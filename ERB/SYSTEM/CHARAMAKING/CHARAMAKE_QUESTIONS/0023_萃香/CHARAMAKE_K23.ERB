@@ -1,0 +1,50 @@
+﻿;萃香＠むのう
+@CHARAMAKE_K23(ARG)
+PRINTFORMW 「おや、起きたかい」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:ローマ字)
+PRINTL 
+PRINTFORML 「なに、簡単な質問さ、難しく考える必要はない」
+PRINTFORMW 「絶対に敵わない敵に出会ったら、あなたはどうする？」
+PRINTL 
+PRINTFORMDL [0] 答えない
+PRINTFORMDL [1] 立ち向かう、逃走は無いのだ！
+PRINTFORMDL [2] 全力で逃げる、逃走しか無いのだ！
+PRINTFORMDL [3] 許してください、俺には家族が！
+PRINTFORMDL [4] だんなぁ！　舎弟にしてください！
+CALL INPUTINTD(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「なんでそこで黙るかなぁ？」
+		;無回答の補正値は固定
+		CALLF CM_PROF("衝動", -10)
+		CALLF CM_PROF("好奇心", -10)
+		CALLF CM_PROF("羞恥", 10)
+		CALLF CM_PROF("神経質", 10)
+	CASE 1
+		PRINTFORML 「お、良い答えだねぇ！」
+		CALLF CM_PROF("攻撃", 30)
+		CALLF CM_PROF("プライド", 30)
+		CALLF CM_PROF("衝動", 20)
+		CALLF CM_PROF("知性", -20)
+	CASE 2
+		PRINTFORML 「ふーん？　普通だねぇ」
+		CALLF CM_PROF("素直さ", 20)
+		CALLF CM_PROF("知性", 10)
+		CALLF CM_PROF("楽観", -20)
+		CALLF CM_PROF("攻撃", -10)
+	CASE 3
+		PRINTFORML 「それで許してくれる相手ならいいんじゃない？」
+		CALLF CM_PROF("楽観", 20)
+		CALLF CM_PROF("被虐", 10)
+		CALLF CM_PROF("プライド", -20)
+		CALLF CM_PROF("知性", -10)
+		CALLF CM_PROF("羞恥", -10)
+	CASE 4
+		PRINTFORML 「誇りの一つも無いんだねぇ！」
+		CALLF CM_PROF("楽観", 30)
+		CALLF CM_PROF("モラル", -20)
+		CALLF CM_PROF("プライド", -30)
+ENDSELECT
+PRINTFORMW 「こんなものかな、それじゃ、おやすみ」
+RETURN 1

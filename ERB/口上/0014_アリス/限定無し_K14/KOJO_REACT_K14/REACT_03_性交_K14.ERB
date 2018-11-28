@@ -1,0 +1,1741 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上 性交系個別リアクション口上ファイル
+;
+;	性交系リアクション口上をまとめたファイル
+;
+;Version		Reason
+;1.71			@口上記入チェック仕様に。全体的に手入れ。@v0330++:IS_NOWCOMNAMEに不正な名称を渡していたのを修正
+;1.62			@IS_COMGRONAMEの新設に伴いTFLAG:REACT分類をIS_COMGRONAMEに変更
+;1.60			ACT分類単体ファイルとして独立
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;性交系 REACT30～35
+;========================================================================
+;・各REACT内の分け方としてTFLAG:REACT分類(IS_COMGRONAME)やSELECTCOM(IS_NOWCOMNAME)が考えられます
+;・ACT分類:性交系の場合、基本的に愛撫系COM(COM10~COM16)、性交系COM(COM20~COM22)、苦痛系COM(COM30~COM33)が選択肢となりますが
+;・状況によってはその他のものが選択肢に含まれる可能性もあります
+;-------------------------------------------------
+;=================================================
+;関連変数…
+;
+;TFLAG:REACT分類 (0=なし/1=消極的従う/2=積極的従う/3=許しを乞う/4=暴れる/5=要求に応じない,拒否/6=逃げる,もがく)
+;IS_COMGRONAME（"なし/消極的従う/積極的従う/許しを乞う/暴れる/拒否/逃げる"）
+;
+;FIRSTREACT
+;初回ACT判定関数
+;TFLAG:ACT（TFLAG:90）を自動で参照、現在実行されているREACTごとに番号が独立して保存される
+;
+;ONCEREACT
+;調教内未読判定関数　調教前に初期化される
+;その他の仕様はほぼFIRSTREACTと同様
+;=================================================
+
+;────────────────────────────────────
+;REACT30, 正常位・個別リアクション
+;────────────────────────────────────
+;想定されるCOM…
+;会話系反応
+;	COM:もっとハードにして
+;愛撫系反応
+;	COM:嫌がる/下手だと罵る/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る/中に出して！/中に出さないで！
+;苦痛系反応
+;	COM:暴れる
+;-------------------------------------------------
+@KOJO_REACT_K14_30
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=通常/1=連続実行/2=他のＶ性交から/3=Ａ性交から/4=Ｖ性交奉仕から/5=Ａ性交奉仕から)
+;・主導権は調教者(SEX_INITIATIVE(TARGET))
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:MASTER:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W(@"%CALLNAME:MASTER%処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる") && IS_NOWCOMNAME("快感を受け入れる/気持ち良い！/腰を振る")
+	;=================================================
+	;COM20, 腰を振る		80%
+	;=================================================
+	IF 口上記入チェック(80) && IS_NOWCOMNAME("腰を振る")
+		LOCALS = %RAND_SPLIT("はっ、はぁ/んんっ、く/あ…、んん/ハァ、あ/くぅっ、ん/はーっ、はぁ、はぁ")%……
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORM 「%LOCALS%
+				;調教者がイきそう。もしくは快PALAMが一定以上
+				IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+					PRINTFORMW 可愛い声で鳴いてくれちゃって…」
+					PRINTFORMW 「私%RAND_SPLIT("、堪らなくなっちゃうわ/も、止まらなくなりそう")%……」
+				;その他
+				ELSE
+					PRINTFORMW ふふ、甘えた声だしちゃって…」
+					PRINTFORMW 「もっと、もっといい声で鳴かせたくなっちゃうわ……」
+				ENDIF
+			CASE "無理のない行動"
+				PRINTFORM 「%LOCALS%
+				;調教者がイきそう。もしくは快PALAMが一定以上
+				IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+					PRINTFORMW %RAND_SPLIT("エッチな/イヤラシイ/中々の")%腰使い、ね…」
+					PRINTFORMW 「そんなことされたら、もう%RAND_SPLIT("私……、スイッチ入っちゃうから/……やめてあげられないから、ね")%…」
+				;その他
+				ELSE
+					PRINTFORMW ふふ、良い感じよ…」
+					PRINTFORMW 「ほら、もっと私を感じて……」
+				ENDIF
+			CASE "無理をした行動"
+				;調教者がイきそう。もしくは快PALAMが一定以上
+				IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+					PRINTFORMW 「%LOCALS%大人しく、身を任せることにしたって訳？」
+					PRINTFORMW 「ま、そういう事なら……、%RAND_SPLIT("お望み通り、犯してあげるわ/存分に犯してあげるから")%…」
+				;その他
+				ELSE
+					PRINTFORMW 「そうそう、それでいいのよ…」
+					PRINTFORMW 「いつまでも快楽に抗うのは、%CNAME(MASTER, TARGET)%だって辛いでしょう？」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;COM側の充実度によって確率を偏らせるとかそんな考え。REACT毎に書き分けるのが面倒になったので汎用処理で済ませる
+	;=================================================
+	;COM15/16, 快感を受け入れる/気持ち良い！
+	;=================================================
+	IF 口上記入チェック(100) && ((IS_NOWCOMNAME("快感を受け入れる") && PERCENT(90)) || (IS_NOWCOMNAME("気持ち良い！") && PERCENT(65)))
+		;汎用処理を呼ぶ
+		CALL PRINT_REACT_30_COM15_COM16_K14
+		;RESULT値は関数側で指定。後から変える場合この方が楽とかそんな考え
+		RETURN RESULT
+	ENDIF
+RETURN 0
+ENDIF
+
+;一応COM条件に許しを乞うを含めているが、まずないものと考えている。怯えるは面倒過ぎるので考慮しない。発生したらCOMでなんとかするという構え
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：許しを乞う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("許しを乞う") && IS_NOWCOMNAME("許しを乞う/快感を我慢する")
+	SELECTCASE GET_COM_RANK()
+		CASE "自然な行動"
+			;BASE:満足による派生（高い=50%以上/一般=25%以上/低い=25%未満）
+			SELECTCASE TENSION(TARGET, 8)
+				CASE "高い"
+					PRINTFORMW 「私、言わなかったかしら？ そんなこと言うのは逆効果だって…」
+					PRINTFORMW 「むしろ%CNAME(MASTER, TARGET)%を、もっとめちゃめちゃにしたくなっちゃうわ……」
+				CASE "一般"
+					PRINTFORMW 「よく言うわね。本当は感じちゃってる癖に…」
+					PRINTFORMW 「嘘つきな子には、お仕置きしてあげないと。ねぇ？」
+				CASE "低い"
+					PRINTFORMW 「今更そんなこと言われても、止められる訳ないじゃない」
+					PRINTFORMW 「大人しく諦めるのね…」
+			ENDSELECT
+		CASE "無理のない行動"
+			;BASE:満足による派生
+			SELECTCASE TENSION(TARGET, 8)
+				CASE "高い"
+					PRINTFORMW 「やめてなんて言われると、余計にやめたくなくなっちゃうのよねぇ…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%も…、私がその程度じゃやめないって、判って言ってるんじゃないの？」
+				CASE "一般"
+					PRINTFORMW 「今やめたら、辛いのは%CNAME(MASTER, TARGET)%の方だと思うけどねぇ？」
+					PRINTFORMW 「本当にやめて欲しいなら、そんな声は出ないはずだと思うけど」
+				CASE "低い"
+					PRINTFORMW 「そんなこと言う割に、随分良い声が出ちゃってるみたいだけどね？」
+					PRINTFORMW 「『こんなことやめて』なんて…、それが%CNAME(MASTER, TARGET)%の本心なのか、怪しいところね」
+			ENDSELECT
+		CASE "無理をした行動"
+			;実は気持ちいい
+			IF COMCOR_POSI()
+				PRINTFORMW 「許してなんて言いながら、随分いい感じの腰使いねぇ？」
+				PRINTFORMW 「本当は嫌じゃないんでしょう。ほら、正直に言ってみなさいよ…」
+			;実は嫌
+			ELSE
+				PRINTFORMW 「言われてやめるくらいなら、最初からしてないわよ」
+				PRINTFORMW 「いい加減、諦めたらどうなの？」
+			ENDIF
+	ENDSELECT
+	PRINTL
+	PRINTFORMDW %CALLNAME%は身をよじる%CALLNAME:MASTER%を押さえつけながら犯し続けた…
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：消極的従う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類で区切っている以上、REACT派生は考慮する必要なし
+;------------------------------------------------
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う") && IS_NOWCOMNAME("恥ずかしがる/嫌がる/下手だと罵る/快感を我慢する")
+	;=================================================
+	;COM10, 恥ずかしがる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("恥ずかしがる")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「素直じゃないのね。%RAND_SPLIT("私に声を聞かれるの/もしかして、声を出すの")%が恥ずかしいとか？」
+				PRINTFORMW 「ま、それはそれで%RAND_SPLIT("悪くない/結構だ")%けど…」
+				PRINTFORM 「無理やりにでも鳴かせたく\@ TENSION(TARGET, 8) == "高い" ? なっちゃうわ # なるわね \@……
+				CALL PRINT_SYMBOL_K14
+			CASE "無理のない行動"
+				PRINTFORMW 「我慢したところで、いい感じの声が出ちゃってるわね」
+				PRINTFORM 「今更恥ずかしがっても、もう手遅れだと思うわ……
+				CALL PRINT_SYMBOL_K14
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「真っ赤な顔して恥ずかしがってる割には…、私を離そうとしないのね\@ TENSION(TARGET, 8) == "高い" ? ？ # \@」
+					PRINTFORMW 「ま、そういうことなら…。私\@ TENSION(TARGET, 8) == "高い" ? にとっても好都合ってね。ふふ # も精々愉しませてもらうわ \@……」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「そうやって恥ずかしがってみせてるけど、本当はキモチ良いんでしょう」
+					IF AFFECTION("溺愛")
+						PRINTFORMW 「いい加減、我慢するのも辛そうに見えるけどね」
+					ELSE
+						PRINTFORMW 「素直になるつもりがないのなら…、もっと虐めてやるから……」
+					ENDIF
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM11, 嫌がる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("嫌がる")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「嫌とか言ってる割には、随分良い感じになっちゃってるみたいだけど。ねぇ？」
+			CASE "無理のない行動"
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%…、そうやって嫌がってみせてる\@ TENSION(TARGET, 8) == "高い" ? 癖に # けど \@……」
+				PRINTFORMW 「\@ TENSION(TARGET, 8) == "高い" ? 随分いい声で鳴くのね？ ふふ… # いい声が出ちゃってる事に気付いてないのかしら。ねぇ？ \@」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					CALL FADEIN(10, "「ねぇ本当は……」")
+					PRINTFORMW 「まんざらでもない、悪くないって思ってるんでしょう」
+					PRINTFORMW 「だって%CNAME(MASTER, TARGET)%……、嫌とか言いながら私を離そうとしないし。ねぇ？」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「ふふ、声が震えてるわよ。言う程嫌って訳じゃなさそうねぇ？」
+					PRINTFORMW 「良い感じの声も出ちゃってるのに、今更嫌とかちょっと無理があると思うわよ」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM12, 下手だと罵る
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("下手だと罵る")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「感じてないなら、もっと余裕があっても良さそうなものだけどねぇ？」
+				PRINTFORMW 「嘘つきな子には、ちょっとお仕置きが必要かしら……」
+			CASE "無理のない行動"
+				PRINTFORMW 「へぇ、言ってくれるじゃない。ま、それが本当だとして…」
+				PRINTFORMW 「そんな私に良い感じに鳴かされちゃってる%CNAME(MASTER, TARGET)%は、一体何なの？」
+				IF !RAND:3
+					PRINTFORMW 「っていう話になるんだけど。%CNAME(MASTER, TARGET)%、そこまでは考えていないようね」
+					PRINTFORMW 「尤も…、そんな余裕もないのかしら。ねぇ？」
+				ENDIF
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「流石にそれは…、少々説得力に欠けると思うけどね？」
+					PRINTFORMW 「今の自分がどんな状態なのか、良く考えてみる事をお勧めするわ」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「この状況で、まだそんな口が利けるのね」
+					PRINTFORMW 「尤も…、今更なに言ったところで、説得力に欠けるのが悲しいところだけど」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;条件毎にRESULTを返す。古い記述を生かして統合する為の苦肉の策とかそんなん
+	;=================================================
+	;COM14, 快感を我慢する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("快感を我慢する")
+		;2/3で真
+		IF RAND:3
+			SELECTCASE GET_COM_RANK()
+				CASE "自然な行動"
+					PRINTFORMW 「そういうのも悪くはないけど…」
+					PRINTFORMW 「私としては、もっと%CNAME(MASTER, TARGET)%の声が聞きたいのよね……」
+				CASE "無理のない行動"
+					PRINTFORMW 「声が出ちゃってるわよ。%CNAME(MASTER, TARGET)%…、我慢するんじゃなかったの？」
+					PRINTFORMW 「でも…、ふふ。悪くないわ。ほら、もっと声を聞かせて……」
+				CASE "無理をした行動"
+					;実は気持ちいい
+					IF COMCOR_POSI()
+						PRINTFORMW 「%RAND_SPLIT("いくら/そうやって、")%自分を偽ろうとしたところで…」
+						PRINTFORMW 「身体は素直に反応しちゃうのよねぇ。悲しい話だけど。ふふ」
+					;実は嫌
+					ELSE
+						PRINTFORMW 「どれだけ堪えようとしたところで、もう声出ちゃうのが抑えられないみたいだけど」
+						PRINTFORMW 「いい加減、諦めて楽に%RAND_SPLIT("なればいいのにね/なっちゃえば")%？」
+					ENDIF
+			ENDSELECT
+			RETURN 1
+		;1/3で真
+		ELSE
+			;負荷0, 1ならRETURN 1
+			IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動") > 0
+				IF AFFECTION("相思相愛")
+					PRINTFORMW 「いくらそんな態度したところで…」
+					PRINTFORM 「%CNAME(MASTER, TARGET)%の膣内はぐいぐい締め付けてきてるわ
+					CALL PRINT_SYMBOL_K14
+				ELSEIF AFFECTION("溺愛")
+					PRINTFORMW 「あまり乗り気じゃないのかしら…？」
+					PRINTFORM 「でも、こうなっちゃったら一緒よね…
+					CALL PRINT_SYMBOL_K14
+				ELSE
+					PRINTFORMW 「あまりシたくないのかしら？」
+					PRINTFORMW 「消極的過ぎてつまらないわね……」
+				ENDIF
+				RETURN 1
+			;負荷2ならRETURN 0
+			ELSE
+				RETURN 0
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 0
+ENDIF
+;REACT30, 正常位
+
+;────────────────────────────────────
+;REACT31, 後背位・個別リアクション
+;────────────────────────────────────
+;想定されるCOM…
+;会話系反応
+;	COM:許しを乞う
+;愛撫系反応
+;	COM:恥ずかしがる/嫌がる/下手だと罵る/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る/中に出して！/中に出さないで！
+;苦痛系反応
+;	COM:暴れる
+;-------------------------------------------------
+@KOJO_REACT_K14_31
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=通常/1=連続実行/2=他のＶ性交から/3=Ａ性交から/4=Ｖ性交奉仕から/5=Ａ性交奉仕から)
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:MASTER:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W(@"%CALLNAME:MASTER%処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる") && IS_NOWCOMNAME("快感を受け入れる/気持ち良い！/腰を振る")
+	;=================================================
+	;COM20, 腰を振る		80%
+	;=================================================
+	IF 口上記入チェック(80) && IS_NOWCOMNAME("腰を振る")
+		LOCALS = %RAND_SPLIT("はっ、はぁ/んんっ、く/あ…、んん/ハァ、あ/くぅっ、ん/はーっ、はぁ、はぁ")%……
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORM 「%LOCALS%
+				IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+					PRINTFORMW いいわよ、とってもいいわ。%CNAME(MASTER, TARGET)%…」
+					PRINTFORMW 「おかげで私も、%RAND_SPLIT("すっかり乗せられちゃいそうだけど/ついつい本気になっちゃうわ")%……」
+				ELSE
+					PRINTFORMW この格好、いつもより興奮しちゃうのかしら…？」
+					PRINTFORM 「その気持ち、なんとなくだけど……判らなくもないわ
+					CALL PRINT_SYMBOL_K14
+				ENDIF
+			CASE "無理のない行動"
+				PRINTFORM 「%LOCALS%
+				IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+					PRINTFORMW %RAND_SPLIT("はしたない/イヤラシイ/いい")%声で鳴いてくれちゃって…」
+					PRINTFORMW 「%RAND_SPLIT("思わずその気にさせられちゃうわ/って、私も余裕ないのよね")%……」
+				ELSE
+					PRINTFORMW ほら、これがいいんでしょう？ 気持ち良いんでしょう？」
+					PRINTFORMW 「でもこんなの、まだまだ序の口よ……」
+				ENDIF
+			CASE "無理をした行動"
+				IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+					PRINTFORMW 「%LOCALS%ふふ、だらしないわ。いい眺めね」
+					PRINTFORMW 「ま、そんなこと言ってるけど……私も、そろそろ駄目かも…」
+				ELSE
+					PRINTFORMW 「すっかり流されちゃって、他愛ないわね…」
+					PRINTFORMW 「でも、こんなものじゃ済まない%RAND_SPLIT("から/わよ")%」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM15/16, 快感を受け入れる/気持ち良い！
+	;=================================================
+	IF 口上記入チェック(100) && ((IS_NOWCOMNAME("快感を受け入れる") && PERCENT(90)) || (IS_NOWCOMNAME("気持ち良い！") && PERCENT(65)))
+		CALL PRINT_REACT_30_COM15_COM16_K14
+		RETURN RESULT
+	ENDIF
+RETURN 0
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：許しを乞う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("許しを乞う") && IS_NOWCOMNAME("許しを乞う/快感を我慢する")
+	CALL PRINT_REACT_30_COM7_COM14_K14
+	RETURN RESULT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：消極的従う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う") && IS_NOWCOMNAME("恥ずかしがる/嫌がる/下手だと罵る/快感を我慢する")
+	;=================================================
+	;COM10, 恥ずかしがる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("恥ずかしがる")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「そうやって、必死に声を押し殺してるのも悪くないわ」
+				PRINTFORMW 「むしろ、余計に興奮しちゃうかも。ふふ…」
+			CASE "無理のない行動"
+				PRINTFORMW 「とりあえず、逆らうつもりはないのね？」
+				PRINTFORMW 「ま、そういうことなら…、精々好きなようにさせてもらうわ」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%…、なんだかんだで良くなっちゃってるのかしら」
+					PRINTFORMW 「だって、ねぇ？ おしりをこんなに高く上げちゃって。ふふ……」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「へぇ、抵抗する気はなさそうね？」
+					PRINTFORMW 「ま、私にとっては好都合だけど……」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM11, 嫌がる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("嫌がる")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「そんなに嫌なら、普通は抵抗するものだと思うけどねぇ？」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%…、言う程嫌って訳じゃなさそうね」
+			CASE "無理のない行動"
+				PRINTFORMW 「嫌がる%CNAME(MASTER, TARGET)%を無理やり犯すってのも悪くないわ。尤も…」
+				PRINTFORMW 「言う程嫌そうにも見えないんだけど。ねぇ？」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「本当に嫌なら、こんな…まるでおねだりするみたいな格好はしないはずよね？」
+					PRINTFORMW 「ほら、正直に言ってみなさいよ…」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「嫌とか言いながらも抵抗はしないとか。一体どういう心境な訳？」
+					PRINTFORMW 「まぁ尤も…、嫌々言ってる%CNAME(MASTER, TARGET)%を犯すのも悪いものじゃないけど。フフ…」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM12, 下手だと罵る
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("下手だと罵る")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「感じてないなら、もっと余裕があっても良さそうなものだけどねぇ？」
+				PRINTFORMW 「嘘つきな子には、ちょっとお仕置きが必要かしら……」
+			CASE "無理のない行動"
+				PRINTFORMW 「へぇ、言ってくれるじゃない。ま、それが本当だとして…」
+				PRINTFORMW 「そんな私に良い感じに鳴かされちゃってる%CNAME(MASTER, TARGET)%は、一体何なの？」
+				IF !RAND:3
+					PRINTFORMW 「っていう話になるんだけど。%CNAME(MASTER, TARGET)%、そこまでは考えていないようね」
+					PRINTFORMW 「尤も…、そんな余裕もないのかしら。ねぇ？」
+				ENDIF
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「流石にそれは…、少々説得力に欠けると思うけどね？」
+					PRINTFORMW 「今の自分がどんな状態なのか、良く考えてみる事をお勧めするわ」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「この状況で、まだそんな口が利けるのね」
+					PRINTFORMW 「尤も…、今更なに言ったところで、説得力に欠けるのが悲しいところだけど」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM14, 快感を我慢する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("快感を我慢する")
+		LOCALS = \@ ALI(0) ? ふふ # フフ \@
+		;2/3で真
+		IF RAND:3
+			SELECTCASE GET_COM_RANK()
+				CASE "自然な行動"
+					PRINTFORML 「あらあら、%RAND_SPLIT("意地張っちゃって…、/強情/頑張るわ")%ねぇ？」
+					PRINTFORMW 「本当は、\@ PALAM:MASTER:快Ｖ > 8500 ? 今にもイきそうになってる # 気持ちよくて堪らない \@癖に……」
+					SELECTCASE TENSION(TARGET, 8)
+						CASE "高い"
+							PRINTFORMW 「でも、そんな%CNAME(MASTER, TARGET)%を無理やり鳴かせてみるのも一興ね」
+							PRINTL
+							PRINTFORMDL %CALLNAME%は必死に快楽に耐えようとする%CALLNAME:MASTER%を、
+							PRINTFORMDW 息もできない程激しく、背後から責めたてた…
+							;SOURCE捏造
+							TIMES SOURCE:MASTER:快Ｖ, 1.50
+						CASE "一般"
+							PRINTFORMW 「思わず、ちょっと虐めたくなっちゃうわね。%LOCALS%…」
+						CASE "低い"
+							PRINTFORMW 「何なら、もう少し激しくシてあげてもいいのよ」
+					ENDSELECT
+				CASE "無理のない行動"
+					PRINTFORMW 「%LOCALS%、こういうのも悪くないわね」
+					PRINTFORMW 「鳴かないのなら、意地でも鳴かせてやるから覚悟して……」
+				CASE "無理をした行動"
+					;実は気持ちいい
+					IF COMCOR_POSI()
+						PRINTFORMW 「声を出すのは我慢できても、身体は反応しちゃうのが悲しいところね。%LOCALS%」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%の格好…、まるでおねだりしてるみたいになってるわよ」
+					;実は嫌
+					ELSE
+						PRINTFORMW 「正直、声を出さないのが不満ではあるけど…」
+						PRINTFORMW 「抵抗しないのなら、私の好きなように弄べるわねぇ。%LOCALS%…」
+					ENDIF
+			ENDSELECT
+			;分岐内でRESULTを返す
+			RETURN 1
+		;1/3で真
+		ELSE
+			;負荷0, 1ならRETURN 1
+			IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動") > 0
+				IF AFFECTION("相思相愛") && PERCENT(80)
+					PRINTFORMW 「ほら、陵辱されてるみたいで興奮してるんでしょう…？」
+					PRINTFORM 「正直に言えたら、もっと愉しませてあげるわ…
+					CALL PRINT_SYMBOL_K14
+				ELSEIF AFFECTION("溺愛") && PERCENT(70)
+					PRINTFORMW 「なんか無理やりしてるみたいで、興奮しちゃうわね…」
+					PRINTFORM 「今の%CNAME(MASTER, TARGET)%、とっても可愛いわ…
+					CALL AUTOHEARTCB2_K14
+					PRINTFORMW 　ほら、もっと愉しませて頂戴…」
+				ELSE
+					PRINTFORMW 「必死にキモチ良いの我慢してるみたいだけど…」
+					PRINTFORMW 「本当は、後ろから突かれるのが好きなんでしょう？ %LOCALS%」
+				ENDIF
+				RETURN 1
+			;負荷2ならRETURN 0
+			ELSE
+				RETURN 0
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 0
+ENDIF
+;REACT31, 後背位
+
+;────────────────────────────────────
+;REACT32, 騎乗位・個別リアクション
+;────────────────────────────────────
+;想定されるCOM…
+;愛撫系反応
+;	COM:嫌がる/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る/中に出して！/中に出さないで！
+;苦痛系反応
+;	COM:痛みを我慢する/悲鳴を上げる/暴れる
+;奉仕系反応
+;	COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+;-------------------------------------------------
+@KOJO_REACT_K14_32
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=通常/1=連続実行/2=他のＶ性交から/3=Ａ性交から/4=Ｖ性交奉仕から/5=Ａ性交奉仕から)
+;-------------------------------------------------
+;・キャンセル処理はACT_MESSAGE_OTHERSにて汎用処理
+;・他の性交系とは違い、奉仕系反応(COM40番台)も出る事に注意
+;・キャンセルが成立するのは他の性交系と異なり、REACT分類が暴れる/拒否の場合である
+;・主導権は調教対象(SEX_INITIATIVE(MASTER))
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:MASTER:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W(@"%CALLNAME:MASTER%処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;COMなすがままなら汎用リアクションに飛ばす
+IF IS_NOWCOMNAME("なすがまま")
+	RETURN 0
+ENDIF
+
+;並列処理だがCOMによって確率を絞る。REACT負荷の処理はここで完結させる
+;ACT/REACT30騎乗位の場合、COM20,腰を振るは積極的従う扱いになる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COM, 平然とやる/腰を振る/積極的やる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && (IS_NOWCOMNAME("平然とやる") || (IS_NOWCOMNAME("腰を振る") && !RAND:2) || (IS_NOWCOMNAME("積極的やる") && !RAND:3))
+	;=================================================
+	;自然な行動
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "自然な行動"
+		;調教者状態変化派生
+		SELECTCASE GET_CONDITION(TARGET)
+			CASE "情欲"
+				PRINTFORM 「%RANDTEXT_K14("あん", "んあ")%っ、あ%RANDTEXT_K14("ぁ", "＿")%っ
+				;AH
+				CALL AUTOHEARTCB_K14
+				;2/3で表示
+				IF RAND:3
+					;RANDREACT(0)
+					SELECTCASE RANDREACT(2, 0)
+						CASE 0
+							PRINTFORMW 　私を押さえつけるなんて生意気%RANDTEXT_K14("ね", "なのよ")%…」
+							PRINTFORMW 「でもなんか…、興奮するわね。こういうの……」
+						CASE 1
+							PRINTFORMW 　私を犯してでもいるつもり%RANDTEXT_K14("なのかしら…", "？", "な訳？")%」
+							PRINTFORMW 「でも、%RANDTEXT_K14("時には", "＿")%こういうのも悪くない。今はそ%RANDTEXT_K14("う思えるわ", "んな気分ね")%」
+					ENDSELECT
+					PRINTFORM 「ほら、いいわよ。このままもっと、%RANDTEXT_K14("私を愉しませて", "激しくシて")%頂戴…
+					;PSで閉じる
+					CALL PRINT_SYMBOL_K14
+				;1/3で表示
+				ELSE
+					PRINTFORMW 　ちょっと生意気ね。でも嫌いじゃないわよ。こういうの…」
+					PRINTFORMDW %CALLNAME%は%CALLNAME:MASTER%の手を払いのけると首筋を腕を廻し、強引に引き寄せながらその唇を奪った…
+					PRINTL
+					;RANDREACT(1)
+					SELECTCASE RANDREACT(2, 1)
+						CASE 0
+							CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("キス"), 1)%")
+							CLEARLINE 1
+						CASE 1
+							PRINTFORML 「%KOJO_RAND_K14(("キス"), 1)%」
+					ENDSELECT
+					PRINTFORMW 「ほら、激しいのがお好みなんでしょう？ いいわよ、付き合ってあげる…」
+					PRINTFORMDW 二人は互いの唇を貪りつつ、\@ !TIME ? %RANDTEXT_K14("白昼の", "＿")%光 # %RANDTEXT_K14("宵", "夜の", "＿")%闇 \@の中で\@ M_COND("情欲") ? 獣のように激しく # 妖しく \@交わっている…
+					;1/2で表示
+					SIF !RAND:2
+						PRINTFORMDW 辺りには淫らな水音が絶えることなく響き渡っている…
+					;キスを捏造
+					CALL SET_KISS
+				ENDIF
+			CASE "疲弊", "衰弱"
+				PRINTFORMW 「%RANDTEXT_K14("はぁ、はぁ", "ハァ、ハァ")%…、私が疲れてあまり動けないからって、%RANDTEXT_K14("ちょっと", "なんか")%調子に乗ってない？」
+				PRINTFORM 「%RANDTEXT_K14("ふ", "＿")%あぁっ
+				;AH
+				CALL AUTOHEARTCB_K14
+				PRINTFORMW 　\@ TENSION(TARGET, 8) == "高い" ? もうっ # は \@、はげしすぎるわよ…\@ TENSION(TARGET, 8) == "高い" ? っ！ # \@」
+			CASEELSE
+				PRINTFORM 「んんっ！ あっ
+				;AH
+				CALL AUTOHEARTCB_K14
+				PRINTFORMW 　%RANDTEXT_K14("ちょっと生意気ね", "激しいわね")%。でも…」
+				PRINTFORMW 「これはこれで、悪くない、かも……」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;無理のない行動
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理のない行動"
+		;調教者状態変化派生
+		SELECTCASE GET_CONDITION(TARGET)
+			CASE "情欲"
+				PRINTFORM 「%RANDTEXT_K14("んん", "ふあ")%っ！ あ%RANDTEXT_K14("ぁ", "＿")%っ
+				CALL AUTOHEARTCB_K14
+				PRINTFORMW 　%RANDTEXT_K14("頑張", "夢中にな")%っちゃって……、可愛い%RANDTEXT_K14("わ", "＿")%」
+				PRINTFORMDW %CALLNAME%は%CALLNAME:MASTER%の手を取ると、その上体を引き寄せ情熱的なキスをした…
+				PRINTL
+				;RANDREACT(2)
+				SELECTCASE RANDREACT(2, 2)
+					CASE 0
+						CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("キス"), 1)%")
+						CLEARLINE 1
+					CASE 1
+						PRINTFORML 「%KOJO_RAND_K14(("キス"), 1)%」
+				ENDSELECT
+				PRINTFORMW 「\@ TENSION(TARGET, 8) == "高い" ? ねぇ # ほら\@、もっと…このままキスしててあげるから……」
+				;キスを捏造
+				CALL SET_KISS
+			CASE "疲弊", "衰弱"
+				PRINTFORMW 「%RANDTEXT_K14("はぁ、はぁ", "ハァ、ハァ")%…、そうやって%RANDTEXT_K14("頑張って", "一生懸命シて")%くれるのは結構なんだけど…」
+				PRINTFORMW 「流石に、%RANDTEXT_K14("ちょっと", "少々")%疲れてきたわ%RANDTEXT_K14("ね", "＿")%」
+			CASEELSE
+				PRINTFORM 「\@ AFFECTION("溺愛") ? ふふ # フフ \@…、いい%RANDTEXT_K14("感じ", "調子")%よ
+				;AH2
+				CALL AUTOHEARTCB2_K14
+				PRINTFORM 　今の%CNAME(MASTER, TARGET)%、とっても可愛い%RANDTEXT_K14("わ", "＿")%
+				CALL PRINT_SYMBOL_K14
+				PRINTFORMW 「さぁ、もっとよ\@ TENSION(TARGET, 8) == "高い" ? ！ # 。 \@　%CNAME(MASTER, TARGET)%の%RANDTEXT_K14("乱れる", "イヤラシイ")%姿、私に見せて頂戴…」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;何がCOMCOR_POSIだよめどいんじゃクソとか思わない事もないけど
+	;状況を細かく拾えるので描写の幅は広がるし、決めうちできるとむしろ書きやすい面もある
+	;というかまあ本来は、快感を我慢する/消極的やる等の微妙なニュアンスのCOMでこそ生きる
+	;=================================================
+	;無理をした行動
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+		;当初、状態変化を別枠するつもりが面倒になったので統合してみたら酷く判り難い感じになって悲しい
+		;実はまんざらでもない
+		IF COMCOR_POSI()
+			;調教者BASE:満足派生
+			SELECTCASE TENSION(TARGET, 8)
+				CASE "高い"
+					PRINTFORMW 「快楽に流されて、自分が保てなくなりそうで怖い？ 意気地がないのね」
+					;調教者が情欲でない
+					SIF !T_COND("情欲")
+						PRINTFORMW 「まぁでも…、そんな%CNAME(MASTER, TARGET)%を見ていると、徹底的に堕としてやりたくなるわ…」
+				CASEELSE
+					PRINTFORMW 「%RAND_SPLIT("ツマラナイ/つまらない")%拘りなんて捨ててしまったらどうなの？」
+					PRINTFORMW 「…とぼけたって駄目。顔を見れば、何を考えているかなんて直ぐ判るわ」
+					;調教者が情欲でない
+					SIF !T_COND("情欲")
+						PRINTFORMW 「でも…、そんな%CNAME(MASTER, TARGET)%を蕩かしてしまうのも、それはそれで一興ね」
+			ENDSELECT
+			;調教者が情欲でない
+			IF !T_COND("情欲")
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ウフフ…」")
+				CLEARLINE 1
+			ENDIF
+			;COMCOR分岐を抜けたら状態変化で分岐
+		;実は嫌
+		ELSE
+			;調教者BASE:満足派生
+			SELECTCASE TENSION(TARGET, 8)
+				CASE "高い"
+					PRINTFORMW 「こんな事するのに抵抗があるんでしょう？ 見てれば判るわ%RANDTEXT_K14("よ", "＿")%、そんなの」
+					;調教者が情欲でない
+					SIF !T_COND("情欲")
+						PRINTFORMW 「でも私としては、こういう機会を生かさない手はないわね。ウフフ…」
+				CASEELSE
+					PRINTFORMW 「それじゃご機嫌取りにもならないわよ、悪いけど。%CNAME(MASTER, TARGET)%が無理してるのが伝わってくるもの」
+					;調教者が情欲でない
+					SIF !T_COND("情欲")
+						PRINTFORMW 「ただ、そうね？ この際%CNAME(MASTER, TARGET)%を虐めてあげるのも一興ね…」
+			ENDSELECT
+			;COMCOR分岐を抜けたら状態変化で分岐
+		ENDIF
+		;調教者が情欲			台詞、地の文、キスの処理
+		IF T_COND("情欲")
+			PRINTFORMW 「でも…、今はどうだっていいわ\@ TENSION(TARGET, 8) == "高い" ? ！ # 。 \@　そんな\@ TENSION(TARGET) == "高い" ? の # もの… \@」
+			PRINTFORMDL %CALLNAME%は%CALLNAME:MASTER%の上体を強引に引き寄せると、情熱的なキスをしてきた…
+			PRINTFORMDW 情欲に染まった%CALLNAME%の瞳は妖しい光を帯びている…
+			PRINTL
+			;RANDREACT(3)
+			SELECTCASE RANDREACT(2, 3)
+				CASE 0
+					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("キス"), 1)%")
+					CLEARLINE 1
+				CASE 1
+					PRINTFORML 「%KOJO_RAND_K14(("キス"), 1)%」
+			ENDSELECT
+			PRINTFORMW 「覚悟して。%CNAME(MASTER, TARGET)%をめちゃめちゃにしてあげるから…」
+			;キスを捏造
+			CALL SET_KISS
+		;その他					地の文のみ
+		ELSE
+			PRINTFORMDL %CALLNAME%は\@ COMCOR_POSI() ? 挑発的な笑みを湛えながら # 一言そう告げると \@、%CALLNAME:MASTER%が腰を振るリズムに合わせて突き上げる
+			PRINTFORMDW 必死に\@ COMCOR_POSI() ? 自分を保とう # 快楽に抗おう \@とする%CALLNAME:MASTER%の努力も虚しく、その%RANDTEXT_K14("理性", "心")%は溶かされていく…
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる") && IS_NOWCOMNAME("快感を受け入れる/気持ち良い！")
+	;=================================================
+	;COM15/16, 快感を受け入れる/気持ち良い！
+	;=================================================
+	IF 口上記入チェック(100) && (IS_NOWCOMNAME("快感を受け入れる") && PERCENT(90)) || (IS_NOWCOMNAME("気持ち良い！") && PERCENT(65))
+		;-------------------------------------------------
+		;85%で専用処理
+		;-------------------------------------------------
+		IF 口上記入チェック(85)
+			SELECTCASE GET_COM_RANK()
+				CASE "自然な行動"
+					PRINTFORMW 「そういう感じに腰を使うとキモチ良いのよね、判るわ…」
+					;調教者がイきそうもしくは快PALAMが一定以上
+					IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+						PRINTFORMW 「って、私もすっかり良い感じになっちゃってるんだけど……」
+					ELSE
+						PRINTFORMW 「でも、私としてはイマイチなんだけど」
+					ENDIF
+				CASE "無理のない行動"
+					PRINTFORMW 「自分がキモチ良いトコ、見つけちゃったみたいね？ ふふ」
+					;調教者がイきそうもしくは快PALAMが一定以上
+					IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+						PRINTFORMW 「って私もちょっとコレ、ヤバいかも……」
+					ELSE
+						PRINTFORMW 「でも%CNAME(MASTER, TARGET)%、自分が気持ち良くなることしか頭にないみたい……」
+					ENDIF
+				CASE "無理をした行動"
+					PRINTFORMW 「\@ ALI(0) ? ふふ # フフ \@、スイッチが入っちゃったみたいね」
+					PRINTFORMW 「悪くない眺めだわ……」
+			ENDSELECT
+			RETURN 1
+		ENDIF
+		
+		;---------------------
+		;漏れてきたら汎用処理			要らないかも知れないけど一応。あるものは使いたくなる故
+		;---------------------
+		CALL PRINT_REACT_30_COM15_COM16_K14
+		RETURN RESULT
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：許しを乞う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("許しを乞う") && IS_NOWCOMNAME("許しを乞う/快感を我慢する")
+	CALL PRINT_REACT_30_COM7_COM14_K14
+	RETURN RESULT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：消極的従う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う") && IS_NOWCOMNAME("快感を我慢する")
+	LOCALS = \@ ALI(0) ? ふふ # フフ \@
+	;2/3で真
+	IF RAND:3
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「ちょっと恥ずかしそうね？ こんな事してる段階で今更すぎるけど」
+				PRINTFORMW 「でも、腰が止まらないってことは…、なんだかんだで良くなっちゃってるのかしら。%LOCALS%…」
+			CASE "無理のない行動"
+				PRINTFORMW 「単調で実にツマラナイわねぇ。退屈すぎて眠くなるわ\@ TENSION(TARGET, 7) == "高い" ? ！ # \@」
+				PRINTFORMW 「\@ ABL:MASTER:性交 > 4 ? %CNAME(MASTER, TARGET)%なら、もっとできるはずよね？ # まぁ、慣れてない内はこんなものなのかしら \@」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「恥ずかしくって積極的になれない、って感じかしら？」
+					PRINTFORMW 「でも…、腰の動きは止まらないのね。%LOCALS%」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「『もっと情熱的に』なんて言うつもりはないけど、あまりにも単調なのはねぇ…」
+					PRINTFORMW 「\@ ABL:MASTER:性交 > 4 ? %CNAME(MASTER, TARGET)%ならもっとできるはずだけど、、今はその気になれないって訳なの…？ # 不慣れな内は、こんなものなのかも知れないけど \@」
+				ENDIF
+		ENDSELECT
+		;分岐内でRESULTを返す
+		RETURN 1
+	;1/3で真
+	ELSE
+		;負荷0, 1ならRETURN 1
+		IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動") > 0
+			IF AFFECTION("相思相愛")
+				PRINTFORMW 「ほら、%CNAME(MASTER, TARGET)%ももっと愉しんでよ…」
+				PRINTFORM 「いつまでも拗ねてると……、思いっきり突きあげちゃうんだから…
+				CALL PRINT_SYMBOL_K14
+			ELSEIF AFFECTION("溺愛")
+				PRINTFORMW 「ねぇ、もっと動きなさいよ…」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%が動かないなら、下から虐めちゃうわよ……」
+			ELSE
+				PRINTFORMW 「ほら、もっと動きなさいよ」
+				PRINTFORMW 「使えないわね…」
+			ENDIF
+			RETURN 1
+		;負荷2ならRETURN 0
+		ELSE
+			RETURN 0
+		ENDIF
+	ENDIF
+RETURN 0
+ENDIF
+;REACT32, 騎乗位
+
+;────────────────────────────────────
+;REACT33, 対面座位・個別リアクション
+;────────────────────────────────────
+;想定されるCOM…
+;愛撫系反応
+;	COM:嫌がる/下手だと罵る/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る/中に出して！/中に出さないで！
+;苦痛系反応
+;	COM:痛みを我慢する/悲鳴を上げる/暴れる
+;-------------------------------------------------
+@KOJO_REACT_K14_33
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=通常/1=連続実行/2=他のＶ性交から/3=Ａ性交から/4=Ｖ性交奉仕から/5=Ａ性交奉仕から)
+;-------------------------------------------------
+;・キャンセル処理はACT_MESSAGE_OTHERSにて汎用処理
+;・主導権は調教者(SEX_INITIATIVE(TARGET))
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:MASTER:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W(@"%CALLNAME:MASTER%処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる") && IS_NOWCOMNAME("快感を受け入れる/気持ち良い！/腰を振る")
+	;=================================================
+	;COM20, 腰を振る		80%
+	;=================================================
+	IF 口上記入チェック(80) && IS_NOWCOMNAME("腰を振る")
+		LOCALS = %RAND_SPLIT("はっ、はぁ/んんっ、く/あ…、んん/ハァ、あ/くぅっ、ん/はーっ、はぁ、はぁ")%……
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORM 「%LOCALS%
+				PRINTFORM ん、可愛い%RAND_SPLIT("わ/わね/")%…
+				CALL PRINT_SYMBOL_K14
+				PRINTFORMW 「%RAND_SPLIT("ほら、キスしてあげる/さぁ、キスしましょう")%……」
+			CASE "無理のない行動"
+				PRINTFORM 「%LOCALS%
+				PRINTFORMW %CNAME(MASTER, TARGET)%ってぎゅっとされるの好きよね。ふふ」
+				PRINTFORMW 「ほら、こっちを向いて。キスしてあげるわ……」
+			CASE "無理をした行動"
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%KOJO_RAND_K14(("キス"), 1)%」")
+				SIF ANIME_CONFIG("FADE")
+					CLEARLINE 1
+				PRINTFORMW 「ふふ、すっかり素直になっちゃって」
+				PRINTFORMW 「でも悪くないわね。こういうのも……」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM15/16, 快感を受け入れる/気持ち良い！
+	;=================================================
+	IF 口上記入チェック(100) && ((IS_NOWCOMNAME("快感を受け入れる") && PERCENT(90)) || (IS_NOWCOMNAME("気持ち良い！") && PERCENT(65)))
+		CALL PRINT_REACT_30_COM15_COM16_K14
+		RETURN RESULT
+	ENDIF
+RETURN 0
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：許しを乞う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("許しを乞う") && IS_NOWCOMNAME("許しを乞う/快感を我慢する")
+	CALL PRINT_REACT_30_COM7_COM14_K14
+	RETURN RESULT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：消極的従う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う") && IS_NOWCOMNAME("恥ずかしがる/嫌がる/下手だと罵る/快感を我慢する")
+	;=================================================
+	;COM10, 恥ずかしがる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("恥ずかしがる")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「ふふっ、恥ずかしがっちゃって可愛らしいわね」
+				PRINTFORMW 「でも折角なんだから、ちゃんと%CNAME(MASTER, TARGET)%の顔を見せて欲しいわ」
+			CASE "無理のない行動"
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%KOJO_RAND_K14(("キス"), 1)%」")
+				SIF ANIME_CONFIG("FADE")
+					CLEARLINE 1
+				PRINTFORM 「ふふ、ご馳走様…
+				CALL PRINT_SYMBOL_K14
+				PRINTFORMW 「って、%CNAME(MASTER, TARGET)%を余計に恥ずかしがらせちゃったかしら？」
+			CASE "無理をした行動"
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%KOJO_RAND_K14(("キス"), 1)%」")
+				SIF ANIME_CONFIG("FADE")
+					CLEARLINE 1
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「ん…、乗り気じゃないけど、かといって逆らう訳でもないのね？」
+					PRINTFORMW 「まぁいいわ。今はそれでも……」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「フフ、どう？ これだと逃げる事も隠れる事もできないわよ」
+					PRINTFORMW 「恥ずかしがるのは%CNAME(MASTER, TARGET)%の勝手だけど…」
+					PRINTFORMW 「私は私で、好きにさせてもらうから……」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM11, 嫌がる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("嫌がる")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「面白いこと言うわね？ そんなに嫌なら、なんで私の腕の中で大人しくしてるのかしら」
+				PRINTFORMW 「本当はまんざらでもないんでしょう。ほら、正直に言いなさいよ……」
+			CASE "無理のない行動"
+				PRINTFORMW 「フフ…、嫌がったとろでどうにもならないわね。この格好じゃ」
+				PRINTFORMW 「尤も…本気で嫌なら暴れるなりなんなり、方法はあると思うけど」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%…、それほど嫌って訳じゃなさそうね？」
+			CASE "無理をした行動"
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%KOJO_RAND_K14(("キス"), 1)%」")
+				SIF ANIME_CONFIG("FADE")
+					CLEARLINE 1
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「今頃になって嫌がってみせても、ねぇ？」
+					PRINTFORMW 「大人しく、私にキスされてたのは何処の誰だったかしら。フフ…」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「へぇ、そう。嫌なの。ま、そんなの私の知ったことではないわね」
+					PRINTFORMW 「悪いけど、私のやりたいようにさせてもらうから……」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;派生：強がる扱い
+	;=================================================
+	;COM12, 下手だと罵る
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("下手だと罵る")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「震えながらそんなこと言われても、ねぇ？」
+				PRINTFORMW 「見え透いた嘘はやめておくのね……」
+			CASE "無理のない行動"
+				PRINTFORMW 「私にキスされてる時は妙に大人しかった癖に、よく言うわ…」
+				PRINTFORMW 「見得を張るのもいい加減にしたらどうなの？」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「そう言う割には、キスされてる時にうっとりしてたみたいだけど。ねぇ？」
+					PRINTFORMW 「嘘を付くなら、もう少し上手くやらないと。フフ…」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「ハイハイ、勝手に言ってれば？」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%が虚勢を張ってるのはミエミエなのよ」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM14, 快感を我慢する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("快感を我慢する")
+		LOCALS = \@ ALI(0) ? ふふ # フフ \@
+		;2/3で真
+		IF RAND:3
+			SELECTCASE GET_COM_RANK()
+				CASE "自然な行動"
+					PRINTFORMW 「あら、随分大人しいのね？ もしかして、声が出そうなのを我慢してるとか…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%にも、そんな可愛らしいとこがあったのね。%LOCALS%」
+				CASE "無理のない行動"
+					PRINTFORMW 「いくら誤魔化そうとしたって、これだけ顔が近いとよく判るわ」
+					PRINTFORMW 「本当は感じてるんでしょう？ ふふ、見れば判るもの。今更何言っても遅いわよ」
+				CASE "無理をした行動"
+					;実は気持ちいい
+					IF COMCOR_POSI()
+						PRINTFORMW 「%LOCALS%、すっかり大人しくなっちゃって」
+						PRINTFORMW 「ま、そういうことなら…、ここは愉しむに限るわね」
+					;実は嫌
+					ELSE
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%の唇を無理やり奪うってのも悪くないわね」
+						PRINTFORMW 「意地っ張りな子を虐めるのって、ゾクゾクしちゃうわ……」
+					ENDIF
+			ENDSELECT
+			;分岐内でRESULTを返す
+			RETURN 1
+		;1/3で真
+		ELSE
+			;負荷0, 1ならRETURN 1
+			IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動") > 0
+				IF AFFECTION("相思相愛") && PERCENT(80)
+					PRINTFORMW 「なにそれ。やけに大人しいじゃない」
+					PRINTFORMW 「自分から動く気がないのなら、虐めちゃうわよ……」
+				ELSEIF AFFECTION("溺愛") && PERCENT(70)
+					PRINTFORMW 「どうせすぐ気持ちよくなっちゃう癖に…」
+					PRINTFORMW 「ほら、もっと素直になりなさいよ…。%KOJO_RAND_K14(("キス"), 1)%」
+				ELSE
+					PRINTFORMW 「なによ、あまりシたくないって訳…？」
+					PRINTFORMW 「でも、そんなの最初だけよ…」
+				ENDIF
+				RETURN 1
+			;負荷2ならRETURN 0
+			ELSE
+				RETURN 0
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 0
+ENDIF
+;REACT33, 対面座位
+
+;────────────────────────────────────
+;REACT34, 背面座位・個別リアクション
+;────────────────────────────────────
+;想定されるCOM…
+;会話系反応
+;	COM:許しを乞う
+;愛撫系反応
+;	COM:嫌がる/下手だと罵る/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る/中に出して！/中に出さないで！
+;苦痛系反応
+;	COM:痛みを我慢する/悲鳴を上げる/暴れる
+;-------------------------------------------------
+@KOJO_REACT_K14_34
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=通常/1=連続実行/2=他のＶ性交から/3=Ａ性交から/4=Ｖ性交奉仕から/5=Ａ性交奉仕から)
+;-------------------------------------------------
+;・キャンセル処理はACT_MESSAGE_OTHERSにて汎用処理
+;・主導権は調教者(SEX_INITIATIVE(TARGET))
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:MASTER:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W(@"%CALLNAME:MASTER%処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる") && IS_NOWCOMNAME("快感を受け入れる/気持ち良い！/腰を振る")
+	;=================================================
+	;COM20, 腰を振る		80%
+	;=================================================
+	IF 口上記入チェック(80) && IS_NOWCOMNAME("腰を振る")
+		LOCALS = %RAND_SPLIT("はっ、はぁ/んんっ、く/あ…、んん/ハァ、あ/くぅっ、ん/はーっ、はぁ、はぁ")%……
+		;消費気力による派生
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORM 「%LOCALS%
+				;調教者BASE:満足派生
+				SELECTCASE TENSION(TARGET, 8)
+					CASE "高い"
+						PRINTFORMW そうね、言われるまでもなくそのつもりだったけど。くすっ」
+					CASE "一般"
+						PRINTFORMW おねだりだなんて珍しいわね。ふふ」
+					CASE "低い"
+						PRINTFORMW ふふ、欲張りなのね」
+				ENDSELECT
+				;調教者の技能によって分岐
+				IF ABL:TARGET:性交 > 4
+					PRINTFORMW 「ほら、こう？ \@ PENIS(MASTER) ? 扱いて # 指先でつまんで \@欲しかったんでしょう？」
+					PRINTFORMW 「私の指捌き、存分に堪能するといいわ……」
+				ELSE
+					PRINTFORMW 「ん、でもこれ…、%RAND_SPLIT("思ったより/中々/意外と")%難しいわね……」
+				ENDIF
+			CASE "無理のない行動"
+				PRINTFORM 「%LOCALS%
+				PRINTFORMW いい声で鳴いてくれちゃって…」
+				PRINTFORMW 「何処が一番キモチ良いのかしら。ねぇ？ ふふ」
+			CASE "無理をした行動"
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%を玩具にしてるみたいで悪くないわね、これ…」
+				PRINTFORM 「尤も…、%CNAME(MASTER, TARGET)%だってまんざらでもなさそうだけど
+				CALL PRINT_SYMBOL_K14
+		ENDSELECT
+		;調教者がイきそうな場合FADEOUT
+		IF TCVAR:イきそう
+			CALL FADEOUT(15, @"（とか言いながら、私も%RAND_SPLIT("そろそろイきそうな/余裕ない")%のよね……）")
+			;コンフィグを参照
+			SIF ANIME_CONFIG("FADE")
+				;FADEがONなら行削除
+				CLEARLINE 1
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM15/16, 快感を受け入れる/気持ち良い！
+	;=================================================
+	IF 口上記入チェック(100) && ((IS_NOWCOMNAME("快感を受け入れる") && PERCENT(90)) || (IS_NOWCOMNAME("気持ち良い！") && PERCENT(65)))
+		CALL PRINT_REACT_30_COM15_COM16_K14
+		RETURN RESULT
+	ENDIF
+RETURN 0
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：許しを乞う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("許しを乞う") && IS_NOWCOMNAME("許しを乞う/快感を我慢する")
+	CALL PRINT_REACT_30_COM7_COM14_K14
+	RETURN RESULT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：消極的従う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う") && IS_NOWCOMNAME("恥ずかしがる/嫌がる/下手だと罵る/快感を我慢する")
+	;=================================================
+	;COM10, 恥ずかしがる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("恥ずかしがる")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「子供みたいに扱われるのは恥ずかしいかしら？」
+				SIF TALENT:MASTER:小柄
+					PRINTFORMW 「ま、仕方無いわよね。実際…、子供なんだから。ふふ」
+				PRINTFORMW 「でもこうやって、私に玩具にされるのも悪くないでしょう」
+				PRINTFORMW 「ほら、正直に言ってみなさいよ……」
+			CASE "無理のない行動"
+				PRINTFORMW 「耳まで真っ赤になっちゃって…、もしかして恥ずかしいとか？ ふふ」
+				PRINTFORMW 「ほら、恥ずかしがってないで。こっちを向\@ AFFECTION("相思相愛") ? いて # きなさい \@」
+				PRINTFORM 「%CNAME(MASTER, TARGET)%の顔%RAND_SPLIT("が見えないと物足りないわ/、私に見せて頂戴")%…
+				CALL PRINT_SYMBOL_K14
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「恥ずかしがったところで、私達がこうやって繋がってる事実は変わらない訳だけど」
+					PRINTFORMW 「まぁ実際…、改めて見ると凄くイヤラシイわよね？」
+					PRINTFORMW 「その気持ち、判らないでもないけど。ふふ」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「こうやって、恥ずかしがってる%CNAME(MASTER, TARGET)%を虐めるのも悪くないわね…」
+					PRINTFORMW 「ほら、どう？ 思わず声が出そうになるでしょう？ フフ…」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM11, 嫌がる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("嫌がる")
+		LOCALS = \@ ALI(0) ? ふふ # フフ \@
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「本当に嫌なら抵抗すれば済む話でしょう？ 尤も…」
+				PRINTFORMW 「それを許すつもりはないんだけど。ね……」
+			CASE "無理のない行動"
+				PRINTFORMW 「嫌がる%CNAME(MASTER, TARGET)%を玩具にするのって興奮しちゃうわね……」
+				PRINTFORMW 「まぁでも…、それ程嫌そうに見えないのは、私の気のせいかしら。ねぇ？」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「それって照れ隠しか何かな訳？ %LOCALS%」
+					PRINTFORM 「何だかんだ言って%CNAME(MASTER, TARGET)%…、大分いい感じになっちゃってるみたいだけどね
+					CALL PRINT_SYMBOL_K14
+				;実は嫌
+				ELSE
+					PRINTFORMW 「嫌とか言いながら、声が震えてるわよ？ ま、そうよね」
+					PRINTFORMW 「そうとでも言っておかないと、イヤラシイ声が出ちゃうものね？ %LOCALS%…」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM12, 下手だと罵る
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("下手だと罵る")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「強がったところで、身体を合わせていると判っちゃうのよね」
+				PRINTFORMW 「ほら、ココ…弄られるとキモチ良いんでしょう？ 正直に言いなさいよ…」
+			CASE "無理のない行動"
+				PRINTFORMW 「良い感じの声が出ちゃってるのに、下手とか言われても。ねぇ？」
+				PRINTFORMW 「こうやって、私に玩具にされるの。本当は好きな癖に……」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「人を下手呼ばわりする割には、随分余裕がなさそうね？」
+					PRINTFORMW 「いいわよ。ミエミエの、つまらない嘘がつけない位鳴かせてやるから……」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「まだ減らず口をたたく余裕があるのね…」
+					PRINTFORMW 「じゃ、そうね。こういうのはどうかしら。フフフ…」
+					PRINTFORMDL %CALLNAME%は必死に強がる%CALLNAME:MASTER%の心を見透かしたかのように、、
+					PRINTFORMDL \@ PENIS(MASTER) ? %PENIS_DESCRIPTION2_K14(MASTER)% # %CLITORIS_DESCRIPTION(MASTER)% \@%Ｃ描写(MASTER)%を指先で弄びながら、
+					PRINTFORMDW %CALLNAME:MASTER%の反応を窺っている…
+					;SIF TCVAR:MASTER:イきそう || PALAM:MASTER:快Ｖ > 8500 || PALAM:MASTER:快Ｂ > 8500
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM14, 快感を我慢する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("快感を我慢する")
+		LOCALS = \@ AFFECTION("溺愛") ? ふふ # フフ \@
+		;2/3で真
+		IF RAND:3
+			SELECTCASE GET_COM_RANK()
+				CASE "自然な行動"
+					PRINTFORMW 「本当は気持ちいい癖に、%RAND_SPLIT(@"%CNAME(MASTER, TARGET)%も意地っ張りねぇ/素直じゃないのね…/よく頑張るわね？")%」
+					PRINTFORMW 「まぁでも、そんな%CNAME(MASTER, TARGET)%を弄ぶってのも……」
+					CALL FADEIN(10, "「――悪くないわ」")
+					CALL FADEOUT(15, "「%LOCALS%…」")
+					SIF ANIME_CONFIG("FADE")
+						CLEARLINE 1
+				CASE "無理のない行動"
+					PRINTFORMW 「ほら、どう？ 本当は声が出そうなくらい感じちゃってるんでしょう？」
+					PRINTFORMW 「ふふ、でも……。%RAND_SPLIT("素直になれない/意地っ張りな")%%CNAME(MASTER, TARGET)%をこうして苛めるのって…」
+					CALL FADEIN(10, "「愉しくて仕方無いわ…」")
+					CALL FADEOUT(15, "「%LOCALS%…」")
+					SIF ANIME_CONFIG("FADE")
+						CLEARLINE 1
+				CASE "無理をした行動"
+					;実は気持ちいい
+					IF COMCOR_POSI()
+						PRINTFORMW 「なによ、大人しいわね？ っていうか%CNAME(MASTER, TARGET)%、一体何処を見て…」
+						PRINTFORMW 「あー、なるほど。繋がってる処を見て、変な気持ちになっちゃったとか？」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%にも、まだそんな可愛らしいところがあったのね。%LOCALS%」
+					;実は嫌
+					ELSE
+						PRINTFORMW 「へぇ、頑張るわねぇ？ でもこれに耐えられるかしら」
+						PRINTFORMW 「ほらこう？ こうして\@ PENIS(MASTER) ? 扱かれる # 弄られる \@とキモチ良いでしょう？」
+						PRINTFORM 「%LOCALS%、%CNAME(MASTER, TARGET)%を苛めるのって…、本当に愉しいわね
+						CALL PRINT_SYMBOL_K14
+					ENDIF
+			ENDSELECT
+			RETURN 1
+		;1/3で真
+		ELSE
+			;負荷0, 1ならRETURN 1
+			IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動") > 0
+				IF AFFECTION("相思相愛") && PERCENT(80)
+					PRINTFORMW 「なによそれ。反応が薄くてつまらないわね…」
+					PRINTFORM 「ま、%CNAME(MASTER, TARGET)%がそういう態度なら…、私が激しくするまでよ…
+					CALL PRINT_SYMBOL_K14
+				ELSEIF AFFECTION("溺愛") && PERCENT(70)
+					PRINTFORMW 「気乗り薄な態度なんて認めないんだから…」
+					PRINTFORM 「どうせすぐ気持ちよくなっちゃうんだろうけど
+					CALL PRINT_SYMBOL_K14
+				ELSE
+					PRINTFORMW 「大人しいのは結構だけど…」
+					PRINTFORMW 「それでは%RAND_SPLIT("あまりにも退屈/面白味に欠ける/ちょっと不満な")%のよねぇ」
+				ENDIF
+				RETURN 1
+			;負荷2ならRETURN 0
+			ELSE
+				RETURN 0
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 0
+ENDIF
+;REACT34, 背面座位
+
+;────────────────────────────────────
+;REACT35, アナルセックス・個別リアクション
+;────────────────────────────────────
+;想定されるCOM…
+;会話系反応
+;	COM:許しを乞う
+;愛撫系反応
+;	COM:嫌がる/下手だと罵る/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る/中に出して！/中に出さないで！
+;苦痛系反応
+;	COM:痛みを我慢する/悲鳴を上げる/暴れる
+;-------------------------------------------------
+@KOJO_REACT_K14_35
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=通常/1=連続実行/3=Ｖ性交から/4=Ｖ性交奉仕から/5=Ａ性交奉仕から)
+;-------------------------------------------------
+;・キャンセル処理はACT_MESSAGE_OTHERSにて汎用処理
+;・主導権は調教者(SEX_INITIATIVE(TARGET))
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W(@"%CALLNAME:MASTER%バックバージン喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる") && IS_NOWCOMNAME("快感を受け入れる/気持ち良い！/腰を振る")
+	;=================================================
+	;COM20, 腰を振る		80%
+	;=================================================
+	IF 口上記入チェック(80) && IS_NOWCOMNAME("腰を振る")
+		LOCALS = %RAND_SPLIT("はっ、はぁ/んんっ、く/あ…、んん/ハァ、あ/くぅっ、ん/はーっ、はぁ、はぁ")%……
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				;1/2で真
+				IF RAND:2
+					PRINTFORM 「%LOCALS%
+					;調教対象がオトコ
+					IF TALENT:MASTER:オトコ
+						PRINTFORMW \@ TALENT:MASTER:小柄 ? 男の子のおしりを犯して、可愛い声で # 男を犯して、女みたいにアンアン \@鳴かせるのって堪らないわ…」
+						PRINTFORMW 「もう…、男としてのプライドも何もあったもんじゃないわね？ ウフフ…」
+					;その他
+					ELSE
+						PRINTFORMW \@ TENSION(TARGET, 8) == "高い" ? フフ、何を言ってるのかよく判らないわ # その獣じみた声も悪くないわね… \@」
+						PRINTFORMW 「ほら\@ TENSION(TARGET, 8) == "高い" ? もっと？ もっとおしりに欲しいでしょう？ # 、キモチ良いのが奥まできてるでしょう？ \@」
+						;調教者BASE:満足が50%以上
+						SIF TENSION(TARGET, 8) == "高い"
+							PRINTFORMW 「%CNAME(MASTER, TARGET)%が望むなら、このまま壊してあげてもいいのよ……」
+					ENDIF
+				ELSE
+					PRINTFORMW 「ばかみたいな声出しちゃって…。%CNAME(MASTER, TARGET)%って、本当におしりを苛められるのが好きなのね？」
+					;調教対象がオトコ
+					IF TALENT:MASTER:オトコ
+						PRINTFORMW 「\@ TALENT:MASTER:小柄 ? 男の子 # 男 \@の癖に、情けないわ…」
+					;その他
+					ELSE
+						PRINTFORMW 「\@ TALENT:MASTER:小柄 ? 女の子 # 女 \@なのに、はしたないわ…」
+					ENDIF
+					;フェードアウト	OFFになっていればPRINT+WAIT
+					CALL FADEOUT(15, "「ウフフ…」")
+					;コンフィグを参照
+					SIF ANIME_CONFIG("FADE")
+						;FADEがONなら行削除
+						CLEARLINE 1
+				ENDIF
+			CASE "無理のない行動"
+				;1/2で真
+				IF RAND:2
+					PRINTFORM 「%LOCALS%
+					;調教対象がオトコ
+					IF TALENT:MASTER:オトコ
+						PRINTFORMW \@ TALENT:MASTER:小柄 ? 男の子 # 男 \@の癖に、、随分情けない声が出るものねぇ？」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%…、\@ TALENT:MASTER:小柄 ? 女の子 # 女 \@にでもなったつもりなのかしら。ウフフ…」
+					;その他
+					ELSE
+						PRINTFORMW 情けない声…、ホント情けないわ。女の\@ TALENT:MASTER:小柄 ? 子の # \@癖に」
+						PRINTFORMW 「でも仕方無いわよね？ 変なゾクゾクがきちゃって、キモチ良い%RAND_SPLIT("のよ/もの")%ね？ フフ」
+					ENDIF
+				ELSE
+					PRINTFORMW 「いいわねぇ、その情けない声。本当…、ゾクゾクきちゃうわ」
+					PRINTFORMW 「ほらほら、まだまだいくわよ。もっと\@ TALENT:MASTER:オトコ ? 豚 # メス犬 \@みたいに鳴かせてあげる%RAND_SPLIT("から/わ")%……」
+				ENDIF
+			CASE "無理をした行動"
+				IF RAND:2
+					;調教対象がオトコ
+					IF TALENT:MASTER:オトコ
+						PRINTFORMW 「随分いい声で鳴くじゃない…、\@ TALENT:MASTER:小柄 ? 男の子 # 男 \@の癖に。ねぇ？」
+						SELECTCASE RANDREACT(3, 20)
+							CASE 0
+								PRINTFORMW 「おしりズボズボ犯されてアンアン鳴いちゃう男って、ちょっとどうなのかしら。ウフフ」
+							CASE 1
+								PRINTFORMW 「でもこうして%CNAME(MASTER, TARGET)%を\@ TALENT:MASTER:小柄 ? 女の子 # 女 \@みたいに鳴かせるのって、ゾクゾクしちゃうわ……」
+							CASE 2
+								PRINTFORMW 「ほら、もっと鳴いていいのよ？ 尻穴狂いの\@ TALENT:MASTER:小柄 ? 男の子 # 男 \@だからって、別に軽蔑したりはしないから。ウフフ…」
+						ENDSELECT
+					;その他
+					ELSE
+						PRINTFORMW 「あらあら、だらしないわねぇ。%CNAME(MASTER, TARGET)%…、\@ ABL:MASTER:Ａ感覚 > 4 ? おしり犯されると直ぐに駄目になっちゃうのよね # おしり犯された程度で屈服しちゃう訳？ \@」
+						PRINTFORMW 「\@ ABL:MASTER:Ａ感覚 > 4 ? でもこんなの…、まだまだ序の口だから # 尤も…、%CNAME(MASTER, TARGET)%自身がそれを望んでいたのかも知れないけど \@。\@ AFFECTION("相思相愛") ? ふふ # フフ \@」
+					ENDIF
+				ELSE
+					PRINTFORMW 「」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM15/16, 快感を受け入れる/気持ち良い！
+	;=================================================
+	IF 口上記入チェック(100) && ((IS_NOWCOMNAME("快感を受け入れる") && PERCENT(90)) || (IS_NOWCOMNAME("気持ち良い！") && PERCENT(65)))
+		;汎用処理
+		CALL PRINT_REACT_30_COM15_COM16_K14
+		RETURN RESULT
+	ENDIF
+RETURN 0
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：許しを乞う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("許しを乞う") && IS_NOWCOMNAME("許しを乞う/快感を我慢する")
+	;汎用処理
+	CALL PRINT_REACT_30_COM7_COM14_K14
+	RETURN RESULT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類：消極的従う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う") && IS_NOWCOMNAME("恥ずかしがる/嫌がる/下手だと罵る/快感を我慢する")
+	;=================================================
+	;COM10, 恥ずかしがる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("恥ずかしがる")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「――抵抗しないのは好都合ね」
+				PRINTFORMW 「ちょっと恥ずかしそうだけど、そんなの…すぐにどうでも良くなるから」
+			CASE "無理のない行動"
+				PRINTFORMW 「恥ずかしがるのは結構だけど…」
+				PRINTFORMW 「正直、もうそんな段階じゃないと思うわよ。ふふ」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「まぁ確かに…、おしりで感じちゃうなんて恥ずかしいわよねぇ？ ふふ」
+					PRINTFORMW 「でも%CNAME(MASTER, TARGET)%だってコレ、まんざらでもないんでしょう」
+					PRINTFORMW 「ほら、白状するのよ。正直に……」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「とりあえず、逆らわないってことは…」
+					PRINTFORMW 「私の好きにしていいってことなのかしら。ねぇ？ ふふ……」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM11, 嫌がる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("嫌がる")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「嫌がってみせてた癖に、抵抗はしないのね…」
+				PRINTFORMW 「\@ PALAM:MASTER:快Ａ > 2000 ? 何だかんだ言いながら、良くなってきちゃった # 実は…、こうなる事を望んでいた \@とか？ フフ」
+			CASE "無理のない行動"
+				PRINTFORMW 「それ程嫌そうにも見えないんだけど。ねぇ？」
+				PRINTFORMW 「\@ PALAM:MASTER:快Ａ > 2000 ? ほら、本当はキモチ良いんでしょう？ 正直に言うのよ… # ま、抵抗しないのなら…受け入れたのと一緒よね。ふふ \@」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「あらあら、これはどういう事かしら？ 本当に嫌なら、そんな声は出ないはずよねぇ」
+					PRINTFORMW 「ほら、どうなの？ 本当はおしり…、キモチ良いんでしょう？」
+					SIF !RAND:3
+						PRINTFORMW 「さぁ白状するのよ。正直に」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「そう…、それが%CNAME(MASTER, TARGET)%の精一杯って訳。ふーん」
+					PRINTFORML 「ま、%CNAME(MASTER, TARGET)%が嫌がろうが、私の知った事ではないわ。ましてや…」
+					PRINTFORMW 「抵抗しないとなれば、ね……」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;派生：強がる"悪印象小"扱い
+	;=================================================
+	;COM12, 下手だと罵る
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("下手だと罵る")
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORMW 「あらそう。じゃ、どうすれば感じるのかしら？ とか言ってみるけど…」
+				PRINTFORM 「それが強がりだって事は判っているのよ。悪いけど、ね
+				CALL PRINT_SYMBOL_K14
+			CASE "無理のない行動"
+				PRINTFORMW 「あぁそう。勝手に言ってれば？ 私の知った事じゃないわよ、そんなの…」
+				PRINTFORMW 「尤も…、それが%CNAME(MASTER, TARGET)%の強がりだって事。ちゃんと判ってるんだけど。ね」
+			CASE "無理をした行動"
+				;実は気持ちいい
+				IF COMCOR_POSI()
+					PRINTFORMW 「あらあら、いい感じの声が出ちゃってる癖に。それはちょっと、ねぇ？ フフ」
+					PRINTFORMW 「\@ TENSION(TARGET, 8) == "高い" ? そんな戯言が言えないくらい、もっと激しくシてあげるべきかしら… # %CNAME(MASTER, TARGET)%の往生際の悪さも大概ね \@」
+				;実は嫌
+				ELSE
+					PRINTFORMW 「へぇ、それはそれは…。申し訳ないことをしたわねぇ。ただそうね…」
+					PRINTFORMW 「その下手な私に、いい感じに鳴かされちゃってる%CNAME(MASTER, TARGET)%は…いったい何なの\@ TENSION(TARGET, 8) == "高い" ? ！ # \@？」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;COM14, 快感を我慢する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("快感を我慢する")
+		LOCALS = \@ ALI(0) ? ふふ # フフ \@
+		;2/3で真
+		IF RAND:3
+			SELECTCASE GET_COM_RANK()
+				CASE "自然な行動"
+					PRINTFORMW 「%RAND_SPLIT("なによ、急に大人しくなっちゃって/あら…抵抗もせず、随分大人しいのね/逆らうかと思いきや、やけに素直じゃない")%」
+					PRINTFORMW 「なんだかんだ言って、いい感じになってきちゃったとか？ 他愛ないわね\@ TENSION(TARGET, 8) == "高い" ? ぇ # \@」
+					SIF TALENT:MASTER:オトコ
+						CALL FADEIN(10, @"「\@ TALENT:MASTER:小柄 ? 男の子 # 男 \@の癖に…」")
+				CASE "無理のない行動"
+					PRINTFORMW 「声出すのを我慢したところで、切なそうな吐息が漏れちゃってるわよ」
+					PRINTFORMW 「ほら、キモチ良いんでしょう？ おしりズボズボ犯されて…、声が出ちゃいそうなんでしょう？」
+					PRINTFORMW 「%RAND_SPLIT("そうやって/いつまでも")%意地張ってると…もっと激しくして、\@ TALENT:MASTER:オトコ ? 豚 # メス犬 \@みたいに鳴かせてやるから……」
+				CASE "無理をした行動"
+					;実は気持ちいい
+					IF COMCOR_POSI()
+						IF TALENT:MASTER:オトコ
+							PRINTFORMW 「あらあら…\@ TALENT:MASTER:小柄 ? 男の子 # 男 \@の癖に、随分情けない声が出るのねぇ」
+							PRINTFORMW 「おしりを犯されて、\@ TALENT:MASTER:小柄 ? 女の子 # 女 \@みたいに鳴かされる気分はいかが？」
+							PRINTFORMW 「ま、正直…\@ ABL:MASTER:マゾっ気 > 4 ? マゾ豚の # \@%CNAME(MASTER, TARGET)%\@ ABL:MASTER:マゾっ気 > 4 ? は悦んでるのかも知れないけど # には相応しい姿だとは思うけど \@」
+							CALL FADEOUT(15, @"「\@ ALI(0) ? うふふ # ウフフ \@…」")
+							SIF ANIME_CONFIG("FADE")
+								CLEARLINE 1
+						ELSE
+							PRINTFORMW 「我慢したところで、可愛い声が出るのは抑えられないみたいね？ ふふ」
+							PRINTFORMW 「余計な事は考えず、素直に感じればいいの。きっとその方が…」
+							PRINTFORMW 「%CNAME(MASTER, TARGET)%の為にもなると思うわよ」
+						ENDIF
+					;実は嫌
+					ELSE
+						PRINTFORMW 「素直じゃないわねぇ。本当は、気持ちよくて堪らない癖に…」
+						PRINTFORMW 「おしりを犯されて感じてる事実って、そんなに受け入れ難いものなのかしら？」
+						PRINTFORMW 「まぁでも、そんな%CNAME(MASTER, TARGET)%をこうやって%RAND_SPLIT("いじめる/イジメル/苛める/虐める")%の。ホント…、愉しいのよね」
+					ENDIF
+			ENDSELECT
+			;分岐内でRESULTを返す
+			RETURN 1
+		;1/3で真
+		ELSE
+			;負荷0, 1ならRETURN 1
+			IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動") > 0
+				IF AFFECTION("相思相愛") && PERCENT(80) && !T_COND("怒り")
+					PRINTFORMW 「嫌そうにしてた割には、愉しんでるみたいだけど…？」
+					PRINTFORM 「ふふっ…、素直にしてればいくらでもしてあげるから…
+					CALL PRINT_SYMBOL_K14
+				ELSEIF AFFECTION("溺愛") && PERCENT(70) && !T_COND("怒り")
+					PRINTFORMW 「ねぇ、自分から腰が動いてるのに気付いてるかしら…？」
+					PRINTFORMW 「変な意地張らないで、素直になりなさいよ」
+				ELSE
+					PRINTFORMW 「ほらどう？ おしり、気持ち良いんでしょう…？」
+					PRINTFORMW 「正直に言いなさいよっ、この変態！」
+				ENDIF
+				RETURN 1
+			;負荷2ならRETURN 0
+			ELSE
+				RETURN 0
+			ENDIF
+		ENDIF
+	ENDIF
+RETURN 0
+ENDIF
+;REACT35, アナルセックス
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;以下、関数置き場
+;━━━━━━━━━━━━━━━━━━━━━━━━
+
+;-------------------------------------------------
+;COM15快感を受け入れる/COM16気持ちいい！の汎用処理
+;-------------------------------------------------
+;TRAIN_MESSAGE2とREACTION_MESSAGEを睨みつつ、落とし処を探る作業
+@PRINT_REACT_30_COM15_COM16_K14
+;消費気力による派生
+SELECTCASE GET_COM_RANK()
+	CASE "自然な行動"
+		PRINTFORMW 「すっかり良い感じに蕩けちゃって\@ IS_NOWCOMNAME("気持ち良い！") ? 。でも、…… # … \@」
+		;COM15, 快感を受け入れる
+		IF IS_NOWCOMNAME("快感を受け入れる")
+			;調教者がイきそうもしくは快PALAMが一定以上
+			IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+				PRINT 「でも、私も人の事は言えないわね…
+			;その他
+			ELSE
+				PRINT 「そういう事なら、私も精々愉しませてもらうわ…
+			ENDIF
+		;COM16, 気持ち良い！
+		ELSE
+			PRINT 「そんな風に素直に感じてくれると、私も嬉しくなっちゃうわ…
+		ENDIF
+		CALL PRINT_SYMBOL_K14
+	CASE "無理のない行動"
+		PRINTFORMW 「\@ IS_NOWCOMNAME("快感を受け入れる") ? ふふ # あら \@、いい処に当たってるのかしら」
+		;COM15, 快感を受け入れる
+		IF IS_NOWCOMNAME("快感を受け入れる")
+			;調教者がイきそうもしくは快PALAMが一定以上
+			IF TCVAR:イきそう || PALAM:快Ｃ > 6000
+				PRINTW 「とか言いながら、私もあまり余裕ないんだけど…」
+			;その他
+			ELSE
+				PRINTW 「でもこんなの、まだまだ序の口だから……」
+			ENDIF
+		;COM16, 気持ち良い！
+		ELSE
+			PRINTW 「ま、感謝されて悪い気はしないわ。ふふ」
+		ENDIF
+	CASE "無理をした行動"
+		PRINTW 「そうそう、余計な事は考えなくていいの。快楽に身を任せてしまえばいいわ」
+		;COM15, 快感を受け入れる
+		IF IS_NOWCOMNAME("快感を受け入れる")
+			PRINTFORM 「尤も、今の%CNAME(MASTER, TARGET)%に考える余裕なんて無さそうだけど…
+			CALL PRINT_SYMBOL_K14
+		;COM16, 気持ち良い！
+		ELSE
+			PRINTW 「まぁでも…その声、ちょっとワザとらしい気もするけどね」
+		ENDIF
+ENDSELECT
+RETURN 1
+
+;-------------------------------------------------
+;COM7許しを乞う/COM14快感を我慢するの場合の汎用処理
+;-------------------------------------------------
+@PRINT_REACT_30_COM7_COM14_K14
+SELECTCASE GET_COM_RANK()
+	CASE "自然な行動"
+		;BASE:満足による派生（高い=50%以上/一般=25%以上/低い=25%未満）
+		SELECTCASE TENSION(TARGET, 8)
+			CASE "高い"
+				PRINTW 「私、言わなかったかしら？ そんなこと言うのは逆効果だって…」
+				PRINTFORMW 「むしろ%CNAME(MASTER, TARGET)%を、もっとめちゃめちゃにしたくなっちゃうわ……」
+			CASE "一般"
+				PRINTW 「よく言うわね。本当は感じちゃってる癖に…」
+				PRINTW 「嘘つきな子には、お仕置きしてあげないと。ねぇ？」
+			CASE "低い"
+				PRINTW 「今更そんなこと言われても、止められる訳ないじゃない」
+				PRINTW 「大人しく諦めるのね…」
+		ENDSELECT
+	CASE "無理のない行動"
+		;BASE:満足による派生
+		SELECTCASE TENSION(TARGET, 8)
+			CASE "高い"
+				PRINTFORMW 「\@ IS_NOWCOMNAME("快感を我慢する") ?やめて # 許して \@なんて言われると、余計にやめたくなくなっちゃうのよねぇ…」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%も…、私がその程度じゃやめないって、判って言ってるんじゃないの？」
+			CASE "一般"
+				PRINTFORMW 「今やめたら、辛いのは%CNAME(MASTER, TARGET)%の方だと思うけどねぇ？」
+				PRINTW 「本当にやめて欲しいなら、そんな声は出ないはずだと思うけど」
+			CASE "低い"
+				PRINTW 「そんなこと言う割に、随分良い声が出ちゃってるみたいだけどね？」
+				PRINTFORMW 「『\@ IS_NOWCOMNAME("快感を我慢する") ? こんなことやめて # もう許して \@』なんて…、それが%CNAME(MASTER, TARGET)%の本心なのか、怪しいところね」
+		ENDSELECT
+	CASE "無理をした行動"
+		;実は気持ちいい
+		IF COMCOR_POSI()
+			PRINTW 「許してなんて言いながら、随分いい感じの腰使いねぇ？」
+			PRINTW 「本当は嫌じゃないんでしょう。ほら、正直に言ってみなさいよ…」
+		;実は嫌
+		ELSE
+			PRINTW 「言われてやめるくらいなら、最初からしてないわよ」
+			PRINTW 「いい加減、諦めたらどうなの？」
+		ENDIF
+ENDSELECT
+PRINTL
+PRINTFORMD %CALLNAME%は身をよじる%CALLNAME:MASTER%を
+SELECTCASE GET_ACTNAME(TFLAG:ACT)
+	CASE "正常位"
+		PRINTDW 押さえつけながら犯し続けた…
+	CASE "後背位"
+		PRINTDW 、背後から嬲るように犯し続けた…
+	CASE "騎乗位"
+		PRINTDW 激しく下から突き上げている…
+	CASE "対面座位"
+		PRINTDW 抱きしめながら犯し続けた…
+	CASE "背面座位"
+		PRINTDW 、背後から抱きかかえながら犯し続けた…
+	CASE "アナルセックス"
+		PRINTFORMDW 押さえつけながら、その%ANUS_DESCRIPTION(MASTER)%を犯し続けた…
+ENDSELECT
+RETURN 1

@@ -1,0 +1,383 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+;	雛口上　その他イベント口上ファイル
+
+;	大満足ボーナス、本日の方針イベント口上をまとめたファイル
+
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+
+;EV16, 大満足ボーナス口上
+;########################
+[SKIPSTART]
+	・@EVENTTRAINから呼び出される
+	・大満足ボーナスを得ている場合、調教開始時に表示される
+	・タイミングは調教開始口上(EV11)の後、調教者行動前口上(EV12)の前
+[SKIPEND]
+
+@KOJO_MALE_EVENT_K39_16(ARG) ;引数内訳…ARG=(0.選択前/1.選択後)
+#DIM  DYNAMIC FAVRATING
+#DIMS DYNAMIC RHEART
+FAVRATING = GET_KFLAG_K39("相思相愛")
+RHEART '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+
+;ご主人様でなければここでRETURN
+SIF TALENT:TARGET:ご主人様
+	RETURN 0
+
+;//////////
+;選択前口上
+;//////////
+[SKIPSTART]
+	・上機嫌な様子で、今日は何をされたいかとたずねる
+	・口上表示前に地の文(%CALLNAME:TARGET%さま大満足ボーナス)
+	・口上表示の後に地の文(%CALLNAME:TARGET%は上機嫌な様子で、今日は何をされたいかとたずねてきた)が続く
+	・地の文の後に選択肢が表示される
+[SKIPEND]
+IF !ARG
+	IF FAVRATING
+		PRINTFORML 「今回はご褒美として何でもシてあげる」
+		PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%は何を望むの？」
+	ELSE
+		PRINTFORML 「今回はお望みの事を何でもしてあげますよ」
+		PRINTFORMW 「遠慮なく言ってくださいね」
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;//////////
+;選択後口上
+;//////////
+[SKIPSTART]
+	・調教対象の返答に対して、一言
+	・口上表示に後に地の文(%CALLNAME:TARGET%は%CALLNAME:MASTER%の返事を聞くと調教の準備を始めた)が続く
+	・上記の地の文を表示した後に、選択肢毎の地の文が表示される
+	・休憩が選択された場合はEV12, ご褒美による中止に続く
+
+	関連変数…
+		・TCVAR:今日の満足ボーナス(0=いつもどおり/1=A開発/2=お仕置き/3=ハード/4=イチャイチャ
+	                               5=異常/6=野外/7=子作り/8=休憩)
+	関連関数…
+		・IS_SATIS_BONUS          (通常/アナル/お仕置き/ハード/イチャイチャ/異常/野外/子作り/休憩)
+[SKIPEND]
+IF ARG == 1
+	;ボーナス[0] いつも通り
+	;======================
+	IF IS_SATIS_BONUS("通常")
+		IF FAVRATING
+			PRINTFORML 「いつも通りでいいの？」
+			CALL HTMLPRINTW(@"「まぁ、%CNAME(MASTER, TARGET)%がそう言うなら%RHEART%」")
+		ELSE
+			PRINTFORML 「いつも通り、ですか」
+			PRINTFORMW 「欲が無いんですね？」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[1] アナルをいじめて
+	;============================
+	IF IS_SATIS_BONUS("アナル")
+		IF FAVRATING
+			PRINTFORML 「本当におしりでいいの？」
+			PRINTFORMW 「うふっ、イヤラシイ人」
+		ELSE
+			PRINTFORML 「本当にいいんでしょうか？」
+			PRINTFORMW 「うふっ、イヤラシイんですね」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[2] お仕置きして //選択する事によって(TFLAG:お仕置きフラグ)が立つ
+	;========================
+	IF IS_SATIS_BONUS("お仕置き")
+		IF FAVRATING
+			PRINTFORML 「お仕置きとかあまり好きじゃないんだけど？」
+			PRINTFORMW 「どうしてもって言うなら仕方ないわね…」
+		ELSE
+			PRINTFORML 「お仕置き、ですか…」 
+			PRINTFORMW 「お望みとあれば仕方ありませんね」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[3] 激しくして
+	;======================
+	IF IS_SATIS_BONUS("ハード")
+		IF FAVRATING
+			PRINTFORML 「どうせいつも激しいと思うんだけど？」
+			PRINTFORMW 「それとはまた違うの？ うふっ」
+		ELSE
+			PRINTFORML 「うふっ、偶にはそういうのもいいかも知れませんね」
+			PRINTFORMW 「お望み通り、厄をたっぷり搾り取ってあげます」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[4] 甘えさせて
+	;======================
+	IF IS_SATIS_BONUS("イチャイチャ")
+		IF FAVRATING
+			PRINTFORML 「もうっ、子供じゃないんだから…でも」
+			CALL HTMLPRINTW(@"「いいよ…思いっきり甘えさせてあげる%RHEART%」")
+		ELSE
+			PRINTFORML 「ふふ、可愛い事を言いますね」
+			CALL HTMLPRINTW(@"「いいですよ、思いっきり甘えてくださいね%RHEART%」")
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[5] 壊れるまでして
+	;==========================
+	IF IS_SATIS_BONUS("異常")
+		IF FAVRATING
+			PRINTFORML 「壊れるまでって…本当にそんなのがいいの？」
+			PRINTFORMW 「まぁ、どうしてもって言うなら仕方ないけど……」
+		ELSE
+			PRINTFORML 「壊れるまで、ですか…」
+			PRINTFORMW 「気は進みませんが、仕方ありませんね」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[6] 外に出たい //首輪の所持が条件
+	;======================
+	IF IS_SATIS_BONUS("野外") && FLAG:オートモード表示設定 < 1 ;//オートモード簡略表示なら弾く
+		;雛がご主人様かつ特定の条件を満たしている場合
+		IF FAVRATING
+			PRINTFORM 「外ね。気晴らしにはいいかも
+			CALL PRINT_SYMBOL_K39
+			PRINTFORMW 「ねぇ、何処か行きたいところはある？」
+			PRINTL
+			PRINTFORMDL [ 0] 霧の湖
+			PRINTFORMDL [ 1] 守矢神社
+			PRINTFORMDL [ 2] 博麗神社
+			PRINTFORMDL [ 3] 迷いの竹林
+			PRINTFORMDL [ 4] 人里
+			CALL INPUTINTD(0, 1, 2, 3, 4)
+			;オートなら止める
+			SIF FLAG:オートモード > 0
+				FORCEWAIT
+			SELECTCASE RESULT      ;RESULTによって派生
+				CASE 0
+					PRINTFORMW 「霧の湖ね？　いいわよ」
+					SELECTCASE FLAG:季節
+						CASE 1     ;夏
+							CALL HTMLPRINTW(@"「この暑い季節にはぴったりの場所かも知れないわね%RHEART%」")
+						CASE 3     ;冬
+							PRINTFORMW 「でも、行っても寒いだけのような気もするけど…」
+						CASEELSE   ;春又は秋
+							CALL HTMLPRINTW(@"「今の季節なら暑からず寒からずで、丁度良いかもしれないわね%RHEART%」")
+					ENDSELECT
+				CASE 1
+					PRINTFORML 「守矢神社！？ …って、%CNAME(MASTER, TARGET)%ねぇ」
+					PRINTFORMW 「あそこで変な事してて見つかったら、色々とまずいと思うん%RAND_SPLIT("だけど/ですけど")%…？」
+					SIF !RAND:2
+						CALL HTMLPRINTW(@"「でも、ちょっとドキドキして興奮しちゃうかも\@ RAND:2 ? %RHEART% # … \@」")
+				CASE 2
+					PRINTFORMW 「博麗神社に行きたいの？」
+					CALL HTMLPRINTW(@"「でも、あの巫女に見せつけてやるのも面白いかもね%RHEART%」")
+				CASE 3
+					PRINTFORMW 「あんな所に行っても何も、って…」
+					PRINTFORMW 「兎達に見せつけるつもり？」
+				CASE 4
+					CALL FADE_TO_CLEARLINE(15, "「…………」")
+					{
+					PRINTFORMW 「%RAND_SPLIT(
+					"私、これでも人間の味方を自認してる神様なんだけど/" + 
+					"あのねぇ、私にも立場ってものがあるんですけどー")%？」
+					}
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%がどうしてもって言うならまぁ、仕方ないけど……」
+			ENDSELECT
+		;その他
+		ELSE
+			PRINTFORMW 「外、ですか。たまには良いかも知れませんね」
+			PRINTFORMW 「では、何処か行きたいところはありますか？」
+			PRINTL
+			PRINTFORMDL [ 0] 妖怪の山
+			PRINTFORMDL [ 1] 玄武の沢
+			PRINTFORMDL [ 2] 無縁塚
+			PRINTFORMDL [ 3] 三途の川
+			PRINTFORMDL [ 4] 人里
+			CALL INPUTINTD(0, 1, 2, 3, 4)
+			;オートなら止める
+			SIF FLAG:オートモード > 0
+				FORCEWAIT
+			SELECTCASE RESULT
+				CASE 0
+					PRINTFORML 「妖怪の山ですか。いいですよ」
+					PRINTFORMW 「私と一緒なら天狗達も手荒な事はしないでしょうし」
+					SIF AFFECTION("溺愛")
+						CALL HTMLPRINTW(@"「哨戒天狗に見せつけるというのも楽しそうですね%RHEART%」")
+				CASE 1
+					PRINTFORMW 「玄武の沢ですか。それもいいかも知れませんね」
+					{
+					CALL HTMLPRINTW(@"「あそこの柱状節理は他では中々見られませんし\@ 
+					AFFECTION("溺愛") ? 、必見ですよ%RHEART% # \@」")
+					}
+				CASE 2
+					PRINTFORMW 「無縁塚、ですか…？」
+					PRINTFORMW 「何か思うところがあるのでしょうか……」
+				CASE 3
+					PRINTFORMW 「三途の川、ですか…」
+					PRINTFORMW 「先に言っておきますけど、あそこに居る魚は釣れませんよ？」
+				CASE 4
+					PRINTFORMW 「人里って……そんなに人に見られたいのですか？」
+					PRINTFORMW 「それは流石に私もちょっと恥ずかしいのですが…」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[7] 孕ませたい //好意+好感度が10000以上で可能になる
+	;======================
+	IF IS_SATIS_BONUS("子作り")
+		;初回
+		;====
+		IF FIRSTEVENT(70)
+			IF FAVRATING
+				PRINTFORMW 「厄神である私を孕ませたいなんて言う人がいるなんてね」
+				PRINTFORMW 「酔狂にも程がある、というか……%CNAME(MASTER, TARGET)%、本気で言ってる？」
+				PRINTFORMW 「まあでも、そんな事言い出したからには……ちゃんと責任はとってもらうからね。いい？」
+			ELSE
+				PRINTFORMW 「私をからかってるという訳でもなさそうですが…」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%がどこまで本気なのか、正直…図りかねます」
+				PRINTFORMW 「……でもそうですね。そう言われて、あまり悪い気はしませんけど。ふふ」
+			ENDIF
+			RETURN 1
+		ENDIF
+
+		;初回以外 //イベント経過によって分岐
+		;========
+		IF FAVRATING
+			SELECTCASE RANDEVENT(3, 70)
+				CASE 0
+					PRINTFORMW 「ふーん。そんな言い出したからには、それなりの覚悟があるって訳？」
+					PRINTFORMW 「厄神と言っても私、女なんだから…、そんな事言われたら本気になっちゃうかも知れないわよ？」
+				CASE 1
+					;WAITは噛まさない
+					CALL FADEIN(10, "「厄神を孕ませたいとか……、まったく」")
+					PRINTFORMW 「身の程知らずというか、怖いもの知らずというか。でも私…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%のそんなところに、どうしようもなく惹かれちゃってるのは確かなのよね」
+					PRINTFORMW 「まあ、こういう事は口に出して言うべきじゃないのかも知れないけど。ふふっ」
+				CASE 2
+					PRINTFORMW 「孕ませたいとか言い出したからには、しっかりと頑張ってもらわないとね？ こう見えたって私…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%にそんなこと言われて、ちょっとその気になっちゃってるんだから……」
+			ENDSELECT
+		ELSE
+			IF RAND:2
+				PRINTFORMW 「ふふ、なかなか言ってくれますね」
+				PRINTFORMW 「あまりハッキリ言われると、ちょっと恥ずかしいですけど…」
+			ELSE
+				PRINTFORMW 「こちらから聞いた手前、拒否する訳にもいかないですね」
+				CALL HTMLPRINTW(@"「と言いながら私も…、満更でもないのが正直なとこですけど\@ RAND:2 ? %RHEART% # \@」")
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[8] 休ませて //調教対象の消耗に関わらず選択可能
+	;====================
+	IF IS_SATIS_BONUS("休憩")
+		IF FAVRATING
+			PRINTFORMW 「いいわよ？　今日はのんびり過ごしましょう。でもそうね…」
+			;EV12を弄ったので辻褄をあわせる
+			PRINTFORMW 「%RAND_SPLIT("何もしない/家でじっとしてる")%より、ちょっと出かけてみるのもいいかも%RAND_SPLIT("知れないわ/")%」
+			;CALL HTMLPRINTW(@"「お茶でも飲みながら、まったりっていうのも悪くないしね%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORMW 「そうですね、時には休む事も必要でしょうし」
+			PRINTFORMW 「今日はゆっくり休んでくださいね」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[9] 抱いてほしい
+	;========================
+	;IF IS_SATIS_BONUS("抱いて")
+	;ENDIF
+
+	;ボーナス[10] ご奉仕したい
+	;=========================
+	IF IS_SATIS_BONUS("ご奉仕")
+		SELECTCASE RANDEVENT(5, 100)
+			CASE 0
+				CALL HTMLPRINTW(@"「あら%RHEART% これはまた随分可愛らしい申し出\@ GET_KFLAG_K39("相思相愛") ? ね # ですね \@。ふふ…」")
+			CASE 1
+				CALL HTMLPRINTW(@"「いい\@ FAVRATING ? わ # です \@よ%RHEART% %CNAME(MASTER, TARGET)%がそう望むなら」")
+			CASE 2
+				CALL HTMLPRINTW(@"「そう\@ FAVRATING ? ねぇ # ですね\@。%CNAME(MASTER, TARGET)%がそこまで言うなら%RHEART%」")
+			CASE 3
+				CALL HTMLPRINTW(@"「ふふ%RHEART% 嬉しいこと言って\@ FAVRATING ? くれちゃって # ますね \@」")
+			CASE 4
+				CALL HTMLPRINTW(@"「そういうことなら…、お願い\@ FAVRATING ? しようかしら # しましょうか \@。ふふっ%RHEART%」")
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;EV17, 本日の方針口上
+;####################
+[SKIPSTART]
+	・@EVENTTRAINから呼び出される
+	・タイミングは調教開始口上(EV11)の後、調教者行動前口上(EV12)の前
+	・大満足ボーナスを得ている場合はそちらが優先される(即ち、この箇所が呼び出される事はない)
+	・調教者により本日の方針が決定された場合に表示
+	・口上表示の後にPRINTLを挟んで地の文。地の文は方針毎に専用のものになる
+	・子作り、休憩はご褒美でしか出ないのでこの箇所では不要。方針が通常の場合は処理されないので通常も不要
+	・Ａ感覚が4までは確率（Ａ感覚、0で1/3）でTFLAG:今日の方針 == 1（Ａ開発）になり1/5の確率で他の方針によって上書きされる
+	・Ａ感覚が5以降になると今日の方針 == 1（Ａ開発）になる可能性は無くなる（感覚が上昇すればＡ開発の必要はない、という仕様？）
+[SKIPEND]
+
+@KOJO_MALE_EVENT_K39_17(ARG)
+VARSET LOCALS
+LOCALS:0 '= RAND_SPLIT("ふふ/ふふふ/くすっ/くすくす")
+
+PRINTFORMW 「さて、今回はどう\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? しようかしら # しましょうか \@」
+SELECTCASE POLICY("今日")
+	CASE "アナル"
+		{
+		PRINTFORMW 「ちょっとおしりを虐めてあげるのも\@ 
+		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? いいかも 
+		# 一興ですね \@。%LOCALS:0%」
+		}
+	CASE "お仕置き", "ハード", "異常"
+		PRINT 「なんとなく、ちょっと
+		SELECTCASE POLICY("今日")
+			CASE "お仕置き"
+				PRINT 虐めてあげ
+			CASE "ハード"
+				PRINT 激しくし
+			CASE "異常"
+				PRINTFORM %CNAME(MASTER, TARGET)%をめちゃめちゃにし
+		ENDSELECT
+		PRINTFORM たい気分\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? なのよね # なんですよね \@…
+		CALL PRINT_SYMBOL_K39
+	;CASE "ハード"
+	CASE "イチャイチャ"
+		{
+		PRINTFORMW 「そう\@ 
+		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? ねぇ # ですね \@。ちょっと優しく\@ 
+		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? ってのはどう # というのはどうですか \@？」
+		}
+		{
+		CALL HTMLPRINTW(@"「\@ 
+		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? ほら…、ぼんやりしてないで、こっちにきて 
+		# さあ、こちらへどうぞ \@…%HTML_PS_K39()%」")
+		}
+	;CASE "異常"
+	CASE "野外"
+		PRINTFORMW 「偶には外に出掛けて\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? みる # みましょうか \@？」
+		{
+		PRINTFORMW 「とりあえず、この首輪を付けてもらう事に\@ 
+		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? なるけど # なりますけど \@。%LOCALS:0%…」
+		}
+	CASEELSE
+		;//CASEELSEは空にしておく
+ENDSELECT
+RETURN 1

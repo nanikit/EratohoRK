@@ -1,0 +1,573 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	橙口上 オープニング、エンディング口上ファイル
+;
+;	オープニング, エンディングイベント口上のファイル
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;EV1, オープニング口上
+;========================================================================
+;・口上主(TARGET)が主人である場合にのみ表示される
+;・戻り値を2とした場合はOP後の本体側のタイトルロゴは表示されない
+;・ノーマルモード以外の場合、調教対象がNO:MASTER == 0(いわるゆるあなた)でない可能性あり
+;-------------------------------------------------
+;関連変数…
+;FLAG:モード(0=通常/1=サンドボックス/9=エキストラ)
+;-------------------------------------------------
+@KOJO_EVENT_K13_1(ARG)
+RESETCOLOR
+PRINTFORMW 始める前に、いくつかお聞きしたいことが御座います
+
+PRINTFORML 作者の趣味・口上の雰囲気・プレイの快適性など諸々の都合により、
+PRINTFORMW 橙の素質・経験に以下の変更を加えようと思うのですが、宜しいでしょうか？
+PRINTL 
+PRINTFORML ◎素質[習得遅い]の削除  →ダレ防止のため、調教の進行を早めます
+PRINTFORML ◎素質[衝動的]の付与    →この口上の気分屋な橙に近づけるための措置です
+PRINTFORML ◎百合経験の削除        →藍様とは健全な主従関係でいてもらいます
+PRINTFORMW ◎自慰経験の微増        →調教する以上はエッチな娘であって欲しいので
+PRINTL 
+PRINTFORML [ 0] - 変更を行う
+PRINTFORML [ 1] - 変更を行わない
+
+$INPUT_LOOP_A
+INPUT
+
+IF RESULT == 0
+	TALENT:習得遅い = 0
+	TALENT:衝動的 = 1
+	EXP:百合経験 = 0
+	EXP:自慰経験 = 5
+	PRINTFORMW 了解致しました。素質・経験の変更を行います
+ELSEIF RESULT == 1
+	PRINTFORMW 了解致しました。素質・経験はそのままに致します
+ELSE
+	GOTO INPUT_LOOP_A
+ENDIF
+
+PRINTL 
+PRINTFORMW もう一つ、橙を処女にするか非処女にするかを選ぶことができます
+PRINTFORMW 口上への影響はほとんどないので、お好きな方をお選び下さい
+PRINTL 
+PRINTFORML [ 0] - 処女
+PRINTFORML [ 1] - 非処女
+
+$INPUT_LOOP_B
+INPUT
+
+IF RESULT == 1
+	TALENT:処女 = 0
+	ABL:性交 = 1
+	EXP:Ｖ経験 = 5
+	EXP:性交経験 = 3
+	EXP:性知識 = 10
+ELSEIF RESULT != 0
+	GOTO INPUT_LOOP_B
+ENDIF
+PRINTFORMW 了解致しました
+PRINTL 
+PRINTFORMW それではお楽しみ下さいませ……
+PRINTL 
+PRINTL 
+PRINTFORMW ………………
+FOR LOCAL:0, 0, 10
+	PRINTL 
+NEXT
+CALL KOJO_COLOR_K13
+CUSTOMDRAWLINE ―
+
+PRINTFORMW %CALLNAME:MASTER%は薄暗い部屋の中で目を覚ました
+PRINTFORMW %CALLNAME:MASTER%はベッドの上に仰向けに寝かされており、視界には見慣れない薄汚い天井が映る
+PRINTL 
+PRINTFORMW ……どうにも頭が重く、前後の記憶がはっきりしない
+PRINTFORMW ここがどこで、どういう経緯でこの場所にいるのか、%CALLNAME:MASTER%には皆目見当もつかなかった
+PRINTFORMW ともかく現状を確認しようと、%CALLNAME:MASTER%はその重い体をベットから起こした
+PRINTL 
+PRINTFORMW ――じゃらり
+PRINTL 
+PRINTFORMW 首に違和感を感じるとともに、金属の擦れる音がする
+PRINTFORMW %CALLNAME:MASTER%には何やら首輪のようなものが嵌められており、鎖で繋がれたその先は、床に打ち付けられた金属の杭に繋がっていた
+PRINTL
+PRINTFORMW 不意に、小屋の反対側の隅、ちょうど影になっていた部分が、もぞもぞと動いた
+PRINTFORMW 「うん……？　やっと起きたのかしら？」
+PRINTFORMW 「ふぁぁ……あんまり起きるのが遅いから、私まで寝ちゃったじゃない」
+
+;主人公が『あなた』
+IF NO:MASTER == 0
+	PRINTFORMW 小屋の隅に潜んでいた少女は、大きく一つあくびをすると、%CALLNAME:MASTER%のそばに歩み寄ってきた
+	PRINTL 
+	PRINTFORMW 「それで……気分はどう？」
+	PRINTFORML 状況がよく飲み込めていない%CALLNAME:MASTER%だったが、
+	PRINTFORMW ひとまず正直に、頭が重いことと気分自体はそれほど悪くない旨を伝えた
+	PRINTFORMW 「そう、良かった。なかなか目を覚まさないから心配してたんだけど、とりあえずは大丈夫そうかな？」
+	PRINTFORMW 目の前の少女は、ニッコリと微笑むと、%CALLNAME:MASTER%のすぐ前に座り込んだ
+	PRINTL 
+	PRINTFORMW 「今日から私、化け猫の『橙』が、あなたのご主人様になりました」
+	PRINTFORMW 「%FUNC_K13_CALLNAME()%はこれから、私のペットとして生きていくのよ？　いいわね？」
+	PRINTL 
+	PRINTFORMW %CALLNAME:MASTER%は彼女の言葉の意味を上手く飲み込めず、きょとんとしてしまう
+	PRINTFORMW 「……ん？　何よ、その顔は？　別に冗談で言ってるわけじゃないのよ？」
+	PRINTFORMW 「私が%FUNC_K13_CALLNAME()%を飼うの。そのために、わざわざ%FUNC_K13_CALLNAME()%を攫ってきたのよ」
+	PRINTFORMW 「ほら、外の人間ってペットを飼うらしいじゃない」
+	PRINTFORMW 「中には猫を飼うなんて生意気なことをしてる人間までいるんでしょ？」
+	PRINTFORMW 「人が猫を飼うのが許されるなら、私みたいな化け猫がペットを飼っても、何の問題もない――」
+	PRINTFORMW 「ね？　%FUNC_K13_CALLNAME()%もそう思わない？」
+	PRINTL 
+	PRINTFORMW 言っている内容は荒唐無稽だが、少なくとも少女は本気で%CALLNAME:MASTER%を飼うつもりでいるようだ……
+	PRINTFORMW 「ふふ、大丈夫よ、ちゃんと大切に面倒見てあげるから」
+	PRINTFORMW 「もちろん……嫌とは言わせないよ？」
+	PRINTL 
+	PRINTFORMW 「もしも嫌だって言うなら――」
+	PRINTL 
+	PRINTFORMW 「嫌とも思わないように、私が調教して……正しくペットとして、躾けてあげる」
+
+;主人公が『あなた』以外
+ELSE
+	PRINTFORMW 小屋の隅に潜んでいた少女は、大きく一つあくびをすると、%CALLNAME:MASTER%のそばに歩み寄ってきた
+	PRINTL 
+	PRINTFORMW 「それで……気分はどう？」
+	PRINTFORML 状況がよく飲み込めていない%CALLNAME:MASTER%だったが、
+	PRINTFORMW ひとまず正直に、頭が重いことと気分自体はそれほど悪くない旨を伝えた
+	PRINTFORMW 「そう、良かった。あんなことがあったから、少し心配してたんだけど、とりあえずは大丈夫そうかな？」
+	PRINTL 
+	PRINTFORMW 『あんなこと』――
+	PRINTL 
+	PRINTFORMW 思い当たるような内容を記憶の中から探し出せなかった%CALLNAME:MASTER%は、少女に説明を求めた
+	PRINTFORMW 「あれ？　ひょっとして覚えてない？」
+	PRINTFORMW 「えーと……じゃあ、私が見たままを話すよ？」
+	;主人公が藍または紫
+	IF GROUPMATCH(NO:MASTER, 21, 22)
+		PRINTFORMW ……%CALLNAME:MASTER%は少女の態度にそこはかとない違和感を覚えながらも、彼女の話に耳を傾けた
+	ENDIF
+	PRINTL 
+	PRINTFORMW 「昨日の話だけど……急に言い争うような声が聞こえて、気になってその声の方に行ってみたの」
+	PRINTFORMW 「そうしたら%FUNC_K13_CALLNAME()%ともう一人が喧嘩してる場面に出くわして」
+	PRINTFORMW 「それで、そのまま何となく物陰から覗いてたの」
+	PRINTFORMW 「そのうち一人が何か変なモノ――後ろからでよく見えなかったけど」
+	PRINTFORMW 「とにかく何かを取り出して、%FUNC_K13_CALLNAME()%に向けたの」
+	PRINTFORMW 「そうしたら、急に%FUNC_K13_CALLNAME()%が倒れちゃって……」
+	PRINTFORMW 「びっくりして物陰から身を乗り出して覗いてたら、そのもう一人の方が私の方に振り向いてきてね」
+	PRINTFORMW 「ヤバイっ、と思ってすぐに逃げようとしたんだけど、その前に相手の方から話し掛けてきて――」
+	PRINTFORMW 「『こいつの力は封印した。お前にでもくれてやるから、後は好きにしていい』っていう感じのことを言われたの」
+	PRINTFORMW 「そのまま放置して野良妖怪に喰われるのも可哀想だから、とりあえずこの小屋に運んだってわけ」
+	PRINTFORMW 「あ、ちなみに、その相手の名前はわからないからね？　初めて見た相手だったし、すぐにどこかに行っちゃったから」
+	PRINTL 
+	PRINTFORMW 全く身に覚えがない話だったが、確かに力が封印されているというのは感じ取れた
+	PRINTFORMW いつもならこんな鎖など問題なく破れるはずだが、それも今の状態では難しく感じられる
+	PRINTFORMW ……そういえば、そもそもどうして自分はこんな風に首輪で繋がれているのだろうか？
+	PRINTFORMW 「まあ、覚えてないならいいや。そこは本題じゃないからね」
+	PRINTFORMW 「と、いうわけで、本題に入るよ？」
+	PRINTL
+	PRINTFORMW 「外の世界では、人間が猫をペットとして飼ってるらしいね」
+	PRINTFORMW 「人間風情が生意気にってのもあるけど、そこはひとまず置いておくとして」
+	PRINTFORMW 「それが許されるなら、猫の方がペットを飼ったって良いと思わない？」
+	PRINTFORMW 「そんなわけで、常々、私もペットが欲しいと思ってたんだよねー」
+	PRINTFORMW 「そこに転がり込んできた、私より格下の相手！」
+	PRINTFORMW 「……ふふ、もう、これ以上言わなくてもわかるでしょ？」
+	PRINTL 
+	PRINTFORMW 少女は無邪気な笑みを浮かべながらも、その瞳は%CALLNAME:MASTER%の体に舐めるような視線を向けている
+	PRINTFORMW %CALLNAME:MASTER%は背筋にゾクリとしたものが走り抜けるのを感じた
+	PRINTL 
+	PRINTFORMW 「大丈夫、大丈夫♪　ちゃんと大切に面倒見てあげるから」
+	PRINTFORMW 「それに、今の%FUNC_K13_CALLNAME()%、本当に何の力も感じないからね」
+	PRINTFORMW 「誰の助けも借りなかったら、本当にそこら辺の野良妖怪に食い殺されちゃうよ？」
+	PRINTFORMW 「あの場に放置されるよりは幾分マシだと思って、今からあなたのご主人様になる私に従いなさい」
+	PRINTFORMW 「………………」
+	PRINTFORMW 「嫌とは言わせないよ。いいね？」
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;CNAMEやCSTR:召喚可能助手、その他各種代入に向いた箇所の一つです
+;コマンド封印も個別に可能ですが、本体側の意向として(一応)隠し機能にしたいという事情もあり
+;判る人はどうぞ、という事で解説はしない方向で
+;-------------------------------------------------
+;口上を表示した上で、終端をRETURN 0とする事で本体側の汎用OPに渡す事も可能だったりします
+;汎用OPに飛ばした際はタイトルロゴが表示されます
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ノーマルモード時
+;RESULT値(1,OPを表示した後本体のタイトルロゴを表示/2, 本体のタイトルロゴを表示しない)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && !FLAG:モード
+	;とりあえず必要そうなものを例として置いておきます
+	;実際にどのように扱うかは、既存の口上を見てもらえば分かるかと
+	
+	;召喚可能助手代入		以下の例の場合、霊夢と魔理沙のみ魔力使用で呼ぶ事が出来る
+	;CSTR:召喚可能助手 = 霊夢/魔理沙/
+	
+	;MASTERの呼び名代入		以下の例の場合、MASTERの呼び名は貴方となる
+	;CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴方/%CSTR:(TARGET):呼び方リスト%
+	;他の箇所(例えばEVENT11)等で条件式を組んでINPUTを絡ませて代入、という事も可能
+	
+	;キャラカットイン CSVで定義されたものが呼ばれる。CSVCSTRで任意のキャラのカットインを呼ぶ事も可能
+	;CALL CHARA_CUTIN(CSTR:二つ名, CSTR:登場名, CSTR:ローマ字)
+	
+	;ＢＧＭカットイン(CSTR:曲１, CSTR:曲２でキャラCSVで定義されたものを呼び、直接記述する事で任意の内容に変更する事も出来る)
+	;CALL BGM_CUTIN(CSTR:曲１)
+	
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+
+;将来的に他のモードが追加された場合はFLAG:モードを決めうちした方が良いかも知れません
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ノーマルモード以外の場合
+;RESULT値(1,OPを表示した後本体のタイトルロゴを表示/2, 本体のタイトルロゴを表示しない)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && FLAG:モード > 0
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+
+;========================================================================
+;EV2, エンディングイベント口上
+;========================================================================
+;・開始30日以降、日時の更新時にシステム側からEVENT2が呼び出される
+;・戻り値1以上が返ると本体側でFLAG:END達成が立ち、以降はシステム側から呼び出される事はない
+;・以前は戻り値1以外はFLAG:END達成が立たない仕様でしたが、現在はRESULT > 0ならフラグが立つようになっています
+;・必要に応じてFIRSTEVENTを使っておくと万が一の保険にはなりますし、仕様変更にも強いです
+;-------------------------------------------------
+;　最短で呼び出されるのが30日というだけなので、その他の部分では口上側で任意に条件設定が可能です
+;　IF 口上記入チェック() &&で条件で区切るなり、IF 口上記入チェック()で大分岐にした上で、小分岐内で個別に条件設定も出来ます
+;　階層イベント形式にして表示させた上でRETURN 0。最後にRETURN 1で。なんて事も可能ではあったり
+;　可能性は無限にあるので、条件設定は各口上作者に委ねたいと思います
+;-------------------------------------------------
+@KOJO_EVENT_K13_2(ARG)
+;-------------------------------------------------
+;将来的にはCFLAG:依存度による本体側のED分岐なんていう代物の構想もあったり
+;その際には、本体側の処理を呼ぶ/殺すも口上側で任意に設定が可能という方向性
+;とはいえ、いつになるのか、実現するかも定かではないので、現状は各自頑張って下さいということで
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;エンディング
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック()
+	RESETCOLOR
+
+	PRINTL 
+	PRINTL 
+	PRINTL 
+	DRAWLINE
+	PRINTFORMW ★%CALLNAME%に監禁されてから1ヶ月が経過しました★
+	PRINTFORMW エンディングイベントに入ります……
+	DRAWLINE
+	PRINTL 
+	PRINTFORML ………………
+
+	;強制ウェイト
+	MESSKIP
+	IF RESULT
+		FORCEWAIT
+	ENDIF
+
+	PRINTFORMW …………
+	PRINTFORMW ……
+	PRINTL 
+
+	CALL KOJO_COLOR(TARGET)
+
+	;●ペット兼任恋人エンド
+	;条件:恋人イベントを消化している
+	IF FUNC_K13_ISLOVER()
+		PRINTFORMW 「ほら、来なさいっ！」
+		PRINTFORMW 夜の調教が終わった後、%CALLNAME%が%CALLNAME:MASTER%の小屋へとやって来た
+		PRINTFORMW %CALLNAME%は小屋に入るなり、%CALLNAME:MASTER%の首輪を外すと、%CALLNAME:MASTER%の腕を掴んで引きずるようにして%CALLNAME:MASTER%を小屋の外へと引っ張り出した
+		PRINTFORMW 「今日は%FUNC_K13_CALLNAME()%と一緒に行きたい所があるのよ」
+		PRINTFORMW 「ほーら！　ボサッとしてないで、ちゃっちゃと歩くっ！」
+		PRINTFORMW わずかな月明かりが差すだけの暗闇の中、%CALLNAME:MASTER%は%CALLNAME%に腕を引かれてひたすら夜道を歩かされた……
+		PRINTL 
+		PRINTW ………………
+		PRINTL 
+
+		PRINTFORMW 「とうちゃーくっ！　ここに%CALLNAME:MASTER%を連れて来てみたかったの♪」
+		PRINTFORMW %CALLNAME%に案内されてきた場所には、一際高くそびえる巨大な樹がそびえ立っていた
+		PRINTFORMW 上を見上げると、葉や枝が夜の闇にまぎれて、まるでどこまでも続いていくような錯覚に陥る
+		PRINTFORMW 「もう、何をボケッと突っ立ってるのよ！」
+		PRINTFORMW 「今から、この木に登るわよ？　私が先に登るから、ついてきなさい♪」
+		PRINTFORMW %CALLNAME%はそう言うなり、太い木の幹のわずかな凹凸に器用に爪を引っ掛けて、するすると大樹を登っていく
+		PRINTFORMW 「……ちょっと！　ついてきなさいって言ったでしょ！　さっさと登って来なさいっ！」
+
+		;主人公が『あなた』
+		IF NO:MASTER == 0
+			PRINTFORMW %CALLNAME%の命令には逆らえず、%CALLNAME:MASTER%は言われた通りに幹を登ろうと試みた
+			PRINTFORMW だがまともに手足を掛けられるような場所はほとんどなく、幹の太さからしがみついて登ることもできそうにない
+			PRINTFORMW まるでロッククライミングのようだ
+			PRINTFORMW %CALLNAME:MASTER%は頑張って木に向かってジャンプしてみたが、あっさりと幹に跳ね返されて地面に尻もちをついた
+			PRINTFORMW 「……何をやってるのよ、情けないわね」
+			PRINTFORMW %CALLNAME%は呆れたような様子で%CALLNAME:MASTER%を見ると、木から飛び降りて%CALLNAME:MASTER%のすぐ隣に着地した
+			PRINTFORMW 「仕方ないから連れていってあげる。ほら、私の背中に掴まりなさい」
+			PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%に促されるまま、おぶさるような形で%CALLNAME%を後ろから抱きしめた
+			PRINTFORMW すると、%CALLNAME%の体がフワリと浮き上がり、%CALLNAME:MASTER%と共にあっという間に木の上の方まで飛び上がった
+			PRINTFORMW 「何を驚いたような顔してるのよ？　妖怪だもの、空くらい飛べるのは当たり前でしょ？」
+			PRINTFORMW 「さあ、そこの枝の上に降りるわよ」
+			PRINTFORMW %CALLNAME%は比較的安定した太い枝の上に%CALLNAME:MASTER%を降ろすと、自らも%CALLNAME:MASTER%の隣に座った
+
+		;主人公が『あなた』以外
+		ELSE
+			PRINTFORML さすがにまともに大樹を登るのは骨が折れそうなので、
+			PRINTFORMW %CALLNAME:MASTER%は飛んでもいいかと%CALLNAME%に許可を求めた
+			PRINTFORMW 「別にいいけど……根性ないわねっ」
+			PRINTFORMW 「だったら私も飛んでくわ！　ほら、あそこにある枝の上に降りるわよ！」
+			PRINTFORMW %CALLNAME%が指差した枝は、比較的太くて安定しており、何人か乗ってもビクともしなさそうだ
+			PRINTFORMW %CALLNAME%は枝の上に降りるとその上に座り、%CALLNAME:MASTER%に隣りに座るように促した……
+		ENDIF
+
+		PRINTL 
+		PRINTFORMW 「ん～！　風が気持ちいい」
+		PRINTFORMW %CALLNAME%は両腕を上げてぐっと伸びをした
+		PRINTFORMW 「どう？　いい場所でしょ？」
+
+		;主人公が『あなた』
+		IF NO:MASTER == 0
+			PRINTFORML 地上数十メートルはあろうかという高所のはずだが、
+			PRINTFORMW 下に張り出した枝葉の絨毯が地面を覆い隠していることもあり、思っていたほどには恐怖を感じない
+		ENDIF
+
+		PRINTFORMW 「ここは景色もいいんだけど……ほら、見て。この場所だと月がキレイに見えるのよ」
+		PRINTFORMW %CALLNAME%につられるように、%CALLNAME:MASTER%は空を見上げ、月を見た
+		PRINTFORMW 「この場所に来ると、なんだか月にすごく近づいた感じがするのよね」
+
+		;主人公が『あなた』
+		IF NO:MASTER == 0
+			PRINTFORMW 「私は妖怪だから、余計に心地良いっていうか……気持ちが昂ぶって、イイ気分になるの」
+			PRINTFORMW 落ち着くような、昂ぶるような、不思議な感覚
+			PRINTFORMW 気付けば引き込まれるように、%CALLNAME:MASTER%は月から目を離せなくなっていた
+		;主人公が『あなた』以外
+		ELSE
+			PRINTFORMW 「やっぱり妖怪だからかしら？　どうにも気持ちが昂ぶって、イイ気分になるの」
+			PRINTFORMW %CALLNAME:MASTER%も%CALLNAME%と共に、落ち着くような、昂ぶるような、不思議な感覚に身を委ねた
+		ENDIF
+
+		PRINTFORMW 「…………」
+		PRINTFORMW %CALLNAME:MASTER%の肩に、%CALLNAME%が寄りかかってくる
+		PRINTFORMW %CALLNAME%の心地よい重みを感じながら、%CALLNAME:MASTER%は%CALLNAME%と二人、無言で月を見つめ続けた…
+		PRINTL 
+		PRINTFORMW ………………
+		PRINTL 
+		PRINTFORMW 「こういうの、いいわね」
+		PRINTFORMW 静かなムードの中、唐突に%CALLNAME%が声を発した
+
+		;主人公が『あなた』
+		IF NO:MASTER == 0
+			PRINTFORMW 「最初はこんな弱っちいニンゲンの恋人になるなんて思いもしなかったけど……」
+			PRINTFORMW 「悪くないわね。だって今、私とってもイイ気分だもの」
+		;主人公が『あなた』以外
+		ELSE
+			PRINTFORMW 「最初は、私の言うことを聞いてくれる可愛いペットが欲しいってだけだったけど……」
+			PRINTFORMW 「恋人……っていうのも、悪くないわね。だって今、私とってもイイ気分だもの」
+		ENDIF
+
+		PRINTFORMW 「…………」
+
+		;主人公がオトコ
+		IF TALENT:MASTER:オトコ
+			PRINTFORMW 「ねえ……頭、撫でてくれないかな？」
+			PRINTFORMW %CALLNAME%に促されるままに、%CALLNAME:MASTER%は%CALLNAME%の頭を優しく撫でた…
+			PRINTL 
+			PRINTFORMW 「…………」
+			PRINTFORMW 「…………♪」
+			PRINTFORMW 「ふふっ、もういいわよ。満足したわ♪」
+			PRINTFORMW %CALLNAME%は枝の上に立ち上がると、%CALLNAME:MASTER%の顔を覗き込むようにして笑顔を見せた
+
+		;主人公がオトコ以外
+		ELSE
+			PRINTFORMW 「ねえ……頭、撫でてあげるから、もっとこっちに来て♪」
+			PRINTFORMW %CALLNAME%に抱き寄せられるまま、%CALLNAME:MASTER%は%CALLNAME%の膝に頭を乗せて横になった
+			PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%に膝枕しながら、%CALLNAME:MASTER%の頭を優しく撫でていく……
+			PRINTL 
+			PRINTFORMW 「…………」
+			PRINTFORMW 「…………」
+			PRINTFORMW 「…………ふふっ♪」
+			PRINTL 
+			PRINTFORMW 「はい、これでおしまい！　体、起こしなさい？」
+			PRINTFORML %CALLNAME%は%CALLNAME:MASTER%の頭を膝から持ち上げて元のように座らせると、
+			PRINTFORMW 枝の上に立ち上がり、%CALLNAME:MASTER%の顔を覗き込むようにして笑顔を見せた
+		ENDIF
+
+		PRINTFORMW 「今日は付き合ってくれてありがとうね。楽しかったわよ♪」
+		PRINTFORMW 「もちろん、ペット兼恋人だから、明日の朝はまたペットとして愉しませてもらうけど……」
+		PRINTFORMW 「……また、時々こうやって、"恋人"しましょうね❤」
+		PRINTFORMW %CALLNAME%ははにかむように微笑むと、%CALLNAME:MASTER%の頬に軽く口付けた
+
+		
+		;主人公が『あなた』
+		IF NO:MASTER == 0
+			PRINTFORMW そして照れを隠すようにくるりと身を翻すと、枝の上からひょいと飛び降りて、下に広がる枝葉の中に消えていった
+			PRINTL 
+			PRINTFORMW 下から%CALLNAME%が大声で叫ぶ音が聞こえてくる
+			PRINTFORMW 「ほらほら、今日はもう帰るわよ！　%FUNC_K13_CALLNAME()%もさっさと降りてきなさい！」
+			PRINTL 
+			PRINTFORMW ……………………
+			PRINTL 
+			PRINTFORMW ……無理です
+
+		;主人公が『あなた』以外
+		ELSE
+			PRINTFORMW 「さ、今日はこれで帰るわよ？　帰りは二人で、一緒に飛んで行きましょ？」
+			PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の手を取ると、枝の上からフワリと飛び上がった
+			PRINTFORMW %CALLNAME:MASTER%の上からこちらを見る%CALLNAME%の後ろに月が映る
+			PRINTFORMW その瞬間、%CALLNAME%の姿がどこか神々しく、美しく見えて……%CALLNAME:MASTER%はズクン、と胸が疼くのを感じた
+		ENDIF
+
+		PRINTL 
+		PRINTW 
+		PRINTW 　　― TO BE CONTINUED ... ―
+
+	;●解放エンド
+	;条件:「調教者から調教対象への好感度」「調教対象から調教者への好感度」のうち少なくとも一方が2000未満
+	ELSEIF !AFFECTION("調教完了") || !AFFECTION("溺愛")
+		;主人公が『あなた』
+		IF NO:MASTER == 0
+			PRINTFORMW 「今日限りで、%FUNC_K13_CALLNAME()%を解放してあげる」
+			PRINTFORMW 小屋に入るなり、%CALLNAME%は気だるい声でそう宣言した
+			PRINTL 
+			PRINTFORMW 「だって%FUNC_K13_CALLNAME()%ったら、全然懐いてくれないんだもの……」
+			PRINTFORMW 「そりゃ、無理やり攫ってきたわけだし、そう簡単に懐いてもらえるとは思ってなかったけど」
+			PRINTFORMW 「せっかくあんなに手を掛けてあげたわけだし、もう少しくらい素直になってくれてもいいと思うのよね」
+			PRINTFORMW 「なんというか……恩を仇で返された気分？」
+			PRINTFORMW %CALLNAME%は口を尖らせ、%CALLNAME:MASTER%を睨むようにして見つめた
+			PRINTL 
+			PRINTFORMW 「本当は飼い主として、最後まで責任を持って面倒を見ようと思ったんだけどさ……」
+			PRINTFORMW 「よく考えたら、『捨て猫』とは違って、別に私が捨てても元の生活に戻るだけ」
+			PRINTFORMW 「かえって%FUNC_K13_CALLNAME()%にとっては幸せなのよね」
+			PRINTFORMW 「……って、そういう風に考えたら、もうどうでも良くなっちゃってね」
+			PRINTFORMW %CALLNAME%は大きくため息をつくと、%CALLNAME:MASTER%の前で屈み込んだ
+			PRINTFORMW %CALLNAME%が%CALLNAME:MASTER%の首に手を伸ばすと、カチャリと金属音がして%CALLNAME:MASTER%の首輪が外された
+			PRINTL 
+			PRINTFORMW 「ほら、立ちなさい」
+			PRINTFORMW 「さすがに一人じゃ帰れないだろうから、安全な場所まで連れて行ってあげるわ」
+			PRINTFORMW 「とりあえず、私が%FUNC_K13_CALLNAME()%を攫った場所まで連れていくから、その先は案内してちょうだいね」
+			PRINTL 
+			PRINTFORMW ………………
+			PRINTL 
+			PRINTFORMW %CALLNAME%と%CALLNAME:MASTER%は、山を降り、獣道を抜け、やがて人里のすぐ近くまでやってきた
+			PRINTFORMW 「さすがにここまで来れば、一人でも問題なさそうね」
+			PRINTFORMW 「それじゃあね。……もう悪い妖怪に攫われないように気を付けるのよ？」
+			PRINTW 
+			PRINTFORMW 「さようなら」
+			PRINTL 
+			PRINTFORMW %CALLNAME:MASTER%が後ろを振り向くと、既にそこには%CALLNAME%の姿はなかった
+			PRINTFORMW 突然、一陣の風が%CALLNAME:MASTER%の後ろを通り抜ける
+			PRINTFORMW 風が、彼女の足跡も、匂いも、そして%CALLNAME:MASTER%の頭に残った残像をも、全て綺麗に洗い流していった……
+			PRINTL 
+			PRINTW 
+			PRINTW 　　― END ―
+
+		;主人公が『あなた』以外
+		ELSE
+			PRINTFORMW 「今日で%FUNC_K13_CALLNAME()%を解放してあげる」
+			PRINTFORMW 小屋に入るなり、%CALLNAME%は気だるい声でそう宣言した
+			PRINTL 
+			PRINTFORMW 「だって%FUNC_K13_CALLNAME()%ったら、全然懐いてくれないんだもの……」
+			PRINTFORMW 「そりゃ、無理やり攫ってきたわけだし、そう簡単に懐いてもらえるとは思ってなかったけど」
+			PRINTFORMW 「せっかくあんなに手を掛けてあげたわけだし、もう少しくらい素直になってくれてもいいと思うのよね」
+			PRINTFORMW 「なんというか……恩を仇で返された気分？」
+			PRINTFORMW %CALLNAME%は口を尖らせ、%CALLNAME:MASTER%を睨むようにして見つめた
+			PRINTL 
+			PRINTFORMW 「もう疲れちゃったから、『ペット遊び』はこれでオシマイ」
+			PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の前に屈み込むと、%CALLNAME:MASTER%の首に手を伸ばした
+			PRINTFORMW カチャリと金属音がして、%CALLNAME:MASTER%の首輪が外される
+			PRINTFORMW 「あ～あ、私、もっと可愛くて従順なペットが欲しかったなー……」
+			PRINTL 
+			PRINTFORMW ………………
+			PRINTL 
+			PRINTFORMW 「それじゃ、行きましょ」
+			PRINTFORMW 「……どこへって？」
+			PRINTFORMW 「もちろん、%FUNC_K13_CALLNAME()%が失った力を取り戻しに行くのよ」
+			PRINTFORMW 「%FUNC_K13_CALLNAME()%の力を封印した奴の顔を見たのは私だけだもの。私が行くしかないでしょ？」
+			PRINTL 
+			PRINTFORMW 「…………」
+			PRINTFORMW 「一応、『元』飼い主だからね」
+			PRINTFORMW 「そこらのムセキニンな飼い主と違って、私は最後まで責任をもって面倒を見る主義なの」
+			PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%を見て、ニヤリと笑った
+			PRINTL 
+			PRINTFORMW 「そんなわけで、さっさと出発しましょ」
+			PRINTFORMW 「まずは『わからなかったら人に聞く！』作戦。手当たり次第に聞き回って、『アヤシイヤツ』の情報を集めるのよ！」
+			PRINTFORMW 「ほら、ボサッとしてないで、私の後に付いてきなさいっ」
+			PRINTFORMW やたらとハイテンションな%CALLNAME%に引きずられ、%CALLNAME:MASTER%は力を取り戻すための旅に出ることになるのだった……
+			PRINTL 
+			PRINTW 
+			PRINTW 　　― TO BE CONTINUED ...？ ―
+		ENDIF
+
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTW 
+		RESETCOLOR
+		DRAWLINE
+		PRINTFORMW ※解放エンドになってしまいましたが、エンディングをなかったことにして次の日に進みますか？
+		CALL FUNC_K13_ASK("次の日の調教へ", "ゲームを終了する")
+		IF RESULT == 1
+			QUIT
+		ENDIF
+		PRINTFORMW …………
+		PRINTL 
+		CALL KOJO_COLOR(TARGET)
+		PRINTFORMW %CALLNAME:MASTER%はいつものベッドの上で目を覚ました
+		PRINTFORMW どうやら夢だったようですね
+		PRINTFORMW 夢なら仕方ない
+		PRINTL 
+		PRINTW 　　― TO BE CONTINUED ... ―
+
+	;●ペット生活エンド
+	;条件:他のエンドの条件をいずれも満たしていない
+	ELSE
+		PRINTFORMW 「おはよう、よく眠れた？」
+		PRINTFORMW その日、%CALLNAME%はいつもより早い時間に%CALLNAME:MASTER%の小屋に姿を現した
+		PRINTFORMW 「別にいつもより早く調教を始めようってわけじゃないわ。身構えなくても大丈夫よ？」
+		PRINTFORMW 「今日は少し話したいことがあったから、早めに来てみたの」
+		PRINTL 
+		PRINTFORMW 「それで、今日が何の日か、%FUNC_K13_CALLNAME()%にわかるかしら？」
+		PRINTFORML 唐突に投げかけられた質問に%CALLNAME:MASTER%が面食らっていると、
+		PRINTFORMW ほとんど考える間も与えないまま、%CALLNAME%が続ける
+		PRINTFORMW 「なんと！　今日で私が%FUNC_K13_CALLNAME()%を飼い始めてからちょうど一ヶ月目になるのよ！」
+		PRINTFORMW %CALLNAME%は妙に得意気な表情で、ふふんと鼻を鳴らした
+		PRINTL 
+		PRINTFORMW 「というわけで、もうペット生活にもだいぶ慣れたでしょ？」
+		PRINTFORMW 「%FUNC_K13_CALLNAME()%もだいぶ従順になったし、最初に苦労した分、これからが楽しみね♪」
+		PRINTFORMW 「あ、そうだ。せっかくだし、%FUNC_K13_CALLNAME()%に一つ聞いておこうかしら」
+		PRINTFORMW 「もし、私が今から解放してあげるって言ったら、%FUNC_K13_CALLNAME()%はどうする？」
+		PRINTFORMW 「別にどう答えても怒らないから、正直に言ってみて」
+		CALL FUNC_K13_ASK("以前の生活に戻る", "ここに留まる")
+		IF RESULT == 0
+			PRINTFORML ゴシャッ！！
+			PRINTFORMW 答えた瞬間、%CALLNAME:MASTER%の顔面に%CALLNAME%の足裏が押し付けられ、思い切り後ろの壁に頭を打ち付けられた
+			PRINTFORMW 「そう、やっぱりまだ前の生活に未練があるのね」
+			PRINTFORMW 「まあ、まだ一ヶ月目だし、私もそうじゃないかと思ってたわ」
+			PRINTFORMW 後頭部を抱えて悶絶する%CALLNAME:MASTER%を、%CALLNAME%は特に気にする風もなく見下ろしながら呟いた
+			PRINTFORMW 「これからまだまだ、%FUNC_K13_CALLNAME()%に前の生活への未練がなくなるまで躾けないといけないわね」
+			PRINTFORMW 「そういうことだから、これからもよろしくね。……私の可愛いペットちゃん❤」
+			PRINTL 
+			PRINTFORMW 「それじゃ、私はこれから今日の調教の準備をしてくるから、大人しく待ってるのよ？」
+			PRINTFORML %CALLNAME:MASTER%は未だズキズキと痛む頭を抱えて顔を上げることも出来ないまま、
+			PRINTFORMW バタンと勢い良く閉まる小屋の扉の音を聞いた
+			PRINTFORMW %CALLNAME:MASTER%の中に、強烈な鈍い痛みと共に、顔面に押し付けられた%CALLNAME%の足裏の感触と匂いが、
+			PRINTFORMW しばらくの間ずっと残り続けた
+		ELSE
+			PRINTFORMW 「あら？　意外ね。……別に私の機嫌とか、考えなくてもいいのよ？」
+			PRINTFORMW 「それとも、未練が残るほど前の生活が幸せじゃなかったのかしら？」
+			PRINTFORMW 「だとしたら、ちょっと気の毒ね」
+			PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の答えの真意を探るべく、%CALLNAME:MASTER%の顔をじっと、観察するように見つめた
+			PRINTL 
+			PRINTFORMW 「まあ、何にしても、私が飼い主として責任を持って%CALLNAME:MASTER%を幸せにしてあげれば問題無い話ね」
+			PRINTFORMW 「正確に言えば、私に飼われるのを幸せに感じちゃうようになるまで躾けてあげるってことだけど♪」
+			IF TALENT:MASTER:オトコ
+				PRINTFORMW %CALLNAME%はニヤリと妖しく微笑みながら、%CALLNAME:MASTER%の股間に視線を落とした
+			ELSE
+				PRINTFORMW %CALLNAME%はニヤリと妖しく微笑みながら、%CALLNAME:MASTER%の身体に視線を落とした
+			ENDIF
+			PRINTFORMW 「それじゃ、私はこれから今日の調教の準備をしてくるから、大人しく待ってるのよ？」
+			PRINTFORMW %CALLNAME%はくるりと身を翻すと、軽やかな走りで小屋を出て行った
+			PRINTFORMW そうしてまた、今日も%CALLNAME:MASTER%のペットとしての生活が始まる……
+		ENDIF
+		PRINTL 
+		PRINTW 　　― TO BE CONTINUED ... ―
+	ENDIF
+
+	;戻り値は1で決めうちしておきます
+	RETURN 1
+ENDIF

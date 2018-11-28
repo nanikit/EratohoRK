@@ -1,0 +1,1057 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上(対象限定) オープニング、エンディング口上ファイル
+;
+;		オープニング, エンディングイベント口上のファイル
+;
+;		EXTRAモードでN09咲夜をMASTERに選択した場合のみ表示
+;
+;Version		Reason
+;1.74			細かな修正
+;1.70			@口上記入チェック仕様に。その他細かな修正
+;1.61			ENDINGを関数化。EVENT2の枠を開放及びED後の続行が可能なように
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;-------------------------------------------------
+;KOJO_EVENTの間に対象のナンバーを挟むとMASTERが条件に当てはまる場合にのみ、その口上が呼び出される
+;キャラ指定以外にもMALE, TWIN, PENIS, FEMALE等の性別、ペニスの有無の指定も可能
+;呼び出しの優先度は("N0KX1(指定キャラ) > MALE(おとこ) > TWIN(ふたなり) > PENIS(おとこ、ふたなりのいずれか) > FEMALE(その他)")となる
+;ただ、"MALEYOU", "TWINYOU", "PENISYOU", "FEMALEYOU", 等の"YOU"付きは指定キャラ限定("NOKX1")より上位の優先度が与えられている
+;条件無し口上との共存も可能なので、条件無しの口上を作ったあとに、必要に応じて対象限定口上を追加する事が可能
+;色々やりたいなら、別ファイルで呼び出し関数を変えてやる方が、単一のファイルでやるよりスマートだと思う
+;-------------------------------------------------
+;@口上記入チェックについて…
+;
+;口上記入チェック(0)で表示なし(元のLOCAL = 0)
+;口上記入チェック()で表示(元のLOCAL = 1)
+;口上記入チェック(50)なら50%の確率で表示(元のLOCAL = PERCENT(50))
+;
+;LOCALを開放出来て、代入が不要になるので記述も従来のものより簡潔にできる
+;()でONになるのが判りにくい気もするので、
+;口上記入チェック(100)とかしてしまった方が表示のON/OFFのつまらないミスは減らせる気はする
+;記入漏れなのか否かの書き手の意図も明確になり、より直感的に判別し易いと個人的には考える
+;
+;RESULT値は決めうちする必要がある事に注意
+;-------------------------------------------------
+
+;────────────────────────────────────
+;NO9_EV1, オープニング口上
+;────────────────────────────────────
+;・対象限定OP
+;-------------------------------------------------
+@KOJO_NO9_MS_EVENT_K14_1(ARG)
+;------------------------------------------------
+;FLAG:モード:9が口上表示の条件なので、本来であれば条件決めうちする必要はない
+;ただ、決めうちしておけば保険にはなるという思想
+;
+;とか書いた時点と違い、現在の仕様だとFLAG:モード == 1（サンドボックス）で引っかかるという
+;-------------------------------------------------
+
+;モード1と9共通部分
+
+;---------------------------------------------
+;バリアント判定処理
+;---------------------------------------------
+CALL CHK_GAMEBASE_K14
+
+;---------------------------------------------
+;各種封印処理
+;---------------------------------------------
+;整合性の観点から対象限定口上では助手を封印する。他のキャラと合致しない文字列を入れれば完全封印が可能
+CSTR:召喚可能助手 = 封印/
+;奴隷の首輪取得を封印
+CFLAG:奴隷の首輪封印 = 1
+;大満足ボーナスの外に出たいを封印
+CFLAG:外に出たい封印 = 1
+;口上の整合性を損なうコマンドを封印
+;野外プレイを封印
+CFLAG:1044 = 100
+;ボールギャグを封印
+CFLAG:1065 = 100
+;現状対応できないんで指挿入れを封印
+CFLAG:1019 = 100
+;アナルセックスさせるを封印(相思相愛時に処女でなければ解放)
+CFLAG:1099 = 100
+
+;以下封印せずともまず出ないはずだけど、この口上にそぐわないので万が一の為に封印！
+;フィストファックを封印
+CFLAG:1070 = 100
+;アナルフィストを封印
+CFLAG:1071 = 100
+;両穴フィストを封印
+CFLAG:1072 = 100
+;公衆肉便器プレイを封印
+CFLAG:1074 = 100
+
+;咲夜視点で語られるOP
+;------------------------------------------------------------------------------------------------------
+;汎用性を考慮する必要がないので、呼び出し関数で対象指定している部分は直接記述
+;それでも他のファイルで条件無しの部分もあるので開幕で呼び名を代入する
+;この処理によって%CNAME(XX)%を使用している場所で定義した呼び名を表示させる事が出来る
+;咲夜の場合、呼び名を代入しないと特定の面子以外は"さん"付けで呼ぶように本体側のCSVで定義されている
+;CSTR:(XX)の中身を替える事によって色々と応用が利く MASTER TARGET (FLAG:2)あたりは使う機会が多いと思われる
+;あまり何度も代入を繰り返すと重くなる？らしい。OPや助手召喚時、いずれかのFIRSTTIMEの場所に限定するのが望ましいのかな
+;正直、途中でプレイヤーが名前を変更するような事は考えたくないし、して欲しくない。変える側の自己責任でもあるけれど
+;本体のコンフィグ [3] 名前の変更は粛清して欲しいな！
+;------------------------------------------------------------------------------------------------------
+
+;---------------------------------------------
+;開幕で呼び名を代入
+;---------------------------------------------
+;TARGET(この場合はアリス)が対象の名前を呼ぶ場合
+CSTR:(TARGET):呼び方リスト = 咲夜_咲夜/%CSTR:(TARGET):呼び方リスト%
+;MASTER(この場合は咲夜)が対象の名前を呼ぶ場合
+CSTR:(MASTER):呼び方リスト = アリス_アリス/%CSTR:(MASTER):呼び方リスト%
+
+NO_09_二つ名 = \@ RAND:2 ? 紅い悪魔のメイド # 電光石火のメイド \@
+NO_14_二つ名 = \@ RAND:2 ? 七色の人形遣い # 雹の人形遣い \@
+
+;以下、モードで分ける
+
+;EXTRAモード
+IF FLAG:モード == 9
+	SETBGCOLOR 0, 0, 20 ;背景色を夜用に
+	[SKIPSTART]
+	;---------------------------------------------
+	;OPスキップ処理
+	;---------------------------------------------
+	PRINTFORMDW 　オープニングをスキップしますか？
+	PRINTL
+	PRINTFORMDL [0] はい
+	PRINTFORMDL [1] いいえ
+	CALL INPUTINTD(0, 1)
+	SELECTCASE RESULT
+		CASE 0
+			GOTO SKIP
+		CASE 1
+			PRINTL
+	ENDSELECT
+	[SKIPEND]
+	
+	;---------------------------------------------
+	;全画面カットイン用の一連の処理
+	;---------------------------------------------
+	RESETCOLOR ;文字色リセット
+	CALL SETFONT_K14 ;フォントをセット
+	;REDRAW 0でカットイン中の描画を抑制
+	REDRAW 0
+	;強制表示x1
+	CALLF ANIME_CONFIG("TIMES", 1)
+	;全画面カットイン
+	CALL FULLCUTIN(33, 17, "月を見上げる度に思い出す", "　", "　", "　　　　　　全ての始まりとなったあの日の事を")
+	;強制表示x1
+	CALLF ANIME_CONFIG("TIMES", 1)
+	;全画面カットイン
+	CALL FULLCUTIN(33, 17, "心に深く刻まれた", "　", "　", "　　　　　生涯忘れえぬ、私の、大切な思い出……")
+	;REDRAWを戻す
+	REDRAW 1
+	
+	;---------------------------------------------
+	;OP開始
+	;---------------------------------------------
+	CALL TWAIT3_K14
+	CALL RESETFONT_K14 ;フォントをリセット
+	CALL KOJO_COLOR(TARGET) ;口上指定文字色を呼ぶ
+	CALL PRINTCOLORL(COLOR_K14("アリス"), "「ごめんなさい、起こしてしまったかしら？」")
+	CALL PRINTCOLORW(COLOR2_K14("ALICE"), "「よく眠ってるから、そっとしておいたんだけど…」")
+	PRINTL
+	;キャラカットイン(アリス)
+	;CALL CHARA_CUTIN(CSTR:二つ名, CSTR:登場名, CSTR:ローマ字)
+	CALL CHARA_CUTIN(NO_14_二つ名, CSTR:登場名, CSTR:ローマ字)
+	PRINTL
+	;------------------------------------------------------------------------------------------------------
+	;@PRINTCOLORWはRGBCOLORで指定した色で文字列を表示、改行待ちをする
+	;@PRINTCOLORや@PRINTCOLORL等のバリエーションもある
+	;RGBCOLORは色指定が面倒なのと管理上の理由で@COLOR_K14を作った。色を変えたくなった時は関数側を変更するだけなので便利。
+	;台詞関係はCALL KOJO_COLORでやる手もあるけど、書いた後、一目でどちらの台詞か判別するのが難しくなる為、@PRINTCOLORにした
+	;個人的にはこの方が後から見て分かりやすい。対象指定口上故、MASTERもTARGETも完全固定なのでこれで十分と考える
+	;コンビネーション口上等で台詞の書き分けするなら@PRINT_KOJO_COLORが良いかな
+	;------------------------------------------------------------------------------------------------------
+	CALL PRINTCOLORL(COLOR2_K14("SAKUYA"), "私を呼ぶ声が聞こえる……")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "この声はアリス、そうアリスの声だ")
+	PRINTL
+	
+	;キャラカットイン(咲夜) CSTR:(MASTER)でもいいんだけど、ゲーム上定義されないキャラを呼ぶ処理もあるのでCSVCSTRで統一
+	;CALL CHARA_CUTIN(CSVCSTR(9, 10, 0), CSVCSTR(9, 11, 0), CSVCSTR(9, 12, 0))
+	CALL CHARA_CUTIN(NO_09_二つ名, CSVCSTR(9, 11, 0), CSVCSTR(9, 12, 0))
+	PRINTL
+	PRINTFORMDL 寝起きのせいか頭がぼんやりする
+	PRINTFORMDW しかし何時の間に眠ってしまったのだろう
+	PRINTFORMDW アリスの家を訪ね、一緒にお茶を飲んで、それから……
+	PRINTL
+	PRINTFORMDL 記憶はそこで途切れていた。どうしてもそれ以上の事が思い起こせない
+	PRINTFORMDW 最近疲れが溜まっていたのは確かだ。それにしても、お茶を飲みながら寝てしまうなんて…
+	PRINTL
+	PRINTFORML 「あら、どうしたの？　難しい顔しちゃって」
+	PRINTFORMW 「でもその顔、中々可愛いわよ♪」
+	PRINTL
+	PRINTFORMDL アリスは笑顔で私を見つめている
+	PRINTFORMDW 私の大好きな笑顔、心が癒される笑顔…
+	PRINTL
+	PRINTFORMDW そう、私はアリスに対して単なる友人以上の感情を抱いている――
+	PRINTL
+	PRINTFORMDW それがいつからだったのか、自分でも良く分からない。しかし…
+	PRINTFORMDL 気が付けば、私の心は彼女に奪われてしまっていた
+	PRINTFORMDW だが同性同士、そのような気持ちを伝えられる訳もなく、現状に甘んじてきた
+	PRINTL
+	PRINTFORMDW それでいいと思っていた。ただ、こうして共に過ごし、共に語らい、同じ時を共有する事ができれば、それだけで私は…
+	PRINTL
+	PRINTFORMDW 気持ちを伝えてもアリスを苦しませるだけだ。そんな事は私の本意ではない
+	PRINTFORMDW 彼女にはいつも笑顔でいて欲しかった。そしてちょっと危なっかしいところのあるこの人を、見守っていたかった
+	PRINTFORMDW まるで人形のように端正な容姿に似合わず、時に好戦的で、時におっちょこちょいな彼女の傍に居たかった…
+	PRINTL
+	PRINTFORMDW ふと気が付くと、アリスは心配そうな顔でこちらを覗きこんでいる
+	PRINTL
+	PRINTFORMW 「咲夜、まだ眠り足りないんじゃない？」
+	PRINTFORMW 「随分疲れてるみたいだったし…ねぇ、いつも帰る時間まではまだ間があるし、どうせなら…」
+	PRINTL
+	;------------------------------------------------------------------------------------------------------
+	;MASTERが喋る口上には嫌悪感をもっているけど、特定のキャラだと全然嫌じゃない不思議。むしろ積極的に喋らせたい
+	;台詞を色分けするので「」『』の使い分けは不要と判断。「」は誰々、『』は誰々の台詞です！とか今更過ぎる
+	;------------------------------------------------------------------------------------------------------
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いや、もう大丈夫。アリスにこれ以上迷惑掛ける訳にもいかないし、それに…」")
+	PRINTL
+	PRINTFORMDL その瞬間、アリスの指に唇を塞がれた
+	PRINTFORMDW 柔らかな良い香り、私の好きな香りがする…
+	PRINTFORMDW 見上げるとアリスは悪戯っぽい笑顔を浮かべて、こちらを見ている
+	PRINTL
+	;貴方表記でもいいんだけど条件無し口上でTALENT:MASTER:122を貴方と呼んでいるのであえて変えた
+	;対象となるキャラが固定なのでCNAMEは使う必要ないかな、という感じ
+	PRINTFORML 「駄目よ？ 無理しちゃ。それに…」
+	PRINTFORMW 「貴女を帰す訳にはいかないの。悪いけど」
+	PRINTL
+	PRINTFORMDW 今、アリスはなんと言った？ 言葉の意味が良く飲み込めない…
+	PRINTL
+	PRINTFORMW 「ふふっ、可愛い、可愛い咲夜。まだ気が付かないのかしら？」
+	
+	;------------------------------------------------------------------------------------------------------
+	;ＢＧＭカットインは直接文字を打ち込む事によって任意の文字列を表示させる事も可能
+	;引数によって♪またはＢＧＭと表示を切り替える事も可能。表示させず文字列のみの表示もまた可能
+	;------------------------------------------------------------------------------------------------------
+	;ＢＧＭカットイン(プラスチックマインド)
+	CALL BGM_CUTIN(CSTR:曲２, 1)
+	
+	PRINTFORMW 「今の貴女は私の魔力の糸で拘束されてるのよ…」
+	PRINTFORMDW 未だ状況が飲み込めない私は、さながら白痴のように呆然としたままだった
+	PRINTL
+	PRINTFORMW 「ああ、そうそう。抵抗しても無駄だからね？」
+	PRINTFORMW 「この糸はね、貴女の能力を封じ、拘束し、その行動を抑制するの」
+	PRINTL
+	PRINTFORMW 「流石に人形のように自在に操れる訳じゃないけど、今の私にはこれで十分」
+	PRINTFORMW 「そして、これを解除できるのは術者である私だけ…」
+	PRINTL
+	PRINTFORMW 「この力を手に入れるのには苦労したのよ？　それに…」
+	PRINTFORMW 「術式自体も完全には程遠いわ。どうやら時間の経過と共に、私にも反動がくるみたいなのよね」
+	PRINTL
+	PRINTFORMDW そう言ったアリスの指先からは、血が滲み出していた
+	PRINTFORMDW 彼女はまるで人事の様に語っているが、それは見るからに痛々しく、血が止まる様子もなかった…
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリス、一体どうしてこんな事を！」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇ、お願い。こんな事やめてよ！ それに、その指の手当てもしないと！」")
+	PRINTL
+	PRINTFORMDW 瞬間、アリスの瞳の色が変わったような気がした
+	PRINTFORMDW それはこれまで私が見た事もない、ある種の狂気と強い意志が綯い交ぜとなったものだった
+	PRINTFORMDW その様はまさに死の少女、彼女のかつての二つ名を思い起こさせた……
+	PRINTL
+	PRINTFORMW 「ねぇ、咲夜。貴女がいけないのよ？」
+	PRINTFORMW 「私が此れほど愛してるのに、いつまでも煮え切らない貴女がいけないのよ…」
+	PRINTL
+	PRINTFORMDW そう、実を言うとかつてアリスにそれとなく想いを告げられた事が何度かあった
+	PRINTFORMDW しかし、私はそれから逃げてしまっていた。笑って誤魔化し、聞こえないふりをしてきた…
+	PRINTL
+	PRINTL
+	
+	;---------------------------------------------
+	;フェードイン用処理
+	;---------------------------------------------
+	;フェードインをＭＳ 明朝＆太字斜体に
+	CALL SETFONT_K14
+	;フェードイン
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "――怖かった")
+	;TWAITで間をとりつつ自動的に進める
+	TWAIT 800, 0
+	PRINTL
+	;フェードイン
+	CALL FADE(25, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "　　　今までの関係が壊れてしまうのが怖かった…")
+	TWAIT 1000, 0
+	PRINTL
+	;フェードイン
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "　　　　　　――恐れていた")
+	TWAIT 800, 0
+	PRINTL
+	;フェードイン
+	CALL FADE(25, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "　　　　　　　　　一度受け入れてしまうと、自分に歯止めが掛からなくなりそうなのを恐れていた")
+	TWAIT 1000, 0
+
+	;---------------------------------------------
+	;全画面カットイン用の一連の処理
+	;---------------------------------------------
+	;フルカットインは文字色指定できないので咲夜の文字色でSETCOLOR
+	SETCOLOR 172, 175, 210
+	;描画を抑制
+	REDRAW 0
+	CALLF ANIME_CONFIG("TIMES", 1) ;強制表示x1
+	CALL FULLCUTIN2(50, 17, "でも……") ;全画面カットイン2(フェードイン・アウトが従来より早い)
+	;REDRAWを戻す
+	REDRAW 1
+	;文字色を戻す
+	CALL KOJO_COLOR(TARGET)
+	TWAIT 1000, 0
+	PRINTL
+	PRINTL
+
+	;---------------------------------------------
+	;フェードイン終了後にフォントを戻す
+	;---------------------------------------------
+	;フェードイン
+	CALL FADE(25, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "　　　　　　　　　　　　結局のところ、アリスの全てを受け止める自信が無かったのだ……")
+	;フォントを戻す
+	CALL RESETFONT_K14
+	TWAIT 1500, 0
+
+	PRINTL
+	PRINTL
+	PRINTFORMDW 異能の力を持つ身とは云え、私は所詮人間。種族、魔法使いであるアリスとは違いすぎている
+	PRINTFORMDW どれだけ共に幸せな時間を過ごしたとしても、いつの日か別れが来る事は避けられない
+	PRINTFORMDW アリスを自分に縛りつけたあげく、最期には彼女を置き去りにしなければならない
+	PRINTFORMDW 私はそんな事には耐えられない。悲しみに暮れる彼女を一人残して世を去る事など……
+	PRINTL
+	PRINTFORMDW そんな結末が避けられない以上、付かず離れずの、現在の穏やかな関係で良いと思っていた。でも…
+	PRINTFORMDW それが逆にアリスを傷つけ、追い詰めてしまっていたなんて……
+	PRINTL
+	PRINTFORMDW 悔やんでも悔やみきれない――
+	PRINTFORMDW 私は大切な人を自らの至らなさ故に苦しめ、傷つけてしまった
+	PRINTL
+	PRINTFORMDW それも心だけに止まらず、その体まで……
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス、お願い。もう本当に止めて！」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんな事しなくても私はどこにも行かない。ずっと貴女と一緒にいるから！」")
+	PRINTL
+	PRINTFORMW 「駄目よ、今更そんな事言ったって。私は騙されないわ……」
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なっ！ 騙すだなんて、どうしてそんな…」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それに私の事なんてどうだっていいの！　だけどそのままでは貴女が！」")
+	PRINTL
+	PRINTFORMDL 私がそう言った瞬間、アリスは微かな笑みを浮かべた
+	PRINTFORMDW だがその笑みは、私の好きなそれではなく、氷のような酷薄な笑みだった…
+	PRINTL
+	PRINTFORMW 「こんな状況に追い込まれてるのに私を気遣ってくれるのね、咲夜……」
+	PRINTFORMW 「貴女はいつもそうね？ 人の心配ばかりして。その癖、物事の本質を理解してない…」
+	PRINTFORMW 「そう、貴女は分かってない！ 全然分かってない！！」
+	PRINTL
+	PRINTFORMW 「最初から全部覚悟の上なのよ。伊達や酔狂でやってる訳じゃないの」
+	PRINTFORMW 「魔法使いって貴女が思ってる以上に丈夫なのよ。術の反動があるからって、直ぐに死ぬ事はないわ」
+	PRINTFORMW 「無駄に長い寿命が人並になるだけの話よ？　ま、場合によっては人並といっても、短命な人並って事になるかも知れないけど」
+	PRINTL
+	PRINTFORMDL 視界が滲み、アリスの姿がぼやける
+	PRINTFORMDW 私は涙を流していた。心は感情の渦に飲み込まれ、最早それに抗う事は出来なかった…
+	PRINTL
+	PRINTFORMDW 悲しかった。今までの心地よく、穏やかな関係が壊れてしまった事が悲しかった。でも…
+	PRINTFORMDW それ以上に嬉しかった。アリスにここまで想われているなんて想像もしていなかった
+	PRINTFORMDW ただ、それは望んだ形ではなかったけれど……
+	PRINTL
+	PRINTFORMDW 思えばこれは非常に彼女らしいとも言えた
+	PRINTFORMDW 悩みなんてないなどと公言してる癖に、その実非常に繊細で傷付き易く、その心にはある種の闇を抱えている
+	PRINTFORMDW 人を頼る事を知らず、何でも自分で解決しようとして、時には暴走してしまう…
+	PRINTL
+	PRINTFORMDW 私はアリスのそんな部分が好きだった。堪らなく愛おしかった…
+	PRINTFORMDW いつかその心の内を、全て隠さずに見せて欲しいと思っていた
+	PRINTFORMDW 気高く、精緻で繊細なガラス細工のようなその心に触れたいと思っていた
+	PRINTL
+	PRINTFORMDW だが、そんな彼女の心が今、壊れつつある…
+	PRINTFORMDW なんとかしなければ、全てが手遅れになる前に！
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス、落ち着いて良く聞いて頂戴」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私も貴女の事好きよ。ずっと、ずっと前から…」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だから、だからっ！　貴女のそんな姿は見たくないのよ！ こんな事しなくたって私は！」")
+	PRINTL
+	PRINTFORMW 「あら、そうだったの。ありがとう咲夜。とっても嬉しいわ」
+	PRINTFORMW 「たとえ一時凌ぎの嘘だとしても、ね…」
+	PRINTFORMDW そう言い放つアリスの言葉に感情はこもっていなかった…
+	PRINTL
+	PRINTFORMW 「もう遅いのよ、今更手遅れなの。悪いけど…」
+	CALL BGM_CUTIN("the Grimoire of Alice", 1)
+	PRINTFORMW 「貴女は私の人形になってもらうわ。そして、いずれは永遠に朽ちる事のない存在にしてあげる」
+	
+	PRINTFORM 「まだ研究が完成していないから、もう少し待ってもらう事になるでしょうけど、ね…
+	;@PRINT_HEARTCBW_K14 指定色でHEARTを表示した後指定色で『」』を表示し入力待ちする
+	CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+	
+	PRINTL
+	PRINTFORMDW アリスは微笑みながらそう語った。何かに憑かれたようなその姿を、私は見るに耐えなかった…
+	PRINTL
+	PRINTFORMW 「今夜はもう遅いわ。貴女もお疲れみたいだし、ゆっくり休んで頂戴」
+	PRINTFORMW 「そうそう、紅魔舘の事なら心配しなくて大丈夫よ。ちゃんと手は打ってあるから」
+	PRINTL
+	PRINTFORMDW アリスはそう言うと私に近づき、頬に軽く口付けをした
+	
+	PRINTFORM 「じゃ、朝になったら会いましょう。私の可愛いメイド長さん…
+	CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+	
+	PRINTL
+	PRINTFORMDW 先ほどの口付けに何かが仕込んであったのか、または何らかの魔術なのか
+	PRINTFORMDW 私は強い睡魔に誘われ、意識を保つ事が出来なかった……
+	;$SKIP
+	;OP経過判定
+	KFLAG:(FLAG:ご主人様):51 = 1
+	CALL TWAIT3_K14
+	;RESULT値2でタイトルロゴは表示させない
+	RETURN 2
+;サンドボックスの場合
+ELSE
+	;汎用OPに丸投げする		NO:MASTER == 9（咲夜）の場合はモードに関わらずこちらが呼び出される
+	RETURN 0
+ENDIF
+
+;────────────────────────────────────
+;NO9_EV2, エンディングイベント口上
+;────────────────────────────────────
+;・50日経過KFLAG:(FLAG:ご主人様):0またはKFLAG:(FLAG:ご主人様):1への代入が条件(KFLAG:(FLAG:ご主人様):2と3にすべきかも)
+;-------------------------------------------------
+
+;*************************************************
+;エンディング
+;*************************************************
+;相思相愛イベント時の選択肢によりルートＡとＢに分岐
+;とりあえず暫定的。最終的にはもう少し手を加えるかも知れない
+;TRUE ENDは全て完成したのちに最後に実装する予定
+;-------------------------------------------------
+;v1.61で試しにEV2及びED後のプレイ続行を解放してみる
+;今後EVENT2の枠をこのまま使うか別枠と併用するか現状だとなんとも言えないんでとりあえずEDを関数化
+;現時点では別枠の処理は要らないと思われるんでコメントアウト
+;-------------------------------------------------
+@KOJO_NO9_EVENT_K14_2(ARG)
+;-------------------------------------------------
+;DAYではなく、特定のイベントからKFLAGインクリメントして設定した方がよさげ
+;いずれまとめて手入れする時に考える
+;基本的にこの二人、進展が超遅いので色々と難しい。挙動的には割りと好みではあるんだけどw
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;EXTRAエンディング
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF FLAG:モード == 9 && (DAY >= 50 && (KFLAG:(FLAG:ご主人様):8 == 1 || KFLAG:(FLAG:ご主人様):9 == 1) && KFLAG:(FLAG:ご主人様):51 == 1 && FLAG:オートモード表示設定 == 0 &&  FIRSTEVENT(0))
+	CALL ENDING_NO9_K14
+	RETURN 1
+ENDIF
+
+;ここはコメントアウト
+;=================================================
+;@KOJO_NO9_MS_EVENT_K14_11_ENDING
+;=================================================
+;IF FLAG:モード == 9 && (DAY >= 48 && (KFLAG:(FLAG:ご主人様):8 == 1 || KFLAG:(FLAG:ご主人様):9 == 1) && KFLAG:(FLAG:ご主人様):51 == 1 && FIRSTTIME(0))
+;	CALL ENDING_NO9_K14
+;	RETURN 1
+;ENDIF
+
+;-------------------------------------------------
+;エンディング関数
+;-------------------------------------------------
+@ENDING_NO9_K14
+#LOCALSIZE 1
+[SKIPSTART]
+TRUE ENDを最終的にどのような形にするか悩ましい
+主に如何に呼び出すかという意味において
+TEST版のED仕様ならRETURN 0とFIRSTTIME、若しくはAUTOORDERで階層化させてEV 2の枠内でTRUE ENDING呼び出すのもありかなという気もしている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;未完＆まだ実装する気ないんでコメントアウト
+;エンディングルートＡ(TRUE END)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF KFLAG:(FLAG:ご主人様):0 == 1 && KFLAG:(FLAG:ご主人様):10 == 1
+	CALL TWAIT3_K14
+	;TRUE END
+	;来るって言ったのに遅いわね云々
+	PRINTFORMW
+	;咲夜登場
+	PRINTFORMW
+	;いつものやりとり
+	PRINTFORMW
+	;思い出話
+	PRINTFORMW
+	;月を見上げながら
+	PRINTFORMW
+	;明かされる過去。（仄めかす程度か？）二人の本当の最初の出会い
+	
+	;フラッシュバック
+	
+	どうして泣いているの？
+	どうして血だらけなの？
+	どうしてひとりぼっちなの？
+	そっか、じゃぁ私と一緒だね云々。貴女、お名前は？
+	―判らない。私には名前がないの
+	そうなんだ？ 私はアリスよ、よろしくね
+	;そして人形を手渡そうとする
+	これ、貴女にあげる。この子もまだ名前がないの。貴女と一緒だね云々…
+	―貰っていいの？
+	うん、その代わりに…（もじもじしながら）私と友達になってくれる？
+	―ごめんなさい。それはできないの、だって…私はもうここには居られないから
+	どうして？
+	―私は逃げなきゃならないの
+	誰から逃げるの？
+	―よく判らない…でも、私は逃げなきゃいけないの。だって、人をいっぱい殺したから…
+	どうして殺したの？
+	―私を襲ってくる、悪い奴だから
+	じゃ仕方ないね（あくまで無邪気に）
+	―ねぇ、貴女もここにいては危ないわ。そうだ！ 私と一緒にいかない？
+	ごめんなさい、それはできないの。
+	―そう、残念。じゃ、私はそろそろ行くわ
+	ねぇ、もしまた会う事があったら…その時こそ友達になってくれる？
+	―うん、喜んで
+	（幼い二人、笑顔で手を取り合い約束を交わす）
+	
+	;フラッシュバックおわり
+	
+	PRINTFORMW
+	;そして幕引き
+	PRINTFORMW
+	;SCROLLTEXTでエンディングタイトル
+	RESETCOLOR
+	FONTSTYLE 1
+	CUSTOMDRAWLINE -=
+	CALL SCROLLTEXT("　　　　　　　【Ending No.0005】ここにタイトル", 2, 6, 117, 0, 1)
+	CALL RESETFONT_K14
+	PRINTL
+	PRINTL
+	;ED経過判定
+	;KFLAG:(FLAG:ご主人様):4 = 1
+	;ゲームオーバー(選択肢x3)
+	CALL GAME_OVER_K14
+	RETURN 1
+ENDIF
+[SKIPEND]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;選択肢で分岐。最終的には共通ルートにまとめる
+;エンディングルートＡ(GOOD END)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF KFLAG:(FLAG:ご主人様):0 == 1
+	;背景色を夜用に
+	SETBGCOLOR 0, 0, 20
+	PRINTFORMDW ある晩の事、紅魔舘を訪れる約束をしていたアリスは、その準備に追われていた…
+	PRINTFORML 「さて、支度も出来た事だしそろそろ行きましょうか」
+	PRINTFORMW 「荷物をお願いね、上海」
+	CALL PRINTCOLORW(COLOR_K14("上海"), "「＼ｼｬﾝﾊｰｲ／」")
+	PRINTFORMW 「……どうみても自我が生まれてるわよね、この子」
+	CALL PRINTCOLORW(COLOR_K14("上海"), "「？」")
+	PRINTFORMW 「人の形をしたものには魂が宿る、って誰の言葉だったかしら…」
+	PRINTFORMW 「まぁいいわ。いきましょう」
+	CALL TWAIT3_K14
+	;アリス、紅魔舘を訪れるも多忙な咲夜。アリスは待つ間に…
+	PRINTFORMW 「今晩は、咲夜」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いらっしゃい、アリス。で、来てもらったとこ悪いんだけど…」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ちょっと今手が離せないのよ。部屋で待っててもらえる？」")
+	PRINTFORMW 「仕方無いわね。ま、どうせならちょっと他に寄ってから行くから」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「わかった。じゃ、部屋で会いましょう」")
+	PRINTL
+	CALL HTMLPRINTDL(@"%HTMLBUTTON("[0] 紅魔舘の庭を散策", "0", "レミリアと対面")%")
+	CALL HTMLPRINTDL(@"%HTMLBUTTON("[1] 大図書館へ", "1", "パチュリーと対面")%")
+	;PRINTFORMDL [0] 紅魔舘の庭を散策
+	;PRINTFORMDL [1] 大図書館へ
+	CALL INPUTINTD(0, 1)
+	SELECTCASE RESULT
+		;紅魔舘の庭にて
+		CASE 0
+			;レミリア登場、こんな夜更けに云々
+			PRINTFORMW 「よく手入れが行き届いてるわね。それに、風がとっても気持ちいい…」
+			PRINTFORMDW その時、アリスの背後に何かが降り立った…
+			PRINTL
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「こんな夜更けに一人で出歩いてるのは感心しないわね」")
+			;キャラカットイン(レミリア)
+			CALL CHARA_CUTIN(CSVCSTR(10, 10, 0), CSVCSTR(10, 11, 0), CSVCSTR(10, 12, 0))
+			PRINTL
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「吸血鬼にでも襲われたらどうするつもりなのかしら？」")
+			PRINTL
+			;面倒くさいのと会ったわ、とアリス
+			PRINTFORML （面倒なのと会ったわね……）
+			PRINTFORMW 「好き好んで魔法使いを襲うとも思えないけどね」
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「…よく判ってる。魔法使いの血なんて頼まれても願い下げ」")
+			;会話を交わす二人
+			PRINTFORMW 「…で？ 態々現れたからには、話があったんじゃない？」
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「私との話に時間は掛けたくない、か。まぁいいわ。そういうの嫌いじゃないし」")
+			PRINTFORMW 「…………」
+			;咲夜について云々
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「単刀直入に言うわ。うちの犬についての話よ」")
+			
+			;ＢＧＭカットイン(亡き王女の為のセプテット)
+			CALL BGM_CUTIN(CSVCSTR(10, 13, 0), 1)
+			
+			PRINTFORMW 「！？ 気付いてたのね……」
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「見損なってもらっては困るわねぇ」")
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「こう見えても長い時を生きてきてるのよ？ 見ていれば簡単に判る事よ」")
+			PRINTFORMW 「そうだったの……それで？ 結局何が言いたい訳？」
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「せっかちねぇ。まぁいいわ…あいつ、イヤ、咲夜は…」")
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「お前と居る時とても穏やかな顔をしてるのよ。私には見せた事もないような穏やかな顔を、ね」")
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「悪魔の狗が、ただの小娘みたいな純真な笑顔を見せるの」")
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「私じゃあいつにそんな顔させてやれないし、させてやるつもりも無いわ」")
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「だからお前には感謝してる。そして…できれば、ずっとあいつの傍に居てやって欲しい」")
+			PRINTFORMW 「レミリア…」
+			PRINTL
+			PRINTFORMDW レミリアは笑顔で言った…
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「何だかんだ言って私はあいつが可愛くて仕方無いのよ。生きてる限り扱き使ってやるけどね」")
+			PRINTFORMW 「…鬼ね」
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「そんなに褒めるな。照れるだろう」")
+			PRINTFORMW 「…いや、あんた吸血鬼でしょう。でも…ありがとう、レミリア」
+			PRINTFORMW 「ただ、私はそんなに優しくないわよ？」
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「そこまで干渉する気はこちらには無いわ。ただ…」")
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「咲夜にはそのくらいで丁度いいと思うけど」")
+			PRINTFORMW 「…同感」
+			;フェードアウト
+			CALL FADE(20, COLOR_K14("レミィ"), COLOR_K14("black"), "「ふふっ」")
+			SIF ANIME_CONFIG("FADE")
+				CLEARLINE 1
+			;フェードアウト
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「クスクス」")
+			SIF ANIME_CONFIG("FADE")
+				CLEARLINE 1
+			PRINTL
+			PRINTFORMDW レミリアはアリスの頬にそっと口づけしながら言った…
+			CALL PRINTCOLORW(COLOR_K14("レミィ"), "「咲夜のこと、よろしくね」")
+			PRINTFORMW 「ええ、わかったわ……」
+			CALL TWAIT1_K14
+			;共通ルートに戻る
+			;KFLAGに代入
+			KFLAG:(FLAG:ご主人様):7 = 1
+		;大図書館にて
+		CASE 1
+			;パチュリー登場、よくきたわね云々
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「……鼠が入り込んできたわね」")
+			;キャラカットイン(パチュリー)
+			CALL CHARA_CUTIN(CSVCSTR(8, 10, 0), CSVCSTR(8, 11, 0), CSVCSTR(8, 12, 0))
+			PRINTL
+			PRINTFORMW 「本の下敷きにもならず、元気そうで何よりね」
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「ふふ、言うわね。まぁそれは兎も角…よく来たわね。今、席を用意させるわ」")
+			PRINTFORMW 「ん、ありがとう」
+			CALL TWAIT1_K14
+			;二人で魔法談義に花を咲かせる
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「…それは中々面白い考えね。でも簡単にはいかないとは思う」")
+			
+			;ＢＧＭカットイン(ヴワル魔法図書館)
+			CALL BGM_CUTIN(CSVCSTR(8, 14, 0), 1)
+			
+			PRINTFORMW 「どの位かかるかしら？」
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「…そうね。普通にいって50年ってところね」")
+			PRINTFORMW 「えっ、そんなに？」
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「一般的な場合、って前置きするべきだったわね。貴女の場合なら、そうねぇ…」")
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「20年ってところではないかしら？」")
+			PRINTFORMW 「いずれにしても、楽な道のりじゃなさそうね…」
+			;年長者の説教
+			CALL PRINTCOLORL(COLOR_K14("パチェ"), "「当然よ。魔術を修めるには長い時間がかかるし、それに近道はないの」")
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「よく覚えておきなさい。未熟な魔法使いよ」")
+			PRINTFORMW 「…相変わらず手厳しいわね」
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「私は年長の魔法使いとして当然の事を言ったまでよ」")
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「まぁそれはいいとして、そろそろお茶にしましょうか」")
+			
+			PRINTFORM 「賛成…
+			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+			
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「……現金ね」")
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「でも、そういった心持ちは魔法使いに必要な資質であるのも確かね。ふふっ」")
+			PRINTFORMDW 二人は暫しの間魔術談義に花を咲かせ、楽しいひとときを過ごした…
+			CALL TWAIT1_K14
+			;有意義な時間だったわ、とアリス図書館から去ろうとする
+			PRINTFORMW 「さて、そろそろお暇しようかしら。有意義な時間だったわ、ありがとう」
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「私も愉しかったわ。貴女は生徒としては教え甲斐があるし、それなりに見所もある」")
+			PRINTFORMW 「…それなりに、か。精進するわ、先・輩」
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「ま、頑張る事ね？ こう見えても貴女には期待してるのだから」")
+			PRINTFORMW 「はいはい、判ったわ」
+			PRINTFORMDW アリスはそう言って席を立とうとした…
+			PRINTL
+			;ちょっとまちなさいと引き止めるパチュリー
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「ちょっと待ちなさい。アリス」")
+			PRINTFORMW 「なに？」
+			PRINTFORMDW パチュリーは真剣な面持ちで語り始めた…
+			PRINTL
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「この世界に私達の同胞はもう残り少ないの。だから…」")
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「あまり無茶な事はおやめなさい」")
+			PRINTFORMW 「…気付いてたのね」
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「何があったかまでは判らない。でも…普通ではない、異様な魔力の残滓は感じ取れる」")
+			PRINTFORMW 「痕跡は消したつもりだったのに…」
+			PRINTL
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「ふふ、私を見くびらない事ね？ それに…」")
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「私達は悠久の時を生きる魔法使い。まだまだ時間は沢山あるわ」")
+			CALL PRINTCOLORW(COLOR_K14("パチェ"), "「共通の価値観を持ち、共通の話が出来る相手を失うのは私も嫌なのよ」")
+			PRINTFORMW 「…わかった。よく覚えておくわ」
+			CALL TWAIT1_K14
+			;共通ルートに戻る
+			;KFLAGに代入
+			KFLAG:(FLAG:ご主人様):7 = 2
+	ENDSELECT
+	;咲夜の私室。ごめんなさい、遅くなったわと咲夜登場
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ごめんなさい、すっかり遅くなっちゃって」")
+	PRINTFORMW 「大丈夫よ。こっちもそれなりに有意義に過ごしてたから」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それは何より…でも、ちょっと気になるわね？」")
+	PRINTFORMW 「聞きたいの？ まぁいいわ、咲夜にも話しておくべきだと思うし」
+	;楽しげに会話
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何の話？」")
+	PRINTFORMDW アリスは語り始めた…
+	PRINTL
+	;派生を処理
+	SELECTCASE KFLAG:(FLAG:ご主人様):7
+		;レミリアに会った場合
+		CASE 1
+			PRINTFORMW 「レミリアにね、その…会ったのよ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「お嬢様に？ で、何を話したのよ」")
+			PRINTFORMDW アリスは事の一切を咲夜に話して聞かせた…
+			PRINTL
+			PRINTFORMW 「レミリアに言われたわ。咲夜をよろしく、って」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「えっ、それって…」")
+			PRINTFORMW 「まぁ”そういう事”なんじゃない？ 取りあえず素直に喜んでいいんじゃないかしら」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、そうよね。でも、とっくにばれていたのね…」")
+			PRINTFORML 「咲夜が判りやす過ぎるからでしょ？」
+			PRINTFORMW 「…まったく。私も最初は何を言われるかと思ってあせったわよ」
+			PRINTFORMW 「でも、何だかんだ言って咲夜は愛されてるのね。別に羨む訳じゃないけど、そういうのもアリかなって思ったわ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、私もお嬢様を愛してるわ。ただしこの場合は、主人としてね」")
+			PRINTFORMW 「うん、知ってる」
+		;パチュリーに会った場合
+		CASE 2
+			PRINTFORMW 「図書館でね、その…パチュリーに説教されたわ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ちょっと面白そうね？ 詳しく聞かせてよ」")
+			PRINTFORMDW アリスは事の次第を咲夜に話して聞かせた…
+			PRINTL
+			PRINTFORMW 「彼女はぼかしてたけど、恐らく何があったか判ってる感じだった」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「魔法使い同士の会話って回りくどいわねぇ」")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「でも、あの方なりに貴女の事心配してるのは良く判るわ」")
+			PRINTFORMW 「うん、そうね…色々あったけど、パチュリーには感謝してる。同胞として、魔法使いの先輩として、ね」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ええ、知ってる」")
+	ENDSELECT
+	PRINTL
+	;バルコニーに出てお茶
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「話も一段落って事でバルコニーでお茶にしましょうか。紅茶でいいわよね？」")
+	PRINTFORMW 「ねぇ咲夜。折角だから…」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ブランデーを少々ね？」")
+	PRINTFORMW 「ふふっ、流石メイド長。よく判ってるわね」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「当然よ」")
+	PRINTL
+	;二人、月を見上げながら
+	PRINTFORMW 「ん、いい香り。アールグレイかしら」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「流石、よく判ってるわね」")
+	PRINTFORMW 「…当然」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「でも紅茶だけだと、なんか物足りないわね」")
+	PRINTFORMW 「ふふっ、そんな事もあるかと思って実は用意してきてるのよ。ほら」
+	PRINTFORMDW アリスはそう言うと何処からかブランデーケーキを取り出した
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…やれやれ。準備がよろしい事で」")
+	PRINTFORMW 「まぁね？ それに、その、なんていうか…今日はちょっと特別な日になる気がしてたの」
+	CALL PRINTCOLOR(COLOR_K14("咲夜"), "「紅茶とケーキで二人だけのささやかなパーティってとこね。悪くないわ")
+	CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"))
+	PRINTFORMW 「そうね、本当に…ね」
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…これは美味しいわね。紅茶の茶葉も混ぜてる？」")
+	PRINTFORMW 「アールグレイをね。結構日持ちもするし、今度多目に作ってきてあげようか？」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それより作りかたを教えて欲しいわね」")
+	PRINTFORMW 「それはいいけど……咲夜にできるかしら？」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「言ってくれるわね？ 確かにお菓子作りはアリスの方がちょっとだけ上手いけど」")
+	PRINTFORMW 「ちょっとだけって事はないと思うけど？」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いいえ、ちょっとだけ」")
+	PRINTFORMW 「…強情ね。ま、お互い様だけど」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、それは認めるわ」")
+	
+	;フェードアウト
+	CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「クスクス」")
+	SIF ANIME_CONFIG("FADE")
+		CLEARLINE 1
+	;フェードアウト
+	CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「ふふふ」")
+	SIF ANIME_CONFIG("FADE")
+		CLEARLINE 1
+
+	CALL TWAIT1_K14
+	;そして幕引き
+	PRINTFORMW 「月が綺麗ね」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね…そういえばあの日もこんな月の綺麗な夜だった」")
+	PRINTFORMW 「あの日？」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、あの日。貴女が現状を変えようと一歩踏み出した日」")
+	PRINTFORMW 「そういえばそうね…、そんな気がする」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私はね？ 感謝してるのよ。アリスが行動を起こさなかったら何も変わらなかった」")
+	PRINTFORMDW アリスは黙して語らず、じっと咲夜を見つめている…
+	;何となくキャラカットイン風のアレンジ用のカットインを作りたくなるな！
+	;---------------------------------------------
+	;タイトル:Plan Doll
+	;原曲:人形裁判～人の形弄びし少女
+	;サークル:FELT
+	;ヴォーカル:舞花
+	;アルバム:Fairy Queen
+	;---------------------------------------------
+	CALL BGM_CUTIN("Plan doll", 1)
+	
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そのままだったら、きっと今でもそのままの関係だったと思うわ」")
+	PRINTFORMW 「うん…」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そして多分…ずっとそのままだった気がする」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大切な時間を無駄にして、私はきっとそのまま…」")
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女言ったわよね？ 今を大切にしたいと思えるようになったって」")
+	PRINTFORMW 「そうね……私は先ばかり見て足元が見えてなかった」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私は逆に先の事を見ようって思うようになったわ」")
+	PRINTFORMW 「そうなの？」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ええ。でも、今が大事じゃないって訳じゃない」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「むしろ先の事の為にも、今をもっと大事にしようってところね」")
+	PRINTFORMW 「…同感。でも今日の咲夜はちょっと変よ」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんな事言ってると押し倒すわよ」")
+	PRINTFORMW 「やれるものならやってみなさいよ…って、ちょ、さ、咲夜！？」
+	PRINTFORMDW 咲夜は突然アリスを押し倒した。その瞳は紅く染まり、それを見返すアリスの瞳もまた、金色に染まっている…
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ふふ、これでいいかしら？」")
+	PRINTFORMW 「やめてよこんな所で…それに、月が見ているわ」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「違うわ、見せてるのよ」")
+	PRINTFORMW 「…まったく。でも、時にはこういうのも悪くないわね…」
+	PRINTFORMDW アリスは咲夜を引き寄せ強く抱きしめた…
+	CALL TWAIT3_K14
+	;フェードインをＭＳ 明朝かつ太字斜体に
+	CALL SETFONT_K14
+	;中央で表示
+	ALIGNMENT CENTER
+	;以下、フェードイン TARGET以外の台詞を入れる場合@FADEINだと使い勝手が悪いので@FADEで統一
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "い、痛いわ、アリス…")
+	TWAIT 2500, 0
+	PRINTL
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("ALICE"), "ウルサイわよ。このくらい我慢して…ばか咲夜……")
+	TWAIT 2500, 0
+	PRINTL
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "月が…きれいね……")
+	TWAIT 2500, 0
+	PRINTL
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("ALICE"), "その体勢で見えるはずないと思うけど？")
+	TWAIT 2500, 0
+	PRINTL
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "ちゃんと見えてるわ。貴女の瞳に映る月が、ね……")
+	TWAIT 2500, 0
+	PRINTL
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("ALICE"), "…臭い台詞。でも、そうね……悪くない。今は、そう思えるわね")
+	TWAIT 3000, 0
+	CALL TWAIT3_ZWEI_K14
+	CALL FADE(20, COLOR_K14("black"), COLOR_K14("white"), "～Fin")
+	;フォントを戻す
+	CALL RESETFONT_K14
+	;左寄せに戻す
+	ALIGNMENT LEFT
+	PRINTL
+	TWAIT 500, 0
+	PRINTL
+	
+	;SCROLLTEXTでエンディングタイトル
+	RESETCOLOR
+	;太字にする
+	FONTSTYLE 1
+	CUSTOMDRAWLINE -=
+	CALL SCROLLTEXT("　　　　　　　【Ending No.0006】", 2, 6, 117, 0, 1)
+	;フォントを戻す
+	CALL RESETFONT_K14
+	
+	;ED経過判定
+	;KFLAG:(FLAG:ご主人様):5 = 1
+	PRINTL
+	PRINTL
+	;ゲームオーバー(選択肢x3)
+	CALL GAME_OVER_K14
+;ルートＢは分岐なし。血を吐きそうになりながら書いた
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;エンディングルートＢ(BAD END)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+ELSEIF KFLAG:(FLAG:ご主人様):1 == 1
+	SETBGCOLOR 0, 0, 20 ;背景色を夜用に
+	;まぁほとんど意味ないね、これ。何らかの形で冬を表現するエフェクトを捏造すべきな感
+	FLAG:季節 = 3 ;季節を冬に
+	PRINTFORMDW 満ち足りた幸せな日々…しかし、それは長くは続かなかった
+	CALL TWAIT1_K14
+	PRINTFORMDW 月日が流れたある冬の事、咲夜は病に臥せっていた
+	PRINTFORMDW その原因は誰にも判らず、医師やまじない師、魔術師達が匙を投げるなか、咲夜は日々衰弱していった…
+	CALL TWAIT3_K14
+	;病に伏せる咲夜
+	PRINTFORMDW その部屋に居るのは二人きりだった
+	PRINTFORMDW ベッドに横たわる咲夜、傍に佇むアリス
+	PRINTFORMDW 窓辺には雪が降り積もり、辺りは静寂に包まれている…
+	PRINTL
+	PRINTFORMW 「こうして二人きりになるのって、随分久しぶりね」
+	PRINTFORMDW アリスは笑顔で語りかけた。しかしその表情からは憔悴しきった様子が窺われ
+	PRINTFORMDW 咲夜は自分が病に臥せった状況にも関わらず、そんなアリスの身を案じるのだった…
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、みんな気を使ってくれたみたい」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私は……もう長くない。だから、みんな…」")
+	PRINTFORMW 「ばかっ！ 何言ってるのよ！！ そんなの全然咲夜らしくないわよ！」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、らしくないわね……でも、私には判るの」")
+	PRINTFORMDW アリスは咲夜の手を握り締め、そして言った…
+	PRINTL
+	PRINTFORMW 「判らない！ 私には判らないわよ、そんなの！」
+	PRINTFORMW 「なんで？ どうして？ どうして咲夜がこんな目に合わなきゃならないのよっ！」
+	PRINTFORMDW アリスの感情は昂ぶり、言葉は熱を帯び、その目には涙が浮かんでいた…
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「落ち着いて、アリス。これは全部私の自業自得なの。だから…」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女が気に病む事なんてないのよ」")
+	PRINTFORMW 「わ、訳の判らない事言わないでよ。何よ…自業自得って……」
+	PRINTFORMW 「それに、貴女の事心配するのは当たり前じゃない！」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうだったわね…最期の最期まで、気が利かなくてごめんなさい」")
+	PRINTFORMW 「なんで、謝るのよ……」
+	PRINTFORMDW 咲夜はアリスをなだめるかのようにそっと手を握り返すと、胸元から何かを取り出した
+	PRINTL
+	;明かされる真実
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇ覚えてる？ この指輪…」")
+	PRINTFORMW 「そ、それって……咲夜が壊して棄てたって…」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ごめんなさい、ずっと嘘ついてたわ。でも…」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私はこれを持っていたかったの」")
+	PRINTFORMW 「どうして、そんなもの……どんな影響があるか判らないって言ったじゃない！」
+	PRINTFORMDW 咲夜は語り始めた…
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「でもこの指輪は私達を結び付けてくれたわ。そして、あの時の貴女は命を掛けていた」")
+	PRINTFORMW 「な、何言い出すのよ」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリスが一歩を踏み出してくれたから私達は一つになれた」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「自分の身を犠牲にしながら、貴女が踏み出してくれたから…」")
+	PRINTFORMW 「そんなの咲夜が気にする事なんて…」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうじゃないのよ」")
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「これはずっと目の前の事から逃げ続けた自分への戒め、私なりのけじめなのよ」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それに、これを身につけてると貴女と一つになれるような気がして、ね」")
+	PRINTFORMW 「だ、だからって！ こんな事になったら意味が無いじゃない！」
+	PRINTFORMW 「そんなもの、さっさと棄てればよかったのよ！」
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはできなかったのよ。貴女の血が染み付いたこの指輪を棄てるなんて事は…」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「場合によっては貴女はあのとき死んでた」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「その貴女の、アリスの覚悟に応える為にも、私はこれを持っていたかったの」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「自分がどうなろうとも、ね」")
+	PRINTL
+	PRINTFORMW 「ホントばか……咲夜は大馬鹿よ！」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうかも、しれないわね…」")
+	PRINTL
+	;別れ
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ごめんなさい、アリス。でも貴女に会えて良かった…私、幸せだったわ」")
+	PRINTFORMW 「嫌っ！ 嫌よそんなの！ もう終わりみたいな事、言わないでよ…」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、ね……それに、またいつか会える。そんな気がするわ…」")
+	PRINTFORMDW 咲夜はアリスの頬に手を当て、指先でそっと涙を拭った…
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だから、もう泣かないで……貴女には、やっぱり笑顔が似合うと思うから」")
+	PRINTL
+	PRINTFORMDW アリスは咲夜の手をとり、涙を流しつつも精一杯の笑顔を見せた
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「うん…やっぱり、その方がいいわね。最期に貴女の笑顔が見られてよかった…」")
+	CALL FADEIN(20, "「さく、や…？」")
+	PRINTFORMDW 瞼を閉じながら咲夜が言葉を紡ぐ
+	;フェードイン
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "「ねぇアリス…春になったら、一緒に……」")
+	TWAIT 500, 0
+	PRINTL
+	PRINTFORMDW 満ち足りた笑顔を残したまま…それが咲夜の最期の言葉となった…
+	CALL TWAIT3_K14
+	;葬儀
+	;他の人物を描写すると収拾つかなくなるので切り捨てる。本筋に関係もないしね
+	PRINTFORMDW 葬儀は湖の見える小高い丘の上で厳かに執り行われた
+	PRINTFORMDW 降り積もる雪の中言葉を発する者もなく、ただ静かに時は過ぎていった…
+	PRINTL
+	PRINTFORMDW 葬儀の参列者が一人、また一人と去っていき、最後には喪服に身を包んだ人形遣い、アリスだけが残された
+	PRINTFORMDW その手には咲夜が愛用していたヘッドドレスと、かつて自身が作り出し、咲夜を死に追いやる元ともなった指輪が握られている
+	PRINTFORMDW その瞳は涙を流す事もなく、ただ静かに咲夜の永眠する事となった場所を見つめていた…
+	PRINTL
+	PRINTL
+	;フェードインをＭＳ 明朝に(他に何か適切なフォントがないかな？)
+	CALL SETFONT_K14
+	;中央で表示(アライメントで行末コメント使うとエラーを吐く)
+	ALIGNMENT CENTER
+	;-------------------------------------------------------
+	;FADE毎にクリアラインさせない方がいいような気もする…
+	;そしてフェードインでもいいような気もするし悩ましいな！
+	;-------------------------------------------------------
+	;//ユニコード化によりフランス語も普通に出力可能に。アキュートアクセント付きでも保存、出力に問題なし！
+	;フェードアウト5連
+	CALL FADE(30, COLOR2_K14("ALICE"), COLOR_K14("black"), "Par chance nos vies nocturnes")
+	;CLEARLINE 1
+	TWAIT 2500, 0
+	CALL FADE(30, COLOR2_K14("ALICE"), COLOR_K14("black"), "Comme des pétales s'échappent aux vents de Neptune")
+	;CLEARLINE 1
+	TWAIT 2500, 0
+	CALL FADE(35, COLOR2_K14("ALICE"), COLOR_K14("black"), "Marionnettes guidées en cachette Jusqu'à ma cage")
+	;CLEARLINE 1
+	TWAIT 2500, 0
+	CALL FADE(30, COLOR2_K14("ALICE"), COLOR_K14("black"), "Je ne vous ai pas aimés juste--SAKUYA")
+	TWAIT 2500, 0
+	;CLEARLINE 1
+	CALL FADE(35, COLOR2_K14("ALICE"), COLOR_K14("black"), "je vous aimais")
+	;CLEARLINE 1
+	TWAIT 1000, 0
+	;最後にまとめて行削除する
+	CLEARLINE 5
+	PRINTL
+	;フォントを戻す
+	CALL RESETFONT_K14
+	;左寄せに戻す
+	ALIGNMENT LEFT
+	;再会、人形遣いの真の姿、そして幕引きへ
+	PRINTFORMDW アリスは衰弱していた…
+	PRINTFORMDW それが咲夜を失った事による精神的なものなのか、自ら生み出した忌まわしい指輪の影響なのか、彼女自身にも判らなかった
+	PRINTFORMDW 額には汗が滲み、視界がぼやける。アリスはがっくりと膝をつき、その場に蹲りそうになった
+	PRINTFORMDW と、その時……彼女の身体を包む何かの感触…
+	PRINTFORMDW それはやさしく、あたたかく、よろこばしく、懐かしい、彼女が求めてやまない感触だった……
+	;---------------------------------------------
+	;タイトル:La Fleur En Cage
+	;原曲:不思議の国のアリス
+	;サークル:Crest
+	;ヴォーカル:Lyn-A
+	;アルバム:螺旋衒操 ～Dolls of Independence～
+	;---------------------------------------------
+	CALL BGM_CUTIN("La fleur en Cage", 1)
+	
+	CALL FADEIN(20, "「さく、や……」")
+	PRINTL
+	PRINTFORMDW 振り返るとそこには咲夜の姿があった。少なくともアリスにはそう見えた
+	PRINTFORMDW その姿は朧で、儚げで、もしかしたら彼女にしか見えないものであるかも知れなかった…
+	PRINTFORMW 「きてくれたのね、咲夜」
+	PRINTL
+	PRINTFORMDW アリスを見つめる咲夜の姿はほほえみを湛えつつも、その表情は何処か悲しげであった
+	PRINTFORMDW 咲夜が膝をついたアリスに手を差し伸べる。アリスは笑顔でその手を取ろうと立ち上がりかけた
+	PRINTFORMDW 彼女本来の美しく、生気に満ちた、一点の曇りも無い笑顔で――
+	PRINTL
+	PRINTFORMDW しかし……差し出したアリスの手はもはや人のそれではなく、人形そのものになっていた…
+	PRINTFORMDW アリスはその魂が存在の奥底から、かつての彼女自身であったもの、人形であるその身体から引き離され
+	PRINTFORMDW 生命が薄れていくのを感じながら、こうして死ぬのがずっと昔から自分の運命なのだと悟った…
+	PRINTFORMDW しかし、そうして死んでゆきながらも、彼女は幸せだった
+	PRINTFORMDW 自身の魂がかけがえのない相手と溶け合い、永遠に結ばれた事を知ったからであった
+	PRINTL
+	CALL FADEIN(20, "「咲夜、これで私達は永遠にひとつだわ」")
+	TWAIT 500, 0
+	PRINTFORMDW 七色の人形遣い、アリスは一声叫び、やがてその身体はくずおれ、抜け殻の人形と化してぐったりと横たわった
+	PRINTFORMDW 未だ降り止む事を知らぬ、雪空のもとに……
+	PRINTL
+	PRINTFORMDW 雪は降り続いた。二人を弔うかのように。二人を祝福するかのように
+	PRINTFORMDW それはいつまでも、いつまでも、降り続いた……
+	CALL TWAIT3_K14
+	;FULLCUTINでもいいような気もするけど、どうするか
+	;フェードインをＭＳ 明朝に
+	CALL SETFONT_K14
+	;中央で表示
+	ALIGNMENT CENTER
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "ねぇ覚えてる？ 私達が出会ったのもこんな雪の降る日だったって事")
+	TWAIT 2500, 0
+	PRINTL
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("ALICE"), "忘れる訳ないわ。私の、大切な想い出だもの……")
+	TWAIT 2500, 0
+	PRINTL
+	PRINTL
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "見てアリス！ 月がとっても綺麗")
+	TWAIT 2500, 0
+	PRINTL
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("ALICE"), "馬鹿ね。月なんて見える訳…")
+	TWAIT 3000, 0
+	PRINTL
+	CALL FADE(20, COLOR_K14("black"), COLOR2_K14("ALICE"), "そうね……私にも見える。そんな、気がするわ……")
+	TWAIT 3000, 0
+	CALL TWAIT3_ZWEI_K14
+	CALL FADE(20, COLOR_K14("black"), COLOR_K14("white"), "～Fin")
+	;フォントを戻す
+	CALL RESETFONT_K14
+	;左寄せに戻す
+	ALIGNMENT LEFT
+	PRINTL
+	TWAIT 500, 0
+	PRINTL
+	;デフォ色にする
+	RESETCOLOR
+	;太字にする
+	FONTSTYLE 1
+	;SCROLLTEXTの上段にCUSTOMDRAWLINEしてラインの中でアニメーションさせる
+	CUSTOMDRAWLINE -=
+	;SCROLLTEXTでエンディングタイトル
+	CALL SCROLLTEXT("　　　　　　　【Ending No.0007】", 2, 6, 117, 0, 1)
+	;フォントを戻す
+	CALL RESETFONT_K14
+	PRINTL
+	TWAIT 500, 0
+	PRINTL
+	;ゲームオーバー2で終了させる
+	CALL GAME_OVER2_K14
+ENDIF

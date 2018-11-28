@@ -1,0 +1,1304 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上 日常イベント口上ファイル
+;
+;	日常イベントで呼び出される口上をまとめたファイル
+;
+;Version		Reason
+;1.71			@口上記入チェック仕様に
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;日常イベント口上
+;========================================================================
+;屈服刻印*5％で実行 屈服刻印は調教者毎に判別される
+;イベントが発生した際の内訳はスキンシップ67％、日常33％
+;システム側の処理はERB\SYSTEM\EVENT_DAILY.ERB内
+;-------------------------------------------------
+
+;────────────────────────────────────
+;EV201, 介抱		DAILY_LIFE_NURSING
+;────────────────────────────────────
+;・調教中気絶した後
+;-------------------------------------------------
+@KOJO_EVENT_K14_201(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,失神で調教中止になった場合/=1,疲労で調教中止になった場合)
+;-------------------------------------------------
+;・介抱の場合、口上主は調教者(TARGET)になっている
+;・@FAVORや@AFFECTION等の好感度参照用関数は、引数を省略するとTARGETを見に行くので調教部分と同じ使い方でOK
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;介抱
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	;疲労で調教中止になった場合
+	IF ARG == 1
+		;アライメント+かつアリスが主人である場合
+		IF TALENT:TARGET:ご主人様 && ALI(0, (FLAG:ご主人様))
+			PRINTFORMW 「――まったく。この程度で情けないったらないわね」
+			;良い子は真似してはいけませんという類のアレ		まぁTIMES, 1ならなんとか。FORCEは許されないと思う次第
+			CALLF ANIME_CONFIG("TIMES", 1)
+			;フェードアウト
+			CALL FADEOUT(20, "「まぁいいわ……」")
+			;行削除		TIMES使ってるので決めうち
+			CLEARLINE 1
+			CALL HTMLPRINTW(@"「食事の用意ができるまで、そこで%HTMLFONT("<b>大人しく</b>")%、%HTMLFONT("<b>ゆっくり</b>")%休んでいるのよッ！ いい？」")
+		;アライメント-
+		ELSE
+			PRINTFORMW 「ま、確かに…、私もやりすぎたかもしれないけれど」
+			PRINTFORMW 「この程度で音を上げられちゃ、興ざめもいいとこね……」
+		ENDIF
+	;失神で調教中止になった場合
+	ELSE
+		;相思相愛
+		IF TALENT:TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「ご免なさい、私、やり過ぎちゃったわね…」
+		;それ以外
+		ELSE
+			PRINTFORMW 「\@ ALI(0) ? ねぇ大丈夫？ 後の事は心配しなくていいわ # あら、思ったより元気そうね？ \@」
+			PRINTFORMW 「\@ ALI(0) ? ゆっくり休んで頂戴 # ま、今はゆっくり休むといいわ \@」
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+;========================================================================
+;スキンシップ（各種の性経験が入ります）
+;========================================================================
+;@DAILY_LIFE_1_0～からランダムで選ぶ　RETURN 0されると再抽選、RETURN 1(0以外)で抽選から抜ける
+;-------------------------------------------------
+;・スキンシップの場合、口上主がTARGETであるとは限らない
+;・(ASSI:1)や(ASSI:2)である場合もあったり、ASSIですらない場合もある
+;・この箇所での口上主の参照(キャラ番号の指定)はDAILY_TARGETで
+;・@FAVORや@AFFECTION等の好感度参照用関数及びその他多くの関数は、引数を省略するとTARGETを参照してしまうので
+;・この箇所に於いてはキャラ番号を指定する必要がある
+;-------------------------------------------------
+;※多次元配列変数について…
+;	・TALENT等の多次元配列変数は省略するとTARGET扱いになる(TALENT:HOGEはTALENT:TARGET:HOGEと同じである)ので注意
+;	・この箇所で口上主の素質を参照する場合は"TALENT:DAILY_TARGET:HOGE"のように行うこと
+;	・その他の変数を使用する場合も、一通り調べておいた方が幸せになれます
+;	・このバリアントの口上用フラグ：KFLAGも多次元配列変数です
+;	・この箇所でKFLAG:nとしてしまうと、意図した通りの動作をしない可能性があります。KFLAG:DAILY_TARGET:nとすればOKです
+;-------------------------------------------------
+;────────────────────────────────────
+;EV202, スキンシップ0
+;────────────────────────────────────
+;・台所でセクハラ
+;-------------------------------------------------
+@KOJO_EVENT_K14_202(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,股間まさぐり/=1,おっぱいまさぐり/=2,無視したら諦めて出て行った/=3,身をゆだねて股間でイかされ
+;              =4,身をゆだねておっぱいで/=5,ぱんつお着替えさせてくれました)
+;-------------------------------------------------
+
+;スキンシップ0_0 股間まさぐり/おっぱいまさぐり
+IF 口上記入チェック(100) && GROUPMATCH(ARG, 0, 1)
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", DAILY_TARGET)
+		CALL HTMLPRINTW(@"「ウフフ… なんか悪戯したくなっちゃう%HTML_HEARTB(, COLOR2_K14("PINK"))%」")
+		PRINTFORMW 「あら、\@ ARG == 0 ? 少し硬くなってるみたいね # 乳首が少し立ってきてるわね \@…」
+	;それ以外
+	ELSE
+		PRINTFORMW 「ウフフ…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ0_2 無視したら諦めて出て行った
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", DAILY_TARGET)
+		PRINTFORMW 「ねぇ、駄目なの？ 今はシたくないの…？」
+		PRINTFORMW 「……もうっ、仕方ないわね。邪魔して悪かったわ、そのまま続けて頂戴」
+	;それ以外
+	ELSE
+		PRINTFORMW 「あら、つれないわね…」
+		PRINTFORMW 「お邪魔だったようね。じゃ、そのまま続けて頂戴」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ0_3 身をゆだねて股間でイかされ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 3
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", DAILY_TARGET)
+		CALL HTMLPRINTW(@"「うふっ、素直で可愛いわね%HTML_PS_K14()%」")
+		PRINTFORMW 「いいわ、このままシゴいてイかせてあげる」
+	;それ以外
+	ELSE
+		PRINTFORMW 「抵抗しないって事は…」
+		PRINTFORMW 「このままシゴいてイかせて欲しいって事かしら？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ0_4 身をゆだねておっぱいで
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 4
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", DAILY_TARGET)
+		CALL HTMLPRINTW(@"「うふっ、素直で可愛いわね%HTML_PS_K14()%」")
+		PRINTFORMW 「いいわ、このままおっぱいでイかせてあげる」
+	;それ以外
+	ELSE
+		PRINTFORMW 「抵抗しないって事は…」
+		PRINTFORMW 「このまま胸でイかせて欲しいのかしら？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ0_5 ぱんつお着替えさせてくれました
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 5
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", DAILY_TARGET)
+		CALL HTMLPRINTW(@"「うふふっ、パンツをこんなに汚しちゃって%HTML_AH2_K14()% 私の手がそんなによかったのかしら」")
+		PRINTFORMW 「ねぇ、ちょっと待ってて？ 着替えを取ってきてあげるから」
+	;それ以外
+	ELSE
+		CALL HTMLPRINTW(@"「あらあら、パンツが汚れちゃったわね%HTML_PS_K14()%」")
+		PRINTFORMW 「待ってなさい。今、替えを取ってきてあげるわ」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV203, スキンシップ1
+;────────────────────────────────────
+;・食堂でお茶しながら
+;-------------------------------------------------
+@KOJO_EVENT_K14_203(ARG)
+;-------------------------------------------------
+;引数…ARG(=0,お紅茶いかが？/=1,媚薬でむらむらおっぱい気になる/=2,おっぱい見せつけられました
+;          =3,あわてて逃げました/=4,むしゃぶりついてご奉仕したらご褒美にぱいずりorクンニでイかされちゃいました(長いｗ))
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ1_0 お紅茶いかが？
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「丁度良かった、今紅茶を淹れたところなの」
+		PRINTFORMW 「新しい茶葉なんだけど、%CNAME(MASTER, (FLAG:ご主人様))%は気に入るかしら？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「紅茶を淹れたんだけど、%CNAME(MASTER, DAILY_TARGET)%も飲むでしょう？」
+		PRINTFORMW 「遠慮する事ないわ。さぁ、飲んで頂戴」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ1_1 媚薬でむらむらおっぱい気になる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「ウフフ…効いてきたみたいね」
+		PRINTFORMW 「ねぇ、私のおっぱいがそんなに気になる？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「ウフフ…効いてきたみたい」
+		PRINTFORMW 「ねぇ、%CNAME(MASTER, DAILY_TARGET)%。一体どこを見てるのかしら？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ1_2 おっぱい見せつけられました
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「そんな目で見られたら…」
+		CALL HTMLPRINTW(@"「見せない訳にはいかないわね%HTML_PS_K14()%」")
+	;それ以外
+	ELSE
+		PRINTFORMW 「ほら、遠慮しないで…」
+		PRINTFORMW 「もっとよく見ていいのよ？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ1_3 あわてて逃げました
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 3
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「ちょ、ちょっと待ちなさいよ！ なんで逃げるのよ！」
+		PRINTFORMW 「もうっ、なによ…！」
+		PRINTFORMW 「私はすっかりその気になってるのに……」
+	;それ以外
+	ELSE
+		PRINTFORMW 「逃げられたわね。でも……」
+		PRINTFORMW 「いくらでも機会はあるし、今回は見逃してあげてもいいわね」
+		PRINTFORMW 「ウフフ……」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ1_4 むしゃぶりついてご奉仕したら
+;                  ご褒美にぱいずりorクンニでイかされちゃいました
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 4
+	;調教対象にペニス有り
+	IF PENIS(MASTER)
+		;相思相愛
+		IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「うふっ、さぁ来て」
+			PRINTFORMW 「%CNAME(MASTER, (FLAG:ご主人様))%の大好きなおっぱいで愉しませてあげる」
+			CALL HTMLPRINTW(@"「パイズリもして欲しいんでしょ？ 大丈夫、ちゃんと分かってるわ%HTML_PS_K14()%」")
+		;それ以外
+		ELSE
+			PRINTFORMW 「さぁ、いらっしゃい」
+			CALL HTMLPRINTW(@"「私の胸で愉しませてあげるわ%HTML_PS_K14()%」")
+		ENDIF
+	;ペニス無し
+	ELSE
+		;相思相愛
+		IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「うふっ、さぁ来て」
+			PRINTFORMW 「ほら、%CNAME(MASTER, (FLAG:ご主人様))%の大好きなおっぱいよ。思いっきりしゃぶりついていいのよ？」
+		;それ以外
+		ELSE
+			PRINTFORMW 「さぁ、いらっしゃい」
+			CALL HTMLPRINTW(@"「私の胸で愉しませてあげるわ%HTML_PS_K14()%」")
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV204, スキンシップ2
+;────────────────────────────────────
+;・廊下で無理やりキス
+;-------------------------------------------------
+@KOJO_EVENT_K14_204(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,廊下でご主人様に呼び止められました/=1,いきなりちゅぅ/=2,数分後満足してばいばい)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ2_0 廊下でご主人様に呼び止められました
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	{
+	PRINTFORMW 「\@ TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様)) 
+	? ねぇ、ちょっと待って # ちょっと待ちなさい \@」
+	}
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ2_1 いきなりちゅぅ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	PRINTFORMW 「\@ TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様)) ? ちゅっ # んちゅ \@…」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ2_1 数分後満足してばいばい
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「うふっ、ご馳走様」
+		CALL HTMLPRINTW(@"「続きはまたあとで、ね%HTML_PS_K14()%」")
+	;それ以外
+	ELSE
+		CALL HTMLPRINTW(@"「ウフフ… 美味しかったわよ%HTML_PS_K14()%」")
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV205, スキンシップ3
+;────────────────────────────────────
+;・廊下でおっぱい揉み揉み
+;-------------------------------------------------
+@KOJO_EVENT_K14_205(ARG)
+;-------------------------------------------------
+;引数内訳…(0,いきなり背中から抱きつかれたなう、1,おっぱい揉まれてるなう、2,満足していなくなったお…)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ3_0 いきなり背中から抱きつかれたなう
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「ね、動かないで」
+		PRINTFORMW 「暫くそのままでいて…」
+	;それ以外
+	ELSE
+		PRINTFORMW 「ウフフ…」
+		PRINTFORMW 「動いちゃ駄目よ？ そのままじっとしてなさい」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ3_1 おっぱい揉まれてるなう
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「いつ触っても感度が良くていやらしいおっぱいね？」
+		CALL HTMLPRINTW(@"「そんなに声出しちゃって……なんて可愛いのかしら…%HTML_PS_K14()%」")
+	;それ以外
+	ELSE
+		PRINTFORMW 「あら、乳首が硬くなってるわね？」
+		PRINTFORMW 「このまま気持ちよくなってしまいなさい。フフ…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ3_1 満足していなくなったお…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 2
+;ENDIF
+
+;────────────────────────────────────
+;EV206, スキンシップ4
+;────────────────────────────────────
+;・食事中にしゃぶられ
+;-------------------------------------------------
+@KOJO_EVENT_K14_206(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,お食事ご一緒いいかしら？/=1,マッハで食って逃げました/=2,テーブルの下でしゃぶられてます
+;              =3,どくんどくん/=4,倍プッシュだ)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ4_0 お食事ご一緒いいかしら？
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「あら、食事中だったの？ そう、それなら…」
+		PRINTFORMW 「ついでに私も一緒にいいかしら？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「あら、食事中だったの？ そう、それなら…」
+		PRINTFORMW 「私もご一緒させてもらっていいかしら？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ4_1 マッハで食って逃げました
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	{
+	PRINTFORMW 「\@ TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様)) 
+	? なによ！ 逃げる事ないじゃない！ # 上手く逃げられたわね… \@」
+	}
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ4_2 テーブルの下でしゃぶられてます
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「じゃ、頂く事にするわ」
+		CALL HTMLPRINTW(@"「と言っても…私が頂くのはこっちの方だけど%HTML_PS_K14()%」")
+	;それ以外
+	ELSE
+		PRINTFORMW 「では食事を頂く事にしましょう」
+		PRINTFORMW 「ウフフ…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ4_3 どくんどくん
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 3
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「ほら、もうイっちゃうんでしょう？」
+		CALL HTMLPRINTW(@"「さっさと飲ませて頂戴%HTML_PS_K14()%」")
+	;それ以外
+	ELSE
+		PRINTFORMW 「フフ… ビックンビックンしちゃって」
+		PRINTFORMW 「いいわよ、飲んであげる。このまま射精しなさい」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ4_4 倍プッシュだ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 4
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「んっ、こんなものじゃ済まないわよ？」
+		PRINTFORMW 「……徹底的に搾り取ってあげるから。覚悟するのね……ふふ」
+	;それ以外
+	ELSE
+		PRINTFORMW 「まだまだいけるでしょう？」
+		PRINTFORMW 「さぁ、観念して。搾り取ってあげるわ」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV207, スキンシップ5
+;────────────────────────────────────
+;・皿洗い手伝い→ファックの流れ
+;-------------------------------------------------
+@KOJO_EVENT_K14_207(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,お皿洗いを手伝ってくれるようです/=1,おとこわりします/=2,一緒に頑張って終わらせました
+;              =3,おくちにほしいなーオーラ/=4,おいしかったです/=5,お手伝いしたんだからお尻犯せよ
+;              =6,お尻でヤってしまいました/7,謝礼はまんまん銀行に突っ込んでくれ/=8,確かに受け取った)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ5_0 お皿洗いを手伝ってくれるようです
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「ほら、手伝ってあげるわ」
+		PRINTFORMW 「二人でさっさと終わらせた方がいいでしょ？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「ご苦労様。私も手伝いましょうか？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ5_1 お断りします
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「あら、そう… 遠慮しなくていいのに」
+		PRINTFORMW 「じゃ、後は任せるわね」
+	;それ以外
+	ELSE
+		PRINTFORMW 「あら、そう… 遠慮しなくていいのに」
+		PRINTFORMW 「じゃ、後は任せるわね」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ5_2 一緒に頑張って終わらせました
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「まぁ、この私が手伝ったのだからこんなものね」
+		PRINTFORMW 「ほら、お皿がまだ残ってるわよ？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「大体片付いたわね」
+		PRINTFORMW 「あら、お皿がまだ残ってるわよ」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ5_3 おくちにほしいなーオーラ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 3
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「もうっ、私に全部言わせる気？」
+		PRINTFORMW 「判ってる癖に……」
+	;それ以外
+	ELSE
+		PRINTFORMW 「ねぇ、言わなくても判るでしょう？」
+		PRINTFORMW 「あまり私に恥をかかせないで頂戴……」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ5_4 おいしかったです
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 4
+	PRINTL
+	CALL FADEOUT(10, @"「%KOJO_RAND_K14(("フェラ"), 1)%」")
+	CALL FADE_CLINE(1)
+	{
+	PRINTFORMW 「\@ TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様)) 
+	? うふっ、ご馳走様♪ # 美味しかったわよ？ フフ… \@」
+	}
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ5_5 お手伝いしたんだからお尻犯せよ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 5
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		CALL HTMLPRINTW(@"「ねぇ、この期に及んで%HTMLFONT("<b>この私</b>")%に恥をかかせないでくれる？」")
+		PRINTFORMW 「%CNAME(MASTER, DAILY_TARGET)%なら判るはずよね？ 私が何を望んでいるか……」
+	;それ以外
+	ELSE
+		PRINTFORMW 「なによその顔……。私としては当然の要求なんですけど？」
+		PRINTFORMW 「ほら、いつまでボサッとしてるのよ。本当…、焦れったいわねぇ」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ5_6 お尻でヤってしまいました
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 6
+	CALL QUAKE(4)
+	PRINTFORM 「ん%RAND_SPLIT("ぁ/っ")%、あっ
+	CALL AUTOHEARTCB_K14
+	PRINTFORMW 　%RAND_SPLIT("ふ/ん/")%あぁ……」
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「んっ、凄い… いっぱい出したわね…」
+		PRINTFORMW 「ねぇ、見て。おしりから零れちゃいそうなの…」
+	;それ以外
+	ELSE
+		PRINTFORMW 「おしりの中でビュクビュクいってる…」
+		PRINTFORMW 「随分いっぱい出したわね… 」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ5_7 謝礼はまんまん銀行に突っ込んでくれ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 7
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「ねぇ、私……、我慢出来なくなっちゃった%RAND_SPLIT("わ/")%…」
+		PRINTFORMW 「ここでこのままシたいの… いいでしょ？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「さぁ、等価交換よ。準備はいいかしら？ といっても…」
+		PRINTFORMW 「%CNAME(MASTER, DAILY_TARGET)%の準備ができるまで、黙って待ってるつもりはないけど…。フフ」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ5_8 確かに受け取った
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 8
+	CALL QUAKE(4)
+	PRINTFORM 「あ%RAND_SPLIT("ぁ/っ")%、あんっ
+	CALL AUTOHEARTCB_K14
+	PRINTFORMW 　%RAND_SPLIT("ぁ/ぅ/")%あぁ……」
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「はぁ、はぁ、はぁ…。ねぇ、ちょっと早くない？」
+		CALL FADE(15, COLOR2_K14("黒"), COLOR2_K14("アリス"), "「とか言ってみたりして。ふふ……」")
+		PRINTFORMW 「まぁでも…、悪くなかったわ。本当よ？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「はぁ、はぁ……なんだかんだ言って%CNAME(MASTER, DAILY_TARGET)%……」
+		PRINTFORMW 「結構その気だったんじゃない。ふふ」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV208, スキンシップ6
+;────────────────────────────────────
+;・入浴中に襲われる
+;-------------------------------------------------
+@KOJO_EVENT_K14_208(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,お風呂場強襲/=1,背中を流します泡踊り/=2,ちんこは触ってあげない/3,イかせて！
+;              =4,我慢してたら焦らすの面倒になったようです/=5,どくんどくん/=6,全身ぬるぬる気持ちいい？/=7,びくんびくん)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ6_0 お風呂場強襲
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	{
+	PRINTFORMW 「\@ TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様)) 
+	? あら？ 居たのね。入るわよ # 私も%RAND_SPLIT("一緒に/")%入っていいかしら？ \@」
+	}
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ6_1 背中を流します泡踊り
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「さ、背中流してあげる」
+		PRINTFORM 「%RAND_SPLIT("じゃ/ほら")%、後ろ向いて。そのままじっとしててね。
+		PRINTFORMW %RAND_SPLIT("う/ふ")%ふ%RAND_SPLIT("っ/")%…」
+	;それ以外
+	ELSE
+		PRINTFORMW 「さぁ、背中を流してあげるから後ろを向きなさい」
+		PRINTFORMW 「ウフフ…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ6_2 ちんこは触ってあげない
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「ほらっ、%CNAME(MASTER, (FLAG:ご主人様))%好きでしょ？ こーいうの」
+		PRINTFORMW 「でも、これ…ヌルヌルが気持ちよく%RAND_SPLIT("っ/")%て、私も興奮してきちゃった%RAND_SPLIT("わ/")%…」
+	;それ以外
+	ELSE
+		PRINTFORMW 「私の胸が擦れてるの、わかるかしら？」
+		PRINTFORMW 「さぁ、もっと愉しませてあげるわ。フフ…」
+	ENDIF
+	PRINTL
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ6_3 イかせて！
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 3
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「うふっ、そんなにおねだりされちゃ仕方ないわね」
+		CALL HTMLPRINTW(@"「ほら、思いっきりシゴいてあげる%HTML_PS_K14()%」")
+	;それ以外
+	ELSE
+		PRINTFORMW 「いいわよ？ 素直におねだり出来たご褒美をあげる」
+		PRINTFORM 「私の手でシゴいてあげるわ
+		CALL HTMLPRINTW(@"「私の手でシゴいてあげるわ%HTML_PS_K14()%」")
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ6_4 我慢してたら焦らすの面倒になったようです
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 4
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「もうっ！ 判ったわよ。私の負けよ」
+		PRINTFORMW 「こんなモノ見ちゃったら、私……もう我慢出来ない%RAND_SPLIT("わ/")%っ！」
+	;それ以外
+	ELSE
+		PRINTFORMW 「はいはい、わかった。私の負けよ」
+		PRINTFORMW 「でも本当は、%CNAME(MASTER, DAILY_TARGET)%も焦らされてつらいんでしょう？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ6_5 どくんどくん
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 5
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「一擦りするたびに凄いビクビクさせちゃって…」
+		PRINTFORMW 「ほら、お風呂なんだから思いっきりぶちまけていいのよ？」
+		PRINTFORMW 「%RAND_SPLIT("う/ふ")%ふっ、腰がガクガクしてるわね。そろそろとどめを刺してあげる%RAND_SPLIT("♪/わ……")%」
+	;それ以外
+	ELSE
+		PRINTFORMW 「さんざん焦らしたせいかしら？ 凄く手応えがあるわね%RAND_SPLIT("♪/ぇ")%」
+		PRINTFORMW 「ほら、イっちゃいなさいよ。思いっきり%RAND_SPLIT("吐き出し/ぶちまけ")%なさい」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ6_6 全身ぬるぬる気持ちいい？
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 6
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「折角泡塗れなんだから愉しまないとね？」
+		PRINTFORMW 「%CNAME(MASTER, DAILY_TARGET)%の肌、すべすべで気持ちよさそうだし。ふふ…」
+	;それ以外
+	ELSE
+		PRINTFORMW 「お互い泡塗れになったところで…」
+		PRINTFORMW 「さ、愉しませて頂戴。ウフフ…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ6_7 びくんびくん
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 7
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		CALL HTMLPRINTW(@"「あんあん鳴いちゃって可愛いわね…%HTML_PS_K14()%」")
+		PRINTFORMW 「何度でもイかせてあげるから、好きなだけイっちゃえばいいわ」
+	;それ以外
+	ELSE
+		PRINTFORMW 「ほら、ここ？ それともこっちかしら？」
+		PRINTFORMW 「フフ…ほら、イっちゃっていいのよ…？」
+		CALL HTMLPRINTW(@"「%CNAME(MASTER, DAILY_TARGET)%が可愛くイクところ、私に見せて頂戴…%HTML_PS_K14()%」")
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV209, スキンシップ7
+;────────────────────────────────────
+;・ご主人様がバイブで…
+;-------------------------------------------------
+@KOJO_EVENT_K14_209(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,バイブでフェラの練習/=1,！　何見てるの！？/=2,あら…試してみる？)
+;-------------------------------------------------
+;・バイブ購入済みかつ調教対象にペニスありの場合に発生
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ7_0 バイブでフェラの練習
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	PRINTFORMW 「%KOJO_RAND_K14(("フェラ"), 1)%」
+	{
+	PRINTFORMW 「\@ TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様)) 
+	? うーん、ちょっと違うわね。もっと舌を使った方がいいのかしら 
+	# 慣れないと顎が疲れるのね、コレ \@…」
+	}
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ7_1 何見てるの！？ (調教者が清楚・恥じらい持ちの場合限定)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 1
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ7_2 あら…試してみる？
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「なによ、黙って見てるなんていやらしいわね！」
+		CALL FADE(15, COLOR2_K14("黒"), COLOR2_K14("アリス"), "「ま、別にいいけど……」")
+		PRINTFORMW 「ねぇ、そんな事より…、ちょっと試していかない？」
+	;それ以外
+	ELSE
+		PRINTFORMW 「あら、見られちゃったみたいね」
+		PRINTFORMW 「ほら、今すぐ実践してあげてもいいのよ？ フフ…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV210, スキンシップ8
+;────────────────────────────────────
+;・入浴中二人に襲われて…
+;-------------------------------------------------
+@KOJO_EVENT_K14_210(ARG)
+;-------------------------------------------------
+;DAILY_SUBTARGETの実装により、口上側で二人目のキャラを参照する手段を用意する必要がなくなった
+;というか日常系の仕様の穴を今まで放置しててごめんなさい的なアレ
+
+;#DIM SUBTARGET,1
+;同時出演するキャラの登録番号をSUBTARGETに
+;SUBTARGET = ARG/100
+;イベント番号を戻す
+;ARG %= 100
+;-------------------------------------------------
+;引数内訳…ARG(=0,二人でお風呂場強襲/=1,二人で洗いっこ/=2,見られてエスカレート/=3,のぼせてしまいました
+;              =4,混ぜてもらってぬるぬるまっと/=5,二人でそーぷぷれい)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ8_0 二人でお風呂場強襲
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「あら、奇遇ね？ 丁度いいわ。三人で一緒に入りましょう？」
+		CALL HTMLPRINTW(@"（本当は分かってたけど…%HTML_PS_K14()%）")
+	;それ以外
+	ELSE
+		PRINTFORMW 「ウフフ…」
+		CALL PRINT_KOJO_COLORW(DAILY_SUBTARGET, "『うふふ…』", DAILY_TARGET)
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ8_1 二人で洗いっこ→後に選択肢で分岐
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;口上主がキャラ番号に関わらず最初のキャラとして選択されないと表示されない
+IF 口上記入チェック(100) && ARG == 1
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMDL %CALLNAME:(FLAG:ご主人様)%は%CALLNAME:DAILY_SUBTARGET%の耳元に何事か囁き
+		PRINTFORMDW 時折%CALLNAME:MASTER%の方を見ては二人でｸｽｸｽ笑いあっている… 
+		PRINTL
+		CALL HTMLPRINTW(@"「さぁ、思いっきりいやらしく洗いっこして、見せつけてやるのよ%HTML_PS_K14()%」")
+		PRINTFORMW 「うふふ…」
+		CALL PRINT_KOJO_COLORW(DAILY_SUBTARGET, "『クスクス…』", DAILY_TARGET)
+	;それ以外
+	ELSE
+		PRINTFORMDL %CALLNAME:DAILY_TARGET%は%CALLNAME:DAILY_SUBTARGET%の耳元に何事か囁き
+		PRINTFORMDW 時折%CALLNAME:MASTER%の方を見ては二人でニヤニヤ笑っている… 
+		PRINTL
+		CALL HTMLPRINTW(@"「さぁ、思いっきりいやらしく洗いっこして、見せつけてやりましょう%HTML_PS_K14()%」")
+		PRINTFORMW 「ウフフ…」
+		CALL PRINT_KOJO_COLORW(DAILY_SUBTARGET, "『うふふ…』", DAILY_TARGET)
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ8_2 見られてエスカレート
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	SELECTCASE RANDEVENT(2, 20)
+		CASE 0
+			CALL HTMLPRINTW(@"「あっ%HTML_AH_K14()% ん…なんか興奮してきちゃった…」")
+			CALL HTMLPRINTW(@"「やんっ……なかなかやるわね……じゃ、私も%HTML_PS_K14()%」")
+			CALL PRINT_KOJO_COLORW(DAILY_SUBTARGET, "『んっ…あぁっ……や、だめっ……ソコは、だめぇっ…』", DAILY_TARGET)
+		CASE 1
+			CALL HTMLPRINTW(@"「ねぇ、キスしてるとこを見せつけてやりましょう%HTML_PS_K14()%」")
+			PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%」
+			PRINTFORMW 「ウフフ…」
+			CALL PRINT_KOJO_COLORW(DAILY_SUBTARGET, "『うふふ…』", DAILY_TARGET)
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ8_3 のぼせてしまいました
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 3
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「あら、のぼせちゃったの？」
+		PRINTFORMW 「子供じゃないんだから、しっかりしなさいよね！」
+		SIF TALENT:MASTER:小柄
+			PRINTFORMW 「って…、そう言えば子供だったわね。ふふ…」
+	;それ以外
+	ELSE
+		PRINTFORMW 「あらあら、のぼせちゃったみたいね？」
+		PRINTFORMW 「仕方ないわね%RAND_SPLIT("、/ぇ。じゃ、")%二人で運んであげましょう」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ8_4 混ぜてもらってぬるぬるまっと
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 4
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「もう待ちきれないんでしょ？ ふふっ」
+		CALL HTMLPRINTW(@"「さぁ、私と%CNAME(DAILY_SUBTARGET, (FLAG:ご主人様))%の体を存分に愉しんで%HTML_PS_K14()%」")
+	;それ以外
+	ELSE
+		CALL HTMLPRINTW(@"「さ、いらっしゃい。私と%CNAME(DAILY_SUBTARGET, DAILY_TARGET)%で愉しませてあげる%HTML_PS_K14()%」")
+		PRINTFORMW 「私達二人の体を同時に味わえるなんて、%CNAME(MASTER, DAILY_TARGET)%幸せ者よ？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ8_5 二人でそーぷぷれい
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 5
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「ねぇ、私と%CNAME(DAILY_SUBTARGET, (FLAG:ご主人様))%の体、どっちの方が気持ちいいかしら？」
+		PRINTFORMW 「ほら、正直に言わないとお仕置きするわよ？」
+		PRINTFORMW 「あ、ちょっと%CNAME(DAILY_SUBTARGET, (FLAG:ご主人様))%！ なに勝手にやってるのよ！」
+		PRINTFORMW 「もうっ、やめなさいよ、ソコは私専用なんだからねっ！」
+	;それ以外
+	ELSE
+		PRINTFORMW 「私はこっち」
+		CALL PRINT_KOJO_COLORW(DAILY_SUBTARGET, "『じゃ、私はこっちを…』", DAILY_TARGET)
+		PRINTFORMW 「ウフフ…」
+		CALL PRINT_KOJO_COLORW(DAILY_SUBTARGET, "『うふふ…』", DAILY_TARGET)
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV211, スキンシップ9
+;────────────────────────────────────
+;・風呂から上ったらパンツが無かった
+;-------------------------------------------------
+@KOJO_EVENT_K14_211(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,お風呂上りのーぱんえんかうんと/=1,ガン見されてます/=2,風邪ひかないようにね)
+;-------------------------------------------------
+;・夜の場合に発生
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ9_0 お風呂上りのーぱんえんかうんと
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「もうお風呂上ったの？ というか…」
+		PRINTFORMW 「なにモジモジしてるの？ 落ち着かないわね。クスクス…」
+	;それ以外
+	ELSE
+		PRINTFORMW 「あら、どうしたの？」
+		PRINTFORMW 「落ち着かないみたいね。フフ…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ9_1 ガン見されてます
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	PRINTL
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「%RAND_SPLIT("ふ/う")%ふ%RAND_SPLIT("っ/")%、今更恥ずかしがる事なんてないのに」
+		CALL HTMLPRINTW(@"「可愛らしいわね…%HTML_PS_K14()%」")
+	;それ以外
+	ELSE
+		PRINTFORMW 「あらあら、そんなに恥ずかしかったのかしら？」
+		PRINTFORMW 「ウフフ……」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ9_2 風邪ひかないようにね
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 2
+;ENDIF
+
+;========================================================================
+;日常（好感度上昇、その他ソフトな経験など）
+;========================================================================
+
+;────────────────────────────────────
+;EV212, 日常0
+;────────────────────────────────────
+;・ティータイム
+;-------------------------------------------------
+@KOJO_EVENT_K14_212(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,お茶はいかが？/=1,楽しいお茶たいむでした)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;日常0_0 お茶はいかが？
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	;相思相愛
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		SELECTCASE RANDEVENT(3, 0, DAILY_TARGET)
+			CASE 0
+				PRINTFORMW 「さ、ティータイムにしましょう」
+				PRINTFORMW 「ティーポットを新調してみたんだけど、どう？ なかなか素敵だと思わない？」
+			CASE 1
+				PRINTFORMW 「ねぇ見て。ティーカップをお揃いにしてみたんだけど」
+				CALL HTMLPRINTW(@"「なに？ 照れてるの？ うふっ、面白い人ね%HTML_PS_K14()%」")
+			CASE 2
+				PRINTFORMW 「ティータイムと言えば、やっぱりスコーンでしょ？」
+				PRINTFORML 「オーブンじゃなくて、フライパンでさくっと焼いてみたんだけど。…って」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%の興味は、食べること自体にしかないみたいね…」
+		ENDSELECT
+	;それ以外
+	ELSE
+		SELECTCASE RANDEVENT(3, 1, DAILY_TARGET)
+			CASE 0
+				PRINTFORMW 「丁度良かったわ、一緒にお茶しましょう」
+				PRINTFORMW 「たまにはこういうのもいいでしょう？」
+			CASE 1
+				PRINTFORMW 「ねぇ、クッキーを焼いたんだけど%CNAME(MASTER, DAILY_TARGET)%も食べるでしょう？」
+				CALL HTMLPRINTW(@"「この紅茶にきっと合うと思うわ%HTML_PS_K14()%」")
+			CASE 2
+				PRINTFORML 「あら、変に警戒しなくていいのよ。別に毒なんて入ってないから」
+				PRINTFORMW 「本当にその気があったとして…、そんな回りくどい事する必要なんてないもの」
+				PRINTFORMW 「…って、冗談としてはちょっとキツイかしらね？」
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;日常0_1 楽しいお茶たいむでした
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	PRINTL
+	;-------------------------------------------------
+	;初回
+	;------------------------------------------------- 
+	IF FIRSTEVENT(0, DAILY_TARGET)
+		PRINTFORMW 「そういえば、こうして二人でお茶するなんて初めてだったかしら？」
+		CALL HTMLPRINTW(@"「ほら、別に何もしやしないわよ。安心してお茶を楽しんで頂戴%HTML_PS_K14()%」")
+		RETURN 1
+	ENDIF
+	
+	;相思相愛 ORDEREVENTを全部見たらその他で処理
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", (FLAG:ご主人様))
+		;階層イベント。0, 1, 2の順に処理。全部見たらCASEELSEで
+		SELECTCASE ORDEREVENT(0, DAILY_TARGET)
+			CASE 0
+				PRINTFORMW 「……そうね、確かに私は神綺様によって創られた存在なのかも知れないけど…」
+				PRINTFORML 「つくられた者にも自分の意思がある…
+				PRINTFORMW 　それを証明したくて、自律人形にこだわってるのかも知れないわね…」
+			CASE 1
+				PRINTFORMW 「魔法といってもなんでも出来る万能のものじゃないわ」
+				PRINTFORMW 「力なんてものは無制限に得られる訳じゃない」
+				PRINTFORMW 「何かを得る為には何かを切り捨てる必要があるのよ……」
+				PRINTFORMW 「私が今まで何を捨ててきたかって？ さて、どうかしらね。うふふ…」
+			CASE 2
+				PRINTFORMW 「数秘術で自分の名前の数を知る為には、まず名前を数字に変換しなくてはいけないの」
+				PRINTFORML 「やり方は簡単よ？ まず1から9までの数を横に書いて
+				PRINTFORMW 　そこにアルファベットを当てはめていくだけでいいわ」
+				PRINTL
+				PRINTFORMDL 1 2 3 4 5 6 7 8 9
+				PRINTFORMDL A B C D E F G H I
+				PRINTFORMDL J K L M N O P Q R
+				PRINTFORMDW S T U V W X Y Z
+				PRINTL
+				PRINTFORMW 「これがモダンシステムと呼ばれるやつね」
+				PRINTFORMW 「私の場合だと…」
+				PRINTL
+				PRINTFORMDL A L I C E  M A R G A T R O I D 
+				PRINTFORMDW 1 3 9 3 5  4 1 9 7 1 2 9 6 9 4
+				PRINTL
+				PRINTFORMW 「合計して73になる訳だけど、数秘術は一桁になるまで足さなければならないから…」
+				PRINTFORMW 「7+3で10になって1+0で最終的には1が私の数字になるの」
+				PRINTL
+				PRINTFORML 「名前が1になる人物は、確固たる目的を持ち、意思が強く、積極的、自信過剰
+				PRINTFORMW 　野心的、好戦的で想像力、独創性に優れるとされてるわ」
+				PRINTL
+				PRINTFORMW 「他には独立心が強くて、他人に従う事も、他人と協力する事も嫌うってとこかしら」
+				PRINTFORMW 「それ以外だと1は始まりの数字で支配を意味するの。どう？ なかなか面白いでしょ？」
+				PRINTFORMW 「ねぇ、%CNAME(MASTER, (FLAG:ご主人様))%の数字はいくつになるのかしら…？」 
+			CASEELSE
+				SELECTCASE RANDEVENT(3, 2, DAILY_TARGET)
+					CASE 0
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%、もう少しこう…、上品に飲めないの？」
+						CALL FADEIN(8, "「――まったく」")
+						PRINTFORMW 「やれやれだわ。ふふ…」
+					CASE 1
+						PRINTFORMW 「なに？ 美味しい？ ふふ、当然でしょ」
+						PRINTFORML 「使う水の質と沸かす温度。茶葉の計量とその蒸らし方」
+						PRINTFORMW 「この私が、こだわって淹れてる紅茶なんだから%RAND_SPLIT("ねっ！/")%」
+						PRINTL
+						PRINTFORMDW %CALLNAME:TARGET%は得意気に、そう言い放った…
+					CASE 2
+						PRINTFORML 「ねぇ…ただ飲んで食べるのではなくて、なんていうかこう…」
+						PRINTFORMW 「紅茶の香りとか、ティータイムの会話とか…、そういうの含めて楽しんで欲しいんだけど」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%ってホント、そういうとこ気が利かないわよねぇ」
+						PRINTFORMW 「ま、別に構わないんだけど。ふふっ…」
+				ENDSELECT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	SELECTCASE RANDEVENT(4, 3, DAILY_TARGET)
+		CASE 0
+			PRINTFORMW 「私の場合捨食の法を修めてるから、こういった事も本来は必要ないのだけれど」
+			PRINTFORMW 「でも、お茶や食事を楽しまないなんて、勿体無いじゃない？」
+			PRINTFORMW 「あぁ、捨食っていうのは魔力によって食事や水分補給を補うってことなんだけど……」
+		CASE 1
+			PRINTFORMW 「…そう、私は元人間なの。といっても”魔界”の人間って意味なんだけど」
+			PRINTFORMW 「%CNAME(MASTER, DAILY_TARGET)%達に言わせると魔族、って事になるのかしらね？」
+			PRINTFORMW 「まぁそんな事より、次は%CNAME(MASTER, DAILY_TARGET)%の事聞かせてくれないかしら？」
+		CASE 2
+			PRINTFORMW 「そうねぇ、私の夢といっていいのかどうか分からないけど」
+			PRINTFORMW 「とりあえずは、完全に自律で動く人形を作るのが当面の目標かしらね」
+			PRINTFORMW 「今は時々命令を出すなり、魔力の糸で操るなりしないと駄目だから…」
+		CASE 3
+			PRINTFORMW 「……そうよ、その魔界をたった一人で創造したのが神綺様……私の母親でもあるんだけど」
+			PRINTFORMW 「と言っても生みの親というより、創造主って言ったほうが正確かも知れないわね……」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV213, 日常1
+;────────────────────────────────────
+;・昼寝（当然夜には発生しない）
+;・ここで寝ているのは口上主
+;・季節が夏もしくは冬の場合は発生しない
+;-------------------------------------------------
+@KOJO_EVENT_K14_213(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,お昼寝発見/=1,ごゆっくりどうぞ)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;日常1_0 お昼寝発見
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	{
+	CALL HTMLPRINTDW(@"\@ !FLAG:季節 ? 暖かな春の日差しに包まれて # 爽やかな秋空の元 \@、" + 
+	@"%HTMLFONT(@"%CALLNAME:DAILY_TARGET%", , COLOR2_K14("アリス"))%は微かな寝息を立てている")
+	}
+	SIF !AFFECTION("相思相愛", DAILY_TARGET)
+		CALL HTMLPRINTDW(@"%HTMLFONT(@"%CALLNAME:DAILY_TARGET%", , COLOR2_K14("アリス"))%の周囲には武器を持った人形達が配置され、辺りを油断なく警戒している…")
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;日常1_1 ごゆっくりどうぞ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	PRINTL
+	;アリスが主人であり特定の条件を満たしている場合
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", DAILY_TARGET)
+		;ビットを初期化
+		KFLAG:DAILY_TARGET:717 = CLEARBITS(KFLAG:DAILY_TARGET:717, "0/1/2/3/4")
+		SELECTCASE RANDEVENT(4, 10, DAILY_TARGET)
+			CASE 0
+				;汎用処理で参照する為のビットを立てる
+				SETBIT KFLAG:DAILY_TARGET:717, 0
+				;汎用処理
+				CALL PRINT_KOJO_EVENT_213_0
+				;心が読めるならアリスさんの心の声を聞くことができる
+				IF TALENT:MASTER:読心能力 == 2
+					PRINTFORML （どうせ暇なんだから、昼寝に付き合ってくれてもよさそうなのに）
+					PRINTFORMW （この人なりに、私に気を使ってくれてるのかしら……）
+				ENDIF
+			CASE 1
+				SETBIT KFLAG:DAILY_TARGET:717, 1
+				CALL PRINT_KOJO_EVENT_213_0
+				SIF TALENT:MASTER:読心能力 == 2
+					PRINTFORMW （なによ。黙って見てるだけとか、ツマラナイわね……）
+			CASE 2
+				SETBIT KFLAG:DAILY_TARGET:717, 2
+				CALL PRINT_KOJO_EVENT_213_0
+				SIF TALENT:MASTER:読心能力 == 2
+					PRINTFORMW （……折角わたしがこんな無防備な格好でいるのに。この人何もしない訳？）
+			CASE 3
+				SETBIT KFLAG:DAILY_TARGET:717, 3
+				CALL PRINT_KOJO_EVENT_213_0
+				SIF TALENT:MASTER:読心能力 == 2
+					PRINTFORMW （……悪戯のひとつでもしてくるかと思って期待したけど。なによ……）
+			CASE 4
+				SETBIT KFLAG:DAILY_TARGET:717, 4
+				CALL PRINT_KOJO_EVENT_213_0
+				IF TALENT:MASTER:読心能力 == 2
+					PRINTFORML （邪魔しちゃ悪いって気を遣ってくれてるのは判るけど）
+					PRINTFORMW （これはこれで、ちょっと寂しいわね……）
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	SELECTCASE RANDEVENT(4, 11, DAILY_TARGET)
+		CASE 0
+			{
+			CALL HTMLPRINTDL(@"%CALLNAME:MASTER%は好奇心に駆られ、" + 
+			@"%HTMLFONT(@"%CALLNAME:DAILY_TARGET%", , COLOR2_K14("アリス"))%の寝顔を見ようと近づこうとしたが")
+			}
+			PRINTFORMDW 人形達に行く手を阻まれ、仕方なくその場を立ち去った…
+		CASE 1
+			PRINTFORMW 「%RAND_SPLIT("悪いけど、邪魔しないでくれる？/邪魔をしたら許さないわよ")%」
+			CALL HTMLPRINTDW(@"眠っているはずの%HTMLFONT(@"%CALLNAME:DAILY_TARGET%", , COLOR2_K14("アリス"))%の突然の声")
+			CALL HTMLPRINTDL(@"%HTMLFONT(@"%CALLNAME:DAILY_TARGET%", , COLOR2_K14("アリス"))%は確かに眠っている――が。")
+			PRINTFORMDW 種族：魔法使いともなれば、そう簡単に正体を失わないものらしい…
+		CASE 1
+			PRINTFORMDW 警戒厳重な人形達に気圧された%CALLNAME:MASTER%は、大人しくその場を後にした…
+		CASE 2
+			CALL FPRINTL("「ｺｯﾁﾐﾝﾅ」 　　", COLOR2_K14("赤"), "右")
+			CALL FPRINTW("「ﾊﾞｶｼﾞｬﾈｰﾉ」　", COLOR2_K14("上海"), "右")
+			PRINTFORMDW %CALLNAME:MASTER%は口の悪い人形達に追い払われた…
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV214, 反抗除去
+;────────────────────────────────────
+;・反抗除去
+;・反抗刻印を持った調教者のアライメントが高くなると発生
+;-------------------------------------------------
+@KOJO_EVENT_K14_214(ARG)
+;-------------------------------------------------
+;引数内訳…ARG(=0,懐柔されたようです)
+;-------------------------------------------------
+;・反抗刻印は調教者毎に管理されているのがRevの仕様
+;・口上主の反抗刻印を参照する場合はMARK:DAILY_TARGET:反抗刻印で
+;・MARK:反抗刻印で参照してしまうと0にしかならないので注意
+;・口上呼び出し時点で刻印の処理は終了している
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;反抗除去0_0 懐柔されたようです
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	;アリスが主人であり特定の条件を満たしている場合
+	IF TALENT:DAILY_TARGET:ご主人様 && AFFECTION("相思相愛", DAILY_TARGET) && GET_KFLAG_K14("相思相愛", DAILY_TARGET)
+		PRINTFORMW 「懐柔って言うと、なんか聞こえが悪いわね。\@ MARK:DAILY_TARGET:反抗刻印 > 0 ? というか # まぁでも \@…」
+		IF MARK:DAILY_TARGET:反抗刻印 > 0
+			PRINTFORMW 「%CNAME(MASTER, DAILY_TARGET)%には振り回されっぱなしで、ちょっと癪ね……」
+		ELSE
+			PRINTFORMW 「これで少しは扱いやすくなるかしら？」
+			PRINTFORMW 「…って、こんな言い方したら%CNAME(MASTER, DAILY_TARGET)%は怒るかもだけど。ふふ」
+		ENDIF
+	;その他
+	ELSE
+		;反抗刻印は調教者毎に管理されるのがRevの仕様
+		SELECTCASE MARK:DAILY_TARGET:反抗刻印
+			CASE IS > 1
+				PRINTFORMW 「多少マシな感じにはなったけど、正直…まだまだってところね」
+				PRINTFORMW 「だって、ねぇ？ %CNAME(MASTER, DAILY_TARGET)%のその目を見れば判るのよ」
+				PRINTFORMW 「そう%RAND_SPLIT("し/やっ")%て黙っていたって。ね……」
+			CASE 1
+				PRINTFORMW 「へぇ、少しは素直になったみたいだけど。でもねぇ……」
+				PRINTFORMW 「%CNAME(MASTER, DAILY_TARGET)%の事をどこまで信用したものかしら」
+			CASEELSE
+				CALL HTMLPRINTW(@"「そうねぇ。ようやくこの%HTMLFONT("<b>私</b>", , COLOR2_K14("白"))%の下僕に相応しい感じになったかしら？」")
+				PRINTFORMW 「以前の%CNAME(MASTER, DAILY_TARGET)%なら、こんなこと言われたら腹を立てたんでしょけど」
+				PRINTFORMW 「今となってはもう、ね。フフ……」
+		ENDSELECT
+	ENDIF
+	PRINTL
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;EV213の汎用処理
+;-------------------------------------------------
+@PRINT_KOJO_EVENT_213_0
+PRINTD 思わず
+SIF GETBIT(KFLAG:DAILY_TARGET:717, 0)
+	PRINTD 一緒に昼寝したい
+SIF GETBIT(KFLAG:DAILY_TARGET:717, 1)
+	PRINTFORMD %RAND_SPLIT("鮮やかな/美しい/柔らかな")%ブロンドの髪に触れたい
+SIF GETBIT(KFLAG:DAILY_TARGET:717, 2)
+	PRINTD 寝顔にキスしたい
+SIF GETBIT(KFLAG:DAILY_TARGET:717, 3)
+	PRINTD ちょっと悪戯をしたい
+SIF GETBIT(KFLAG:DAILY_TARGET:717, 4)
+	PRINTD 寝顔をもっとよく見たい
+PRINTFORMDL という衝動に駆られた%CALLNAME:MASTER%だったが
+PRINTDL 邪魔をしては悪いと思い、静かにその場を後にした…
+WAIT
+PRINTL

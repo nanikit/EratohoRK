@@ -1,0 +1,674 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;	アリス口上 その他イベント口上ファイル
+
+;	大満足ボーナス、本日の方針イベント口上をまとめたファイル
+
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;#############################
+;EV16, 大満足ボーナス口上
+;#############################
+[SKIPSTART]
+・@EVENTRAINから呼び出される
+・大満足ボーナスが発生した場合に表示される
+・タイミングは調教開始口上(EV11)の後、調教者行動前口上(EV12)の前
+・選択前、選択後は共通の呼び出しからARGで別けられる
+[SKIPEND]
+@KOJO_EVENT_K14_16(ARG) ;ARG=(0.選択前/1.選択後)
+#DIMS DYNAMIC RHEART
+RHEART '= RAND:3 ? HTML_HEARTB(, COLOR2_K14("pink")) # HTML_HEART(, COLOR2_K14("pink"))
+
+
+;/////////////////////////////
+;選択前口上
+;/////////////////////////////
+;・上機嫌な様子で、今日は何をされたいかとたずねる
+;・上機嫌な様子で、今日は何をされたいかとたずねる
+;・口上表示前に地の文(%CALLNAME:TARGET%さま大満足ボーナス)
+;・口上表示の後に地の文(%CALLNAME:TARGET%は上機嫌な様子で、今日は何をされたいかとたずねてきた)が続く
+;・地の文の後に選択肢が表示される
+IF 口上記入チェック(100) && ARG == 0 && TALENT:TARGET:ご主人様
+	SELECTCASE RANDEVENT(4, 20)
+		CASE 0
+			PRINTFORMW 「今回はご褒美として何でもしてあげるわよ」
+			PRINTFORMW 「ねぇ、どうして欲しい…？」
+		CASE 1
+			PRINTFORMW 「ねぇ、何かリクエストはあるかしら？」
+			PRINTFORMW 「別に驚く事はないわ。私だってそういう気分の時はあるもの。ふふ」
+		CASE 2
+			PRINTFORMW 「偶には希望を聞いてあげてもいいわよ？」
+			PRINTFORMW 「今日は%CNAME(MASTER, TARGET)%がしたい事をしてあげる」
+			PRINTFORMW 「さて、何がお望みかしら？」
+		CASE 3
+			PRINTFORMW 「今回は特別よ。何か希望があるなら聞いてあげるわ」
+			PRINTFORMW 「で、%CNAME(MASTER, TARGET)%は何を望むの…？」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;/////////////////////////////
+;選択後口上
+;/////////////////////////////
+[SKIPSTART]
+・調教対象の返答に対して、一言
+・口上表示に後に地の文(%CALLNAME:TARGET%は%CALLNAME:MASTER%の返事を聞くと調教の準備を始めた)が続く
+・上記の地の文を表示した後に、選択肢毎の地の文が表示される
+・休憩が選択された場合はEV12, ご褒美による中止に続く
+
+・TCVAR:今日の満足ボーナス
+	0=いつもどおり
+	1=A開発
+	2=お仕置き
+	3=ハード
+	4=イチャイチャ
+	5=異常
+	6=野外
+	7=子作り
+	8=休憩
+	9=抱いて
+	10=ご奉仕
+	11=かわいがり
+・IS_SATIS_BONUS(通常/アナル/お仕置き/ハード/イチャイチャ/異常/野外/子作り/休憩/抱いて/ご奉仕/かわいがり)
+[SKIPEND]
+
+;大満足ボーナス選択後
+;********************
+;TCVAR:今日の満足ボーナス/IS_POLICY/POLICY単体でもこの箇所での参照は可能
+;調教ターン中に満足ボーナスを参照するならTCVAR:今日の満足ボーナスで
+;v1.212から口上表示前にシステム側で空行が入るように
+IF ARG == 1 && TALENT:TARGET:ご主人様 ;調教者がご主人様
+	;ボーナス[0] いつも通り
+	;======================
+	IF IS_SATIS_BONUS("通常")
+		;2/3の確率で表示
+		IF RAND:3
+			SELECTCASE RANDEVENT(4, 0)
+				CASE 0
+					PRINTFORMW 「あら､ 控えめね？」
+					PRINTFORMW 「遠慮なんていらないのに」
+				CASE 1
+					PRINTFORMW 「意外と欲が無いのね？」
+					PRINTFORMW 「ま、%CNAME(MASTER, TARGET)%がそれでいいなら」
+				CASE 2
+					PRINTFORMW 「折角の機会だと思うんだけど%CNAME(MASTER, TARGET)%、本当にそれでいいわけ？」
+					PRINTFORMW 「まぁ…、私としては別に構わないけど」
+				CASE 3
+					PRINTFORMW 「正直、%CNAME(MASTER, TARGET)%が何を言ってくるか楽しみにしてたんだけど」
+					PRINTFORMW 「これじゃ興ざめもいいとこだわ…」
+			ENDSELECT
+		;1/3の確率で汎用口上
+		ELSE
+			CALL KOJO_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[1] アナルをいじめて
+	;============================
+	IF IS_SATIS_BONUS("アナル")
+		IF RAND:3
+			SELECTCASE RANDEVENT(3, 1)
+				CASE 0
+					PRINTFORMW 「お尻ね？ 判ったわ…」
+					CALL HTMLPRINTW(@"「ふふっ…、私も%CNAME(MASTER, TARGET)%のお尻虐めるの、大好きよ…%RHEART%」")
+				CASE 1
+					PRINTFORMW 「……変態」
+					CALL HTMLPRINTW(@"「ま、%CNAME(MASTER, TARGET)%がいいなら別に構わないけど%RAND_SPLIT("/、ね")%%RHEART%」")
+				CASE 2
+					PRINTFORMW 「おしりを虐めてだなんて、\@ TALENT:MASTER:オトコ ? 男の癖に # はしたないわね \@…」
+					PRINTFORM 「でも…、%CNAME(MASTER, TARGET)%のおしり弄って
+					;調教対象が小柄
+					IF TALENT:MASTER:小柄
+						PRINTFORM \@ TALENT:MASTER:オトコ ? 女の子 # 子猫 \@みたいに鳴かせると、とっても可愛いのよね
+						CALL PRINT_SYMBOL_K14
+					;その他
+					ELSE
+						PRINTFORMW \@ TALENT:MASTER:オトコ ? 女 # 発情したメス豚 \@みたいに鳴かせるの、ゾクゾクしちゃうのよね%RAND_SPLIT("ぇ/")%」
+					ENDIF
+					CALL FADEOUT(15, @"「\@ AFFECTION("相思相愛") ? ふふ # フフ \@……」")
+					SIF ANIME_CONFIG("FADE")
+						CLEARLINE 1
+			ENDSELECT
+		ELSE
+			CALL KOJO_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[2] お仕置きして
+	;========================
+	IF IS_SATIS_BONUS("お仕置き")
+		IF RAND:3
+			SELECTCASE RANDEVENT(2, 2)
+				CASE 0
+					PRINTFORMW 「いいわよ……私も%CNAME(MASTER, TARGET)%にお仕置きするの、大好きだもの」
+					PRINTFORMW 「さぁ、覚悟はいいかしら…」
+				CASE 1
+					PRINTFORMW 「あら、マゾ豚らしいリクエストね？ ふふ」
+					PRINTFORMW 「そういう事なら遠慮なくいく%RAND_SPLIT("から/わよ")%……」
+			ENDSELECT
+		ELSE
+			CALL KOJO_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[3] 激しくして
+	;======================
+	IF IS_SATIS_BONUS("ハード")
+		IF RAND:3
+			SELECTCASE RANDEVENT(2, 3)
+				CASE 0
+					PRINTFORMW 「あら、激しいのがいいの…？」
+					CALL HTMLPRINTW(@"「いやらしいお人形さんね%RHEART%」")
+				CASE 1
+					PRINTFORMW 「そうね？ 偶にはそういうのもいいかもね」
+					CALL HTMLPRINTW(@"「私も激しいのは嫌いじゃないし。ふふ%RHEART%」")
+			ENDSELECT
+		ELSE
+			CALL KOJO_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[4] 甘えさせて
+	;======================
+	IF IS_SATIS_BONUS("イチャイチャ")
+		IF RAND:3
+			;調教対象がお子様
+			IF TALENT:MASTER:小柄
+				PRINTFORMW 「可愛い事言うじゃない……」
+				CALL HTMLPRINTW(@"「いいわよ%RHEART% 今日はお姉さんに思いっきり甘えさせてあげるから。ふふ」")
+			;調教対象がオトコ
+			ELSEIF TALENT:MASTER:オトコ
+				PRINTFORMW 「いい年した男が甘えさせてって、ちょっとどうかと思うわよ？」
+				CALL HTMLPRINTW(@"「でもまぁ……時にはそういうのもいいかしら、ね%RHEART%」")
+			;その他
+			ELSE
+				PRINTFORMW 「甘えさせてだなんて、可愛い事言うわね…」
+				CALL HTMLPRINTW(@"「さぁ、いらっしゃい。思いっきり可愛がってあげる%RHEART%」")
+			ENDIF
+		ELSE
+			CALL KOJO_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[5] 壊れるまでして
+	;==========================
+	IF IS_SATIS_BONUS("異常")
+		IF RAND:3
+			SELECTCASE RANDEVENT(3, 5)
+				CASE 0
+					PRINTFORMW 「いいわ、 お望み通り、壊してあげる……」
+				CASE 1
+					PRINTFORMW 「フフ、本当にいいのかしら？ 後で取り消しはきかないのよ」
+				CASE 2
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%…、変わってるわね」
+					PRINTFORMW 「ま、それが望みと言うなら叶えてあげるわ…」
+			ENDSELECT
+			PRINTFORMDW アリスの瞳は金色に染まり、妖しい雰囲気を漂わせている…
+		ELSE
+			CALL KOJO_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;方針[6], 外に出たい
+	;===================
+	IF IS_SATIS_BONUS("野外")
+		IF RAND:3
+			SELECTCASE RANDEVENT(3, 6)
+				CASE 0
+					PRINTFORMW 「それ、人に見られても良いって事よね？」
+					PRINTFORMW 「まぁ…、%CNAME(MASTER, TARGET)%がいいなら構わないけど」
+				CASE 1
+					PRINTFORMW 「外に出たい、ねぇ。ま、それはいいんだけど」
+					PRINTFORMW 「面倒なやつには会いたくないわね…」
+				CASE 2
+					PRINTFORML 「そうねぇ。気分転換にはいいかも」
+					PRINTFORMW 「でも…、あまり目立つ訳にもいかないわよ？」
+					PRINTFORMW 「つまらない噂を立てられると、色々と面倒だし……」
+			ENDSELECT
+		ELSE
+			CALL KOJO_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[7] 孕ませたい
+	;======================
+	IF IS_SATIS_BONUS("子作り")
+		;初回かつ調教者が処女 // 今の動作だとこの手の分岐が必要だと思った
+		;--------------------
+		IF TALENT:TARGET:処女
+			PRINTFORML 「えっ！？ それって、つまり……」
+			CALL HTMLPRINTW(@"「この私の%HTMLFONT("<b>初めて</b>", , COLOR2_K14("white"))%が欲しいって事よね？」")
+			PRINTL
+			CALL TWAIT3_K14
+			PRINTL
+			PRINTFORMDW %CALLNAME%はうつむき、暫しの間考え込んだあと言った…
+			;各分岐毎確実に排他にしたいので個別にRETURNする
+			IF 0
+			;イベント経過後
+			ELSEIF GET_KFLAG_K14("相思相愛")
+				{
+				CALL HTMLPRINTL(@"「ま、正直今更感はあるけど…%CNAME(MASTER, TARGET)%が" + 
+				@"%HTMLFONT("<b>そこまで</b>", , COLOR2_K14("白"))%言うなら仕方ないわね」")
+				}
+				PRINTFORMW 「大事にとっておいたところで自慢になるものでもないし、いくらでもあげるわよ」
+				;心が読める
+				SIF TALENT:MASTER:読心能力 == 2
+					CALL FADEIN(15, "（やっとその気になったのね。遅いのよ、馬鹿……）")
+				;空気が読める
+				;SIF TALENT:MASTER:読心能力 == 1
+				;	PRINTFORMDW
+				;汎用処理
+				CALL KOJO_EV16_1_K14
+				RETURN 1
+			;調教者の方が依存している
+			ELSEIF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
+				PRINTFORMW 「ま、別にいいけど。こんなもの、私のでよければあげるわよ」
+				;心が読める
+				SIF TALENT:MASTER:読心能力 == 2
+					CALL FADEIN(15, @"（%CNAME(MASTER, TARGET)%になら…、いくらでも……）")
+				;汎用処理
+				CALL KOJO_EV16_1_K14
+				RETURN 1
+			;その他
+			ELSE
+				PRINTFORMW 「そうね、別にいいわよ。%CNAME(MASTER, TARGET)%の希望を聞いたのは私だしね」
+				;汎用処理
+				CALL KOJO_EV16_1_K14
+				RETURN 1
+			ENDIF
+		ENDIF
+
+		;初回かつ調教者が処女でない場合
+		;------------------------------
+		IF !TALENT:TARGET:処女 && FIRSTEVENT(7)
+			{
+			CALL HTMLPRINTW(@"「は、孕ませたいとか…、%HTMLFONT("<b>馬っ鹿じゃないの</b>", , 
+			COLOR2_K14("ALICE"))%！？　この私に種付けしたいとか何様よっ！」")
+			}
+			PRINTFORMW 「な～んていうのを期待してるとしたら、お生憎様…」
+			PRINTFORMW 「この際ハッキリ言っとくけど、私にだって選ぶ権利はあるのよ？ %CNAME(MASTER, TARGET)%、その辺判ってる！？」
+			CALL TWAIT1_K14
+			PRINTFORMW 「でもなぜかしら。%CNAME(MASTER, TARGET)%にそう言われて、悪い気がしないのは確かなのよ」
+			PRINTFORMW 「むしろ、ちょっと……って、これ以上はやめておくわ…」
+			PRINTFORMW 「いくら聞かれても教える気はないから、そのつもりでね。判った？」
+			CALL KOJO_EV16_1_K14
+			CALL TWAIT3_K14
+			RETURN 1
+		ENDIF
+
+		;その他
+		;------
+		IF RAND:3
+			SELECTCASE RANDEVENT(5, 7)
+				CASE 0
+					CALL HTMLPRINTL(@"「あら、生意気な事言うじゃない……ふふ%RHEART%」")
+					PRINTFORMW 「そう言うからには期待していいのかしら？」
+				CASE 1
+					PRINTFORMW 「この私を孕ませたいなんて生意気ね！ でも…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%ならいいわよ……」
+				CASE 2
+					PRINTFORMW 「そう言うからには責任を取る覚悟があるって事かしら？」
+					PRINTFORMW 「まぁでも……、今更過ぎるわよね？ そんな話。くすっ」
+				CASE 3
+					CALL FADEIN(10, "「……まったく」")
+					WAIT
+					{
+					CALL HTMLPRINTW(@"「この%HTMLFONT("<b>私</b>", , 
+					COLOR2_K14("ALICE"))%に向かって種付けしたいとか、どの口が言うのかしら…」")
+					}
+					PRINTW 「とか言ってはみたものの…、ん、そうね」
+					CALL HTMLPRINTW(@"「面と向かって言われると、ちょとドキドキしちゃうのは確かなのよね…%RHEART%」")
+				CASE 4
+					PRINTFORML 「そうね、それは別に構わないけど…」
+					PRINTFORMW 「そこまで言うからには、相応の頑張りを期待させてもらうわよ。いいわね？」
+					{
+					CALL HTMLPRINTW(@"「途中で萎びたり、打ち止めになったりしたら%HTMLFONT("<b>ちょん切って</b>"
+					, , COLOR2_K14("ALICE"))%やるんだから。ふふ%RHEART%」")
+					}
+			ENDSELECT
+		ELSE
+			CALL KOJO_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[8] 休ませて
+	;====================
+	IF IS_SATIS_BONUS("休憩")
+		;調教対象が消耗している
+		{
+		PRINTFORMW 「\@ CFLAG:MASTER:消耗 >= 3 
+		? そうね、%CNAME(MASTER, TARGET)%も大分疲れているみたいだし 
+		# 休ませてとか言う割には元気そうに見えるけど？ でもまあ… \@」
+		}
+		PRINTFORMW 「たまには%RAND_SPLIT("のんびり過ごすのもいいわね/そういう日があってもいいわよね")%」
+		RETURN 1
+	ENDIF
+
+	;ボーナス[9] 抱いてほしい
+	;========================
+	IF IS_SATIS_BONUS("抱いて")
+		;調教対象が処女かつ初回
+		;----------------------
+		IF TALENT:MASTER:処女 && FIRSTEVENT(9)
+			PRINTFORML 「えっ、それってつまり……」
+			{
+			CALL HTMLPRINTW(@"「この私に%CNAME(MASTER, TARGET)%の%HTMLFONT("<b>初めて</b>"
+			, , COLOR2_K14("white"))%を捧げてもいいって事よね？」")
+			}
+			PRINTL
+			CALL TWAIT3_K14
+			PRINTL
+			PRINTFORMDW %CALLNAME%はうつむき、暫しの間考え込んだあと言った…
+			IF 0
+			;イベント経過済み
+			ELSEIF GET_KFLAG_K14("相思相愛")
+				PRINTFORMW 「今頃になってやっとその気になるとか…遅いのよ、%CNAME(MASTER, TARGET)%」
+				PRINTFORMW 「でも……、まぁいいいわ。許してあげる」
+				PRINTFORMW 「私だって、その…なんていうか……%CNAME(MASTER, TARGET)%から切り出してくれて凄く嬉しいのは確かだし」
+				CALL HTMLPRINTL(@"「…って、お喋りはこの辺にしておくべきよね。ふふ%RHEART%」")
+			;調教者が依存している
+			ELSEIF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
+				PRINTFORMW 「正直、%CNAME(MASTER, TARGET)%から言い出すなんてちょっとビックリね。でも…」
+				PRINTFORMW 「とても嬉しく思うわ。本当よ？」
+			;その他
+			ELSE
+				PRINTFORMW 「そうね。私もそろそろ次の段階に進んでも、って思ってたけど…」
+				PRINTFORMW 「でもまさか、%CNAME(MASTER, TARGET)%から言い出すなんてね？」
+				CALL HTMLPRINTL(@"「ちょっと意外…、って言ったら%CNAME(MASTER, TARGET)%に失礼かもだけど。ふふ%RHEART%」")
+			ENDIF
+			PRINTL
+			{
+			PRINTFORMW 「さぁ、こっちへいらっしゃい。このアリス\@ 
+			TALENT:MASTER:小柄 ? お姉 # \@さんが%CNAME(MASTER, TARGET)%の初めて貰ってあげる」
+			}
+			CALL HTMLPRINTW(@"「思いっきり可愛がってあげるわ…%RHEART%」")
+			RETURN 1
+		ENDIF
+
+		;調教対象が処女でないかつ初回
+		;----------------------------
+		IF !TALENT:MASTER:処女 && FIRSTEVENT(9)
+			PRINTFORMW 「そう、ようやく私に抱かれる気になったのね」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%がその気なら、私に断る理由なんてないわ」
+			PRINTFORMW 「ま、そういうことだから、よろしくお願いね…って言ったらちょっと変かしら？」
+			CALL FADEOUT(15, "「ふふ…」")
+			SIF ANIME_CONFIG("FADE")
+				CLEARLINE 1
+			RETURN 1
+		ENDIF
+
+		;条件なし
+		;--------
+		SELECTCASE RANDEVENT(6, 9)
+			CASE 0
+				CALL HTMLPRINTW(@"「あら…%RHEART% 私に抱かれたいだなんて直球ね？ ふふ」")
+			CASE 1
+				CALL HTMLPRINTW(@"「ふふ、随分可愛らしいこと言ってくれるじゃない%RHEART%」")
+			CASE 2
+				PRINTFORML 「いいわよ、抱いてあげる…」
+				CALL HTMLPRINTW(@"「子猫のように可愛がってあげるわ…%RHEART%」")
+			CASE 3
+				CALL HTMLPRINTW(@"「ふふ…%RHEART% そこまで言われて断る理由なんてないわね」")
+			CASE 4
+				CALL HTMLPRINTL(@"「正直、直接的な物言いってあまり好きじゃないんだけど…」")
+				CALL HTMLPRINTW(@"「こういう場合は別よね%RHEART% 私好きよ？ そういうの」")
+			CASE 5
+				CALL HTMLPRINTL(@"「あら%RHEART% 大胆ね、%CNAME(MASTER, TARGET)%」")
+				CALL HTMLPRINTL(@"「そこまで言われたら、私としても応えない訳にいかないじゃない…%RHEART%」")
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	;ボーナス[10] ご奉仕したい
+	;=========================
+	IF IS_SATIS_BONUS("ご奉仕")
+		;初回
+		IF FIRSTEVENT(10)
+			IF 0
+			ELSEIF GET_KFLAG_K14("相思相愛")
+				PRINTFORML 「そういえば、%CNAME(MASTER, TARGET)%がそういう事言い出したのはこれが初めてよね」
+				PRINTFORMW 「ま、正直…今更すぎる気はするけど。でも、そうね……」
+				PRINTFORML 「言われて悪い気がしないのは確かね。むしろちょっと嬉しいかも…」
+				{
+				CALL HTMLPRINTW(@"「な～んて言うと%CNAME(MASTER, TARGET)%はすぐ調子に乗りそうだけど。" + 
+				@"ま、この際どうでもいいわね。ふふ…%RHEART%」")
+				}
+			ELSE
+				IF 0
+				ELSEIF TALENT:MASTER:小柄
+					{
+					CALL HTMLPRINTW(@"「あら%RHEART% 随分可愛らしいこと言ってくれるじゃない。この\@ 
+					TALENT:MASTER:オトコ ? 子 # 娘 \@ってば。ふふ…」")
+					}
+				ELSEIF TALENT:MASTER:オトコ
+					PRINTFORMW 「へぇ、大の男がそういう事言いだすなんてね。ま、これはこれで…悪くない気分だけど」
+				ELSE
+					PRINTFORML 「%CNAME(MASTER, TARGET)%からそんな健気な台詞が聞けるなんてね？」
+					PRINTFORMW 「それに今の…、ちょっと可愛かったわよ」
+				ENDIF
+				IF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
+					PRINTFORMW 「まぁそういう事なら、%CNAME(MASTER, TARGET)%がどこまで本気なのか見せてもらおうかしら」
+					CALL HTMLPRINTW(@"「精々頑張ることね？ 期待してるわよ%RHEART%」")
+				ELSE
+					PRINTFORMW 「まぁでも、%CNAME(MASTER, TARGET)%がそこまで言うなら仕方ないわね」
+					{
+					PRINTFORMW 「このアリス\@ TALENT:MASTER:小柄 
+					? お姉さん # 様 \@に奉仕できる幸せを噛み締めながら、精々頑張って頂戴…」
+					}
+				ENDIF
+			ENDIF
+			RETURN 1
+		ENDIF
+
+		;初回以外
+		SELECTCASE RANDEVENT(5, 10)
+			CASE 0
+				CALL HTMLPRINTW(@"「ふふ%RHEART% 嬉しいこと言ってくれるじゃない。ほら、こっちにきなさいよ…」")
+			CASE 1
+				CALL HTMLPRINTW(@"「ご奉仕したいだなんて、殊勝な心がけね？ ふふ…%RHEART%」")
+			CASE 2
+				PRINTFORMW 「そうね。そういうことならお願いしようかしら」
+			CASE 3
+				PRINTFORMW 「これはまた、随分可愛らしい申し出ね%RAND_SPLIT("。/？")% クスクス…」
+			CASE 4
+				PRINTFORML 「%CNAME(MASTER, TARGET)%がそう言うなら断る理由なんてないわね」
+				CALL HTMLPRINTW(@"「私は精々楽しませてもらう事にするわ%RHEART%」")
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	;ボーナス[11] かわいがって
+	;=========================
+	IF IS_SATIS_BONUS("かわいがり")
+		;初回
+		IF FIRSTEVENT(11)
+			CALL HTMLPRINTW(@"「ふふっ、随分可愛らしいこと言うようになったじゃない%RHEART%」")
+			;調教対象がオトコかつ小柄ではない
+			SIF TALENT:MASTER:オトコ && !TALENT:MASTER:小柄
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%のような男の口からそんな言葉が出るとは思ってもみなかったけど。まぁ…」
+			PRINTFORMW 「いいわよ、このアリス\@ TALENT:MASTER:小柄 ? お姉さん # 様 \@がたっぷり可愛がってあげるわ」
+			SIF !TALENT:MASTER:小柄
+				PRINTW 「私なりのやりかたで、ね……」
+			RETURN 1
+		ENDIF
+
+		;2/3の確率で表示
+		IF RAND:3
+			;調教対象が子供 //小柄は子供として扱うのがこの口上の仕様
+			IF TALENT:MASTER:小柄
+				SELECTCASE RANDEVENT(11)
+					CASE 0
+						CALL HTMLPRINTW(@"「ふふ%RHEART% 可愛らしいこと言うのね」")
+						PRINTFORMW 「尤も…、%CNAME(MASTER, TARGET)%の歳ならそういうこと言い出してもおかしくはないけど」
+					CASE 1
+						CALL HTMLPRINTW(@"「あら、かわいい%RHEART%」")
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%みたいな\@ TALENT:MASTER:オトコ ? 子 # 娘 \@にそんなこと言われたら断れないわね」
+					CASE 2
+						PRINTFORMW 「ふふ…、何だかんだいってやっぱり歳相応の子供ね」
+						PRINTFORMW 「まぁでも…、%CNAME(MASTER, TARGET)%がそう言うなら」
+				ENDSELECT
+			;調教対象がオトコ
+			ELSEIF TALENT:MASTER:オトコ
+				SELECTCASE RANDEVENT(12)
+					CASE 0
+						PRINTFORMW 「大の男がそういうこと言い出すのって、ちょっとどうなの？」
+						CALL HTMLPRINTW(@"「な～んて今更よね、そんなの。ふふ%RHEART%」")
+					CASE 1
+						PRINTFORMW 「全く…、%CNAME(MASTER, TARGET)%にはプライドってものが無いのかしら？」
+						CALL HTMLPRINTW(@"「%HTMLFONT("<b>恥を知りなさい！</b>", "ＭＳ 明朝", COLOR2_K14("白"))%」")
+						PRINTFORMW 「とか、思わず言いたくなるけど今は止めておくわ。って…」
+						PRINTFORMW 「ちょっと遅かったかしらね？ ふふ…」
+					CASE 2
+						PRINTFORMW 「そうねぇ…、『かわいがって』とかどう考えても%CNAME(MASTER, TARGET)%のような男には似つかわしくない台詞だけど…」
+						PRINTFORMW 「これはこれで悪い気がしないのは確かなのよ。私も大概ね」
+				ENDSELECT
+			;調教対象がオトコ以外
+			ELSE
+				SELECTCASE RANDEVENT(13)
+					CASE 0
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%にそう言われて断る理由なんてないわ」
+						PRINTFORMW 「いいわよ、可愛がってあげるわ…」
+					CASE 1
+						PRINTFORMW 「あらあら、まるで子供みたいなこと言うのね」
+						PRINTFORMW 「でも、ふふ…%CNAME(MASTER, TARGET)%のそういうとこ、嫌いじゃないわよ」
+					CASE 2
+						PRINTFORMW 「ま、そういう気分になることってあるわよね。判るわ」
+						CALL HTMLPRINTW(@"「いいわよ、子猫のように可愛がってあげる…%RHEART%」")
+				ENDSELECT
+			ENDIF
+		;1/3の確率で汎用処理
+		ELSE
+			CALL KOJO_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;========================================================================
+;EV17, 本日の方針口上
+;========================================================================
+;・@EVENTTRAINから呼び出される
+;・タイミングは調教開始口上(EV11)の後、調教者行動前口上(EV12)の前
+;・大満足ボーナスを得ている場合はそちらが優先される(即ち、この箇所が呼び出される事はない)
+;・調教者により本日の方針が決定された場合に表示
+;・口上表示の後にPRINTLを挟んで地の文。地の文は方針毎に専用のものになる
+;・子作り、休憩はご褒美でしか出ないのでこの箇所では不要。方針が通常の場合は処理されないので通常も不要
+;・Ａ感覚が4までは確率（Ａ感覚、0で1/3）でTFLAG:今日の方針 == 1（Ａ開発）になり1/5の確率で他の方針によって上書きされる
+;・Ａ感覚が5以降になると今日の方針 == 1（Ａ開発）になる可能性は無くなる（感覚が上昇すればＡ開発の必要はない、という仕様？）
+;-------------------------------------------------
+@KOJO_EVENT_K14_17(ARG)
+;-------------------------------------------------
+
+LOCALS = \@ AFFECTION("相思相愛") ? くすくす # ウフフ \@
+;一行空ける
+PRINTL
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;方針がアナル開発 FIRST/RANDEVENT(0)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_POLICY("今日", "アナル")
+	PRINTFORMW 「さてと、今回はおしりを虐めてあげようかしら？」
+	SELECTCASE RANDEVENT(2, 0)
+		CASE 0
+			PRINTFORMW 「もう少し慣らしてあげないとね。色々な意味で…ふふ」
+		CASE 1
+			PRINTFORMW 「おしり弄られて\@ TALENT:MASTER:オトコ ? 女の子みたいに # \@鳴いちゃう%CNAME(MASTER, TARGET)%の姿、わたし好きなのよね」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;方針がお仕置き FIRST/RANDEVENT(1)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_POLICY("今日", "お仕置き")
+	PRINTFORMW 「たまにはお仕置きの日っていうのもいいかも知れないわ」
+	PRINTFORMW 「自分でも良く判らないけど…、なんかそういう気分なのよね」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;方針がいつもより激しく FIRST/RANDEVENT(2)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_POLICY("今日", "ハード")
+	PRINTFORMW 「さて、今回はちょっと激しくするわよ。覚悟して頂戴…」
+	;調教対象のマゾっ気が4以上
+	SIF ABL:MASTER:マゾっ気 > 4
+		PRINTFORMW 「違うわね。%CNAME(MASTER, TARGET)%の場合、愉しみにしててってのが正しいわよね？」
+	CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%LOCALS%…」")
+	CLEARLINE 1
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;方針がイチャイチャ FIRST/RANDEVENT(3)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_POLICY("今日", "イチャイチャ")
+	PRINTFORMW 「時にはちょっと甘やかすのも悪くないわよね。ま、そんな訳で…」
+	PRINTFORM 「今回は思い切り可愛がってあげるわ
+	CALL PRINT_SYMBOL_K14
+	SIF !RAND:3
+		PRINTFORMW 「あ、これは文字通りの意味で…別に裏はないから、安心していいわよ？ ふふっ……」
+	RETURN 1
+ENDIF
+
+;この口上の場合、方針が異常でも放置プレイ、足舐め強制、罵倒にしかならない。他は封印しているのでね
+;とはいってもアリスさんの場合、補正値的に公衆便器は強烈なマイナス補正がかかってるし、fist系が出る事もまずないんだけど
+;というかまぁ、画的に美しくないものは嫌い。fistとか死ねばいい
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;方針が異常 FIRST/RANDEVENT(4)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_POLICY("今日", "異常")
+	PRINTFORMW 「今回はたっぷりと可愛がってあげるから、愉しみにしてていいわよ。とは言っても…」
+	PRINTFORMW 「文字通りって訳でもないんだけど。ね？」
+	IF !RAND:3
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%LOCALS%…」")
+		SIF ANIME_CONFIG("FADE")
+			CLEARLINE 1
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;方針が野外 FIRST/RANDEVENT(5)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_POLICY("今日", "野外")
+	PRINTFORMW 「たまには外出するのもいいかも知れないわね」
+	PRINTFORMW 「%CNAME(MASTER, TARGET)%の事は、そうねぇ…」
+	PRINTFORMW 「よく出来た人形とでも言っておけば、なんとかなるのではないかしら」
+	IF !RAND:3
+		PRINTFORMW 「流石に、死霊術とも言えないしね？」
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%LOCALS%…」")
+		SIF ANIME_CONFIG("FADE")
+			CLEARLINE 1
+	ENDIF
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;EV16汎用口上
+;-------------------------------------------------
+@KOJO_EV16_K14
+PRINTFORM 「いいわよ、お望み通りにしてあげる…
+CALL PRINT_SYMBOL_K14
+PRINTFORMW 「じゃ、はじめるわよ」
+
+@KOJO_EV16_1_K14
+{
+PRINTFORMDL %CALLNAME%は\@ TALENT:TARGET:処女
+? まるで他人事のようにあっさりと承諾し 
+# 努めて冷静に振舞ってい \@たが、
+}
+PRINTFORMD その表情には
+SIF CFLAG:TARGET:依存度 > 4000
+	PRINTFORMD 、隠し切れない
+SIF GET_KFLAG_K14("相思相愛")
+	PRINTFORMD 幸せそうな
+PRINTFORMDW 笑みが浮かんでいた…

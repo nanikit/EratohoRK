@@ -1,0 +1,282 @@
+﻿;-------------------------------------------------
+;天子口上 専用イベント口上ファイル
+;-------------------------------------------------
+;特定状況下で呼び出される専用イベント口上をまとめたファイルです
+;-------------------------------------------------
+;*************************************************
+;専用イベント口上
+;*************************************************
+
+;=================================================
+;さらに強靭になった体イベント
+;=================================================
+;・調教中止時に発生した場合に表示
+;-------------------------------------------------
+@KOJO_EVENT_K52_AMIBA_EVENT
+;-------------------------------------------------
+;・本口上では調教中止の際に天子が天界の桃を使った料理を作り、あなたと一緒に食べる事になる
+;・この際に1/5の確率で天界の桃の体を鍛える効果が普段より効き過ぎて、体がさらに強靭になり体力・気力の最大値が100上昇する
+;・更に、オトコ・ふたなりでかつ精力の最大値が限界値に達していない時は精力の最大値も100上昇する
+;・このイベントを計10回発生させると天人と同レベルの体になってしまい、「痛みに強い」と「精力絶倫」を身につけ、
+;・更に体力・気力・精力の最大値が1000上昇してしまう
+;・…デメリットは特に無い
+;-------------------------------------------------
+
+;-------------------------------------------------
+;記入チェック
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+;一般
+	PRINTL
+	PRINTFORMDW ………
+	PRINTFORMDW ……
+	PRINTFORMDW …
+	PRINTL
+	PRINTFORMDW 天子が作ってくれた、桃を使った料理を食べてから少し経った
+	PRINTL
+	PRINTFORMDW 何故か体が熱い…
+	PRINTFORMDW …力がみなぎってくるような、妙な感覚を覚える
+	PRINTFORMDW …どうやら、体が丈夫になる副作用が少しばかり効き過ぎてしまったようだ
+	PRINTFORMDW いつもより余計に体が鍛えられてしまった…
+	PRINTL
+	PRINTFORMDW さらに体が強靭になり、体力と気力の最大値が100上昇してしまいました
+	;体力と気力の最大値上昇
+	MAXBASE:MASTER:体力 += 100
+	MAXBASE:MASTER:気力 += 100
+	;オトコ・ふたなりでかつ精力の最大値が限界値に達していないと、精力の限界値も100上昇
+	IF (TALENT:MASTER:ふたなり || TALENT:MASTER:オトコ) && MAXBASE:MASTER:射精 < 2500 + CFLAG:MASTER:精力限界 * 500
+		PRINTFORMDW さらに、精力の限界値も100上昇してしまいました
+		MAXBASE:MASTER:射精 += 100
+	ENDIF
+	;イベント発生回数をカウント
+	KFLAG:1++
+	;イベントを計10回発生させると天人と同レベルの体になる
+	IF KFLAG:1 == 10
+		PRINTL
+		PRINTFORMDW ………
+		PRINTFORMDW ……
+		PRINTFORMDW …
+		PRINTL
+		PRINTFORMDW 桃のせいで、今まで何度も何度も体が強靭になってしまってきた
+		PRINTFORMDW …どうやら、そのせいで自分の体はついに天人と同レベルにまで鍛えられてしまったようだ
+		PRINTFORMDW 天人になるつもりは微塵も無かったのに、である
+		PRINTL
+		PRINTFORMDW …うん、あまり深く考えないようにしよう
+		PRINTL
+		PRINTFORMDW ついに、体が天人と同レベルに頑丈になってしまいました
+		PRINTFORMDW 体力と気力の最大値が1000上昇してしまいました
+		;体力と気力の最大値上昇
+		MAXBASE:MASTER:体力 += 1000
+		MAXBASE:MASTER:気力 += 1000
+		;オトコ・ふたなりなら精力の限界値も上昇
+		IF TALENT:MASTER:ふたなり || TALENT:MASTER:オトコ
+			PRINTFORMDW さらに、精力の限界値も1000上昇してしまいました
+			;精力の限界値を2回分上昇
+			CFLAG:MASTER:精力限界 += 2
+			;精力の限界値上昇
+			MAXBASE:MASTER:射精 += 1000
+		ENDIF
+		PRINTL
+		;既に持っていなければ「痛みに強い」取得
+		IF TALENT:MASTER:痛みに強い == 0
+			;痛みに弱い除去
+			SIF TALENT:MASTER:痛みに弱い
+				TALENT:MASTER:痛みに弱い = 0
+			TALENT:MASTER:痛みに強い = 1
+			PRINTFORMDW [痛みに強い]を取得してしまいました
+		ENDIF
+		;オトコ・ふたなりでかつ既に持っていなければ「精力絶倫」取得
+		IF (TALENT:MASTER:ふたなり || TALENT:MASTER:オトコ) && TALENT:MASTER:精力絶倫 == 0
+			;精力薄弱除去
+			SIF TALENT:MASTER:精力薄弱
+				TALENT:MASTER:精力薄弱 = 0
+			TALENT:MASTER:精力絶倫 = 1
+			PRINTFORMDW [精力絶倫]を取得してしまいました
+		ENDIF
+	ENDIF
+	RETURN LOCAL
+ENDIF
+
+;=================================================
+;食い意地の張りすぎは命に関わるぞイベント
+;=================================================
+;・調教中止時に発生した場合に表示
+;-------------------------------------------------
+@KOJO_EVENT_K52_ONESYO_CANDY_EVENT
+;-------------------------------------------------
+;・調教中止の際に、1/10の確率で天子が妙な飴玉を拾ってくる
+;・食後のデザートとしてその飴玉を食べてしまうと、効果によって「おもらし癖」を取得してしまう
+;・eratohoYMにも存在しない、不思議な飴玉である。一体誰が作ったのだろうか…
+;-------------------------------------------------
+
+;-------------------------------------------------
+;記入チェック
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+;一般
+	PRINTL
+	PRINTFORMDW ………
+	PRINTFORMDW ……
+	PRINTFORMDW …
+	PRINTL
+	PRINTFORMW 「そうだ、%CALLNAME:MASTER%…　飴、食べたくないかしら？」
+	PRINTFORMDW そう言うと、天子は懐から飴玉を1つ取り出した
+	PRINTFORMDW レモン色の綺麗な飴玉だ
+	PRINTFORMW 「食後のデザートには丁度いいでしょう？　1つしか無いから、%CALLNAME:MASTER%が食べてしまって良いわよ？」
+	PRINTFORMDW そう天子に言われると、何となく食べたい気分になってしまう
+	PRINTFORMDW さて、天子に差し出された飴玉を…
+	PRINTL 
+	PRINTFORMDL [0] 好意に甘えて食べる
+	PRINTFORMDL [1] 第六感が危険を察知したため食べない
+	CALL INPUTINTD(0, 1)
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW 「分かったわ、それじゃ…　あーんして？」
+			PRINTFORMDW 天子は飴玉を持って、自分の口に近づけてきた
+			PRINTFORMDW 全く予想だにしなかった行動に、つい戸惑ってしまう
+			PRINTFORMW 「こういうシチュエーションを一度、体験してみたかったのよね…」
+			PRINTFORMDW 天子は期待に満ち溢れた顔をしている…
+			PRINTFORMDW …観念して、素直に口を開けてあげた
+			PRINTFORMW 「ありがとう！　それじゃ早速…　あーん？」
+			PRINTFORMDW 口に飴玉を入れられた
+			PRINTL 
+			PRINTFORMDW …飴玉は色の通りレモン味だった
+			PRINTFORMDW 少しだけ天子の指も舐めてしまったが、これはハプニングであって別にわざとでは無い
+			PRINTFORMDW ただ、指の感触に少し興奮してしまったのは…　内緒だ
+			PRINTL 
+			PRINTFORMW 「どう？　美味しいかしら？」
+			PRINTFORMDW 美味しいと天子に返事をする
+			PRINTFORMW 「あーんまでしてあげたかいが有ったわね…　ふふ、ご馳走様でした！」
+			PRINTFORMDW 満足気に微笑む天子は相変わらず可愛い…
+			PRINTFORMDW 天子とちょっぴり甘い時間を過ごした…
+			PRINTL
+			PRINTL
+			PRINTFORMDW 不用意な行動は、時に予想だにしない結末を招く事がある
+			PRINTFORMDW そう、後悔は先に立たず
+			PRINTFORMDW まさに、「時既に時間切れ」なのだ…
+			PRINTL
+			PRINTFORMDW 飴玉を食べたという「行動」は、翌日の朝に「結末」となって訪れた
+			PRINTFORMDW 後悔の涙でベッドを濡らしても、その時既に「とある水分」でベッドは濡れてしまっていたのだ…
+			PRINTL
+			PRINTFORMW （お菓子置き場に有ったから持ってきたのは良いけれど…）
+			PRINTFORMW （私、あれを買った覚えが無いのよね…　あの飴玉って、どこで手に入れた物なのかしら…？）
+			PRINTL
+			PRINTFORMDW ………
+			PRINTFORMDW ……
+			PRINTFORMDW …
+			PRINTL
+			PRINTFORMDW %CALLNAME:MASTER%は[おもらし癖]を取得してしまいました
+			;おもらし癖入手
+			TALENT:MASTER:おもらし癖 = 1
+			;イベント発生済みフラグON
+			KFLAG:2 = 1
+		CASE 1
+			PRINTFORMW 「もしかして、もうお腹いっぱいなのかしら？」
+			PRINTFORMW 「分かったわ！　それならば、これはまた今度食べましょうか！」
+			PRINTFORMDW そう言うと、天子は飴玉を懐にしまう
+			PRINTFORMDW …何故か、とんでもない死亡フラグを回避したような気がしてならない…
+	ENDSELECT
+	RETURN LOCAL
+ENDIF
+
+;=================================================
+;求めよ、さらば与えられんイベント
+;=================================================
+;・ふたなり化orふたなり消去時に発生した場合に表示
+;-------------------------------------------------
+@KOJO_EVENT_K52_OCHINCHIN_LAND_EVENT
+;-------------------------------------------------
+;・ふたなり化orふたなり消去時に発生
+;・魔力を通常の量+1000消費して、調教対象側をふたなり化orふたなり消去する事が可能
+;・おちんちんランドはっじまっるよ～！
+;-------------------------------------------------
+
+;-------------------------------------------------
+;記入チェック
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+;一般
+	PRINTL
+	PRINTFORMDW ………
+	PRINTFORMDW ……
+	PRINTFORMDW …
+	PRINTL
+	;イベント初発生時、胸のサイズ変更イベントと共通
+	IF KFLAG:3 == 0
+		PRINTFORMW 「ところで%CALLNAME:MASTER%…」
+		PRINTFORMW 「この魔法を貴方に使えば、貴方にもおちんちんを生やしたり消したり、胸を大きくしたり小さくしたり出来るみたいね」
+		PRINTFORMDW 天子はサラッと凄い事を言い出した
+		PRINTFORMW 「だって、ほら…　この魔力って元々は%CALLNAME:MASTER%から貰った物じゃない？」
+		PRINTFORMW 「だから貰った魔力の一部を%CALLNAME:MASTER%に一旦返して、貴方の魔力としてこの魔法を行使すれば大丈夫みたいよ」
+		PRINTFORMW 「ただ…　一旦私の物として変換した魔力を元に戻す際と、貴方に魔力を返す際にロスが発生するみたい」
+		PRINTFORMW 「だから、普段より多く魔力を消費するけれど…　丁度魔力は十分有るし、今ならいつでも行けるわよ？」
+		PRINTFORMDW 天子は自信満々な顔で露骨に誘ってくる
+		PRINTFORMDW そう天子に言われると、何となく断れない雰囲気になってしまう
+		PRINTFORMDW 一度、天子の誘いに乗ってみるのも良いだろう…　天子も喜ぶだろうし
+		;イベント初発生済みフラグON
+		KFLAG:3 = 1
+	;2回目以降
+	ELSE
+		PRINTFORMW 「ふふ、今回は%CALLNAME:MASTER%の方はどうするのかしら？」
+		PRINTFORMW 「おちんちんが有っても無くても、それぞれ違ったプレイが出来るのが良いわよね…」
+		PRINTFORMW 「もちろん、私はどっちでも構わないわよ？」
+	ENDIF
+	PRINTL 
+	PRINTFORMDW さて、今回はどうしようか…
+	PRINTFORMDL (残り魔力 {CFLAG:魔力})
+	PRINTL 
+	PRINTFORMDL [0] \@ TALENT:MASTER:ふたなり ? 両性化を元に戻す　 # 両性化の儀式をする \@　　　　　　　　　　　　　　 魔力8000
+	PRINTFORMDL [1] 何もしない
+	CALL INPUTINTD(0, 1)
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW 「ふふ、分かったわ！　それじゃ、手を出して頂戴？」
+			PRINTFORMDW そう言われて手を差し出すと、天子は軽く手を握ってきた
+			PRINTFORMW 「ふふ、%CALLNAME:MASTER%の手、あったかいな…」
+			PRINTFORMDW 天子は凄く幸せそうな顔をしている…
+			PRINTFORMW 「…って、そうじゃないわ！　それじゃ、魔力を貴方に返すわよ？」
+			PRINTFORMDW そう言い、天子は呪文を唱え出した
+			PRINTFORMDW 天子から暖かい魔力が送られてくる…　何だか力がみなぎってきて気持ち良い
+			PRINTFORMW 「…良し、これで上手く返せたわね！　それじゃ、次の呪文を唱えるわね！」
+			PRINTFORMDW そう言い、天子は次の呪文を唱え出した
+			;ふたなり消去
+			IF TALENT:MASTER:ふたなり
+				PRINTFORMDW 膨大な魔力がペニスに集まり、どんどん熱を持ってくる…
+				PRINTFORMDW 次の瞬間、ペニスが強烈な光を放った！　…何か最悪な光景だ！
+				CALL FLASH
+				PRINTFORMDW しばらくし、光が収まると…　ペニスは可愛らしいクリトリスに戻っていた
+			;ふたなり化
+			ELSE
+				PRINTFORMDW 膨大な魔力がクリトリスに集まり、どんどん熱を持ってくる…
+				PRINTFORMDW 次の瞬間、クリトリスが強烈な光を放った！　…何か卑猥な光景だ！
+				CALL FLASH
+				PRINTFORMDW しばらくし、光が収まると…　クリトリスはご立派なペニスに変わっていた
+			ENDIF
+			PRINTL 
+			PRINTFORMW 「ふう、お疲れ様！　今回は%CALLNAME:MASTER%のお気に召したかしら？」
+			PRINTFORMDW 天子は額から汗を流している…　この魔法は結構疲れるようだ
+			PRINTFORMDW タンスからタオルを持ってきて、天子の汗を拭いてあげた
+			PRINTFORMW 「ありがとう！　ふふ、%CALLNAME:MASTER%に優しくされちゃった！」
+			PRINTFORMDW 満足気に微笑む天子は相変わらず可愛い…
+			PRINTFORMDW 天子とちょっぴり甘い時間を過ごした…
+			PRINTL
+			;通常の調教者の場合と同様の処理
+			CFLAG:魔力 -= 8000
+			TALENT:MASTER:ふたなり = !TALENT:MASTER:ふたなり
+			;童貞化。性交経験は逆レイプの経験等と混ざるので微妙だと思いますが…
+			TALENT:MASTER:童貞 = TALENT:MASTER:ふたなり && !EXP:MASTER:性交経験
+			;射精ゲージの初期化
+			;初期化関数を統一@これみ
+			CALL BASE_SETUP_PENIS(MASTER)
+			CALL VOIDLINE_IF(RESULT)
+			PRINTFORMDW %CALLNAME:MASTER%は\@ TALENT:MASTER:ふたなり ? ふたなり # 女の子 \@になりました
+		CASE 1
+			PRINTFORMW 「ふふ、分かったわ！　それじゃ、また気が向いた時は声を掛けて頂戴！」
+			PRINTFORMDW いつか気が向いた時にでも、また天子に声を掛けてみようか…
+	ENDSELECT
+	RETURN LOCAL
+ENDIF
+

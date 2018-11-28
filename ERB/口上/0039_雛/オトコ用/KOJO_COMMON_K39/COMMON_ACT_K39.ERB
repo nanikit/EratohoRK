@@ -1,0 +1,766 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;	雛口上　汎用アクション口上ファイル
+
+;	汎用アクション口上をまとめたファイル
+
+;Version		Reason
+;1.11			修正等
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;=================================================
+;簡易フロー
+;    表示タイミング・まずアクションごとの口上
+;        表示しなかった場合、コンビネーションが発生していれば派生前を呼んでみる
+;            表示しなかった場合汎用アクション口上(←いまここ)
+;=================================================
+
+;========================================================================
+;汎用アクション口上 AUTORAND(500) ～
+;========================================================================
+;・個別の調教者アクションが表示されなかった際に表示
+;・@KOJO_ACT_KX以外で関数分けはされておらず、全て共通で呼び出される
+;・この部分のみを使用し、コマンド毎に呼び出しを分けていな他のバリアント口上のような使い方も可能
+;・元々は手間を減らしたい場合のeasy用機能として設けられたもの
+;・SELECTCASE GET_ACTNAME(TFLAG:ACT)で分けるもいいし、IS_NOWACTNAMEでIF ELSEIFで分けてもいい
+;・さらに手間を減らしたいならMENUMATCH等でACT分類で分けてもいい(基本的に非推奨だけど)
+;・個別にRESULT返してもいいし、最後にまとめてRESULTを返してもいい
+;・ACT毎の名称はStr.CSVの0～103を参照の事
+;-------------------------------------------------
+;・easy用口上テンプレートはこの汎用アクション(@KOJO_ACT)と
+;      統括汎用リアクション(@KOJO_REACT)機能を基本として作成する予定
+;-------------------------------------------------
+@KOJO_MALE_ACT_K39
+#LOCALSIZE 10
+#LOCALSSIZE 10
+VARSET LOCAL
+VARSET LOCALS
+RESULT = 0
+
+;//この口上は通常のACT口上、"その他・条件なし"の箇所が確立で真になるようになっているので
+;//そこから漏れた場合はこちらで処理されるようになっている
+;//汎用ACTが実装された時に試験的にやり始めて、結局そのまま残ってるといかいうアレ
+;//今更通常のACTに移し替えるのも面倒だし…
+
+;//ACT系の最後の受け皿なので確率で真偽になる類の分岐は基本的に設けない
+;//今後この箇所を手入れする可能性は非常に低い
+;//上気の理由によりここでは記入チェックを使わない
+;//条件毎の優先度の見極め、不要な部分の削除、コメントアウトが徹底できるなら、そもそも不要でもある
+
+;────────────────────────────────────
+;ACT10：愛撫
+;────────────────────────────────────
+IF IS_NOWACTNAME("手で愛撫")
+	;手淫する
+	IF TFLAG:ACT派生 == 1
+		IF 0
+		;連続実行
+		ELSEIF TFLAG:ACT == TFLAG:前ACT
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE AUTORAND(5, 500)
+					CASE 0
+						PRINTFORMW 「思いっきり激しくシゴかれるの大好きでしょ？」
+					CASE 1
+						PRINTFORMW 「シゴかれながら乳首を弄られるのはどう？」
+					CASE 2
+						PRINTFORMW 「唾液塗れの手で先っぽばかり責められるのはどう？」
+					CASE 3
+						PRINTFORMW 「左手でシゴかれるとちょっと違う感じでしょ？」
+					CASE 4
+						PRINTFORMW 「一緒におしりの穴も弄られると堪らないでしょ？」
+				ENDSELECT
+				SELECTCASE AUTORAND(5, 501)
+					CASE 0
+						PRINTFORMW 「イク時はちゃんと『イキます！』って言わないと駄目よ？　うふふっ」
+					CASE 1
+						PRINTFORM 「手の中でどんどん大きくなってくる……なんか私も興奮してきちゃった
+						CALL PRINT_SYMBOL_K39
+					CASE 2
+						PRINTFORM 「イキたくなったら何時でも射精して？　ほらほらっ！　早くイっちゃいなさいよ
+						CALL PRINT_SYMBOL_K39
+					CASE 3
+						PRINTFORMW 「ほら、もっと感じて、%TNAME_K39()%の手で気持ちよくなって…」
+					CASE 4
+						PRINTFORMW 「うふっ、ビクビクさせちゃって。そんなに気持ち良いのかしら
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE AUTORAND(6, 502)
+					CASE 0
+						PRINTFORMW 「ビクビクさせて気持ちよさそうですね…」
+					CASE 1
+						PRINTFORMW 「もう少し強めにシゴいた方がいいですか？」
+					CASE 2
+						PRINTFORMW 「声が出るのを抑えられないみたいですね？」
+					CASE 3
+						PRINTFORMW 「唾液で濡らして先端を擦られるのはどうでしょう…」
+					CASE 4
+						PRINTFORMW 「逆手でシゴくなんていうのはどうですか？」
+					CASE 5
+						PRINTFORMW 「一緒に乳首を弄られるのはどうでしょう？」
+				ENDSELECT
+				SELECTCASE AUTORAND(4, 503)
+					CASE 0
+						PRINTFORMW 「イきたくなったらいつでも出していいんですよ♪」
+					CASE 1
+						PRINTFORMW 「さぁ、厄神の指捌きをもっと愉しんでくださいね♪」
+					CASE 2
+						PRINTFORMW 「腰が自然に動いてしまうのも止められないみたいですね？　うふっ」	
+					CASEELSE
+						PRINTFORMW 「イク時はちゃんと私に言ってくださいね？　うふ」
+				ENDSELECT
+			ENDIF
+			PRINTFORMDW %CALLNAME%は時折%CALLNAME:MASTER%の%RAND_SPLIT("乳首を弄り/アヌスを愛撫し/陰嚢を優しく揉み解し/耳に息を吹きかけ")%ながら、ペニスをしごき続けた…
+			RETURN 1
+		;その他：通常のアクション
+		ELSE
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE AUTORAND(4, 505)
+					CASE 0
+						PRINTFORMW 「手で擦って欲しくて待ちきれないんでしょ？　ほら、正直に言わないとシてあげないよ？」
+					CASE 1
+						PRINTFORMW 「ほら、じっとしてて？　手コキで昇天させてあげるから♪」
+					CASE 2
+						PRINTFORMW 「さぁ、大人しく私にシゴかれなさい？　空っぽになるまでシてあげるから♪」
+					CASE 3
+						PRINTFORMW 「そんな目で見なくても分かるわ。いいよ、手でシゴいてあげる♪」
+				ENDSELECT
+				SELECTCASE AUTORAND(4, 506)
+					CASE 0
+						PRINTFORMW 「相変わらず良い手応えね？　ねぇ、もっと強くシゴいた方がいいかしら」
+					CASE 1
+						PRINTFORMW 「ねぇ、簡単にイっては駄目よ？　少しは愉しませてね。うふっ」
+					CASE 2
+						PRINTFORMW 「こんな感じ？　それともこうした方がいい？　うふっ」
+					CASE 3
+						PRINTFORMW 「もう先っぽがこんなにヌルヌルなのね？　ほら、もっと気持ちよくしてあげる」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE AUTORAND(4, 507)
+					CASE 0
+						PRINTFORMW 「さぁ、私の手で蕩かしてあげますよ♪」
+					CASE 1
+						PRINTFORMW 「私の手でシゴかれるのが待ちきれないですか？」
+					CASE 2
+						PRINTFORMW 「もうこんなに硬くしてしまって……すぐに楽にしてあげます♪」
+					CASE 3
+						PRINTFORMW 「期待しているのでしょう？　言わなくても分かりますよ」
+				ENDSELECT
+				SELECTCASE AUTORAND(4, 508)
+					CASE 0
+						PRINTFORMW 「ほら、こんな感じはどうでしょう。えっ、もっと強くですか？　うふふ」
+					CASE 1
+						PRINTFORMW 「ほら、見つめられながらシゴかれると興奮しませんか？　うふっ」
+					CASE 2
+						PRINTFORMW 「中々扱き応えがありますね…空になるまでシてあげますよ♪」
+					CASE 3
+						PRINTFORMW 「すっかり大人しくなってしまって。そんなに良いんでしょうか？　うふっ」
+				ENDSELECT
+			ENDIF
+			PRINTFORMDW %CALLNAME%は%RAND_SPLIT("妖艶な笑みを浮かべつつ/自らの愛液を塗しつつ/自らの唾液を塗しつつ/ねっとりとした視線を絡めながら")%、その手であなたのペニスをしごき始めた…
+			RETURN 1
+		ENDIF
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT派生11：胸愛撫
+;────────────────────────────────────
+IF IS_NOWACTNAME("胸愛撫")
+	SELECTCASE TFLAG:ACT派生
+		;乳首吸い
+		CASE 1
+			RETURN 0
+		;揉み合い
+		CASE 2
+			RETURN 0
+		;乳首責め
+		CASE 3
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE AUTORAND(3, 510)
+					CASE 0
+						PRINTFORMW 「ほら、じっとしてて？」
+						PRINTFORMW 「思いっきり愉しませてあげるから♪」
+					CASE 1
+						PRINTFORMW 「ねぇ、弄って欲しいんでしょ？」
+						PRINTFORMW 「素直に言わないとシてあげないから♪」
+					CASE 2
+						PRINTFORMW 「さぁ、愉しませてあげる」
+						PRINTFORMW 「期待していいわよ？　うふっ」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE AUTORAND(4, 511)
+					CASE 0
+						PRINTFORMW 「さぁ、気持ちよくしてあげますよ」
+						PRINTFORMW 「安心して私に任せてくださいね♪」
+					CASE 1
+						PRINTFORMW 「大人しくしててくださいね？」
+						PRINTFORMW 「気持ちよくしてあげるだけですから♪」
+					CASE 2
+						PRINTFORMW 「うふ、期待していいですよ」
+						PRINTFORMW 「思いっきり愉しませてあげますから♪」
+					CASE 3
+						PRINTFORMW 「あなたはどんな感じに弄られるのが好きなんでしょうか？」
+						PRINTFORMW 「こんな感じ？ それともこうでしょうか？ うふ……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;────────────────────────────────────
+;ACT派生12：口で愛撫
+;────────────────────────────────────
+IF IS_NOWACTNAME("口で愛撫")
+	;ACT派生1：フェラ
+	IF TFLAG:ACT派生 == 1
+		;連続実行
+		IF TFLAG:ACT == TFLAG:前ACT
+			;フェードアウト
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE AUTORAND(4, 520)
+					CASE 0
+						PRINTFORMW 「上目遣いで見つめられてしゃぶられるのって興奮するの…？」
+					CASE 1
+						PRINTFORM 「イきそうになったら教えて？　全部飲んであげるから…
+						CALL PRINT_SYMBOL_K39
+					CASE 2
+						PRINTFORM 「うふ、おいし♪　ほら、もっと激しくシてあげる…
+						CALL PRINT_SYMBOL_K39
+					CASE 3
+						PRINTFORM 「ほらっ、動いたらちゃんと出来ないでしょ。大人しくしてて…
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+				;終端でRETURN
+			;その他
+			ELSE
+				SELECTCASE AUTORAND(4, 521)
+					CASE 0
+						PRINTFORM 「気持ち良いですか？　うふ、もっと蕩かしてあげます…
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORMW 「イきそうになったら言ってくださいね？」
+					CASE 2
+						PRINTFORMW 「先端の後ろ側を舌で突かれるのがいいみたいですね？」
+					CASE 3
+						PRINTFORM 「まだ頑張るんですね？　では、ちょっと激しくイきますよ
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+				;終端でRETURN
+			ENDIF
+			;調教者が"情欲"もしくは25%で真
+			SIF IS_CONDITION(TARGET, "情欲") || !RAND:4
+				CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+			RETURN 1
+		;通常
+		ELSE
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE AUTORAND(4, 522)
+					CASE 0
+						PRINTFORM 「口でシて欲しいんでしょ？ ほら、正直に言いなさいよ…
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORMW 「ほら、足を開いて。これをシて欲しかったんでしょ？ うふ」
+					CASE 2
+						PRINTFORM 「うふ、イヤラシイ匂いね。ちょっと興奮しちゃう
+						CALL PRINT_SYMBOL_K39
+					CASE 3
+						PRINTFORMW 「さぁ、口で蕩かしてあげる。準備はいい？」
+				ENDSELECT
+				;フェードアウト
+				CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+				PRINT 「ん%RAND_SPLIT("っ/ッ")%……
+				SELECTCASE AUTORAND(4, 523)
+					CASE 0
+						PRINTFORMW まだまだこんなものじゃ済まないわよ？」
+					CASE 1
+						PRINTFORMW ねぇ、気持ち良い？ どうなの？」
+					CASE 2
+						PRINTFORMW すごく、熱い……」
+					CASE 3
+						PRINTFORMW どんどん大きくなって…」
+				ENDSELECT
+				;RETURNは終端で
+			;その他
+			ELSE
+				SELECTCASE AUTORAND(4, 524)
+					CASE 0
+						PRINTFORMW 「言わなくても分かりますよ、口でシて欲しいんですね？」
+					CASE 1
+						PRINTFORMW 「さぁ、厄神の舌使いを存分に堪能してもらいますよ。覚悟してくださいね？」
+					CASE 2
+						PRINTFORM 「動かないでくださいね？ 私の口で搾り取ってあげます%RAND_SPLIT("から/")%
+						CALL PRINT_SYMBOL_K39
+					CASE 3
+						PRINTFORM 「この匂いが堪らないですね
+						CALL AUTOHEARTCB2_K39
+						PRINTFORMW 　さ、準備はいいですか？」
+				ENDSELECT
+				CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+				PRINT 「ん%RAND_SPLIT("っ/ッ")%……」
+				SELECTCASE AUTORAND(4, 525)
+					CASE 0
+						PRINTFORM これからが本番ですよ…
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORMW 愉しんでもらえてますか？」
+					CASE 2
+						PRINTFORMW すごく、熱くて……」
+					CASE 3
+						PRINTFORMW 口の中で、こんなに大きく…」
+				ENDSELECT
+				;RETURNは終端で
+			ENDIF
+			PRINTFORMDW %CALLNAME%は%RAND_SPLIT("亀頭に舌を絡めつつ/上目遣いで見上げながら/手で根元を擦りながら/片手で陰嚢を優しく揉み解しながら")%、あなたのペニスを口でしごき始めた…
+			RETURN 1
+		ENDIF
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT13：アナル愛撫
+;────────────────────────────────────
+;IF IS_NOWACTNAME("アナル愛撫")
+;ENDIF
+
+;────────────────────────────────────
+;ACT14：アナル舐め
+;────────────────────────────────────
+;IF IS_NOWACTNAME("アナル舐め")
+;ENDIF
+
+;────────────────────────────────────
+;ACT15：キス
+;────────────────────────────────────
+;IF IS_NOWACTNAME("キス")
+;ENDIF
+
+;────────────────────────────────────
+;ACT16：性器を擦り合う
+;────────────────────────────────────
+;IF IS_NOWACTNAME("性器を擦り合う")
+	;ACTへ移設
+;ENDIF
+
+;────────────────────────────────────
+;ACT17：パイズリする
+;────────────────────────────────────
+IF IS_NOWACTNAME("パイズリする") && !FLAG:オートモード
+	;調教者が巨乳
+	IF TALENT:TARGET:巨乳
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORM 「折角おっぱいが大きくなったんだから愉しまないとね
+			CALL PRINT_SYMBOL_K39
+			PRINTFORMW 「ねぇ、あなたはどうしたい？」
+			PRINTL
+			PRINTFORMDL [0] 縦パイズリ
+			PRINTFORMDL [1] 巨乳で普通にパイズリ
+			PRINTFORMDL [2] 巨乳を揉みしだきながら腰を振る
+			PRINTFORMDL [3] 谷間から顔出した先端をペロペロして！
+			CALL INPUTINTD(0, 1, 2, 3)
+			SELECTCASE RESULT
+				CASE 0
+					PRINTFORM 「ふふっ、いいわよ？　%TNAME_K39()%のおっぱいとえっちさせてあげる
+				CASE 1
+					PRINTFORM 「意外と普通ね？　まぁ、それもいいかも
+				CASE 2
+					PRINTFORM 「うふ、激しくシたいのね？　いいよ…思いっきり愉しんで
+				CASE 3
+					PRINTFORM 「クスクス、分かったわ。胸と口で愉しませてあげる
+			ENDSELECT
+			CALL PRINT_SYMBOL_K39
+		;その他
+		ELSE
+			PRINTFORM 「折角大きくしたのですから、思い切り愉しんでくださいね
+			CALL PRINT_SYMBOL_K39
+			PRINTFORMW 「今回は何がしたいですか？」
+			PRINTL
+			PRINTFORMDL [0] ぱふぱふして！
+			PRINTFORMDL [1] 縦パイズリ
+			PRINTFORMDL [2] 巨乳で普通にパイズリ
+			PRINTFORMDL [3] 谷間から顔出した先端をペロペロして！
+			CALL INPUTINTD(0, 1, 2, 3)
+			SELECTCASE RESULT
+				CASE 0
+					PRINTFORM 「ご免なさい、それは出来ないんです。その代わり、普通に愉しませてあげますよ
+				CASE 1
+					PRINTFORM 「それは大きくないと出来ませんからね。いいですよ、存分に愉しんでください
+				CASE 2
+					PRINTFORM 「それもいいかも知れませんね。この胸の柔らかさ、たっぷり堪能してくださいね
+				CASE 3
+					PRINTFORM 「うふ、欲張りなんですね。いいですよ、胸と口で愉しませてあげます
+			ENDSELECT
+			CALL PRINT_SYMBOL_K39
+		ENDIF
+		RETURN 1
+	;調教者が巨乳ではない
+	ELSE
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORML 「いつも同じじゃツマラナイから、何かリクエストがあったら言ってみて？」
+			PRINTFORMW 「ねぇ、あなたはどうして欲しいの？」
+			PRINTL
+			PRINTFORMDL [0] 裏スジを乳首で刺激しながら
+			PRINTFORMDL [1] 両手できつく挟んでバキュームフェラで
+			PRINTFORMDL [2] ねっとりと優しく
+			PRINTFORMDL [3] 雛がシてくれるなら何でも
+			CALL INPUTINTD(0, 1, 2, 3)
+			SELECTCASE RESULT
+				CASE 0
+					PRINTFORMW 「それやると私もよくなっちゃうんだけど？　まぁ、別にいいけど♪」
+				CASE 1
+					PRINTFORMW 「それはいいけど……すぐイっちゃうんじゃない？　うふふっ」
+				CASE 2
+					PRINTFORMW 「いいよ……%TNAME_K39()%のおっぱいでたっぷり可愛がってあげる♪」
+				CASE 3
+					PRINTFORMW 「うふっ、可愛い事言うじゃない♪」
+			ENDSELECT
+		;それ以外
+		ELSE
+			PRINTFORMW 「ちょっと強めにシゴかれるのと、先端を舐めながらと、どちらが良いですか？」
+			PRINTL
+			PRINTFORMDL [0] 激しくして！
+			PRINTFORMDL [1] 先っぽ舐め舐めして！
+			PRINTFORMDL [2] 両方！
+			CALL INPUTINTD(0, 1, 2)
+			SELECTCASE RESULT
+				CASE 0
+					PRINTFORMW 「激しいのがお望みなんですね？　いいですよ、思いっきり激しくシてあげます♪」
+				CASE 1
+					PRINTFORMW 「うふ、舐めながら胸で擦って欲しいんですね？　では、お望み通りに♪」
+				CASE 2
+					PRINTFORMW 「クスクス、欲張りなんですね。いいですよ、どちらもシてあげます♪」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT18：足コキする
+;────────────────────────────────────
+IF IS_NOWACTNAME("足コキする")
+	;調教者が下半身下着着用中
+	IF PANTSCHECK(0, 1)
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE AUTORAND(2, 540)
+				CASE 0
+					PRINTFORMW 「ほら、足でシゴかれるの大好きでしょ？」
+				CASE 1
+					PRINTFORMW 「うふ、もう期待して興奮してるみたいね？」
+			ENDSELECT
+			SELECTCASE AUTORAND(4, 541)
+				CASE 0
+					PRINTFORMW 「ん…そんな目で見られると、興奮して濡れてきちゃう…」
+				CASE 1
+					PRINTFORMW 「ねぇ、下着がぐっしょり濡れてるの分かる？ ふふ」
+				CASE 2
+					PRINTFORM 「もっと強く踏んで欲しいの？ まったく、イヤラシイ人ね
+					CALL PRINT_SYMBOL_K39
+				CASE 3
+					PRINTFORMW 「ねぇ、こんな感じはどう？ もっと強く擦った方がいい？」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE AUTORAND(2, 542)
+				CASE 0
+					PRINTFORMW 「こういうのは嫌いじゃないみたいですね？」
+				CASE 1
+					PRINTFORMW 「コレが大好きという人も居るようですが、あなたはどうなんでしょう？」
+			ENDSELECT
+			SELECTCASE AUTORAND(3, 543)
+				CASE 0
+					PRINTFORMW 「目つきがイヤラシイですね♪　下着を穿いてると不満ですか？」
+				CASE 1
+					PRINTFORMW 「下着を穿いてる方がむしろ興奮するんじゃないですか？ ふふ」
+				CASE 2
+					PRINTFORMW 「下着が濡れているの、判りますか？ もっと良く見ていいんですよ。うふっ」
+			ENDSELECT
+		ENDIF
+		PRINTFORMDW %CALLNAME%は%RAND_SPLIT("秘唇を見せつけながら/自ら指で秘裂を広げて見せながら/溢れ出す愛液をあなたの男性器に塗りつけ")%、その足であなたのペニスをしごき始めた…
+		RETURN 1
+	;穿いてない
+	ELSE
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE AUTORAND(2, 544)
+				CASE 0
+					PRINTFORMW 「ほら、折角穿いてないんだから、もっと良く見て？」
+				CASE 1
+					PRINTFORMW 「これ、私も興奮しちゃって……溢れ出すのが止まらなくなっちゃう…」
+			ENDSELECT
+			SELECTCASE AUTORAND(4, 545)
+				CASE 0
+					PRINTFORMW 「ねぇ、足で擦られながら%TNAME_K39()%とえっちしてるような気分なんじゃない？　うふっ」
+				CASE 1
+					PRINTFORM 「なに？ もっと強く踏んで欲しいの？ まったく、イヤラシイ人ね
+					CALL PRINT_SYMBOL_K39
+				CASE 2
+					PRINTFORM 「先っぽクニクニされるのはどう？　うふ、気に入ったみたいね
+					CALL PRINT_SYMBOL_K39
+				CASE 3
+					PRINTFORMW 「こんなに硬くしちゃって…やっぱり見えてる方が興奮するの？」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE AUTORAND(2, 546)
+				CASE 0
+					PRINTFORMW 「さぁ、恥ずかしがらず、もっと良く見ていいんですよ？」
+				CASE 1
+					PRINTFORMW 「奥から溢れ出してるの、分かりますか？　あなたに見られて、私も見られて興奮してるんですよ…」
+			ENDSELECT
+			SELECTCASE AUTORAND(3, 547)
+				CASE 0
+					PRINTFORMW 「ん…凄く硬いですね…やはり下着を穿いてない方が興奮しますか？　うふっ」
+				CASE 1
+					PRINTFORMW 「片足で袋を弄られるのはどうですか？　うふ、もっと愉しんでくださいね♪」
+				CASE 2
+					PRINTFORMW 「もっと強く踏みつけるように、ですか？　クス、本当にイヤラシイ人ですね♪」
+			ENDSELECT
+		ENDIF
+		PRINTFORMDW %CALLNAME%は%RAND_SPLIT("秘唇を見せつけながら/自ら指で秘裂を広げて見せながら溢れ出す愛液をあなたの男性器に塗りつけ")%、その足であなたのペニスをしごき始めた…
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT50：手で愛撫強制
+;────────────────────────────────────
+IF IS_NOWACTNAME("手で愛撫を強制")
+	IF !TFLAG:ACT派生
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE AUTORAND(4, 550)
+				CASE 0
+					PRINTFORMW 「あなたに弄ってもらえるのが嬉しくって……」
+				CASE 1
+					PRINTFORMW 「ねぇ、私の体、期待で熱くなってるの分かる？」
+				CASE 2
+					PRINTFORMW 「あなたに触れられる度、%TNAME_K39()%の体は悦んじゃうの……」
+				CASE 3
+					PRINTFORMW 「ねぇ、はやく弄って。もう待ちきれないの……」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE AUTORAND(4, 551)
+				CASE 0
+					PRINTFORMW 「さぁ、あなたの好きなようにしていいですよ」
+				CASE 1
+					PRINTFORMW 「私の体、期待で熱くなってるの分かりますか？」
+				CASE 2
+					PRINTFORMW 「あなたに触れられる度、私はちょっと\@ AFFECTION("溺愛") ? 幸せな気持ちになり # ドキドキしてしまい \@ます……」
+				CASE 3
+					PRINTFORMW 「優しく、丁寧にお願いしますね」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT51：口で愛撫を強制
+;────────────────────────────────────
+IF IS_NOWACTNAME("口で愛撫を強制")
+	;調教対象がペニスを責められている時
+	IF INRANGE(TEQUIP:調教対象Ｃ使用, 1, 2)
+		IF 0
+		;膣内射精後しばらく
+		ELSEIF INRANGE(TCVAR:MASTER:膣内射精後経過ターン, 1, 2)
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE AUTORAND(2, 560)
+					CASE 0
+						PRINTFORMW 「あなたのも弄ってあげるから、ちゃんと舐めて綺麗にして」
+						PRINTFORMW 「まだ奥から出てくるから、しっかり舐めないと駄目よ？」
+					CASE 1
+						PRINTFORMW 「これって、凄くいけない事してるみたいで…」
+						PRINTFORMW 「ちょっと興奮しちゃう…」
+				ENDSELECT
+			;その他
+			ELSE
+				PRINTFORMW 「さぁ、自分が出したものは、ちゃんと綺麗にしてもらいますよ」
+				PRINTFORM 「その代わり、こっちもちゃんと弄ってあげますから
+				CALL PRINT_SYMBOL_K39
+			ENDIF
+		;顔面騎乗アナル派生
+		ELSEIF TFLAG:ACT派生 == 3
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINTFORMW 「ん……わたし、疼いてきちゃって…」
+				PRINTFORMW 「ねぇ、私の恥ずかしいトコ舐めて…もう我慢できないの…」
+			ELSE
+				PRINTFORMW 「うふ、そんなに嫌がらないで」
+				PRINTFORM 「私、これでも期待しているんですよ
+				CALL PRINT_SYMBOL_K39
+			ENDIF
+		;クンニ強制
+		ELSE
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE AUTORAND(3, 561)
+					CASE 0
+						PRINTFORMW 「ねぇ…舐めてもらうの期待して、ヒクヒクしてるの、分かる？」
+						PRINTFORMW 「早くシて欲しくて、もう我慢できないの…」
+					CASE 1
+						PRINTFORMW 「ほら、あなたの舌で存分に味わって？」
+						PRINTFORMW 「遠慮なく舐めまわしていいわよ♪」
+					CASE 2
+						PRINTFORMW 「ねぇ、早く舐めて。もう待ちきれないの…」
+						PRINTFORMW 「疼いちゃって、つらいの…」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE AUTORAND(4, 562)
+					CASE 0
+						PRINTFORMW 「舐めて欲しくて、ヒクヒクしてるの分かりますか？」
+						PRINTFORMW 「さ、優しくお願いしますね…」
+					CASE 1
+						PRINTFORMW 「丁寧にお願いしますね」
+					CASE 2
+						PRINTFORMW 「敏感なところなので、優しくしてくださいね」	
+					CASE 3
+						PRINTFORMW 「さ、私の味を愉しんでくださいね♪」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		RETURN 1
+	;顔面騎乗中
+	ELSEIF TFLAG:ACT派生 == 2
+		;膣内精液あり
+		IF INRANGE(TCVAR:MASTER:膣内射精後経過ターン, 1, 2)
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE AUTORAND(2, 563)
+					CASE 0
+						PRINTFORMW 「あなたのも弄ってあげるから、ちゃんと舐めて綺麗にして」
+						PRINTFORMW 「まだ奥から出てくるから、しっかり舐めないと駄目よ？」
+					CASE 1
+						PRINTFORMW 「これって、凄くいけない事してるみたいで…」
+						PRINTFORMW 「ちょっと興奮しちゃう…」
+				ENDSELECT
+			ELSE
+				PRINTFORMW 「さぁ、自分が出したものは、ちゃんと綺麗にしてもらいますよ」
+				PRINTFORMW 「その代わり、こっちもちゃんと弄ってあげますから♪」
+			ENDIF
+		;その他
+		ELSE
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE AUTORAND(3, 564)
+					CASE 0
+						PRINTFORMW 「ねぇ…舐めてもらうの期待して、ヒクヒクしてるの、分かる？」
+						PRINTFORMW 「早くシて欲しくて、もう我慢できないの…」
+					CASE 1
+						PRINTFORMW 「ほら、あなたの舌で存分に味わって？」
+						PRINTFORMW 「遠慮なく舐めまわしていいわよ♪」
+					CASE 2
+						PRINTFORMW 「ねぇ、早く舐めて。もう待ちきれないの…」
+						PRINTFORMW 「疼いちゃって、つらいの…」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE AUTORAND(4, 565)
+					CASE 0
+						PRINTFORMW 「舐めて欲しくて、ヒクヒクしてるの分かりますか？」
+						PRINTFORMW 「さ、優しくお願いしますね…」
+					CASE 1
+						PRINTFORMW 「丁寧にお願いしますね」
+					CASE 2
+						PRINTFORMW 「敏感なところなので、優しくしてくださいね」
+					CASE 3
+						PRINTFORMW 「さ、私の味を愉しんでくださいね♪」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		RETURN 1
+	;顔面騎乗アナル中
+	ELSEIF TFLAG:ACT派生 == 3
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE AUTORAND(3, 566)
+				CASE 0
+					PRINTFORMW 「ねぇ…舐めてもらうの期待して、ヒクヒクしてるの、分かる？」
+					PRINTFORMW 「早くシて欲しくて、もう我慢できないの…」
+				CASE 1
+					PRINTFORMW 「ほら、あなたの舌で存分に味わって？」
+					PRINTFORMW 「遠慮なく舐めまわしていいわよ♪」
+				CASE 2
+					PRINTFORMW 「ねぇ、早く舐めて。もう待ちきれない…」
+					PRINTFORMW 「おしりが疼いて、つらいの…」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE AUTORAND(3, 567)
+				CASE 0
+					PRINTFORMW 「うふ、そんなに嫌がらないで」
+					PRINTFORMW 「私、これでも期待しているんですよ♪」
+				CASE 1
+					PRINTFORMW 「実を言うと、こんな所を舐められるのは私も恥ずかしいんですよ」
+				CASE 2
+					PRINTFORMW 「さぁ、存分に味わってくださいね♪」
+				CASE 3
+					PRINTFORMW 「ちょっと恥ずかしいですけど…」
+					PRINTFORMW 「それでも期待してしまう私は、駄目な神様でしょうか」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	;クンニ強制
+	ELSE
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「ほら、指でちゃんと開いていてあげる」
+			PRINTFORMW 「好きな様に舐めまわして…」
+		ELSE
+			PRINTFORMW 「そんなに見られると、ちょっと恥ずかしいですね…」
+			PRINTFORMW 「でも私、興奮してしまって……」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT分類が加虐系(スパンキング/鞭/針/縄/アイマスク/ボールギャグ/罵倒/三角木馬/浣腸セット)
+;────────────────────────────────────
+IF MENUMATCH(TFLAG:ACT, "加虐") && !IS_NOWACTNAME("罵倒") && !IS_NOWACTNAME("アイマスク")
+	;相思相愛
+	IF GET_KFLAG_K39("相思相愛")
+		SELECTCASE AUTORAND(3, 570)
+			CASE 0
+				PRINTFORMW 「ねぇ、本当はこういうの嫌いじゃないんでしょ？」
+				PRINTFORM 「\@ ABL:MASTER:マゾっ気 > 4 ? その目を見れば判るわ # って、私の勘違いかもしれないけど \@…
+				CALL PRINT_SYMBOL_K39
+			CASE 1
+				PRINTFORMW 「ねぇ、正直に言って」
+				PRINTFORMW 「本当はもっと虐めて欲しいんじゃないの？」
+			CASE 2
+				PRINTFORML 「こういうのってあまり趣味じゃないんだけど」
+				PRINTFORMW 「\@ ABL:MASTER:マゾっ気 > 4 ? あなたが悦ぶ # 厄祓いの為 \@なら、それも仕方ないかなって……」
+		ENDSELECT
+	;その他
+	ELSE
+		SELECTCASE AUTORAND(3, 571)
+			CASE 0
+				PRINTFORML 「ちょっと痛いかもしれませんが、我慢してくださいね…？」
+			CASE 1
+				PRINTFORML 「自分にこういう趣味は無いと思っていたのですが」
+				PRINTFORMW 「その認識は、改めなければならないみたいです…」
+			CASE 2
+				PRINTFORML 「あの、正直に言いますと…」
+				PRINTFORMW 「私、あなたの苦しむ姿をみると、ちょっと興奮してしまうんです…」
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF

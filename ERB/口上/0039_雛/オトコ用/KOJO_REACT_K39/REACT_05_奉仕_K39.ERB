@@ -1,0 +1,656 @@
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;雛口上 奉仕系個別リアクション口上ファイル
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;##################
+;奉仕系 REACT50～57
+;##################
+[SKIPSTART]
+	#TFLAG:ACT
+		50 = 手で愛撫を強制
+		51 = 口で愛撫を強制
+		52 = パイズリ
+		53 = 素股
+		55 = 足舐め強制
+		56 = イラマチオ
+		57 = 胸愛撫強制
+
+・ACT分類:奉仕系の場合、奉仕系COM(COM40~COM44)を中心に、ACTによっては愛撫系COMが選択肢となりますが
+・状況によってはその他のものが選択肢に含まれる可能性もあります
+[SKIPEND]
+
+
+;/////////////////////////////////////////
+;REACT50, 手で愛撫を強制・個別リアクション
+;/////////////////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	愛撫系反応
+		COM:恥ずかしがる
+	奉仕系反応
+		COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+	その他反応
+		COM:自慰し始める
+
+・地の文はREACT分類とACT派生で分岐
+・REACT分類:受け入れるはREACTION_MESSAGEで処理される
+・REACT分類が消極的従う/平然と従う/積極的従う/受け入れる/許しを乞うである場合は受容扱い
+・REACT分類が拒否/暴れる/逃げるの場合は拒絶した扱いになる
+[SKIPEND]
+@KOJO_MALE_REACT_K39_50 ;TFLAG:ACT派生(0=愛撫強制/1=手淫強制/2=ペニスバンド手淫強制)
+;変数宣言と代入
+#DIM  DYNAMIC FAV_RATING
+#DIMS DYNAMIC SYMBOL
+#DIMS DYNAMIC STRING
+#DIMS DYNAMIC AHEART
+#DIMS DYNAMIC RHEART
+#DIMS DYNAMIC MSTR
+#DIMS DYNAMIC YOU
+#DIMS DYNAMIC TGT
+FAV_RATING = GET_KFLAG_K39("相思相愛")
+SYMBOL    '= HTML_PS_K39()
+AHEART    '= HTML_AH_K39()
+RHEART    '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+STRING    '= RAND_SPLIT("ふふ/うふ/ふふっ/うふっ/くすっ/クスクス") + "…"
+MSTR      '= CNAME(MASTER, TARGET)
+YOU       '= CALLNAME:MASTER
+TGT       '= CALLNAME:TARGET
+
+
+;REACT50, 自慰し始める/恥ずかしがる/嫌がる // REACTで完結させる
+;=========================================
+IF IS_NOWCOMNAME("自慰し始める/恥ずかしがる/嫌がる")
+	CALL TEXTDISPLAY_CATEGORY_5_REJECT_K39
+	RETURN 1
+ENDIF
+
+;REACT50, 消極的やる(50%) // 負荷2、派生1の場合は弾く
+;========================
+IF 口上記入チェック(50) && IS_NOWCOMNAME("消極的やる") && TFLAG:REACT負荷 < 2 && TFLAG:REACT派生 < 1
+	IF 0
+	ELSEIF FAV_RATING
+		PRINTFORMW 「や…だめっ、こんな……焦らされたら…」
+		PRINTFORMW 「ねぇ、もっと…もっと触ってよ……」
+	ELSEIF AFFECTION("溺愛")
+		PRINTFORMW 「あっ…ん…嫌、焦らさないで……」
+		PRINTFORMW 「もどかしくて、おかしくなってしまいます……」
+	ELSEIF AFFECTION("眷愛")
+		PRINTFORMW 「んっ…焦らされてるみたいで、切なくなってしまいます…」
+	ELSEIF AFFECTION("嫌悪")
+		PRINTFORMW 「あの、もっと真面目にやってもらえますか？」
+	ELSE
+		PRINTFORMW 「私に触るのは嫌ですか…？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;REACT50, 積極的やる(50%) // 負荷2は弾く
+;========================;
+IF 口上記入チェック(50) && IS_NOWCOMNAME("積極的やる") && TFLAG:REACT負荷 < 2
+	IF FAV_RATING
+		CALL HTMLPRINTW(@"「あっ%AHEART% あぁっ%AHEART% ふぁっ%AHEART% いいよぉ…ッ…！」")
+		PRINTFORMW 「ねぇ、もっとっ！ もっとシてぇっ！」
+	ELSEIF AFFECTION("溺愛")
+		CALL HTMLPRINTW(@"「はっ…あっ%AHEART% あんっ%AHEART% いいです、気持ちいいですよ」")
+		CALL HTMLPRINTW(@"「んっ%AHEART% もっと、もっとシてください…」")
+	ELSEIF AFFECTION("眷愛")
+		CALL HTMLPRINTW(@"「あっ%AHEART% んんっ%AHEART% 積極的にシてくれるんですね」")
+		PRINTFORMW 「いいですよ…もっと、%MSTR%の好きなように…」
+	ELSE
+		CALL HTMLPRINTW(@"「あ…んっ%AHEART% なかなかいいですよ」")
+		PRINTFORMW 「さぁ、もっと私に触ってください…」
+	ENDIF
+	;;;;;;;;;;;;;;;;;;;
+	;RETURNせずに下層へ
+	;;;;;;;;;;;;;;;;;;;
+
+	;快ｘが規定以上
+	IF TCVAR:イきそう || PALAM:快Ｃ > 7500 || PALAM:快Ｂ > 7500 || PALAM:快Ａ > 5000
+		;空行を入れる
+		PRINTL
+		;快ｃ条件
+		IF TCVAR:イきそう || PALAM:快Ｃ > 7500
+			{
+			CALL HTMLPRINTW(@"「あ゛っ%AHEART% \@ FAV_RATING 
+			? やだソコっ # ソコ弄られたらッ 
+			\@%AHEART% あんっ%AHEART% あぁっ%HTML_PS2_K39()%」")
+			}
+		;快ｂ条件
+		ELSEIF PALAM:快Ｂ > 7500
+			{
+			CALL HTMLPRINTW(@"「ふぁっ%AHEART% \@ FAV_RATING 
+			? 乳首、敏感になってるのに…あんっ # いま……乳首、弄られたらッ 
+			\@%AHEART% %RAND_SPLIT("あんっ、/")%あぁっ%HTML_PS2_K39()%」")
+			}
+		;快ａ条件
+		ELSE
+			{
+			CALL HTMLPRINTW(@"「%RAND_SPLIT("あ/ん/ふ/ぁ")%ぁっ%AHEART% " + 
+			@"%RAND_SPLIT("おしり…、きもちいい/やだ私……おしりでこんなに感じて")%…" + 
+			@"%RAND_SPLIT("っ/ッ/")%%HTML_PS2_K39()%」")
+			}
+		ENDIF
+		PRINTL
+		{
+		CALL HTMLPRINTW(@"「\@ RAND:2 
+		? は%RAND_SPLIT("あ/ぁ/っ/ーっ")%%RHEART% は%RAND_SPLIT("あ/ぁ/ーっ")%%RHEART% 
+		# ハァ%RHEART% ハァ%RHEART% 
+		\@ もう\@ FAV_RATING 
+		? 、%MSTR%の指で溶かされそう 
+		# 私、%MSTR%に溶かされそうです \@……」")
+		}
+	ENDIF
+	;RETURNは終端で
+	RETURN 1
+ENDIF
+
+
+;/////////////////////////////////////////
+;REACT51, 口で愛撫を強制・個別リアクション
+;/////////////////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	愛撫系反応
+		COM:恥ずかしがる
+	奉仕系反応
+		COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+	その他反応
+		COM:自慰し始める
+
+・地の文はREACT分類とACT派生で分岐
+・REACT分類:受け入れるはREACTION_MESSAGEで処理される
+・REACT分類が消極的従う/平然と従う/積極的従う/受け入れる/許しを乞うである場合は受容扱い
+・REACT分類が拒否/暴れる/逃げるの場合は拒絶した扱いになる
+[SKIPEND]
+@KOJO_MALE_REACT_K39_51 ;TFLAG:ACT派生(0=クンニ強制/1=フェラ強制/2=顔面騎乗/3=顔面騎乗アナル)
+;変数宣言と代入
+#DIM  DYNAMIC FAV_RATING
+#DIMS DYNAMIC AHEART
+#DIMS DYNAMIC EHEART
+#DIMS DYNAMIC RHEART
+FAV_RATING = GET_KFLAG_K39("相思相愛")
+AHEART    '= HTML_AH_K39()
+EHEART    '= HTML_PS2_K39()
+
+;REACT51, 自慰し始める/恥ずかしがる/嫌がる
+;=========================================
+IF IS_NOWCOMNAME("自慰し始める/恥ずかしがる/嫌がる")
+	CALL TEXTDISPLAY_CATEGORY_5_REJECT_K39
+	RETURN 1
+ENDIF
+
+;REACT51, 消極的やる(55%)
+;========================
+IF 口上記入チェック(55) && IS_NOWCOMNAME("消極的やる") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+	SELECTCASE RANDREACT(4, 410)
+		CASE 0
+			CALL HTMLPRINTW(@"「んっ%AHEART% くっ…あまり焦らさないで\@ FAV_RATING ? よ # \@……」")
+			PRINTFORMW 「これじゃ私…切なくって……」
+		CASE 1
+			CALL HTMLPRINTW(@"「あっ%AHEART% もっと…、積極的にして\@ FAV_RATING ? よ # くれないと \@…」")
+			PRINTFORMW 「私、もどかしく\@ FAV_RATING ? っ # \@て……」
+		CASE 2
+			{
+			CALL HTMLPRINTW(@"「あんっ%AHEART% んっ…\@ FAV_RATING 
+			? なによそれ…焦れったい…… # あまりしたくないんですか…？ \@」")
+			}
+		CASE 3
+			CALL HTMLPRINTW(@"「んっ%AHEART% はんっ%AHEART% %RAND_SPLIT("あ/ん/は")%っ……」")
+			PRINTFORMW 「\@ FAV_RATING ? ねぇ…、そんなに焦らさないでよぉ # お願いです…あまり焦らさないで \@……」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;REACT51, 積極的やる(60%)
+;========================
+IF 口上記入チェック(60) && IS_NOWCOMNAME("積極的やる") && TFLAG:REACT負荷 < 2
+	SELECTCASE RANDREACT(6, 420)
+		CASE 0
+			{
+			CALL HTMLPRINTW(@"「や%AHEART% ダメっ！ そこっ、舌で転が\@ 
+			FAV_RATING ? しちゃぁ # されたら \@っ…」")
+			}
+			CALL HTMLPRINTW(@"「%RAND_SPLIT("あ/ん")%%AHEART% そ、そうやって！ 弱いとこばっかり…ッ！」")
+		CASE 1
+			{
+			CALL HTMLPRINTW(@"「%RAND_SPLIT("あ/ん/あぁ")%んっ%AHEART% あっ%AHEART% 舌が、きもちいい\@ 
+			!FAV_RATING ? です # \@ッ…%EHEART%」")
+			}
+			CALL HTMLPRINTW(@"「もっとっ%AHEART% もっとぉ%AHEART% あぁっッ…%EHEART%」")
+		CASE 2
+			{
+			CALL HTMLPRINTW(@"「やっ%AHEART% %RAND_SPLIT("あ/ん/あぁ")%んっ%AHEART% き、きもちいい\@ 
+			FAV_RATING ? よぉ # です \@っ…%EHEART%」")
+			}
+		CASE 3
+			{
+			CALL HTMLPRINTW(@"「ふぁっ%AHEART% \@ FAV_RATING 
+			? あん # いいですっ 
+			\@%AHEART% そこ……もっとっ%EHEART%」")
+			}
+			{
+			CALL HTMLPRINTW(@"「%RAND_SPLIT("は/あ/ん/")%んっ%AHEART% 蕩けるッ！ 蕩けちゃ\@ 
+			FAV_RATING ? う # います \@…っ%EHEART%」")
+			}
+		CASE 4
+			CALL HTMLPRINTW(@"「あぁっ%AHEART% そ、そんなとこまで……%RAND_SPLIT("あ/ふ/ん")%ぁっ%EHEART%」")
+			{
+			CALL HTMLPRINTW(@"「やっ%AHEART% \@ FAV_RATING 
+			? やだ私…へ、変になっちゃう # わ、わたし……おかしくっ 
+			\@…ッ…%EHEART%」")
+			}
+		CASE 5
+			{
+			CALL HTMLPRINTW(@"「%RAND_SPLIT("は/あ/ん")%んっ%AHEART% " + 
+			@"%RAND_SPLIT("あ/ふ")%ぁっ%AHEART% 積極的に、シてくれる\@ 
+			FAV_RATING ? の # んです \@ね……」")
+			}
+			{
+			CALL HTMLPRINTW(@"「%RAND_SPLIT("ふ/あ/ん")%ぁっ%AHEART% いい\@ 
+			FAV_RATING ? よぉ # です 
+			\@っ%AHEART% もっと、もっとッ…%EHEART%」")
+			}
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+
+;///////////////////////////////////
+;REACT52, パイズリ・個別リアクション
+;///////////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	愛撫系反応
+		COM:恥ずかしがる/嫌がる/快感を我慢する/快感を受け入れる/気持ち良い！
+	奉仕系反応
+		COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+
+・地の文はREACT分類とTALENT:MASTER:巨乳/貧乳で分岐
+・REACT分類:受け入れるはREACTION_MESSAGEで処理される
+・REACT分類が消極的従う/平然と従う/積極的従う/受け入れる/許しを乞うである場合は受容扱い
+・REACT分類が拒否/暴れる/逃げるの場合は拒絶した扱いになる
+[SKIPEND]
+;@KOJO_MALE_REACT_K39_52 ;ACT派生なし
+;オトコ限定口上では不要
+;RETURN 0
+
+
+;///////////////////////////////
+;REACT53, 素股・個別リアクション
+;///////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	愛撫系反応
+		COM:恥ずかしがる/嫌がる/快感を我慢する/快感を受け入れる/気持ち良い！
+	奉仕系反応
+		COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+
+・地の文はREACT分類で分岐
+・REACT分類:受け入れるはREACTION_MESSAGEで処理される
+・REACT分類が消極的従う/平然と従う/積極的従う/受け入れる/許しを乞うである場合は受容扱い
+・REACT分類が拒否/暴れる/逃げるの場合は拒絶した扱いになる
+[SKIPEND]
+;@KOJO_MALE_REACT_K39_53 ;ACT派生なし
+;オトコ限定口上では不要
+;RETURN 0
+
+
+;/////////////////////////////////////
+;ACT/REACT54, 足コキは12/04/08版で廃止
+;/////////////////////////////////////
+
+
+;/////////////////////////////////////
+;REACT55, 足舐め強制・個別リアクション
+;/////////////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	会話系反応
+		COM:許しを乞う
+	奉仕系反応
+		COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+	その他反応
+		COM:自慰し始める
+
+・地の文はREACT分類で分岐
+・REACT分類:受け入れるはREACTION_MESSAGEで処理される
+・REACT分類が消極的従う/平然と従う/積極的従う/受け入れる/許しを乞うである場合は受容扱い
+・REACT分類が拒否/暴れる/逃げるの場合は拒絶した扱いになる
+[SKIPEND]
+@KOJO_MALE_REACT_K39_55 ;ACT派生なし
+#DIM  DYNAMIC FAV_RATING
+#DIMS DYNAMIC SYMBOL
+#DIMS DYNAMIC AHEART
+FAV_RATING = GET_KFLAG_K39("相思相愛")
+SYMBOL    '= HTML_PS_K39()
+AHEART    '= HTML_AH_K39()
+
+;REACT55, 自慰し始める/恥ずかしがる/嫌がる
+;=========================================
+IF IS_NOWCOMNAME("自慰し始める/恥ずかしがる/嫌がる")
+	CALL TEXTDISPLAY_CATEGORY_5_REJECT_K39
+	RETURN 1
+ENDIF
+
+;REACT55, 消極的やる(50%)
+;========================
+IF 口上記入チェック(50) && IS_NOWCOMNAME("消極的やる") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+	IF 0
+	ELSEIF FAV_RATING
+		SELECTCASE RANDREACT(3, 0)
+			CASE 0
+				PRINTFORML 「ねぇ、%TNAME_K39()%はこんなのじゃ嫌…」
+				PRINTFORMW 「どうしていつもみたいにしてくれないの…」
+			CASE 1
+				PRINTFORML 「なによ、それ……」
+				PRINTFORMW 「正直、白けるんですけどー？」
+			CASE 2
+				PRINTFORML 「やりたくないならハッキリそう言えば？」
+				PRINTFORMW 「そういう中途半端なの、余計に傷つくんだけど…」
+		ENDSELECT
+	ELSEIF AFFECTION("溺愛")
+		SELECTCASE RANDREACT(2, 1)
+			CASE 0
+				PRINTFORMW 「あまり気が進まないようですね…」
+			CASE 1
+				PRINTFORMW 「私の足を舐めるのは嫌ですか…？」
+				PRINTFORMW 「ちょっと悲しいですね…」
+		ENDSELECT
+	ELSEIF AFFECTION("眷愛")
+		PRINTFORMW 「あの、もっとちゃんと舐めて欲しいのですが…」
+	ELSE
+		PRINTFORMW 「あまりやりたくなさそうですね…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;REACT55, 積極的やる(50%)
+;========================
+IF 口上記入チェック(50) && IS_NOWCOMNAME("積極的やる") && TFLAG:REACT負荷 < 2
+	IF 0
+	ELSEIF FAV_RATING
+		{
+		CALL HTMLPRINTW(@"「\@ RAND:2 
+		? んっ%AHEART% あっ%AHEART% もう、これだけでイ蕩けちゃいそう… 
+		# あっ%AHEART% やんっ%AHEART% そんな、上の方まで舐める%RAND_SPLIT("の？/なんて……")% \@」")
+		}
+	ELSEIF AFFECTION("溺愛")
+		{
+		CALL HTMLPRINTW(@"「\@ RAND:2 
+		? あっ%AHEART% んっ%AHEART% すっかり上手になって 
+		# んっ%AHEART% もうこれだけで私…、蕩かされてしまいそうです… \@…」")
+		}
+	ELSEIF AFFECTION("眷愛")
+		{
+		CALL HTMLPRINTW(@"「\@ RAND:2 
+		? んっ%AHEART% 舌使いがイヤラシイですね… 
+		# ふふ%HTML_AH2_K39()% 大分慣れた感じですね%RAND_SPLIT("？/")% \@」")
+		}
+	ELSE
+		{
+		CALL HTMLPRINTW(@"「\@ RAND:2 
+		? うふ、積極的に舐めてくれるんですね%SYMBOL% 
+		# ん%AHEART% いいですよ、そのまま続けてください… \@」")
+		}
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;/////////////////////////////////////
+;REACT56, イラマチオ・個別リアクション
+;/////////////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	苦痛系反応
+		COM:痛みを我慢する/悲鳴を上げる/暴れる
+	奉仕系反応
+		COM:消極的やる/積極的やる/愛情を込めてやる/平然とやる
+
+・地の文はREACT分類(積極的従う, 平然と従う/許しを乞う, 消極的従う/受け入れる)で分岐
+・他の奉仕系と異なり、イラマチオの場合は拒絶できない
+・ただし、COM32,暴れるで暴れが通る可能性あり
+[SKIPEND]
+;@KOJO_MALE_REACT_K39_56 ;ACT派生なし
+;RETURN 0
+
+
+;/////////////////////////////////////
+;REACT57, 胸愛撫強制・個別リアクション
+;/////////////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	愛撫系反応
+			COM:恥ずかしがる
+		奉仕系反応
+			COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+		その他反応
+			COM:自慰し始める
+
+・地の文はREACT分類で分岐
+・REACT分類:受け入れるはREACTION_MESSAGEで処理される
+・REACT分類が消極的従う/平然と従う/積極的従う/受け入れる/許しを乞うである場合は受容扱い
+・REACT分類が拒否/暴れる/逃げるの場合は拒絶した扱いになる
+[SKIPEND]
+@KOJO_MALE_REACT_K39_57 ;TFLAG:ACT派生(0=手で愛撫強制/2=口で愛撫強制)
+;ACT派生 == 1(ぱふぱふｗ)が粛清された関係で番号が飛んでいるので注意
+
+;変数宣言と代入
+#DIM  DYNAMIC FAV_RATING
+#DIM  DYNAMIC DERI0
+#DIM  DYNAMIC DERI2
+#DIMS DYNAMIC SYMBOL
+#DIMS DYNAMIC AHEART
+#DIMS DYNAMIC EHEART
+#DIMS DYNAMIC MSTR
+#DIMS DYNAMIC YOU
+#DIMS DYNAMIC TGT
+FAV_RATING = GET_KFLAG_K39("相思相愛")
+DERI0      = !TFLAG:ACT派生
+DERI2      = TFLAG:ACT派生 == 2
+SYMBOL    '= HTML_PS_K39()
+AHEART    '= HTML_AH_K39()
+EHEART    '= HTML_PS2_K39()
+MSTR      '= CNAME(MASTER, TARGET)
+YOU       '= CALLNAME:MASTER
+TGT       '= CALLNAME:TARGET
+
+;;;;;;;;;;;;;;;
+;派生0と2を統合
+;;;;;;;;;;;;;;;
+
+;消極的やる // 負荷2、派生1はCOMに流す
+;==========
+IF IS_NOWCOMNAME("消極的やる") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+	;性交奉仕中
+	IF TEQUIP:性交奉仕中
+		IF FAV_RATING
+			PRINTFORMW 「ねぇっ！ こんなのはイヤっ！」
+			PRINTFORMW 「もっと突いてよ…もっとおっぱい\@ DERI2 ? 吸ってよ # 触って \@！ これじゃ、切なくって…」
+		ELSE
+			PRINTFORMW 「これでは切なくなってしまいます…」
+			PRINTFORMW 「お願いです、もっと、もっと積極的に」
+		ENDIF
+		{
+		PRINTFORMDW %TGT%は\@ GROUPMATCH(TEQUIP:性交奉仕中, 1, 4) > 0 
+		? %YOU%に胸を押し付けながら # 消極的な%YOU%に不満気な様子で 
+		\@、もどかしげに腰を揺すっている…
+		}
+		RETURN 1
+	ENDIF
+
+	;その他(60%) // 確立でCOMに流す
+	;-----------
+	IF 口上記入チェック(60)
+		IF FAV_RATING
+			PRINTFORMW 「んっ、あっ！ ねぇ、なんで消極的なの？」
+			PRINTFORMW 「もっとちゃんとやってよ…」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「んんっ…く…お願い、焦らさないで……」
+			PRINTFORMW 「これでは、余計に切なくなってしまいます……」
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「嫌々やってるような感じですね…」
+		ELSE
+			PRINTFORMW 「あまり私の胸に触れたくないみたいですね…」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;平然とやる・積極的やる
+;======================
+IF IS_NOWCOMNAME("平然とやる/積極的やる") && TFLAG:REACT負荷 < 2
+	;性交奉仕中
+	IF TEQUIP:性交奉仕中
+		CALL QUAKE(4)
+		{
+		CALL HTMLPRINTW(@"「%RAND_SPLIT("ふ/あ/ん")%ぁっ%AHEART% " + 
+		@"%RAND_SPLIT("あ/は/ん")%ぁ%RAND_SPLIT("っ/")%っ%AHEART% あんっ%AHEART% " + 
+		@"あ%RAND_SPLIT("゛/")%っ%AHEART% %RAND_SPLIT("あ/ふ")%ぁっ%EHEART%」")
+		}
+		PRINTFORMDW %TGT%は%YOU%に貫かれたまま\@ DERI2 ? 先端の蕾を吸わ # 胸を揉みしだか \@れ、甘い吐息を漏らしている…
+		RETURN 1
+	ENDIF
+
+	;;;;;;;;;;;;;;;;;;
+	;以下、確率でCOMへ
+	;;;;;;;;;;;;;;;;;;
+
+	;相思相愛
+	IF 口上記入チェック(80) && FAV_RATING ;80%
+		;調教者の快Ｂが高い // 調教者が情欲
+		IF PALAM:快Ｂ >= 7500 || IS_CONDITION(TARGET, "情欲")
+			{
+			CALL HTMLPRINTW(@"「あっ%AHEART% あぁん%AHEART% " + 
+			@"や…そんなに優しく\@ DERI2 ? 吸わ # 触れら \@れたら私、もう……、抑えられなくなっちゃう…」")
+			}
+			{
+			CALL HTMLPRINTW(@"「%RAND_SPLIT("ふ/あ")%ぁ%RAND_SPLIT("っ/")%%AHEART% " + 
+			@"%RAND_SPLIT("は/あ/")%ぁっ%RAND_SPLIT("っ/")%%AHEART% " + 
+			@"%RAND_SPLIT("あ/ん/は")%んっ%AHEART% あっ%AHEART% あぁっ%EHEART%」")
+			}
+		;その他
+		ELSE
+			{
+			CALL HTMLPRINTW(@"「%RAND_SPLIT("ふふ/くすっ")%、そうやっておっぱい\@ 
+			DERI2 ? 吸 # 触 
+			\@ってる時の%MSTR%ってホント子供みたい%RAND_SPLIT("ね/")%%SYMBOL%」")
+			}
+			{
+			CALL HTMLPRINTW(@"「子供にしては…ん%RAND_SPLIT("っ/")%%AHEART% \@ 
+			DERI2 ? 舌 # 指 \@使いがイヤラシ過ぎるけど」")
+			}
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;溺愛(好感度2000)
+	IF 口上記入チェック(70) && AFFECTION("溺愛") ;70%
+		SELECTCASE RANDREACT(2, 421)
+			CASE 0
+				CALL HTMLPRINTW(@"「あぁっ%AHEART% いいです、気持ちいいですっ%AHEART% んんっ%EHEART%」")
+				CALL HTMLPRINTW(@"「あっ%AHEART% もっとっ、もっと\@ DERI2 ? 吸 # 触 \@ってください……」")
+			CASE 1
+				{
+				CALL HTMLPRINTW(@"「ひあぁっ%AHEART% だ、駄目です%AHEART% そんなに優しく\@ 
+				DERI2 ? 吸わ # 触れら \@れたら%EHEART%」")
+				}
+				{
+				CALL HTMLPRINTW(@"「もう私……%RAND_SPLIT(
+				@"自分が、抑えられなくなりそうで/%MSTR%のこと、本気で…好きに")%っ！」")
+				}
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	;眷愛(好感度1000)
+	IF 口上記入チェック(70) && AFFECTION("眷愛") ;70%
+		IF PALAM:快Ｂ >= 6500
+			CALL HTMLPRINTW(@"「%RAND_SPLIT("あ/ん")%っ%AHEART% なんか、イヤラシイ\@ DERI2 ? 舌 # 指 \@使いですね」")
+			PRINTFORMW 「\@ DERI2 ? 先が # 私… \@、切なくなってしまいます…」
+		ELSE
+			CALL HTMLPRINTW(@"「あらあら、赤ちゃんみたいですね%SYMBOL%」")
+			PRINTFORMW 「いいですよ。私の\@ DERI2 ? 乳首、もっと吸 # 胸、もっと触 \@ってください…」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;その他(50%) // あまり手の入っていない箇所は確率落としてCOMと相互に補完し合うように
+	IF 口上記入チェック(50)
+		PRINTFORMW 「んっ！ なかなかいいですよ」
+		PRINTFORMW 「丁寧に、優しくお願いしますね…」
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;//////////
+;関数置き場
+;//////////
+
+;TEXTDISPLAY_CATEGORY_5 AUTORAND(250) ～ (255)
+;=============================================
+@TEXTDISPLAY_CATEGORY_5_REJECT_K39
+#DIM  DYNAMIC FAV_RATING
+#DIMS DYNAMIC MSTR
+FAV_RATING = GET_KFLAG_K39("相思相愛")
+MSTR      '= CNAME(MASTER, TARGET)
+
+;SELECTCOMで派生
+SELECTCASE TRAINNAME:SELECTCOM
+	CASE "自慰し始める"
+		;好意好感度で派生
+		IF FAV_RATING
+			SELECTCASE AUTORAND(2, 250)
+				CASE 0
+					PRINTFORMW 「空気が読めないにも程があると思うんだけど…」
+				CASE 1
+					PRINTFORMW 「そんなのいくらしても別に構わないけど…」
+					PRINTFORMW 「私と居るときにする事ないでしょう？」
+			ENDSELECT
+		ELSE
+			SELECTCASE AUTORAND(2, 251)
+				CASE 0
+					PRINTFORMW 「%MSTR%が自分でするのが大好きなのは良く判りましたけど…」
+					PRINTFORMW 「そういう事では困ってしまいますね」
+				CASE 1
+					PRINTFORMW 「別に咎める訳ではありませんけど…」
+					PRINTFORMW 「何も今しなくてもいいのではないですか？」
+			ENDSELECT
+		ENDIF
+	CASE "恥ずかしがる"
+		IF FAV_RATING
+			SELECTCASE AUTORAND(2, 252)
+				CASE 0
+					PRINTFORMW 「今更恥ずかしくて私に触れないってどういう事なの？」
+				CASE 1
+					PRINTFORMW 「いや、だから……今更恥ずかしいって意味が判らないんだけど…」
+			ENDSELECT
+		ELSE
+			SELECTCASE AUTORAND(2, 253)
+				CASE 0
+					PRINTFORMW 「恥ずかしいのは判りますけど、それでは困ってしまいますね…」
+				CASE 1
+					PRINTFORMW 「%MSTR%なりに理由はあるんでしょうけど、それじゃ困りますね…」
+			ENDSELECT
+		ENDIF
+	CASE "嫌がる"
+		IF FAV_RATING
+			SELECTCASE AUTORAND(2, 254)
+				CASE 0
+					PRINTFORMW 「何よそれ……意味が判らないんだけど…」
+				CASE 1
+					PRINTFORMW 「ねぇ、私に触るのが嫌ってどういう事なの？」
+					PRINTFORMW 「よく判るように説明して！」
+			ENDSELECT
+		ELSE
+			SELECTCASE AUTORAND(2, 255)
+				CASE 0
+					PRINTFORMW 「困りましたね…どうすれば%MSTR%に受け入れて貰えるんでしょうか」
+				CASE 1
+					PRINTFORMW 「そんな露骨に嫌がられると、流石にちょっと傷付きます…」
+			ENDSELECT
+		ENDIF
+ENDSELECT

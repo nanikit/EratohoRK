@@ -1,0 +1,565 @@
+﻿;==================================================
+;
+;	関数置き場
+;
+;==================================================
+
+;-------------------------------------------------
+;関数名:PRINT_HEARTCBW
+;概　要:HEARTCBをCALLした後、『」』を指定色で表示し入力待ちする
+;引　数:0 ハート色指定
+;引　数:1 ハートの数(省略すると１つ)
+;引　数:2 使用するフォント名（省略するとVerdana）
+;引　数:3 『」』色指定 省略すると青(口上指定色)で表示
+;引　数:4 『」』の代わりに表示する文字列
+;-------------------------------------------------
+@K11_PRINT_HEARTCBW(ARG:1 = 0xC07070, ARG = 1, ARGS = "Verdana", ARG:2 = 0xff5e64, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL HEARTB(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+
+;吸血されたらおちんちんギンギン設定って、何なんですかね。ホント理解できません。僕も吸血されてギンギンになりたいです
+@K11_VAMPIRE
+	TCVAR:MASTER:勃起度 = 1500
+	MAXBASE:MASTER:射精 += 100
+	BASE:MASTER:射精 = MAXBASE:MASTER:射精
+RETURN RESULT
+
+;強制SEX行動
+@K11_SEX
+	IF TEQUIP:MASTER:下半身上着 || TEQUIP:MASTER:下半身下着
+		TCVAR:行動予約 = 5
+	ELSE
+		SELECTCASE RAND:6
+;			CASE 0
+;				TCVAR:行動予約 = 12
+;			CASE 1
+;				TCVAR:行動予約 = 42
+			CASE 0
+				TCVAR:行動予約 = 95
+			CASE 1
+				TCVAR:行動予約 = 96
+			CASE 2
+				TCVAR:行動予約 = 97
+			CASE 3
+				TCVAR:行動予約 = 98
+			CASE 4
+				TCVAR:行動予約 = 99
+			CASEELSE
+				TCVAR:行動予約 = 103
+		ENDSELECT
+	ENDIF
+	KFLAG:11 = 1
+RETURN RESULT
+
+
+[SKIPSTART]
+;開始時にニーソックスをガーターベルトにする
+;開幕速攻脱ぐ事になっても泣かない
+@K11_SOCKS_CHANGE1
+;全裸設定の場合、イベント起こらない。セックスも起こりやすい半裸オススメ。
+IF CFLAG:TARGET:衣装 == 0 || CFLAG:TARGET:衣装 == 1
+	
+	IF KFLAG:4 == 0 && FAVOR(1500, 1500)
+		;無いとは思うが、一度も出なかったらそれはそれで寂しいので、１度は好感度により着替えあり
+		KFLAG:4 = 1
+	ELSE
+		;着衣プレイ好きあれば、３分の１
+		;なければ９分の１で変更で着替える
+		LOCAL:1 = PERCENT(66)
+		SIF LOCAL:1
+			RETURN RESULT
+		LOCAL:2 = PERCENT(66)
+		SIF LOCAL:2 && TALENT:TARGET:着衣プレイ好き == 0
+			RETURN RESULT
+	ENDIF
+
+	;ガーター変更
+	EQUIP:TARGET:靴下 = 3
+	TEQUIP:TARGET:靴下 = 3
+	;K11_SOCKS_CHANGE2で使うフラグ
+	KFLAG:3 = 1
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+	PRINTFORMDL 
+	PRINTFORMW 「ねえねえ……今日はこんなの履いてみたんだけど、どうかな？」
+	IF CFLAG:TARGET:衣装 == 0
+		PRINTFORMDW フランはミニスカートの裾をつまみ、たくし上げると大人の色香を放つガーターストッキングを魅せつける
+		PRINTFORM 「なんだかエッチ見えるでしょ。%MASTERNAME%喜んでくれると嬉しいなぁ
+		CALL K11_PRINT_HEARTCBW
+	ELSEIF CFLAG:TARGET:衣装 == 1
+		PRINTFORMDW フランは下着姿のまま細い足を差し出すと、大人の色香を放つガーターストッキングを魅せつける
+		PRINTFORM 「ふふっ、こういうの好きでしょ？ %MASTERNAME%のために履いてきたんだからぁ、楽しんで
+		CALL K11_PRINT_HEARTCBW
+	ENDIF
+	IF RAND:2
+		PRINTFORMDW 無邪気な愛らしさを持つフランに、大人の色香が追加され%CALLNAME:MASTER%を惑わす
+	ENDIF
+	
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+
+ENDIF
+RETURN RESULT
+
+;終了時にガーターベルトを通常のニーソックスに戻す
+@K11_SOCKS_CHANGE2
+;上関数で立てたフラグを拾う
+IF KFLAG:3 == 1
+	EQUIP:TARGET:靴下 = 2
+	TEQUIP:TARGET:靴下 = 2
+	KFLAG:3 = 0
+ENDIF
+RETURN RESULT
+
+[SKIPEND]
+
+;コスプレで超遊んで見る。
+;まだ設定不十分らしいので、バグったりするかも。ああ、また怒られるかも。でもやってみたいんだもん。
+@K11_CLOTHES_CHANGE1
+;半裸・全裸設定の場合、イベント起こらない。好感度3000で発生
+IF CFLAG:TARGET:衣装 == 0 && FAVOR(3000, 3000)
+	;無いとは思うが、一度も出なかったらそれはそれで寂しいので、１度は3500好感度により着替えあり
+	IF KFLAG:6 == 0 && FAVOR(3500, 3500)
+		KFLAG:6 = 1
+	ELSE
+		;着衣プレイ好きある場合
+		IF TALENT:TARGET:着衣プレイ好き == 1
+			;３分の１で着替えない
+			LOCAL:1 = PERCENT(33)
+				SIF LOCAL:1
+				RETURN RESULT
+		;着衣プレイ好きない場合
+		ELSE
+			;５分の４で着替えない
+			LOCAL:1 = PERCENT(80)
+				SIF LOCAL:1
+				RETURN RESULT
+		ENDIF
+	ENDIF
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+	PRINTFORMDL 
+
+	;一旦全裸にする
+	EQUIP:TARGET:靴下 = 0
+	TEQUIP:TARGET:靴下 = 0
+	EQUIP:TARGET:下半身下着 = 0
+	TEQUIP:TARGET:下半身下着 = 0
+	EQUIP:TARGET:上半身下着 = 0
+	TEQUIP:TARGET:上半身下着 = 0
+	EQUIP:TARGET:下半身上着 = 0
+	TEQUIP:TARGET:下半身上着 = 0
+	EQUIP:TARGET:上半身上着 = 0
+	TEQUIP:TARGET:上半身上着 = 0
+
+;EQUIP:コスプレ <※>コスプレ(1=ボンデージ/2=和服/3=メイド服/4=チャイナ服/5=セーラー服/6=スク水/7=バニースーツ/8=体操服)
+;EQUIP:アクセサリ 特殊        (1=手袋/2=袖/3=羽衣)
+;EQUIP:靴下 靴下        (1=ソックス/2=ニーソックス/3=ガーターストッキング)
+;EQUIP:下半身下着 下半身下着  (1=ドロワーズ/2=パンティ/3=トランクス/4=パンティーストッキング)
+;EQUIP:上半身下着 上半身下着  (1=ブラジャー/2=キャミソール/3=さらし)
+;EQUIP:下半身上着 下半身上着  (1=スカート/2=キュロット/3=もんぺ/4=ズボン)
+;EQUIP:上半身上着 上半身上着  (1=上着)
+;EQUIP:全身上着 全身上着    (1=和服/2=導師服/3=ワンピース)
+
+	;1=ボンデージ
+	IF RAND:8 == 0
+		EQUIP:コスプレ = 1
+		TEQUIP:TARGET:コスプレ = 1
+		EQUIP:TARGET:靴下 = 3
+		TEQUIP:TARGET:靴下 = 3
+		PRINTFORMDW フランは、レザー張りのキチキチボンテージを身に着けた
+		PRINTFORMDW 当然、子供用のサイズを特注した品だった
+		PRINTFORMW 「ふふっ、こういうの%MASTERNAME%好きでしょ♪ 今日はフランが女王様ね♪」
+	;2=和服
+	ELSEIF RAND:7 == 0
+		EQUIP:コスプレ = 2
+		TEQUIP:TARGET:コスプレ = 2
+		EQUIP:TARGET:下半身下着 = 2
+		TEQUIP:TARGET:下半身下着 = 2
+		PRINTFORMDW フランは、子供用のピンクと赤の可愛らしい和服を身に着けた
+		PRINTFORM 「この服は"はだけて"着ると、男の人が喜ぶんだって。だからぁエッチの時に%MASTERNAME%の手で脱がしてね
+		CALL K11_PRINT_HEARTCBW
+	;3=メイド服
+	ELSEIF RAND:6 == 0
+		EQUIP:コスプレ = 3
+		TEQUIP:TARGET:コスプレ = 3
+		EQUIP:TARGET:靴下 = 2
+		TEQUIP:TARGET:靴下 = 2
+		;メイド服フランちゃんの下着はドロワーズだと思います！！！！！１１１１
+		EQUIP:TARGET:下半身下着 = 1
+		TEQUIP:TARGET:下半身下着 = 1
+		PRINTFORMDW フランは、紅魔館のメイド服を身に着けた
+		PRINTFORMDW スカートの端を摘むとちょこんとお辞儀をする
+		PRINTFORM 「うふふっ、ごほーしして下さいね、ご主人様
+		CALL K11_PRINT_HEARTCBW
+	;4=チャイナ服
+	ELSEIF RAND:5 == 0
+		EQUIP:コスプレ = 4
+		TEQUIP:TARGET:コスプレ = 4
+		EQUIP:TARGET:下半身下着 = 2
+		TEQUIP:TARGET:下半身下着 = 2
+		PRINTFORMDW フランは、深いスリットの入った色っぽいチャイナ服を身に着けた
+		PRINTFORMW 「これなんだかスースーするわ。それに、%MASTERNAME%にパンツ見えちゃう♪」
+	;5=セーラー服
+	ELSEIF RAND:4 == 0
+		EQUIP:コスプレ = 5
+		TEQUIP:TARGET:コスプレ = 5
+		EQUIP:TARGET:靴下 = 1
+		TEQUIP:TARGET:靴下 = 1
+		EQUIP:TARGET:下半身下着 = 2
+		TEQUIP:TARGET:下半身下着 = 2
+		EQUIP:TARGET:上半身下着 = 1
+		TEQUIP:TARGET:上半身下着 = 1
+		PRINTFORMDW フランは%CALLNAME:MASTER%のよく知るセーラー服を身に着けた
+		PRINTFORM 「クスッ…%MASTERNAME%が"せいしゅん"時代にできなかったこと、フランが叶えてあげる
+		CALL K11_PRINT_HEARTCBW
+	;6=スク水
+	ELSEIF RAND:3 == 0
+		EQUIP:コスプレ = 6
+		TEQUIP:TARGET:コスプレ = 6
+		EQUIP:TARGET:靴下 = 2
+		TEQUIP:TARGET:靴下 = 2
+		PRINTFORMDW フランはスクール水着を身に着けた
+		PRINTFORMDW スク水の胸元に大きく『４－９－５　ふらん』と書かれている
+		PRINTFORMW 「これね、この前図書館にプールができたときに用意したフランの取っておきの水着なの♪」
+	;7=バニースーツ
+	ELSEIF RAND:2 == 0
+		EQUIP:コスプレ = 7
+		TEQUIP:TARGET:コスプレ = 7
+		EQUIP:TARGET:下半身下着 = 4
+		TEQUIP:TARGET:下半身下着 = 4
+		PRINTFORMW フランはバニースーツを身に着けた
+		IF TALENT:TARGET:貧乳 
+			PRINTFORMDW ちなみに胸のサイズが全く合っていなく、既に小さな乳首が見えている
+		ELSE
+			PRINTFORMDW 胸のサイズも豊胸の魔法をしたフランにピッタリと合っている
+		ENDIF
+		PRINTFORM 「うさぎはすっごくエッチが大好きなんだって。えへへ、フランにピッタリだね
+		CALL K11_PRINT_HEARTCBW
+	;8=体操服
+	ELSE
+		EQUIP:コスプレ = 8
+		TEQUIP:TARGET:コスプレ = 8
+		EQUIP:TARGET:靴下 = 1
+		TEQUIP:TARGET:靴下 = 1
+		EQUIP:TARGET:下半身下着 = 2
+		TEQUIP:TARGET:下半身下着 = 2
+		PRINTFORMDW フランは体操服に着替えた
+		PRINTFORMDW ブルマの履き心地が気になるのか、しきりに指で食い込みを直している
+		PRINTFORMW 「これは運動着なの。だからきっと、みんなエッチの時に着てるんだよね♪」
+	ENDIF
+
+	;K11_CLOTHES_CHANGE2で使うフラグ　（コスプレ用）
+	KFLAG:5 = 1
+	
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+
+;ソックスのみの変更
+ELSEIF CFLAG:TARGET:衣装 == 0 || CFLAG:TARGET:衣装 == 1
+	IF KFLAG:4 == 0 && FAVOR(1500, 1500)
+		;無いとは思うが、一度も出なかったらそれはそれで寂しいので、１度は好感度により着替えあり
+		KFLAG:4 = 1
+	ELSE
+		;レアっぷりを出したいので、適当に確率を入れる。着衣プレイ好きで上昇補正
+		LOCAL:1 = PERCENT(60)
+		SIF LOCAL:1
+			RETURN RESULT
+		LOCAL:2 = PERCENT(66)
+		SIF LOCAL:2 && TALENT:TARGET:着衣プレイ好き == 0
+			RETURN RESULT
+	ENDIF
+
+	;ガーター変更
+	EQUIP:TARGET:靴下 = 3
+	TEQUIP:TARGET:靴下 = 3
+	;K11_CLOTHES_CHANGE2で使うフラグ （ガーター用）
+	KFLAG:3 = 1
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+	PRINTFORMDL 
+	PRINTFORMW 「ねえねえ……今日はこんなの履いてみたんだけど、どうかな？」
+	IF CFLAG:TARGET:衣装 == 0
+		PRINTFORMDW フランはミニスカートの裾をつまみたくし上げると、大人の色香を放つ、ベルトの付いた黒のガーターストッキングを魅せつけた
+		PRINTFORM 「なんだかエッチ見えるでしょ。%MASTERNAME%喜んでくれると嬉しいなぁ
+		CALL K11_PRINT_HEARTCBW
+	ELSEIF CFLAG:TARGET:衣装 == 1
+		PRINTFORMDW フランは下着姿のまま細い足を差し出すと、大人の色香を放つ、ベルトの付いた黒のガーターストッキングを魅せつけた
+		PRINTFORM 「ふふっ、こういうの好きでしょ？ %MASTERNAME%のために履いてきたんだからぁ、楽しんで
+		CALL K11_PRINT_HEARTCBW
+	ENDIF
+	
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+
+ENDIF
+RETURN RESULT
+
+;終了時に通常の服に戻す
+@K11_CLOTHES_CHANGE2
+;上関数で立てたフラグを拾う（コスプレ）
+IF KFLAG:5 == 1
+	EQUIP:コスプレ = 0
+	TEQUIP:TARGET:コスプレ = 0
+
+	EQUIP:TARGET:靴下 = 2
+	TEQUIP:TARGET:靴下 = 2
+	EQUIP:TARGET:下半身下着 = 2
+	TEQUIP:TARGET:下半身下着 = 2
+	EQUIP:TARGET:上半身下着 = 2
+	TEQUIP:TARGET:上半身下着 = 2
+	EQUIP:TARGET:下半身上着 = 1
+	TEQUIP:TARGET:下半身上着 = 1
+	EQUIP:TARGET:上半身上着 = 1
+	TEQUIP:TARGET:上半身上着 = 1
+	KFLAG:5 = 0
+
+ELSEIF KFLAG:3 == 1
+;上関数で立てたフラグを拾う（ガーターベルト）
+	EQUIP:TARGET:靴下 = 2
+	TEQUIP:TARGET:靴下 = 2
+	KFLAG:3 = 0
+
+ENDIF
+RETURN RESULT
+
+
+;初期設定　ビッチ化
+@K11_STATUSSET
+	;あらすじ［2］の場合だと、優し目のフランちゃんになる
+	IF KFLAG:1 == 2
+		TALENT:TARGET:処女 = 0
+		TALENT:TARGET:汚れ無視 = 1
+		;貞操無頓着の幼女っていうのはエロい。会いたい
+		TALENT:TARGET:貞操無頓着 = 1
+		TALENT:TARGET:心根優しい = 1
+		TALENT:TARGET:献身的 = 1
+		TALENT:TARGET:衝動的 = 0
+;		TALENT:TARGET:倒錯的 = 0
+;		TALENT:TARGET:楽観的 = 1
+		TALENT:TARGET:サド = 0
+		TALENT:TARGET:大人しい = 1
+		TALENT:TARGET:素直 = 1
+		TALENT:TARGET:舌使い = 1
+		TALENT:TARGET:器用な指先 = 1
+		TALENT:TARGET:回復早い = 1
+		TALENT:TARGET:腰使い = 1
+	ELSE
+		TALENT:TARGET:処女 = 0
+		TALENT:TARGET:汚れ無視 = 1
+		;貞操無頓着の幼女っていうのはエロい。会いたい
+		TALENT:TARGET:貞操無頓着 = 1
+		TALENT:TARGET:舌使い = 1
+		TALENT:TARGET:器用な指先 = 1
+		TALENT:TARGET:回復早い = 1
+		TALENT:TARGET:腰使い = 1
+	ENDIF
+	EXP:TARGET:Ｃ経験 = 18
+	EXP:TARGET:Ｖ経験 = 50
+	EXP:TARGET:Ａ経験 = 20
+	EXP:TARGET:Ｂ経験 = 10
+	EXP:TARGET:絶頂経験 = 25
+	EXP:TARGET:性交経験 = 60
+	EXP:TARGET:自慰経験 = 40
+	EXP:TARGET:調教自慰経験 = 10
+	EXP:TARGET:精液経験 = 70
+	EXP:TARGET:口淫経験 = 30
+	EXP:TARGET:手淫経験 = 30
+	EXP:TARGET:キス経験 = 20
+	EXP:TARGET:苦痛快楽経験 = 80
+	EXP:TARGET:異常経験 = 10
+	EXP:TARGET:緊縛経験 = 85
+	EXP:TARGET:Ｖ拡張経験 = 5
+	EXP:TARGET:Ａ拡張経験 = 2
+	ABL:TARGET:欲望 = 2
+	ABL:TARGET:技巧 = 2
+	ABL:TARGET:Ｃ感覚 = 1
+	ABL:TARGET:Ｖ感覚 = 2
+	ABL:TARGET:Ａ感覚 = 1
+	ABL:TARGET:精液中毒 = 1
+	ABL:TARGET:愛撫 = 2
+	ABL:TARGET:性交 = 2
+RETURN RESULT
+
+;呼び名設定
+@K11_NAMESET
+	;ストーリー分岐
+	IF KFLAG:1 == 2
+		;オトコだった場合
+		IF TALENT:MASTER:オトコ == 1
+			RESULTS = お義兄様
+			MASTERNAME = %RESULTS%
+		;女もしくはふたなりだった場合（基本的に想定しません）
+		ELSE
+			RESULTS = お義姉様
+			MASTERNAME = %RESULTS%
+		ENDIF
+	ELSE
+	PRINTL 　
+		$INPUT_LOOP_2
+		;オトコだった場合
+		IF TALENT:MASTER:オトコ == 1
+			PRINTFORMDL [1] おじ様
+			PRINTFORMDL [2] お兄様
+			PRINTFORMDL [3] おにいさま
+			PRINTFORMDL 
+			PRINTFORMDL [9] ※自分で呼び名を入力する（非推奨）
+			INPUT
+			IF RESULT == 1
+				RESULTS = おじ様
+				MASTERNAME = %RESULTS%
+			ELSEIF RESULT == 2
+				RESULTS = お兄様
+				MASTERNAME = %RESULTS%
+			ELSEIF RESULT == 3
+				RESULTS = おにいさま
+				MASTERNAME = %RESULTS%
+			ELSEIF RESULT == 9
+				PRINTFORMDL ※例 【 たろう 】と入力した場合、
+				PRINTFORML 「たろうぁ…♪」
+				PRINTFORMDL 等と表示される箇所が発生します。あ行なら問題ないかも。
+				PRINTL 　
+				$INPUT_LOOP_3
+				INPUTS
+				STRLENS RESULTS
+				IF RESULT > 14
+					PRINTFORML 「長すぎて覚えられないわ」
+					GOTO INPUT_LOOP_3
+				ELSEIF RESULTS == ""
+					GOTO INPUT_LOOP_3
+				ELSE
+					IF RESULTS == "フラン"
+						PRINTFORML 「それ、わたしの愛称なんだけど」
+					ELSEIF RESULTS == "フランドール"
+						PRINTFORML 「ふーん、そうなんだ、ふーん、へー」
+						PRINTFORML 「で、それわたしの名前なんだけど」
+					ELSEIF RESULTS == "レミリア"
+						PRINTFORML 「っぷ……あはははっ！ へえ、そうなんだぁ、あー、おもしろい」
+					ELSEIF RESULTS == "霊夢"
+						PRINTFORML 「ふーんじゃあ、あなたの名前は本当は魔理沙さんなのね」
+					ELSEIF RESULTS == "魔理沙"
+						PRINTFORML 「あら、正直に答えるなんて珍しいのね、魔理沙さん？」
+					ELSEIF RESULTS == "咲夜"
+						PRINTFORML 「そんなにあら、正直に答えるなんて珍しいのね、魔理沙さん？」
+					ELSEIF RESULTS == "パチュリー"
+						PRINTFORML 「あら、いつの間にそんなに血色良くなったのかしら」
+					ELSEIF RESULTS == "咲夜"
+						PRINTFORML 「もー、それならケーキ持ってきてよ。お腹減ったわ」
+					ELSEIF RESULTS == "美鈴"
+						PRINTFORML 「うーんと……これって下克上ってやつ？」
+					ELSE
+						PRINTFORML 「%RESULTS%？」
+					ENDIF
+					PRINTFORMDL [0] はい
+					PRINTFORMDL [1] いいえ
+					PRINTDL 
+					PRINTFORMDL [9] やっぱりやめる
+					$INPUT_LOOP_4
+					INPUT
+					IF RESULT == 0
+						MASTERNAME = %RESULTS%
+						PRINTFORMDW %CALLNAME:MASTER%は、本当の名前%MASTERNAME%を教えた
+					ELSEIF RESULT == 1
+						GOTO INPUT_LOOP_3
+					ELSEIF RESULT == 9
+						GOTO INPUT_LOOP_2
+					ELSE
+						GOTO INPUT_LOOP_4
+					ENDIF
+				ENDIF
+			ELSE
+				GOTO INPUT_LOOP_2
+			ENDIF
+		;女もしくはふたなりだった場合（基本的に想定しません）
+		ELSE
+			PRINTFORMDL [1] お姉様
+			PRINTFORMDL [2] %CALLNAME:PLAYER%
+			PRINTFORMDL 
+			PRINTFORMDL [9] ※自分で呼び名を入力する（非推奨）
+			INPUT
+			IF RESULT == 1
+				RESULTS = お姉様
+				MASTERNAME = %RESULTS%
+			ELSEIF RESULT == 2
+				MASTERNAME = %CALLNAME:PLAYER%
+			ELSEIF RESULT == 9
+				PRINTL ※例 【 たろう 】と入力した場合、
+				PRINTFORML 「たろうぁ…♪」
+				PRINTFORMDL 等と表示される箇所が発生します。あ行なら問題ないかも。
+				PRINTL 　
+				$INPUT_LOOP_5
+				INPUTS
+				STRLENS RESULTS
+				IF RESULT > 14
+					PRINTFORML 「長すぎて覚えられないわ」
+					GOTO INPUT_LOOP_5
+				ELSEIF RESULTS == ""
+					GOTO INPUT_LOOP_5
+				ELSE
+					IF RESULTS == "フラン"
+						PRINTFORML 「それ、わたしの愛称なんだけど」
+					ELSEIF RESULTS == "フランドール"
+						PRINTFORML 「ふーん、そうなんだ、ふーん、へー」
+						PRINTFORML 「で、それわたしの名前なんだけど」
+					ELSEIF RESULTS == "レミリア"
+						PRINTFORML 「っぷ……あはははっ！ へえ、そうなんだぁ、あー、おもしろい」
+					ELSEIF RESULTS == "霊夢"
+						PRINTFORML 「ふーんじゃあ、あなたの名前は本当は魔理沙さんなのね」
+					ELSEIF RESULTS == "魔理沙"
+						PRINTFORML 「あら、正直に答えるなんて珍しいのね、魔理沙さん？」
+					ELSEIF RESULTS == "咲夜"
+						PRINTFORML 「そんなにあら、正直に答えるなんて珍しいのね、魔理沙さん？」
+					ELSEIF RESULTS == "パチュリー"
+						PRINTFORML 「あら、いつの間にそんなに血色良くなったのかしら」
+					ELSEIF RESULTS == "咲夜"
+						PRINTFORML 「もー、それならケーキ持ってきてよ。お腹減ったわ」
+					ELSEIF RESULTS == "美鈴"
+						PRINTFORML 「うーんと……これって下克上ってやつ？」
+					ELSE
+						PRINTFORML 「%RESULTS%？」
+					ENDIF
+					PRINTL [0] はい
+					PRINTL [1] いいえ
+					PRINTL 
+					PRINTL [9] やっぱりやめる
+					$INPUT_LOOP_6
+					INPUT
+					IF RESULT == 0
+						MASTERNAME = %RESULTS%
+						PRINTFORMW %CALLNAME:MASTER%は、本当の名前%MASTERNAME%を教えた
+					ELSEIF RESULT == 1
+						GOTO INPUT_LOOP_5
+					ELSEIF RESULT == 9
+						GOTO INPUT_LOOP_2
+					ELSE
+						GOTO INPUT_LOOP_6
+					ENDIF
+				ENDIF
+			ELSE
+				GOTO INPUT_LOOP_2
+			ENDIF
+		ENDIF
+		PRINTFORML 
+	ENDIF
+RETURN RESULT

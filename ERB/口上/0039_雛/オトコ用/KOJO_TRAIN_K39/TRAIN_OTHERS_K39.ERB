@@ -1,0 +1,961 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	雛口上 その他調教イベント口上ファイル
+;
+;	その他調教ターン中イベントをまとめたファイル
+;
+;version		Reason
+;1.11			EV20とその他をファイル分け。新規作成
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;────────────────────────────────────
+;EV21, 大満足口上
+;────────────────────────────────────
+;・調教者の大満足ボーナスを取得した場合に表示
+;-------------------------------------------------
+@KOJO_MALE_EVENT_K39_21(ARG)
+;-------------------------------------------------
+#LOCALSIZE 1
+VARSET LOCAL
+LOCAL:0 = GET_KFLAG_K39("相思相愛")
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;雛さま大満足
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	;=================================================
+	;愛想よく応答する
+	;=================================================
+	IF IS_NOWCOMNAME("愛想よく応答する")
+		PRINTFORM 「\@ LOCAL:0 ? うふっ、何かご褒美を考えなくちゃね # 愛想がいいのが一番ですね \@
+		CALL PRINT_SYMBOL_K39
+		PRINTFORMDW 雛は慈愛に満ちた表情で%CALLNAME:MASTER%を見つめている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;快感を受け入れる
+	;=================================================
+	IF IS_NOWCOMNAME("快感を受け入れる")
+		PRINTFORM 「\@ LOCAL:0 ? うふっ、可愛い # 素直な子は好きですよ \@
+		CALL PRINT_SYMBOL_K39
+		PRINTFORMDW 雛は微笑みながら%CALLNAME:MASTER%を見つめている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;悲鳴を上げる
+	;=================================================
+	IF IS_NOWCOMNAME("悲鳴を上げる")
+		PRINTFORMW 「\@ LOCAL:0 ? ねぇ、もっと。もっと聞かせて # そんな甘い声で鳴かれると私…、ちょっと興奮してしまいます \@……」
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;愛情を込めてやる
+	;=================================================
+	IF IS_NOWCOMNAME("愛情を込めてやる")
+		PRINTFORMW 「\@ LOCAL:0 ? そんなに優しくされると蕩けちゃう # そんなに優しくされたら、蕩けてしまいます \@…」
+		PRINTFORMDW 雛は潤んだ瞳で%CALLNAME:MASTER%を見つめている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;積極的従う(積極的やる、なすがまま等)
+	;=================================================
+	IF 口上記入チェック(100) && IS_COMGRONAME("積極的従う")
+		;-------------------------------------------------
+		;ED経過
+		;-------------------------------------------------
+		IF GET_KFLAG_K39("ED経過", TARGET)
+			PRINTFORMW 「好き、大好き…」
+			PRINTFORMDW 雛は潤んだ瞳で%CALLNAME:MASTER%を見つめている…
+			RETURN 1
+		ENDIF
+		
+		;---------------------
+		;その他
+		;---------------------
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「こんな事、駄目なのは分かってる。でも…」
+			PRINTFORMW 「\@ RAND:2 ? もう、 # %CNAME(MASTER, TARGET)%と \@離れたくない……」
+			PRINTFORMDW 雛は潤んだ瞳で%CALLNAME:MASTER%を見つめている…
+		;その他
+		ELSE
+			PRINTFORMW 「積極的に求めてくれると、私も嬉しいです…」
+			PRINTFORMDW 雛は微笑みながら%CALLNAME:MASTER%を見つめている…
+		ENDIF 
+		RETURN 2
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	CALL HTMLPRINTW(@"「\@ LOCAL:0 ? くすくす、いい感じね # ふふ、悪くないですね \@…%HTML_HEARTB(, COLOR2_K39("PINK"))%」")
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV22, 状態変化口上
+;────────────────────────────────────
+;・状態異常が付いたときに表示
+;・TCVAR:状態変化が調教者、TCVAR:MASTER:状態変化が調教対象
+;・状態変化が起こると3ターン持続する
+;-------------------------------------------------
+@KOJO_MALE_EVENT_K39_22(ARG)
+;-------------------------------------------------
+;・近い将来、調教者と調教対象で状態変化口上呼び出しを切り分けたい意向
+;・そして状態変化以外の勃起描写、潤滑描写、尿意描写あたりにも口上呼び出しの枠を追加したい考え(2015/01/09)
+;-------------------------------------------------
+;*************************************************
+;EV22_0, 調教者状態変化
+;*************************************************
+IF 口上記入チェック(100) ;&& ARG == 0
+	;調教者の状態変化で派生
+	SELECTCASE GET_CONDITION(TARGET)
+		CASE "疲弊"
+			;状態変化持続ターンを2に
+			TCVAR:状態変化持続 = 2
+			;2/3の確率で表示無し RESULTに0を返す
+			IF RAND:3
+				RETURN 0
+			;1/3の確率で表示
+			ELSE
+				PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? ちょっと%RAND_SPLIT("やりすぎかしら/疲れたわね")% # ちょっと疲れましたね \@…」
+				PRINTFORMDW 雛は肩で大きく息をしている…
+				RETURN 1
+			ENDIF
+		CASE "衰弱"
+			RETURN 0
+		CASE "無気力"
+			RETURN 0
+		CASE "朦朧"
+			RETURN 0
+		CASE "情欲"
+			IF RAND:3
+				RETURN 0
+			ELSE
+				PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? も、もう駄目……。我慢、できないわ…… # ご免なさい、私、もう我慢できませんっ！ \@」
+				PRINTFORMDW 雛は情欲に濁った目で%CALLNAME:MASTER%を見据えながら近寄ってきた…
+				RETURN 1
+			ENDIF
+		CASE "怒り"
+			IF AFFECTION("相思相愛")
+				TCVAR:状態変化持続 = 1
+			ELSEIF AFFECTION("溺愛")
+				IF RAND:3
+					TCVAR:状態変化持続 = 2
+				ELSE
+					TCVAR:状態変化持続 = 1
+				ENDIF
+			ELSEIF AFFECTION("眷愛")
+				IF RAND:3
+					TCVAR:状態変化持続 = 3
+				ELSE
+					TCVAR:状態変化持続 = 2
+				ENDIF
+			ELSE
+				TCVAR:状態変化持続 = 3
+			ENDIF
+			IF RAND:3
+				RETURN 0
+			ELSE
+				PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? ねぇ、本気で怒ってもいいの # 私を怒らせて楽しいですか \@？」
+				RETURN 1
+			ENDIF
+		CASE "退屈"
+			;調教の経過時間
+			SELECTCASE TFLAG:経過時間
+				;長い
+				CASE IS >= 60
+					PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? ねぇ、もう終わりにする # そろそろ止めましょうか \@…？」
+					TCVAR:状態変化持続 = 3
+				;普通
+				CASE IS >= 30
+					PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? なんかいまひとつな感じ # どうもいまひとつですね \@…」
+					TCVAR:状態変化持続 = 2
+				;短い
+				CASEELSE
+					PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? なんか気分が乗らない感じ # どうも気分が乗りませんね \@…」
+					TCVAR:状態変化持続 = 1
+			ENDSELECT
+			RETURN 1
+		CASE "鬱屈"
+			;//TARGETの場合、TALENT:狂気がある場合にのみ1/5の確率で鬱屈化
+			;//狂気持ちで無い場合は死に口上になる
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;*************************************************
+;EV22_1, 調教対象状態変化
+;*************************************************
+;IF 口上記入チェック(0) ;&& ARG == 1
+	;SELECTCASE GET_CONDITION(MASTER)
+	;ENDSELECT
+;ENDIF
+
+;────────────────────────────────────
+;EV23, 調教対象能力値アップ口上
+;────────────────────────────────────
+;・調教中に調教対象の能力値が上昇した際に表示
+;-------------------------------------------------
+;引数内訳…
+;ARG=(今回上昇したABL番号)
+;
+;GFLAGより…
+;ABL:0 従順/1 欲望/2 技巧/3 Ｃ感覚/4 Ｖ感覚/5 Ａ感覚/6 Ｂ感覚/7 奉仕精神/8 露出癖/9 レズっ気/10ＢＬっ気/11マゾっ気
+;12自慰中毒/13精液中毒/14レズ中毒/15苦痛中毒/16拘束中毒
+;
+;ABL:20 会話/21 愛撫/22 道具/23 性交/24 羞恥/25 奉仕/26 加虐/27 異常
+;-------------------------------------------------
+@KOJO_MALE_EVENT_K39_23(ARG)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象[従順]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	;見づらいので改行
+	PRINTL 
+	PRINTFORM 「\@ GET_KFLAG_K39("相思相愛") ? そうそう、素直が一番よ # 厄を祓う為にも素直が一番ですね \@
+	CALL PRINT_SYMBOL_K39
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象[欲望]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(35) && ARG == 1
+	PRINTL 
+	PRINTFORM 「\@ GET_KFLAG_K39("相思相愛") ? そんなイヤラシイ目つきしちゃって # ちょっと目つきがイヤラシイですね \@
+	CALL PRINT_SYMBOL_K39 
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象[技巧]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(35) && ARG == 2
+	PRINTL 
+	PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? 少し上手になった感じかしら？ # ちょっと上手くなった感じでしょうか \@」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;Ｃ/Ｖ/Ａ/Ｂ感覚のいずれかがアップ
+;記入チェック
+LOCAL = PERCENT(30)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && GROUPMATCH(ARG, 3, 4, 5, 6)
+	PRINTL 
+	PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? ふふ、開発されちゃった感じ # 感度が良くなったみたいですね \@？」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象[Ｃ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 3
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象[Ｖ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 4
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象[Ａ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 5
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象[Ｂ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 6
+;ENDIF
+
+;────────────────────────────────────
+;EV24, 調教者能力値アップ口上
+;────────────────────────────────────
+;・調教中に調教者の能力値が上昇した際に表示
+;-------------------------------------------------
+;引数内訳…
+;ARG=(今回上昇したABL番号)
+;
+;ARG:0 従順/1 欲望/2 技巧/3 Ｃ感覚/4 Ｖ感覚/5 Ａ感覚/6 Ｂ感覚/7 奉仕精神/8 露出癖/9 レズっ気/10ＢＬっ気/11マゾっ気
+;12自慰中毒/13精液中毒/14レズ中毒/15苦痛中毒/16拘束中毒
+;
+;ARG:20 会話/21 愛撫/22 道具/23 性交/24 羞恥/25 奉仕/26 加虐/27 異常
+;-------------------------------------------------
+@KOJO_MALE_EVENT_K39_24(ARG)
+;-------------------------------------------------
+IF 口上記入チェック(25)
+	;PRINTL
+	;上昇した能力値で派生
+	SELECTCASE ARG
+		;[欲望]
+		CASE 1
+			PRINTL
+			PRINTFORM 「\@ GET_KFLAG_K39("相思相愛") ? うふっ、一緒にもっと愉しみましょ # まだまだ愉しませてもらいますよ \@
+			CALL PRINT_SYMBOL_K39 
+			RETURN 1
+		[SKIPSTART]
+		;[技巧]
+		CASE 2
+			RETURN 0
+		;[Ｃ感覚]
+		CASE 3
+			RETURN 0
+		;[Ｖ感覚]
+		CASE 4
+			RETURN 0
+		;[Ａ感覚]
+		CASE 5
+			RETURN 0
+		;[Ｂ感覚]
+		CASE 6
+			RETURN 0
+		;[愛撫]
+		CASE 21
+			RETURN 0
+		[SKIPEND]
+	ENDSELECT
+ENDIF
+
+;────────────────────────────────────
+;EV29, 屈服・苦痛刻印による反抗刻印上限処理
+;────────────────────────────────────
+;・反抗刻印Lv上限の処理
+;・反抗刻印は10-(苦痛刻印+屈服刻印)/2を超えない
+;-------------------------------------------------
+@KOJO_MALE_EVENT_K39_29(ARG)
+;-------------------------------------------------
+;%CALLNAME:TARGET%の与える快楽\@ MARK:MASTER:苦痛刻印 ? と苦痛 # \@が%CALLNAME:MASTER%から反抗の気力を奪っていく…
+;反抗刻印は{MARK:反抗刻印}になった
+;-------------------------------------------------
+;IF 口上記入チェック(0)
+;ENDIF
+
+;*************************************************
+;刻印取得口上
+;*************************************************
+;・調教中に刻印を取得させた場合に表示。どのレベルで口上表示するかは加減自由なので個々で調整するのが望ましい
+;・記入チェックが=1の場合、同時に複数取得したときはこのファイルで一番上のものだけを表示する
+;・=2の場合、取得した刻印の口上すべてを上から順に表示する
+;・刻印取得による素質変動の前に表示するため、素質取得/喪失するかはこの時点でのTALENTの有無で判定できる
+;-------------------------------------------------
+@KOJO_MALE_MARK_K39(ARG:0, ARG:1, ARG:2, ARG:3, ARG:4)
+#DIM 記入チェック
+#DIM すべて順に表示
+;刻印取得口上「すべて順に表示」のための初期化処理
+すべて順に表示 = 0
+;-------------------------------------------------
+;引数内訳…
+;ARG:(刻印番号)=(今回取得したレベル)
+;-------------------------------------------------
+[SKIPSTART]
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[トラウマ]取得
+記入チェック = 0	;0.非表示/1.同時に取得した刻印をこれ以下表示しない/2.すべて順に表示する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 記入チェック && ARG:4
+	SETBIT すべて順に表示, 4
+	SELECTCASE ARG:4
+		;トラウマLv2
+		CASE 2
+		;トラウマLv10…[臆病]がない場合、それを得る
+		;              既に[臆病]があり[狂気]がない場合、[幼稚]がある場合は100%、ない場合は1/3の確率で[狂気]を得る
+		;              [狂気]の取得判定に漏れ、かつ[幼稚]を持たない場合、[幼稚]を得る(幼児退行する)
+		;              現状、[狂気]と[幼稚]はどちらに転ぶか先に判定する術は無い(要望があれば…)。とりあえず頭がおかしくなると解釈してください
+		CASE 10
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 4
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 4) && 記入チェック == 1
+		RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[苦痛刻印]取得
+記入チェック = 0	;0.非表示/1.同時に取得した刻印をこれ以下表示しない/2.すべて順に表示する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 記入チェック && ARG:0
+	SETBIT すべて順に表示, 0
+	SELECTCASE ARG:0
+		;苦痛刻印Lv2
+		CASE 2
+		;苦痛刻印Lv9…[気丈]がある場合、それを失う
+		;CASE 9
+		;苦痛刻印Lv10
+		CASE 10
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 0
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 0) && 記入チェック == 1
+		RETURN 1
+ENDIF
+[SKIPEND]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[反抗刻印]取得
+記入チェック = 1	;（0, 非表示、1, 同時に取得した刻印をこれ以下表示しない、2, すべて順に表示する）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG:3
+	SETBIT すべて順に表示, 3
+	SELECTCASE ARG:3
+		;反抗刻印Lv1
+		CASE 1
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINTFORMW 「何よ？ 一体どうしたの？」
+				PRINTFORMW 「不満があるなら言ってくれないと、判らないんだけど…」
+			;それ以外
+			ELSE
+				PRINTFORMW 「何か不満そうですね？」
+			ENDIF
+		;反抗刻印Lv2
+		CASE 2
+			PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? 何時までそんな態度を続けるつもりなの？ # そんなに私の事が嫌なんでしょうか… \@」
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 3
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 3) && 記入チェック == 1
+		RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[屈服刻印]取得
+記入チェック = 1	;（0, 非表示、1, 同時に取得した刻印をこれ以下表示しない、2, すべて順に表示する）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 記入チェック && ARG:2
+	SETBIT すべて順に表示, 2
+	SELECTCASE ARG:2
+		;屈服刻印Lv2
+		CASE 2
+			PRINTFORMW 「少し素直になった\@ GET_KFLAG_K39("相思相愛") ? 感じかしら？ # 感じでしょうか \@」
+		;屈服刻印Lv5
+		CASE 5
+			PRINTFORMW 「大分素直になった感じ\@ GET_KFLAG_K39("相思相愛") ? ね # でしょうか\@？」 
+		;屈服刻印Lv7…[反抗的]がある場合、それを失う
+		CASE 7
+			PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? 大丈夫、安心して。ちゃんと面倒は見てあげるから♪ # 私の事、受け入れてくれたみたいですね \@」
+		;屈服刻印Lv10…[プライド高い]がある場合、それを失う
+		CASE 10
+			PRINTFORMW 「わたし…やりすぎ\@ GET_KFLAG_K39("相思相愛") ? ちゃったのかしら # てしまったでしょうか \@……」
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 2
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 2) && 記入チェック == 1
+		RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[快楽刻印]取得
+記入チェック = 1	;（0, 非表示、1, 同時に取得した刻印をこれ以下表示しない、2, すべて順に表示する）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 記入チェック && ARG:1
+	SETBIT すべて順に表示, 1
+	SELECTCASE ARG:1
+		;快楽刻印Lv2
+		;CASE 2
+		;快楽刻印Lv5…[快感の否定]がある場合、それを失う
+		CASE 5
+			PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? 身体は正直みたいね？ # 快楽には逆らえないみたいですね \@」
+		;快楽刻印Lv7…[抑圧]がある場合、それを失う
+		CASE 7
+			PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? なんか今までと印象が変わった感じね # ちょっと雰囲気が変わりましたね \@？」
+		;快楽刻印Lv10…[快感に素直]がない場合、それを得る
+		;CASE 10
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 1
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 1) && 記入チェック == 1
+		RETURN 1
+ENDIF
+;刻印取得口上「すべて順に表示」のための終端処理
+RETURN すべて順に表示 != 0
+
+
+;*************************************************
+;関数置き場
+;*************************************************
+
+;=================================================
+;絶頂口上関数類
+;=================================================
+;部位別絶頂とか心底糞だと思う今日この頃
+;-------------------------------------------------
+;調教者ｃ絶頂口上関数
+;-------------------------------------------------
+@TC_EX_K39
+#LOCALSIZE 1
+SELECTCASE CFLAG:TARGET:C絶回数
+	CASE IS >= 4
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「っふあ！ くるっ！ またきちゃうぅっ！ あ゛あ゛あぁっ！」
+			PRINTFORML 「いやぁっつ、だめぇっ！ アあ゛ッ！ イクッ、また…イ、くうぅっ！！」
+		ELSE
+			PRINTFORMW 「ふぁぁっ！ だめっ！ これ以上イったら……わたしッ！」
+			PRINTFORML 「あ゛ッ…アぁ゛っ！ またイクっ！ ダメぇっ！ あ゛あぁぁっ！！」
+		ENDIF
+	CASE 3
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「あっ、あぁっ！ だめぇっ！ もうっ、おかしくっ！ おかしくなっちゃう！」
+		ELSE
+			PRINTFORMW 「あっ、あぁっ！ だめぇっ！ とまらなくなっちゃうぅっ！」
+		ENDIF
+		PRINTFORML 「ア゛っ！ わたし……またっ！ イっちゃう！ イっちゃうぅっ！！」
+	CASE 2
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「や、やだっ！ またイっちゃうっ…！ あ；あっ！！」
+		ELSE
+			PRINTFORMW 「イきますっ！ またイっちゃいますっ…ッ…！ あぁっ！！」
+		ENDIF
+		PRINTFORML 「や、ダメっ…… イクッ！ またぁっ、イ、クぅっ…！」
+	CASEELSE
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「ふぁぁっ！ だめっ！ イっ、くぅぅっっ！」
+			PRINTFORML 「ひぅっ！ あんっ、あッ……いっ、ちゃうぅっ…！」
+		ELSE
+			PRINTFORMW 「だめっ！ も、もぅっ……いくっ、イきますぅっ…ッ…！」
+			PRINTFORML 「イっ…イクぅぅっっ！ イっちゃうぅっ！！」
+		ENDIF
+ENDSELECT
+CALL QUAKE(4)
+WAIT
+
+;-------------------------------------------------
+;調教者ｖ絶頂口上関数
+;-------------------------------------------------
+@TV_EX_K39
+#LOCALSIZE 1
+SELECTCASE CFLAG:TARGET:V絶回数
+	CASE IS >= 4
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「っふあ！ くるっ！ またきちゃうぅっ！ あ゛あ゛あぁっ！」
+			PRINTFORML 「いやぁっつ、だめぇっ！ アあ゛ッ！ イクッ、また…イ、くうぅっ！！」
+		ELSE
+			PRINTFORMW 「ふぁぁっ！ だめっ！ これ以上イったら……わたしッ！」
+			PRINTFORML 「あ゛ッ…アぁ゛っ！ またイクっ！ ダメぇっ！ あ゛あぁぁっ！！」
+		ENDIF
+	CASE 3
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「あっ、あぁっ！ だめぇっ！ もうっ、おかしくっ！ おかしくなっちゃう！」
+		ELSE
+			PRINTFORMW 「あっ、あぁっ！ だめぇっ！ とまらなくなっちゃうぅっ！」
+		ENDIF
+		PRINTFORML 「ア゛っ！ わたし……またっ！ イっちゃう！ イっちゃうぅっ！！」
+	CASE 2
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「や、やだっ！ またイっちゃうっ…！ あ；あっ！！」
+		ELSE
+			PRINTFORMW 「イきますっ！ またイっちゃいますっ…ッ…！ あぁっ！！」
+		ENDIF
+		PRINTFORML 「や、ダメっ…… イクッ！ またぁっ、イ、クぅっ…！」
+	CASEELSE
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「ふぁぁっ！ だめっ！ イっ、くぅぅっっ！」
+			PRINTFORML 「ひぅっ！ あんっ、あッ……いっ、イクっ…！」
+		ELSE
+			PRINTFORMW 「だめっ！ も、もぅっ……いくっ、イきますぅっ…ッ…！」
+			PRINTFORML 「イっ…イクぅぅっっ！ イっちゃうぅっ！！」
+		ENDIF
+ENDSELECT
+CALL QUAKE(4)
+WAIT
+
+;-------------------------------------------------
+;膣内射精用
+;-------------------------------------------------
+@TV_EX2_K39
+#LOCALSIZE 1
+;絶頂回数派生を処理
+SELECTCASE CFLAG:TARGET:V絶回数
+	;Ｖ絶頂4回以上
+	CASE IS >= 4
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORML 「っふあ！ くるっ！ またきちゃうぅっ！ あ゛あ゛あぁっ！」
+			CALL SHOOT_VARIATION_K39
+			TWAIT 500, 0
+			PRINTFORML 「アあ゛ッ！ イクッ、中出しされて、また…イ、くうぅっ！！」
+		ELSE
+			PRINTFORML 「ふぁぁっ！ だめっ！ これ以上イったら……わたしッ！」
+			CALL SHOOT_VARIATION_K39
+			TWAIT 500, 0
+			PRINTFORML 「あ゛ッ…アぁ゛っ！ またイクっ！ ダメぇっ！ あ゛あぁぁっ！！」
+		ENDIF
+	;Ｖ絶頂3回
+	CASE 3
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORML 「あっ、あぁっ！ だめぇっ！ もうっ、おかしくっ！ おかしくなっちゃう！」
+		ELSE
+			PRINTFORML 「あっ、あぁっ！ だめぇっ！ とまらなくなっちゃうぅっ！」
+		ENDIF
+		CALL SHOOT_VARIATION_K39
+		TWAIT 500, 0
+		PRINTFORML 「ア゛っ！ わたし……またっ！ イっちゃう！ イっちゃうぅっ！！」
+	;Ｖ絶頂2回
+	CASE 2
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORML 「や、やだっ！ 今出されたら、またイっちゃうっ…！ あ゛あっ！！」
+		ELSE
+			PRINTFORML 「や、だめっ！ 今出されたら、またイっちゃいますっ…ッ…！ あぁっ！！」
+		ENDIF
+		CALL SHOOT_VARIATION_K39
+		TWAIT 500, 0
+		PRINTFORML 「や、ダメっ…… イクッ！ またぁっ、イ、クぅっ…！」
+	;その他
+	CASEELSE
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORML 「ふぁぁっ！ だめっ！ イっ、くぅぅっっ！」
+			CALL SHOOT_VARIATION_K39
+			TWAIT 500, 0
+			PRINTFORML 「ひぅっ！ 中出しされてっ！ あッ……いっ、イクっ…！」
+		ELSE
+			PRINTFORML 「だめっ！ も、もぅっ……いくっ、イきますぅっ…ッ…！」
+			CALL SHOOT_VARIATION_K39
+			TWAIT 500, 0
+			PRINTFORML 「イっ…イクぅぅっっ！ 中に出されて、イっちゃうぅっ！！」
+		ENDIF
+ENDSELECT
+CALL QUAKE(4)
+WAIT
+
+;-------------------------------------------------
+;調教者ａ絶頂口上関数
+;-------------------------------------------------
+@TA_EX_K39
+#LOCALSIZE 1
+SELECTCASE CFLAG:TARGET:A絶回数
+	CASE IS >= 4
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「っふあ！ くるっ！ またきちゃうぅっ！ あ゛あ゛あぁっ！」
+			PRINTFORML 「いやぁっ、またおしりでぇっ！ アあ゛ッ！ イクッ、また…イ、くうぅっ！！」
+		ELSE
+			PRINTFORMW 「ふぁぁっ！ だめっ！ これ以上イったら……わたしッ！」
+			PRINTFORML 「あ゛ッ…アぁ゛っ！ またおしりでイクっ！ あ゛あぁぁっ！！」
+		ENDIF
+	CASE 3
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「あっ、あぁっ！ だめぇっ！ おしりっ、おかしくっ！ おかしくなっちゃう！」
+		ELSE
+			PRINTFORMW 「あっ、あぁっ！ だめぇっ！ おしり良すぎて、とまらなくなっちゃうぅっ！」
+		ENDIF
+		PRINTFORML 「ア゛っ！ わたし……またっ！ イっちゃう！ イっちゃうぅっ！！」
+	CASE 2
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「や、やだっ！ またおしりでイっちゃうっ…！ あ；あっ！！」
+		ELSE
+			PRINTFORMW 「イきますっ！ またおしりでイキますっ…ッ…！ あぁっ！！」
+		ENDIF
+		PRINTFORML 「や、ダメっ…… イクッ！ またぁっ、イ、クぅっ…！」
+	CASEELSE
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「ふぁぁっ！ だめっ！ おしりでイっっちゃう！」
+			PRINTFORML 「ひぅっ！ あんっ、あッ……いっ、イクっ…！」
+		ELSE
+			PRINTFORMW 「だめっ！ も、もぅっ……いくっ、イきますぅっ…ッ…！」
+			PRINTFORML 「イっ…イクぅぅっっ！ おしりで、イっちゃうぅっ！！」
+		ENDIF
+ENDSELECT
+CALl QUAKE(4)
+WAIT
+
+;-------------------------------------------------
+@TA_EX2_K39
+#LOCALSIZE 1
+SELECTCASE CFLAG:TARGET:A絶回数
+	CASE IS >= 4
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「っふあ！ くるっ！ またきちゃうぅっ！ あ゛あ゛あぁっ！」
+			CALL SHOOT_VARIATION_K39
+			PRINTFORML 「いやぁっ、またおしりでぇっ！ アあ゛ッ！ イクッ、また…イ、くうぅっ！！」
+		ELSE
+			PRINTFORMW 「ふぁぁっ！ だめっ！ これ以上イったら……わたしッ！」
+			CALL SHOOT_VARIATION_K39
+			PRINTFORML 「あ゛ッ…アぁ゛っ！ またおしりでイクっ！ あ゛あぁぁっ！！」
+		ENDIF
+	CASE 3
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「あっ、あぁっ！ だめぇっ！ おしりっ、おかしくっ！ おかしくなっちゃう！」
+		ELSE
+			PRINTFORMW 「あっ、あぁっ！ だめぇっ！ おしり良すぎて、とまらなくなっちゃうぅっ！」
+		ENDIF
+		CALL SHOOT_VARIATION_K39
+		PRINTFORML 「ア゛っ！ わたし……またっ！ イっちゃう！ イっちゃうぅっ！！」
+	CASE 2
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「や、やだっ！ またおしりでイっちゃうっ…！ あ；あっ！！」
+		ELSE
+			PRINTFORMW 「イきますっ！ またおしりでイキますっ…ッ…！ あぁっ！！」
+		ENDIF
+		CALL SHOOT_VARIATION_K39
+		PRINTFORML 「や、ダメっ…… イクッ！ またぁっ、イ、クぅっ…！」
+	CASEELSE
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「ふぁぁっ！ だめっ！ おしりでイっっちゃう！」
+			CALL SHOOT_VARIATION_K39
+			PRINTFORML 「ひぅっ！ あんっ、あッ……いっ、イクっ…！」
+		ELSE
+			PRINTFORMW 「だめっ！ も、もぅっ……いくっ、イきますぅっ…ッ…！」
+			CALL SHOOT_VARIATION_K39
+			PRINTFORML 「イっ…イクぅぅっっ！ おしりで、イっちゃうぅっ！！」
+		ENDIF
+ENDSELECT
+CALL QUAKE(4)
+WAIT
+
+;-------------------------------------------------
+;調教者ｂ絶頂口上関数
+;-------------------------------------------------
+@TB_EX_K39
+#LOCALSIZE 1
+SELECTCASE CFLAG:TARGET:B絶回数
+	CASE IS >= 4
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「っふあ！ くるっ！ またきちゃうぅっ！ あ゛あ゛あぁっ！」
+			PRINTFORML 「いやぁっつ、だめぇっ！ アあ゛ッ！ イクッ、また…イ、くうぅっ！！」
+		ELSE
+			PRINTFORMW 「ふぁぁっ！ だめっ！ これ以上イったら……わたしッ！」
+			PRINTFORML 「あ゛ッ…アぁ゛っ！ またイクっ！ ダメぇっ！ あ゛あぁぁっ！！」
+		ENDIF
+	CASE 3
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「あっ、あぁっ！ おっぱいよすぎてぇっ！」
+		ELSE
+			PRINTFORMW 「あっ、あぁっ！ だめぇっ！ 胸が敏感に……あ゛ぁっ！」
+		ENDIF
+		PRINTFORML 「ア゛っ！ わたし……またっ！ イっちゃう！ イっちゃうぅっ！！」
+	CASE 2
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「や、やだっ！ またおっぱいでイっちゃうっ…！ あ；あっ！！」
+		ELSE
+			PRINTFORMW 「イきますっ！ またおっぱいでイっちゃいますっ…ッ…！ あぁっ！！」
+		ENDIF
+		PRINTFORML 「や、ダメっ…… イクッ！ またぁっ、イ、クぅっ…！」
+	CASEELSE
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「ふぁぁっ！ だめっ！ イっ、くぅぅっっ！」
+			PRINTFORML 「ひぅっ！ あんっ、あッ……いっ、イクっ…！」
+		ELSE
+			PRINTFORMW 「だめっ！ も、もぅっ……いくっ、イきますぅっ…ッ…！」
+			PRINTFORML 「イっ…イクぅぅっっ！ おっぱいでイっちゃうぅっ！！」
+		ENDIF
+ENDSELECT
+CALL QUAKE(4)
+WAIT
+
+;-------------------------------------------------
+@EX_SITUATION_K39
+#LOCALSIZE 1
+;一行空ける
+PRINTL
+PRINTFORMD %CALLNAME:TARGET%は
+;正常位
+IF IS_NOWACTNAME("正常位させる") || TEQUIP:性交奉仕中 == 1
+	PRINTFORMDL %CALLNAME:MASTER%の腰に足をしっかりと絡め、
+	SELECTCASE NOWEX:MASTER:射精
+		;射精無し
+		CASE 0
+			SIF !PENIS(MASTER)
+				PRINTFORMD %DHARNESS_DESCRIPTION(MASTER)%に貫かれながら
+		;空射精
+		CASE 1
+			PRINTD 膣内のペニスの脈動に応じるかのように
+		;大量射精
+		CASE 3
+			PRINTD 大量の精液を注ぎ込まれながら
+		;早漏
+		CASE 4
+			PRINTD 予期せぬ膣内への熱い刺激に
+		;その他
+		CASEELSE
+			PRINTD 白濁液を注ぎ込まれながら
+	ENDSELECT
+	PRINTFORMDW 全身を震わせて絶頂した…
+;後背位
+ELSEIF IS_NOWACTNAME("後背位させる")  || TEQUIP:性交奉仕中 == 2
+	PRINTFORMDL 背中を大きく仰け反らせ、
+	SELECTCASE NOWEX:MASTER:射精
+		;射精無し
+		CASE 0
+			SIF !PENIS(MASTER)
+				PRINTFORMD 背後から%DHARNESS_DESCRIPTION(MASTER)%に貫かれながら、
+		;空射精
+		CASE 1
+			PRINTD 膣内のペニスの脈動に応じるかのように、
+		;大量射精
+		CASE 3
+			PRINTD 背後から大量の精液を注ぎ込まれながら、
+		;早漏
+		CASE 4
+			PRINTD 予期せぬ膣内への熱い刺激に、
+		;その他
+		CASEELSE
+			PRINTD 背後から白濁液を注ぎ込まれながら、
+	ENDSELECT
+	PRINTFORMDW 細い肩を震わせて絶頂した…
+;対面座位
+ELSEIF IS_NOWACTNAME("対面座位させる") || TEQUIP:性交奉仕中 == 4
+	PRINTFORMDL %CALLNAME:MASTER%に縋りつきながら甘い声をあげ、
+	SELECTCASE NOWEX:MASTER:射精
+		;射精無し
+		CASE 0
+			SIF !PENIS(MASTER)
+				PRINTFORMD 膣内を%DHARNESS_DESCRIPTION(MASTER)%で突き上げられながら
+		;空射精
+		CASE 1
+			PRINTD 膣内のペニスの脈動に応じるかのように
+		;大量射精
+		CASE 3
+			PRINTD 最奥に大量の精液を注ぎ込まれながら
+		;早漏
+		CASE 4
+			PRINTD 予期せぬ膣内への熱い刺激に
+		;その他
+		CASEELSE
+			PRINTD 子宮内へ白濁液を注ぎ込まれながら
+	ENDSELECT
+	PRINTFORMDW その腕の中で身体を震わせて絶頂した…
+	SIF T_COND("情欲")
+		PRINTFORMDW %CALLNAME:MASTER%の背中には、うっすらと爪の痕がついている
+;背面座位
+ELSEIF IS_NOWACTNAME("背面座位させる") || TEQUIP:性交奉仕中 == 5
+	PRINTFORMDL %CALLNAME:MASTER%の首に手をまわし、
+	SELECTCASE NOWEX:MASTER:射精
+		;射精無し
+		CASE 0
+			SIF !PENIS(MASTER)
+				PRINTFORMD 背後から%DHARNESS_DESCRIPTION(MASTER)%に突き上げられながら
+		;空射精
+		CASE 1
+			PRINTD 膣内のペニスの脈動に応じるかのように
+		;大量射精
+		CASE 3
+			PRINTD 大量の子種を注ぎ込まれながら
+		;早漏
+		CASE 4
+			PRINTD 予期せぬ子宮口への熱い刺激に
+		;その他
+		CASEELSE
+			PRINTD 膣奥へ熱い迸りを受けながら
+	ENDSELECT
+	PRINTFORMDW 全身をビクビクと震わせて絶頂した…
+;逆レイプ
+ELSEIF IS_NOWACTNAME("逆レイプ") || TEQUIP:性交奉仕中 == 3
+	PRINTFORMDL 上体を反らしながら後ろに手をつき、
+	SELECTCASE NOWEX:MASTER:射精
+		;射精無し
+		CASE 0
+			SIF !PENIS(MASTER)
+				PRINTFORMD その膣内を%DHARNESS_DESCRIPTION(MASTER)%で抉られながら
+		;空射精
+		CASE 1
+			PRINTD 膣内のペニスの脈動に応じるかのように
+		;大量射精
+		CASE 3
+			PRINTD 大量の淫欲の精を注ぎ込まれながら
+		;早漏
+		CASE 4
+			PRINTD 予期せぬ子宮口への熱い刺激に
+		;その他
+		CASEELSE
+			PRINTD 熱い白濁液を注ぎ込まれながら
+	ENDSELECT
+	PRINTFORMDW 全身をガクガクと揺らして絶頂した…
+;アナルセックスさせる
+ELSEIF IS_NOWACTNAME("アナルセックスさせる") || TEQUIP:性交奉仕中 == 6
+	PRINTFORMDL 肛内をこすりあげられ甘い吐息を漏らし、
+	SELECTCASE NOWEX:MASTER:射精
+		;射精無し
+		CASE 0
+			SIF !PENIS(MASTER)
+				PRINTFORMD %DHARNESS_DESCRIPTION(MASTER)%に貫かれながら
+		;空射精
+		CASE 1
+			PRINTD ペニスの脈動に応じるかのように
+		;大量射精
+		CASE 3
+			PRINTD 大量の淫欲の精を注ぎ込まれながら
+		;早漏
+		CASE 4
+			PRINTD 予期せぬ腸内への熱い刺激に
+		;その他
+		CASEELSE
+			PRINTD 熱い白濁液を注ぎ込まれながら
+	ENDSELECT
+	PRINTFORMDW ビクビクと小刻みに震えつつ絶頂した…
+ENDIF
+
+;-----------------------------------------------------------
+;ペニスバンドの要素を噛ますのが面倒なんで、PENIS(MASTER)で弾いておく
+;-----------------------------------------------------------
+;抜かず採用時且つ空射精以外
+IF TFLAG:抜かず && NOWEX:MASTER:射精 > 1 && PENIS(MASTER)
+	PRINTFORMD 繋がったままの%CALLNAME:TARGET%の
+	;Ａセックス
+	IF IS_NOWACTNAME("アナルセックスさせる") || TEQUIP:性交奉仕中 == 6
+		PRINTD アヌスからは、
+	;Ａセックス以外
+	ELSE
+		PRINTD 秘所からは、
+	ENDIF
+	;射精量で分岐
+	IF NOWEX:MASTER:射精 == 3
+		PRINTDW 収まりきらない精液が溢れ出している…
+	ELSE
+		PRINTDW わずかに精液が漏れ出している…
+	ENDIF
+;抜かず非採用時且つ空射精以外
+ELSEIF NOWEX:MASTER:射精 > 1 && PENIS(MASTER)
+	;相思相愛
+	IF AFFECTION("相思相愛")
+		PRINTFORMD %CALLNAME:TARGET%は幸せそうな笑顔で下腹部を撫でながら、
+	;その他
+	ELSE
+		PRINTFORMD ペニスを解放した%CALLNAME:TARGET%は意味ありげに微笑みながら、
+	ENDIF
+	PRINTFORMDW %CALLNAME:MASTER%を見つめている…
+	PRINTD その絶頂で綻んだ
+	;Ａセックス
+	IF IS_NOWACTNAME("アナルセックスさせる") || TEQUIP:性交奉仕中 == 6
+		PRINTFORMD %ANUS_DESCRIPTION(TARGET)%
+	;Ａセックス以外
+	ELSE
+		PRINTFORMD %VAGINA_DESCRIPTION2(TARGET)%
+	ENDIF
+	PRINTD からは、
+	;大量射精の場合
+	IF NOWEX:MASTER:射精 == 3
+		PRINTDW 収まりきらない精液が溢れ出していた…
+	;その他
+	ELSE
+		PRINTDW わずかに精液が垂れていた…
+	ENDIF
+ENDIF
+;本体の地の文を殺す
+FLAG:地の文制御 = 1
+
+;-------------------------------------------------
+@SHOOT_VARIATION_K39
+#LOCALSIZE 1
+SELECTCASE NOWEX:MASTER:射精
+	;空射精
+	CASE 1
+		CALL QUAKE(4)
+	;大量射精
+	CASE 3
+		CALL FLASH(2)
+	;その他
+	CASEELSE
+		CALL FLASH(1)
+ENDSELECT

@@ -1,0 +1,198 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上 AS_調教開始イベント口上ファイル
+;
+;	調教開始イベント口上をまとめたファイル
+;
+;Version		Reason
+;1.71			@口上記入チェック仕様に。その他細かな修正
+;1.70			GAMEBASE参照を初回時に行うように
+;1.67			AS単体ファイルとして独立
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;AS EV11, 調教開始口上 FIRSTEVENT(50) ～
+;========================================================================
+;・口上主がご主人様でない場合に表示されるもの
+;・本来のご主人様の名前は%CNAME((FLAG:ご主人様), TARGET)%で参照可能
+;-------------------------------------------------
+@KOJO_AS_EVENT_K14_11(ARG)
+;------------------------------------------------
+;引数内訳…
+;ARG=(0, 調教可、1, 口上主の疲労で中止、2, 調教対象の疲労で中止)
+;-------------------------------------------------
+
+;回数カウント
+AS_調教回数カウント += 1
+
+;ビットを初期化
+KFLAG:TARGET:201 = CLEARBITS(KFLAG:TARGET:201, "0/1/2/3/4")
+CLEARBIT KFLAG:TARGET:202, 0
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;初回
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AS_調教回数カウント == 1
+	;-------------------------------------------------
+	;バリアント判定処理
+	;-------------------------------------------------
+	CALL CHK_GAMEBASE_K14
+	
+	;-------------------------------------------------
+	;CNAME代入処理
+	;-------------------------------------------------
+	;MASTERの呼び名を代入
+	IF NO:MASTER == 0
+		;名前入力済みかつ男
+		IF TALENT:MASTER:オトコ
+			CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴方/%CSTR:(TARGET):呼び方リスト%
+		;名前入力済みかつふたなり
+		ELSEIF TALENT:MASTER:ふたなり
+			CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴女/%CSTR:(TARGET):呼び方リスト%
+		;名前入力済みかつそれ以外（女）
+		ELSE
+			CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴女/%CSTR:(TARGET):呼び方リスト%
+		ENDIF
+	;男の場合
+	ELSEIF TALENT:MASTER:オトコ
+		CSTR:(TARGET):呼び方リスト = あなた_貴方/%CSTR:(TARGET):呼び方リスト%
+	;ふたなりの場合
+	ELSEIF TALENT:MASTER:ふたなり
+		CSTR:(TARGET):呼び方リスト = あなた_貴女/%CSTR:(TARGET):呼び方リスト%
+	;それ以外（女）
+	ELSE
+		CSTR:(TARGET):呼び方リスト = あなた_貴女/%CSTR:(TARGET):呼び方リスト%
+	ENDIF
+	
+	;この辺りの条件は少々きつ過ぎるかも知れない
+	;=================================================
+	;反抗刻印Lv5以上
+	;=================================================
+	IF 口上記入チェック(100) && MARK:反抗刻印 >= 5
+		PRINTFORML 「ふ～ん、確かに%CNAME((FLAG:ご主人様), TARGET)%が苦労してるだけの事はありそうね」
+		PRINTFORMDW アリスは%CALLNAME:MASTER%を値踏みするかのような視線を投げかけている…
+		PRINTL
+		PRINTFORMW 「なんだかんだ言って、%CNAME((FLAG:ご主人様), TARGET)%も情が移って手荒な事はやり難いんでしょうけど」
+		PRINTFORMW 「私は%CNAME(MASTER, TARGET)%がどうなろうと知った事ではないから…」
+		PRINTFORMW 「覚悟して頂戴、ね♪」
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;トラウマLv5以上
+	;=================================================
+	IF 口上記入チェック(100) && MARK:MASTER:トラウマ >= 5
+		PRINTFORMW 「すっかり怯えちゃって、%CNAME((FLAG:ご主人様), TARGET)%に大分酷い事されてきたみたいねぇ」
+		PRINTFORMW 「大丈夫よ、安心して？ 私は%CNAME((FLAG:ご主人様), TARGET)%程酷い事はしないし…」
+		PRINTFORML 「たっぷり可愛がってあげるわ。ただし…」
+		CALL FADEIN(13, "「私なりのやり方で、ね」")
+		WAIT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;快楽刻印Lv7以上
+	;=================================================
+	IF 口上記入チェック(100) && MARK:MASTER:快楽刻印 >= 7
+		PRINTFORMW 「随分良く躾けられてるみたいね？」
+		PRINTFORMW 「もうすっかり%CNAME((FLAG:ご主人様), TARGET)%の犬ってとこかしら？」
+		PRINTFORMW 「でも、手間が掛からないのは大歓迎だし……精々愉しませてもらうわ」
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ウフフ…」")
+		CLEARLINE 1
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	PRINTFORMW 「さぁ、準備はいいかしら？」
+	PRINTFORMW 「%CNAME((FLAG:ご主人様), TARGET)%の手前、あまり好き勝手な事は出来ないけど…」
+	PRINTFORM 「壊さない程度に愉しませてもらう事にするわ
+	CALL PRINT_8THNOTECW_K14(COLOR_K14("white"), , , COLOR2_K14("ALICE"))
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教１０回目
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AS_調教回数カウント == 10 && !ARG
+	PRINTFORMW 「そろそろ私にも慣れてきた感じかしらね？」
+	PRINTFORMW 「ねぇ、%CNAME((FLAG:ご主人様), TARGET)%と比べて私はどうなのかしら？」
+	PRINTFORMW 「%CNAME((FLAG:ご主人様), TARGET)%には秘密にしておくから、ちょっと聞かせて頂戴」
+	PRINTL
+	PRINTFORMDL [0] ご主人様は裏切れない…
+	PRINTFORMDL [1] えっと、実は…
+	CALL INPUTINTD(0, 1)
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW 「模範的な回答ね」
+			PRINTFORMW 「まぁ、%CNAME(MASTER, TARGET)%の立場ではそう言うしか無いわよねぇ」
+		CASE 1
+			PRINTFORMW 「あら、そうなの？」
+			PRINTFORMW 「まぁ、ある意味仕方無い事なんでしょうけど……そんな事言われても困るわね」
+			PRINTFORMW 「私にとって、%CNAME(MASTER, TARGET)%は只の玩具でしかないもの」
+	ENDSELECT
+	CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ウフフ…」")
+	CLEARLINE 1
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教済み（好意1000以上） FIRSTEVENT(53)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AFFECTION("調教済み") && FIRSTEVENT(53)
+	PRINTFORMW 「なんか随分気に入られちゃったみたいね」
+	PRINTFORMW 「でもいいこと？ 私にとって、%CNAME(MASTER, TARGET)%は所詮玩具でしかないし…」
+	PRINTFORMW 「あまり%CNAME((FLAG:ご主人様), TARGET)%を嫉妬させない方がいいわよ？」
+	PRINTFORMW 「あの子怒らせたら、どうなっても知らないから。ウフフ…」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;反抗刻印Lv5以上
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && MARK:反抗刻印 >= 5
+	PRINTFORMW 「生意気な人形ね…」
+	PRINTFORMW 「従わないつもりなら、無理やり従わせるまでよ」
+	PRINTFORMW 「あんまり私を甘く見ないで欲しいものね…」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;トラウマLv5以上
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && MARK:MASTER:トラウマ >= 5
+	PRINTFORMW 「いいわね…その怯えきった目。ゾクゾクしちゃう……」
+	PRINTFORM 「もっと虐めたくなっちゃうわ
+	CALL PRINT_8THNOTECW_K14(COLOR_K14("white"), , , COLOR2_K14("ALICE"))
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;快楽刻印Lv7以上
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && MARK:MASTER:快楽刻印 >= 7
+	PRINTFORMW 「わかるわ…%CNAME(MASTER, TARGET)%が何を期待しているのか」
+	PRINTFORMW 「任せて…私無しでは生きていけないくらい、快楽漬けにしてあげる。とは言っても…」
+	PRINTFORMW 「そんな事になったら%CNAME((FLAG:ご主人様), TARGET)%に怒られちゃうかもだけど、ね」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;条件なし
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	SELECTCASE RANDEVENT(90)
+		CASE 0
+			PRINTFORMW 「また%CNAME(MASTER, TARGET)%のお守りをするよう%CNAME((FLAG:ご主人様), TARGET)%に言われた訳だけど…」
+			PRINTFORMW 「なんていうか、やれやれ…ね」
+			PRINTFORMW 「ま、折角だから精々愉しませてもらう事にするわ」
+		CASE 1
+			PRINTFORMW 「こんな事を人任せにする%CNAME((FLAG:ご主人様), TARGET)%も、ちょっと酔狂が過ぎるんじゃないかしら」
+			PRINTFORMW 「まぁでも…それに付き合う私も大概よね？」
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「フフ…」")
+			CLEARLINE 1
+	ENDSELECT
+	RETURN 1
+ENDIF

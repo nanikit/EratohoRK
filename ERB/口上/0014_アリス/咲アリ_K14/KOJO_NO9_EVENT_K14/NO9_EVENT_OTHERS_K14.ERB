@@ -1,0 +1,594 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;	アリス口上(対象限定) その他イベント口上ファイル
+
+;		その他のイベント口上をまとめたファイル
+
+;	EXTRAモードでN09咲夜をMASTERに選択した場合のみ表示
+
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;#############################
+;EV16, 大満足ボーナス口上
+;#############################
+[SKIPSTART]
+・@EVENTRAINから呼び出される
+・大満足ボーナスが発生した場合に表示される
+・タイミングは調教開始口上の後、調教者行動前口上の前
+・選択前、選択後は共通の呼び出しからARGで別けられる
+[SKIPEND]
+@KOJO_NO9_MS_EVENT_K14_16(ARG) ;ARG=(0.選択前/1.選択後)
+#DIMS DYNAMIC RHEART
+#DIMS DYNAMIC STRING
+RHEART '= RAND:3 ? HTML_HEARTB(, COLOR2_K14("pink")) # HTML_HEART(, COLOR2_K14("pink"))
+STRING '= RANDTEXT_K14("ふふふ", "クスクス", "くすくす", "くすっ", "ふふっ")
+
+;/////////////////////////////
+;選択前口上
+;/////////////////////////////
+;・上機嫌な様子で、今日は何をされたいかとたずねる
+;・口上が表示された後に(%CALLNAME:TARGET%は上機嫌な様子で)と地の文が続く
+IF 口上記入チェック(100) && ARG == 0
+	SELECTCASE RANDEVENT(4, 0)
+		CASE 0
+			PRINTFORMW 「今回はご褒美として何でもしてあげるわよ」
+			PRINTFORMW 「ねぇ、どうして欲しい…？」
+		CASE 1
+			PRINTFORMW 「ねぇ、何かリクエストはあるかしら？」
+			PRINTFORMW 「別に驚く事はないわ。私だってそういう気分の時はあるもの。ふふ」
+		CASE 2
+			PRINTFORMW 「偶には希望を聞いてあげてもいいわよ？」
+			PRINTFORMW 「今日は%CNAME(MASTER, TARGET)%がしたい事をしてあげる」
+			PRINTFORMW 「さて、何がお望みかしら？」
+		CASE 3
+			PRINTFORMW 「今回は特別よ。何か希望があるなら聞いてあげるわ」
+			PRINTFORMW 「で、%CNAME(MASTER, TARGET)%は何を望むの…？」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+
+;/////////////////////////////
+;選択後口上
+;/////////////////////////////
+;・調教対象の返答に対して、一言
+;・分岐毎に登録番号を割り振っておく事に
+;・口上が表示された後に地の文が表示される。地の文は汎用。
+IF ARG == 1 && TALENT:TARGET:ご主人様
+	;ボーナス[0] いつも通り // FIRST/RANDEVENT(1)
+	;==========
+	IF IS_SATIS_BONUS("通常")
+		;2/3の確率で表示
+		IF RAND:3
+			PRINTFORMW 「咲夜にしては随分控えめじゃない?」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それってどういう意味か聞かせて頂けるかしら」")
+			PRINTFORMW 「そうねぇ……いや、やっぱりやめとくわ。咲夜、絶対怒るもの」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「余計に気になるわね……」")
+			PRINTFORMW 「知らない方がいいって事もあるわ。そういう事で納得して頂戴」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それで上手く丸め込んだつもり？」")
+			PRINTFORMW 「ええ、そうよ？ この上なく、ね」
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%STRING%%ELLIPSIS_K14()%」")
+			SIF ANIME_CONFIG("FADE")
+				CLEARLINE 1
+		;1/3の確率で汎用処理
+		ELSE
+			CALL KOJO_NO9_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[1] アナルをいじめて // FIRST/RANDEVENT(2)
+	;============================
+	IF IS_SATIS_BONUS("アナル")
+		;80%の確率で表示
+		IF PERCENT(80)
+			CALL FADEIN(15, "「ねぇ、咲夜……」")
+			WAIT
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「な、なによ」")
+			PRINTFORMW 「良く聞こえなかったわ。もう一度言って」
+			SELECTCASE RANDEVENT(2, 2)
+				CASE 0
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), @"「聞こえてた癖に、%RANDTEXT_K14("白々しい", "良く言う")%わね…」")
+					PRINTFORML 「あら、ばれてた？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「当然よ！」")
+					PRINTFORMW 「じゃ、仕方無いわね。ふふ」
+				CASE 1
+					CALL PRINTCOLOR(COLOR_K14("咲夜"), "「絶っ対に")
+					CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "嫌", 1)
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "！」")
+					PRINTFORMW 「そう、仕方無いわね……でも、咲夜がこんな事言うなんて、ねぇ？ ふふ」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なっ！ 聞こえなかったって……」")
+					PRINTFORMW 「あれは嘘…、ちゃんと聞こえてたわよ？ おしりをいじめ…」
+					CALL PRINTCOLORL(COLOR_K14("咲夜"), "「ああもうっ！ 分かった！ 分かったから！」")
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そのあたりにしておいて貰えるかしら……」")
+					PRINTFORMW 「そうね？ 私も引き際は弁えてるつもりだし」
+					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%STRING%%ELLIPSIS_K14()%」")
+					SIF ANIME_CONFIG("FADE")
+						CLEARLINE 1
+			ENDSELECT
+		;漏れたら汎用処理
+		ELSE
+			CALL KOJO_NO9_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[2] お仕置きして // FIRST/RANDEVENT(3)
+	;========================
+	IF IS_SATIS_BONUS("お仕置き")
+		;初回
+		;----
+		IF FIRSTEVENT(2)
+			PRINTFORMW 「お仕置きして欲しいなんて……咲夜、貴女そういう趣味があったのね…」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「な、なんの事かしら…」")
+			PRINTFORMW 「今更とぼけても手遅れだと思うけどね？ まぁいいけど」
+			PRINTFORMW 「貴女の望み、叶えてあげるわ」
+			CALL FADEIN(15, "「ふふふ……」")
+			WAIT
+			RETURN 1
+		ENDIF
+		
+		;初回以外を処理
+		SELECTCASE RANDEVENT(2, 3)
+			CASE 0
+				PRINTFORMW 「お仕置きして、ねぇ？ ふふふ」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いちいち言い直さないで欲しいわね…」")
+				PRINTFORMW 「そうね？ 思わず言っちゃったにしても、ちょっと恥ずかしいわよね。%STRING%%ELLIPSIS_K14()%」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……いい加減にしないと本気で怒るわよ」")
+				PRINTFORM 「あら、ごめんなさい…
+				CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+			CASE 1
+				PRINTFORMW 「別に構わないわよ？ 趣味がいいとは思わないけど、咲夜がそれを望むなら、ね」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いや、だから……余計な事、言わないで頂けるかしら…」")
+				PRINTFORMW 「ふふ、わかった。この辺でやめておくわ」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	;ボーナス[3] 激しくして // FIRST/RANDEVENT(4)
+	;======================
+	IF IS_SATIS_BONUS("ハード")
+		;80%で表示
+		IF PERCENT(80)
+			;好感度1000以上
+			IF AFFECTION("眷愛")
+				SELECTCASE RANDEVENT(2, 4)
+					CASE 0
+						PRINTFORMW 「……激しくシてなんて。イヤラシイわね、咲夜」
+						CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なっ、なによ！ 悪い？」")
+						PRINTFORMW 「別に？ 私も嫌いじゃないし、そういうの」
+						CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なら、いちいち余計な事言わなくてもいいんじゃないかしら…」")
+						PRINTFORMW 「ま、そうよね？ ふふ」
+					CASE 1
+						PRINTFORMW 「そうね……、時にはそういうのもいいわよね」
+						PRINTFORMW 「まぁでも、いつもそれなりに激しいと思ってたんだけど、咲夜的には不満だったのかしらね？」
+						CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いや、だから……余計な事言わないで頂けるかしら…」")
+						CALL HTMLPRINTW(@"「ふふ、ごめんなさい…%RHEART%」")
+				ENDSELECT
+			;その他
+			ELSE
+				PRINTFORMW 「あら、激しいのがいいの…？」
+				PRINTFORMW 「イヤラシイわね。ま、私は構わないわよ？ ふふ」
+			ENDIF
+		;漏れたら汎用処理
+		ELSE
+			CALL KOJO_NO9_EV16_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[4] 甘えさせて // FIRST/RANDEVENT(5)
+	;======================
+	IF IS_SATIS_BONUS("イチャイチャ")
+		;初回
+		;----
+		IF 口上記入チェック(100) && FIRSTACT(5)
+			PRINTFORMW 「……咲夜、貴女」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「な、なによ」")
+			PRINTFORMW 「可愛い事言うじゃない。いつもそんな感じだといいのに、ね？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「悪かったわね…」")
+			CALL HTMLPRINTW(@"「あら、気にする事ないわよ？ 咲夜のちょっとへそ曲がりなとことか、頑固なところも好きだから%RHEART%」")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「態々そういう事、言う必要があるのか疑問ね」")
+			PRINTFORMW 「ま、正直……私もそう思わない事もないけど。ただ…」
+			PRINTFORMW 「咲夜のちょっと困った顔見るのも好きなのよねぇ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……それは結構な事で。少しはこっちの身にもなって欲しいわ」")
+			PRINTFORMW 「そうね？ 善処する事にするわ。ふふ」
+			RETURN 1
+		ENDIF
+		
+		;初回以外を処理（2/3の確率で表示）
+		IF RAND:3
+			SELECTCASE RANDEVENT(2, 5)
+				CASE 0
+					PRINTFORM 「紅魔舘のメイド長がこの私に『
+					CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "甘えさせて", 1)
+					PRINTFORMW 』ねぇ？」
+					PRINTFORMW 「他の人が聞いたらどう思うかしら。ふふ…」
+					PRINTFORMW 「ま、私的には光栄と思っておけばいいのかしら。ね、咲夜？」
+					CALL PRINTCOLORL(COLOR_K14("咲夜"), "「そうね……そんなところかしら。それから…」")
+					PRINTFORMW 「ん、なによ？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いい加減黙りなさい。アリス…」")
+					PRINTFORM 「そうね、咲夜が怒る前にやめておくわ
+					CALL PRINT_SYMBOL_K14
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「もう怒ってるわよ！ 馬鹿っ！」")
+				CASE 1
+					PRINTFORMW 「咲夜でもそういう気分になる時があるのね？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はいはいそうですよわるかったわね」")
+					PRINTFORMW 「なによそれ？ 可愛くない…」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「甘えさせてくれるんじゃなかった？」")
+					PRINTFORMW 「ん、まぁそうなんだけど……可愛げのないのに甘えられても、ね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「は？ 喧嘩売ってる？」")
+					PRINTFORMW 「軽い冗談じゃない」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「判り難い、笑えない冗談は嫌いなのよ。アリス…」")
+					PRINTFORMW 「それは残念ね？ 以後、気をつける事にするわ」
+					;フェードアウト
+					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%STRING%%ELLIPSIS_K14()%」")
+					SIF ANIME_CONFIG("FADE")
+						CLEARLINE 1
+			ENDSELECT
+		;1/3の確率で表示
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「甘えさせてだなんて、可愛い事言うわね…」
+					PRINTFORMW 「さぁ、いらっしゃい。思いっきり可愛がってあげる♪」
+				CASEELSE
+					;汎用処理
+					CALL KOJO_NO9_EV16_K14
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[5] 壊れるまでして // FIRST/RANDEVENT(6)
+	;==========================
+	IF IS_SATIS_BONUS("異常")
+		;初回
+		;----
+		IF 口上記入チェック(100) && FIRSTACT(6)
+			PRINTFORMW 「本当にそんな事言っちゃっていいのかしら。ねぇ咲夜？」
+			PRINTFORMW 「脆すぎるのよ、貴女達人間は……。でも、まぁ…」
+			PRINTFORMW 「私もそこまで無茶するつもりはないんだけど、ね」
+			RETURN 1
+		ENDIF
+		
+		;2/3の確率で表示
+		IF RAND:3
+			SELECTCASE RANDEVENT(2, 6)
+				CASE 0
+					PRINTFORMW 「やだ咲夜ったら……そんな事言っちゃって」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「う、五月蝿いわね…」")
+					PRINTFORMW 「ま、私は構わないわよ。時にはそういうのも悪くないし、ね」
+				CASE 1
+					PRINTFORMW 「いいわよ、咲夜がそれを望むなら……」
+					PRINTFORMW 「優しく壊してあげるわ。フフ…」
+			ENDSELECT
+		;1/3の確率で表示
+		ELSE
+			PRINTFORMW 「いいわ……。お望み通り、壊してあげる……」
+			PRINTFORMDW アリスの瞳は怪しい光を帯びている…
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[6] 外に出たい // FIRST/RANDEVENT(7)
+	;======================
+	IF IS_SATIS_BONUS("野外")
+		PRINTFORMW 「それを認めるつもりはないのよ、悪いけど…」
+		PRINTFORMW 「ま、そんな訳で……、普段通りってことにしておくわ」
+		;本日の方針(0=いつもどおり/1=A開発/2=お仕置き/3=ハード/4=イチャイチャ/5=異常/6=野外/7=子作り/8=休憩)
+		TFLAG:今日の方針 = 0
+		RETURN 1
+	ENDIF
+
+	;ボーナス[7] 孕ませたい
+	;======================
+	;IF IS_SATIS_BONUS("子作り")
+	;ENDIF
+
+	;休憩はINFO.ERBにて処理される
+	;ボーナス[8] 休ませて // FIRST/RANDEVENT(8)
+	;====================
+	IF IS_SATIS_BONUS("休憩")
+		;相思相愛調教開始時の初回イベントを経過している場合
+		IF KFLAG:(FLAG:ご主人様):11 == 1
+			;BASE 0, 調教対象の体力派生
+			SELECTCASE TENSION(MASTER, 0)
+				CASE "高い"
+					PRINTFORMW 「どう見ても元気そうに見えるんだけど……、理由を聞かせてもらえる？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……そういう気分じゃない。それじゃ不足かしら？」")
+					PRINTFORMW 「そうね、ちょっと不満だけどそういう理由もアリだとは思う」
+					PRINTFORMW 「ま、たまにはゆっくりするのもいいわね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), @"「でしょう？ いい機会だから\@ TIME ? おゆはん # 昼食 \@は私が作るわ」")
+					PRINTFORMW 「いいわね、それ。私も手伝うわよ？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「結構よ。今日のところは私に任せて頂戴」")
+					PRINTFORMW 「まぁ咲夜がそう言うなら……。じゃ、私は大人しくお菓子作りでも」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「役割分担って訳ね？」")
+					CALL HTMLPRINTW(@"「……そういう事。って、なんだかちょっと楽しくなってきたわ%RHEART%」")
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ふふ……、そうね。本当に、ね」")
+				CASE "一般"
+					PRINTFORMW 「そういえば咲夜、ちょっと顔色が悪いみたいな…」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう？」")
+					PRINTFORMW 「……でもないかも」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どっちなのよ」")
+					PRINTFORMW 「ふふ、まぁいいじゃない。のんびり過ごすってのも悪くないし、ね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、私もそう思うわ」")
+				CASE "低い"
+					PRINTFORMW 「具合悪そうね、本当に大丈夫なの？」
+					CALL PRINTCOLORL(COLOR_K14("咲夜"), "「そうね、確かにちょっと疲れてるけど…」")
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「少し休めば大丈夫だと思うわ」")
+					PRINTFORMW 「そう？ それなら、いいけど……」
+			ENDSELECT
+		;その他
+		ELSE
+			;BASE 0, 調教対象の体力派生
+			SELECTCASE TENSION(MASTER, 0)
+				CASE "高い"
+					PRINTFORMW 「疲れてるようには見えないけど……」
+					PRINTFORMW 「ま、そういう日があってもいいかしら、ね」
+				CASE "一般"
+					PRINTFORMW 「ま、そうね。たまにはのんびり過ごすのもいいわよね」
+					PRINTFORMW 「あまり勝手をされちゃ困るけど、自由にするといいわ」
+				CASE "低い"
+					PRINTFORMW 「そうね、顔色も優れないし疲れが溜まってるみたい」
+					PRINTFORMW 「わかったわ。今日はゆっくり休んで頂戴」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[9] 抱いてほしい
+	;========================
+	IF IS_SATIS_BONUS("抱いて")
+		;初回
+		;----
+		IF FIRSTEVENT(9)
+			PRINTFORMW 「咲夜、貴女……」
+			CALL FPRINTW("「な、なによ」", COLOR2_K14("SAKUYA"))
+			PRINTFORMW 「よく聞こえなかったわ。もう一度言って」
+			CALL FPRINTW("「よく言うわ。聞こえてた癖に…」", COLOR2_K14("SAKUYA"))
+			PRINTFORMW 「あら、ばれてた？」
+			CALL FPRINTW("「それはもう、これ以上無いほどにね」", COLOR2_K14("SAKUYA"))
+			PRINTFORMW 「流石メイド長。なんでもお見通しって訳ね」
+			CALL FPRINTW("「こんな事で褒められてもね。というか、何時までこんな茶番を続けるつもり？」", COLOR2_K14("SAKUYA"))
+			{
+			CALL HTMLPRINTW(@"「ん、それもそうね。折角咲夜がこの私に%HTMLFONT("<b>抱いて</b>"
+			, , COLOR2_K14("white"))%なんて言ってくれたんだから」")
+			}
+			CALL FPRINTW("「ねぇアリス…」", COLOR2_K14("SAKUYA"))
+			PRINTFORMW 「なによ」
+			CALL FPRINTW("「お願いだから、その辺にして頂けるかしら…」", COLOR2_K14("SAKUYA"))
+			CALL HTMLPRINTW(@"「ふふ、わかったわ…」")
+			RETURN 1
+		ENDIF
+		
+		;初回以外
+		;--------
+		IF RAND:2
+			SELECTCASE RANDEVENT(4, 9)
+				CASE 0
+					PRINTFORMW 「咲夜からおねだりだなんて、一体どういう風の吹き回しかしら」
+					CALL FPRINTW("「う、うるさいわね…」", COLOR2_K14("SAKUYA"))
+					PRINTFORMW 「あら、怒った？」
+					CALL FPRINTW("「怒ってないわよ！」", COLOR2_K14("SAKUYA"))
+					PRINTFORMW 「やっぱり怒ってるじゃない」
+					CALL FPRINTW("「だから怒ってな…って、いつまで続ける気よ」", COLOR2_K14("SAKUYA"))
+					PRINTFORMW 「ふふっ、そうね。でも咲夜の怒った顔、なかなか可愛かったわよ」
+					CALL FPRINTW("「はいはいわかった。もうなんとでも言って頂戴…」", COLOR2_K14("SAKUYA"))
+					;CALL FADEOUT(15, "「」")
+				CASE 1
+					PRINTFORMW 「抱いてほしいなんて…、咲夜にしては随分ストレートな物言いね」
+					CALL FPRINTW("「そうね。回りくどいのも結構だけれど、時にはこういう気分の時もあるわ」", COLOR2_K14("SAKUYA"))
+					PRINTFORMW 「それは私も同感ね。何時も何時もでは疲れちゃうし」
+					CALL FPRINTW("「貴女がそれを言うわけ？」", COLOR2_K14("SAKUYA"))
+					PRINTFORMW 「ほら、そうやって脱線しない」
+					CALL FPRINTW("「ん、それもそうね。悪かったわ」", COLOR2_K14("SAKUYA"))
+					PRINTFORMW 「クスクス」
+					CALL FPRINTW("「ふふ…」", COLOR2_K14("SAKUYA"))
+				CASE 2
+					PRINTFORMW 「いつもそのくらい素直だといいのにね。咲夜？」
+					CALL FPRINTW("「その言葉、そっくりそのままお返しするわ。アリス…」", COLOR2_K14("SAKUYA"))
+					PRINTFORMW 「言ってくれるわね？ でも…、まぁいいわ。おねだりする咲夜可愛かったし」
+					CALL FPRINTW("「ああもう、わかったから！ その辺にしておいて」", COLOR2_K14("SAKUYA"))
+					PRINTFORMW 「ふふっ、そうね…」
+				CASE 3
+					CALL HTMLPRINTW(@"「咲夜に%HTMLFONT("<b>抱いて</b>", , COLOR2_K14("white"))%なんて言われたら断れないわね」")
+					CALL FPRINTW("「その変に強調するの、やめて頂けるかしら…」", COLOR2_K14("SAKUYA"))
+					{
+					CALL HTMLPRINTW(@"「え、だって仕方ないでしょ？ %HTMLFONT("<b>抱いて</b>"
+					, , COLOR2_K14("white"))%って言ったのは咲夜なんだし」")
+					}
+					CALL FPRINTW("「はいはい、私の負けよ。だからもうやめて頂戴」", COLOR2_K14("SAKUYA"))
+					CALL HTMLPRINTW(@"「何が負けなのかよく判らないけど…、まぁいいわ。時間も勿体無いし、ね」")
+			ENDSELECT
+		ELSE
+			SELECTCASE RANDEVENT(6, 10)
+				CASE 0
+					CALL HTMLPRINTW(@"「あら…%RHEART% 私に抱かれたいだなんて直球ね？ ふふ」")
+				CASE 1
+					CALL HTMLPRINTW(@"「ふふ、随分可愛らしいこと言ってくれるじゃない%RHEART%」")
+				CASE 2
+					PRINTFORML 「いいわよ、抱いてあげる…」
+					CALL HTMLPRINTW(@"「子猫のように可愛がってあげるわ…%RHEART%」")
+				CASE 3
+					CALL HTMLPRINTW(@"「ふふ…%RHEART% そこまで言われて断る理由なんてないわね」")
+				CASE 4
+					CALL HTMLPRINTL(@"「正直、直接的な物言いってあまり好きじゃないんだけど…」")
+					CALL HTMLPRINTW(@"「こういう場合は別よね%RHEART% 私好きよ？ そういうの」")
+				CASE 5
+					CALL HTMLPRINTL(@"「あら%RHEART% 大胆ね、%CNAME(MASTER, TARGET)%」")
+					CALL HTMLPRINTL(@"「そこまで言われたら、私としても応えない訳にいかないじゃない…%RHEART%」")
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ボーナス[10] ご奉仕したい
+	;=========================
+	IF IS_SATIS_BONUS("ご奉仕")
+		IF FIRSTEVENT(10)
+			PRINTFORML 「咲夜、貴女……大丈夫？」
+			CALL FPRINTW("「は？ なんの話よ」", COLOR2_K14("SAKUYA"))
+			PRINTFORML 「いや、なんていうか…急にそんな事言いだすから、どこかおかしくなったのかって思って」
+			CALL FPRINTW("「はい？」", COLOR2_K14("SAKUYA"))
+			PRINTFORMW 「具体的に言うと、その、頭とか…」
+			CALL FPRINTW("「張り倒すわよ」", COLOR2_K14("SAKUYA"))
+			PRINTFORMW 「ふふ、ごめんなさい」
+			RETURN 1
+		ENDIF
+
+		;初回以外
+		SELECTCASE RANDEVENT(6, 10)
+			CASE 0
+				CALL HTMLPRINTW(@"「ふふ%RHEART% 嬉しいこと言ってくれるじゃない。ほら、こっちにきなさいよ…」")
+			CASE 1
+				CALL HTMLPRINTW(@"「ご奉仕したいだなんて、殊勝な心がけね？ ふふ…%RHEART%」")
+			CASE 2
+				PRINTFORMW 「そうね。そういうことならお願いしようかしら」
+			CASE 3
+				PRINTFORMW 「これはまた、随分可愛らしい申し出ね%RAND_SPLIT("。/？")% クスクス…」
+			CASE 4
+				PRINTFORML 「%CNAME(MASTER, TARGET)%がそう言うなら断る理由なんてないわね」
+				CALL HTMLPRINTW(@"「私は精々楽しませてもらう事にするわ%RHEART%」")
+			CASE 5
+				PRINTFORMW 「一体どういう風の吹き回しかしらね？ 天変地異の前触れじゃなければいいけど」
+				CALL FPRINTW("「言ってくれるわね。いいわ…、目に物見せてやるから」", COLOR2_K14("SAKUYA"))
+				PRINTFORMW 「あら、それは楽しみね。 ふふっ…」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	;ボーナス[11] かわいがって
+	;=========================
+	IF IS_SATIS_BONUS("かわいがり")
+		;初回
+		IF FIRSTEVENT(11)
+			PRINTFORMW 「まさか、貴女の口からそんな言葉が聞けるなんてね」
+			PRINTFORMW 「ホント、この世界は驚きと奇跡に満ちているわ。そうは思わない、咲夜？」
+			CALL FPRINTW("「……いや別に。っていうか、自分で言って物凄く後悔してるわ、今」", COLOR2_K14("SAKUYA"))
+			PRINTFORMW 「後悔でも何でも好きなだけすれば？ でも、それでさっき言ったことが取り消せる訳じゃないけど」
+			PRINTFORMW 「言葉には責任が伴うのよ。ま、それはそれとして…」
+			PRINTFORMW 「私としては貴女の望みを叶えるのにやぶさかでないんだけど。どうする…？」
+			CALL FPRINTW("「い、一々聞かないで頂けるかしら。そういうの…」", COLOR2_K14("SAKUYA"))
+			PRINTFORMW 「ふふ、それもそうね」
+			RETURN 1
+		ENDIF
+		
+		;初回以外なら一般口上を呼び出す
+		CALL KOJO_EVENT_K14_16(1)
+		RETURN RESULT
+	ENDIF
+ENDIF
+
+;=================================================
+;EV17, 本日の方針口上
+;=================================================
+;・調教者により本日の方針が決定された場合に表示
+;・口上表示の後に地の文。地の文は方針毎に専用のものになる
+;・子作り、休憩はご褒美でしか出ないので此処では不要、なはず
+;・Ａ感覚が4までは確率（Ａ感覚、0で1/3）でTFLAG:今日の方針 == 1（Ａ開発）になり1/5の確率で他の方針によって上書きされる
+;・Ａ感覚が5以降になると今日の方針 == 1（Ａ開発）になる可能性は無くなる（感覚が上昇すればＡ開発の必要はない、という仕様？）
+;・調教者の方針変更は満足ボーナスが条件を満たしていると飛ばされる
+;・ある程度進展すると目にする機会は限られてくると思われる
+;-------------------------------------------------
+@KOJO_NO9_MS_EVENT_K14_17(ARG)
+
+;本日の方針口上
+;━━━━━━━
+;ABL:MASTER:Ａ感覚 < 5の条件の時のみ発生する可能性がある
+;ABLの上昇に伴い発生確率が落ちてゆき（0=1/3, 1=1/4, 2=1/6. 3=8/1. 4=1/12。さらに1/5で他の方針で上書き）、5以上では完全に発生しなくなる
+
+;方針がアナル開発 // FIRST/RANDEVENT(0)
+;================
+IF IS_POLICY("今日", "アナル")
+	PRINTFORMW 「なんとなく、今日は咲夜のおしりを虐めたい気分なのよね」
+	PRINTFORMW 「ま、そういう訳で……覚悟して頂戴。ふふ」
+	RETURN 1
+ENDIF
+
+;方針がお仕置き // FIRST/RANDEVENT(1)
+;==============
+IF IS_POLICY("今日", "お仕置き")
+	PRINTFORMW 「決めたわ。今日はお仕置きの日よ！」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「訳が判らないわ……」")
+	PRINTFORMW 「別に判る必要もないしね？ ま、好きなようにさせて貰うわ。ふふ」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……やれやれ、ね」")
+	RETURN 1
+ENDIF
+
+;方針がいつもより激しく // FIRST/RANDEVENT(2)
+;======================
+IF IS_POLICY("今日", "ハード")
+	PRINTFORMW 「ねぇ咲夜……、今日はちょっと激しくしてみようと思うんだけど」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……お好きに。どうせ何言ったってやめるつもりなんてない癖に」")
+	PRINTFORMW 「流石、よく判ってるわね。その通りよ！」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんな得意げに言われても、ねぇ……やれやれだわ」")
+	RETURN 1
+ENDIF
+
+;方針がイチャイチャ // FIRST/RANDEVENT(3)
+;==================
+IF IS_POLICY("今日", "イチャイチャ")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇ、ひとつ聞いていいかしら……、その手招きは一体どういうつもりなのか」")
+	PRINTFORMW 「……この程度の事も判らないなんて。ボケるにはまだちょっと早いんじゃない？」
+	CALL PRINTCOLORL(COLOR_K14("咲夜"), "「いや、だから……そうじゃなくて…」")
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どういう魂胆があるのかって聞いてるのよ！」")
+	PRINTFORMW 「なら最初からそう言いなさいよ。回りくどいわね」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……判ってた癖に」")
+	PRINTFORMW 「ま、それは認めるわ。ただ……魂胆も何も、今日は優しくしてあげようって思っただけよ」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なによ、それ……、どういう風の吹き回しよ」")
+	PRINTFORMW 「別に？ ただそういう気分ってだけの話よ。それはそれとして、優しくされるのは嫌いだった？」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「嫌いとか、そういう問題じゃ…」")
+	PRINTFORMW 「わかった。恥ずかしいのね？ 咲夜」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なっ！？ どうして私が恥ずかしがらなきゃいけないのよ…」")
+	PRINTFORMW 「自分の心に聞いてみればいいんじゃない？ ふふ」
+	RETURN 1
+ENDIF
+
+;方針が異常 // FIRST/RANDEVENT(4)
+;==========
+IF IS_POLICY("今日", "異常")
+	CALL FADEIN(15, "「フフ……、なんだかとってもいい気分だわ」")
+	WAIT
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "（ちょっと様子がおかしいわね……）")
+	PRINTFORMW 「あら？ 何か気になる事でも？」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……別に。何でもないわよ」")
+	PRINTFORMW 「そう？ ならいいけど。あ、そうそう……」
+	PRINTFORM 「今日はたっぷり可愛がってあげるつもりだから、愉しみにしてて頂戴。咲夜…
+	
+	;Times New Romanの連十六分音符は微妙かも知れない
+	SELECTCASE RANDEVENT(4, 4)
+		CASE 0
+			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+		CASE 1
+			CALL PRINT_8THNOTECW_K14(COLOR_K14("white"), , , COLOR2_K14("ALICE"))
+		CASE 2
+			CALL PRINT_W8NOTECW_K14(COLOR_K14("white"), , , COLOR2_K14("ALICE"))
+		CASE 3
+			CALL PRINT_W16NOTECW_K14(COLOR_K14("white"), , , COLOR2_K14("ALICE"))
+	ENDSELECT
+	
+	;フェードアウト
+	CALL FADE(18, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "（悪い予感しかしないわ……）")
+	CLEARLINE 1
+	RETURN 1
+ENDIF
+
+;これは弾きようがないので今日の方針への代入で回避する
+;方針が野外 // FIRST/RANDEVENT(5)
+;==========
+IF IS_POLICY("今日", "野外")
+	;IF KFLAG:(FLAG:ご主人様):8 != 1 || KFLAG:(FLAG:ご主人様):9 != 1
+	PRINTFORMW 「すっかり忘れてたわ。今、外に出る訳にはいかないのよね」
+	PRINTFORMW 「こんな状況で表に出るわけにもいかないし…」
+	;方針"いつもどおり"にする
+	TFLAG:今日の方針 = 0
+	RETURN 1
+ENDIF
+
+;*************************************************
+;EV16汎用口上
+;*************************************************
+@KOJO_NO9_EV16_K14
+PRINTFORMW 「いいわよ……お望み通りにしてあげる♪」
+PRINTFORMW 「じゃ、はじめるわよ」

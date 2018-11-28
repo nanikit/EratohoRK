@@ -1,0 +1,1338 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上[対象限定]その他調教イベント口上ファイル
+;
+;	その他調教ターン中イベントをまとめたファイル
+;
+;version		Reason
+;1.70			@口上記入チェック仕様に。刻印取得口上を手入れ
+;1.69			KOJO_TRAIN_K14.ERBからEVENT21/22/23/24及び刻印口上を切り分け
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;NO9_EV21, 大満足口上
+;========================================================================
+;・調教者の大満足ボーナスを取得した場合に表示
+;-------------------------------------------------
+@KOJO_NO9_MS_EVENT_K14_21(ARG)
+;-------------------------------------------------
+;今の仕様だとREACT負荷で別けないと不味い気がする
+;取りあえず、場合によってCOM口上との整合性がとれなくなりそうな箇所はコメントアウトする
+;負荷2の場合、アリスさまがご機嫌斜めな場合があるのでｗ
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま大満足
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	;=================================================
+	;愛想よく応答する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("愛想よく応答する")
+		PRINTFORM 「ふふ、こういう咲夜も悪くないわね
+		CALL PRINT_SYMBOL_K14
+		SIF GET_COM_RANK() == "無理をした行動"
+			PRINTFORMW 「ちょっとワザとらしい気もするけど、ね」
+		PRINTFORMDW アリスは\@ TFLAG:REACT負荷 > 2 ? 満面の # \@笑みを湛え、%CALLNAME:MASTER%を見つめている
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;快感を受け入れる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("快感を受け入れる/気持ち良い！")
+		PRINTFORM 「ふふ、素直で可愛いわね
+		CALL PRINT_SYMBOL_K14
+		PRINTFORMDW アリスは満面の笑みを湛え、%CALLNAME:MASTER%を見つめている
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;中に出して！
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("中に出して！")
+		PRINTFORMW 「ふふっ、中出しをおねだりだなんて……」
+		PRINTFORM 「なんて可愛いのかしら…
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	[SKIPSTART]
+	;=================================================
+	;悲鳴を上げる
+	;=================================================
+	IF 口上記入チェック(0) && IS_NOWCOMNAME("悲鳴を上げる")
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「なんて甘い声で、鳴くのかしら……」
+			PRINTFORMW 「ねぇ、もっと……、もっと聞かせて」
+		ELSE
+			PRINTFORMW 「いい声で鳴くわね……」
+			PRINTFORMW 「…たまらないわ。その情けない顔も素敵よ？」
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「フフ…」")
+			CLEARLINE 1
+		ENDIF
+		RETURN 1
+	ENDIF
+	[SKIPEND]
+	
+	;=================================================
+	;愛情を込めてやる
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("愛情を込めてやる")
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%の心が伝わってくるわ…」
+			PRINTFORMDL アリスは蕩けきった表情を浮かべ、体を摺り寄せてきた…
+			PRINTL
+			PRINTFORM 「好きよ…、大好き…\@ CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度 ? っ！ # \@
+			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+			PRINTFORMDW アリスは潤んだ瞳で%CALLNAME:MASTER%を見つめている…
+		ELSE
+			PRINTFORMW 「こんなになって…、私で、わたしなんかに…」
+			PRINTFORMDW アリスは蕩けきった表情を浮かべ、体を摺り寄せてきた…
+			PRINTFORM 「ふふ、 悪くないわ。こういうの…
+			CALL PRINT_SYMBOL_K14
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;SELECTCOM == 15は上層で処理
+	;=================================================
+	;REACT分類が積極的従う(積極的やる、なすがまま等)
+	;=================================================
+	IF 口上記入チェック(100) && IS_COMGRONAME("積極的従う/受け入れる")
+		PRINTFORMW 「いいわよ、とってもいい感じ……」
+		PRINTFORMDW アリスは潤んだ瞳で%CALLNAME:MASTER%を見つめている…
+		RETURN 1
+	ENDIF
+	
+	;---------------------------------------------
+	;その他を処理
+	;---------------------------------------------
+	PRINTFORMW 「ふふ、いい感じね」
+	PRINTFORM 「悪くないわよ、咲夜…
+	CALL PRINT_SYMBOL_K14
+	RETURN 1
+ENDIF
+
+;========================================================================
+;NO9_EV22, 状態変化口上
+;========================================================================
+;・状態異常が付いたときに表示
+;・全て派生で処理される
+;・TCVAR:状態変化が調教者、TCVAR:MASTER:状態変化が調教対象
+;・状態変化が起こると3ターン持続する
+;-------------------------------------------------
+@KOJO_NO9_MS_EVENT_K14_22(ARG)
+;-------------------------------------------------
+;────────────────────────────────────
+;NO9_EV22_0, 調教者状態変化
+;────────────────────────────────────
+;T_COND TARGETが指定した状態なら真を返す
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[疲弊]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && T_COND("疲弊")
+	TCVAR:状態変化持続 = 2
+	IF RAND:3
+		RETURN 0
+	ELSE
+		;アリスさま満足度派生処理
+		SELECTCASE TENSION(TARGET, 8)
+			CASE "高い"
+				PRINTFORMW 「疲れたけど…心地よい疲れって感じね…♪」
+			CASE "一般"
+				PRINTFORMW 「ちょっと疲れたわね…」
+			CASE "低い"
+				PRINTFORMW 「ふぅ……疲れたわね……」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[衰弱]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && T_COND("衰弱") && !TFLAG:一回休み
+	TCVAR:状態変化持続 = 2
+	IF RAND:3
+		RETURN 0
+	ELSE
+		PRINTFORML 「はぁ……はぁ……」
+		PRINTFORMDL アリスは肩で息をしながら、疲れきった表情を見せた
+		PRINTFORMW 「ちょっと……ヤりすぎちゃったわね…」
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[無気力]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && T_COND("無気力")
+	TCVAR:状態変化持続 = 1
+	IF RAND:3
+		RETURN 0
+	ELSE
+		;アリスさま満足度派生処理
+		SELECTCASE TENSION(TARGET, 8)
+			CASE "高い"
+				PRINTFORMW 「良く判らないけど…急に何もかも嫌になったわ…」
+			CASE "一般"
+				PRINTFORMW 「なんか…何もする気にならないわね…」
+			CASE "低い"
+				PRINTFORMW 「なんか興醒めね……」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[朦朧]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && T_COND("朦朧")
+	TCVAR:状態変化持続 = 2
+	IF RAND:3
+		RETURN 0
+	ELSE
+		PRINTFORMW 「んっ…！ 頭がクラクラするわ…」
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[情欲]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && T_COND("情欲")
+	IF RAND:3
+		RETURN 0
+	ELSE
+		;アリスさま満足度派生処理
+		SELECTCASE TENSION(TARGET, 8)
+			CASE "高い"
+				PRINTFORML 「も、もう駄目…我慢できないわ！」
+				PRINTFORMW 「徹底的に可愛がってあげるから覚悟して…」
+			CASE "一般"
+				PRINTFORML 「だめ、こんなの…抑えないと…」
+				PRINTFORMW 「でも、咲夜をめちゃめちゃにしたくて、私…」
+			CASE "低い"
+				PRINTFORMW 「私…自分でも怖いくらい興奮してる…」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[怒り]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && T_COND("怒り")
+	IF AFFECTION("相思相愛")
+		TCVAR:状態変化持続 = 1
+	ELSEIF AFFECTION("溺愛")
+		IF RAND:3
+			TCVAR:状態変化持続 = 2
+		ELSE
+			TCVAR:状態変化持続 = 1
+		ENDIF
+	ELSEIF AFFECTION("眷愛")
+		IF RAND:3
+			TCVAR:状態変化持続 = 3
+		ELSE
+			TCVAR:状態変化持続 = 2
+		ENDIF
+	ELSE
+		TCVAR:状態変化持続 = 3
+	ENDIF
+	IF RAND:3
+		RETURN 0
+	ELSE
+		;アリスさま満足度派生処理
+		SELECTCASE TENSION(TARGET, 8)
+			CASE "高い"
+				PRINTFORML 「悪くない気分だったけど…すっかり台無しにしてくれたわね？」
+				PRINTFORMW 「その代償は高くつくから、覚悟して…」
+			CASE "一般"
+				PRINTFORML 「お願いだから、あまり怒らせないで頂戴」
+				PRINTFORMW 「どこまで自分を押さえられるか、あまり自信が無いわ…」
+			CASE "低い"
+				PRINTFORMW 「私を怒らせても良い事は無いわよ…」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;100%
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[退屈]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && T_COND("退屈")
+	;調教の経過時間
+	SELECTCASE TFLAG:経過時間
+		;長い
+		CASE IS >= 60
+			PRINTFORMW 「飽きてきたわね…そろそろ終わりにしようかしら」
+			TCVAR:状態変化持続 = 3
+		;普通
+		CASE IS >= 30
+			PRINTFORMW 「つまらないわ…ホント退屈な女ね」
+			TCVAR:状態変化持続 = 2
+		;短い
+		CASEELSE
+			PRINTFORMW 「可愛げがなくてツマラナイわね…」
+			TCVAR:状態変化持続 = 1
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[鬱屈]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && T_COND("鬱屈")
+;ENDIF
+;元々は狂乱。テンション上がって過激なことやる状態、らしい…
+;TARGETの場合、TALENT:狂気がある場合にのみ1/5の確率で鬱屈化
+;狂気持ちで無い場合は死に口上になる
+;将来的には変更の可能性あり
+
+;────────────────────────────────────
+;NO9_EV22_1, 調教対象状態変化
+;────────────────────────────────────
+;M_COND MASTERが指定した状態なら真を返す
+;------------------------------------------------
+;キャラ限定口上でここでMASTERに喋らせるのはよさ気な感
+;通常だとTARGETがMASTERに対して一言で終わりそうだけど
+;------------------------------------------------
+
+;BASEで派生してもよさそう
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[疲弊]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && M_COND("疲弊")
+	TCVAR:MASTER:状態変化持続 = 2
+	IF RAND:3
+		RETURN 0
+	ELSE
+		SELECTCASE RANDEVENT(3, 0)
+			CASE 0
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ちょっと疲れたわね…」")
+			CASE 1
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ふぅ…疲れたわね…」")
+			CASE 2
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なんか身体がだるいわね…」")
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[衰弱]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && M_COND("衰弱")
+	TCVAR:MASTER:状態変化持続 = 2
+	IF RAND:3
+		RETURN 0
+	ELSE
+		SELECTCASE RANDEVENT(3, 1)
+			CASE 0
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ハァ、ハァ…流石に、やり過ぎよ…」")
+			CASE 1
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……まったく。加減てものを知らないのかしら…」")
+			CASE 2
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はぁ、はぁ…もう限界……」")
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[無気力]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && M_COND("無気力")
+	TCVAR:MASTER:状態変化持続 = 2
+	IF RAND:3
+		RETURN 0
+	ELSE
+		SELECTCASE RANDEVENT(3, 2)
+			CASE 0
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「もう何もしたくないわね…」")
+			CASE 1
+				CALL PRINTCOLORL(COLOR_K14("咲夜"), "「はぁ～～」")
+				PRINTFORMW 「何よ、ため息なんてついちゃって」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別に？ 大した事じゃないわ。でも…はぁ～～」")
+				PRINTFORMW （良く判らないけど、何かムカつく……）
+			CASE 2
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「もうどうでもよくなって来たわね…」")
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[朦朧]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && M_COND("朦朧")
+	TCVAR:MASTER:状態変化持続 = 2
+	IF RAND:3
+		RETURN 0
+	ELSE
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…ん。なんか目眩がするわね…」")
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[情欲]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(40) && M_COND("情欲")
+	SELECTCASE RANDEVENT(3, 3)
+		CASE 0
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "（やだ私…、凄く興奮しちゃって…）")
+		CASE 1
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "（だめ、こんなの…まだ足りないわ……）")
+		CASE 2
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "（もう…自分が抑えられなくなりそう…）")
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[怒り]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && M_COND("怒り")
+	IF AFFECTION("相思相愛")
+		TCVAR:MASTER:状態変化持続 = 1
+	ELSEIF AFFECTION("調教完了")
+		IF RAND:3
+			TCVAR:MASTER:状態変化持続 = 2
+		ELSE
+			TCVAR:MASTER:状態変化持続 = 1
+		ENDIF
+	ELSEIF AFFECTION("調教済み")
+		IF RAND:3
+			TCVAR:MASTER:状態変化持続 = 3
+		ELSE
+			TCVAR:MASTER:状態変化持続 = 2
+		ENDIF
+	ELSE
+		TCVAR:MASTER:状態変化持続 = 3
+	ENDIF
+	IF RAND:3
+		RETURN 0
+	ELSE
+		SELECTCASE RANDEVENT(3, 4)
+			CASE 0
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…まったく。やりたい放題してくれるわね」")
+			CASE 1
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何をしても私が怒らないと思ってもらっては困るわね…」")
+			CASE 2
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "（ちょっとムカつくわね…）")
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[退屈]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && M_COND("退屈")
+	;調教の経過時間
+	SELECTCASE TFLAG:経過時間
+		;長い
+		CASE IS >= 60
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「まだ続けるつもりなのかしら？」")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いい加減終わりにして欲しいわね…」")
+			TCVAR:MASTER:状態変化持続 = 3
+		;普通
+		CASE IS >= 30
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「もううんざりね。早く終わらないかしら…」")
+			TCVAR:MASTER:状態変化持続 = 2
+		;短い
+		CASEELSE
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いい加減飽きたわね…」")
+			TCVAR:MASTER:状態変化持続 = 1
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[鬱屈]化
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(33) && M_COND("鬱屈")
+	SELECTCASE RANDEVENT(2, 5)
+		CASE 0
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なんかもう、おかしくなりそう…」")
+		CASE 1
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「フフ、悪くない気分だわ」")
+	ENDSELECT
+	PRINTFORMDW 咲夜の瞳は紅く染まり、異様な雰囲気を漂わせている…
+	RETURN 1
+ENDIF
+
+;========================================================================
+;NO9_EV23, 調教対象能力値アップ口上
+;========================================================================
+;・調教中に調教対象の能力値が上昇した際に表示
+;-------------------------------------------------
+@KOJO_NO9_MS_EVENT_K14_23(ARG)
+;-------------------------------------------------
+;引数内訳…
+;ARG=(今回上昇したABL番号)
+;
+;ARG:0 従順/1 欲望/2 技巧/3 Ｃ感覚/4 Ｖ感覚/5 Ａ感覚/6 Ｂ感覚/7 奉仕精神/8 露出癖/9 レズっ気/10ＢＬっ気/11マゾっ気
+;12自慰中毒/13精液中毒/14レズ中毒/15苦痛中毒/16拘束中毒
+;
+;ARG:20 会話/21 愛撫/22 道具/23 性交/24 羞恥/25 奉仕/26 加虐/27 異常
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[従順]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 0
+	;見づらいので改行
+	PRINTL 
+	SELECTCASE ABL:MASTER:従順
+		CASE IS >= 9
+			PRINTFORMW 「素直で大人しい咲夜も、それはそれで悪くないけど…」
+			PRINTFORMW 「何か裏がありそうでちょっと不気味ね？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「森で一人ひっそりと暮らしてる何処かの人形遣いも不気味だけどね」")
+			PRINTFORMW 「あら、変態でへたれな何処かの従者よりマシよ」
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「…………」")
+			PRINTFORMW 「…………」
+			PRINTFORMDW 二人は暫しの間、互いに睨みあった…
+		CASE IS > 6
+			PRINTFORMW 「咲夜にも素直で可愛らしいとこがあったのね？」
+			PRINTFORMW 「…ちょっと意外。一言余計なのは相変わらずだけど」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはお互い様ね」")
+			PRINTFORMW 「ま、そうよね。ふふっ」
+		CASE IS > 3
+			PRINTFORML 「大分素直になった感じで何より、ってところかしら？」
+			PRINTFORMW 「でも、ちょっと面白みに欠けるわね」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「勝手な事言ってくれるわね…」")
+			PRINTFORMW 「あら、気に障ったのなら誤るわ。ふふ…」
+		CASEELSE
+			PRINTFORMW 「少しは素直になった感じかしら、ねぇ咲夜？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ウルサイわよ、黙って…」")
+			PRINTFORMW 「ふふ…別にいいけど、ね」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[欲望]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	PRINTL
+	IF !TEQUIP:アイマスク
+		SELECTCASE ABL:MASTER:欲望
+			CASE IS >= 9
+				PRINTFORMW 「なんていうか…もうすっかり色情狂の変態って感じね…」
+				CALL PRINTCOLORL(COLOR_K14("咲夜"), "「いいわ、好きなように言わせてあげる。でも…」")
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「まだまだ愉しませて貰うから、そのつもりでね？」")
+				PRINTFORMW 「はぁ～ やれやれ、ね…」
+			CASE IS >= 6
+				PRINTFORMW 「ねぇ咲夜…そんな目で見られると、私ちょっと恥ずかしいわ」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ば、馬鹿な事言わないで頂けるかしら…」")
+				PRINTFORMW 「ふふ…馬鹿な事、ねぇ？ くすっ…」
+			CASE IS >= 3
+				PRINTFORMW 「本当はこんなものじゃ物足りないんでしょう？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そ、そんな事っ！ ない、わよ…」")
+				PRINTFORM 「相変わらず素直じゃないけど…良い傾向かしら、ね…
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+			CASEELSE
+				PRINTFORMW 「目をうるうるさせちゃって…一体どうしたのかしら、ねぇ咲夜？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「！？ き、気のせいじゃないかしら…」")
+				PRINTFORMW 「ふふ…ま、そういう事にしておいてあげるわ…♪」
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+[SKIPSTART]
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[技巧/奉仕]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && GROUPMATCH(ARG, 2, 25)
+	PRINTL
+	PRINTFORMW 「なんか…随分上手くなったわね…」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「見損なって貰っては困るわね？ 私を誰だと思ってるのかしら」")
+	PRINTFORMW 「う～ん。ちょっと不安になってきたわ…」
+	RETURN 2
+ENDIF
+[SKIPEND]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[技巧]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	PRINTL 
+	SELECTCASE ABL:MASTER:技巧
+		CASE IS >= 9
+			PRINTFORMW 「流石に器用ね？ ちょっと天然入ってるのが玉に瑕だけど」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なによそれ…褒めてるのか貶してるのか、はっきりしなさいよ！」")
+			PRINTFORMW 「イヤよ。だってそれじゃ面白くないもの。ふふっ」
+		CASE IS >= 6
+			PRINTFORML 「手先の器用さは中々ね？ 私程じゃないけど」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あら、アリスだって悪くないわよ？ 私程じゃないけど」")
+			PRINTFORML 「………」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…………」")
+		CASE IS >= 3
+			PRINTFORMW 「悪くないわね。ま、この位はやってもらわないとね、咲夜？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そういう事言うのやめなさいよ」")
+			PRINTFORM 「ふふ、そうね。悪かったわ…
+				CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+		CASEELSE
+			PRINTFORMW 「少しは使える感じになったかしら？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「気に入らないわね、そういう言い方…」")
+			PRINTFORMW 「ホント難しい人ね、咲夜？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そういう問題じゃないわよ」")
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+[SKIPSTART]
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[感覚複数]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && GROUPMATCH(ARG, 3, 4, 5, 6) >= 2
+	PRINTL
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なんていうか…、すっかり開発されちゃったわね」")
+	PRINTFORMW 「なによ、嫌なの？」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうじゃないけど…」")
+	PRINTFORMW 「じゃぁ何なのよ」
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「と言うか…、あまり聞いて欲しく無いわね、こういう事」")
+	PRINTFORMW 「あら、恥ずかしがるなんてらしくないわね？」
+	CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
+		CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "ウルサイわよ", 1)
+	CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+	RETURN 1
+ENDIF
+[SKIPEND]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[Ｃ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 3
+	PRINTL 
+	SELECTCASE ABL:MASTER:Ｃ感覚
+		CASE IS >= 9
+			PRINTFORMW 「人ってこんなに変わるものなのね…」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「悪い予感がするけど一応聞いておくわ。何の話よ？」")
+			PRINTFORMW 「だから、不感症のマグロ女だった咲夜がこんなになるなんて驚きね？ って話」
+			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
+				CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "張り倒すわよ", 1)
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+		CASE IS >= 6
+			PRINTFORMW 「気の毒なくらい感度が悪かったのが嘘みたいね？」
+			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「何が『")
+			CALL PRINTCOLOR(COLOR_K14("アリス"), "嘘みたいね？")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "』よ！ そもそもそんな事実は無いわ！」")
+			PRINTFORMW 「あら、そうだった？ ふふっ」
+		CASE IS >= 3
+			PRINTFORML 「ねぇ咲夜」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なによ」")
+			PRINTFORMW 「中弄られるのと、こっちとどっちが好き？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんな事…言いたくないし、聞かれたくもないわよ！」")
+			PRINTFORMW 「仕方無いわね…じゃぁおしりの…」
+			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
+				CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "いい加減にして", 1)
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+		;後から見てなんでコメントアウトしたのかと考えてしまう不具合。初期段階に相応しくないとか？ 理由は明記しておくべきだね
+		;CASEELSE
+		;	PRINTFORMW 「大分ココの感度も良くなってきた感じかしら？ ほら」
+		;	CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ば、バカッ！ 今触らないでよ！」")
+		;	PRINTFORMW 「ふふ、ごめんなさい…♪」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[Ｖ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 4
+	PRINTL 
+	SELECTCASE ABL:MASTER:Ｖ感覚
+		CASE IS >= 9
+			PRINTFORMW 「ねぇ咲夜、何か匂わない？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別に？ っていうか、何の匂いよ」")
+			PRINTFORMW 「…メス犬の匂い」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「殴られたいの？」")
+		CASE IS >= 6
+			PRINTFORMW 「もうすっかり馴染んだ感じね。イヤラシイわ…」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そういう風にした張本人がよく言うわね！」")
+			PRINTFORMW 「ふふ、そうだったわね」
+		CASE IS >= 3
+			PRINTFORMW 「不感症かと思って心配したけど…杞憂だったみたいね？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんな事で心配されたくないわね…」")
+			PRINTFORMW 「そういうものなの？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうよ！ 余計なお世話だわ」")
+			PRINTFORMW 「そう、まぁいいけど、ね…♪」
+		CASEELSE
+			PRINTFORMW 「少しずつ馴染んできた感じかしらね？」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[Ａ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 5
+	PRINTL 
+	SELECTCASE ABL:MASTER:Ａ感覚
+		CASE IS >= 9
+			PRINTFORMW 「紅魔舘のメイド長はおしりでするのが大好き！ ってとこね？」
+			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
+			CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "だ　か　ら", 1)
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "一々そういう事言うのやめなさいよ！」")
+			PRINTFORMW 「はいはい、判ったわ…♪」
+		CASE IS >= 6
+			PRINTFORMW 「咲夜がこんなにおしりで感じるようになるなんてね？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ウルサイわよ！ やめて頂戴…」")
+			PRINTFORM 「ふふ、恥ずかしがる事なんてないのに…
+				CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+		CASE IS >= 3
+			PRINTFORMW 「そろそろおしりでも感じるようになってきたんじゃない？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そういう事言うのやめて…」")
+			PRINTFORMW 「あら、恥ずかしいの？ ふふふ…」
+		CASEELSE
+			PRINTFORMW 「少しずつ馴染んできた感じかしらね？」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[Ｂ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 6
+	PRINTL 
+	SELECTCASE ABL:MASTER:Ｂ感覚
+		CASE IS >= 9
+			PRINTFORMW 「すっかり敏感になった感じね？ 本当、イヤラシイ身体してるわ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「人の事言えた口？ アリスだって大概だと思うけどね」")
+			PRINTFORM 「否定はしないわよ？ でも、
+				CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "あの", 1)
+			PRINTFORMW 咲夜がこんなになるなんてね。ふふっ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なんか侮辱された気がするんだけど」")
+			PRINTFORMW 「気のせいよ。そんな事より、ようやく人並になれた事を喜ぶべきじゃないかしら？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「殴っていい？」")
+		CASE IS >= 6
+			IF TALENT:TARGET:巨乳
+				PRINTFORM 「
+					CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "小さい", 1)
+				PRINTFORMW 胸は敏感そうで羨ましいわね」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス…」")
+				PRINTFORMW 「なによ？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「『小さい』って部分に、凄い悪意を感じるんだけど」")
+				PRINTFORMW 「ふふ、考え過ぎよ…♪」
+			ELSEIF TALENT:TARGET:貧乳
+				PRINTFORMW 「ようやく人並に感じるようになったって感じ？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね？ 誰かさんみたいな貧相な胸程じゃないけど、それなりにね」")
+				PRINTFORMW 「あら、言ってくれるわね」
+				CALL PRINTCOLORL(COLOR_K14("咲夜"), "「私は事実を言ったまでよ」")
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「でも、気分を害したのなら、謝ってあげない事もないけどね？ フフ」")
+				PRINTFORMW 「…ムカつくわ。魔力で大きくしちゃおうかしら…」
+			ELSE
+				PRINTFORML 「大きさは私と変わらないのに、気の毒な位感度が悪かったけど…」
+				PRINTFORMW 「ようやくまともになった感じかしらね？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス…、同情にかこつけて人を侮辱するのはやめて頂けるかしら」")
+				PRINTFORMW 「なによ、これでも本当に心配してたんだからね」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「本当は愉しんでるだけ…、判ってるのよ」")
+				PRINTFORML 「…………」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「素直ね…」")
+				PRINTFORML 「ありがとう」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「")
+					CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "褒めてないわ", 1)
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+			ENDIF
+		CASE IS >= 3
+			PRINTFORMW 「多少は感度が良くなったみたいね？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、なのかしら…自分では良く判らないわ」")
+			PRINTFORMW 「ま、感度の悪い女なんて気の毒で見ていられないから、良かったんじゃない？」
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「そうやって、いつもいつも…」")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「一言余計なのよ、馬鹿っ！！」")
+			PRINTFORMW 「一言余計なのはお互い様。諦めた方が精神衛生上も良いと思うわよ？ ふふ」
+		CASEELSE
+			PRINTFORMW 「少しは人並に感じるようになってきたかしら？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「その言い方、凄く引っ掛かるんだけど」")
+			PRINTFORMW 「考え過ぎじゃないの？ ふふっ」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+[SKIPSTART]
+★EV23終端までコメントアウト★
+;以下枠だけ設置して保留
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[奉仕精神]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && ARG == 7
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[露出癖]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && ARG == 8
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[レズっ気]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && ARG == 9
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[マゾっ気]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && ARG == 11
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[自慰中毒]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && ARG == 12
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[精液中毒]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && ARG == 13
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[苦痛中毒]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && ARG == 15
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[拘束中毒]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && ARG == 16
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;咲夜さん[奉仕]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && ARG == 25
+ENDIF
+[SKIPEND]
+
+;========================================================================
+;NO9_EV24, 調教者能力値アップ口上
+;========================================================================
+;・調教中に調教者の能力値が上昇した際に表示
+;-------------------------------------------------
+@KOJO_NO9_MS_EVENT_K14_24(ARG)
+;-------------------------------------------------
+;引数内訳…
+;ARG=(今回上昇したABL番号)
+;
+;ARG:0 従順/1 欲望/2 技巧/3 Ｃ感覚/4 Ｖ感覚/5 Ａ感覚/6 Ｂ感覚/7 奉仕精神/8 露出癖/9 レズっ気/10ＢＬっ気/11マゾっ気
+;12自慰中毒/13精液中毒/14レズ中毒/15苦痛中毒/16拘束中毒
+;
+;ARG:20 会話/21 愛撫/22 道具/23 性交/24 羞恥/25 奉仕/26 加虐/27 異常
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[欲望]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 1
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[技巧/愛撫]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(20) && GROUPMATCH(ARG, 2, 21) > 1
+	PRINTL
+	PRINTFORMW 「咲夜の弱点、だんだん判ってきたわ。ふふ」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[技巧]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	PRINTL 
+	SELECTCASE ABL:TARGET:技巧
+		CASE IS >= 9
+			PRINTFORMW 「器用過ぎるってのも考え物かしら…、悩ましいわね」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「面白いわね？ 悩みなんて無いって言ってた癖に」")
+			PRINTFORMW 「うん、まぁ…、そうなんだけど」
+			PRINTFORMW 「あまり上手過ぎると、咲夜が持たないんじゃないかって、ね」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なっ！？ 何を馬鹿な事…」")
+			PRINTFORMW 「でもホントの事でしょう？ 咲夜、すぐイっちゃうんだから」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いや、だから…、そういう話はやめて欲しいわね…」")
+			PRINTFORMW 「なによ、恥ずかしいの？ ふふっ、それならもっと恥ずかしい事…」
+			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
+			CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "いい加減にして", 1)
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+		CASE IS >= 6
+			PRINTFORMW 「また腕をあげちゃったかしら？ この殺人ドールも、もっと上手く操れそうね」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はいはい、それは結構な事で」")
+			PRINTFORMW 「なによ、気の無い返事ね。そんな態度してると火薬を詰めるわよ？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女がそれを言うと、冗談に聞こえないからやめて頂戴」")
+			PRINTFORMW 「あら、冗談なんて言った覚えは無いわよ？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いや、だから…、真顔でそんな事言うのはやめて」")
+		CASE IS >= 3
+			PRINTFORMW 「そうね…、この私が相手なんだから、咲夜がメス犬みたいに鳴いちゃうのも仕方無い事かしら」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「その勝手な一人語り、やめて頂けるかしら…」")
+			PRINTFORMW 「あら、聞こえてた？」
+			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
+			CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "思いっきり聞こえてるわよ", 1)
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+		CASEELSE
+			PRINTFORMW 「とりあえずこんなものかしら」
+			PRINTFORMW 「もっと愉しませてあげるから、期待していいわよ？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別に、期待なんて…」")
+			PRINTFORMW 「そう？ ま、いいけどね…♪」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[感覚複数]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(20) && GROUPMATCH(ARG, 3, 4, 5, 6) > 1
+	PRINTL
+	PRINTFORMW 「私の身体、何時の間にこんなに感じやすくなったのかしら」
+	RETURN 1
+ENDIF
+ 
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[Ｃ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 3
+	PRINTL 
+	SELECTCASE ABL:TARGET:Ｃ感覚
+		CASE IS >= 9
+			PRINTFORMW 「自分でも怖いくらい敏感になった感じね…」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「良い事じゃない。私にとっても悪い話じゃないし…♪」")
+			PRINTFORMW 「咲夜がそう言うと、悪い予感しかしないわ…」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「酷いわね。私ってそんなに信用無い？」")
+			PRINTFORM 「
+			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "当たり前よ", 1)
+			PRINTFORMW 」
+		CASE IS >= 6
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「ホント、妬ましいくらい敏感ね」")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いつも自分で弄ってるとそうなるものなのかしら？」")
+			PRINTFORM 「
+			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "ウルサイわね", 1)
+			PRINTFORMW 」
+		CASE IS >= 3
+			PRINTFORMW 「凄く敏感になった気がするわ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私のおかげかしら？」")
+			PRINTFORMW 「知らないわよ、そんなの」
+		CASEELSE
+			PRINTFORMW 「なんか…、前より敏感になった感じね…」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[Ｖ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 4
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[Ａ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 5
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[Ｂ感覚]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 6
+	PRINTL 
+	SELECTCASE ABL:TARGET:Ｂ感覚
+		CASE IS >= 9
+			PRINTFORMW 「私、時々思うんだけど…」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なによ、唐突に」")
+			PRINTFORMW 「感度の悪い女ってホント気の毒よね、って」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), @"「そういう事\@ !TEQUIP:アイマスク ? はこっちを見ながら言って欲しく無いわね # を私に言われても困るわね \@」")
+			PRINTFORMW 「どうして？ だって壁に向かって話す訳にもいかないし」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「当てつけてるようにしか\@ !TEQUIP:アイマスク ? 見え # 聞こえ \@ないからよ！」")
+			PRINTFORM 「気にし過ぎよ。まぁちょっとはそういうのもあるかもだけど、ね…
+			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+		CASE IS >= 6
+			PRINTFORMW 「また少し敏感になった感じね…」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私も頑張った甲斐があった、ってとこかしら」")
+			PRINTFORMW 「それはどうかしらね？ 咲夜の触り方って、がさつだし」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「へぇ、言ってくれるわね。これでも貴女よりはマシだと思ってるけど」")
+			PRINTFORMW 「咲夜…貴女、熱でもあるんじゃない？ 人間て不便よねぇ」
+			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
+			CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "張り倒すわよ", 1)
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+		CASE IS >= 3
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「随分弄ってきたけど、色も形も変わらないわね？」")
+			PRINTFORM 「
+			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "当然よ", 1)
+			PRINTFORMW 」
+		CASEELSE
+			PRINTFORMW 「%RAND_SPLIT("私の胸、/なんていうか…、/")%ちょっと敏感になった感じね…」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[レズっ気]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 9
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[自慰中毒]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 12
+	PRINTL
+	SELECTCASE ABL:TARGET:自慰中毒
+		CASE IS >= 9
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇ、一つ忠告しておくけど」")
+			PRINTFORMW 「何の話よ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「弄り過ぎると形が崩れるわよ？」")
+			PRINTFORM 「
+			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "大きなお世話よ", 1)
+			PRINTFORMW 」
+		CASE IS >= 6
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「ねぇアリス」")
+			PRINTFORMW 「なによ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「偶には道具とか使ってみたら？」")
+			PRINTFORM 「
+			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "興味ないわね", 1)
+			PRINTFORMW 」
+		CASE IS >= 3
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ホント、貴女って自分でするの好きよね？」")
+			PRINTFORM 「
+			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "ウルサイわよ", 1)
+			PRINTFORMW 」
+		CASEELSE
+			PRINTFORMW （自分で%RAND_SPLIT("弄る/する")%の、癖にな%RAND_SPLIT("っちゃい/り")%そう…）
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[愛撫]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 21
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[道具]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 22
+	PRINTL
+	SELECTCASE ABL:TARGET:道具
+		CASE IS >= 9
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「ねぇ、私思うんだけど」")
+			PRINTFORMW 「なによ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「この手の物って態々魔力で練成しなくても、貴女なら作れるんじゃないの？」")
+			PRINTFORMW 「そうね…、作る事自体は難しくないと思うけど」
+			PRINTFORMW 「自分がこんな物を作る姿はあまり考えたくないわね…、幽雅さとは程遠い物だし」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう？ 良く似合うと思うけど」")
+			PRINTFORMW 「蹴られたいの？」
+		CASE IS >= 6
+			PRINTFORML 「こういうのって風情がないからどうかと思うんだけど…」
+			PRINTFORMW 「咲夜がおねだりするから仕方無いのよねぇ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何を言ってるのか良く判らないわね…」")
+			PRINTFORMW 「そう…、じゃぁ良く判る様に言ってあげましょうか？」
+			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
+				CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "いい加減にして", 1)
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+		CASE IS >= 3
+			PRINTFORMW 「コレ、工夫次第でもっと色々出来そうね」
+		CASEELSE
+			PRINTFORMW 「ふふ、少しずつ使い方が判ってきたわ…♪」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[性交]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;IF 口上記入チェック(0) && ARG == 23
+;ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;アリスさま[加虐]アップ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 26
+	PRINTL
+	SELECTCASE ABL:TARGET:加虐
+		CASE IS >= 9
+			PRINTFORML 「ちょっと自分が判らなくなってきたわ」
+			PRINTFORMW 「でも、もう止められそうにない…」
+		CASE IS >= 6
+			PRINTFORMW 「自分にこんな面があるなんて知らなかったわ…」
+		CASE IS >= 3
+			PRINTFORMW 「あまり良い声で鳴かれるとやめられなくなりそう…」
+		CASEELSE
+			PRINTFORMW 「咲夜に酷い事するのって興奮するわね…」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;========================================================================
+;NO9_EV29, 屈服・苦痛刻印による反抗刻印上限処理
+;========================================================================
+;・反抗刻印Lv上限の処理
+;・反抗刻印は10-(苦痛刻印+屈服刻印)/2を超えない
+;-------------------------------------------------
+@KOJO_NO9_MS_EVENT_K14_29(ARG)
+;-------------------------------------------------
+;%CALLNAME:TARGET%の与える快楽\@ MARK:MASTER:苦痛刻印 ? と苦痛 # \@が%CALLNAME:MASTER%から反抗の気力を奪っていく…
+;反抗刻印は{MARK:反抗刻印}になった
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;反抗刻印上限処理
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	;階層イベント。3つ見たらCASEELSE以降で処理とかそんな感じで
+	SELECTCASE ORDEREVENT(0)
+		CASE 0
+			PRINTFORMW 「少しは素直になったみたいだけど……、まだまだこれからってとこね」
+		CASE 1
+			PRINTFORML 「%CNAME(MASTER, TARGET)%も多少はマシになったかしら？」
+			PRINTFORMW 「…って、私の気のせいかも知れないけど」
+		CASE 2
+			PRINTFORMW 「愚鈍な%CNAME(MASTER, TARGET)%でも、逆らっても無駄って事に気付いたかしら。ねぇ？」
+		CASEELSE
+			PRINTFORML 「――無益な抵抗を続けたところで、何も得るものは無い」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%がそれに気付けない程、馬鹿じゃなければいいんだけど…ね？」
+			;フェードイン
+			CALL FADEIN(13, @"「だってそれは……、%CNAME(MASTER, TARGET)%自身の為でもあるんだから」")
+			;フェードアウト
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? ふふふ # ウフフ \@…」")
+			SIF ANIME_CONFIG("FADE")
+				CLEARLINE 1
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;========================================================================
+;刻印取得口上
+;========================================================================
+;・調教中に刻印を取得させた場合に表示。どのレベルで口上表示するかは加減自由なので個々で調整するのが望ましい
+;・記入チェックが=1の場合、同時に複数取得したときはこのファイルで一番上のものだけを表示する
+;・=2の場合、取得した刻印の口上すべてを上から順に表示する
+;・刻印取得による素質変動の前に表示するため、素質取得/喪失するかはこの時点でのTALENTの有無で判定できる
+;-------------------------------------------------
+@KOJO_NO9_MS_MARK_K14(ARG:0, ARG:1, ARG:2, ARG:3, ARG:4)
+#DIM 記入チェック
+#DIM すべて順に表示
+;-------------------------------------------------
+;引数内訳…
+;ARG:(刻印番号)=(今回取得したレベル)
+;-------------------------------------------------
+;対象限定だとちょっとどうかと思う箇所のチェックをoff
+;トラウマの箇所は限定無しから引き写し
+;いずれ梃入れしないといけない
+;-------------------------------------------------
+;こいし口上の人がよさげな感じでまとめてくれてたので拝借。お世話になります
+;多分テンプレも同様の方向になるはず
+;-------------------------------------------------
+
+;刻印取得口上「すべて順に表示」のための初期化処理
+すべて順に表示 = 0
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[トラウマ]取得		ON
+記入チェック = 1	;記入チェック（0, 非表示、1, 同時に取得した刻印をこれ以下表示しない、2, すべて順に表示する）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 記入チェック && ARG:4
+	SETBIT すべて順に表示, 4
+	SELECTCASE ARG:4
+		;トラウマLv1~Lv9
+		CASE 1 TO 9
+			;初回
+			IF FIRSTMARK(0)
+				;ACTSTR未定義に落ちると何も表示されないのは仕様。ACTSTR手入れするつもりが後回しになってる現状。誰かやってくれないかなｗ
+				PRINTFORMW 「――なるほど、ねぇ。%CNAME(MASTER, TARGET)%は%ACTSTR(CFLAG:MASTER:8)%がトラウマ、と」
+				PRINTFORMW 「%RAND_SPLIT("あら？ 誤魔化したってもう遅いわよ/嘘ついたって駄目")%。%CNAME(MASTER, TARGET)%って判りやすいのよ」
+				PRINTFORML 「まあでも――」
+				;フェードアウト、少し早め
+				CALL FADE(8, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? ふふっ # フフッ \@…」")
+				CLEARLINE 1
+				PRINTFORMW 「ちょっと面白くなってきたかしら。ねぇ？」
+			;初回以降はRANDMARKで
+			ELSE
+				;ORDERMARKでも面白いのかも知れない
+				SELECTCASE RANDMARK(4, 0)
+					CASE 0
+						PRINTFORMW 「あら、%ACTSTR(CFLAG:MASTER:8)%が随分堪えたみたいね？」
+					CASE 1
+						PRINTFORMW 「%ACTSTR(CFLAG:MASTER:8)%がそんなに嫌だったのかしら」
+					CASE 2
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%……、%ACTSTR(CFLAG:MASTER:8)%が嫌なのね」
+						PRINTFORMW 「だからって、私は手加減するつもりないんだけど。ふふ…」
+					CASE 3
+						PRINTFORMW 「へぇ、そう。%CNAME(MASTER, TARGET)%、%ACTSTR(CFLAG:MASTER:8)%が苦手なの…」
+						PRINTFORMW 「まぁでも…、私に知られたのは不味かったわね？ %RAND_SPLIT("クスクス/くすくす/ふふふ")%…」
+				ENDSELECT
+			ENDIF
+		;トラウマLv10…[臆病]がない場合、それを得る
+		;              既に[臆病]があり[狂気]がない場合、[幼稚]がある場合は100%、ない場合は1/3の確率で[狂気]を得る
+		;              [狂気]の取得判定に漏れ、かつ[幼稚]を持たない場合、[幼稚]を得る(幼児退行する)
+		;              現状、[狂気]と[幼稚]はどちらに転ぶか先に判定する術は無い(要望があれば…)。とりあえず頭がおかしくなると解釈してください
+		CASE 10
+			;微妙なところだな。10000だと低すぎる気はする
+			IF CFLAG:MASTER:依存度 > 12000
+				;調教対象が臆病/狂気/幼稚の内1つ以上を所持
+				IF TRUECHECK(TALENT:MASTER:臆病, TALENT:MASTER:狂気, TALENT:MASTER:幼稚) > 1
+					PRINTFORM 「ま、仕方無いわね\@ AFFECTION("相思相愛") ? … # \@。
+					IF AFFECTION("相思相愛")
+						PRINTFORMW ちゃんと責任はとってあげるわ」
+						PRINTFORMW 「ずっと私の傍で可愛がってあげるから、%CNAME(MASTER, TARGET)%は何も心配しなくていいのよ…」
+					ELSE
+						PRINTFORMW %CNAME(MASTER, TARGET)%自身も望んだ結果でしょう？」
+						PRINTFORMW 「これからも、私の人形として可愛がってあげるから…」
+						CALL FADEIN(10, "「――安心していいわよ」")
+						CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ウフフ…」")
+						CLEARLINE 1
+					ENDIF
+				;調教対象が臆病/狂気/幼稚の内1つを所持
+				ELSE
+					PRINTFORMW 「いつかこんな事になるんじゃないかって思ってた。だけど…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%自身も望まぬ限り、こうはならなかったはずよ」
+					PRINTFORMW 「ま、何であれ…、私は%CNAME(MASTER, TARGET)%の事、\@ AFFECTION("相思相愛") ? これからもずっと愛してあげるわ # 見捨てたりはしないから \@…」
+				ENDIF
+			ELSE
+				IF AFFECTION("相思相愛")
+					PRINTFORML 「なんていうか……」
+					PRINTFORMW 「取り返しのつかない事をしてしまった気がするわ…」
+				ELSE
+					PRINTFORML 「う、これは流石に……」
+					PRINTFORMW 「私、やりすぎてしまったかしら…」
+				ENDIF
+			ENDIF
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 4
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 4) && 記入チェック == 1
+		RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[苦痛刻印]取得		OFFにする
+記入チェック = 0	;（0, 非表示、1, 同時に取得した刻印をこれ以下表示しない、2, すべて順に表示する）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 記入チェック && ARG:0
+	SETBIT すべて順に表示, 0
+	SELECTCASE ARG:0
+		;苦痛刻印Lv2
+		CASE 2
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%にはもっと痛みに慣れてもらわないと、ね」
+		;苦痛刻印Lv5
+		CASE 5
+			PRINTFORMW 「少しは苦痛にも慣れてきたかしらね」
+		;苦痛刻印Lv7
+		CASE 7
+			PRINTFORMW 「ねぇ、痛いのが好きになってきたんじゃない…？」
+			PRINTFORMW 
+		;苦痛刻印Lv9…[気丈]がある場合、それを失う
+		CASE 9
+			PRINTFORMW 「あら…？　心が折れちゃったみたいね」
+			PRINTFORMW 「それでいいのよ…　気丈な人形なんて可愛くないもの…♪」
+		;苦痛刻印Lv10
+		CASE 10
+			PRINTFORM 「ふふ…、もう立派な変態マゾ、ね…
+			CALL PRINT_SYMBOL_K14
+			PRINTFORML 「あら、気にする事ないと思うわよ？ %CNAME(MASTER, TARGET)%には相応しいと思うし」
+			CALL FADEIN(8, "「私にしたって…」")
+			PRINTFORMW 「嫌いじゃないしね？ そういうの。ふふ…」
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 0
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 0) && 記入チェック == 1
+		RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[反抗刻印]取得		ON
+記入チェック = 1	;（0, 非表示、1, 同時に取得した刻印をこれ以下表示しない、2, すべて順に表示する）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 記入チェック && ARG:3
+	SETBIT すべて順に表示, 3
+	SELECTCASE ARG:3
+		;反抗刻印Lv2
+		CASE 2
+			PRINTFORMW 「それがどういう結果に繋がるのか、よく考えた方が身の為よ…」
+		;反抗刻印Lv5
+		CASE 5
+			PRINTFORMW 「あくまでも私に逆らうつもりかしら…？」
+		;反抗刻印Lv7
+		CASE 7
+			PRINTFORML 「そんな態度が、いつまでも許されると思ったら……」
+			CALL FADEIN(8, "「大間違いよ」")
+			WAIT
+		CASE 8, 9
+			PRINTFORMW 「本当、許し難いわね。%CNAME(MASTER, TARGET)%…」
+		;反抗刻印Lv10
+		CASE 10
+			PRINTFORMW 「絶対に、許さない…」
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 3
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 3) && 記入チェック == 1
+		RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[屈服刻印]取得		OFFにする
+記入チェック = 0	;（0, 非表示、1, 同時に取得した刻印をこれ以下表示しない、2, すべて順に表示する）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 記入チェック && ARG:2
+	SETBIT すべて順に表示, 2
+	SELECTCASE ARG:2
+		;屈服刻印Lv2
+		CASE 2
+			PRINTFORMW 「ちょっとは素直になったかしら」
+		;屈服刻印Lv5
+		CASE 5
+			PRINTFORMW 「良い傾向ね」
+		;屈服刻印Lv7…[反抗的]がある場合、それを失う
+		CASE 7
+			PRINTFORMW 「ようやく、逆らっても無駄なのが分かったみたい、ね…」
+		;屈服刻印Lv10…[プライド高い]がある場合、それを失う
+		CASE 10
+			PRINTFORMW 「そうよ……、つまらないプライドなんて捨ててしまいなさい」
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 2
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 2) && 記入チェック == 1
+		RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;[快楽刻印]取得		ON
+記入チェック = 1	;（0, 非表示、1, 同時に取得した刻印をこれ以下表示しない、2, すべて順に表示する）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 記入チェック && ARG:1
+	SETBIT すべて順に表示, 1
+	SELECTCASE ARG:1
+		;快楽刻印Lv2
+		CASE 2
+			PRINTFORMW 「いくら言葉で否定しても、誤魔化しきれるものではないわ…」
+		;快楽刻印Lv5…[快感の否定]がある場合、それを失う
+		CASE 5
+			PRINTFORM 「フフッ、躰は正直ね…
+			CALL PRINT_SYMBOL_K14
+		;快楽刻印Lv7…[抑圧]がある場合、それを失う
+		CASE 7
+			PRINTFORMW 「そうよ、もっと自分を解放して…」
+		;快楽刻印Lv10…[快感に素直]がない場合、それを得る
+		CASE 10
+			PRINTFORMW 「そうよ、それでいいの…」
+			PRINTFORM 「これから、もっと可愛がってあげるわ
+			CALL PRINT_SYMBOL_K14
+		;表示しない
+		CASEELSE
+			CLEARBIT すべて順に表示, 1
+	ENDSELECT
+	SIF GETBIT(すべて順に表示, 1) && 記入チェック == 1
+		RETURN 1
+ENDIF
+
+;刻印取得口上「すべて順に表示」のための終端処理
+RETURN すべて順に表示 != 0

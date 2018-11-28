@@ -1,0 +1,625 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上(対象限定) 休憩系個別リアクション口上ファイル
+;
+;		休憩系リアクション口上をまとめたファイル
+;
+;	EXTRAモードでNO:9咲夜をMASTERに選択した場合のみ表示
+;
+;Version		Reason
+;1.70			@口上記入チェック仕様に。その他加筆＆細かな修正等
+;1.62			SELECTCOMをIS_NOWCOMNAMEに
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;────────────────────────────────────
+;休憩系
+;────────────────────────────────────
+;・各REACT内の分け方としてTFLAG:REACT分類(IS_COMGRONAME)やSELECTCOM(IS_NOWCOMNAME)が考えられます
+;・範囲の広い条件で拾ってしまうのは基本的にお勧めしませんが、場合によってはそれもアリと考えます
+;・ACT分類:休憩系の場合、会話系COM(COM0~COM8)中心の選択肢となりますが
+;・状況によってはその他のものが選択肢に含まれる可能性もあります
+;・リアクション(REACT)で処理されなかったものは汎用リアクション(COM)で補完されるので
+;・無理に全て埋める必要はありません
+;・必要と思うものを絞り込み、COMとの連携を考えて効率よく構築すべきです
+;-------------------------------------------------
+;※持続効果のあるTEQUIPで愛撫系反応が選択肢となる場合があります
+;-------------------------------------------------
+;・各REACT内は、&& IS_NOWCOMNAMEなり、&& IS_COMGRONAME等の条件で決めうちしましょう
+;・ここに条件無し分岐があると、全て拾ってしまって汎用リアクションに流れません
+;・調教対象の反応に関わらず、同じリアクションしかしなくなってしまいます
+;・要するにこれは、想定されたシステムの破壊に繋がります
+;-------------------------------------------------
+;　REACTの地の文はACT_MESSAGE.ERBのTRAIN_MESSAGE2_{TFLAG:ACT}で処理されます
+;　基本的に地の文はTFLAG:ACT派生によって分岐します。
+;　休憩系の場合、ACT派生は命令に従ったか否かに割り当てられています
+;　ACT_MESSAGE.ERB REACTION_MESSAGE.ERBを参照しながらの作業をお勧めします
+;-------------------------------------------------
+
+;────────────────────────────────────
+;NO9_REACT90, 休ませる・個別リアクション
+;────────────────────────────────────
+;・TFLAG:ACT派生(0=普通に休んだ/1=道具のせいであまり休めなかった/2=勝手に自慰をし始めた)
+;-------------------------------------------------
+;想定されるCOM…
+;会話系反応
+;	COM:沈黙する/気弱く応答する/無愛想に応答する/愛想よく応答する/強気に応答する/皮肉を言う/もっとハードにして/許しを乞う/気持ち良くして
+;愛撫系反応
+;	COM:快感を我慢する/快感を受け入れる/気持ち良い！
+;苦痛系反応
+;	COM:痛みを我慢する/悲鳴を上げる
+;-------------------------------------------------
+@KOJO_NO9_MS_REACT_K14_90
+;-------------------------------------------------
+;・地の文はACT派生で分岐
+;・REACT分類が受け入れるの場合のみ処理が異なる
+;-------------------------------------------------
+
+LOCALS = %RANDTEXT_K14("ふふ", "フフ", "くすっ", "クスクス")%
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT90_0, 普通に休んだ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;沈黙する RANDREACT(0)-(4)
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("沈黙する") && TFLAG:REACT負荷 < 2
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「なにそれ、メイド長はご機嫌斜めなのかしら？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別に？ ただ喋りたくない気分なの。構わないで頂けるかしら」")
+			PRINTFORMW 「そんな事言われると余計に構いたくなるんだけど？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はぁ…、やれやれ、ね」")
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「なによ、喋りたくない気分ってわけ？」
+			PRINTFORMW 「ツマラナイ意地張ったところで、仕方無いと思うけどね」
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「ねぇ咲夜、黙ってないで何か言ったらどうなの？」
+			PRINTFORMW 「ま、そうしたいのなら別に構わないけど」
+		ELSE
+			PRINTFORMW 「折角休ませてあげたのに、可愛くないわ…」
+			PRINTFORMW 「もっとも、今の咲夜の立場なら当然の反応なんでしょうけど、ね」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;気弱く応答する RANDREACT(5)-(9)
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("気弱く応答する") && TFLAG:REACT負荷 < 2 && TFLAG:REACT派生 < 1
+		SELECTCASE RANDREACT(2, 5)
+			CASE 0
+				PRINTFORMW 「なによ、元気がないわね？」
+				PRINTFORMW 「普段能天気な%CNAME(MASTER, TARGET)%がそんな様子だと、ちょっと心配になるんだけど」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ひとこと余計な気がするんだけど、気のせいかしら」")
+				PRINTFORMW 「ま、そういう事にしてもらえると角が立たなくていいと思うわ」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはそうでしょうね…、%CNAME(TARGET)%にとっては」")
+				PRINTFORMW 「あら？ 私の気分以上に大切な事なんて、今、この場には無いはずよ」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…やれやれ。そこまで言い切られると、もう何も言う気がしないわ」")
+				PRINTFORMW 「ふふ、それは何より、ね」
+			CASE 1
+				PRINTFORMW 「らしくないわね？ そういうの」
+				PRINTFORMW 「まぁでも……、そんな咲夜の様子を見られた事を喜ぶべきかしら」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…はいはい。好きなように言ってるといいわ」")
+				PRINTFORMW 「でも、言いたい放題すると怒るんでしょう？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「当然よ」")
+				PRINTFORMW 「…やれやれ、ね」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはこっちの台詞よ！」")
+				PRINTFORMW 「%LOCALS%」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;無愛想に応答する RANDREACT(10)-(14)
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("無愛想に応答する") && TFLAG:REACT負荷 < 2
+		IF AFFECTION("相思相愛")
+			SELECTCASE RANDREACT(2, 10)
+				CASE 0
+					PRINTFORMW 「機嫌悪そうね？ もしかして咲夜、『あの日』なの？」
+					PRINTFORMW 「色々と大変よね、人間って」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なに勝手に結論出してひとりで納得してるのかしら…」")
+					PRINTFORMW 「違うの？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「違うわよ！」")
+					PRINTFORM 「あら、それは失礼したわね
+					CALL AUTOHEARTCB2_K14
+					PRINTFORMW 　%LOCALS%…」
+				CASE 1
+					PRINTFORMW 「ねぇ咲夜…、前から言おうと思ってたんだけど」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なによ」")
+					PRINTFORMW 「…本当に可愛くないわね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「奇遇ね？ 私も貴女にそう言おうと思ってたの」")
+					PRINTFORMW 「へぇ、そう……。気が合うわね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「確かにね。それは認めるわ」")
+					PRINTFORML 「…………」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…………」")
+			ENDSELECT
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「何も休んでる時にそんな態度しなくてもいいんじゃないかしら」
+			PRINTFORMW 「でもまぁ…、咲夜のそういうとこ、嫌いじゃないわよ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なっ！？ 一体…、何を言ってるのかしら…」")
+			PRINTFORMW 「今更こんな事で照れる事無いと思うけど？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そ、そんなんじゃないわよ！」")
+			PRINTFORMW 「じゃぁなんなのよ？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「言いたくないわね…」")
+			PRINTFORMW 「ま、答えは期待してなかったけど。と、いうより…」
+			PRINTFORM 「今の貴女の姿が何よりの答え、ってだけの話なんだけど、ね
+			CALL PRINT_SYMBOL_K14
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「まぁそうね、そういうのってある意味咲夜らしいとは思うけど…」
+			PRINTFORMW 「こんな時に無愛想に振舞わなくてもいいんじゃない？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ご期待に添えなくて悪かったわね」")
+			PRINTFORMW 「…言うじゃない。悪かったなんて思ってもいない癖に」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ええ、そうね。否定はしないわ」")
+			PRINTFORMW 「…可愛くない」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…お互いに、ね」")
+		ELSE
+			PRINTFORMW 「…可愛くないわね。知ってたけど」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それなら、いちいち言う必要無いのではないかしら？」")
+			PRINTFORMW 「そうね？ でも言わずにはいられないのよ。悪いけど」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「悪いなんて露ほどにも思ってない癖に、よく言うわ」")
+			PRINTFORMW 「…よくわかってるじゃない。流石、ね。%LOCALS%」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;愛想よく応答する RANDREACT(15)-(19)
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("愛想よく応答する") && TFLAG:REACT負荷 < 2
+		SELECTCASE RANDREACT(2, 15)
+			CASE 0
+				PRINTFORMW 「やだ咲夜ったら…、一体どうしちゃったのかしら」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「は？ どういう意味よ」")
+				PRINTFORMW 「妙に愛想がいいのは咲夜にしては不自然だと思ってね？」
+				PRINTFORMW 「錬金術用の素材でもつまみ食いしたのかなって」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「意味がわからないわ、アリス…」")
+			CASE 1
+				PRINTFORMW 「今のはちょっと可愛かったわ。貴女にもそんな一面があったのね、咲夜？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…当然よ。むしろ今頃気付くとか、ちょっと鈍いのではないかしら」")
+				PRINTFORMW 「…前言撤回。気のせいだったみたい」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、それは残念ね」")
+				PRINTFORM 「…心にも無い事をよく言うわ
+				;相思相愛の場合は話が続く
+				IF AFFECTION("相思相愛")
+					PRINTFORML 。ま、それは兎も角…」
+					PRINTFORMW 「キリがないからそろそろこの辺にしたいんだけど？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、異論はないわ」")
+					PRINTFORMW 「あら、珍しく気が合ったわね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…言われてみれば。まぁ時にはいいのではないかしら」")
+					PRINTFORMW 「そうね、私もそう思うわ。ふふ」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), @"「%LOCALS%」")
+				;相思相愛で無い場合括弧閉じて終わり
+				ELSE
+					PRINTFORMW 」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;強気に応答する RANDREACT(20)-(24)
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("強気に応答する") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+		IF AFFECTION("相思相愛")
+			;なんだこれ？
+			PRINTFORMW 「ねぇ…、休憩するっていう時にその言い草はちょっとどうなの？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なによ、気に障ったかしら」")
+			PRINTFORMW 「別に？ ただ……構って欲しくてそんな事言ってるんじゃないか、ってね」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんな事ある訳……というか、意味がわからないわ」")
+			;1/3の確率で表示
+			IF !RAND:3
+				PRINTFORML 「そうなの？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうよ」")
+				PRINTFORMW 「それは残念ね。ただ…」
+				PRINTFORMW 「こうして話していること自体、貴女の計算の内だとしたらちょっと癪よね」
+				PRINTFORMW 「ま、咲夜がにそんな計算ができるとは思えないけど」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「へぇ、言ってくれるじゃない…」")
+				PRINTFORML 「まぁね、この位は言わせて貰うわ。そもそも咲夜が先に仕掛けてきたんじゃない」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「記憶にないわね」")
+				PRINTFORMW 「ボケるにはまだ早いと思うけど？ もっとも、時間を止める分、老化が早いのかしら？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…面白い冗談ね」")
+				PRINTFORMW 「それは誤解。私、冗談をいったつもりないもの」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…………」")
+				PRINTFORMW 「…自業自得よ」
+			ENDIF
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「…やれやれ、ね。ホント、貴女の相手は疲れるわ。咲夜」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女にそんなこと言われる筋合いはないわよ、アリス…」")
+			PRINTFORMW 「見解の相違ね。私はそうは思わないわ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…ああそう。なら勝手に言ってればいいわ」")
+			PRINTFORML 「ええ、勿論。言われなくてもそうするつもりよ」
+			;フェードアウト
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「フフ……」")
+			CLEARLINE 1
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「ま、咲夜はその位じゃないとね。貴女のそういうとこ、嫌いじゃないし。ただ…」
+			PRINTFORMW 「何も休んでる時にそんな態度しなくてもいいんじゃない？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私の勝手よ、そんなの」")
+			PRINTFORMW 「そうもいかないのよ、咲夜。悪いけど」
+			PRINTFORMW 「貴女がその辺のところを理解してくれると、色々と手間が省けるんだけど」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「勝手な言い分ね…」")
+			PRINTFORMW 「そうね？ それは否定しないわ。その通りだと思うし、ね」
+		ELSE
+			PRINTFORMW 「元気がいいわね？ これは休む必要なんてなかったかも」
+			PRINTFORMW 「まぁでも、その調子がいつまで続くかしら。ねぇ咲夜…」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;もっとハードにして RANDREACT(25)-(29)
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("もっとハードにして") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+		SELECTCASE RANDREACT(2, 25)
+			CASE 0
+				PRINTFORML 「ねぇ咲夜……」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「な、なによ」")
+				PRINTFORML 「もう一回言って」
+				CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
+				CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "嫌", 2)
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+				PRINTFORM 「あら、残念
+				CALL AUTOHEARTCB2_K14
+				PRINTFORMW 　もう一度聞きたかったのに。ふふ…」
+			CASE 1
+				PRINTFORML 「ええ、いいわよ。咲夜がそれでいいのなら。ま、それはいいとして…」
+				PRINTFORMW 「勢いで言ったはいいけど、ちょっと冷静になると恥ずかしくなってこない？」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ありがとうアリス。お陰さまで今、凄い自己嫌悪に陥ってるわ」")
+				PRINTFORML 「…繊細ね」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…当然よ。と、いうか…」")
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「誰かさんが余計な事を言わなければ、こうなる事もなかったけどね…」")
+				PRINTFORMW 「そんなに落ち込む事ないと思うけどね？ さっきの咲夜、ちょっと可愛かったし」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私としては、蒸し返さないでいてくれると、ありがたいんだけど」")
+				PRINTFORMW 「ふふっ、わかった。もうやめておくわ」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;気持ちよくして RANDREACT(30)-(34)
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("気持ち良くして") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+		IF T_COND("情欲")
+			PRINTFORMW 「いいわよ、咲夜がそうして欲しいのなら」
+			PRINTFORMW 「でも…、ふふ。咲夜が素直におねだりなんて、ちょっと意外ね？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……ひとこと余計よ」")
+			PRINTFORMW 「そうね、私もそう思うわ。%LOCALS%…」
+		ELSE
+			SELECTCASE RANDREACT(2, 30)
+				CASE 0
+					PRINTFORML 「よく聞こえなかったわ。もう一度言ってもらえる？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…聞こえてた癖に」")
+					PRINTFORMW 「あ、ばれてた？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ばれてるのも承知の上で、またそういう事を言うのね…」")
+					PRINTFORMW 「ふふ、ごめんなさい」
+				CASE 1
+					PRINTFORM 「…そうね。私の足にキスして
+					CALL PRINTCOLOR(COLOR_K14("咲夜"), "『変態メイドでごめんなさい』")
+					PRINTFORMW って言えたら、してあげてもいいわ」
+					CALL PRINTCOLORL(COLOR_K14("咲夜"), "「――なによそれ。と、いうか…」")
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「こういう時くらい空気を読んでもらいたいわね」")
+					PRINTFORMW 「ありきたりじゃつまらないと思ってね？ 気を使ったつもりなんだけど」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんな理由で気を使われても、全然ありがたくないわよ！」")
+					PRINTFORMW 「ま、そうよね。ふふ」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;確率でCOMへ
+	;イかせてあげるに派生したら弾く
+	;=================================================
+	;イかせて！ RANDREACT(35)-(39)
+	;=================================================
+	IF 口上記入チェック(50) && IS_NOWCOMNAME("イかせて！") && GROUPMATCH(TFLAG:REACT派生, 0, 2) > 0
+		SELECTCASE RANDREACT(2, 35)
+			CASE 0
+				PRINTFORMW 「悪いわね。休憩中じゃなければ、考えてあげてもよかったけれど」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そこまで素で返されるとは思ってなかったわ…」")
+				PRINTFORMW 「貴女の期待に応えられなくて残念に思うわ。咲夜」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「残念と言う割に、随分楽しそうね」")
+				PRINTFORM 「それは気のせいじゃない？
+			CASE 1
+				PRINTFORMW 「ふふっ…、咲夜にしては、随分可愛らしい事言うじゃない」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そういう返しをされて、言った事を後悔してるわ…」")
+				PRINTFORM 「そんな必要ないと思うけどね？
+		ENDSELECT
+		PRINTFORMW 　%LOCALS%…」
+		RETURN 1
+	ENDIF
+ENDIF
+
+;TEQUIP毎に分岐を設けるのが理想だけど、面倒過ぎるんでRANDでお茶を濁す
+;TRAIN_MESSAGE2の表現はバイブ系、若しくは電動の道具的な感じ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT90_1, 道具のせいであまり休めなかった RANDREACT(50)-(59)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	SELECTCASE RANDREACT(2, 50)
+		CASE 0
+			PRINTFORMW 「ま、その状態で休めって無理があるわよね？」
+			PRINTFORMW 「%LOCALS%…」
+		CASE 1
+			PRINTFORMW 「あら、落ち着かないみたいね？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…当然でしょう」")
+			PRINTFORML 「ま、そうよね。でも…」
+			PRINTFORMW 「そんな咲夜の姿を眺めるのも悪くないわ。%LOCALS%…」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;勝手にオナニーするなに派生したら弾く
+;基本的にはREACTではREACT派生0相当の処理を行い、派生 > 0の場合はCOMでという方針
+;でもまぁ、割りと気分次第で変わるのでなんともだ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT90_2, 勝手に自慰をし始めた RANDREACT(60)-
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 2
+	IF IS_NOWCOMNAME("自慰し始める") && TFLAG:REACT派生 < 1
+		IF AFFECTION("相思相愛")
+			SELECTCASE RANDREACT(2, 60)
+				CASE 0
+					PRINTFORMW 「…やれやれ、ね。今更何も言う気しないわ」
+					PRINTFORMW 「いいわ、好きなだけヤってなさいよ！ 私は休ませてもらうから…」
+				CASE 1
+					PRINTFORMW 「うん、まぁ…どうしてもシたいなら好きにすればいいと思うけど…」
+					PRINTFORMW 「態々見せ付けるみたいにされるのは、今はちょっと鬱陶しいのよ」
+					PRINTFORMW 「そんな訳だから、こっち向いてするのはやめてくれる？」
+			ENDSELECT
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「いや、だから……それじゃ休憩にならないでしょう？」
+			PRINTFORMW 「とか言ったところで、耳に入ってないみたいだけど」
+			PRINTFORMW 「ま、私も人の事は言えないけど…、咲夜も大概ね」
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「状況が違えば面白い光景なんでしょうけど…」
+			PRINTFORMW 「私が休んでいいって言ったのを蔑ろにされてるみたいで、あまりいい気はしないわね……」
+		ELSE
+			PRINTFORMW 「そんな事許可した覚えはないわよ、咲夜…」
+			PRINTFORMW 「…って。聞こえてるかどうか、怪しいところね？ やれやれだわ」
+		ENDIF
+		RETURN 1
+	ENDIF
+RETURN 0
+ENDIF
+
+;────────────────────────────────────
+;NO9_REACT91, 栄養剤を飲ませる・個別リアクション
+;────────────────────────────────────
+;・TFLAG:ACT派生(0=栄養剤を飲んだ/1=栄養剤を捨てた)
+;-------------------------------------------------
+;想定されるCOM…
+;会話系反応
+;	COM:沈黙する/気弱く応答する/無愛想に応答する/愛想よく応答する/強気に応答する/皮肉を言う/もっとハードにして/許しを乞う/気持ち良くして
+;奉仕系反応
+;	COM:拒否する
+;-------------------------------------------------
+@KOJO_NO9_MS_REACT_K14_91
+;-------------------------------------------------
+;・地の文はTFLAG:ACT派生で分岐
+;-------------------------------------------------
+
+;RESULT値は全て2にする
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;NO9_REACT91_0, 栄養剤を飲んだ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;初回分岐はACT派生毎に分けることに
+	;=================================================
+	;初回 FIRSTREACT(0)
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTREACT(0)
+		PRINTFORMW 「…で？ 感想は？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……美味しくないわね」")
+		PRINTFORMW 「ごめんなさい。よく聞こえなかったわ」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いや、だから……不味いって」")
+		PRINTFORML 「ねぇ、咲夜」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何よ」")
+		PRINTFORMW 「私の聞き間違いかしら？ 何かネガティブな感想だった気がするんだけど」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「残念だけど、聞き間違いじゃないと思うわ」")
+		PRINTFORMW 「…面白い冗談ね」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どうあっても認める気はないのね…」")
+		RETURN 2
+	ENDIF
+	
+	;=================================================
+	;調教対象のBASE:体力50%以上
+	;=================================================
+	IF 口上記入チェック(100) && TENSION(MASTER, 0) == "高い"
+		IF AFFECTION("相思相愛")
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「ねぇアリス。私、思うんだけど…」")
+			PRINTFORMW 「なによ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「容器に拘るのもいいけど、中身の方はなんとかならないのかしら？」")
+			PRINTFORMW 「どういう意味よ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「改めて説明する必要も無いと思うけど。…って、人の話聞いてる？」")
+			PRINTFORMW 「あら、ごめんなさい。何の話だっけ？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あくまでもとぼける気なのね。やれやれだわ…」")
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「ねぇ咲夜、なんともない？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いや別に……って。どういう意味よ」")
+			PRINTFORMW 「ああ、うん……普通に元気な時に飲んだら、鼻血でも出るかなって」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……笑えない冗談ね」")
+			PRINTFORMW 「それは誤解よ。私、冗談を言ったつもりはないもの」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…………」")
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「で？ 感想は？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね……、特に味が変わったって感じはしないけど」")
+			PRINTFORMW 「おかしいわね。私、配合を間違えたかしら？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「たとえ冗談でも、飲んだ後には聞きたくない話ね…」")
+		ELSEIF AFFECTION("嫌悪")
+			;汎用処理を呼ぶ
+			CALL PRINT_REACT_91_NO9_K14
+		ELSE ;その他
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「ねぇアリス」")
+			PRINTFORMW 「なによ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…やっぱりコレ、美味しくない」")
+			PRINTFORMW 「いちいち言わなくていいわ。咲夜…」
+		ENDIF
+		RETURN 2
+	ENDIF
+	
+	;=================================================
+	;調教対象のBASE:体力25%以上
+	;=================================================
+	IF 口上記入チェック(100) && TENSION(MASTER, 0) == "一般"
+		IF AFFECTION("相思相愛")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…やっぱり美味しくないわね。効果は認めるけど」")
+			PRINTFORMW 「自分から飲んでおいて、余計な事言わないで欲しいわね」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それもそうね。でも、言い続ける事で改善されるかも知れないでしょう？」")
+			PRINTFORML 「それは期待しない方がいいわ」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「言い切ったわね…」")
+			PRINTFORMW 「仕方無いでしょ？ あくまでも薬であって、嗜好品を作ってる訳じゃないんだから」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはまぁ、確かにその通りなんでしょうけど。でもねぇ…」")
+			PRINTFORMW 「いい加減にしないと口を塞ぐわよ！」
+		ELSEIF AFFECTION("溺愛")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…相変わらず酷い味ね」")
+			PRINTFORMW 「こう見えても私、傷付きやすいんだけど？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「これほど説得力のない台詞は、初めて聞いた気がするわ」")
+			PRINTFORMW 「咲夜にしては面白い冗談ね…」
+			;1/3の確率で表示
+			IF !RAND:3
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはなにより。でも残念ながら冗談を言ったつもりはないのよ」")
+				PRINTFORML 「…………」
+				PRINTFORMW 「キリがないわね…」
+				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね…」")
+			ENDIF
+		ELSEIF AFFECTION("眷愛")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス、コレ…」")
+			PRINTFORMW 「どうかした？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いつものと、ちょっと違う気がするんだけど…」")
+			PRINTFORML 「渡したものに間違いはないはずよ。ただ…」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ただ、なによ？」")
+			PRINTFORMW 「ああ、うん……調合を間違えたかもって」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それは考えたくない可能性ね…」")
+		ELSEIF AFFECTION("嫌悪")
+			;汎用処理を呼ぶ
+			CALL PRINT_REACT_91_NO9_K14
+		ELSE ;その他
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…………」")
+			PRINTFORMW 「なによ、言いたい事があるならはっきり言ったら？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「聞きたくないって言われた気がするけど」")
+			PRINTFORMW 「…覚えてないわね」
+		ENDIF
+		RETURN 2
+	ENDIF
+	
+	;=================================================
+	;調教対象のBASE:体力25%未満
+	;=================================================
+	IF 口上記入チェック(100) && TENSION(MASTER, 0) == "低い"
+		IF AFFECTION("相思相愛")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「やっぱり疲れてる時には良く効くわね。その点は認めるわ」")
+			PRINTFORMW 「で、お味の方はいかが？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それは聞かないで頂けるかしら。私、貴女を傷つけたくないのよ」")
+			PRINTFORMW 「ありがとう咲夜。その一言で十分傷ついたわ…」
+		ELSEIF AFFECTION("溺愛")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どう考えてもコレ、味覚云々っていう問題じゃないわね」")
+			PRINTFORMW 「貴女が何を言ってるのか判らないわ。咲夜…」
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「いい加減認めたらどう？」")
+			PRINTFORMW 「イヤよ」
+			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「…即答ね」")
+			PRINTFORMW 「当然よ」
+		ELSEIF AFFECTION("眷愛")
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…確かに良く効くわね。美味しくないのは別として」")
+			PRINTFORMW 「聞こえてるわよ…」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「盗み聞きとは感心しないわね。アリス」")
+			PRINTFORMW 「…白々しい。態々聞こえるように言っておいて」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それは誤解ね」")
+			PRINTFORMW 「誤解する余地があるとは思えないわ。私には、ね」
+		ELSEIF AFFECTION("嫌悪")
+			;汎用処理を呼ぶ
+			CALL PRINT_REACT_91_NO9_K14
+		ELSE ;その他
+			PRINTFORMW 「気が進まないとか言ってた割には全部飲んだわね？」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「一応、ね。だからといって、美味しかったって訳じゃないけど」")
+			PRINTFORMW 「それは言わなくていいわ。咲夜…」
+		ENDIF
+		RETURN 2
+	ENDIF
+;条件から漏れる事があった場合RESULT値1を返す。その可能性は無いはずだけど
+RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;NO9_REACT91_1, 栄養剤を捨てた
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	;=================================================
+	;初回 FIRSTREACT(1)
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTREACT(1)
+		PRINTFORMW 「流石に、それはちょっとないと思うわ。捨てるだなんて…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ごめんなさい。手が滑ってね」")
+		PRINTFORMW 「…笑えない冗談ね」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「でしょうね？ 笑わせるつもりもなかったし」")
+		PRINTFORML 「…………」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…………」")
+		RETURN 2
+	ENDIF
+	
+	;ACTの記述と辻褄を合わせる。KFLAG使わなくてもまぁいいかな的な
+	;=================================================
+	;相思相愛且つ、BASE:MASTER:体力が特定条件の場合
+	;=================================================
+	IF 口上記入チェック(100) && AFFECTION("相思相愛") && TENSION(MASTER, 0) == "高い"
+		PRINTFORMW 「なによ、それ。投げ捨てたくなる程気に入らない？」
+		PRINTFORMW 「それとも、私に言われた事に怒ってるとか？ ま、いずれにしても…」
+		PRINTFORMW 「貴女、最低よ。咲夜……」
+		RETURN 2
+	ENDIF
+	
+	;=================================================
+	;相思相愛且つ、BASE:MASTER:体力が特定条件の場合
+	;=================================================
+	IF 口上記入チェック(100) && AFFECTION("相思相愛") && GROUPMATCH(TENSION(MASTER, 0), "一般", "低い") > 0
+		PRINTFORMW 「ねぇ…、自分から催促した癖に、それはないんじゃないかしら……」
+		PRINTFORMW 「最低、ね…」
+		RETURN 2
+	ENDIF
+	
+	;派生1の枠に落ちたらこの箇所で完結させ、COMに流れる事がないように
+	;-----------------------------------
+	;その他
+	;-----------------------------------
+	IF AFFECTION("相思相愛")
+		PRINTFORMW 「こら、子供みたいな事はやめなさいよ！」
+	ELSE
+		PRINTFORMW 「やってくれるわね…」
+		PRINTFORMW 「そんなに私を怒らせたいのかしら」
+	ENDIF
+	RETURN 2
+ENDIF
+
+;────────────────────────────────────
+;NO9_REACT92, 治療する・個別リアクション
+;────────────────────────────────────
+;・TFLAG:ACT派生(0=体の隅々まで撫で回して治療した/1=暴れたため治療できなかった)
+;-------------------------------------------------
+;想定されるCOM…
+;会話系反応
+;	COM:沈黙する/気弱く応答する/無愛想に応答する/愛想よく応答する/強気に応答する/皮肉を言う/もっとハードにして/許しを乞う/気持ち良くして
+;奉仕系反応
+;	COM:暴れる
+;-------------------------------------------------
+;@KOJO_NO9_MS_REACT_K14_92
+;-------------------------------------------------
+;・地の文はTFLAG:ACT派生で分岐
+;-------------------------------------------------
+;TALENT:治療が無い場合は発生し得ないので不要
+;まぁ、嫌がらせ用の処理を盛るのもいいかも知れないｗ
+;-------------------------------------------------
+;*************************************************
+;関数置き場
+;*************************************************
+@PRINT_REACT_91_NO9_K14
+SELECTCASE TENSION(TARGET, 8)
+	CASE "高い"
+		PRINTFORMW 「意外ね？ てっきり投げ捨てるのかと思ってたわ」
+		PRINTFORMW 「ま、それならそれで結構な事ではあるけど。ね」
+	CASE "一般"
+		PRINTFORMW 「私が言うのもなんだけど…、よく平気で飲めるわね？」
+		PRINTFORMW 「そこまで信用されてる実感もないけど…」
+	CASE "低い"
+		PRINTFORMW 「あら、ちゃんと飲んだのね？ ちょっと意外だわ」
+ENDSELECT

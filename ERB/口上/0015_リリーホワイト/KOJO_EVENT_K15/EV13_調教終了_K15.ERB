@@ -1,0 +1,951 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	[リリーホワイト]口上 調教終了イベント口上ファイル
+;
+;	調教終了イベント口上をまとめたファイル
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;EV13, 調教終了口上
+;========================================================================
+;・@EVENTCOMENDから呼び出される
+;・口上主が調教終了する直前に表示
+;・ARG:1, ARG:2の場合は地の文表示後にPRINTLで空行。その後に口上を表示
+;・ARG:0の場合は固有の地の文なし。口上表示の前にPRINTLで空行が入る
+;・RESULT 0以上を返すと口上表示後にPRINTLで空行が入る
+;-------------------------------------------------
+;関連変数…
+;FLAG:日常制御	調教終了時状況(1=通常/2=精力0/3=一回休み/4=失神した)
+;-------------------------------------------------
+@KOJO_EVENT_K15_13(ARG)
+;-------------------------------------------------
+;引数内訳…
+;ARG=(0, 普通に終了、1, 調教対象が疲れている、2, 調教対象が失神した)
+;-------------------------------------------------
+;────────────────────────────────────
+;ARG:1, ARG:2, 疲労・失神による調教終了 FIRSTEVENT(0)～
+;────────────────────────────────────
+;・調教対象消耗度に応じて疲労/失神に分かれる
+;・呼び出しタイミングは地の文の表示→PRINTL→口上の表示
+;・EVENT201, 介抱(日常イベント)の箇所を書く場合は、上手く連携できるようにすると良いでしょう
+;------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象が失神した
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	;-------------------------------------------------
+	;性交奉仕中
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && TEQUIP:性交奉仕中
+		PRINTFORMW 「あっん……気絶、しちゃったんですか？」
+		PRINTFORM 「もう……はぁ……んっ、んぅ…
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーは%CALLNAME:MASTER%を起こさないように、ゆっくりと腰を浮かせていく……
+		PRINTFORMDW 　硬さを保ったままの怒張がズルリと引き抜かれると、
+		PRINTFORMDW 　ぽっかりと口を開けた\@ TEQUIP:性交中 == 6 ? 菊門 # 膣口 \@から真っ白な子種が溢れ出し、白磁の太ももへと伝い落ちていく……
+		PRINTFORM 「あっ、はぁ……こんなにいっぱい射精してくれたんですね……ふふっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORM 「とっても……気持ち良かったですよ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーは無防備に眠る%CALLNAME:MASTER%の顔を覗き込み、そっと唇を重ねた……
+	RETURN 1
+	ENDIF
+
+	;-------------------------------------------------
+	;性交中
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && TEQUIP:性交中
+		PRINTFORMW 「あっん……気絶、しちゃったんですか？」
+		PRINTFORM 「もう……はぁ……んっ、んぅ…
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーは%CALLNAME:MASTER%を起こさないように、ゆっくりとペニスを引き抜いていく……
+		PRINTFORMDW 　すっかり敏感になった\@ TEQUIP:性交中 == 6 ? 肛内粘膜 # 膣壁 \@を擦り上げられ、%CALLNAME:MASTER%は失神したまま『ピュッ』と潮を噴いた……
+		PRINTFORM 「えっちなカラダ……こんなの、我慢できませんよね……ふふっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORM 「無理させちゃってごめんね……ゆっくり休んでください……
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーは無防備に眠る%CALLNAME:MASTER%の顔を覗き込み、そっと唇を重ねた…
+	RETURN 1
+	ENDIF
+
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		IF FAVOR(2000, 2000)
+			IF RAND:2 == 0
+				PRINTFORMW 「%RAND_SPLIT("すっすみませんっ！！/あわっあわわわゎ……")%」
+				PRINTFORMW 「どっ、どうしましょう！！　大丈夫ですかっ！？」
+			ELSE
+				PRINTFORMW 「%RAND_SPLIT("ちょっとやり過ぎちゃいましたね/眠っちゃいましたね")%……」
+				PRINTFORMW 「可愛い寝顔……無茶させて、ごめんね……」
+				PRINTL  
+				PRINTFORMDW リリーは無防備に眠る%CALLNAME:MASTER%の顔を覗き込み、%RAND_SPLIT("優しく頭を撫でた/そっと唇を重ねた")%…
+			ENDIF
+		ELSEIF AFFECTION("反抗")
+			PRINTFORMW 「無防備に眠りこけちゃって……」
+			PRINTFORMW 「本当に、寝顔だけは可愛いんですけどね……」
+		ELSE
+			PRINTFORMW 「%RAND_SPLIT("ちょっとやり過ぎちゃいましたね/眠っちゃいましたね")%……」
+			PRINTFORMW 「可愛い寝顔……無茶させて、ごめんね……」
+			PRINTL  
+			PRINTFORMDW リリーは無防備に眠る%CALLNAME:MASTER%の顔を覗き込み、%RAND_SPLIT("優しく頭を撫でた/そっと唇を重ねた")%…
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;大満足ボーナスを得ている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:今回で大満足
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(10)
+		PRINTFORMW 「慣れない事をすると、やっぱり少し恥ずかしいですね……えへへっ♪」
+		PRINTFORMW 「ねぇ、特別な『ご褒美』はどうでしたか？」
+		PRINTL  
+		PRINTFORMW 「リリーにはこんな事しかできませんが……」
+		PRINTFORM 「%CNAME(MASTER)%が喜んでくれたなら、とっても嬉しいです
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　調教が終わった後も、リリーは子猫のように身体を擦り寄せて%CALLNAME:MASTER%に甘えている……
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教対象の精力0
+	;=================================================
+	IF 口上記入チェック(100) && FLAG:日常制御 == 2
+		PRINTFORMDW 全身の精を搾り尽くされた%CALLNAME:MASTER%は、調教が終わっても悦楽の余韻で小さな絶頂を繰り返している……
+		PRINTL  
+		IF FAVOR(3000, 3000)
+			PRINTFORM 「えへへっ……精が空っぽになるまで搾っちゃいましたぁ
+			CALL HEARTCB
+			PRINTFORMW 」
+				IF TALENT:MASTER:オトコ
+					PRINTFORMW 「ほら、%CNAME(MASTER)%がいっぱい%RAND_SPLIT("ザーメン/せーえき/赤ちゃんの素")%注いでくれたから……」
+					PRINTFORM 「リリーのお腹、まるで妊娠してるみたいにぽっこり膨らんじゃってます
+					CALL HEARTCB
+					PRINTFORMW 」
+				ELSE
+					PRINTFORMW 「お腹はいっぱいですけど、ちょっと喉が渇きました……」
+					PRINTFORM 「リリーもいっぱい噴かされちゃいましたし、ねっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				ENDIF
+			PRINTFORMDW リリーは身体の火照りが収まらないといった様子で、まるで子猫のように%CALLNAME:MASTER%に甘えている……
+		ELSE
+			IF TALENT:MASTER:オトコ
+				PRINTFORMW 「%RAND_SPLIT("ザーメン/せーえき/赤ちゃんの素")%搾り尽くしちゃいました……てへっ♪」
+				PRINTFORM 「いっぱい頑張ってくれたもんね……ありがとうございます
+				CALL HEARTCB
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW 「こんなになるまでシちゃうなんてね……ふふっ♪」
+				PRINTFORM 「いっぱい噴いちゃったから、リリーもクタクタです
+				CALL HEARTCB
+				PRINTFORMW 」
+			ENDIF
+			PRINTFORMDW リリーは満足気に微笑みながら、%CALLNAME:MASTER%を見つめている……
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;性交奉仕中	\@ TEQUIP:性交奉仕中 == 6 ? お尻 # おまんこ \@
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && TEQUIP:性交奉仕中
+		PRINTFORM 「\@ TEQUIP:性交奉仕中 == 6 ? お尻の穴 # おまんこ \@でたっぷり搾り取っちゃいましたぁ……んっ…はぁんっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーはゆっくりと腰を浮かせて、硬く張り詰めた怒張を引き抜いていく…
+		PRINTFORMDW 　ぽっかりと口を開けた\@ TEQUIP:性交奉仕中 == 6 ? 菊門 # 膣口 \@から、真っ白な精液が『ごぽり』と溢れ出し、白磁の太ももへと伝い落ちていく……
+		PRINTFORM 「んぅ…ふふっ
+		CALL HEARTCB
+		PRINTFORM すごい…いっぱい、ぴゅっぴゅできましたね
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORM 「%RAND_SPLIT("蕩けた/だらしない")%顔しちゃって…ちゃんと『満足』出来たみたいですね
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORM 「ほら、いい子にしてたら……また『 コ コ 』で搾り取ってあげますからね
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーは%CALLNAME:MASTER%の腰の上でＭ字に足を開き、精液で白く染まった\@ TEQUIP:性交奉仕中 == 6 ? 菊門 # 秘裂 \@を開いて見せた…
+		RETURN 1
+	ENDIF
+
+	;-------------------------------------------------
+	;性交中	\@ TEQUIP:性交中 == 6 ? お尻 # おまんこ \@
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && TEQUIP:性交中
+		PRINTFORM 「おちんちん、抜いちゃいますね……んっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーのペニスがゆっくりと引き抜かれると、%RAND_SPLIT("ヒクヒクと震える/ぽっかりと口を開けた")%\@ TEQUIP:性交中 == 6 ? 菊門 # 膣口 \@から『ごぽっ』と精液が溢れ出す…
+		PRINTFORM 「%RAND_SPLIT("蕩けた/だらしない")%顔しちゃって……『大満足』って感じですね
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORM 「ちゃんといい子にしてたら……また『ご褒美』をあげますからね
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーは悪戯な笑みを浮かべ、苦し気に喘ぐ%CALLNAME:MASTER%にそっと口づけをした……
+		RETURN 1
+	ENDIF
+
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		IF RAND:2 == 0
+			PRINTFORMW 「た～っぷり搾っちゃいましたっ♪　えへへっ♪」
+			PRINTFORMW 「ねぇ、今度は別の『ご褒美』を試してみませんか？」
+			PRINTFORM 「どんなプレイでも……きっと、%CNAME(MASTER)%を満足させてあげますから
+			CALL HEARTCB
+			PRINTFORMW 」
+		ELSE
+			PRINTFORM 「リリーね……もう%CNAME(MASTER)%が居ないと満足できなそうです
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTFORMW 「だって……えっちがこんなに気持ちいいなんて、知りませんでしたから……」
+			PRINTFORM 「……全部、%CNAME(MASTER)%が教えてくれたんですよ？……ふふっ
+			CALL HEARTCB
+			PRINTFORMW 」
+		ENDIF
+		PRINTFORMDW 　リリーは満足気に微笑みながら、%CALLNAME:MASTER%を見つめている……
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象が疲れている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1 && CFLAG:調教回数 > 4
+	;相思相愛/調教完了
+	IF FAVOR(2000, 2000)
+		SELECTCASE RANDEVENT(4, 12)
+			;抱き枕
+			CASE 0
+				PRINTFORMW 「%RAND_SPLIT("疲れちゃいましたか？/もうクタクタですね♪")%」
+				PRINTFORMW 「ほら、リリーをぎゅってしていいですよ……」
+				PRINTFORMW 「%RAND_SPLIT("あっ…んぅ/んっ…はぁ")%…あったかい……」
+				PRINTFORM 「ねぇ、今日はこのまま寝ちゃいましょうか……ふふっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMDW リリー%RAND_SPLIT("を抱き枕にして/を抱きしめながら/と絡み合うようにして/の体温を感じながら")%、%CALLNAME:MASTER%は深い眠りに落ちていった…
+			;ごはん
+			CASE 1
+				PRINTFORM 「%RAND_SPLIT("気持ち良かったね/もうクタクタだね")%……ふふっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「何か精のつくもの作ってきますから、%CNAME(MASTER)%はもう少し休んでいてくださいねっ♪」
+				PRINTFORMDW 　リリーは%RAND_SPLIT("台所に立ち/エプロンを身に着け/裸のままエプロンだけを身に着け")%、鼻歌を歌いながら料理を始めた…
+			;いちゃいちゃ
+			CASE 2
+				PRINTFORMW 「ふふっ♪　たくさんイっちゃいましたね♪」
+				PRINTFORMW 「リリーも%CNAME(MASTER)%の精で、お腹いっぱいになっちゃいましたっ♪」
+				PRINTFORM 「いつもありがとうごさいます……%RAND_SPLIT("大好きですよ/だーいすきっ")%
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMDW 　リリーに押し倒され、%CALLNAME:MASTER%は唇を奪われた…
+				PRINTFORMDW 　そのまま眠り落ちるまで、二人は夢中でお互いを求め合った……
+			;妖精按摩
+			CASEELSE
+				PRINTFORMW 「%RAND_SPLIT("疲れちゃったみたいですね/もうクタクタだね")%……ふふっ♪」
+				PRINTFORMW 「おいで……リリーがマッサージしてあげますからねっ」
+				PRINTFORM 「%CNAME(MASTER)%が元気になれるように……精一杯もみもみしちゃいますねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMDW 　%CALLNAME:MASTER%は%RAND_SPLIT("夢見心地でリリーのマッサージを受けている…/リリーが満足するまで もみもみされてしまった！！")%
+		ENDSELECT
+		RETURN 1
+	;反抗/嫌悪
+	ELSEIF AFFECTION("反抗")
+		IF RAND:2 == 0
+			PRINTFORMW 「こんなので根を上げるなんて……」
+			PRINTFORMW 「本当に、仕方ない子なんだから……」
+		ELSE
+			PRINTFORMW 「そんな態度だから、余計に疲れちゃうんじゃないですか？」
+			PRINTFORMW 「無理矢理されるのが好きって言うなら、リリーは何も言いませんけど……」
+			PRINTFORMW 「もしそうじゃないなら、もう少し素直になってくれると嬉しいですね」
+		ENDIF
+		RETURN 1
+	;その他(恐怖/順応/目覚め/溺愛/調教済み)
+	ELSE
+		SELECTCASE RANDEVENT(3, 13)
+			CASE 0
+				PRINTFORMW 「今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうか」
+				PRINTFORMW 「疲れてるみたいですし、精のつくもの作っておきますねっ♪」
+			CASE 1
+				PRINTFORMW 「あの、%RAND_SPLIT("疲れちゃいました/大丈夫です")%か？」
+				PRINTFORMW 「……今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうね」
+				PRINTFORMW 「%RAND_SPLIT("あなたのペースで/焦らなくても")%いいですから、ゆっくり慣れていきましょうね……」
+			CASEELSE
+				PRINTFORMW 「%RAND_SPLIT("疲れちゃったみたいですね/もうクタクタだね")%……ふふっ」
+				PRINTFORMW 「おいで……リリーがマッサージしてあげますからね」
+				PRINTFORMW 「快感とはちょっと違いますけど、とっても気持ちよくなりますよっ♪」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ARG:0 普通に終了 FIRSTEVENT(10)～
+;────────────────────────────────────
+;・通常の調教終了時の口上
+;・地の文なし。PRINTLによる空行の後に口上表示
+;・枠毎にイベント番号を振ってありますが、任意に設定する事は可能です
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+;普通に終了
+;IF 口上記入チェック(100) && ARG == 0                  //ARG 1と2の分岐があれば残りはARG 0の扱いになります。即ち、ARG == 0自体は必要ありません
+;＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊               //そしてこのようなネストの構造は望ましくありません@/L
+;*************************************************
+;以下、好感度による派生
+;*************************************************
+;EVENT11あたりで任意のKFLAGを立てて条件にしてやると話の辻褄は合わせやすいです
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;相思相愛（好意3000以上・好感度3000以上）
+;・互いに好き合っている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+
+[SKIPSTART]
+条件式は左側から評価されます
+例えば…IF 口上記入チェック(100) && FIRSTEVENT(20) && FAVOR(3000, 3000)
+この場合、好感度条件を満たす前にFIRSTEVENTが立ってしまい、以後この分岐は真(True)になりません
+
+IF 口上記入チェック(100) && FAVOR(3000, 3000) && FIRSTEVENT(20)のような条件式なら、
+相思相愛になる前にFIRSTEVENTが立ってしまう事はありません
+
+他には…
+
+IF 口上記入チェック(100) && FAVOR(3000, 3000)
+	IF FIRSTEVENT(20)
+	ENDIF
+ENDIF
+
+このような形にする手もあります@/L
+[SKIPEND]
+;=================================================
+;相思相愛初回
+;=================================================
+IF 口上記入チェック(100) && FAVOR(3000, 3000) && FIRSTEVENT(20)
+	PRINTFORMDW ………
+	PRINTFORMDW ……
+	PRINTFORMDW …
+	PRINTL  
+	PRINTFORMW 「あの、ぎゅってして貰っても…いいでしょうか……」
+	PRINTFORMDW 　茹蛸のように顔を真っ赤にして俯くリリーを、%CALLNAME:MASTER%は優しく抱きしめた…
+	PRINTFORMDW 　小柄な体は二人の汗と体液でじっとりと濡れているが、不快感は全く感じなかった…
+	PRINTFORMDW 　むしろその全てが愛おしく、そしてどこか誇らしくもあった…
+	PRINTFORMW 「こんなに……身も心も満たされたのは……初めてです……」
+	PRINTFORMW 「本当に%CNAME(MASTER)%と一つになったみたいで……ぁ、んぅ……」
+	PRINTFORM 「……リリーはとっても、幸せです……
+	CALL HEARTCB
+	PRINTFORMW 」
+	PRINTFORMDW 　調教が終わった後も、リリーは%CALLNAME:MASTER%から離れようとせず、
+	PRINTFORMDW 　まるで子猫のように身体を擦り寄せて%CALLNAME:MASTER%に甘えている……
+	PRINTL  
+	PRINTFORMDW %CALLNAME:MASTER%はリリーと生活を共にするうちに、彼女を一人の女性として愛するようになった…
+	PRINTL  
+	PRINTFORMDW ………
+	PRINTFORMDW ……
+	PRINTFORMDW …
+	;PRINTFORMW 長い調教生活の末、%CNAME(MASTER)%とリリーはお互いに唯一無二の存在となっていた…
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教完了（好意2000以上）
+;・調教対象が口上主にもうメロメロ
+;・好感度の伸び的に溺愛の後になると思われます
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && FAVOR(2000, 2000)
+	;=================================================
+	;調教完了初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(30)
+		PRINTFORMDW ………
+		PRINTFORMDW ……
+		PRINTFORMDW …
+		PRINTL  
+		PRINTFORMDW 　何度も絶頂させられた%CALLNAME:MASTER%は疲れ切ってベッドの上から動けないでいる…
+		PRINTFORMDW 　リリーは満足気に微笑み、まるで小さな子供を寝かしつける様に%CALLNAME:MASTER%の頭を優しく撫でる…
+		PRINTFORMW 「ふふっ、疲れちゃいましたか？　リリーの調教は厳しいですからねー♪」
+		PRINTFORMW 「お片付けが終わったらお部屋に運んであげますから、少しだけ待っててくださいね♪」
+		PRINTFORMDW 　リリーは薄手のガウンを一枚羽織り、%CALLNAME:MASTER%をベッドに残したまま慣れた手付きで部屋の片付けを始めた…
+		PRINTFORMDW 　リリーが動く度に薄布が揺れ、%CALLNAME:MASTER%の\@ PENIS(MASTER) ? 精液 # 愛液 \@で濡れた白い肌がチラチラと顔を覗かせる…
+		PRINTFORMDW 　事後特有の妙な艶めかしさに誘われる様に、%CALLNAME:MASTER%はぼうっとリリーの姿を見つめている…
+		PRINTFORMW 「お待たせしましたっ♪　それじゃ、お部屋に行きましょっきゃっ！？」
+		PRINTFORMDW 　%CALLNAME:MASTER%は片付けが終わりベッド脇に立ったリリーを強引にベッドに引きずり込んだ…
+		PRINTFORMDW 　ガウンを剥ぎ取り、なけなしの精を注ぎ込む様に無理矢理に唇を奪った…
+		PRINTFORMDW 　リリーは一瞬驚きに身を固くしたが、すぐに%CALLNAME:MASTER%のキスに合わせて舌を絡めてきた…
+		PRINTFORMDW 　リリーは%CALLNAME:MASTER%の欲望を受け入れる様に優しく唇を吸い、落ち着かせる様に何度も頭を撫でた…
+		PRINTFORM 「んむ…ちゅ……ぷぁっ、またシたくなっちゃいましたか？　ふふっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMW 「%CNAME(MASTER)%の身体も心配ですし……うーん……」
+		PRINTFORM 「おやすみするまでリリーがなでなでしてあげますから、今日はそれで我慢してくださいね
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　母親に抱かれた子供のように%CALLNAME:MASTER%はいつの間にか深い眠りに落ちていた…
+		PRINTL  
+		PRINTFORMDW 　小さな手が%CALLNAME:MASTER%の頭を優しく撫でている、%CALLNAME:MASTER%は性欲の充実だけでは得られない確かな幸福を感じているようだ…
+		PRINTFORMDW 　リリーは全身を%CALLNAME:MASTER%の精で満たされ、心地よい疼きに小さく身を震わせた…
+		PRINTL  
+		PRINTFORMW 濃厚な精を注ぎ込まれ、リリーは全身が性感帯になった
+		;素質付与、本体側で行動ルーチンや快楽SAUSEの対応があれば消すかも
+		;現状、素のリリーだとA/B絶頂は発生しなそう
+			;TALENT:狂気 = 1	行動ルーチンもかなり変わりそうなので保留
+			TALENT:Ｖ敏感 = 1
+			TALENT:Ｂ敏感 = 1
+			TALENT:Ａ敏感 = 1
+			TALENT:Ｃ敏感 = 1
+			TALENT:おもらし癖 = 1
+			TALENT:倒錯的 = 1
+		RETURN 1
+	ENDIF
+
+	;-------------------------------------------------
+	;性交奉仕中　\@ TEQUIP:性交奉仕中 == 6 ? アナル # 秘裂 \@
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && TEQUIP:性交奉仕中
+		PRINTFORM 「おちんちん、抜いちゃいますね……んっ……はぁんっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーはゆっくりと腰を浮かせて、\@ TEQUIP:性交奉仕中 == 6 ? 菊門 # 秘裂 \@から硬く張り詰めた怒張を引き抜いていく…
+		PRINTFORMDW 　溢れ出した精液を塗りつけるように陰茎の上で腰をくねらせ、甘い吐息を漏らしながら情事の余韻を愉しんでいる…
+		PRINTFORM 「ねぇ、リリーの\@ TEQUIP:性交奉仕中 == 6 ? おしりの穴 # おまんこ \@の感触、どうでしたか
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORM 「こんなに%RAND_SPLIT("精液/ザーメン")%ぴゅっぴゅしたんだもん…嘘ついてもバレバレですからねっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーは%CALLNAME:MASTER%の腰の上でＭ字に足を開き、真っ白に染まった\@ TEQUIP:性交奉仕中 == 6 ? 菊門 # 秘裂 \@を開いて見せた…
+	RETURN 1
+	ENDIF
+
+	;-------------------------------------------------
+	;性交中　\@ TEQUIP:性交中 == 6 ? アナル # 秘裂 \@
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && TEQUIP:性交中
+		PRINTFORM 「おちんちん、抜いちゃいますね……んっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーのペニスがゆっくりと引き抜かれ、%CALLNAME:MASTER%の\@ TEQUIP:性交中 == 6 ? アナル # ヴァギナ \@から大量の精液が『ごぽっ』と溢れ出す…
+		PRINTFORM 「%CNAME(MASTER)%の\@ TEQUIP:性交中 == 6 ? おしり # おまんこ \@、もうすっかり%RAND_SPLIT("精液/ザーメン")%の味を覚えちゃったね
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORM 「また今度たっぷり犯してあげますから……今日はゆっくり休んでくださいね
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーは悪戯な笑みを浮かべ、苦し気に喘ぐ%CALLNAME:MASTER%にそっと口づけをした……
+	RETURN 1
+	ENDIF
+
+	;=================================================
+	;その他・条件なし
+;	疲労時の口上と同じ、余裕があれば書き分ける
+	;☆目印
+	;=================================================
+	IF 口上記入チェック(100)
+		SELECTCASE RANDEVENT(4, 14)
+			;抱き枕
+			CASE 0
+				PRINTFORMW 「%RAND_SPLIT("疲れちゃいましたか？/もうクタクタですね♪")%」
+				PRINTFORMW 「ほら、リリーをぎゅってしていいですよ……」
+				PRINTFORMW 「%RAND_SPLIT("あっ…んぅ/んっ…はぁ")%…あったかい……」
+				PRINTFORM 「ねぇ、今日はこのまま寝ちゃいましょうか……ふふっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMDW リリー%RAND_SPLIT("を抱き枕にして/を抱きしめながら/と絡み合うようにして/の体温を感じながら")%、%CALLNAME:MASTER%は深い眠りに落ちていった…
+			;ごはん
+			CASE 1
+				PRINTFORM 「%RAND_SPLIT("気持ち良かったね/もうクタクタだね")%……ふふっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「何か精のつくもの作ってきますから、%CNAME(MASTER)%はもう少し休んでいてくださいねっ♪」
+				PRINTFORMDW 　リリーは%RAND_SPLIT("台所に立ち/エプロンを身に着け/裸のままエプロンだけを身に着け")%、鼻歌を歌いながら料理を始めた…
+			;いちゃいちゃ
+			CASE 2
+				PRINTFORMW 「ふふっ♪　たくさんイっちゃいましたね♪」
+				PRINTFORMW 「リリーも%CNAME(MASTER)%の精で、お腹いっぱいになっちゃいましたっ♪」
+				PRINTFORM 「いつもありがとうごさいます……%RAND_SPLIT("大好きですよ/だーいすきっ")%
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMDW 　リリーに押し倒され、%CALLNAME:MASTER%は唇を奪われた…
+				PRINTFORMDW 　そのまま眠り落ちるまで、二人は夢中でお互いを求め合った……
+			;妖精按摩
+			CASEELSE
+				PRINTFORMW 「%RAND_SPLIT("疲れちゃったみたいですね/もうクタクタだね")%……ふふっ♪」
+				PRINTFORMW 「おいで……リリーがマッサージしてあげますからねっ」
+				PRINTFORM 「%CNAME(MASTER)%が元気になれるように……精一杯もみもみしちゃいますねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMDW 　%CALLNAME:MASTER%は%RAND_SPLIT("夢見心地でリリーのマッサージを受けている…/リリーが満足するまで もみもみされてしまった！！")%
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;溺愛（好感度2000以上）
+;-------------------------------------------------
+;・調教者の方が調教対象にはまってしまい、深かったり倒錯した愛を注いでいる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && FAVOR(0, 2000)
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(40)
+		PRINTFORMDW ………
+		PRINTFORMDW ……
+		PRINTFORMDW …
+		PRINTL  
+		PRINTL  
+		PRINTFORMDW リリーは%CALLNAME:MASTER%に対し、深い愛情を抱いているようだ…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		IF RAND:2 == 0
+			PRINTFORMW 「」
+		ELSE
+			PRINTFORMW 「」
+			PRINTFORMW 「」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教済み（好意1000以上）
+;・調教対象が口上主に調教されるのを幸せに感じている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && FAVOR(1000, 1000)
+	;=================================================
+	;調教済み初回（好意1000以上）　\@ TALENT:MASTER:オトコ ? しこしこ # くちゅくちゅ \@
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(50)
+		PRINTFORMDW ………
+		PRINTFORMDW ……
+		PRINTFORMDW …
+		PRINTL  
+		PRINTFORM 「ほらほらっ、もうイっていいですよっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORM 「リリーのおててでっ、思いっ切り\@ TALENT:MASTER:オトコ ? ぴゅっぴゅ # イっちゃって \@くださいねっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　その言葉を合図に%CALLNAME:MASTER%は悲鳴のような嬌声を上げながら、リリーの手の中に大量の\@ TALENT:MASTER:オトコ ? ザーメンを吐き # 潮を噴き \@出した…
+		PRINTFORMDW 　最後の一滴まで精を搾り尽くされ、%CALLNAME:MASTER%は糸の切れた人形のように力なくベッドの上に倒れ込む…
+		PRINTFORM 「あははっ
+		CALL HEARTCB
+		PRINTFORM  すごいすごいっ
+		CALL HEARTCB
+		PRINTFORM  いっぱい\@ TALENT:MASTER:オトコ ? 射精 # 出 \@しちゃいましたねぇ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORM 「えへへっ……もう限界みたいですし、今日はここまでにしてあげますねっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTFORMDW 　リリーは慣れた手つきで、愛液に塗れた%CALLNAME:MASTER%の身体を丁寧に拭き上げる…
+		PRINTFORMDW 　いまだ夢見心地の%CALLNAME:MASTER%に慈しむような口づけをして、リリーは上機嫌で調教部屋から出ていった…
+		PRINTFORMDW 　%CALLNAME:MASTER%は自室に戻った後も身体の火照りが収まらず、リリーを想いながら寝入るまで自身を慰め続けた…
+		;☆自慰経験取得↓
+		EXP:MASTER:自慰経験 += 1
+		PRINTL  
+		PRINTL 　自慰経験+1
+		PRINTL  
+		;↑
+		PRINTFORMDW %CALLNAME:MASTER%は順調に調教され、リリーに精を捧げることに幸せを感じ始めている…
+		RETURN 1
+	ENDIF
+
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		SELECTCASE RANDEVENT(3, 15)
+			;自慰管理
+			CASE 0
+				PRINTFORMW 「今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうかっ♪」
+				PRINTFORMW 「……%RAND_SPLIT("ひとりえっちなんて/オナニーなんて/ひとりでシたり")%しちゃ、ダメですよ？」
+				PRINTFORM 「ちゃんと我慢できたら、リリーがいっぱい\@ TALENT:MASTER:オトコ ? ぴゅっぴゅさせて # イかせて \@あげますからねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				IF TALENT:MASTER:オトコ
+					PRINTFORMDW リリーは人さし指と親指で輪っかを作ると、口の前で前後に動かして見せた…
+				ELSE
+					PRINTFORMDW リリーは%CALLNAME:MASTER%に手のひらを向けると、中指と薬指を折り曲げ細かに震わせて見せた…
+				ENDIF
+				PRINTFORMDW リリーの熱っぽい視線を受けて、%CALLNAME:MASTER%は再び下半身に血流が集まっていくのを感じた…
+			;妖精按摩
+			CASE 1
+				PRINTFORMW 「いっぱいイって、流石に疲れちゃいましたか？」
+				PRINTFORMW 「むぅ……仕方ないですね、ほらベッドに横になってくださいっ」
+				PRINTFORMW 「リリーのとっておきの%RAND_SPLIT("マッサージ/妖精按摩")%で、%RAND_SPLIT("スッキリさせて/リフレッシュさせて/たっぷり癒して")%あげますねっ♪」
+			;ごはん
+			CASEELSE
+				PRINTFORMW 「お腹も減っちゃいましたし、そろそろ%RAND_SPLIT("終わり/お休み")%にしましょうか」
+				PRINTFORMW 「実はですね……%CNAME(MASTER)%の大好物を作ってあるんですっ！」
+				PRINTFORMW 「リリー%RAND_SPLIT("が腕によりをかけた/の愛情が詰まったお")%料理ですよっ♪　どうですか、楽しみでしょうっ♪」
+				PRINTFORM 「ちょっと用意してきますから、%CNAME(MASTER)%はもう少し休んでいてくださいねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;嫌悪（好意-100未満）
+;-------------------------------------------------
+;・調教者に対し嫌悪感を抱いている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AFFECTION("嫌悪") && CFLAG:調教回数 > 7
+	;=================================================
+	;嫌悪初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(60)
+		PRINTFORMW 「怖い顔……」
+		PRINTFORMW 「まあ、リリーがしてる事を考えれば、当然の反応ですけど……」
+		PRINTFORMW 「ただね……%CNAME(MASTER)%に、一つだけ覚えておいて欲しい事があるの」
+		PRINTFORMW 「そんな顔をする子に優しく出来るほど、リリーも大人じゃないんですよ？」
+		PRINTL  
+		PRINTFORMDW %CALLNAME:MASTER%の明確な嫌悪の意思表示に、リリーは苛立ちを募らせている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		PRINTFORMW 「今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうか」
+		SELECTCASE RANDEVENT(5, 16)
+			CASE 0
+				PRINTFORMW 「……リリーは%CNAME(MASTER)%と仲良くなりたいんですけど、やっぱり難しいみたいですね……」
+			CASE 1
+				PRINTFORMW 「……リリーは%CNAME(MASTER)%と仲良くなりたいんですけど、%RAND_SPLIT("もう少し/まだ")%時間が必要みたいですね……」
+			CASE 2
+				PRINTFORMW 「……嫌われる事には慣れてるつもりでしたけど、やっぱり堪えますね……」
+			CASE 3
+				PRINTFORMW 「……その態度、少しは改めてくれると嬉しいんですけどね」
+			CASEELSE
+				PRINTFORMW 「……ねぇ、いつまで意地を張ってるつもりなんですか？」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・心に傷を作られ、ご主人様の姿を見るだけで怯えてしまう
+;・トラウマの種は「%ACTSTR(CFLAG:MASTER:8)%」で表示できる
+;　例）PRINTFORMW 「もう%ACTSTR(CFLAG:MASTER:8)%は嫌ですって？」
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;恐怖（好意200未満・トラウマLv3以上）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AFFECTION("恐怖") && CFLAG:調教回数 > 5
+	;=================================================
+	;恐怖初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(70)
+		PRINTFORMW 「あのっ、そんなに怯えなくても大丈夫ですよ？」
+		PRINTFORMW 「もう調教は終わりましたし、嫌がる事はしないようにしますから……ね？」
+		PRINTL  
+		PRINTFORMDW 調教によって深いトラウマを刻まれた%CALLNAME:MASTER%は、リリーの姿を見ただけでビクリと身体を震わせてしまう…
+		PRINTFORMDW リリーは小動物のように震える%CALLNAME:MASTER%を見て、嗜虐的な快感を覚え始めている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100) && PERCENT(70)
+		IF RAND:2 == 0
+			PRINTFORMW 「ほら、今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしますから……そんなに%RAND_SPLIT("怯え/怖がら")%ないで、ね？」
+			PRINTFORMW 「……%RAND_SPLIT("あなたのペースで/焦らなくても")%いいですから、ゆっくり慣れていきましょうね」
+		ELSE
+			PRINTFORMW 「今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうか」
+			PRINTFORMW 「……怯える%CNAME(MASTER)%って、なんだか可愛いんですよね」
+			PRINTFORMW 「出来るだけ優しくしますけど、我慢できなくなっちゃったら……%RAND_SPLIT("あはは/その時は、ね/くす/ふふ")%っ♪」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;反抗（好意0以下・反抗刻印Lv1以上）
+;・心を開かない奴隷に苛つくご主人様
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AFFECTION("反抗") && CFLAG:調教回数 > 3
+	;=================================================
+	;反抗初回（好意0以下・反抗刻印Lv1以上）
+	;だいたい調教1～2日目
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(80)
+		PRINTFORMW 「ホームシックにはちょっと早過ぎませんか？」
+		PRINTFORMW 「それとも……リリーじゃ満足出来ないって事でしょうか」
+		PRINTFORMW 「確かにリリーは下手っぴですし、無理矢理な時もありますけど……むぅ…」
+		PRINTL  
+		PRINTFORMDW 反抗的な%CALLNAME:MASTER%の態度に、リリーは不満げな溜息を洩らした…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		SELECTCASE RANDEVENT(4, 17)
+			CASE 0
+				PRINTFORMW 「今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうか」
+				PRINTFORMW 「まだ快感は感じないかもしれませんけど、リリーが%RAND_SPLIT("じっくり/ゆっくり")%慣らしてあげますから……」
+				PRINTFORMW 「また明日、%RAND_SPLIT("楽しみにしていてくださいね♪/おやすみなさい……")%」
+			CASE 1
+				PRINTFORMW 「あの、%RAND_SPLIT("疲れちゃいました/大丈夫です")%か？」
+				PRINTFORMW 「……今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうね」
+				PRINTFORMW 「%RAND_SPLIT("あなたのペースで/焦らなくても")%いいですから、ゆっくり慣れていきましょうね……」
+			CASE 2
+				PRINTFORMW 「%CNAME(MASTER)%が恥ずかしがり屋さんなのは知ってますけど……」
+				PRINTFORMW 「%RAND_SPLIT("恥ずかしがらないで/快感を我慢しないで")%素直になってくれたら、もっと気持ち良くしてあげられると思うんです」
+				PRINTFORMW 「あっ、もちろん無理強いはしませんから安心してくださいね」
+			CASEELSE
+				PRINTFORMW 「なかなか慣れませんね……むぅ……」
+				PRINTFORMW 「そうだ、%RAND_SPLIT("少し気分転換でもし/何か美味しいものでも作り")%ましょうか？」
+				PRINTFORMW 「調教ばっかりだと、気が滅入っちゃいますもんねっ♪」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;目覚め（好意500以上）
+;・調教されるのもむしろ好きになってきたかも知れない…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && FAVOR(500, 500)
+	;=================================================
+	;目覚め初回（好意500以上）　\@ TALENT:MASTER:オトコ ? しこしこ # くちゅくちゅ \@
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(90)
+		PRINTFORMDW ………
+		PRINTFORMDW ……
+		PRINTFORMDW …
+		PRINTL  
+		PRINTFORMW 「ねぇねぇ、%CNAME(MASTER)%って一人でする時、何をオカズにしてるんですか？」
+		PRINTFORMDW 　思いがけない問いかけに、%CALLNAME:MASTER%はピタリと動きを止める…
+		PRINTFORMDW 　調教中にリリーをオカズに自慰をさせられる事はあったが、それと自分でするのはまた別問題だった…
+		PRINTFORMDW 　リリーは答えを急かすように、愛らしい瞳でじっと%CALLNAME:MASTER%を見つめている…
+		PRINTFORMDW 　%CALLNAME:MASTER%の答えは…
+		PRINTL  
+
+		;ここから選択↓
+		$INPUT_LOOP10
+		PRINTFORMDL [1]リリーです、我慢できませんでした…
+		PRINTFORMDL [2]誤魔化します、恥ずかしくて言えません…
+		INPUT
+		IF RESULT != 1 && RESULT != 2
+			GOTO INPUT_LOOP10
+		;リリーがオカズです
+		ELSEIF RESULT == 1
+			PRINTFORMDW 　%CALLNAME:MASTER%は、リリーを想ってシていると答えた…
+			PRINTFORMDW 　普段は淫靡さなど微塵も感じさせない清麗にして可憐な少女が、
+			PRINTFORMDW 　ベッドの上では淫靡に腰をくねらせ、獣のように精を求めてくる…
+			PRINTFORMDW 　その背徳的なギャップに、%CALLNAME:MASTER%は自身の劣情を抑えきれなくなっていた…
+			PRINTFORMW 「ほんと…ですか？　えへへっ♪」
+			PRINTFORM 「そう言って貰えて、リリーはとっても嬉しいですっ
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTFORMW 「他の誰でもない、%CNAME(MASTER)%だから……ここ重要なので、間違わないでくださいね？」
+			PRINTFORMDW 　リリーは満足気に微笑みながら、いい子いい子するように何度も%CALLNAME:MASTER%の頭を撫でた…
+			PRINTFORMDW 　%CALLNAME:MASTER%は羞恥で首元まで紅くさせながら、『それじゃあリリーはどうなんだ』と尋ねた…
+			PRINTFORMW 「そんなの、答えは決まってるじゃないですか……」
+			PRINTFORM 「 ナ イ ショ ♪　ですよっ
+			CALL HEARTCB
+			PRINTFORMW 」
+		;誤魔化します
+		ELSE
+			PRINTFORMDW 　%CALLNAME:MASTER%は恥ずかしがって、適当に誤魔化そうとした…
+			PRINTFORMDW 　もちろん、目の前の少女を想って自身を慰めた事は何度もあった…
+			PRINTFORMDW 　しかし、それを直接本人に言うのは、流石に恥ずかしくてできなかった…
+			PRINTFORMW 「%CNAME(MASTER)%の口から直接聞いてみたかったんですけど……」
+			PRINTFORMW 「まぁ、その真っ赤なお顔が答えになっちゃってますし……今回は良しとしましょうっ♪」
+			PRINTFORMDW 　リリーはクスクスと愉し気に笑いながら、いい子いい子するように何度も%CALLNAME:MASTER%の頭を撫でた…
+		ENDIF
+		;↑選択ここまで
+
+		PRINTL  
+		PRINTFORMDW 　夜遅く、リリーが%CALLNAME:MASTER%の部屋に訪ねて来た…
+		PRINTFORMD 　リリーは%CALLNAME:MASTER%の手に布製の何かを押し付けると、『宿題ですよ
+		CALL HEARTCB
+		PRINTFORMDW 』と言い残し、すぐに部屋を出ていった…
+		PRINTFORMDW 　%CALLNAME:MASTER%の手の中には…たった今リリーが脱いだと思われるシルクの下着が握らされていた…
+		;☆自慰経験取得↓
+		EXP:MASTER:自慰経験 += 1
+		PRINTL  
+		PRINTL 　自慰経験+1
+		PRINTL  
+		;↑
+		PRINTFORMDW %CALLNAME:MASTER%は順調に調教され、奴隷としての自覚に目覚めつつあるようだ…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		SELECTCASE RANDEVENT(3, 18)
+			;自慰管理
+			CASE 0
+				PRINTFORMW 「今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうかっ♪」
+				PRINTFORMW 「……%RAND_SPLIT("ひとりえっちなんて/オナニーなんて/ひとりでシたり")%しちゃ、ダメですよ？」
+				PRINTFORM 「ちゃんと我慢できたら、リリーがいっぱい\@ TALENT:MASTER:オトコ ? ぴゅっぴゅさせて # イかせて \@あげますからねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				IF TALENT:MASTER:オトコ
+					PRINTFORMDW リリーは人さし指と親指で輪っかを作ると、口の前で前後に動かして見せた…
+				ELSE
+					PRINTFORMDW リリーは%CALLNAME:MASTER%に手のひらを向けると、中指と薬指を折り曲げ細かに震わせて見せた…
+				ENDIF
+				PRINTFORMDW リリーの熱っぽい視線を受けて、%CALLNAME:MASTER%は再び下半身に血流が集まっていくのを感じた…
+			;妖精按摩
+			CASE 1
+				PRINTFORMW 「いっぱいイって、流石に疲れちゃいましたか？」
+				PRINTFORMW 「むぅ……仕方ないですね、ほらベッドに横になってくださいっ」
+				PRINTFORMW 「リリーのとっておきの%RAND_SPLIT("マッサージ/妖精按摩")%で、%RAND_SPLIT("スッキリさせて/リフレッシュさせて/たっぷり癒して")%あげますねっ♪」
+			;ごはん
+			CASEELSE
+				PRINTFORMW 「お腹も減っちゃいましたし、そろそろ%RAND_SPLIT("終わり/お休み")%にしましょうか」
+				PRINTFORMW 「実はですね……%CNAME(MASTER)%の大好物を作ってあるんですっ！」
+				PRINTFORMW 「リリー%RAND_SPLIT("が腕によりをかけた/の愛情が詰まったお")%料理ですよっ♪　どうですか、楽しみでしょうっ♪」
+				PRINTFORM 「ちょっと用意してきますから、%CNAME(MASTER)%はもう少し休んでいてくださいねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;順応（好意100以上・好感度100以上）
+;・丁寧に調教を進められて、思ったより嫌じゃないかも…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && FAVOR(100, 100)
+	;=================================================
+	;順応初回（好意100以上・好感度100以上）
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(100)
+		PRINTFORMDW ………
+		PRINTFORMDW ……
+		PRINTFORMDW …
+		PRINTL  
+		PRINTFORMDW 　調教が一段落つき、%CALLNAME:MASTER%とリリーはベッドに並んで腰掛け、身体を休めている…
+		PRINTFORMW 「最近ね、%CNAME(MASTER)%の反応が変わってきたんですけど……気付いてますか？」
+		PRINTFORMW 「いえ、自覚がないならいいんです……それはそれで面白いですし、ふふっ♪」
+		PRINTFORMDW 　リリーは愛らしい笑顔を%CALLNAME:MASTER%に向け、くすくすと笑っている…
+		PRINTFORMDW 　年相応に幼く儚げなこの妖精と、精を求めて淫蕩に微笑む調教者の姿がどうしても重ならなかった…
+		PRINTFORMDW 　夢でも見ているんだろうと言われた方が、よほど現実味がある…
+		PRINTFORMW 「まだまだリリーもヘタっぴですし、できないこともいっぱいありますけど……」
+		PRINTFORMW 「%CNAME(MASTER)%と一緒に、色んな事を覚えていけたらなって……そう思ってるんです」
+		PRINTFORMDW 　少し照れたような可憐な笑みに、%CALLNAME:MASTER%はしばし見惚れてしまった…
+		PRINTL  
+		PRINTFORMDW 調教は順調に進んでいるようだ…
+		PRINTFORMDW %CALLNAME:MASTER%は、リリーによる調教を受け入れ始めている…
+		RETURN 1
+	ENDIF
+
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		SELECTCASE RANDEVENT(4, 19)
+			CASE 0
+				PRINTFORMW 「今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうか」
+				PRINTFORMW 「まだ快感は感じないかもしれませんけど、リリーが%RAND_SPLIT("じっくり/ゆっくり")%慣らしてあげますから……」
+				PRINTFORMW 「また明日、%RAND_SPLIT("楽しみにしていてくださいね♪/おやすみなさい……")%」
+			CASE 1
+				PRINTFORMW 「あの、%RAND_SPLIT("疲れちゃいました/大丈夫です")%か？」
+				PRINTFORMW 「……今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうね」
+				PRINTFORMW 「%RAND_SPLIT("あなたのペースで/焦らなくても")%いいですから、ゆっくり慣れていきましょうね……」
+			CASE 2
+					PRINTFORMW 「%CNAME(MASTER)%が恥ずかしがり屋さんなのは知ってますけど……」
+					PRINTFORMW 「%RAND_SPLIT("恥ずかしがらないで/快感を我慢しないで")%素直になってくれたら、もっと気持ち良くしてあげられると思うんです」
+					PRINTFORMW 「あっ、もちろん無理強いはしませんから安心してくださいね」
+			CASEELSE
+					PRINTFORMW 「なかなか慣れませんね……むぅ……」
+					PRINTFORMW 「そうだ、%RAND_SPLIT("少し気分転換でもし/何か美味しいものでも作り")%ましょうか？」
+					PRINTFORMW 「調教ばっかりだと、気が滅入っちゃいますもんねっ♪」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;序盤（条件なし）
+;-------------------------------------------------
+;・ここまでの条件にヒットしなかった場合
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(110)
+		PRINTFORMDW ………
+		PRINTFORMDW ……
+		PRINTFORMDW …
+		PRINTL  
+		PRINTFORMW 「今日はここまでにしましょうか？」
+		PRINTFORMW 「初日からちょっと張り切り過ぎちゃいましたね……すみません」
+		PRINTFORMW 「ほら、おいで……%CNAME(MASTER)%のお部屋まで案内します」
+		PRINTFORMDW 　リリーは呆然と立ち尽くす%CALLNAME:MASTER%の手を取り、ゆっくりと歩き出す…
+		PRINTFORMDW 　調教部屋を出てすぐに浴室と洗面所、小さな物置部屋を挟んで、%CALLNAME:MASTER%の部屋はその隣にあった…
+		PRINTFORMW 「必要なものは揃ってると思いますけど、何かあれば言ってくださいね」
+		PRINTFORMW 「……聞こえてない、かな」
+		PRINTFORMW 「また明日……おやすみなさい、いい夢を……」
+		PRINTFORMDW 　『ギイィ』と重苦しい音が鳴り、扉が閉まる…
+		PRINTFORMDW 　鍵は掛かっていないようだったが、今の%CALLNAME:MASTER%にそれを確かめる気力は残っていない…
+		PRINTFORMDW 　リリーの言う『また明日』に儚い希望を抱き、%CALLNAME:MASTER%は深い眠りに落ちていった……
+		RETURN 1
+	ENDIF
+
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		SELECTCASE RANDEVENT(3, 20)
+			CASE 0
+				PRINTFORMW 「今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうか」
+				PRINTFORMW 「まだ快感は感じないかもしれませんけど、リリーが%RAND_SPLIT("じっくり/ゆっくり")%慣らしてあげますから……」
+				PRINTFORMW 「また明日、%RAND_SPLIT("楽しみにしていてくださいね♪/おやすみなさい……")%」
+			CASE 1
+				PRINTFORMW 「あの、%RAND_SPLIT("疲れちゃいました/大丈夫です")%か？」
+				PRINTFORMW 「……今日は%RAND_SPLIT("ここまで/もう終わり/もうお休み")%にしましょうね」
+				PRINTFORMW 「%RAND_SPLIT("あなたのペースで/焦らなくても")%いいですから、ゆっくり慣れていきましょうね……」
+			CASEELSE
+				PRINTFORMW 「なかなか慣れませんね……むぅ……」
+				PRINTFORMW 「そうだ、%RAND_SPLIT("少し気分転換でもし/何か美味しいものでも作り")%ましょうか？」
+				PRINTFORMW 「調教ばっかりだと、気が滅入っちゃいますもんねっ♪」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+;＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+;普通に終了
+	;RETURN 1
+;ENDIF //コメントアウトしておきます@/L
+;＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+;メモ　RANDEVENT（12～20）

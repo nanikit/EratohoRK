@@ -1,0 +1,3366 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;		雛口上　調教イベント口上ファイル
+;
+;	絶頂など、調教中に発生するイベントをまとめたファイル
+;
+;Version		Reason
+;1.11			@口上記入チェック仕様に。EV20とその他をファイル分け
+;1.07			全体的に見直し。一部条件の書き直し等
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;EV20, 絶頂口上
+;========================================================================
+;・調教者か調教対象が絶頂に達するときに表示
+;・各絶頂は個別の呼び出しを持たずに、全て派生で処理される
+;-------------------------------------------------
+;ファイル名がTRAINとなっているが、分類上はあくまでもイベント口上である事に注意
+;故に使うべき初回判定関数はFIRSTEVENTになる
+;FIRSTEVENTなら呼び出し毎に番号が管理されるのでFIRSTTIMEに比べると管理はかなり楽になるはず
+;-------------------------------------------------
+;=================================================
+;関連変数…
+;TFLAG:前回中出し
+;	1=Ｖ性交/2=Ｖ性交奉仕/3=Ｖ性交(空射)/4=Ｖ性交奉仕(空射)
+;	5=Ａ性交/6=Ａ性交奉仕/7=Ａ性交(空射)/8=Ａ性交奉仕(空射)
+;TFLAG:REACT分類
+;	0=なし/1=消極的従う/2=積極的従う/3=許しを乞う/4=暴れる
+;	5=要求に応じない,拒否/6=逃げる,もがく
+;NOWEX:射精
+;	1=空射精/2=射精/3=大量射精/4=射精(早漏)/5=前立腺射精
+;TEQUIP:自慰中
+;	(bit0=調教対象/bit1=調教者)
+;
+;//キャラ参照に関わるTFLAG類は可能な限り多次元配列であるTCVARに移していきたいとう意向
+;//"TFLAG:HOGE"等で数値で参照するキャラ分けるより"TCVAR:MASTER:HOGE"等の方がより判りやすく、間違いも減らせる
+;//関数化するのも容易になり、リセットも実装する側の任意の箇所で行える
+;//まぁ後方互換をいきなり切ることはないので、その点は安心してほしい
+;
+;TCVAR:噴乳
+;	(1=空噴乳/2=噴乳/3=大量噴乳)
+;TCVAR:射精
+;	(1=空射精/2=射精/3=大量射精/4=射精(早漏)/5=前立腺射精)
+;TCVAR:潮吹き
+;	(1=潮吹き/2=大量潮吹き)
+;TCVAR:空射精
+;	(1=通常の空射精/2=前立腺刺激による空射精)
+;=================================================
+;関数類…
+;
+;MASTER_EX
+;引　数:ARG:0…愛撫者→1.調教対象自身/2.調教者/4.助手１/8.助手２/16.助手３
+;                      /64.道具/128.便所利用者　省略すると愛撫者を問わない
+;              ビット和での指定が可能
+;       ARG:1…(省略可)絶頂の種別→1.Ｃ絶頂/2.Ｖ絶頂/3.Ａ絶頂/4.Ｂ絶頂
+;                                  /11.噴乳/12.射精/13.放尿
+;ARG:0 (bit0 = 調教対象自身/bit1 = 調教者/bit2 = 助手１/bit3 = 助手２/bit4 = 助手３/bit6 = 道具/bit7 = 便所利用者)
+;-------------------------------------------------
+;TARGET_EX
+;引　数:ARG:0…愛撫者→1.調教対象/2.調教者自身/4.助手１/8.助手２/16.助手３
+;              ビット和での指定が可能。省略すると愛撫者を問わない
+;       ARG:1…(省略可)絶頂の種別→1.ｃ絶頂/2.ｖ絶頂/3.ａ絶頂/4.ｂ絶頂
+;                                  /11.噴乳/12.射精
+;ARG:0 (bit0 = 調教対象/bit1 = 調教者自身/bit2 = 助手１/bit3 = 助手２/bit4 = 助手３)
+;-------------------------------------------------
+;初回判定関数等…
+;FIRSTEVENT
+;	初回EVENT判定関数　TFLAG:イベント番号（TFLAG:10）を自動で参照し、
+;	現在発生しているEVENTごとに番号が独立して保存される
+;ONCEEVENT
+;	調教内初回EVENT判定関数　調教毎にリセットされる
+;	他の仕様はFIRSTEVENTと同様
+;RANDEVENT
+;	RAND処理でイベント種類ごとの番号を返すが、全種見るまで同じ数字は返さない
+;	全て表示した際に初期化される
+;-------------------------------------------------
+;コマンド参照関数等…
+;IS_NOWACTNAME
+;	現在のACT名称と合致すれば真を返す
+;IS_PREVACTNAME
+;	前回のACT名称と合致すれば真を返す
+;IS_COMGRONAME
+;	現在のREACT分類名称と合致すれば真を返す
+;IS_NOWCOMNAME
+;	現在のCOM名称と合致すれば真を返す
+;GET_ACTNAME
+;	ACT番号からACT名称を取得する
+;GET_NORMALACTNUM
+;	コンビネーション、ＳＰアクション番号から派生前ACT番号を取得する
+;-------------------------------------------------
+;絶頂系参照関数等…
+;GET_SHOOTING/SHOOTING
+;	TCVAR:射精に対応。文字列で射精種を参照
+;GET_SPLAYING_MILK/SPLAYING_MILK
+;	TCVAR:噴乳に対応。文字列で噴乳種を参照
+;GET_SQUIRTING/SQUIRTING
+;	TCVAR:潮吹きに対応。文字列で潮吹き種を参照
+;GET_DRY_CUM/DRY_CUM
+;	TCVAR:空射精に対応。文字列で空射精種を参照
+;-------------------------------------------------
+@KOJO_MALE_EVENT_K39_20(ARG)
+;-------------------------------------------------
+;絶頂関係は個別の呼び出しを持たず、全てEVENT20内の派生として処理される
+;故に分岐の優先順位を間違うと死に口上を生み出す事になる
+;各NOWEX毎に最低限何かを設けないと違和感が生じやすくなる
+;突き詰めていくと分岐の可能性は無限に近い為、ある程度取捨選択する必要がある
+;(ASSI:1)や(ASSI:2)の助手関係、TARGETが主人であるか否か、絶頂させたのが誰か、とかキリがない
+;ACT, REACTの様にシステム的に汎用処理が用意されている訳ではないので、
+;場合によっては自作関数で汎用処理を設けてしまった方が楽かも知れない
+;個人的にはRev口上に於いて最も難易度が高く、最も手間が掛かる箇所と考えている
+;既存の口上は相応と手間と時間をかけているので、いきない真似しようとせずに
+;少しずつ書き足す、というくらいの気持ちでやるのがオススメ
+;-------------------------------------------------
+#LOCALSIZE 10
+#LOCALSSIZE 10
+VARSET LOCAL
+VARSET LOCALS
+RESULT = 0
+
+;────────────────────────────────────
+;膣内射精(調教対象→調教者)
+;────────────────────────────────────
+;・Ｖ性交奉仕系で膣内射精する場合に表示
+;・TFLAG:抜かずは抜かない判定ごとに+1される
+;・射精量による分岐は必要に応じ追加して使うのが望ましい
+;-------------------------------------------------
+IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 2, 4)
+	LOCALS:0 '= RAND_SPLIT("膣内/中/ナカ/なか")
+	LOCALS:1 '= RAND_SPLIT("射精/出/だ")
+	LOCALS:2 '= RAND_SPLIT("ん/あ/ふぁ/あぁ") + "っ"
+	;=================================================
+	;抜かずに続行（中出し後、性交奉仕系ACTに続く場合）
+	;=================================================
+	IF TFLAG:抜かず
+		;-------------------------------------------------
+		;同時絶頂(調教者が同時にＶ絶頂)
+		;-------------------------------------------------
+		IF TCVAR:TARGET:Ｖ絶頂 && TCVAR:MASTER:射精
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;焦らし中に絶頂
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF TCVAR:MASTER:焦らし度 > 1
+				SELECTCASE COMGRONAME(TFLAG:REACT分類)
+					;消極的従う
+					CASE "消極的従う"
+						PRINTFORMW （やだ……焦らしてるのにもどかしくなっちゃって……）
+					;積極的従う
+					CASE "積極的従う"
+						PRINTFORMW 「や、だめっ！ 焦らしてるのに…そんなにされたら、わたしがっ！」
+					;その他
+					CASEELSE
+						PRINTFORMW （やだ…焦らしてるのにイっちゃう、イかされちゃう……）
+				ENDSELECT
+				;汎用絶頂口上を呼ぶ
+				CALL TV_EX_K39
+				;TWAITで間を取る
+				TWAIT 500, 0
+				;地の文を呼ぶ
+				CALL EX_SITUATION_K39
+				RETURN 1
+			ENDIF
+			
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;同時絶頂：空射精
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF SHOOTING(MASTER, "空射精")
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 0)
+						CASE 0
+							PRINTFORM 「あっ！ %RAND_SPLIT("あ/は")%あぁぁ%RAND_SPLIT("ぁっ/")%っ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　イ%RAND_SPLIT("っちゃう/ク/く")%っ……イっちゃうっ！」
+							;射精エフェクトを呼ぶ
+							CALL SHOOT_VARIATION_K39
+							;射精エフェクトと絶頂エフェクトに間が欲しいのでTWAIT
+							TWAIT 500, 0
+							PRINTFORMW 「%RAND_SPLIT("っは/ぅ/ふ")%ぁっっ！？ な、%LOCALS:0%でビクビクして…ッ…あぁぁっ！！」
+						CASE 1
+							PRINTFORM 「%RAND_SPLIT("あ/ぅ/ふ")%あぁぁっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　あひぃっ！ きちゃうっ、なにかきちゃうっ！」
+							CALL SHOOT_VARIATION_K39
+							TWAIT 500, 0
+							PRINTFORMW 「っひぁぁっ！？ %RAND_SPLIT("ダメッ/や")%、だめぇっっ！ イ、くぅぅっ…ッ…！」
+					ENDSELECT
+				;その他
+				ELSE
+					;RANDEVENT(1)
+					SELECTCASE RANDEVENT(2, 1)
+						CASE 0
+							PRINTFORM 「あぁぁっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　あっ……出してぇっ！ %LOCALS:0%に%LOCALS:1%してくださいっ！」
+							CALL SHOOT_VARIATION_K39
+							TWAIT 500, 0
+							PRINTFORMW 「っふあぁぁっ！？ 出されてないのにッ……イっちゃうっ！ イっちゃいますっ…ッ…！」
+						CASE 1
+							PRINTFORM 「ああぁんっ
+							CALL PRINT_SYMBOL2_K39
+							PRINTFORMW 　んっくぅっ……イきますっ、イきますぅっっ……！」
+							CALL SHOOT_VARIATION_K39
+							TWAIT 500, 0
+							PRINTFORMW 「んぁぁっ！？ な、中で、ビクビクしてぇっ……イ、くぅぅっ…ッ…！」
+					ENDSELECT
+				ENDIF
+				;終端でまとめてQUAKE
+				CALL QUAKE(4)
+				;TWAITで間を取る
+				TWAIT 500, 0
+				;地の文を呼ぶ
+				CALL EX_SITUATION_K39
+				RETURN 1
+			ENDIF
+			
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;同時絶頂：空射精以外の場合
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF GROUPMATCH(GET_SHOOTING(MASTER), "射精", "大量射精", "早漏", "前立腺射精") > 0
+				;膣内射精と同時にｖ絶頂口上関数(失笑)
+				CALL TV_EX2_K39
+				;TWAITで間をとる
+				TWAIT 500, 0
+				;地の文を呼ぶ
+				CALL EX_SITUATION_K39
+				RETURN 1
+			ENDIF
+		ENDIF
+		
+		;以下、抜かず＆射精のみの場合
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精")
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(2, 2)
+					CASE 0
+						PRINTFORM 「あぁぅっ、あぁっ
+						CALL PRINT_SYMBOL2_K39
+						PRINTFORMW 　な、%LOCALS:0%で……ビクビクしてるけど……」
+					CASE 1
+						PRINTFORMW 「んっ、ねぇ、もう出ないの？ なんか物足りない……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(2, 3)
+					CASE 0
+						PRINTFORM 「あぁぅっ、あぁっ
+						CALL PRINT_SYMBOL2_K39
+						PRINTFORMW 　な、%LOCALS:0%で……ビクビクしてるけど……」
+					CASE 1
+						PRINTFORMW 「うふっ、流石にもう限界みたいですね？」 
+						PRINTFORM 「ちょっと物足りない感じもしますけど…
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;大量射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "大量射精")
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				;RANDEVENT(4)
+				SELECTCASE RANDEVENT(2, 4)
+					CASE 0
+						PRINTFORM 「っふぁっッ！？ 出てるっ、いっぱい出てるっ…ッ…
+						CALL PRINT_SYMBOL2_K39
+						PRINTFORMW 「ひ、\@ TENSION(TARGET, 8) == "高い" ? 雛 # わたし \@っ……神様なのに……ママになっちゃうよぉっっ……！！」
+					CASE 1
+						PRINTFORM 「ああぁっ！？ やっ、ダメぇっ
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　そんなに注いだら……溢れちゃうっ！」
+						PRINTFORMW 「んぁぁっ、だめぇッ……出ちゃう！ \@ TENSION(TARGET, 8) == "高い" ? おまんこ # 中 \@から、厄が出ちゃう\@ TENSION(TARGET, 8) == "高い" ? よぉ # \@っっ…ッ…！」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(2, 5)
+					CASE 0
+						PRINTFORMW 「っはぁっっ！？ 出てるっ、な、%LOCALS:0%にこんなに注がれてっ…ッ…！」 
+						PRINTFORMW 「あぁっ！ だ、だめっ……厄が、溢れてしまいます……」
+					CASE 1
+						PRINTFORMW 「あぁぁっ！ す、凄いっ……まだ射精が止まらないんですね……」 
+						PRINTFORMW 「こんなに注ぎ込んで……この厄神を孕ませるつもりですか？」   
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;早漏
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "早漏")
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				;RANDEVENT(6)
+				SELECTCASE RANDEVENT(2, 6)
+					CASE 0
+						PRINTFORMW 「あぁっ！ な、%LOCALS:0%でビュクビュクって……」
+						PRINTFORMW 「そんなに気持ちよかったの…？」
+					CASE 1
+						PRINTFORMW 「あぁんっ、やだ、やだっ……早いっよっ」
+						PRINTFORMW 「これじゃ、なんか物足りないよ……」
+				ENDSELECT
+			;その他
+			ELSE
+				;RANDEVENT(7)
+				SELECTCASE RANDEVENT(2, 7)
+					CASE 0
+						PRINTFORMW 「あぁっ！ 出てる、%LOCALS:0%に出てる……」
+						PRINTFORMW 「そんなに溜まってたのですか？ いつも私で抜いてるはずなのに。うふっ……」
+					CASE 1
+						PRINTFORMW 「……もうイってしまったんですね」
+						PRINTFORM 「私はまだ満足してませんよ？ %CNAME(MASTER, TARGET)%には、もう少し頑張ってもらいます
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;その他の射精(射精=2, A責射精=5)
+		;-------------------------------------------------
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "射精", "前立腺射精")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINTFORML 「いっ、いいよっ……出してっ、%LOCALS:0%に出してっ！」
+				CALL FLASH(1)
+				;精液中毒LV分岐
+				SELECTCASE ABL:TARGET:精液中毒
+					;精液中毒LV6以上
+					CASE IS >= 6
+						PRINTFORMW 「あぁぁっ！ 好きっ！ %LOCALS:0%に出されるのが堪らないのっ！」
+						PRINTFORMW 「%TNAME_K39()%は、%TNAME_K39()%はっ！ 精液大好きな、駄目な神様なのぉっっ…ッ…！」
+					;精液中毒LV3以上
+					CASE IS >= 3
+						PRINTFORMW 「あぁぁっ！ 出てるっ、%LOCALS:0%に出されるの大好き……」
+					;精液中毒LV3未満
+					CASEELSE
+						PRINTFORMW 「あぁっ！ 出てるっ、お腹の中、あったかい……」
+				ENDSELECT
+			;その他
+			ELSE
+				PRINTFORML 「いっ、いいですよっ……出して、私の%LOCALS:0%に%LOCALS:1%してくださいっ！」
+				CALL FLASH(1)
+				;精液中毒LV分岐
+				SELECTCASE ABL:TARGET:精液中毒
+					;精液中毒LV3以上
+					CASE IS >= 3
+						PRINTFORMW 「あぁぁっ！ 出てるっ、%LOCALS:0%に%LOCALS:1%されるの、癖になってしまいます……」
+					;精液中毒LV3未満
+					CASEELSE
+						PRINTFORMW 「あぁっ！ 出てるっ、私の%LOCALS:0%に……厄がいっぱい……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	;抜かず以外を処理
+	;=================================================
+	;調教者が同時にｖ絶頂
+	;=================================================
+	IF TCVAR:TARGET:Ｖ絶頂 && TCVAR:MASTER:射精 ;&& !TFLAG:抜かず
+		;-------------------------------------------------
+		;焦らし中に
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 > 1
+			SELECTCASE COMGRONAME(TFLAG:REACT分類)
+				CASE "消極的従う", "許しを乞う"
+					PRINTFORMW （やだ……焦らしてるのにもどかしくなっちゃって……）
+				;積極的従う
+				CASE "積極的従う", "平然と従う"
+					PRINTFORMW 「や、だめっ！ 焦らしてるのに…そんなにされたら、わたしがっ！」
+				;その他
+				CASEELSE
+					PRINTFORMW （やだ…焦らしてるのにイっちゃう、イかされちゃう……）
+			ENDSELECT
+			CALL TV_EX_K39
+			;TWAITで間を取る
+			TWAIT 500, 0
+			;地の文を呼ぶ
+			CALL EX_SITUATION_K39
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精")
+			;2/3の確率で表示
+			IF RAND:3
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					;Lで改行しエフェクト呼んで間を取る
+					SELECTCASE RANDEVENT(2, 8)
+						CASE 0
+							PRINTFORM 「あああぁぁんっ！ あぅっ、あぁっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　こんなのっ、こんなのぉ！」
+						CASE 1
+							PRINTFORM 「ひぁぁっっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　もうっ、もうぅっ……イっちゃうっ！ イっちゃうよぉっっ！！」
+					ENDSELECT
+					;射精エフェクト
+					CALL SHOOT_VARIATION_K39
+					;間を取る
+					TWAIT 500, 0
+					SELECTCASE RANDEVENT(2, 9)
+						CASE 0
+							PRINTFORMW 「っはぁっっ！？ な、%LOCALS:0%でビクビクさせちゃダメぇぇっっ…ッ…！！」
+						CASE 1
+							PRINTFORMW 「っひぁぁっ！？ ダメッ、だめぇっっ！ ちゃんと%LOCALS:1%してくれないと……だめぇぇっっ…ッ…！」
+					ENDSELECT
+				;それ以外
+				ELSE
+					;RANDEVENT(10)
+					SELECTCASE RANDEVENT(2, 10)
+						CASE 0
+							PRINTFORM 「あぁぁっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　あっ……出してぇっ！ %LOCALS:0%に%LOCALS:1%してくださいっ！ 」
+						CASE 1
+							PRINTFORM 「ああぁんっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　んっくぅっ……イきますっ、イきますぅっっ……！」
+					ENDSELECT
+					CALL SHOOT_VARIATION_K39
+					TWAIT 500, 0
+					;RANDEVENT(11)
+					SELECTCASE RANDEVENT(2, 11)
+						CASE 0
+							PRINTFORMW 「っふあぁぁっ！？ 出されてないのにッ……イっちゃうっ！ イっちゃいますっ…ッ…！」
+						CASE 1
+							PRINTFORMW 「んぁぁっ！？ な、%LOCALS:0%で、ビクビクしてぇっ……イくぅぅっ…ッ…！」
+					ENDSELECT
+				ENDIF
+				;TV_EX2_K39のQUAKEと被るのでここでQUAKE
+				CALL QUAKE(4)
+			;1/3の確率で汎用絶頂口上
+			ELSE
+				;汎用絶頂口上(QUAKEは関数内にあるのでここでは呼ばない)
+				CALL TV_EX2_K39
+			ENDIF
+			;TWAITで間を取る
+			TWAIT 500, 0
+			;地の文を呼ぶ
+			CALL EX_SITUATION_K39
+			RETURN 1
+		ENDIF
+		
+		;なんとなく汎用化しようと思ったけど中止に
+		;代わりに確率で汎用処理を呼ぶ
+		;-------------------------------------------------
+		;大量射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "大量射精")
+			;2/3の確率で表示
+			IF RAND:3
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 12)
+						CASE 0
+							PRINTFORM 「あっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORM 　あぁっ……ダメっ、ダメぇっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　お、奥っ、突いちゃだめぇぇっっ！！」
+						CASE 1
+							PRINTFORM 「イかせてっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　イかせてぇぇっ！！ もっと犯してっ！ 子宮の中まで犯してよぉっ…ッ…！」
+					ENDSELECT
+					CALL SHOOT_VARIATION_K39
+					TWAIT 500, 0
+					SELECTCASE RANDEVENT(2, 13)
+						CASE 0
+							PRINTFORMW 「っふぁぁっ！？ そ、そんなっ……奥で出されたら、イっちゃうっ！ イっちゃうぅぅっっ…ッ…！！ 」
+						CASE 1
+							PRINTFORMW 「っひゃぁっ！？ お、奥で、ドピュドピュってっ……あ゛ぁぁぁっっ、イっ、くぅぅっっ！」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 14)
+						CASE 0
+							PRINTFORM 「いっ、いいですよっ……出してっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　私の%LOCALS:0%に、%LOCALS:1%してくださいッ……」
+						CASE 1
+							PRINTFORM 「あっ、はぁぁっ……あぁっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　イかせてっ、イかせてくださいッ！」
+					ENDSELECT
+					CALL SHOOT_VARIATION_K39
+					TWAIT 500, 0
+					SELECTCASE RANDEVENT(2, 15)
+						CASE 0
+							PRINTFORMW 「ああぁぁっ！？ こ、こんなに出されてぇっ……私もっ、いっ、イきますぅぅっっ…ッ…！」
+						CASE 1
+							PRINTFORMW 「っひゃぁっ！？ し、子宮にビュクビュク当たってっ……イくっ、イくうぅっ…ッ…！！」
+					ENDSELECT
+				ENDIF
+				CALL QUAKE(4)
+			;1/3の確率で汎用絶頂口上を呼ぶ
+			ELSE
+				CALL TV_EX2_K39
+			ENDIF
+			;TWAITで間を取る
+			TWAIT 500, 0
+			;地の文を呼ぶ
+			CALL EX_SITUATION_K39
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;その他の射精(2=射精, 4=早漏, 5=前立腺射精)
+		;-------------------------------------------------
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "射精", "早漏", "前立腺射精")
+			;2/3の確率で表示
+			IF RAND:3
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 16)
+						CASE 0
+							PRINTFORM 「いっ、いいよっ……出してっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　中に%LOCALS:1%してぇっ！」
+						CASE 1
+							PRINTFORM 「やぁぁっ！ ダメっ、ダメぇっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　きちゃうっ！ %LOCALS:0%で%LOCALS:1%されたら、きちゃうよぉっ！」
+					ENDSELECT
+					CALL SHOOT_VARIATION_K39
+					TWAIT 500, 0
+					SELECTCASE RANDEVENT(2, 17)
+						CASE 0
+							PRINTFORM 「ああっ！？ あっ……イっちゃうっ、%LOCALS:0%に出されてぇっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORMW 　イっちゃうぅっ…ッ…！」
+						CASE 1
+							PRINTFORM 「っふあぁっ！？ も、もぅっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORMW 　イっ、くぅぅっっ…ッ…！」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 18)
+						CASE 0
+							PRINTFORM 「あ%RAND_SPLIT("あぁ/ぁん")%っ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　んんっ……イきますっ、イっちゃいますぅっ…ッ…！」
+						CASE 1
+							PRINTFORM 「やぁっ！ あぁ%RAND_SPLIT("ぁぁ")%っ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　だめぇっ……もうっ、もう私っ…ッ…！」
+					ENDSELECT
+					CALL SHOOT_VARIATION_K39
+					TWAIT 500, 0
+					SELECTCASE RANDEVENT(2, 19)
+						CASE 0
+							PRINTFORM 「っはぁぁっ！？ %LOCALS:0%にっ……、%LOCALS:1%されてぇっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORMW 　イっくぅぅっっ！」
+						CASE 1
+							PRINTFORM 「ああぁっ！？ %LOCALS:0%に…、熱いのがっ！ ふぁぁぁっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORMW 　はぁぁっっんっ…！！」
+					ENDSELECT
+				ENDIF
+				CALL QUAKE(4)
+			;1/3の確率で表示
+			ELSE
+				CALL TV_EX2_K39
+			ENDIF
+			;間を取る
+			TWAIT 500, 0
+			;地の文を呼ぶ
+			CALL EX_SITUATION_K39
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	;//抜かずなし。調教者のＶ絶頂なし
+	;=================================================
+	;焦らしから
+	;=================================================
+	IF TCVAR:MASTER:焦らし度 && TCVAR:MASTER:射精 ;&& ALLSAMES(0, TFLAG:抜かず, TCVAR:TARGET:Ｖ絶頂)
+		;//ALLSAMESは全て0なら真に、という意図。ALLTRUEとかALLFALSEとかの方が直感的に扱えるし、使う人に優しい気がする
+		;-------------------------------------------------
+		;焦らし中に
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 > 1
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINTFORMW 「あぁっ、出てる……%LOCALS:0%に出てる……」
+				PRINTFORMW 「%RAND_SPLIT("うふっ、そんなに気持ちよかった？/まだイかせるつもりはなかったんだけど。仕方ないわね…")%」
+			;それ以外
+			ELSE
+				PRINTFORMW 「あっ、%LOCALS:0%に出て……」
+				PRINTFORMW 「%RAND_SPLIT("ふふ、我慢出来なかったみたいですね♪/イかせてあげるつもりはなかったんですけど。仕方ないですね…")%」
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;トドメ（空射精）
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 == 1 && SHOOTING(MASTER, "空射精")
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(2, 20)
+					CASE 0
+						PRINTFORMW 「んっ！？ ビクビクしてるけど、出ないみたいね……」
+					CASE 1
+						PRINTFORMW 「んぁっ！？ イってるみたいだけど、もう出ないのね…」
+				ENDSELECT
+			;それ以外
+			ELSE
+				SELECTCASE RANDEVENT(2, 21)
+					CASE 0
+						PRINTFORMW 「あぁっ！？ ビクビクしてるけど、もう出ないみたいですね……」
+					CASE 1
+						PRINTFORMW 「んぁっ！？ イってるみたいですけど、出ませんね……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;これはINRANGEでもいいけど、ついGROUPMATCH＝サン使っちゃう。中身全部見えてる方が安心する
+		;-------------------------------------------------
+		;トドメ（射精）
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 == 1 && GROUPMATCH(GET_SHOOTING(MASTER), "射精", "大量射精", "早漏", "前立腺射精")
+			CALL SHOOT_VARIATION_K39
+			SELECTCASE RANDEVENT(2, 22)
+				CASE 0
+					PRINTFORMW 「あぁっ！？ 中で、%LOCALS:0%でビュクビュクって……」
+				CASE 1
+					PRINTFORM 「んぁっ！？ 熱いっ
+					CALL AUTOHEARTCB_K39
+					PRINTFORMW 　お腹の中%RAND_SPLIT("焼けちゃうっ！/、焼けそう……")%」
+			ENDSELECT
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	;//抜かずなし。調教者のＶ絶頂なし。焦らしなし
+	;=================================================
+	;その他射精（空射精）
+	;=================================================
+	IF SHOOTING(MASTER, "空射精") ;&& ALLSAMES(0, TFLAG:抜かず, TCVAR:TARGET:Ｖ絶頂, TCVAR:MASTER:焦らし度)
+		LOCALS:2 '= RAND_SPLIT("ん/あ/ふぁ/あぁ") + "っ"
+		CALL SHOOT_VARIATION_K39
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(2, 24)
+				CASE 0
+					PRINTFORM 「あぁぅっ、%LOCALS:2%
+					CALL AUTOHEARTCB_K39
+					PRINTFORMW 　な、%LOCALS:0%で……ビクビクしてるけど……」
+				CASE 1
+					PRINTFORM 「%LOCALS:2%
+					CALL AUTOHEARTCB_K39
+					PRINTFORMW 　ねぇ、もう出ないの？ \@ ABL:精液中毒 > 4 ? これじゃ物足りないんだけど # 仕方ないわね \@……」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RANDEVENT(2, 25)
+				CASE 0
+					PRINTFORMW 「\@ TENSION(TARGET, 8) == "高い" ? うふっ # ふふ \@、流石にもう限界みたいですね？」
+				CASE 1
+					PRINTFORM 「%LOCALS:2%
+					CALL AUTOHEARTCB_K39
+					PRINTFORMW 　もう、出ませんか？ \@ ABL:精液中毒 > 4 ? ちょっと物足りないですね # 仕方ないですね \@……」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他射精（大量射精）
+	;=================================================
+	IF SHOOTING(MASTER, "大量射精")
+		CALL SHOOT_VARIATION_K39
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(2, 26)
+				CASE 0
+					PRINTFORMW 「っふぁっッ！？ 出てるっ、いっぱい出てるっ…ッ…！」
+				CASE 1
+					PRINTFORMW 「ああぁっ！？ やっ、ダメぇっ！ そんなに注いだら……溢れちゃうっ！」
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 27)
+				CASE 0
+					PRINTFORMW 「%TNAME_K39()%っ……神様なのに……ママになっちゃうよぉっっ……！！」
+				CASE 1
+					PRINTFORMW 「んぁぁっ、だめぇッ……出ちゃう！ \@ IS_CONDITION(TARGET, "情欲") ? おまんこ # ナカ \@から、厄が出ちゃうよぉっっ…ッ…！」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RANDEVENT(2, 28)
+				CASE 0
+					PRINTFORMW 「っはぁっっ！？ 出てるっ、な、%LOCALS:0%にこんなに注がれてっ…ッ…！」
+				CASE 1
+					PRINTFORMW 「あぁぁっ！ す、凄いっ……まだ射精が止まらないんですね……」 
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 29)
+				CASE 0
+					PRINTFORMW 「あぁっ！ だ、だめっ……厄が、溢れてしまいます……」
+				CASE 1
+					PRINTFORMW 「こんなに注ぎ込んで……この厄神を孕ませるつもりですか？」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他射精（早漏）
+	;=================================================
+	IF SHOOTING(MASTER, "早漏")
+		CALL SHOOT_VARIATION_K39
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(2, 30)
+				CASE 0
+					PRINTFORMW 「あぁっ！ な、%LOCALS:0%でビュクビュクって……」
+				CASE 1
+					PRINTFORMW 「あぁんっ、やだ、やだっ……早いっよっ」
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 31)
+				CASE 0
+					PRINTFORMW 「そんなに気持ちよかったの…？」
+				CASE 1
+					PRINTFORMW 「これじゃ物足りないよ……」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RANDEVENT(2, 32)
+				CASE 0
+					PRINTFORMW 「あぁっ！ 出てる、%LOCALS:0%に出てる……」
+				CASE 1
+					PRINTFORMW 「……もうイってしまったんですね」
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 33)
+				CASE 0
+					PRINTFORMW 「そんなに溜まっていたのですか？ って、そんな訳ありませんよね。ふふ……」
+				CASE 1
+					PRINTFORMW 「私はまだ満足してませんよ？ %CNAME(MASTER, TARGET)%には、にはもう少し頑張ってもらいます♪」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他射精（Ａ責射精）
+	;=================================================
+	IF SHOOTING(MASTER, "前立腺射精")
+		PRINTFORM 「%RAND_SPLIT("ん/んん/あっ/あぅっ")%！ え、な
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW に…？ おしりが気持ちよくて%LOCALS:1%しちゃった訳？」
+			PRINTFORMW 「……まったく。でも仕方ないわね。オトコって、そうなってるみたいだから。くすっ…」
+		ELSE
+			PRINTFORMW んです…？ おしりが気持ちよくて%LOCALS:1%しちゃったんですか？」
+			PRINTFORMW 「……まったく。でも仕方ないですね。男の人って、そうなってるみたいですから。ふふ…」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;=================================================
+	;その他射精(2=射精)
+	;=================================================
+	IF SHOOTING(MASTER, "射精")
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORML 「いっ、いいよっ……出してっ、%LOCALS:0%に出してっ！」
+			CALL SHOOT_VARIATION_K39
+			;精液中毒LV分岐
+			SELECTCASE ABL:TARGET:精液中毒
+				;精液中毒LV6以上
+				CASE IS > 6
+					PRINTFORMW 「あぁぁっ！ 好きっ！ %LOCALS:0%に出されるのが堪らないのっ！」
+					PRINTFORMW 「%TNAME_K39()%はっ！ 精液大好きな、駄目な神様なのぉっっ…ッ…！」
+				;精液中毒LV3以上
+				CASE IS > 3
+					PRINTFORMW 「あぁぁっ！ 出てるっ、中に出されるの大好き……」
+				;精液中毒LV3未満
+				CASEELSE
+					PRINTFORMW 「あぁっ！ 出てるっ、お腹の中、あったかい……」
+			ENDSELECT
+		;相思相愛以外
+		ELSE
+			PRINTFORML 「いっ、いいですよっ……出して、私の%LOCALS:0%に%LOCALS:1%してくださいっ！」
+			CALL SHOOT_VARIATION_K39
+			;精液中毒LV分岐
+			SELECTCASE ABL:TARGET:精液中毒
+				;精液中毒LV3以上
+				CASE IS > 3
+					PRINTFORMW 「あぁぁっ！ 出てるっ、中に出されるの、癖になってしまいます……」
+				;精液中毒LV3未満
+				CASEELSE
+					PRINTFORMW 「あぁっ！ 出てるっ、私の中に……厄がいっぱい……」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;アナル内射精(MASTER→TARGET) RANDEVENT(34) ～
+;────────────────────────────────────
+;・Ａ性交奉仕系で腸内射精する場合に表示
+;・TFLAG:抜かずは抜かない判定ごとに+1される
+;・射精量による分岐は必要に応じ追加して使うのが望ましい
+;-------------------------------------------------
+IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 6, 8)
+	LOCALS:0 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEART(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:1 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEARTB(, COLOR2_K39("PINK")) # "！" 
+	;LOCALS:2 = \@ TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || GET_KFLAG_K39("相思相愛") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！？ \@
+	LOCALS:3 '= RAND:2 ? LOCALS:0 # LOCALS:1
+	LOCALS:4 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? LOCALS:3 # "！？" 
+	LOCALS:5 '= TENSION(TARGET, 8) == "高い" ? "……" + HTML_HEARTB(, COLOR2_K39("PINK")) # "" 
+	;=================================================
+	;抜かずに続行
+	;=================================================
+	IF TFLAG:抜かず
+		;-------------------------------------------------
+		;同時絶頂(調教者が同時にＡ絶頂)
+		;-------------------------------------------------
+		IF TCVAR:TARGET:Ａ絶頂 && TCVAR:MASTER:射精
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;焦らし中に
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF TCVAR:MASTER:焦らし度 > 1
+				SELECTCASE COMGRONAME(TFLAG:REACT分類)
+					;消極的従う
+					CASE "消極的従う", "許しを乞う"
+						PRINTFORMW （やだ……焦らしてるのにもどかしくなっちゃって……）
+					;積極的従う
+					CASE "積極的従う", "平然と従う"
+						PRINTFORMW 「や、だめっ！ 焦らしてるのに…そんなにされたら、わたしがっ！」
+					;その他
+					CASEELSE
+						PRINTFORMW （やだ…焦らしてるのにイっちゃう、イかされちゃう……）
+				ENDSELECT
+				CALL TA_EX_K39
+				;TWAITで間を取る
+				TWAIT 500, 0
+				;地の文を呼ぶ
+				CALL EX_SITUATION_K39
+				RETURN 1
+			ENDIF
+			
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;同時絶頂：空射精
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF SHOOTING(MASTER, "空射精")
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 34)
+						CASE 0
+							PRINTFORM 「あっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　ああぁぁぁっっ！ イっちゃうっ……イっちゃうっ！」
+							CALL SHOOT_VARIATION_K39
+							TWAIT 500, 0
+							PRINTFORMW 「っはぁっっ！？ な、中でビクビクしてっ…ッ…！！」
+						CASE 1
+							PRINTFORM 「ああぁぁっ
+							CALL AUTOHEARTCB_K39
+							PRINTFORML 　あひぃっ！ きちゃうっ、なにかきちゃうっ！ 」
+							CALL SHOOT_VARIATION_K39
+							TWAIT 500, 0
+							PRINTFORMW 「っひぁぁっ！？ ダメッ、だめぇっっ！ イ、くぅぅっ…ッ…！」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 35)
+						CASE 0
+							PRINTFORM 「あぁぁっ！ あっ……出してぇっ
+							CALL AUTOHEARTCB_K39
+					 		PRINTFORML 　中に射精してくださいっ！ 」
+							CALL SHOOT_VARIATION_K39
+							TWAIT 500, 0
+							PRINTFORMW 「っふあぁぁっ！？ 出されてないのにッ……イっちゃうっ！ イっちゃいますっ…ッ…！」
+						CASE 1
+							PRINTFORML 「あ%RAND_SPLIT("あぁ/ん")%っ！ %RAND_SPLIT("んっ/くぅっ")%……イきますっ、イきますぅっっ……！」
+							CALL SHOOT_VARIATION_K39
+							TWAIT 500, 0
+							;可読性が悪すぎるのでHTML_AUTOHEARTとか作る必要がありそう
+							{
+							CALL HTMLPRINTW(@"「%RAND_SPLIT("んぁ/あぁ")%っ\@ RAND:2 
+								? %HTML_HEART(, COLOR2_K39("PINK"))% # ！？ \@　な、中で、ビクビクしてぇっ……イくぅぅっ…ッ…！」")
+							}
+					ENDSELECT
+				ENDIF
+				CALL QUAKE(4)
+				TWAIT 500, 0
+				;地の文を呼ぶ
+				CALL EX_SITUATION_K39
+				RETURN 1
+			ENDIF
+			
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;同時絶頂：その他射精(2=射精/3=大量射精/4=射精(早漏)/5=前立腺射精)
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF GROUPMATCH(GET_SHOOTING(MASTER), "射精", "大量射精", "早漏", "前立腺射精") > 0
+				;汎用処理
+				CALL TA_EX2_K39
+				TWAIT 500, 0
+				;地の文を呼ぶ
+				CALL EX_SITUATION_K39
+				RETURN 1
+			ENDIF
+		ENDIF
+		
+		;//抜かず＆調教対象射精。調教者のＡ絶頂なし
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精") ;&& !TCVAR:TARGET:Ａ絶頂
+			;LOCALS:0 = \@ TENSION(TARGET, 8) == "高い" ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！ \@
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(2, 36)
+					CASE 0
+						CALL HTMLPRINTW(@"「あぁぅっ、あぁっ%LOCALS:3%　おしりの中で……ビクビクしてるけど……」")
+					CASE 1
+						CALL HTMLPRINTW(@"「んっ%LOCALS:3%　ねぇ、もう出ないの？ これじゃなんか物足りない……」")
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(2, 37)
+					CASE 0
+						CALL HTMLPRINTW(@"「あぁぅっ、あぁっ%LOCALS:3%　おしりの中で……ビクビクして……」")
+					CASE 1
+						PRINTFORMW 「うふっ、流石にもう限界みたいですね？」 
+						PRINTFORMW 「中に出されないと、ちょっと物足りないですけど♪」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;大量射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "大量射精")
+			LOCALS:0 '= TENSION(TARGET, 8) == "高い" ? HTML_HEART(, COLOR2_K39("PINK")) # "！？" 
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(2, 38)
+					CASE 0
+						CALL HTMLPRINTW(@"「っふぁっッ%LOCALS:3% 出てるっ、いっぱい射精てるっ…ッ…！」")
+						PRINTFORMW 「ひ、雛っ……神様なのに……おしりに精液注がれて興奮しちゃうのぉっっ……！！」
+					CASE 1
+						CALL HTMLPRINTW(@"「ああぁっ%LOCALS:3% やっ、ダメぇっ！ そんなに注いだら……溢れちゃうのぉっ！」")
+						PRINTFORMW 「んぁぁっ、だめぇッ……出ちゃう！ おしりから、厄が出ちゃうよぉっっ…ッ…！」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(2, 39)
+					CASE 0
+						CALL HTMLPRINTW(@"「っはぁっっ%LOCALS:3% 出てるっ、お、おしりにこんなに注がれてっ…ッ…！」")
+						PRINTFORMW 「あぁっ！ だ、だめっ……厄が、溢れてしまいます……」
+					CASE 1
+						CALL HTMLPRINTW(@"「あぁぁっ%LOCALS:3% す、凄いっ……まだ射精が止まらないんですね……」") 
+						CALL HTMLPRINTW(@"「こんなに注ぎ込んで……この厄神をお尻で孕ませるつもりですか？ %LOCALS:5%」")
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;早漏
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "早漏")
+			LOCALS:0 '= TENSION(TARGET, 8) == "高い" ? HTML_HEART(, COLOR2_K39("PINK")) # "！" 
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(2, 40)
+					CASE 0
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% な、中でビュクビュクって……」")
+						PRINTFORMW 「そんなにおしりが気持ちよかったの…？」
+					CASE 1
+						CALL HTMLPRINTW(@"「あぁんっ%LOCALS:3% やだ、やだっ……もうイっちゃうなんて…」")
+						PRINTFORMW 「これじゃなんか、物足りないんだけど……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(2, 41)
+					CASE 0
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% 出てる、中に出てる……」")
+						CALL HTMLPRINTW(@"「そんなに溜まっていたのですか？ って、そんな訳ありませんよね。ふふ%LOCALS:5%」")
+					CASE 1
+						PRINTFORMW 「……もうイってしまったんですね」
+						CALL HTMLPRINTW(@"「私はまだ満足してませんよ？ %CNAME(MASTER, TARGET)%には、もう少し頑張ってもらいます%LOCALS:5%」")
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;その他の射精
+		;-------------------------------------------------
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "射精", "前立腺射精")
+			;//関数化が妥当だけど、どのようにするか考えがまとまらないのでとりあえずLOCALSで
+			;LOCALS:0 = \@ TENSION(TARGET, 8) == "高い" || GET_KFLAG_K39("相思相愛") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！ \@
+			;LOCALS:1 = \@ TENSION(TARGET, 8) == "高い" || GET_KFLAG_K39("相思相愛") && PERCENT(75) ? %HTML_HEARTB(, COLOR2_K39("PINK"))% # ！ \@
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				CALL SHOOT_VARIATION_K39
+				;精液中毒LV分岐
+				SELECTCASE ABL:TARGET:精液中毒
+					;精液中毒LV6以上
+					CASE IS >= 6
+						CALL HTMLPRINTW(@"「あぁぁっ！ 好きっ%LOCALS:3% 中に出されるのが堪らないのっ%LOCALS:3%」")
+						PRINTFORMW 「雛は、%TNAME_K39()%はっ！ 精液大好きな、駄目な神様なのぉっっ…ッ…！」
+					;精液中毒LV3以上
+					CASE IS >= 3
+						CALL HTMLPRINTW(@"「あぁぁっ%LOCALS:3% 出てるっ、中に出されるの大好き……%LOCALS:3%」")
+					;精液中毒LV3未満
+					CASEELSE
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% 出てるっ、お腹の中、あったかい……」")
+				ENDSELECT
+			;相思相愛以外
+			ELSE
+				CALL SHOOT_VARIATION_K39
+				;精液中毒LV分岐
+				SELECTCASE ABL:TARGET:精液中毒
+					;精液中毒LV3以上
+					CASE IS >= 3
+						CALL HTMLPRINTW(@"「あぁぁっ%LOCALS:3% 出てるっ、中に出されるの、癖になってしまいます……%LOCALS:3%」")
+					;精液中毒LV3未満
+					CASEELSE
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% 出てるっ、私の中に……厄がいっぱい……%LOCALS:3%」")
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	;//抜かずなし時に調教者がＡ絶頂
+	;=================================================
+	;調教者が同時にＡ絶頂
+	;=================================================
+	IF TCVAR:TARGET:Ａ絶頂 && TCVAR:MASTER:射精 ;&& !TFLAG:抜かず
+		;-------------------------------------------------
+		;焦らし中に
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 > 1
+			SELECTCASE COMGRONAME(TFLAG:REACT分類)
+				;消極的従う
+				CASE "消極的従う", "許しを乞う"
+					PRINTFORMW （やだ……焦らしてるのにもどかしくなっちゃって……）
+				;積極的従う
+				CASE "積極的従う", "平然と従う"
+					PRINTFORMW 「や、だめっ！ 焦らしてるのに…そんなにされたら、わたしがっ！」
+				;その他
+				CASEELSE
+					PRINTFORMW （やだ…焦らしてるのにイっちゃう、イかされちゃう……）
+			ENDSELECT
+			CALL TA_EX_K39
+			;TWAITで間を取る
+			TWAIT 500, 0
+			;地の文を呼ぶ
+			CALL EX_SITUATION_K39
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精")
+			;LOCALS:0 = \@ TENSION(TARGET, 8) == "高い" || GET_KFLAG_K39("相思相愛") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！ \@
+			;LOCALS:1 = \@ TENSION(TARGET, 8) == "高い" || GET_KFLAG_K39("相思相愛") && PERCENT(75) ? %HTML_HEARTB(, COLOR2_K39("PINK"))% # ！ \@
+			;LOCALS:2 = \@ TENSION(TARGET, 8) == "高い" || GET_KFLAG_K39("相思相愛") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！？ \@
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(2, 42)
+					CASE 0
+						CALL HTMLPRINTW(@"「あっ%LOCALS:3% ああぁぁぁっっ！ イっちゃうっ……イっちゃうっ%LOCALS:1%」")
+						CALL HTMLPRINTW(@"「っはぁっっ%LOCALS:4% な、中でビクビクしてっ…ッ…！！」")
+					CASE 1
+						CALL HTMLPRINTW(@"「あ%RAND_SPLIT("あぁ/")%ぁっ%LOCALS:3% あひぃっ！ きちゃうっ、なにかきちゃうっ%LOCALS:3%」")
+						CALL HTMLPRINTW(@"「っひぁぁっ%LOCALS:4% ダメッ、だめぇっっ%LOCALS:3% イ、くぅぅっ…ッ…！」")
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(2, 43)
+					CASE 0
+						CALL HTMLPRINTW(@"「あぁ%RAND_SPLIT("ぁ/")%っ%LOCALS:3% あっ……出してぇっ！ 中に射精してくださいっ！」")
+						CALL HTMLPRINTW(@"「っふあぁぁっ%LOCALS:4% 出されてないのにッ……イっちゃうっ！ イっちゃいますっ…ッ…！」")
+					CASE 1
+						CALL HTMLPRINTW(@"「あ%RAND_SPLIT("あぁ/")%んっ%LOCALS:3% んっくぅっ……イきますっ、イきますぅっっ……！」")
+						CALL HTMLPRINTW(@"「んぁぁっ%LOCALS:4% な、中で、ビクビクしてぇっ……イくぅぅっ…ッ…！」")
+				ENDSELECT
+			ENDIF
+			CALL QUAKE(4)
+			TWAIT 500, 0
+			;地の文を呼ぶ
+			CALL EX_SITUATION_K39
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;その他射精
+		;-------------------------------------------------
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "射精", "大量射精", "早漏", "前立腺射精")
+			CALL TA_EX2_K39
+			TWAIT 500, 0
+			;地の文を呼ぶ
+			CALL EX_SITUATION_K39
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	;//抜かず、調教者のＡ絶頂なし
+	;=================================================
+	;焦らしから
+	;=================================================
+	IF TCVAR:MASTER:焦らし度 && TCVAR:MASTER:射精 ;&& ALLSAMES(0, TFLAG:抜かず, TCVAR:TARGET:Ａ絶頂)
+		;LOCALS:0 = \@ TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || GET_KFLAG_K39("相思相愛") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！ \@
+		;LOCALS:1 = \@ TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || GET_KFLAG_K39("相思相愛") && PERCENT(75) ? %HTML_HEARTB(, COLOR2_K39("PINK"))% # ！ \@
+		;LOCALS:2 = \@ TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || GET_KFLAG_K39("相思相愛") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！？ \@
+		;LOCALS:3 = \@ RAND:2 ? LOCALS:0 # LOCALS:1 \@
+		;-------------------------------------------------
+		;焦らし中に（空射精は弾く）
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 > 1 && !SHOOTING(MASTER, "空射精")
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% 出てる……おしりの中に出てる……」")
+				PRINTFORMW 「うふっ、そんなに気持ちよかった？」
+			;それ以外
+			ELSE
+				CALL HTMLPRINTW(@"「あっ%LOCALS:3%、中に出て……」")
+				CALL HTMLPRINTW(@"「ふふ、我慢出来なかったみたいですね%LOCALS:5%」")
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;トドメ（空射精）
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 == 1 && SHOOTING(MASTER, "空射精")
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(2, 44)
+					CASE 0
+						CALL HTMLPRINTW(@"「んっ%LOCALS:4% ビクビクしてるけど、出ないみたいね……」")
+					CASE 1
+						CALL HTMLPRINTW(@"「んぁっ%LOCALS:4% イってるみたいだけど、もう出ないのね…」")
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(2, 45)
+					CASE 0
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:4% ビクビクしてるけど、もう出ないみたいですね……」")
+					CASE 1
+						CALL HTMLPRINTW(@"「んぁっ%LOCALS:4% イってるみたいですけど、出ませんね……」")
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;トドメ（射精）
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 == 1 && GROUPMATCH(GET_SHOOTING(MASTER), "射精", "大量射精", "早漏", "前立腺射精")
+			CALL SHOOT_VARIATION_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(2, 46)
+					CASE 0
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:4% 中で、おしりの中でビュクビュクって%LOCALS:5%」")
+					CASE 1
+						CALL HTMLPRINTW(@"「んぁっ%LOCALS:4% 熱いっ！ お腹の中焼けちゃうっ！」")
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(2, 47)
+					CASE 0
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:4% 中で、おしりの中でビュクビュクって%LOCALS:5%」")
+					CASE 1
+						CALL HTMLPRINTW(@"「んぁっ%LOCALS:4% 熱いっ！ お腹の中、焼けそう……」")
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	;//抜かず、調教者のＡ絶頂、焦らし無し
+	;=================================================
+	;その他射精（空射精）
+	;=================================================
+	IF SHOOTING(MASTER, "空射精") ;&& ALLSAMES(0, TCVAR:MASTER:焦らし度, TFLAG:抜かず, TCVAR:TARGET:Ａ絶頂)
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(2, 48)
+				CASE 0
+					CALL HTMLPRINTW(@"「あぁぅっ、あぁっ%LOCALS:3% おしりの中で……ビクビクしてるけど……」")
+				CASE 1
+					CALL HTMLPRINTW(@"「んっ%LOCALS:3% ねぇ、もう出ないの？ これじゃなんか、物足りないんだけど……」")
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RANDEVENT(2, 49)
+				CASE 0
+					PRINTFORMW 「うふっ、流石にもう限界みたいですね？」
+				CASE 1
+					PRINTFORMW 「中に出されないと、ちょっと物足りないですね…」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他射精（大量射精）
+	;=================================================
+	IF SHOOTING(MASTER, "大量射精")
+		CALL SHOOT_VARIATION_K39
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(2, 50)
+				CASE 0
+					CALL HTMLPRINTW(@"「っふぁっッ%LOCALS:4% 出てるっ、いっぱい射精てるっ…ッ…%LOCALS:3%」")
+				CASE 1
+					CALL HTMLPRINTW(@"「ああぁっ%LOCALS:4% やっ、ダメぇっ！ そんなに注いだら……溢れちゃうっ%LOCALS:3%」")
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 51)
+				CASE 0
+					{
+					PRINTFORMW 「\@ TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") 
+						? ひ、雛 # わ、わたし \@っ……神様なのに……おしりに射精されて悦ぶ、変態になっちゃうっっ……！！」
+					}
+				CASE 1
+					CALL HTMLPRINTW(@"「んぁぁっ%LOCALS:3% だめぇッ……出ちゃう%LOCALS:3% おしりの穴から厄が出ちゃうっ…ッ…！」")
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RANDEVENT(2, 52)
+				CASE 0
+					CALL HTMLPRINTW(@"「っはぁっっ%LOCALS:4% 出てるっ、お、おしりにこんなに注がれてっ…ッ…%LOCALS:3%」")
+				CASE 1
+					CALL HTMLPRINTW(@"「あぁぁっ%LOCALS:3% す、凄いっ……まだ射精が止まらないんですね……」")
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 53)
+				CASE 0
+					CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% だ、だめっ……厄が、溢れてしまいます……」")
+				CASE 1
+					CALL HTMLPRINTW(@"「こんなに注ぎ込んで……この厄神をおしりで孕ませるつもりですか？ \@ TENSION(TARGET, 8) == "高い" ? ……%HTML_HEARTB(, COLOR2_K39("PINK"))% # \@」")
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他射精（早漏）
+	;=================================================
+	IF SHOOTING(MASTER, "早漏")
+		CALL SHOOT_VARIATION_K39
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(2, 54)
+				CASE 0
+					CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% な、中でビュクビュクって……」")
+				CASE 1
+					CALL HTMLPRINTW(@"「あぁん%LOCALS:3%っ、やだ、やだっ……早いっよっ」")
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 55)
+				CASE 0
+					PRINTFORMW 「そんなにおしりが気持ちよかったの…？」
+				CASE 1
+					PRINTFORMW 「これじゃちょっと物足りないんだけど……」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RANDEVENT(2, 56)
+				CASE 0
+					CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% 出てる、中に出てる……」")
+				CASE 1
+					PRINTFORMW 「……もうイってしまったんですね」
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 57)
+				CASE 0
+					PRINTFORMW 「そんなに溜まってたのですか？ そんなはずは無いんですけどね%LOCALS:5%」
+				CASE 1
+					PRINTFORM 「私はまだ満足してませんよ？ %CNAME(MASTER, TARGET)%にはもう少し頑張ってもらいます
+					CALL PRINT_SYMBOL_K39
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他射精（Ａ責射精）
+	;=================================================
+	IF SHOOTING(MASTER, "前立腺射精")
+		PRINTFORM 「%RAND_SPLIT("ん/んん/あっ/あぅっ")%！ え、な
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW に…？ 私の…じゃなくて、自分のおしりが気持ちよくて出しちゃった訳？」
+			CALL HTMLPRINTW(@"「……まったく。でも仕方ないわね。オトコって、そうなってるみたいだから。くすっ%LOCALS:5%」")
+		ELSE
+			PRINTFORMW んです…？ 私の…ではなく、自分のおしりが気持ちよくて出しちゃったんですか？」
+			CALL HTMLPRINTW(@"「……まったく。でも仕方ないですね。男の人って、そうなってるみたいですから。ふふ%LOCALS:5%」")
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他射精
+	;=================================================
+	IF SHOOTING(MASTER, "射精")
+		CALL SHOOT_VARIATION_K39
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			;精液中毒LV分岐
+			SELECTCASE ABL:TARGET:精液中毒
+				;精液中毒LV6以上
+				CASE IS >= 6
+					CALL HTMLPRINTW(@"「あぁぁっ%LOCALS:3% 好きっ%LOCALS:3% 中に出されるの大好きっ%LOCALS:3%」")
+					PRINTFORMW 「%TNAME_K39()%は、%TNAME_K39()%はっ！ 精液大好きな、駄目な神様なのぉっっ…ッ…！」
+				;精液中毒LV3以上
+				CASE IS >= 3
+					CALL HTMLPRINTW(@"「あぁぁっ%LOCALS:3% 出てるっ、中に出されるの大好き……」")
+				;精液中毒LV3未満
+				CASEELSE
+					CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% 出てるっ、お腹の中、あったかい……」")
+			ENDSELECT
+		;相思相愛以外
+		ELSE
+			;精液中毒LV分岐
+			SELECTCASE ABL:TARGET:精液中毒
+				;精液中毒LV3以上
+				CASE IS >= 3
+					CALL HTMLPRINTW(@"「あぁぁっ%LOCALS:3% 出てるっ、中に出されるの、癖になってしまいます……」")
+				;精液中毒LV3未満
+				CASEELSE
+					CALL HTMLPRINTW(@"「あぁっ%LOCALS:3% 出てるっ、私の中に……厄がいっぱい……」")
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;調教対象射精 RANDEVENT(59) ～
+;────────────────────────────────────
+;・調教対象が射精する場合に表示
+;・射精量による分岐は必要に応じ加減して使うのが望ましい
+;-------------------------------------------------
+IF 口上記入チェック(100) && TCVAR:MASTER:射精 && !TCVAR:MASTER:放尿
+	LOCALS:0 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEART(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:1 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEARTB(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:2 '= RAND:2 ? LOCALS:0 # LOCALS:1 
+	LOCALS:3 '= RAND:2 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK")) 
+	LOCALS:4 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") ? "……" + LOCALS:3 # "" 
+	[SKIPSTART]
+	;=================================================
+	;前立腺射精(Ａ絶頂時に快Ｃに関わらず射精)
+	;=================================================
+	IF SHOOTING(MASTER, "前立腺射精")
+		;-------------------------------------------------
+		;口で
+		;-------------------------------------------------
+		//IF MA_CHECK_K39("口")
+		//ENDIF
+		;-------------------------------------------------
+		;手で
+		;-------------------------------------------------
+		IF MA_CHECK_K39("手")
+		ENDIF
+		;-------------------------------------------------
+		;ペニスで
+		;-------------------------------------------------
+		//IF MA_CHECK_K39("ペニス")
+		//ENDIF
+		;-------------------------------------------------
+		;ローターで
+		;-------------------------------------------------
+		//IF MA_CHECK_K39("ローター")
+		//ENDIF
+		;-------------------------------------------------
+		;アナルビーズで
+		;-------------------------------------------------
+		IF MA_CHECK_K39("アナルビーズ")
+		ENDIF
+		;-------------------------------------------------
+		;アナルバイブで
+		;-------------------------------------------------
+		IF MA_CHECK_K39("アナルバイブ")
+		ENDIF
+		;-------------------------------------------------
+		;浣腸器＋プラグで
+		;-------------------------------------------------
+		IF MA_CHECK_K39("浣腸器＋プラグ")
+		ENDIF
+	ENDIF
+	[SKIPEND]
+	
+	;GET_NORMALACTNUM(TFLAG:ACT)でコンビネーションにも配慮すべきと思いつつ
+	;手間に躊躇してそのままだったり。真面目にやると割りと酷い事になるんでねぇ
+	;=================================================
+	;素股で同時絶頂
+	;=================================================
+	IF TCVAR:TARGET:Ｃ絶頂 && IS_NOWACTNAME("性器を擦り合う")
+		IF RAND:3
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 58)
+					CASE 0
+						CALL HTMLPRINTW(@"「やぁっ%LOCALS:2% だめっ%LOCALS:2% そんなに擦っちゃだめぇっ！」")
+					CASE 1
+						CALL HTMLPRINTW(@"「ひぁっ%LOCALS:2% あぁっ%LOCALS:2% 擦れてっ……気持ちよくなっちゃうぅっ！」")
+					CASE 2
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:2% そんなにしたらイっちゃうっ%LOCALS:2% イっちゃうっ！」")
+				ENDSELECT
+				SELECTCASE RANDEVENT(3, 59)
+					CASE 0
+						CALL HTMLPRINTW(@"「も、もうっ%LOCALS:2% イっ、くぅぅっっ！」")
+					CASE 1
+						CALL HTMLPRINTW(@"「ふぁぁっ%LOCALS:2% イくっ%LOCALS:2% イくぅぅっっ…ッ…！」")
+					CASE 2
+						CALL HTMLPRINTW(@"「あっ%LOCALS:2% あっ%LOCALS:2% あああぁぁっっ…ッ…！」")
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 60)
+					CASE 0
+						CALL HTMLPRINTW(@"「や、はぁっ%LOCALS:2% いいとこが擦れて、私っ！」")
+					CASE 1
+						CALL HTMLPRINTW(@"「んはっ、あぁっ%LOCALS:2% そんなに、擦られたら…ッ…%LOCALS:2%」")
+					CASE 2
+						CALL HTMLPRINTW(@"「あっ、あぁっ%LOCALS:2% 擦れてっ、変にっ！ 変になっちゃいますぅっ！」")
+				ENDSELECT
+				SELECTCASE RANDEVENT(3, 61)
+					CASE 0
+						CALL HTMLPRINTW(@"「もう、もうっ%LOCALS:2% イっちゃいますっっ！」")
+					CASE 1
+						CALL HTMLPRINTW(@"「あぁっ、だめっ%LOCALS:2% イっ、イくぅっっ！」")
+					CASE 2
+						CALL HTMLPRINTW(@"「こ、こんなんのッ%LOCALS:2% こんなのってぇっ！ ああぁぁぁっ！」")
+				ENDSELECT
+			ENDIF
+			CALL QUAKE(4)
+			TWAIT 500, 0
+			CALL SHOOT_VARIATION_K39
+		ELSE
+			CALL TC_EX_K39
+			TWAIT 500, 0
+			CALL SHOOT_VARIATION_K39
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;これもコンビネーションに派生する可能性を考えないと、と思いつつそのままだったり
+	;=================================================
+	;パイズリで同時絶頂
+	;=================================================
+	IF TCVAR:TARGET:Ｂ絶頂 && IS_NOWACTNAME("パイズリする") && !TCVAR:TARGET:噴乳
+		IF RAND:3
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 62)
+					CASE 0
+						CALL HTMLPRINTW(@"「やぁっ、だめっ%LOCALS:2% そんなに擦っちゃだめぇっ%LOCALS:2%」")
+					CASE 1
+						CALL HTMLPRINTW(@"「ひぁっ%LOCALS:2% おっぱい擦れてっ……気持ちよくなっちゃうぅっ！」")
+					CASE 2
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:2% そんなにしたらイっちゃうっ！ イっちゃうっ！」")
+				ENDSELECT
+				SELECTCASE RANDEVENT(3, 63)
+					CASE 0
+						CALL HTMLPRINTW(@"「も、もうっ%LOCALS:2% イっ、くぅぅっっ！」")
+					CASE 1
+						CALL HTMLPRINTW(@"「ふぁぁっ%LOCALS:2% イくっ、イくぅぅっっ…ッ…！」")
+					CASE 2
+						CALL HTMLPRINTW(@"「あっ、あっ%LOCALS:2% あああぁぁっっ…ッ…！」")
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 64)
+					CASE 0
+						CALL HTMLPRINTW(@"「や%LOCALS:2% はぁっ……胸が擦れて、私っ！」")
+					CASE 1
+						CALL HTMLPRINTW(@"「んはっ、あぁっ%LOCALS:2% そんなに、擦られたら…ッ…」")
+					CASE 2
+						CALL HTMLPRINTW(@"「あっ、あぁっ%LOCALS:2% 乳首が、擦れて…ッ…！」")
+				ENDSELECT
+				SELECTCASE RANDEVENT(3, 65)
+					CASE 0
+						CALL HTMLPRINTW(@"「もう、もうっ%LOCALS:2% イっちゃいますっっ！」")
+					CASE 1
+						CALL HTMLPRINTW(@"「あぁっ%LOCALS:2% だめっ……イっ、イくぅっっ！」")
+					CASE 2
+						CALL HTMLPRINTW(@"「こ、こんなんのッ……こんなのってぇっ%LOCALS:2% ああぁぁぁっ！」")
+				ENDSELECT
+			ENDIF
+			CALL QUAKE(4)
+			TWAIT 500, 0
+			CALL SHOOT_VARIATION_K39
+		ELSE
+			CALL TB_EX_K39
+			TWAIT 500, 0
+			CALL SHOOT_VARIATION_K39
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;bit = 0で調教対象
+	;=================================================
+	;自慰で射精
+	;=================================================
+	IF GETBIT(TEQUIP:自慰中, 0)
+		;-------------------------------------------------
+		;顔射自慰絶頂
+		;-------------------------------------------------
+		IF ME_PLAYER(1) == 9
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 66)
+					CASE 0
+						CALL HTMLPRINTW(@"「いいよ、口に出して……全部飲んであげる%LOCALS:4%」")
+					CASE 1
+						PRINTFORMW 「%TNAME_K39()%の口に出していいよ……ほら、もっとシゴいて……」
+					CASE 2
+						PRINTFORMW 「全部受け止めてあげる……そのまま口に出して……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 67)
+					CASE 0
+						CALL HTMLPRINTW(@"「いいですよ、そのまま私の口に出してください%LOCALS:4%」")
+					CASE 1
+						PRINTFORMW 「口に出していいですよ。さぁ、もっとシゴいて……」
+					CASE 2
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%の厄、全部受け止めてあげます。そのまま出してください……」
+				ENDSELECT
+			ENDIF
+			;RETURNせずに射精種分岐に放り投げる。各分岐に入ったらそこでRETURN
+			;という訳なんで、ここでRETURNしてないのはミスじゃない。と、未来の自分に言っておく
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;空射精
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF SHOOTING(MASTER, "空射精")
+				;エフェクトを処理
+				CALL SHOOT_VARIATION_K39
+				;汎用処理
+				CALL PRINT_KOJO_EV20_1_K39
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					PRINT 　って、
+					SELECTCASE RANDEVENT(3, 68)
+						CASE 0
+							PRINTFORMW 何も出ないんだけど……？」
+						CASE 1
+							PRINTFORMW もう出ないの？ なんか物足りないんだけど……」
+						CASE 2
+							PRINTFORMW もう空っぽみたいね……」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(3, 69)
+						CASE 0
+							PRINTFORMW 　イってるのに出ませんね……」
+						CASE 1
+							PRINTFORMW 　ビクビクしてるけど、何も出ませんね……」
+						CASE 2
+							PRINTFORMW 　出ませんね……もう打ち止めでしょうか？」
+					ENDSELECT
+				ENDIF
+				RETURN 1
+			ENDIF
+			
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;大量射精
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF SHOOTING(MASTER, "大量射精")
+				CALL SHOOT_VARIATION_K39
+				CALL HTMLPRINTW(@"「あぁっ！？ %RAND_SPLIT("っく、コクっ/んんっ、ん")%……んく、んくっ……んくっ%LOCALS:2%」")
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(3, 71)
+						CASE 0
+							PRINTFORMW 「こ、こんなに沢山……もう飲みきれない……」
+						CASE 1
+							CALL HTMLPRINTW(@"「あんっ%LOCALS:2% だめっ……こ、零れちゃう……」")
+						CASE 2
+							CALL HTMLPRINTW(@"「凄い%LOCALS:2% まだ止まらない……ねぇ、私の顔ドロドロにして満足？」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(3, 73)
+						CASE 0
+							CALL HTMLPRINTW(@"「ふふ、厄がこんなに。 これはまだ搾り取れそうですね%LOCALS:4%」")
+						CASE 1
+							PRINTFORMW 「凄い量ですね……厄が零れてしまいそうです……」
+						CASE 2
+							PRINTFORMW 「厄神をこんなに穢して……満足しましたか？」
+					ENDSELECT
+				ENDIF
+				RETURN 1
+			ENDIF
+			
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;早漏
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF SHOOTING(MASTER, "早漏")
+				;エフェクトを処理
+				CALL SHOOT_VARIATION_K39
+				;汎用処理
+				CALL PRINT_KOJO_EV20_1_K39
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(3, 75)
+						CASE 0
+							PRINTFORMW 　そんなに早く出さないでよ……」
+						CASE 1
+							PRINTFORMW 　もうイっちゃったの？ 自分でするのがそんなに良かった？」
+						CASE 2
+							PRINTFORMW 　やだっ、まだ準備してないのに……」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(3, 77)
+						CASE 0
+							PRINTFORMW 　そんなに早く出されては困ります……」
+						CASE 1
+							PRINTFORMW 　もう出してしまったんですか？ そんなに気持ちよかったのかしら」
+						CASE 2
+							PRINTFORMW 　準備してないうちに出されると、厄が零れてしまいます……」
+					ENDSELECT
+				ENDIF
+				RETURN 1
+			ENDIF
+			
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			;通常
+			;〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+			IF SHOOTING(MASTER, "射精")
+				PRINTFORM 「んっ！？ %RAND_SPLIT("っく、コクっ/んぷ…ん/ちゅく、ん")%……
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					IF ABL:TARGET:精液中毒 > 3
+						PRINTFORM %RAND_SPLIT("うふ/ふふ")%、%RAND_SPLIT("ご馳走様/美味しい")%
+						CALL PRINT_SYMBOL2_K14
+					ELSE
+						PRINTFORMW どうも%RAND_SPLIT("慣れないわね/苦手だわ")%、この感じ……」
+					ENDIF
+				;その他
+				ELSE
+					IF ABL:TARGET:精液中毒 > 3
+						PRINTFORM %RAND_SPLIT("うふ/ふふ")%、%RAND_SPLIT("ご馳走様でした/美味しいです")%
+						CALL PRINT_SYMBOL2_K14
+					ELSE
+						PRINTFORMW どうも%RAND_SPLIT("慣れませんね/苦手ですね")%、この感じ……」
+					ENDIF
+				ENDIF
+				RETURN 1
+			ENDIF
+		ENDIF
+		
+		;顔射以外を処理
+		;MC_PLAYERの引数を偽にして調教対象自身を参照…、できてるのかこれｗ
+		;-------------------------------------------------
+		;通常
+		;-------------------------------------------------
+		IF 口上記入チェック(100) && MC_PLAYER(-1) == 1
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 82)
+					CASE 0
+						PRINTFORM 「ほら、もっとシゴいて。%CNAME(MASTER, TARGET)%がイくところ、ちゃんと見ててあげる
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORMW 「ねぇ、イくところを見られてるのってどんな感じ？」
+					CASE 2
+						PRINTFORM 「いいよ、射精してみせて……うふっ、なんか興奮しちゃう
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			ELSE
+				SELECTCASE RANDEVENT(3, 84)
+					CASE 0
+						PRINTFORM 「いいですよ、そのままイってしまっても。ちゃんと見ててあげますから
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORMW 「イくところを見られるのってどんな感じでしょうか？」
+					CASE 2
+						PRINTFORM 「恥ずかしがらず、そのまま射精してください……これ、私も興奮してしまいますね
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			ENDIF
+			CALL SHOOT_VARIATION_K39
+			;RETURNせずに下位に流す。
+			;射精種分岐に落ちる、もしくは分岐を抜けきった時点でRETURN
+			;-------------------------------------------------
+			;空射精
+			;-------------------------------------------------
+			IF SHOOTING(MASTER, "空射精")
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(3, 83)
+						CASE 0
+							PRINTFORMW 「！？ ビクビクしてるけど、何も出ないんだけど……？」
+						CASE 1
+							PRINTFORMW 「！？ もう出ないの？ なんか物足りないんだけど……」
+						CASE 2
+							PRINTFORM 「！？ もう空っぽみたい……ちょっと搾り取り過ぎたかしら
+							CALL PRINT_SYMBOL_K39
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(3, 85)
+						CASE 0
+							PRINTFORMW 「！？ イってるのに出ないみたいですね……」
+						CASE 1
+							PRINTFORMW 「！？ ビクビクしてるけど、何も出ませんね……」
+						CASE 2
+							PRINTFORMW 「んっ……出ませんね……もう打ち止めでしょうか？」
+					ENDSELECT
+				ENDIF
+				RETURN 1
+			ENDIF
+			
+			;-------------------------------------------------
+			;大量射精
+			;-------------------------------------------------
+			IF SHOOTING(MASTER, "大量射精")
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(3, 87)
+						CASE 0
+							PRINTFORMW 「！？ こんなに沢山……ねぇ、自分でするのがそんなに良かったの？」
+						CASE 1
+							PRINTFORM 「！？ そんなにいっぱい射精しちゃって……ちょっと勿体無いかも
+							CALL PRINT_SYMBOL_K39
+						CASE 2
+							PRINTFORMW 「！？ 凄い、まだ止まらないのね……ねぇ、いっぱい出して満足？」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(3, 89)
+						CASE 0
+							PRINTFORM 「！？ ふふ、厄がこんなに。 これはまだ搾り取れそうですね
+							CALL PRINT_SYMBOL_K39
+						CASE 1
+							PRINTFORMW 「！？ 凄い量ですね……自慰がそんなに良かったのでしょうか？」
+						CASE 2
+							PRINTFORM 「！？ まだ止まりませんね……ちょっと勿体無い感じですね
+							CALL PRINT_SYMBOL_K39
+					ENDSELECT
+				ENDIF
+				RETURN 1
+			ENDIF
+			
+			;-------------------------------------------------
+			;早漏
+			;-------------------------------------------------
+			IF SHOOTING(MASTER, "早漏")
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(3, 91)
+						CASE 0
+							PRINTFORMW 「あぁっ！？ そんなに早く出さないでよ……」
+						CASE 1
+							PRINTFORMW 「！？ もうイっちゃったの？ 自分でするのがそんなに良かった？」
+						CASE 2
+							PRINTFORMW 「あっ！？ やだっ、まだ準備してないのに……」
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(3, 93)
+						CASE 0
+							PRINTFORMW 「！？ 随分早いんですね？ 溜まっているはずは無いのですが……」
+						CASE 1
+							PRINTFORMW 「！？ もう出してしまったんですか？ 自分でするのが、そんなに気持ち良かったのでしょうか」
+						CASE 2
+							PRINTFORMW 「！？ あらあら、もうイってしまったんですね」
+					ENDSELECT
+				ENDIF
+				RETURN 1
+			ENDIF
+			;射精1, 3, 4以外は処理せずにリターン
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	;分岐の統廃合をした余波でRANDEVENTのイベント番号が飛び飛びに
+	;いずれ整理しないと
+	;=================================================
+	;素股で射精
+	;=================================================
+	IF IS_NOWACTNAME("性器を擦り合う") && MC_CHECK_K39("膣口")
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(3, 96)
+				CASE 0
+					CALL HTMLPRINTW(@"「いいよ、このまま素股でイかせてあげる%LOCALS:4%」")
+				CASE 1
+					PRINTFORMW 「このまま射精していいよ……ほら、もっと擦って……」
+				CASE 2
+					PRINTFORMW 「全部受け止めてあげる……そのまま射精して……」
+			ENDSELECT
+		ELSE
+			SELECTCASE RANDEVENT(3, 98)
+				CASE 0
+					CALL HTMLPRINTW(@"「いいですよ、このまま素股でイかせてあげます%LOCALS:4%」")
+				CASE 1
+					PRINTFORMW 「このまま出していいですよ。さぁ、もっと擦りつけて……」
+				CASE 2
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%の厄、全部受け止めてあげます。そのまま出してください……」
+			ENDSELECT
+		ENDIF
+		CALL SHOOT_VARIATION_K39
+		;//RETURNせずに下位に流す。条件にヒットしなかった時点でRETURN
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精")
+			;汎用処理
+			CALL PRINT_KOJO_EV20_1_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINT 　って、
+				SELECTCASE RANDEVENT(3, 97)
+					CASE 0
+						PRINTFORMW 何も出ないんだけど……？」
+					CASE 1
+						PRINTFORMW もう出ないの？ なんか物足りないんだけど……」
+					CASE 2
+						PRINTFORMW もう空っぽみたい……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 99)
+					CASE 0
+						PRINTFORMW 　イってるのに出ませんね……」
+					CASE 1
+						PRINTFORMW 　ビクビクしてるけど、何も出ませんね……」
+					CASE 2
+						PRINTFORMW 　出ませんね……もう打ち止めでしょうか？」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;大量射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "大量射精")
+			;汎用処理
+			CALL PRINT_KOJO_EV20_1_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(2, 101)
+					CASE 0
+						PRINTFORMW 　こ、こんなに沢山……素股で妊娠しちゃいそう……」
+					CASE 1
+						PRINTFORMW 　凄い、まだ止まらない……ねぇ、私の体ドロドロにして満足？」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 103)
+					CASE 0
+						PRINTFORM 　厄がこんなに……これはまだ搾り取れそうですね
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORMW 　凄い量ですね……素股で妊娠させるつもりですか？」
+					CASE 2
+						PRINTFORMW 　私をこんなに穢して……満足しましたか？ うふっ……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;早漏
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "早漏")
+			;汎用処理
+			CALL PRINT_KOJO_EV20_1_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 105)
+					CASE 0
+						PRINTFORMW 　そんなに早く出さないでよ……」
+					CASE 1
+						PRINTFORMW 　もうイっちゃったの？ 流石にちょっと早すぎだと思うんですけどー？」
+					CASE 2
+						PRINTFORMW 　やだっ、まだ準備してないのに……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 107)
+					CASE 0
+						PRINTFORMW 　そんなに早く出されては困ります……」
+					CASE 1
+						PRINTFORMW 　もう出してしまったんですか？ そんなに気持ちよかったのかしら♪」
+					CASE 2
+						PRINTFORMW 　準備してないうちに出されると、厄が零れてしまいます……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		;//射精1, 3, 4以外は処理せずにリターン
+	ENDIF
+	
+	;=================================================
+	;口による愛撫で射精(フェラなど)
+	;=================================================
+	IF (IS_NOWACTNAME("口で愛撫") && TFLAG:ACT派生 == 1) || MC_CHECK_K39("口") || TEQUIP:調教対象Ｃ使用 == 2
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(3, 110)
+				CASE 0
+					CALL HTMLPRINTL(@"「いいよ、お口に出して……全部飲んであげる%LOCALS:4%」")
+				CASE 1
+					PRINTFORML 「口に出していいよ……今イかせてあげるから……」
+				CASE 2
+					PRINTFORML 「全部受け止めてあげる……そのまま口の中に出して……」
+			ENDSELECT
+		ELSE
+			SELECTCASE RANDEVENT(3, 112)
+				CASE 0
+					CALL HTMLPRINTL(@"「いいですよ、そのまま私の口に出してください%LOCALS:4%」")
+				CASE 1
+					PRINTFORML 「口に出していいですよ。今イかせてあげます……」
+				CASE 2
+					PRINTFORML 「%CNAME(MASTER, TARGET)%の厄、全部受け止めてあげます。私の口に出してください……」
+			ENDSELECT
+		ENDIF
+		;フェードアウト       //関数内でコンフィグを参照して必要ならCLEARLINEを行う
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+		;エフェクト
+		CALL SHOOT_VARIATION_K39
+		;//RETURNせず射精種分岐へ。分岐に落ちたらRETURN。漏れたら汎用処理へ。
+		
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精")
+			;汎用処理
+			CALL PRINT_KOJO_EV20_1_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINT 　って、
+				SELECTCASE RANDEVENT(3, 111)
+					CASE 0
+						PRINTFORMW 何も出ないんだけど……？」
+					CASE 1
+						PRINTFORMW もう出ないの？ なんか物足りないんだけど……」
+					CASE 2
+						PRINTFORMW もう空っぽみたいね……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 113)
+					CASE 0
+						PRINTFORMW 　イってるのに出ませんね……」
+					CASE 1
+						PRINTFORMW 　ビクビクしてるけど、何も出ませんね……」
+					CASE 2
+						PRINTFORMW 　出ませんね……もう打ち止めでしょうか？」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;大量射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "大量射精")
+			PRINTFORMW 「あぁっ！？ っく、コクっ……んく、んくっ……んくっ！」
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 115)
+					CASE 0
+						PRINTFORMW 「こ、こんなに沢山……もう飲みきれない……」
+					CASE 1
+						PRINTFORMW 「あんっ、だめっ……こ、零れちゃうよぉ……」
+					CASE 2
+						PRINTFORMW 「凄い、まだ止まらない……ねぇ、%TNAME_K39()%を厄塗れにして満足？ うふっ…」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 117)
+					CASE 0
+						PRINTFORMW 「ふふ、厄がこんなに。 これはまだ搾り取れそうですね♪」
+					CASE 1
+						PRINTFORMW 「凄い量ですね……厄が零れてしまいそうです……」
+					CASE 2
+						PRINTFORMW 「厄神をこんなに穢して……満足しましたか？ うふっ……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;早漏
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "早漏")
+			;汎用処理
+			CALL PRINT_KOJO_EV20_1_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 120)
+					CASE 0
+						PRINTFORMW 　そんなに早く出さないでよ……」
+					CASE 1
+						PRINTFORMW 　もうイっちゃったの？ %TNAME_K39()%の口がそんなに良かった？」
+					CASE 2
+						PRINTFORMW 　やだっ、まだ準備してないのに。厄が零れちゃう……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 122)
+					CASE 0
+						PRINTFORMW 　そんなに早く出されては困ります……」
+					CASE 1
+						PRINTFORMW 　もう出してしまったんですか？ そんなに気持ちよかったのかしら♪」
+					CASE 2
+						PRINTFORMW 　準備してないうちに出されると、厄が零れてしまいます……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;その他の射精
+		;-------------------------------------------------
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "射精", "前立腺射精")
+			PRINTFORM 「んっ！？ %RAND_SPLIT("っく、コクっ/んぷ…ん/ちゅく、ん")%……
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				IF ABL:TARGET:精液中毒 > 3
+					PRINTFORM %RAND_SPLIT("うふ/ふふ")%、%RAND_SPLIT("ご馳走様/美味しい")%
+					CALL PRINT_SYMBOL2_K14
+				ELSE
+					PRINTFORMW どうも%RAND_SPLIT("慣れないわね/苦手だわ")%、この感じ……」
+				ENDIF
+			;その他
+			ELSE
+				IF ABL:TARGET:精液中毒 > 3
+					PRINTFORM %RAND_SPLIT("うふ/ふふ")%、%RAND_SPLIT("ご馳走様でした/美味しいです")%
+					CALL PRINT_SYMBOL2_K14
+				ELSE
+					PRINTFORMW どうも%RAND_SPLIT("慣れませんね/苦手ですね")%、この感じ……」
+				ENDIF
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	;=================================================
+	;手による愛撫で射精
+	;=================================================
+	IF IS_NOWACTNAME("手で愛撫") || MC_CHECK_K39("手") || TEQUIP:調教対象Ｃ使用 == 1
+		;台詞、地の文、エフェクトを表示したら射精種分岐へ
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(3, 127)
+				CASE 0
+					PRINTFORML 「いいよ、好きな時に出して……このまま手でイかせてあげる」
+				CASE 1
+					CALL HTMLPRINTL(@"「うふ、ビックンビックンさせちゃって。このイク寸前の手応えが最高ね%LOCALS:4%」")
+				CASE 2
+					PRINTFORML 「ほら、ちゃんと目を見て。見つめながらイかせてあげる…」
+			ENDSELECT
+		ELSE
+			SELECTCASE RANDEVENT(3, 130)
+				CASE 0
+					CALL HTMLPRINTL(@"「イきそうなんですね？ いいですよ、このまま手でイかせてあげます%LOCALS:4%」")
+				CASE 1
+					PRINTFORML 「手の中でビクビクする感触が堪りませんね♪ ほら、いつでもイっていいんですよ」
+				CASE 2
+					PRINTFORML 「このまま厄を抜いてあげます。好きな時に出してくださいね…」
+			ENDSELECT
+		ENDIF
+		PRINTFORMDL %CALLNAME%は%CALLNAME:MASTER%の\@ TCVAR:MASTER:位置前後 == 1 ? 目を見つめ # 耳を愛撫し \@ながら
+		PRINTFORMDW ペニスを激しく扱き上げ、%CALLNAME:MASTER%を絶頂へと導いた……
+		CALL SHOOT_VARIATION_K39
+		;RETURNしないで下位に流す。各分岐内でRETURN。漏れたら汎用処理へ
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精")
+			;汎用処理
+			CALL PRINT_KOJO_EV20_1_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINT 　って、
+				SELECTCASE RANDEVENT(3, 129)
+					CASE 0
+						PRINTFORMW 何も出ないんだけど……？」
+					CASE 1
+						PRINTFORMW もう出ないの？ なんか物足りないんだけど……」
+					CASE 2
+						PRINTFORMW もう空っぽみたいね……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 132)
+					CASE 0
+						PRINTFORMW 　イってるのに出ませんね……」
+					CASE 1
+						PRINTFORMW 　ビクビクしてるけど、何も出ませんね……」
+					CASE 2
+						PRINTFORMW 　出ませんね……もう打ち止めでしょうか？」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;大量射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "大量射精")
+			;汎用処理
+			CALL PRINT_KOJO_EV20_1_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 135)
+					CASE 0
+						PRINTFORM 　こんなに出しちゃって……ちょっと勿体無いわね
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORM 　うふっ、こんなに撒き散らしちゃって……厄い、厄いわ
+						CALL PRINT_SYMBOL_K39
+					CASE 2
+						PRINTFORM 　凄い、まだ射精が止まらない ……ほら、全部出るまでシゴいてあげる
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 138)
+					CASE 0
+						PRINTFORM 　いっぱい出しましたね……では最期の一滴まで出してしまいましょうか
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORMW 　こんなに出してしまって……少しは残しておいてくださいよ？」
+					CASE 2
+						PRINTFORM 　凄い、まだ射精が止まらない ……さ、全部抜いてしまいましょうか
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;早漏
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "早漏")
+			;汎用処理
+			CALL PRINT_KOJO_EV20_1_K39
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 141)
+					CASE 0
+						PRINTFORMW 　もうっ、そんなに早く出さないでよ……」
+					CASE 1
+						PRINTFORMW 　もうイっちゃったの？ %TNAME_K39()%にシゴかれるがそんなに良かった？」
+					CASE 2
+						PRINTFORMW 　やだっ、まだ準備してないのに。イク時はそう言ってよ！」
+						CALL FADEIN(15, "「な～んて」")
+						CALL FADEOUT(15, @"「%RAND_SPLIT("ふふ/くすっ")%…」")
+						CALL FADE_CLINE(1)
+						WAIT
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 144)
+					CASE 0
+						PRINTFORMW 　そんなに早く出されては困ります……」
+					CASE 1
+						PRINTFORM 　もう出してしまったんですか？ そんなに気持ちよかったのかしら
+						CALL PRINT_SYMBOL_K39
+					CASE 2
+						PRINTFORMW 　我慢出来ないほど気持ち良かったのでしょうか？」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		;射精2, 5は上層の処理のみでここでRETURN
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;パイズリで射精：調教者が巨乳の場合
+	;=================================================
+	IF (IS_NOWACTNAME("パイズリする") || MC_CHECK_K39("胸")) && TALENT:TARGET:巨乳
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(3, 149)
+				CASE 0
+					CALL HTMLPRINTW(@"「大きなおっぱいで擦られると気持ちいいでしょ？ このままイかせてあげる%LOCALS:4%」")
+				CASE 1
+					PRINTFORMW 「このまま胸で射精していいよ……ほら、もっと擦ってあげる……」
+				CASE 2
+					PRINTFORMW 「ほら、おっぱいでイかせてあげる……そのまま射精していいよ……」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RANDEVENT(3, 152)
+				CASE 0
+					CALL HTMLPRINTW(@"「さぁ、このまま%CNAME(MASTER, TARGET)%の大好きな胸でイかせてあげます%LOCALS:4%」")
+				CASE 1
+					PRINTFORMW 「このまま胸に出していいですよ。さぁ、もっと擦ってあげます……」
+				CASE 2
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%の厄、全部受け止めてあげます。そのまま出してください……」
+			ENDSELECT
+		ENDIF
+		PRINTFORMD %CALLNAME:TARGET%は
+		SELECTCASE RANDEVENT(3, 150)
+			CASE 0
+				PRINTFORMD %CALLNAME:MASTER%のペニスの先端を舐めながら
+			CASE 1
+				PRINTFORMD 自らの唾液を塗しつつ
+			CASE 2
+				PRINTFORMD 時折乳首を擦り付けながら
+		ENDSELECT
+		PRINTFORMDW その豊かな胸でペニスを激しく扱きあげ、%CALLNAME:MASTER%を絶頂へと導いた……
+		;フェードアウト
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(COLOR2_K39("WHITE"), , "パイズリ", , 1)
+		CALL SHOOT_VARIATION_K39
+		;//射精2, 5の枠は設けずに、条件から漏れた時点でRETURNさせる
+		
+		;空射精/大量射精/早漏であるなら汎用処理を呼ぶ
+		SIF GROUPMATCH(GET_SHOOTING(MASTER), "空射精", "大量射精", "早漏")
+			CALL PRINT_KOJO_EV20_1_K39
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINT って、
+				SELECTCASE RANDEVENT(3, 151)
+					CASE 0
+						PRINTFORMW 　何も出ないんだけど……？」
+					CASE 1
+						PRINTFORMW 　もう出ないの？ なんか物足りないんだけど……」
+					CASE 2
+						PRINTFORMW 　もう空っぽみたい……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 154)
+					CASE 0
+						PRINTFORMW 　イってるのに出ませんね……」
+					CASE 1
+						PRINTFORMW 　ビクビクしてるけど、何も出ませんね……」
+					CASE 2
+						PRINTFORMW 　出ませんね……もう打ち止めでしょうか？」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;大量射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "大量射精")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 157)
+					CASE 0
+						PRINTFORMW 　こんなに沢山………ほら、胸の間に溜まってるの分かる？」
+					CASE 1
+						PRINTFORMW 　あんっ、だめっ……胸の間から零れちゃう……」
+					CASE 2
+						PRINTFORMW 　凄い、まだ止まらない……ねぇ、%TNAME_K39()%の%RAND_SPLIT("体/身体")%…ドロドロにして満足？」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 160)
+					CASE 0
+						PRINTFORM 　厄がこんなに……これはまだ搾り取れそうですね
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORM 　凄い量ですね……ほら、胸の谷間にこんなに沢山
+						CALL PRINT_SYMBOL_K39
+					CASE 2
+						PRINTFORMW 　私をこんなに穢して……満足しましたか？」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;早漏
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "早漏")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 163)
+					CASE 0
+						PRINTFORMW 　そんなに早く出さないでよ……」
+					CASE 1
+						PRINTFORMW 　もうイっちゃったの？ \@ TENSION(TARGET, 8) == "高い" ? 雛 # 私 \@のおっぱいがそんなに良かった？」
+					CASE 2
+						PRINTFORMW 　やだっ、まだ準備してないのに……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 166)
+					CASE 0
+						PRINTFORMW 　そんなに早く出されては困ります……」
+					CASE 1
+						PRINTFORMW 　もう出してしまったんですか？ そんなに気持ちよかったのかしら♪」
+					CASE 2
+						PRINTFORMW 　準備してないうちに出されると、厄が零れてしまいます……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;どうせ貧乳ではパイズリ自体発生しないと思われる
+	;=================================================
+	;パイズリで射精：調教者が貧乳
+	;=================================================
+	;IF 口上記入チェック(100) && (IS_NOWACTNAME("パイズリする") || MC_CHECK_K39("胸")) && TALENT:TARGET:貧乳
+	;ENDIF
+	
+	;台詞、地の文、エフェクトを経由して射精種分岐へ
+	;=================================================
+	;パイズリで射精：調教者が巨乳、貧乳以外場合
+	;=================================================
+	IF IS_NOWACTNAME("パイズリする") || MC_CHECK_K39("胸")
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDEVENT(3, 171)
+				CASE 0
+					CALL HTMLPRINTW(@"「おっぱいで擦られるの気持ちいいでしょ？ このままイかせてあげる%LOCALS:4%」")
+				CASE 1
+					PRINTFORMW 「このまま胸で射精していいよ……ほら、もっと擦ってあげる……」
+				CASE 2
+					PRINTFORMW 「ほら、おっぱいでイかせてあげる……そのまま射精していいよ……」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RANDEVENT(3, 174)
+				CASE 0
+					CALL HTMLPRINTW(@"「さぁ、このまま%CNAME(MASTER, TARGET)%の大好きな胸でイかせてあげます%LOCALS:4%」")
+				CASE 1
+					PRINTFORMW 「このまま胸に出していいですよ。さぁ、もっと擦ってあげます……」
+				CASE 2
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%の厄、全部受け止めてあげます。そのまま出してください……」
+			ENDSELECT
+		ENDIF
+		SELECTCASE RANDEVENT(3, 172)
+			CASE 0
+				PRINTFORMD 雛は%CALLNAME:MASTER%のペニスの先端を舐めながら
+			CASE 1
+				PRINTFORMD 雛は自らの唾液を塗しつつ
+			CASE 2
+				PRINTFORMD 雛は時折乳首を擦り付けながら
+		ENDSELECT
+		PRINTFORMDW その胸でペニスを激しく扱きあげ、%CALLNAME:MASTER%を絶頂へと導いた……
+		;フェードアウト
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(COLOR2_K39("WHITE"), , "パイズリ", , 1)
+		CALL SHOOT_VARIATION_K39
+		;//射精2, 5の枠は設けずに、条件から漏れたらRETURNさせて終了
+		
+		;空射精/大量射精/早漏であるなら汎用処理を呼ぶ
+		SIF GROUPMATCH(GET_SHOOTING(MASTER), "空射精", "大量射精", "早漏")
+			CALL PRINT_KOJO_EV20_1_K39
+		
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINT 　って、
+				SELECTCASE RANDEVENT(3, 173)
+					CASE 0
+						PRINTFORMW 何も出ないんだけど……？」
+					CASE 1
+						PRINTFORMW もう出ないの？ なんか物足りないんだけど……」
+					CASE 2
+						PRINTFORMW もう空っぽみたい……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 176)
+					CASE 0
+						PRINTFORMW 　イってるのに出ませんね……」
+					CASE 1
+						PRINTFORMW 　ビクビクしてるけど、何も出ませんね……」
+					CASE 2
+						PRINTFORMW 　出ませんね……もう打ち止めでしょうか？」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;大量射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "大量射精")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 179)
+					CASE 0
+						PRINTFORMW 　こんなに沢山………ほら、胸の間に溜まってるの分かる？」
+					CASE 1
+						PRINTFORMW 　だめっ……胸の間から零れちゃう……」
+					CASE 2
+						PRINTFORMW 　凄い、まだ止まらない……」
+						PRINTFORMW 「ねぇ、%TNAME_K39()%の体ドロドロにして満足？」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 182)
+					CASE 0
+						PRINTFORM 　厄がこんなに……これはまだ搾り取れそうですね
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORM 　凄い量ですね……ほら、胸の谷間にこんなに沢山
+						CALL PRINT_SYMBOL_K39
+					CASE 2
+						PRINTFORMW 　私をこんなに穢して……満足しましたか？」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;早漏
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "早漏")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 190)
+					CASE 0
+						PRINTFORMW 　そんなに早く出さないでよ……」
+					CASE 1
+						PRINTFORML 　もうイっちゃったの？」
+						PRINTFORMW 「%TNAME_K39()%のおっぱいがそんなに良かった？」
+					CASE 2
+						PRINTFORMW 　やだっ、まだ準備してないのに……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 193)
+					CASE 0
+						PRINTFORMW 　そんなに早く出されては困ります……」
+					CASE 1
+						PRINTFORM 　もう出してしまったんですか？ そんなに気持ちよかったのかしら
+						CALL PRINT_SYMBOL_K39
+					CASE 2
+						PRINTFORMW 　準備してないうちに出されると、厄が零れてしまいます……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;足による愛撫で射精(足コキ)
+	;=================================================
+	IF IS_NOWACTNAME("足コキする") || MC_CHECK_K39("足")
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			;RANDEVENT(198)
+			SELECTCASE RANDEVENT(3, 198)
+				CASE 0
+					CALL HTMLPRINTW(@"「足で擦られるの気持ちいい？ いいよ……このままイかせてあげる%LOCALS:4%」")
+				CASE 1
+					PRINTFORMW 「このまま射精していいよ……ほら、もっと足で擦ってあげる……」
+				CASE 2
+					PRINTFORMW 「ほら、%TNAME_K39()%の股間を良く見て……このまま足でイかせてあげる……」
+			ENDSELECT
+		ELSE
+			;RANDEVENT(201)
+			SELECTCASE RANDEVENT(3, 201)
+				CASE 0
+					CALL HTMLPRINTW(@"「さぁ、このまま足でイかせてあげます%LOCALS:4%」")
+				CASE 1
+					PRINTFORMW 「このまま出していいですよ。ほら、もっと足で擦ってあげます……」
+				CASE 2
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%の厄、全部受け止めてあげます。そのまま出してください……」
+			ENDSELECT
+		ENDIF
+		PRINTFORMD %CALLNAME%は
+		SELECTCASE RANDEVENT(3, 199)
+			CASE 0
+				PRINTD 自らの行為に興奮し、上気しきった表情で
+			CASE 1
+				PRINTD 片足で陰嚢を刺激しながら、踏みつけるように
+			CASE 2
+				PRINTD 股間を見せつけながら両足で
+		ENDSELECT
+		PRINTFORMDW ペニスを激しく扱きあげ、%CALLNAME:MASTER%を絶頂へと導いた……
+		CALL SHOOT_VARIATION_K39
+		;//RETURNせず下位へ。漏れたら終端でRETURN
+		
+		;空射精/大量射精/早漏であるなら汎用処理を呼ぶ
+		SIF GROUPMATCH(GET_SHOOTING(MASTER), "空射精", "大量射精", "早漏")
+			CALL PRINT_KOJO_EV20_1_K39
+		;-------------------------------------------------
+		;空射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "空射精")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				PRINT 　って、
+				SELECTCASE RANDEVENT(3, 200)
+					CASE 0
+						PRINTFORMW 何も出ないんだけど？」
+					CASE 1
+						PRINTFORMW もう出ないの？ なんか物足りないんだけど……」
+					CASE 2
+						PRINTFORMW もう空っぽみたい……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 203)
+					CASE 0
+						PRINTFORMW 　イってるのに出ませんね……」
+					CASE 1
+						PRINTFORMW 　ビクビクしてるけど、何も出ませんね……」
+					CASE 2
+						PRINTFORMW 　出ませんね……もう打ち止めでしょうか？」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;大量射精
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "大量射精")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 206)
+					CASE 0
+						PRINTFORMW 　こんなに沢山……うふ、擦って全部搾り取ってあげる♪」
+					CASE 1
+						PRINTFORM 　%RAND_SPLIT("うふ/ふふ")%、いっぱい出た
+						CALL AUTOHEARTCB2_K39
+						PRINTFORMW 　ねぇ、%TNAME_K39()%の足がそんなに良かった？」
+					CASE 2
+						PRINTFORMW 　凄い、まだ止まらない……ねぇ、%TNAME_K39()%の足ドロドロにして満足？ うふっ…」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 209)
+					CASE 0
+						PRINTFORM 　厄がこんなに……これはまだ搾り取れそうですね
+					CASE 1
+						PRINTFORMW 　凄い量ですね……この匂い\@ ABL:精液中毒 > 3 ? 、興奮してしまいます…♪ # には慣れませんけど… \@」
+					CASE 2
+						PRINTFORMW 　私をこんなに穢して……満足しましたか？ うふっ……」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------------------------
+		;早漏
+		;-------------------------------------------------
+		IF SHOOTING(MASTER, "早漏")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDEVENT(3, 212)
+					CASE 0
+						PRINTFORMW 　もうっ、そんなに早く出さないでよ……」
+					CASE 1
+						PRINTFORMW 　もうイっちゃったの？ 足で擦られるのがそんなに良かった？」
+					CASE 2
+						PRINTFORMW 　やだっ、まだ準備してないのに……もうちょっと我慢してよ……」
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDEVENT(3, 215)
+					CASE 0
+						PRINTFORMW 　そんなに早く出されては困ります……」
+					CASE 1
+						PRINTFORM 　もう出してしまったんですか？ そんなに気持ちよかったのかしら
+						CALL PRINT_SYMBOL_K39
+					CASE 2
+						PRINTFORMW 　そんなに溜まってるはずはないんですけどね？ ふふ」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;オナホールで射精
+	;=================================================
+	IF MC_CHECK_K39("オナホール") || TEQUIP:オナホール
+		CALL SHOOT_VARIATION_K39
+		SELECTCASE GET_SHOOTING(MASTER)
+			CASE "空射精"
+				IF GET_KFLAG_K39("相思相愛")
+					PRINTFORMW 「…満足そうな顔しちゃって」
+					PRINTFORMW 「すっかり搾り取られてご満悦って事なの？」
+				ELSE
+					PRINTFORMW 「あら、もう出ないみたいですね？」
+					PRINTFORMW 「流石にやりすぎでしょうか…」
+				ENDIF
+			CASE "大量射精"
+				IF GET_KFLAG_K39("相思相愛")
+					PRINTFORMW 「…ホント呆れるくらい出したわね」
+					PRINTFORMW 「中から溢れてきてるし…もうずっとこれだけでいいんじゃない？」
+					;フェードアウト
+					CALL FADE(20, COLOR2_K39("HINA"), COLOR2_K39("black"), "「クスクス」")
+					CALL FADE_CLINE(1)
+				ELSE
+					PRINTFORMW 「中に収まりきらなくて零れてきますね」
+					CALL HTMLPRINTW(@"「これがそんなに良かったんでしょうか？ ふふ%LOCALS:4%」")
+				ENDIF
+			;その他
+			CASEELSE
+				IF GET_KFLAG_K39("相思相愛")
+					PRINTFORMW 「こういうのってちょっとどうかと思うけど…」
+					CALL HTMLPRINTW(@"「%CNAME(MASTER, TARGET)%がそれで良ければ、まぁ別にいいんだけどね。ふふ%LOCALS:4%」")
+				ELSE
+					PRINTFORMW 「気持ちよければ何でもいいんでしょうか？」
+					CALL HTMLPRINTW(@"「私は別に構いませんけどね。ふふ%LOCALS:4%」")
+				ENDIF 
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;基本的にここまでくる事が無いよう分岐を設定するのが望ましい
+	;-----------------------------------
+	;漏れたものはここで処理
+	;-----------------------------------
+	CALL SHOOT_VARIATION_K39
+	SELECTCASE GET_SHOOTING(MASTER)
+		CASE "空射精"
+			PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? 何か物足りない感じ…… # 何も出ませんね？ \@」
+		CASE "大量射精"
+			PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? ……まったく。呆れる程出したわね？ # ふふ、よくこんなに出るものですね \@」
+		CASE "早漏"
+			PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛") ? ……この早漏。とか言われると、傷ついたりする # おや、ちょっと早くないですか \@？ ふふ…」
+		;その他
+		CASEELSE
+			CALL HTMLPRINTW(@"「\@ GET_KFLAG_K39("相思相愛") ? 厄い、厄いわ……%HTML_HEARTB(, COLOR2_K39("PINK"))% # ふふっ、出してしまったんですね \@」")
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;調教者射精
+;────────────────────────────────────
+;・調教者が射精する場合に表示
+;・射精量による分岐は必要に応じ追加して使うのが望ましい
+;・現在の仕様では調教者が空射精することは非常に稀(ほぼ無い？)
+;-------------------------------------------------
+;IF 口上記入チェック(0) && TCVAR:TARGET:射精
+;ENDIF
+
+;────────────────────────────────────
+;調教対象Ｃ絶頂 RANDEVENT(161) ～(180)
+;────────────────────────────────────
+;・調教対象がＣ絶頂する場合に表示
+;・ここでは「女の子のＣ絶頂」を想定している
+;・射精口上を放置すると射精もこの箇所で処理されて悲しい事になるんで、最低限何らかのものを用意すべき
+;・もしくは!NOWEX:MASTER:射精なり!TCVAR:MASTER:射精で弾くというのもひとつのやりかた
+;-------------------------------------------------
+;IF 口上記入チェック(0) && TCVAR:MASTER:Ｃ絶頂
+;ENDIF
+
+;────────────────────────────────────
+;調教対象Ｖ絶頂 RANDEVENT(181) ～ (200)
+;────────────────────────────────────
+;・調教対象がＶ絶頂する場合に表示
+;-------------------------------------------------
+;IF 口上記入チェック(0) && TCVAR:MASTER:Ｖ絶頂
+;ENDIF
+
+;────────────────────────────────────
+;調教対象Ａ絶頂
+;────────────────────────────────────
+;・調教対象がＡ絶頂する場合に表示
+;-------------------------------------------------
+;IF 口上記入チェック(0) && TCVAR:MASTER:Ａ絶頂
+;ENDIF
+
+;────────────────────────────────────
+;調教対象Ｂ絶頂
+;────────────────────────────────────
+;・調教対象がＢ絶頂する場合に表示
+;-------------------------------------------------
+;IF 口上記入チェック(0) && TCVAR:MASTER:Ｂ絶頂
+;ENDIF
+
+;────────────────────────────────────
+;調教者Ｃ絶頂
+;────────────────────────────────────
+;・調教者がＣ絶頂する場合に表示
+;・ここでは「女の子のＣ絶頂」を想定している
+;・射精は射精口上の分岐で書くのが望ましい
+;-------------------------------------------------
+IF 口上記入チェック(100) && TCVAR:TARGET:Ｃ絶頂
+	LOCALS:0 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEART(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:1 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEARTB(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:2 '= RAND:2 ? LOCALS:0 # LOCALS:1 
+	;bit = 1で調教者
+	;=================================================
+	;自慰でＣ絶頂
+	;=================================================
+	IF GETBIT(TEQUIP:自慰中, 1)
+		;RANDEVENTで汎用処理と振り分ける
+		SELECTCASE RANDEVENT(2, 220)
+			CASE 1
+				CALL TC_EX_K39
+			CASE 2
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 221)
+						CASE 0
+							CALL HTMLPRINTW(@"「だめぇっ%LOCALS:2% 指がっ、指が止まらないのぉっ%LOCALS:2%」")
+						CASE 1
+							CALL HTMLPRINTW(@"「やっ%LOCALS:2% 自分でっ！ こ、こんなの……駄目なのにっ！！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 222)
+						CASE 0
+							CALL HTMLPRINTL(@"「もうぅっ……イっちゃうっ%LOCALS:2% イっちゃうっっ！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ひぅっ！ あんっ%LOCALS:2% あッ……いっ、イクっ…！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 223)
+						CASE 0
+							CALL HTMLPRINTW(@"「やっ%LOCALS:2% 嫌っ！ 見ないでっ！ そんな目で、私を見ないでっ！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「わ、私っ%LOCALS:2% 自分の指で、こんなに気持ちよくっ…！」")
+					ENDSELECT
+					SELECTCASE  RANDEVENT(2, 224)
+						CASE 0
+							CALL HTMLPRINTL(@"「ひぅっ！ あッ%LOCALS:2% イくっ、イくうぅっ…ッ…！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「だめっ！ も、もぅっ%LOCALS:2% いくっ、イきますぅぅっっ…ッ…！」")
+					ENDSELECT
+				ENDIF
+				;終端でまとめてQUAKE
+				CALL QUAKE(4)
+				;ウェイトで一旦止める
+				WAIT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;口による愛撫で絶頂(クンニなど)
+	;=================================================
+	IF (IS_NOWACTNAME("口で愛撫を強制") && GROUPMATCH(TFLAG:ACT派生, 0, 2)) || TC_CHECK_K39("口")
+		SELECTCASE RANDEVENT(2, 225)
+			CASE 1
+				CALL TC_EX_K39
+			CASE 2
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 226)
+						CASE 0
+							CALL HTMLPRINTW(@"「ひぁっ%LOCALS:2% だめっ、そんなとこ噛んじゃだめぇぇっっ！！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「%RAND_SPLIT("あぁ/あん/はぁ/んぁ")%っ%LOCALS:2% んくっ……だめぇっ%LOCALS:2% もうっ、もうぅっ！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 227)
+						CASE 0
+							CALL HTMLPRINTL(@"「イっちゃうっ%LOCALS:2% イっちゃうぅっ！！ あぁぁっ…！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ふぁぁっ%LOCALS:2% だめっ！ イっ、くぅぅっっ！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 228)
+						CASE 0
+							CALL HTMLPRINTW(@"「いやぁっ%LOCALS:2% いやぁぁっ！ そんなとこまで、舐められたら…ッ…%LOCALS:2%」")
+						CASE 1
+							CALL HTMLPRINTW(@"「だめぇっ%LOCALS:2% だめですっ！ こんなにぃ…っ…こんなにされたらっ…ッ…%LOCALS:2%」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 229)
+						CASE 0
+							CALL HTMLPRINTL(@"「イきますっ！ イっちゃいますっ…ッ…%LOCALS:2% ああぁぁぁっ！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「イっ…イクぅぅっっ%LOCALS:2% イっちゃうぅぅっっ！！」")
+					ENDSELECT
+				ENDIF
+				;PRINT文は改行し、QUAKEの後でWAITをかける
+				CALL QUAKE(4)
+				WAIT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ペニスによる愛撫で絶頂(素股)
+	;=================================================
+	IF IS_NOWACTNAME("性器を擦り合う") || TC_CHECK_K39("ペニス")
+		SELECTCASE RANDEVENT(2, 230)
+			CASE 0
+				CALL TC_EX_K39
+			CASE 1
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 231)
+						CASE 0
+							CALL HTMLPRINTW(@"「ひぁっ%LOCALS:2% だめっ%LOCALS:2% そこばっかり擦り付けたらダメぇっ！！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「やぁぁっっ%LOCALS:2% そんなに擦ったらっ！ イっちゃう%LOCALS:2% イっちゃうよぉっっ！！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 232)
+						CASE 0
+							CALL HTMLPRINTL(@"「ふぁぁっ！ だめっ%LOCALS:2% イっ、くぅぅっっ！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「あっ%LOCALS:2% あぁっ！ イクぅっ%LOCALS:2% イっちゃうぅぅっっ！！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RAND(2, 233)
+						CASE 0
+							CALL HTMLPRINTW(@"「いやぁっ%LOCALS:2% だめっ%LOCALS:2% 駄目ですっ…！…そこばっかり、擦らないでぇっ！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「あぅっ%LOCALS:2% あぁっ%LOCALS:2% そんなに擦られたらッ！ もうっ、もうぅっ、私…ッ…！」")
+					ENDSELECT
+					SELECTCASE  RANDEVENT(2, 234)
+						CASE 0
+							CALL HTMLPRINTL(@"「ひぅっ%LOCALS:2% あッ%LOCALS:2% イくっ、イくうぅっ…ッ…！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「イきますっ！ イっちゃいますっ…ッ…%LOCALS:2% ああぁぁぁっ！！」")
+					ENDSELECT
+				ENDIF
+				;PRINTを改行。QUAKEの後にWAIT
+				CALL QUAKE(4)
+				WAIT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-----------------------------------
+	;汎用処理
+	;-----------------------------------
+	CALL TC_EX_K39
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;調教者Ｖ絶頂 RANDEVENT(261) ～ (280)
+;────────────────────────────────────
+;・調教者がＶ絶頂する場合に表示
+;-------------------------------------------------
+IF 口上記入チェック(100) && TCVAR:TARGET:Ｖ絶頂
+	LOCALS:0 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEART(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:1 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEARTB(, COLOR2_K39("PINK")) # "！"
+	LOCALS:2 '= RAND:2 ? LOCALS:0 # LOCALS:1
+	[SKIPSTART]
+	;=================================================
+	;同時にＡ絶頂/Ｂ絶頂(多重絶頂)
+	;=================================================
+	IF TCVAR:TARGET:Ａ絶頂 || TCVAR:TARGET:Ｂ絶頂
+		;Ｖ+ＡＢ絶頂
+		IF ALLSAMES(1, TCVAR:Ａ絶頂, TCVAR:Ｂ絶頂)
+		;Ｖ+Ａ絶頂
+		ELSEIF TCVAR:Ａ絶頂
+		;Ｖ+Ｂ絶頂
+		ELSEIF TCVAR:Ｂ絶頂
+		ENDIF
+	ENDIF
+	[SKIPEND]
+	
+	;=================================================
+	;自慰でＶ絶頂(バイブ)
+	;=================================================
+	IF GETBIT(TEQUIP:自慰中, 1) && TV_CHECK_K39("バイブ")
+		SELECTCASE RANDEVENT(2, 240)
+			CASE 0
+				CALL TV_EX_K39
+			CASE 1
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 241)
+						CASE 0
+							CALL HTMLPRINTW(@"「ダメっ！ こんなのだめぇっ%LOCALS:2% %TNAME_K39()%！ 駄目な神様になっちゃうよぉっ！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「んっくっ、こんな玩具でっ！ あっ、あぁっ%LOCALS:2% いやっ、いやぁぁっっ！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 242)
+						CASE 0
+							CALL HTMLPRINTL(@"「ひぅっ%LOCALS:2% あぁッ……イくっ、イくうぅっ…ッ…！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ひぅっ！ あんっ%LOCALS:2% あッ……いっ、イクっ…！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 243)
+						CASE 0
+							CALL HTMLPRINTW(@"「いやっ、見ないでっ！ こんな姿見ないでぇっ！ で、でもっ、止まらなくッ%LOCALS:2%」")
+						CASE 1
+							CALL HTMLPRINTW(@"「んっくっ、私、こんな玩具でっ！ あっ%LOCALS:2% あぁっ！ いやっ、いやぁぁっっ！ 」")
+					ENDSELECT
+					SELECTCASE  RANDEVENT(2, 244)
+						CASE 0
+							CALL HTMLPRINTL(@"「イっ…イクぅぅっっ%LOCALS:2% イっちゃうぅぅっっ！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ひぅっ！ あッ%LOCALS:2% イくっ、イくうぅっ…ッ…！！」")
+					ENDSELECT
+				ENDIF
+				CALL QUAKE(4)
+				WAIT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ペニスによる愛撫で絶頂(セックス)
+	;=================================================
+	IF IS_NOWACTNAME("正常位させる/後背位させる/逆レイプ/対面座位させる/背面座位させる") || V_SEX(MASTER)
+		;-------------------------------------------------
+		;焦らし中に絶頂
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 > 1
+			SELECTCASE RANDEVENT(2, 245)
+				CASE 0
+					CALL HTMLPRINTW(@"「あぁっ%LOCALS:2% 嘘っ！ 焦らしてるのに、私がイっちゃうぅっ！」")
+				CASE 1
+					CALL HTMLPRINTW(@"「んぁっ%LOCALS:2% 焦らしてるのに…イっちゃう！ イかされちゃうぅっ！」")
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 246)
+				CASE 0
+					CALL HTMLPRINTL(@"「ふぁぁっ%LOCALS:2% だめっ、だめぇっ！ イっ、くぅぅっっ！！」")
+				CASE 1
+					CALL HTMLPRINTL(@"「ダめぇっ！ も、もうっ！ イクッ%LOCALS:2% ああぁぁっっっ！！！」")
+			ENDSELECT
+			;改行、QUAKE、WAITで
+			CALL QUAKE(4)
+			WAIT
+			RETURN 1
+		ENDIF
+		
+		;-------------------------------
+		;その他
+		;-------------------------------
+		SELECTCASE RANDEVENT(2, 247)
+			CASE 0
+				CALL TV_EX_K39
+			CASE 1
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 248)
+						CASE 0
+							CALL HTMLPRINTW(@"「やぁっ%LOCALS:2% あぁっ！ あっ%LOCALS:2% すごっ…いいぃっ！ もう、もうぅ、イっちゃうぅっっ！！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「あんっ、んぁっ%LOCALS:2% ああぁっ! イっちゃうっ%LOCALS:2% おまんこずぼずぼされてぇっッ！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 249)
+						CASE 0
+							CALL HTMLPRINTL(@"「あっ、あぁっ%LOCALS:2% イクぅぅっっ%LOCALS:2% イっちゃうぅぅっっ！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ふぁぁっ%LOCALS:2% だめっ、だめぇっ！ イっ、くぅぅっっ！！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 250)
+						CASE 0
+							CALL HTMLPRINTW(@"「はぁぁぁっっ！ あぁぁっ%LOCALS:2% あっ、こ、こんなのぉっ%LOCALS:2% んぁぁっ…」")
+						CASE 1
+							CALL HTMLPRINTW(@"「あっ%LOCALS:2% はぁっ！ ああぁっ%LOCALS:2% イかせてっ！ イかせてくださいぃっ…ッ…！」")
+					ENDSELECT
+					SELECTCASE  RANDEVENT(2, 251)
+						CASE 0
+							CALL HTMLPRINTL(@"「だめっ！ も、もぅっ%LOCALS:2% いくっ、イきますぅぅっっ…ッ…！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「あぁっ%LOCALS:2% イきますっ！ イっちゃいますっ…ッ…！ ああぁぁぁっ！！」")
+					ENDSELECT
+				ENDIF
+				CALL QUAKE(4)
+				WAIT
+		ENDSELECT
+		;地の文を呼ぶ
+		CALL EX_SITUATION_K39
+		RETURN 1
+	ENDIF
+	
+	;-----------------------------------
+	;その他汎用処理
+	;-----------------------------------
+	CALL TV_EX_K39
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;調教者Ａ絶頂
+;────────────────────────────────────
+;・調教者がＡ絶頂する場合に表示
+;-------------------------------------------------
+IF 口上記入チェック(100) && TCVAR:TARGET:Ａ絶頂
+	LOCALS:0 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEART(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:1 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEARTB(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:2 '= RAND:2 ? LOCALS:0 # LOCALS:1 
+	;=================================================
+	;同時にＢ絶頂(多重絶頂)
+	;=================================================
+	;IF TCVAR:TARGET:Ｂ絶頂
+	;ENDIF
+	
+	;Ａに対する口で愛撫強制は顔面騎乗の場合のみ発生
+	;=================================================
+	;顔面騎乗アナルで絶頂
+	;=================================================
+	IF (IS_NOWACTNAME("口で愛撫を強制") && TFLAG:ACT派生 == 3) || TEQUIP:顔面騎乗アナル || TA_CHECK_K39("口")
+		SELECTCASE RANDEVENT(2, 260)
+			CASE 0
+				CALL TA_EX_K39
+			CASE 1
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 261)
+						CASE 0
+							CALL HTMLPRINTW(@"「ひぁっ%LOCALS:2% だめっ、そんなにおしり舐めちゃダメぇぇっっ！！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「あぁぁんっっ%LOCALS:2% んくっ…… だめぇっ！ もうっ、もうぅっ%LOCALS:2%」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 262)
+						CASE 0
+							CALL HTMLPRINTL(@"「イっちゃうっ%LOCALS:2% イっちゃうぅっ！！ あぁぁっ…！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ふぁぁっ%LOCALS:2% だめっ！ イっ、くぅぅっっ！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 263)
+						CASE 0
+							CALL HTMLPRINTW(@"「いやぁっ%LOCALS:2% いやぁぁっ！ そんなとこまで、舐められたら…ッ…！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「だめぇっ%LOCALS:2% だめですっ！ こんなにぃ…っ…こんなにされたらっ…ッ…！」")
+					ENDSELECT
+					SELECTCASE  RANDEVENT(2, 264)
+						CASE 0
+							CALL HTMLPRINTL(@"「イきますっ！ イっちゃいますっ…ッ…%LOCALS:2% ああぁぁぁっ！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「イっ…イクぅぅっっ%LOCALS:2% イっちゃうぅぅっっ！！」")
+					ENDSELECT
+				ENDIF
+				CALL QUAKE(4)
+				WAIT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ペニスによる愛撫で絶頂(Ａ性交奉仕)
+	;=================================================
+	IF IS_NOWACTNAME("アナルセックスさせる") || A_SEX(MASTER)
+		;-------------------------------------------------
+		;焦らし中に絶頂
+		;-------------------------------------------------
+		IF TCVAR:MASTER:焦らし度 > 1
+			SELECTCASE RANDEVENT(2, 265)
+				CASE 0
+					CALL HTMLPRINTW(@"「あぁっ！？ 嘘っ！ 焦らしてるのに、私がイっちゃうぅっ%LOCALS:2%」")
+				CASE 1
+					CALL HTMLPRINTW(@"「んぁっ%LOCALS:2% 焦らしてるのに…イっちゃう！ イかされちゃうぅっ%LOCALS:2%」")
+			ENDSELECT
+			SELECTCASE RANDEVENT(2, 266)
+				CASE 0
+					CALL HTMLPRINTL(@"「ふぁぁっ%LOCALS:2% だめっ、だめぇっ%LOCALS:2% イっ、くぅぅっっ！！」")
+				CASE 1
+					CALL HTMLPRINTL(@"「ダめぇっ%LOCALS:2% も、もうっ！ イクッ%LOCALS:2% ああぁぁっっっ！！！」")
+			ENDSELECT
+			CALL QUAKE(4)
+			WAIT
+			RETURN 1
+		ENDIF
+		
+		;---------------------
+		;その他
+		;---------------------
+		SELECTCASE RANDEVENT(2, 267)
+			CASE 0
+				CALL TA_EX_K39
+			CASE 1
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 268)
+						CASE 0
+							CALL HTMLPRINTW(@"「やぁっ、あぁっ%LOCALS:2% あっ、すごっ…いいぃっ%LOCALS:2% もう、もうぅっ%LOCALS:2% イっちゃうぅっっ！！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「あんっ%LOCALS:2% んぁっ！ ああぁっ%LOCALS:2% イっちゃうっ%LOCALS:2% おしりずぼずぼされてぇっッ！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 269)
+						CASE 0
+							CALL HTMLPRINTL(@"「あっ、あぁっ%LOCALS:2% イクぅぅっっ%LOCALS:2% イっちゃうぅぅっっ！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ふぁぁっ%LOCALS:2% だめっ、だめぇっ%LOCALS:2% イっ、くぅぅっっ！！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 270)
+						CASE 0
+							CALL HTMLPRINTW(@"「はぁぁぁっっ！ あぁっ%LOCALS:2% あっ、こ、こんなのぉっ！ んぁぁっ…%LOCALS:2%」")
+						CASE 1
+							CALL HTMLPRINTW(@"「あっ%LOCALS:2% はぁっ！ ああぁっ%LOCALS:2% イかせてっ！ イかせてくださいぃっ…ッ…！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 271)
+						CASE 0
+							CALL HTMLPRINTL(@"「だめっ！ も、もぅっ……いくっ%LOCALS:2% イきますぅぅっっ…ッ…！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「あぁっ%LOCALS:2% イきますっ%LOCALS:2% イっちゃいますっ…ッ…！ ああぁぁぁっ！！」")
+					ENDSELECT
+				ENDIF
+				CALL QUAKE(4)
+				WAIT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-----------------------------------
+	;その他汎用処理
+	;-----------------------------------
+	CALL TA_EX_K39
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;調教者Ｂ絶頂
+;────────────────────────────────────
+;・調教者がＢ絶頂する場合に表示
+;-------------------------------------------------
+IF 口上記入チェック(100) && TCVAR:TARGET:Ｂ絶頂
+	LOCALS:0 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEART(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:1 '= TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") || (GET_KFLAG_K39("相思相愛") && PERCENT(75)) ? HTML_HEARTB(, COLOR2_K39("PINK")) # "！" 
+	LOCALS:2 '= RAND:2 ? LOCALS:0 # LOCALS:1 
+	;=================================================
+	;同時に噴乳 //空噴乳は面倒なので弾く
+	;=================================================
+	IF TCVAR:TARGET:噴乳
+		IF GROUPMATCH(GET_SPLAYING_MILK(TARGET), "噴乳", "大量噴乳")
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛")
+				CALL HTMLPRINTW(@"「や、だめっ%LOCALS:2% 出ちゃう%LOCALS:2% おっぱいでちゃうぅっ！」")
+				CALL HTMLPRINTL(@"「やぁっ%LOCALS:2% おっぱい出しながら…イっ、ちゃうぅぅっ！」")
+			;その他
+			ELSE
+				PRINTFORMW 「あぁっ！？ そ、そんな…私、こんなの……」
+				CALL HTMLPRINTL(@"「いやっ！ だめっ%LOCALS:2% おっぱい出しながら、イってしまいますっ！ あぁぁっ！」")
+			ENDIF
+			CALL QUAKE(4)
+			WAIT
+			RETURN 1
+		;ELSE
+			;//空噴乳はとりあえず放置
+		ENDIF
+	ENDIF
+	
+	;=================================================
+	;自慰でＢ絶頂
+	;=================================================
+	IF GETBIT(TEQUIP:自慰中, 1)
+		SELECTCASE RANDEVENT(2, 280)
+			CASE 0
+				CALL TB_EX_K39
+			CASE 1
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 281)
+						CASE 0
+							CALL HTMLPRINTW(@"「ダメっ%LOCALS:2% こんなのだめぇっ！ %TNAME_K39()%！ 駄目な神様になっちゃうよぉっ！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「んっくっ、自分で弄ってっ……あぁっ%LOCALS:2% いやっ、ダメぇっ！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 282)
+						CASE 0
+							CALL HTMLPRINTL(@"「ひぅっ%LOCALS:2% あぁッ……イくっ%LOCALS:2% イくうぅっ…ッ…！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ひぅっ%LOCALS:2% あんっ%LOCALS:2% あッ……いっ、イクっ…！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 283)
+						CASE 0
+							CALL HTMLPRINTW(@"「いやっ、見ないでっ！ こんな姿見ないでぇっ！ で、でもっ、止まらなくッ%LOCALS:2%」")
+						CASE 1
+							CALL HTMLPRINTW(@"「んっくっ、私、自分で慰めてっ！ あっ%LOCALS:2% あぁっ！ やっ、あぁぁっっ！」")
+					ENDSELECT
+					SELECTCASE  RANDEVENT(2, 284)
+						CASE 0
+							CALL HTMLPRINTL(@"「イっ…イクぅぅっっ%LOCALS:2% イっちゃうぅぅっっ！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ひぅっ！ あッ……イくっ%LOCALS:2% イくうぅっ…ッ…！！」")
+					ENDSELECT
+				ENDIF
+				;改行、QUAKE、WAIT
+				CALL QUAKE(4)
+				WAIT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;口による愛撫で絶頂(口で胸愛撫を強制等)
+	;=================================================
+	IF (IS_NOWACTNAME("胸愛撫強制") && TFLAG:ACT派生 == 2) || TB_CHECK_K39("口")
+		SELECTCASE RANDEVENT(2, 285)
+			CASE 0
+				CALL TB_EX_K39
+			CASE 1
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 286)
+						CASE 0
+							CALL HTMLPRINTW(@"「ひぁっ%LOCALS:2% だめっ、そんなに乳首舐めちゃダメぇぇっっ！！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「%RAND_SPLIT("あぁ/んっ")%っ！ んくっ…… だめぇっ%LOCALS:2% もうっ、もうぅっ！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 287)
+						CASE 0
+							CALL HTMLPRINTL(@"「イっちゃうっ%LOCALS:2% イっちゃうぅっ！！ あぁぁっ…！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「ふぁぁっ%LOCALS:2% だめっ！ イっ%LOCALS:2% くぅぅっっ！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 288)
+						CASE 0
+							CALL HTMLPRINTW(@"「んあぁっ%LOCALS:2% ダメっ%LOCALS:2% そんなに乳首を舐められたら…ッ…！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「だめぇっ%LOCALS:2% だめですっ！ こんなにぃ…っ…%LOCALS:2% こんなにされたらっ…ッ…！」")
+					ENDSELECT
+					SELECTCASE  RANDEVENT(2, 289)
+						CASE 0
+							CALL HTMLPRINTL(@"「イきますっ！ イっちゃいますっ…ッ…%LOCALS:2% ああぁぁぁっ！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「イっ…イクぅぅっっ%LOCALS:2% イっちゃうぅぅっっ！！」")
+					ENDSELECT
+				ENDIF
+				CALL QUAKE(4)
+				WAIT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ペニスによる愛撫で絶頂(パイズリなど)
+	;=================================================
+	IF (IS_NOWACTNAME("パイズリする") || TB_CHECK_K39("ペニス"))
+		SELECTCASE RANDEVENT(2, 290)
+			CASE 0
+				CALL TB_EX_K39
+			CASE 1
+				;相思相愛
+				IF GET_KFLAG_K39("相思相愛")
+					SELECTCASE RANDEVENT(2, 291)
+						CASE 0
+							CALL HTMLPRINTW(@"「ひぁっ%LOCALS:2% だめっ%LOCALS:2% そこばっかり擦り付けたらダメぇぇっっ！！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「やぁぁっっ%LOCALS:2% そんなに擦ったらっ！ イっちゃう%LOCALS:2% イっちゃうよぉっっ！！」")
+					ENDSELECT
+					SELECTCASE RANDEVENT(2, 292)
+						CASE 0
+							CALL HTMLPRINTL(@"「ふぁぁっ%LOCALS:2% だめっ%LOCALS:2% イっ、くぅぅっっ！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「あっ、あぁっ%LOCALS:2% イクぅぅっっ%LOCALS:2% イっちゃうぅぅっっ！！」")
+					ENDSELECT
+				;その他
+				ELSE
+					SELECTCASE RANDEVENT(2, 293)
+						CASE 0
+							CALL HTMLPRINTW(@"「いやぁっ！ だめっ%LOCALS:2% 駄目ですっ…！ そこばっかり、擦らないでぇっ！」")
+						CASE 1
+							CALL HTMLPRINTW(@"「あぅっ、あぁっ%LOCALS:2% そんなに擦られたらッ！ もうっ%LOCALS:2% もうぅっ、私…ッ…！」")
+					ENDSELECT
+					SELECTCASE  RANDEVENT(2, 294)
+						CASE 0
+							CALL HTMLPRINTL(@"「ひぅっ%LOCALS:2% あッ……イくっ、イくうぅっ…ッ…！！」")
+						CASE 1
+							CALL HTMLPRINTL(@"「イきますっ！ イっちゃいますっ…ッ…%LOCALS:2% ああぁぁぁっ！！」")
+					ENDSELECT
+				ENDIF
+				CALL QUAKE(4)
+				WAIT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-----------------------------------
+	;その他汎用処理
+	;-----------------------------------
+	CALL TB_EX_K39
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;調教対象潮吹き
+;────────────────────────────────────
+;・調教対象が潮吹きの場合に表示
+;・現状、ACT指挿入れ時にＧスポット責めに派生した場合にのみ起きる
+;・ご主人様の潮吹きは無い
+;-------------------------------------------------
+;IF 口上記入チェック(0) && TCVAR:MASTER:潮吹き
+;ENDIF
+
+;────────────────────────────────────
+;調教対象失禁
+;────────────────────────────────────
+;・調教対象が失禁する場合に表示
+;・調教対象に素質:おもらし癖が無ければ発生しない
+;・Ｃ絶頂なしで失禁だけというのは稀にあるケース
+;-------------------------------------------------
+IF 口上記入チェック(100) && TCVAR:MASTER:放尿
+	;とりあえず地の文のみアリス口上から引っ張ってきた
+	;自分の口上で色々使いまわしてると別の口上で違う名前が出たりするのがアレなんで
+	;今後はなるべく%CALLNAME:TARGET%表記でいくのが望ましいのかな、と
+	;=================================================
+	;性交奉仕中
+	;=================================================
+	IF IS_NOWACTNAME("逆レイプ/正常位させる/後背位させる/対面座位させる/背面座位させる/アナルセックスさせる") || TEQUIP:性交奉仕中
+		PRINTFORMDL %CALLNAME:MASTER%はこみ上げる尿意を堪えきれず、
+		PRINTFORMDL %CALLNAME:TARGET%の\@ TEQUIP:性交奉仕中 != 6 ? 膣 # 肛 \@内に放尿してしまった…
+		PRINTL
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「えっ？ ちょ、ちょっと…、これ………」
+			PRINTFORMW 「冗談でしょう？ って段階じゃないわね……」
+		ELSE
+			PRINTFORMW 「えっ？ ちょっと、まさかこれ……」
+			PRINTFORMW 「――まったく。本当に困った人ですね……」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	PRINTFORM 「\@ GET_KFLAG_K39("相思相愛") ? うふっ、仕方の無い人ね # あらあら、仕方の無い人ですね \@
+	CALL PRINT_SYMBOL_K39
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;EV20の汎用処理
+;-------------------------------------------------
+@PRINT_KOJO_EV20_1_K39
+PRINTFORM 「%RAND_SPLIT("んっ/んんっ/あっ/あぁっ/あんっ")%\@ TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲") ? … # \@
+;調教者の満足度が高いか情欲状態
+IF TENSION(TARGET, 8) == "高い" || IS_CONDITION(TARGET, "情欲")
+	CALL AUTOHEARTCB_K39
+ELSE
+	PRINT ！？
+ENDIF
+
+;-------------------------------------------------切り取り線-------------------------------------------------

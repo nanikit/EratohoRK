@@ -1,0 +1,74 @@
+﻿;こいし＠Ies
+@CHARAMAKE_K64(ARG)
+SELECTCASE ARG
+	CASE 0
+		PRINTFORMW 「お目覚めね！早速だけど質問に答えてもらうわ。」
+	CASE 9
+		PRINTFORMW 「疲れてる？私で最後だから、答えてくれるかしら？」
+	CASEELSE
+		PRINTFORMW 「ねぇ、起きてる？次は私よ。」
+ENDSELECT
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:ローマ字)
+PRINTL 
+PRINTFORML 「質問よ。」
+PRINTFORMW 「ある日突然、あなたの三つ目の目が開きました。では、その目の能力は？」
+PRINTL 
+PRINTFORMDL [0] 答えない
+PRINTFORMDL [1] 心を読み取る目
+PRINTFORMDL [2] 千里先を見通す目
+PRINTFORMDL [3] 相手に呪いをかける目
+PRINTFORMDL [4] 衣類が透けて見える目
+CALL INPUTINTD(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「あら？思いつかないの？それとも私の話、聞いてなかった？」
+		CALLF CM_PROF("衝動", -10)
+		CALLF CM_PROF("好奇心", -10)
+		CALLF CM_PROF("羞恥", 10)
+		CALLF CM_PROF("神経質", 10)
+	CASE 1
+		PRINTFORML 「そんなものが欲しいの？」
+		PRINTFORML 「他人の心なんて覗いたところで、いい事なんてないのに。」
+			CALLF CM_PROF("攻撃",     +20)
+			CALLF CM_PROF("衝動",     +10)
+			CALLF CM_PROF("好奇心",   +20)
+			CALLF CM_PROF("モラル",   -20)
+			CALLF CM_PROF("知性",     +10)
+			CALLF CM_PROF("被虐",     -20)
+			CALLF CM_PROF("神経質",   +30)
+	CASE 2
+		PRINTFORML 「山の見張り役にでもなりたいのかしら？」
+			CALLF CM_PROF("神経質",   +30)
+			CALLF CM_PROF("プライド", +10)
+			CALLF CM_PROF("好奇心",   +20)
+			CALLF CM_PROF("モラル",   +10)
+			CALLF CM_PROF("潔癖",     +10)
+	CASE 3
+		PRINTFORML 「誰かに恨みでもあるのかしら？」
+		PRINTFORML 「でもその目はきっとあなたを呪うわ。」
+			CALLF CM_PROF("攻撃",     +30)
+			CALLF CM_PROF("衝動",     +10)
+			CALLF CM_PROF("倒錯",     +10)
+			CALLF CM_PROF("モラル",   -20)
+			CALLF CM_PROF("被虐",     -20)
+	CASE 4
+		PRINTFORML 「あら、素直ね。正直なのはいいけど、私の方見ないでくれる？」
+			CALLF CM_PROF("素直さ",   +30)
+			CALLF CM_PROF("プライド", -20)
+			CALLF CM_PROF("モラル",   -20)
+			CALLF CM_PROF("好奇心",   +10)
+			CALLF CM_PROF("Ｂ好き",   +10)
+			CALLF CM_PROF("羞恥",     -20)
+			CALLF CM_PROF("潔癖",     -20)
+ENDSELECT
+
+SELECTCASE ARG
+	CASE 0
+		PRINTFORMW 「こんな感じで質問が続くから。さぁ、次はあっち。」
+	CASE 9
+		PRINTFORMW 「質問は私でおしまい。もう一度無意識に還るといいわ。」
+	CASEELSE
+		PRINTFORMW 「次はあっちよ。いってらっしゃい。」
+ENDSELECT
+RETURN 1

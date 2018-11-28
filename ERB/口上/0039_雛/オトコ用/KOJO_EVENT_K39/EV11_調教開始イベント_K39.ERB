@@ -1,0 +1,502 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+;	雛口上　調教開始イベント口上ファイル
+
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+
+;EV11, 調教開始口上
+;##################
+@KOJO_MALE_EVENT_K39_11(ARG) ;引数内訳…ARG=(0, 通常/1, 調教者の疲労による中止/2, 調教対象の疲労による中止)
+#LOCALSIZE  10
+#LOCALSSIZE 10
+VARSET LOCAL
+VARSET LOCALS
+
+{
+LOCALS:0 '= RAND:3 
+? HTML_HEART(, COLOR2_K39("PINK")) 
+# HTML_EIGHTHNOTE()
+}
+
+[SKIPSTART]
+	一部のイベントはOPを経由してKFLAG:(FLAG:ご主人様):50に代入が行われた場合にのみ表示
+	基本的にノーマルモード以外でのEDを含むイベントは殺す方針
+	CFLAG:調教回数はCFLAG:調教回数に置換
+
+	今見直すと全体的にもう少し書いてもよさそうな気もする
+	ただ個人的にはイベント書くのは精神的に消耗するのであまり気は進まない
+
+	厄神とは神としても女としても穢れた存在という独自の解釈が基盤となっている
+	一連のイベントで雛の穢れてはいるけどあくまで純粋で、健気で、人間思いな部分を描きたかった
+	果たして上手くいったかどうか？
+[SKIPEND]
+
+
+;調教初回
+;========
+IF CFLAG:調教回数 == 1
+	;GameBase判定処理
+	;================
+	CALL CHK_GAMEBASE_K39
+
+	;雛が主人でありOPを経由している場合
+	;==================================
+	IF !FLAG:モード && TALENT:TARGET:ご主人様 && KFLAG:(FLAG:ご主人様):50 == 1
+		;デフォルトカラーで表示する
+		PRINTFORMDL 一口に厄を祓うと言っても幾つか方法がある
+		PRINTFORMDW その中でも一番即効性があるのが、いわゆる性的な接触――
+		PRINTL
+		PRINTFORMDL 自分がなぜ人間の、しかも女を模した姿をしているのか
+		PRINTFORMDW かつて幾度か疑問に思った事もあった――
+		PRINTL
+		PRINTFORMDL 人の厄をこの身に集めるという意味に於いて、どうやらこの姿の方が都合が良いらしい
+		PRINTFORMDW この忌むべき厄神の体はどうしようもなく淫らで、容易く快楽に流されてしまう
+		PRINTL
+		PRINTFORMDW それは自分の心情とは関係なく、その事が時には苦しくもあり、情けなくもあった
+		PRINTFORMDW ただ、それが厄神としての己が務めというのなら、やり遂げるにしくはない――
+		PRINTL
+		PRINTFORMDL 私は人間が好きだ
+		PRINTFORMDW それは自身の存在が、人の手よって形作られた流し雛に由来するものであるからなのかも知れない
+		PRINTL
+		PRINTFORMDL 人々の幸せそうな姿を見るのは、私の数少ない楽しみの一つ
+		PRINTFORMDW ただ、厄神という存在は幸を与える事は出来ない
+		PRINTFORMDL ならば、せめて人々の不幸をこの身に引き受け尽くし、私はただ、遠くから見守れればいい
+		PRINTFORMDW いずれ朽ち果て、消え去るその日まで――
+		PRINTL
+		PRINTFORMDW それでも、この目の前の人物だけは早急に厄を祓う必要がある
+		PRINTFORMDL 一人の人間が此れほどの厄を背負い込んでるのは見た事がない
+		PRINTFORMDW 放置すればいずれ大きな災厄を、自身とその廻りに振りまくであろう事が見て取れた
+		PRINTL
+		PRINTFORMDL 厄神など所詮全能の存在には程遠い者、その力には自ずと限界がある
+		PRINTFORMDW 自身の器を越える厄を受ければ、この身は裂け、消滅してしまう――
+		PRINTL
+		PRINTFORMDW 自分にやり遂げられるだろうか？　不安が無いと言えば嘘になるだろう
+		PRINTFORMDL それでも私は人間の味方、ある意味人に奉仕する神
+		PRINTFORMDW 己が使命に殉じる事になっても、それは本望だった――
+		PRINTL
+		PRINTFORMDW 自虐的という訳ではない。厄神のありようとはこうしたものなのだ
+		PRINTFORMDW 厄を集めるという、ただそれだけの為に形作られ、具現化した存在
+		PRINTFORMDW いずれは其の負荷に耐え切れなくなり、人知れず静かに消えていく存在
+		PRINTFORMDW ただ其れだけの事であり、殊更思い悩む必要も無い――
+		PRINTW
+		;引数はフェード速度(ms)、最初の文字色、次の文字色(背景色)、表示する文字列の順
+		{
+		CALL FADE_TO_CLEARLINE2(
+		30, 
+		COLOR2_K39("white"), 
+		GETBGCOLOR(), 
+		"そう、思っていた……その時迄は……")
+		}
+		CALL TWAIT3_K39
+		;これは設定した文字色で出力する
+		PRINTFORML 「これから行う事は、全て%CNAME(MASTER, TARGET)%の厄を祓う為」
+		PRINTFORMW 「何も心配せず、私に任せてくださいね」
+		PRINTL
+		;開幕今の気分を聞くにしてFIRSTACTを消化させる
+		TCVAR:行動予約 = 0
+		RETURN 1
+	ENDIF
+
+	;雛が主人でない場合もしくはノーマルモードでない場合 //初回にCNAME代入のみ行う
+	;==================================================
+	IF FLAG:モード != 0 || !TALENT:TARGET:ご主人様
+		;プレイヤーが名前を入力済みである場合
+		IF NO:MASTER == 0 && CALLNAME:MASTER != "あなた"
+			IF 0
+			ELSEIF TALENT:MASTER:オトコ    ;//名前入力済みかつオトコ
+				CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴方/%CSTR:(TARGET):呼び方リスト%
+			ELSEIF TALENT:MASTER:ふたなり  ;//名前入力済みかつふたなり
+				CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴女/%CSTR:(TARGET):呼び方リスト%
+			ELSE                           ;//名前入力済みかつそれ以外（女）
+				CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴女/%CSTR:(TARGET):呼び方リスト%
+			ENDIF
+		;調教対象がオトコの場合
+		ELSEIF TALENT:MASTER:オトコ
+			CSTR:(TARGET):呼び方リスト = あなた_貴方/%CSTR:(TARGET):呼び方リスト%
+		;調教対象がふたなりの場合
+		ELSEIF TALENT:MASTER:ふたなり
+			CSTR:(TARGET):呼び方リスト = あなた_貴女/%CSTR:(TARGET):呼び方リスト%
+		;それ以外（女）
+		ELSE
+			CSTR:(TARGET):呼び方リスト = あなた_貴女/%CSTR:(TARGET):呼び方リスト%
+		ENDIF
+		;RESULT値は0
+		RETURN 0
+	ENDIF
+ENDIF
+
+
+;調教１０回目記念
+;================
+;調教中止の場合(ARGが0でない場合)は弾く
+IF CFLAG:TARGET:調教回数 == 10 && KFLAG:(FLAG:ご主人様):50 == 1 && !ARG
+	;雛が主人の時のみ表示
+	IF TALENT:TARGET:ご主人様
+		;↓良く考えると順調でない可能性もあるな
+		PRINTFORMDL 此れまでの所、全ては順調であるように思われた
+		PRINTFORMDW この人物の厄は徐々にではあるが、確実に減少しつつある
+		PRINTFORMDW その一方、普段通りの厄集めも頃合を見計らい、日々行っていた――
+		PRINTL
+		PRINTFORMDL 負担が大きいのは確かだったが、己が為すべきことを為すのに、不平は言っていられない
+		PRINTFORMDW この地の人々を厄災から守り、遠ざける事が出来るのは、この私しか居ないのだから――
+		PRINTL
+		PRINTFORMDL それでも気になる点があった
+		PRINTFORMDW それはこの人物の持つ因果の大きさ、それに起因すると思われる膨大な厄の量――
+		PRINTL
+		PRINTFORMDL 一体どうすれば、只の人間がこれ程の因果の糸を束ねる事が出来るのだろう
+		PRINTFORMDW 未だ心を閉ざしているこの人物が多くを語らない為、今はただ推測する事しか出来ない
+		PRINTFORMDW 出会った時の服装から、恐らく外の世界から迷い込んだであろうという事位しか現状では分からなかった
+		PRINTL
+		PRINTFORMDL 幻想郷に外の世界の者が迷い込むのは、特別珍しい事でもない
+		PRINTFORMDW 結界の薄い場所からこちらにやってきた者は此れまでも数多くいた
+		PRINTFORMDW 大抵の場合、結界の薄い無縁塚の方からやってくるのが常であるが、この人物は其れに当てはまらない
+		PRINTL
+		PRINTFORMDW 妖怪の山に程近い場所に倒れていた事から推察するに、何らかの力によって結界を強引に切り裂いたように思われた
+		PRINTFORMDW 恐らくその行為が因果律を大きく歪め、この人物に多数の因果の糸が絡まる原因になったのではないかという気がする
+		PRINTL
+		PRINTFORMDW 気になる点は他にもあった
+		PRINTFORMDL この人物から厄を祓う度に、私に何らかの力が流れ込むらしく、其れによって新たな能力が備わりつつある
+		PRINTFORMDW この力を十分に確保出来れば、いつの日かこの人物を元の世界に帰してやる事も可能なのかも知れない
+		PRINTL
+		PRINTFORMDW ただ、それら全ては私の推測に過ぎないものであり、確かな事は何も無いというのが現状だった
+		PRINTFORMDW 下手に口を滑らせ、淡い希望を抱かせるのは避けるべきだ
+		PRINTL
+		PRINTFORMDW 希望は容易く絶望に変わる
+		PRINTFORMDW 多数の因果の糸に絡め取られたこの人物が絶望した際に生み出される厄は膨大なものになるだろう
+		PRINTFORMDW そういった事態は何としても避けなければならない
+		PRINTL
+		PRINTFORMDW 兎も角、今はそれらの事柄は心に秘め、精々淫らなで好色な女を演じてみせよう
+		PRINTW
+		{
+		CALL FADE_TO_CLEARLINE2(
+		30, 
+		COLOR2_K39("white"), 
+		GETBGCOLOR(), 
+		"厄神である自分に、今、出来る事はそれだけなのだから――")
+		}
+		CALL TWAIT3_K39
+		PRINTFORMW 「体調の方はどうでしょう？　大丈夫ですか？」
+		PRINTFORMW 「では、今日もよろしくお願いしますね」
+		PRINTL
+		RETURN 1
+	ELSE
+		RETURN 0
+	ENDIF
+ENDIF
+
+
+;調教中止 ARG:1 ARG:2
+;====================
+;CFLAG:消耗 > 5もしくはCFLAG:MASTER:消耗 > 5を条件として呼び出される箇所
+;この条件から漏れた場合は通常の調教開始口上が呼ばれる
+IF INRANGE(ARG, 1, 2)
+	;疲れているのは雛
+	IF ARG == 1
+		PRINTFORMDW %CALLNAME:TARGET%は体調が優れない為、今回は中止にする事にしたようだ…
+	;疲れているのは調教対象
+	ELSE
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「疲れてるのに無理する事なんてないのよ？」
+			PRINTFORMW 「今日はゆっくり休んで」
+		ELSE
+			PRINTFORMW 「大分疲れが溜まってるみたいですね？」
+			PRINTFORMW 「いいですよ、今日はやめておきましょう」
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+;//////////////////////////////////
+;//以下、調教の進展度合いによる派生
+;//////////////////////////////////
+
+;相思相愛(好意、好感度3000以上)
+;==============================
+;FIRSTEVENT(0)(1) RANDEVENT(0)(1)
+IF AFFECTION("相思相愛", (FLAG:ご主人様)) && TALENT:TARGET:ご主人様
+	;初回//雛が主人でありOPを経由している場合
+	;========================================
+	IF KFLAG:(FLAG:ご主人様):50 == 1 && FIRSTEVENT(0)
+		PRINTFORMDW どれだけ想っても許されない
+		PRINTFORMDW 傍にいる事さえも許されない
+		PRINTFORMDW 大切だからこそ、私は望む事もできぬ――
+		CALL BGM_CUTIN("nonexistence", 1)
+		PRINTL
+		PRINTFORMDW 私達の関係はそういったものだった
+		PRINTFORMDW 厄神という存在が一人の人間に執着するなどあってはならぬ事
+		PRINTFORMDW 厄を祓って尚、私の傍に居続ければ、この人は不幸になるばかり――
+		PRINTL
+		PRINTFORMDW 厄神とは神としても女としても穢れきったた存在
+		PRINTFORMDW ささやかな幸せさえ望む事は許されぬ――
+		PRINTL
+		PRINTFORMDW 十分過ぎる程分かっていた、分かっていたはずだった
+		PRINTFORMDW それでも尚、私は狂おしいまでにこの人を求めてしまう
+		PRINTFORMDW 肌を重ねている間、私の空の器は満たされ、その幸福感に心は震えた
+		PRINTL
+		PRINTFORMDW その甘美な感覚は心を深く浸食し、私はそれに溺れ、依存するようになってしまった
+		PRINTFORMDW 最早、かつての自分の姿さえ思い出す事はできない
+		PRINTL
+		PRINTFORMDW 知らなければ良かった、出会わなければよかった――
+		PRINTL
+
+		;中央で表示
+		ALIGNMENT CENTER
+		LOCAL:0 = CURRENTREDRAW()
+		REDRAW 0
+		;強制表示x1
+		CALLF ANIME_CONFIG("TIMES", 1)
+		;全画面カットイン2
+		CALL FULLCUTIN2(0, 17, "でも……")
+		REDRAW LOCAL:0
+		;左寄せに戻す
+		ALIGNMENT LEFT
+
+		PRINTL
+		PRINTFORMDW もう、戻れない、戻る事などできない
+		PRINTFORMDW 今更無かった事になんて出来ない――
+		PRINTL
+		PRINTFORMDW 溢れ出す気持ちを押し留める事が出来ない
+		PRINTFORMDW ここに居るのは最早神とさえ呼べない、孤独を恐れ、愛に飢えた一人の女――
+		PRINTL
+		PRINTFORMDW 私を見て！　私を愛して！　でも……
+		PRINTFORMDW 厄に塗れた私を見ないで……
+		PRINTW
+		PRINTFORMW 「私の事、厄神様って呼ぶのはもうやめて」
+		PRINTFORMW 「これからは%CALLNAME:TARGET%と呼んでください。いいですね？　約束ですよ♪」
+		PRINTL
+		CALL BGM_CUTIN("神々の祈り", 1)
+		PRINTFORMDW その時私は幸せだった。今こそ枷から解き放たれ、前を向いていける気がした
+		PRINTL
+		CALL FADE_TO_CLEARLINE(30, "そう、無邪気に思っていた――")
+		;相思相愛判定
+		KFLAG:(FLAG:ご主人様):100 = 1
+		CALL TWAIT3_K39
+		RETURN 1
+	ENDIF
+
+
+	;EVENT_001
+	;=========
+	IF GET_KFLAG_K39("相思相愛") && FLAG:オートモード表示設定 < 1 && FIRSTEVENT(10) ;//簡略表示なら弾く
+		PRINTFORMW 「ねぇ、ちょっと%CNAME(MASTER, TARGET)%に聞きたいんだけど…」
+		PRINTFORMDW %CALLNAME:TARGET%は言い辛そうに切り出した
+		PRINTL
+		PRINTFORMW 「やっぱり元の世界に帰りたいと思う？ それとも、ここで私とこのまま…」
+		PRINTFORMW 「ごめんなさい、変な事聞いちゃって。元の世界に帰りたいに決まってるわよね…」
+		PRINTFORMDL %CALLNAME:TARGET%は笑顔を取り繕うとしたが、その姿は酷く寂しげに見えた
+		PRINTFORMDW それを見た%CALLNAME:MASTER%は…
+		PRINTL
+		;ツールチップ楽しい
+		CALL HTMLPRINTDL(@"%HTMLBUTTON("[0]", "0", "ルートＡ")% 元の世界には未練がある…")
+		CALL HTMLPRINTDL(@"%HTMLBUTTON("[1]", "1", "ルートＢ")% 出来る事なら、この土地でこのまま…")
+
+		;@INPUTINTD
+		;==========
+		;口上内に於けるINPUTINTは入力した数値が口上色で表示されてしまうが、INPUTINTDはデフォルトカラーで出力する
+		;Revの場合、口上が呼び出される段階で口上指定色でSETCOLORされているので、デフォ色での出力を望む場合はやりくりが必要
+		;些細な問題だけど、気になる人は状況に応じて使い分けてくれたら、とかいうアレ
+		CALL INPUTINTD(0, 1)
+
+		;オートモードならここで止める。主にデバッグ時の都合
+		SIF FLAG:オートモード > 0
+			FORCEWAIT
+		SELECTCASE RESULT
+			;選択肢0 ルートＡ
+			CASE 0
+				PRINTFORMW 「…わかったわ。なんとかしてみる」
+				PRINTFORMDW %CALLNAME:TARGET%は決意を秘めた表情で言った
+				PRINTFORMW 「今すぐには無理だけど、いつか必ず。%CNAME(MASTER, TARGET)%の為にも…」
+				;エンディング用フラグに代入
+				KFLAG:(FLAG:ご主人様):0 = 1
+			;選択肢1 ルートＢ
+			CASE 1
+				PRINTFORMW 「えっ、本当に？ %CNAME(MASTER, TARGET)%はそれでいいの？」
+				PRINTFORMDW %CALLNAME:TARGET%は一瞬笑顔になったが、すぐにその表情は曇ってしまった…
+				PRINTFORMW 「それは確かに……私は嬉しいんだけど。でもやっぱり良くない」
+				PRINTFORMW 「元の世界に帰るべきだと思うの…%CNAME(MASTER, TARGET)%の為にも…」
+				;エンディング用フラグに代入
+				KFLAG:(FLAG:ご主人様):1 = 1
+		ENDSELECT
+		PRINTL
+		PRINTFORMW 「…って、今日の私、少しおかしいわよね」
+		PRINTFORMW 「大体、%CNAME(MASTER, TARGET)%の厄祓いもまだ済んでないのに…」
+		PRINTFORMW 「でもさっき言った事は今の私の本当の気持ち」
+		PRINTFORMW 「私達はいつまでも一緒には居られない。いつかは別れるべきなの」
+		PRINTFORMW 「でも……その時が来るまでは…」
+		PRINTFORMDW %CALLNAME:TARGET%は微かに震えながら%CALLNAME:MASTER%に縋りつきながら言った
+		PRINTFORMW 「このままでいさせて……もう少しだけ、お願い…」
+		PRINTFORMDW その目には光るものがあるように、%CALLNAME:MASTER%には見えた…
+		CALL TWAIT3_K39
+		RETURN 1
+	ENDIF
+
+	[SKIPSTART]
+	工事中
+	;EVENT_002
+	;---------
+	IF DAY < 30 && (KFLAG:(FLAG:ご主人様):0 == 1 || KFLAG:(FLAG:ご主人様):1 == 1) && FIRSTEVENT(12)
+		IF KFLAG:(FLAG:ご主人様)1 == 1
+			PRINTFORMDW 最初から判っていた。判っているはずだった
+			PRINTFORMDW いずれやってくる別れの日の事を
+			PRINTL
+			PRINTFORMDW それは決して避けて通る事のできない定め
+			PRINTFORMDW 回りに不幸を振りまいてしまうこの呪わしい厄神には人並の幸せなど許されなぬ
+		ENDIF
+		RETURN 1
+	ENDIF
+	[SKIPEND]
+
+	;特定のイベント以外を処理
+	;========================
+	IF GET_KFLAG_K39("相思相愛")
+		SELECTCASE RANDEVENT(2, 0)
+			CASE 0
+				CALL HTMLPRINTL(@"「もうっ、そんなに焦らないで%LOCALS:0%」")
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%となら私はいつでもＯＫよ？　クスクス」
+			CASEELSE
+				PRINTFORML 「うふっ、もう待ちきれないんでしょ？」
+				CALL HTMLPRINTW(@"「大丈夫よ、私も同じ気持ちだから%LOCALS:0%」")
+		ENDSELECT
+	ENDIF
+	;エンディングを経過したら弾く
+	SIF KFLAG:(FLAG:ご主人様):150 != 1
+		{
+		PRINTFORMDW %CALLNAME%は\@ 
+		RAND:2 
+		? 溢れんばかりの笑顔で、%CALLNAME:MASTER%の手をとった 
+		# 笑顔を崩さないが、その表情には微かな翳りがみえた \@…
+		}
+	RETURN 1
+ENDIF
+
+
+;溺愛(好感度2000以上) FIRSTEVENT(20)
+;==================================
+;心の変化に戸惑う厄神様
+IF AFFECTION("溺愛")
+	;初回（雛が主人の時のみ表示）
+	;===========================
+	IF TALENT:TARGET:ご主人様 && KFLAG:(FLAG:ご主人様):50 == 1 && FIRSTEVENT(20)
+		PRINTFORMDW 厄神と云う存在は、要するに厄を収める為の器に過ぎない
+		PRINTFORMDW 器である以上は余計なものは極力無い方が望ましい――
+		PRINTL
+		PRINTFORMDW とは云え、こんな私でも喜びや悲しみを知らない訳ではない
+		PRINTFORMDW ただ、それらの感情はあくまで抑制の効いたものであり、必要以上に何かに執着する事は無い
+		PRINTFORMDW 此れまでもそうしてきたし、それで良いと思っていた
+		PRINTL
+		{
+		CALL FADE_TO_CLEARLINE2(
+		30, 
+		COLOR2_K39("white"), 
+		GETBGCOLOR(), 
+		"そう思っていた、はずだったのに……")
+		}
+		PRINTL
+		PRINTFORMDW 自分の中で何かが変わり始めていた
+		PRINTFORMDW 自分が此れまで知らなかった感情が芽生えつつあった
+		PRINTFORMDW 其れは厄神としては許されざるもの、決して抱いてはいけないもの――
+		PRINTW
+		PRINTFORMDW 厄神が一人の人間に愛情を抱き、執着する事などあってはならない……
+		PRINTL
+		PRINTFORMDW 人間の味方が聞いて呆れる。個別の人間に愛情を抱く厄神など只の害悪
+		PRINTFORMDW その様な者の存在は、許されるべきものではない――
+		PRINTL
+		PRINTFORMDW 何よりも度し難いのは、自分がこの感情を愛おしく思い、受け入れつつある事だ
+		PRINTFORMDW そして日々、この感情に抗う事が難しくなってきている
+		PRINTL
+		PRINTFORMDW 私の世界は変わってしまった
+		PRINTFORMDW かつて灰色だった景色は鮮やかな色彩を帯び、何もかもが煌いて見えた
+		PRINTFORMDW 私はまるで年若い娘のように、浮かれ、そして無邪気にはしゃいでいた――
+		PRINTL
+		PRINTFORMDW 私は孤独を知ってしまった
+		PRINTFORMDW 私はその真の意味を知らなかったが、今ならはっきりと分かる
+		PRINTFORMDW そこには孤独を孤独とも思わなかったかつての自分は、最早存在しなかった
+		PRINTL
+		PRINTFORMDW それでも、この感情に溺れてしまう事はできない
+		PRINTFORMDW 望んではいけない、愛してはいけない、この気持ちは殺さねばならない――
+		PRINTL
+		PRINTFORMDW 自らの定めに背く訳にはいかない
+		PRINTFORMDW 私は全ての人々の為にこそ在らねばならない――
+		PRINTW
+		;OPを回収
+		{
+		CALL FADEOUT(
+		40, 
+		"――この気持ちに気付かなければ", 
+		"　", 
+		"　", 
+		"　　　　　　こんなに苦しまずにいられたのに")
+		}
+		CALL FADE_CLINE(1)
+		CALL TWAIT3_K39
+		RETURN 1
+	ENDIF
+
+	;条件無し
+	SELECTCASE RANDEVENT(2, 20)
+		CASE 0
+			PRINTFORML 「では始めましょう」
+			CALL HTMLPRINTW(@"「こう見えても私、楽しみにしていたんですよ%LOCALS:0%」")
+		CASE 1
+			PRINTFORMW 「今日はどんな事しましょうか？」
+			CALL HTMLPRINTW(@"「うふっ、楽しみですね%LOCALS:0%」")
+	ENDSELECT
+	{
+	PRINTFORMW %CALLNAME:TARGET%は笑顔%RAND_SPLIT(
+	"であなたの手をとった/" + 
+	"ではあったが、そこはかとない寂しさを漂わせていた/" + 
+	"を装っているが、その姿はどこか悲しげに見えた")%…
+	}
+	RETURN 1
+ENDIF
+
+;序盤（条件なし）雛が主人の時のみ表示
+;====================================
+IF TALENT:TARGET:ご主人様
+	;初回//調教初回ではない。調教初回は最上層で消化済み
+	;====
+	IF KFLAG:(FLAG:ご主人様):50 == 1 && FIRSTEVENT(90)
+		PRINTFORMDW 恐らく事態を飲み込めていないのだろう
+		PRINTFORMDW この人物は心を固く閉ざし、未だ私の言葉に耳を傾けようともしない
+		PRINTL
+		PRINTFORMDW だが、其れも無理からぬ事
+		PRINTFORMDL これ程厄に塗れた人物を放置出来なかったとは云え、半ば監禁されたような現在の状況は
+		PRINTFORMDW この人物にとっても不愉快で、納得出来るものではないだろう――
+		PRINTL
+		PRINTFORMDW 私としてもこのような形は不本意ではあったが、この人物が纏う禍々しい厄を祓う為には
+		PRINTFORMDW 手段を選んでいられないというのが、正直なところだった
+		PRINTL
+		PRINTFORMDW 恨まれてもいい、憎まれてもいい
+		PRINTFORMDW それが悲しく無いと云えば嘘になるが、受け入れる覚悟はある
+		PRINTL
+		PRINTFORMDW とは云え、すべては始まったばかり…
+		PRINTL
+		{
+		CALL FADE_TO_CLEARLINE2(
+		30, 
+		COLOR2_K39("white"), 
+		GETBGCOLOR(), 
+		"いずれ理解し、受け入れてくれるものと信じている――")
+		}
+		PRINTL
+		CALL TWAIT3_K39
+		RETURN 1
+	ENDIF
+
+	;汎用処理
+	;========
+	{
+	PRINTFORMW 「%RAND_SPLIT(
+	"そんなに緊張しなくていいのですよ/" + 
+	"心配する事はありませんよ/" + 
+	"もっと気を楽にしてください")%」
+	}
+	{
+	PRINTFORMW 「%RAND_SPLIT(
+	@"全ては、%CNAME(MASTER, TARGET)%の厄を祓う為なのですから/" + 
+	@"これは%CNAME(MASTER, TARGET)%の為でもあるのですから/" +
+	"悪いようにはしませんから")%」
+	}
+	RETURN 1
+ENDIF

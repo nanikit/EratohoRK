@@ -1,0 +1,1516 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;		リリーホワイト口上 奉仕系汎用リアクション口上ファイル
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+
+;=====================================================================
+;奉仕系反応 COM40番台
+;=====================================================================
+;・調教者への愛撫を含む行動で見られる
+;・ACT分類:奉仕+トリガーイベント制
+;-------------------------------------------------
+;────────────────────────────────────
+;COM40, 拒否する
+;────────────────────────────────────
+;・REACT分類:拒否
+;・REACT印象:悪印象大
+;・お仕置きポイント追加
+;・依存度変化(-2, -4)
+;-------------------------------------------------
+;・REACT派生なし
+;=================================================
+@KOJO_COM_K15_40
+;=================================================
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COM40, 拒否する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:REACT派生
+		;実はまんざらでもない
+			;%CALLNAME:MASTER%は迷いを見せながらも要求には応じなかった…
+		;実は嫌
+			;%CALLNAME:MASTER%は気圧されながらも要求は呑まなかった…
+		;無理のない行動
+			;%CALLNAME:MASTER%は%CALLNAME:TARGET%の要求を拒否した…
+		;自然な行動
+			;%CALLNAME:MASTER%は強い意志で要求を撥ねつけた…
+	;=================================================
+	;ACT分類が性交
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性交")
+		;-------------------------------------------------
+		;無理をした行動
+		;-------------------------------------------------
+		IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+			;実はまんざらでもない
+			IF COMCOR_POSI()
+				PRINTFORMW 「%RAND_SPLIT("ダメ/イヤ")%なんですか？　……ふふっ」
+				PRINTFORMW 「いいですよ……%RAND_SPLIT("気の済むまで迷って/そうやって、もっとリリーを焦らして")%くださいね」
+			;実は嫌
+			ELSE
+				PRINTFORMW 「むぅ、%RAND_SPLIT("中々/結構")%頑固ですね……」
+				PRINTFORMW 「ちっぽけな%RAND_SPLIT("プライド/自尊心")%なんて捨てちゃった方がいいですよ？」
+				PRINTFORMW 「そうしたら、いつでもリリーが犯してあげますからね♪」
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;---------------------
+		;その他
+		;---------------------
+		SELECTCASE RANDCOM(2, 0)
+			CASE 0
+				PRINTFORMW 「怖くなっちゃいましたか？」
+				PRINTFORMW 「それとも、%RAND_SPLIT("無理矢理/強引に")%して欲しいんでしょうか……ふふっ」
+			CASE 1
+				PRINTFORMW 「リリーはもう準備万端なんですけど……%RAND_SPLIT("ダメ/イヤ/無理")%ですか？」
+				PRINTFORMW 「そんなに%RAND_SPLIT("嫌がら/拒ま")%れると、ちょっと%RAND_SPLIT("ショックなん/むっとしちゃうん")%ですけど……」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類が羞恥
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "羞恥")
+		;-------------------------------------------------
+		;自慰・相互自慰
+		;-------------------------------------------------
+		IF 口上記入チェック(100) && IS_NOWACTNAME("自慰")
+			;調教者も自慰中
+			IF GETBIT(TEQUIP:自慰中, 1)
+				IF RAND:3 == 0
+					PRINTFORMW 「こんなに気持ちぃのに…%RAND_SPLIT("はぁ/あん/ふぅ/んぅ")%っ…」
+					PRINTFORMW 「もっと%RAND_SPLIT("えっちな/")%オカズがなきゃ…できませんか？」
+					PRINTFORM 「それなら…%RAND_SPLIT("ア/ン/あ/ん")%ッ…リリーがもっと%RAND_SPLIT("えっちな/すごい/えっちぃ/ヘンタイな")%おなにー、見せてあげるね…
+					CALL HEARTCB
+					PRINTFORMW 」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「%RAND_SPLIT("ん/あ/ひん")%っ…%RAND_SPLIT("はぁ/んぅ/うぅ")%♪　おなにーしてくれっないんですか？」
+					PRINTFORMW 「リリーひとりじゃ…ッ…寂しいれすよ？」
+				ELSE
+					PRINTFORMW 「こんなに気持ちぃのに…%RAND_SPLIT("はぁ/あん/ふぅ/んぅ")%ッ…」
+					PRINTFORMW 「してくれないなら…ッ…それもいいれすけど…」
+					PRINTFORM 「そのかわり…リリーの%RAND_SPLIT("オナ二―/ひとりえっち")%、ちゃんと見ててくらさいね
+					CALL HEARTCB
+					PRINTFORMW 」
+				ENDIF
+			;顔騎されながら自慰
+			ELSEIF TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+				IF RAND:2 == 0
+					PRINTFORMW 「%RAND_SPLIT("ぺろぺろ/ごほーし")%するのに夢中でそれどころじゃないのかな？　ふふっ」
+					PRINTFORMW 「%RAND_SPLIT("ぐ～りぐり/ほら/ほらぁ/ぐりぐり")%っ♪　お口塞がれて苦しいですか？　んっ、もっとフリフリしてあげますね♪」
+					PRINTFORM 「オナニーしてくれないなら、そのぶん%RAND_SPLIT("ぺろぺろ/ごほーし/リリーの椅子として")%頑張らなきゃダメですよっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				ELSE
+					PRINTFORMW 「%RAND_SPLIT("んんぅ/はぁ、あん/んくっはぁ")%っ♪　もうっ、何言ってるか、んっ、わかんないですよ？」
+					PRINTFORM 「こんなに\@ TALENT:MASTER:オトコ ? ビンビンに勃起させ # おまんこ濡らし \@てるのに、『%RAND_SPLIT("無理です/イヤだ/できません")%』なんて言いませんよねぇ
+					CALL HEARTCB
+					PRINTFORMW 」
+				ENDIF
+			;自慰
+			ELSE
+				IF RAND:2 == 0
+					PRINTFORMW 「やっぱり自分でするより、リリーに\@ TALENT:MASTER:オトコ ? おちんちん # おまんこ \@%RAND_SPLIT("なでなで/すりすり")%される方が好きなんですか？　ふふっ♪」
+					PRINTFORMW 「でも、%RAND_SPLIT("聞き分けの無い/言う事聞かない")%%RAND_SPLIT("豚さん/ロリコンさん/ヘンタイさん/悪い子")%に、いつまでもリリーが優しいと思ったら大間違いですからね？」
+				ELSE
+					PRINTFORMW 「%RAND_SPLIT("もう…/ねぇ、")%リリーが%RAND_SPLIT("お手伝いし/一緒にしてあげ/手伝ってあげ")%なきゃ%RAND_SPLIT("オナニーも一人で/一人でオナニーも")%できないんですか？」
+					PRINTFORMW 「リリーも%RAND_SPLIT("お世話するの/甘えんぼさん/お手伝いするの")%は%RAND_SPLIT("嫌いじゃない/嫌ではないん")%ですけど、なんでもリリー任せになると%RAND_SPLIT("流石に/ちょっと")%困っちゃいますよ……」
+				ENDIF
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;羞恥無理をした行動
+		;-------------------------------------------------
+		IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+			;実はまんざらでもない
+			IF COMCOR_POSI()
+				PRINTFORMW 「本当はリリーに見られて気持ちよくなってるんじゃないですか？」
+				PRINTFORMW 「ほら……恥ずかしがらないでリリーに見せて欲しいなぁ♪」
+			;実は嫌
+			ELSE
+				PRINTFORMW 「恥ずかしくて%RAND_SPLIT("嫌/ダメ")%ですか？……ふふっ」
+				PRINTFORMW 「それじゃあ無理矢理にでも、させちゃおうかなぁ♪」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;---------------------
+		;羞恥その他
+		;---------------------
+		;無理のない行動
+		IF TFLAG:REACT負荷
+			PRINTFORMW 「そういうのダメですよ？」
+			PRINTFORMW 「イヤイヤしてないで、ちゃんとリリーに見せて欲しいなぁ♪」
+		;自然な行動
+		ELSE
+			PRINTFORMW 「そんなに%RAND_SPLIT("言う/嫌がる/イヤ")%なら…仕方ないですね」
+			PRINTFORMW 「リリーも鬼じゃないですし…%CNAME(MASTER)%の為にもっと『愉しい事』考えてあげますねっ♪」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;無理をした行動
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+		;実はまんざらでもない
+		IF COMCOR_POSI()
+			SELECTCASE RANDCOM(2, 10)
+				CASE 0
+					PRINTFORMW 「迷って%RAND_SPLIT("るなら/ないで")%受け入れちゃいましょうよ…ねっ♪」
+					PRINTFORMW 「それとも、リリー%RAND_SPLIT("お姉ちゃん/")%が%RAND_SPLIT("強引に/無理矢理")%してあげなきゃ嫌なのかな？　ふふっ♪」
+				CASE 1
+					PRINTFORMW 「ねぇ、本当の気持ちはどうなんです？」
+					PRINTFORMW 「素直じゃない子は、%RAND_SPLIT("オシオキして/もっといじめて")%あげなきゃいけませんねっ」
+			ENDSELECT
+		;実は嫌
+		ELSE
+			SELECTCASE RANDCOM(2, 11)
+				CASE 0
+					PRINTFORMW 「声が震えちゃってますよ？」
+					PRINTFORMW 「無理にやれとは言いませんけど……ふふっ」
+					PRINTFORMW 「ちゃんと後でオシオキ、しますからねっ♪」
+				CASE 1
+					PRINTFORMW 「ねぇ、嫌なんですか？　むぅ……」
+					PRINTFORMW 「ちょっと%RAND_SPLIT("優しく/甘く/甘やか")%し過ぎちゃったんでしょうか……」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	IF RAND:3
+		;無理のない行動
+		IF TFLAG:REACT負荷
+			;BASE:7, 苛立ち派生
+			SELECTCASE TENSION(TARGET, 7)
+				CASE "高い"
+					PRINTFORMW 「ねぇ、どうしてそんなに聞き分けが無いんですか？」
+					PRINTFORMW 「リリーだって頑張ってるのに……」
+					PRINTFORMW 「ちょっと%RAND_SPLIT("優しく/甘く/甘やか")%し過ぎちゃったんでしょうか……」
+				CASE "一般"
+					PRINTFORMW 「%CNAME(MASTER)%にももう少し協力して欲しいんですけど…」
+					PRINTFORMW 「う～ん……気持ちい事でも、やっぱり嫌なんですか？」
+				CASE "低い"
+					PRINTFORMW 「ねぇ、%RAND_SPLIT("そんな事/嫌だなんて/ダメなんて")%言わないで？」
+					PRINTFORMW 「%RAND_SPLIT("慣れれば/やってみたら")%案外気持ちいい事かもしれませんし…ね♪」
+			ENDSELECT
+		;自然な行動
+		ELSE
+			;BASE:7, 苛立ち派生
+			SELECTCASE TENSION(TARGET, 7)
+				CASE "高い"
+					PRINTFORMW 「ちょっと%RAND_SPLIT("優しく/甘く/甘やか")%し過ぎちゃったんでしょうか……」
+					PRINTFORMW 「リリーが%CNAME(MASTER)%のご主人様だって事、ちゃんと教え込まなきゃいけませんね」
+				CASE "一般"
+					PRINTFORMW 「そんな事、リリーに言っちゃっていいんですか？」
+					PRINTFORMW 「%RAND_SPLIT("ドＭの/ロリコンの")%%RAND_SPLIT("ヘンタイ/豚")%さんの癖に……ふふっ♪」
+				CASE "低い"
+					PRINTFORMW 「まだ%RAND_SPLIT("こんなに抵抗する/気持ちが折れない")%なんて…ふふっ」
+					PRINTFORMW 「ねぇ、自分が今どんな格好をしてるのか理解してますか？」
+					PRINTFORM 「%RAND_SPLIT("情けない/えろえろな/ロリコンの")%ヘンタイ奴隷さんっ
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+		ENDIF
+	ELSE
+		IF 0
+		ELSEIF (AFFECTION("相思相愛") || CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度) && !T_COND("怒り")
+			PRINTFORMW 「プレイの一環だってわかってても、その反応はイラっとしちゃいますね…」
+			PRINTFORMW 「とりあえず……聞き分けの無い子はお仕置きですよね♪」
+		ELSEIF AFFECTION("溺愛") && !T_COND("怒り")
+			PRINTFORMW 「あっ……お気に召しませんでしたか？」
+			PRINTFORMW 「気持ちよくしてあげたいんですけど…中々難しいですね…」
+		ELSEIF AFFECTION("反抗") || (!ALI(0) && !RAND:3) || T_COND("怒り")
+			PRINTFORMW 「全然素直になってくれませんね」
+			PRINTFORMW 「痛いのは好きじゃないんですけど……」
+			PRINTFORMW 「%CNAME(MASTER)%がその気なら、リリーも考え方を変えなきゃいけませんね……」
+		ELSE
+			PRINTFORMW 「素直じゃない子はどうなるのか、忘れちゃいました？」
+			PRINTFORMW 「何度も痛い目見ないとわからないんでしょうか……」
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+;──────────────────────────────────
+;COM41, 消極的やる
+;──────────────────────────────────
+;・REACT分類:消極的従う
+;・REACT派生1は"消極的なのが気に入らない"となりお仕置きポイント追加
+;・REACT印象:好印象小
+;-------------------------------------------------
+;・TFLAG:REACT派生 == 0, 消極的だけどいいか
+;・依存度変化(-3, +2)
+;-------------------------------------------------
+;・TFLAG:REACT派生 == 1, 消極的なのが気に入らない
+;・依存度変化(-5, 0)
+;=================================================
+@KOJO_COM_K15_41
+;=================================================
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COM41_0 & 1, 消極的やる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;早い段階から選択可能になる可能性が高く、進展した後は負荷2で選択肢になる場合もあったり
+;ある程度注力すべき箇所であるように思う。という訳でちょっと真面目にやってみる
+;-------------------------------------------------
+IF 口上記入チェック(100) && GROUPMATCH(TFLAG:REACT派生, 0, 1) > 0
+	;消極的なのが気に入らない
+			;%CALLNAME:MASTER%の消極的な姿勢に、%CALLNAME%は不満そうだ…
+	;消極的だけどいいか
+		;実はまんざらでもない
+				;%CALLNAME:MASTER%は自分から行動する勇気がないようだ…
+		;実は嫌
+				;%CALLNAME:MASTER%は悔しそうにしつつも逆らおうとはしない…
+		;無理のない行動
+			;%CALLNAME:MASTER%はどうにか%CALLNAME%の言う通りにしている…
+		;自然な行動
+			;%CALLNAME:MASTER%は%CALLNAME%に逆えない…
+	;=================================================
+	;ACT分類が性交
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性交") && SEX_INITIATIVE(MASTER)
+		;-------------------------------------------------
+		;無理をした行動
+		;-------------------------------------------------
+		IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+			;実はまんざらでもない
+			IF COMCOR_POSI()
+				SELECTCASE RANDCOM(3, 0)
+					CASE 0
+						PRINTFORMW 「ほら、リリーに合わせて%RAND_SPLIT("動いてごらん/腰振ってごらん/もっと腰振ってみよっか/パンッパンッてしてごらん")%っ♪」
+						PRINTFORMW 「リリーがちゃんとリードしてあげますから…自分で%RAND_SPLIT("気持ちい場所/感じる場所")%を探してみようねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「%RAND_SPLIT("あ/はん/ん/ひん")%っ
+						CALL HEARTCB
+						PRINTFORMW 　ほら、せっかくの名器なのに使わなきゃ勿体ないですよ♪」
+						PRINTFORMW 「%RAND_SPLIT("もしかして/それとも")%リリーに全部お任せするつもりなんですか？」
+					CASE 2
+						PRINTFORMW 「もう、%RAND_SPLIT("マグロさん相手じゃ/こんなえっちじゃ")%つまんないですっ」
+						PRINTFORMW 「もっと%RAND_SPLIT("腰を振って/可愛く喘いで/積極的になって")%リリーを楽しませてくれなきゃダメですよ♪」
+				ENDSELECT
+			;実は嫌
+			ELSE
+				SELECTCASE RANDCOM(2, 1)
+					CASE 0
+						PRINTFORMW 「ふふっ、%RAND_SPLIT("生意気な/悔しそうな/泣きそうな")%顔しちゃって…」
+						PRINTFORMW 「その顔見てると%RAND_SPLIT("虐めたくなっ/ゾクゾクし")%ちゃいます……%RAND_SPLIT("は/")%んっ、ほら%RAND_SPLIT("ぁ/")%っ♪」
+						PRINTFORMW 「どうせなら%CNAME(MASTER)%も楽しんだらどうですか？　%RAND_SPLIT("ロリコン/マゾ豚/")%さんっ♪」
+					CASE 1
+						PRINTFORMW 「%RAND_SPLIT("あれ/ノリが悪いですね")%、マグロさんプレイですか？　%RAND_SPLIT("…ふふっ/ふ～ん…")%」
+						PRINTFORMW 「それなら、リリーに%RAND_SPLIT("オナホ/ダッチワイフ/物")%みたいな扱いされても…文句は言いませんよね♪ %RAND_SPLIT("は/")%んっ、ほら%RAND_SPLIT("ぁ/")%っ♪」
+						PRINTFORM 「ただの『穴』扱いが嫌なら、もっと%RAND_SPLIT("えっちに腰を振って/可愛く喘いで/積極的になって/リリーを楽しませて")%くださいねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;---------------------
+		;その他
+		;---------------------
+		;無理のない行動
+		IF TFLAG:REACT負荷
+			SELECTCASE RANDCOM(2, 2)
+				CASE 0
+					PRINTFORMW 「%RAND_SPLIT("まだまだ/なかなか")%慣れませんねぇ…」
+					PRINTFORMW 「ほら…もっと締め付けて、んっ…一緒に楽しみましょうよっ♪」
+				CASE 1
+					PRINTFORMW 「ほら、リリー言う通りに動いて%RAND_SPLIT("ごらん/みよっか/みようね/みて")%♪」
+					PRINTFORMW 「いつまでも%RAND_SPLIT("お人形さんみたいな扱い/マグロさん")%じゃ%CNAME(MASTER)%も%RAND_SPLIT("つまらない/愉しめない")%んじゃないですか？」
+			ENDSELECT
+		;自然な行動
+		ELSE
+			SELECTCASE RANDCOM(2, 3)
+				CASE 0
+					PRINTFORMW 「リリーの言いなりなんですね…ふふっ♪」
+					PRINTFORM 「ほら、もっと奥まで%RAND_SPLIT("パンパンして/トントンして/グリグリして/突いて/掻き混ぜて")%あげますから…%RAND_SPLIT("可愛く/はしたなく/いやらしく")%%RAND_SPLIT("喘いで/イって/乱れて")%くださいね
+					CALL HEARTCB
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORMW 「せっかくリリーが%RAND_SPLIT("犯して/パンパンして/気持ち良くして")%あげてるのに、ちょっと消極的過ぎませんか？」
+					PRINTFORM 「豚さんらしくもっと%RAND_SPLIT("貪欲になって/『ぶひぃっ♪』って鳴いて/ブヒブヒ言って")%リリーを愉しませて欲しいなぁっ
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類が羞恥
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "羞恥")
+		IF IS_NOWACTNAME("自慰")
+			;調教者も自慰中
+			IF GETBIT(TEQUIP:自慰中, 1)
+				SELECTCASE GET_COM_RANK()
+					;自然な行動
+					;%CALLNAME:MASTER%は%CALLNAME%に逆えない…
+					CASE "自然な行動"
+						SELECTCASE RANDCOM(3, 5)
+							CASE 0
+								PRINTFORMW 「%RAND_SPLIT("はぁ/んぅ/あん/んっ")%…リリーと一緒だと%RAND_SPLIT("緊張して/恥ずかしくて")%上手にできませんか？　%RAND_SPLIT("ふふっ/へぇ～/えへへっ/えへへぇ")%♪」
+								PRINTFORMW 「%RAND_SPLIT("甘えんぼさん/仕方ない子/世話の掛かる子")%なんだから……ほら、優しく\@ TALENT:MASTER:オトコ ? おちんちんを握って # 指を添えて \@みて？……リリーの声に合わせて動かしてみましょうね♪」
+							CASE 1
+								PRINTFORM 「%RAND_SPLIT("そう…その/あぁ…/えっちな顔…")%%RAND_SPLIT("無理矢理やらされてる/本当は嫌なのに/命令だから仕方ない")%って%RAND_SPLIT("感じ/表情")%が…%RAND_SPLIT("はぁ/んぅ/あん/んっ")%
+								CALL HEARTCB
+								PRINTFORMW 」
+								IF RAND:2 == 0
+									PRINTFORM 「%CNAME(MASTER)%をオカズに%RAND_SPLIT("オナニー/ひとりえっち")%するの……%RAND_SPLIT("きもちぃです…/癖になっちゃいます…/いつもより感じちゃう")%
+									CALL HEARTCB
+									PRINTFORMW 」
+								ELSE
+									PRINTFORM 「ねぇ、もっと愉しみましょう……%RAND_SPLIT("はしたない/淫乱な/えっちな/恥ずかしい")%リリーを見て、んっ、もっと\@ TALENT:MASTER:オトコ ? シコシコ # 激しく \@しちゃいましょう
+									CALL HEARTCB
+									PRINTFORMW 」
+								ENDIF
+							CASE 2
+								PRINTFORMW 「%RAND_SPLIT("はぁ/んぅ/あん/んっ")%…ねぇ、そんなに%RAND_SPLIT("ゆっくりで/優しくて")%ちゃんと%RAND_SPLIT("イけるんですか/気持ち良くなれるんですか")%？……ふふっ♪」
+								PRINTFORM 「ほら、んっ、リリーももっと%RAND_SPLIT("激しく/くちゅくちゅ")%しちゃいますから…一緒に気持ちよく%RAND_SPLIT("なっちゃいましょうね/なりましょう/オナニーしよっ/イっちゃいましょう")%
+								CALL HEARTCB
+								PRINTFORMW 」
+						ENDSELECT
+					;無理のない行動
+					;%CALLNAME:MASTER%はどうにか%CALLNAME%の言う通りにしている…
+					CASE "無理のない行動"
+						SELECTCASE RANDCOM(2, 6)
+							CASE 0
+								PRINTFORMW 「オカズが足りないなら…%RAND_SPLIT("はぁ/んぅ/あん/あっ")%…リリーがお手伝いしてあげますね♪」
+								PRINTFORM 「んッ…%CNAME(MASTER)%を想って%RAND_SPLIT("手を動かす/オナニーします/ひとりえっちしちゃう")%から……ちゃんと見て、\@ TALENT:MASTER:オトコ ? シコシコ # クチュクチュ \@してね
+								CALL HEARTCB
+								PRINTFORMW 」
+							CASE 1
+								PRINTFORMW 「見せっこするの、%RAND_SPLIT("んぅっ/あっ/んっ")%、まだ慣れませんか？」
+								PRINTFORM 「なんだか焦らされてるみたいで…はぁ…切なくなっちゃいます…
+								CALL HEARTCB
+								PRINTFORMW 」
+						ENDSELECT
+					;%CALLNAME:MASTER%は自分から行動する勇気がないようだ…
+					;%CALLNAME:MASTER%は悔しそうにしつつも逆らおうとはしない…
+					CASE "無理をした行動"
+						SELECTCASE RANDCOM(2, 7)
+							CASE 0
+								PRINTFORMW 「%RAND_SPLIT("くす/ふふ/あはは/ぷっ…ふふ")%っ…そんなに%RAND_SPLIT("悔しそうなのに/お顔真っ赤にしても")%オナニーは%RAND_SPLIT("続けて/ちゃんとして")%くれるんですねっ♪」
+								PRINTFORMW 「ほら、リリーが%RAND_SPLIT("お豆さん/お胸/乳首/おまんこ")%弄ってるところもっと見せてあげますから…%RAND_SPLIT("はぁ/んぅ/あん/あっ")%…♪」
+								PRINTFORM 「%CNAME(MASTER)%ももっと\@ TALENT:MASTER:オトコ ? シコシコ # クチュクチュ \@していいんですよ
+								CALL HEARTCB
+								PRINTFORMW 」
+							CASE 1
+								PRINTFORMW 「リリーの%RAND_SPLIT("オナニー/ひとりえっち")%をオカズにして、%RAND_SPLIT("んぅっ/あっ/んっ")%、いったい何が不満なんでしょう？　ふふっ♪」
+								PRINTFORMW 「ほら、%CNAME(MASTER)%のリズム\@ TALENT:MASTER:オトコ ? でシコシコしていいです # に合わせてあげます \@から…もっと二人で気持ちよくなっちゃいましょうねっ♪」
+						ENDSELECT
+				ENDSELECT
+			;顔騎されながら自慰
+			ELSEIF TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+				;%RAND_SPLIT("/")%
+				SELECTCASE GET_COM_RANK()
+					;自然な行動
+					;%CALLNAME:MASTER%は%CALLNAME%に逆えない…
+					CASE "自然な行動"
+						SELECTCASE RANDCOM(3, 8)
+							CASE 0
+								PRINTFORMW 「ほらぁ、%RAND_SPLIT("はぁ/んぅ/あん/あっ")%、もっと%RAND_SPLIT("むぎゅってして/押し付けて/グリグリして")%あげますから…ちゃんと\@ TALENT:MASTER:オトコ ? シコシコ # オナニー \@してくださいねっ♪」
+								PRINTFORMW 「%RAND_SPLIT("サボってたら/お休みなんてしたら")%…ひんっ…お仕置きしちゃいますからねっ♪」
+							CASE 1
+								PRINTFORMW 「素直で、%RAND_SPLIT("はぁ/んぅ/あん/あっ")%、いい子ですねっ♪」
+								PRINTFORM 「ほらほらっ、%RAND_SPLIT("お休み/休憩")%してないで%RAND_SPLIT("ちゃんと/もっと/しっかり")%%RAND_SPLIT("ペロペロ/ごほーし/オナニー")%してくださいねっ
+								CALL HEARTCB
+								PRINTFORMW 」
+							CASE 2
+								PRINTFORMW 「もう、おて手が止まってますよ？　お口も…%RAND_SPLIT("はぁん/んぅ/あん/あぁ")%っ♪」
+								PRINTFORM 「%RAND_SPLIT("あんまりサボってると/ちゃんとオナニーしないと")%オシオキですからね♪　例えば…もっとお尻%RAND_SPLIT("グリグリ/で圧迫")%していじめちゃいますからっ
+								CALL HEARTCB
+								PRINTFORMW 」
+						ENDSELECT
+					;無理のない行動
+					;%CALLNAME:MASTER%はどうにか%CALLNAME%の言う通りにしている…
+					CASE "無理のない行動"
+								PRINTFORMW 「んぅ…今度は%RAND_SPLIT("オナニー/ひとりえっち")%に集中し過ぎてごほーしがおざなりになってますよ？」
+								PRINTFORMW 「もう、%RAND_SPLIT("だらしない子/仕方ない子")%ですねぇ…%RAND_SPLIT("うんしょっ/よいしょっ")%…%RAND_SPLIT("と/")%」
+								PRINTFORMDW 　リリーは%CALLNAME:MASTER%の顔面に跨ったまま、ゆっくりと腰を前後%RAND_SPLIT("左右/")%に揺すり始めた…
+								PRINTFORM 「%RAND_SPLIT("はぁ/んぅ/あん")%…ほら、お口は少しお休みしてもいいですから、んっ、%RAND_SPLIT("ちゃんと/しっかり")%オナニーしてくださいね
+								CALL HEARTCB
+								PRINTFORMW 」
+					CASE "無理をした行動"
+						;%CALLNAME:MASTER%は自分から行動する勇気がないようだ…
+						;%CALLNAME:MASTER%は悔しそうにしつつも逆らおうとはしない…
+						SELECTCASE RANDCOM(2, 10)
+							CASE 0
+								PRINTFORMW 「%RAND_SPLIT("くす/ふふ/あはは/ぷっ…ふふ")%っ…こんな事されてるのにオナニーは%RAND_SPLIT("続けて/ちゃんとして")%くれるんですねっ♪」
+								PRINTFORMW 「%RAND_SPLIT("はぁ/んぅ/あん/あ")%っ、%CNAME(MASTER)%っ、とっても%RAND_SPLIT("情けなくて/惨めで")%最高ですよっ♪」
+							CASE 1
+								PRINTFORMW 「リリーに逆らって%RAND_SPLIT("お仕置き/無理矢理")%されるくらいなら、%RAND_SPLIT("自分でした/大人しく従った")%方がマシって感じですか？　ふふっ♪」
+								PRINTFORMW 「\@ TFLAG:REACT派生 ? 消極的なのが引っかかりますけど # もう少し積極的になってくれれば嬉しいんですけど \@、今は%CNAME(MASTER)%の%RAND_SPLIT("情けない/恥ずかしい/")%オナニーショーを愉しませてもらいましょうかっ♪」
+						ENDSELECT
+				ENDSELECT
+			;通常自慰
+			ELSE
+				SELECTCASE GET_COM_RANK()
+					;自然な行動
+					;%CALLNAME:MASTER%は%CALLNAME%に逆えない…
+					CASE "自然な行動"
+						SELECTCASE RANDCOM(3, 11)
+							CASE 0
+								PRINTFORMW 「一人でする時みたいに%RAND_SPLIT("ちゃんと/一生懸命")%\@ TALENT:MASTER:オトコ ? シコシコ # オナニー \@しないと%RAND_SPLIT("もっと恥ずかしい事させちゃいますよ/後が怖いですよ？…ふふっ")%♪」
+								PRINTFORMW 「ほら、優しく\@ TALENT:MASTER:オトコ ? おちんちんを握って # 指を添えて \@……リリーの声に合わせて動かしてみましょうね♪」
+							CASE 1
+								PRINTFORMW 「%RAND_SPLIT("そう…その/あぁ…/えっちな顔…")%%RAND_SPLIT("無理矢理やらされてる/本当は嫌なのに/命令だから仕方ない")%って%RAND_SPLIT("感じ/表情")%が%RAND_SPLIT("たまりませんっ/ゾクゾクしちゃいますっ/とっても良いですよ")%♪」
+								PRINTFORM 「ほら、%CNAME(MASTER)%の%RAND_SPLIT("いやらしい/はしたない/情けない/内緒の")%%RAND_SPLIT("オナニー/ひとりえっち")%、ぜーんぶリリーに見せてくださいねっ
+								CALL HEARTCB
+								PRINTFORMW 」
+							CASE 2
+								PRINTFORMW 「ねぇ、そんなに%RAND_SPLIT("ゆっくりで/優しくて")%ちゃんと%RAND_SPLIT("イけるんですか/気持ち良くなれるんですか")%？」
+								PRINTFORMW 「リリー%RAND_SPLIT("の事なんて気にしないで/がちゃんと見ててあげますから")%、%RAND_SPLIT("もっと/いつもみたいに")%思いっ切り\@ TALENT:MASTER:オトコ ? 扱いて # 乱れて \@%RAND_SPLIT("も/")%いいんですよ……ふふっ♪」
+						ENDSELECT
+					;無理のない行動
+					;%CALLNAME:MASTER%はどうにか%CALLNAME%の言う通りにしている…
+					CASE "無理のない行動"
+						SELECTCASE RANDCOM(2, 12)
+							CASE 0
+								PRINTFORMW 「もう、%RAND_SPLIT("甘えんぼさん/仕方ない子")%ですねぇ…ほら、リリーがお手伝いしてあげますね♪」
+								PRINTFORM 「リリーの言う通りに%RAND_SPLIT("手を動か/オナニー/ひとりえっち")%して…気持ち良くなってくださいねっ
+								CALL HEARTCB
+								PRINTFORMW 」
+							CASE 1
+								PRINTFORMW 「%RAND_SPLIT("くす/ふふ")%っ♪　本当に嫌だったら人前で%RAND_SPLIT("オナニー/ひとりえっち")%なんて恥ずかしくてできませんよね？」
+								PRINTFORM 「%RAND_SPLIT("そうですよね/そうでしょう/ねぇ、聞いてます")%？……%RAND_SPLIT("ロリコンの/露出狂の")% ヘ・ン・タ・イ さんっ
+								CALL HEARTCB
+								PRINTFORMW 」
+						ENDSELECT
+					CASE "無理をした行動"
+						;%CALLNAME:MASTER%は自分から行動する勇気がないようだ…
+						;%CALLNAME:MASTER%は悔しそうにしつつも逆らおうとはしない…
+						SELECTCASE RANDCOM(2, 13)
+							CASE 0
+								PRINTFORMW 「%RAND_SPLIT("くす/ふふ/あはは/ぷっ…ふふ")%っ…そんなに%RAND_SPLIT("悔しそうなのに/お顔真っ赤にしても")%オナニーは%RAND_SPLIT("続けて/ちゃんとして")%くれるんですねっ♪」
+								PRINTFORMW 「%RAND_SPLIT("笑っちゃいけないのはわかってる/申し訳ない")%んですけど…%CNAME(MASTER)%、とっても%RAND_SPLIT("情けなくて/惨めで")%最高ですよっ♪」
+							CASE 1
+								PRINTFORMW 「リリーに逆らって%RAND_SPLIT("お仕置き/無理矢理")%されるくらいなら、%RAND_SPLIT("自分でした/大人しく従った")%方がマシって感じですか？　ふふっ♪」
+								PRINTFORMW 「\@ TFLAG:REACT派生 ? 消極的なのが引っかかりますけど # もう少し積極的になってくれれば嬉しいんですけど \@、今は%CNAME(MASTER)%の%RAND_SPLIT("情けない/恥ずかしい/")%オナニーショーを愉しませてもらいましょうかっ♪」
+						ENDSELECT
+				ENDSELECT
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類が奉仕
+	;・TFLAG:ACT(50=手で愛撫を強制/51=口で愛撫を強制/52=パイズリ/53=素股/55=足舐め強制/56=イラマチオ/57=胸愛撫強制)
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "奉仕")
+		;ACTが口による奉仕である場合		関数による処理を終端で纏めたかったので刻まない。というか刻んで記述したものをあとから統合した
+		IF IS_NOWACTNAME("口で愛撫を強制/足舐め強制/イラマチオ") || (IS_NOWACTNAME("胸愛撫強制") && TFLAG:ACT派生 == 2)
+			SELECTCASE GET_COM_RANK()
+				CASE "自然な行動"
+					;派生：消極的なのが気に入らない
+					IF TFLAG:REACT派生
+						PRINTFORMW 「%RAND_SPLIT("ほらぁ/ねぇ")%、焦らさないでもっと積極的になってくださいよ」
+						PRINTFORMW 「%RAND_SPLIT("手抜きの/適当な")%ごほーしなんて嬉しくないんですからねっ」
+					;派生：消極的だけどいいか
+					ELSE
+						PRINTFORMW 「%RAND_SPLIT("もう/んぅ/あん")%っ、%RAND_SPLIT("焦らしちゃイヤです/焦らさないでくださいよっ")%」
+						PRINTFORMW 「ほらぁ、もっと隅々まで%RAND_SPLIT("丁寧に/しっかり")%ペロペロしなきゃダメですからねっ♪」
+					ENDIF
+				CASE "無理のない行動"
+					PRINTFORMW 「ほらぁ、適当に%RAND_SPLIT("やって/ごほーしして")%もバレバレなんですからねっ」
+					PRINTFORMW 「もっと%RAND_SPLIT("舌/ベロ/お口")%を動かして、んっ、%RAND_SPLIT("ちゅぅ～って吸って/唾液でベタベタにして/リリーを感じさせて")%%RAND_SPLIT("欲しいです/ください")%っ♪」
+				CASE "無理をした行動"
+					;実はまんざらでもない
+					IF COMCOR_POSI()
+						PRINTFORMW 「ふふっ♪　ねぇ、ぺろぺろするの愉しいですか？」
+						;派生：消極的なのが気に入らない
+						IF TFLAG:REACT派生
+							PRINTFORMW 「でも、ごほーしなんですから…ちゃんとリリーを満足させてくれなきゃダメですよっ」
+						;派生：消極的だけどいいか
+						ELSE
+							PRINTFORMW 「まだ照れてるみたいですけど…%RAND_SPLIT("んっ/あんっ")%…%RAND_SPLIT("ちょっとずつ/段々")%%RAND_SPLIT("上手く/上手に")%なってきてますよっ♪」
+						ENDIF
+					;実は嫌
+					ELSE
+						PRINTFORMW 「んっ…リリーの命令通りぺろぺろしちゃって、なんだかワンちゃんみたいですっ」
+						;派生：消極的なのが気に入らない
+						IF TFLAG:REACT派生
+							PRINTFORMW 「ほら、そんな焦れったいごほーしじゃご主人様は満足%RAND_SPLIT("させられ/でき")%ませんよ？」
+						;派生：消極的だけどいいか
+						ELSE
+							PRINTFORMW 「その調子で、もっともっとリリーを気持ちよくしてくださいね♪」
+						ENDIF
+					ENDIF
+			ENDSELECT
+		;パイズリ、素股
+		ELSEIF IS_NOWACTNAME("パイズリ/素股")
+				PRINTFORMW 「ほら、%CNAME(MASTER)%がちゃんと動いてくれなきゃリリーは気持ちよくなれないんですからね？」
+				PRINTFORMW 「身体全部を使って、もっとリリーを%RAND_SPLIT("楽しませて/気持ち良くして")%くれなきゃダメですよ♪」
+		;その他の奉仕系ACT（手で愛撫、胸愛撫）
+		ELSE
+			SELECTCASE GET_COM_RANK()
+				CASE "自然な行動"
+					;派生：消極的なのが気に入らない
+					IF TFLAG:REACT派生
+						PRINTFORMW 「%RAND_SPLIT("ほらぁ/ねぇ")%、焦らさないでもっと積極的になってくださいよ」
+						PRINTFORMW 「%RAND_SPLIT("手抜きの/適当な")%ごほーしなんて嬉しくないんですからねっ」
+					;派生：消極的だけどいいか
+					ELSE
+						PRINTFORMW 「%RAND_SPLIT("もう/んぅ/あん")%っ、%RAND_SPLIT("焦らしちゃイヤです/焦らさないでくださいよっ")%」
+						PRINTFORMW 「%RAND_SPLIT("丁寧に/しっかり/えっちな")%%RAND_SPLIT("マッサージ/エステ")%をするみたいに、ちゃんと奥まで揉み解してくださいね♪」
+					ENDIF
+				CASE "無理のない行動"
+					PRINTFORMW 「ほらぁ、適当に%RAND_SPLIT("やって/ごほーしして")%もバレバレなんですからねっ」
+					PRINTFORMW 「もっと%RAND_SPLIT("指先に力を入れて/手の平全体を使って")%、んっ、リリーを感じさせて%RAND_SPLIT("欲しいです/ください")%っ♪」
+				CASE "無理をした行動"
+					;実はまんざらでもない
+					IF COMCOR_POSI()
+						PRINTFORMW 「ふふっ♪　%CNAME(MASTER)%って%RAND_SPLIT("結構/なかなか/")%%RAND_SPLIT("いやらしい/えっちな/ヘンタイさんっぽい/優しい")%触り方するんですね♪」
+						;派生：消極的なのが気に入らない
+						IF TFLAG:REACT派生
+							PRINTFORMW 「でも、ごほーしなんですから…ちゃんとリリーを満足させてくれなきゃダメですよっ」
+						;派生：消極的だけどいいか
+						ELSE
+							PRINTFORMW 「もう少し%RAND_SPLIT("乱暴な方が好きなんですけど/積極的になってくれると嬉しいんですけど")%…%RAND_SPLIT("んっ/あんっ")%…%RAND_SPLIT("ちょっとずつ/段々")%%RAND_SPLIT("上手く/上手に")%なってきてますよっ♪」
+						ENDIF
+					;実は嫌
+					ELSE
+						PRINTFORMW 「んっ…マッサージみたいでなんだか気持ちいです」
+						;派生：消極的なのが気に入らない
+						IF TFLAG:REACT派生
+							PRINTFORMW 「でも、そんな焦れったいごほーしじゃリリーは満足%RAND_SPLIT("させられ/でき")%ませんよ？」
+						;派生：消極的だけどいいか
+						ELSE
+							PRINTFORMW 「その調子で、もっともっとリリーを気持ちよくしてくださいね♪」
+						ENDIF
+					ENDIF
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類が性奉
+	;=================================================
+	;IF 口上記入チェック(0) && MENUMATCH(TFLAG:ACT, "性奉")
+	;ENDIF
+	
+	;-------------------------
+	;汎用処理
+	;-------------------------
+	;派生：消極的なのが気に入らない（お仕置きポイント加算）
+	;%CALLNAME:MASTER%の消極的な姿勢に、%CALLNAME%は不満そうだ…
+	IF TFLAG:REACT派生
+		IF AFFECTION("相思相愛")
+			SELECTCASE RANDCOM (3, 30)
+				CASE 0
+					PRINTFORMW 「%RAND_SPLIT("んぅ/あれ")%、今日は%RAND_SPLIT("気分がのりませんか？/なんだか消極的ですね")%」
+					PRINTFORMW 「うーん…ちゃんとリリーを満足させてくれなきゃイヤですよ？」
+				CASE 1
+					PRINTFORMW 「うーん…なんだか今日は%RAND_SPLIT("ノリが悪いですね/やる気が感じられませんね")%…」
+					PRINTFORMW 「ねぇ、もっとリリーと愉しみましょうよ。ね？」
+				CASE 2
+					;BASE:8 満足派生
+					SELECTCASE TENSION(TARGET, 8)
+						CASE "高い"
+							PRINTFORMW 「もう…もっとちゃんとしてくださいよ」
+							PRINTFORMW 「リリーはあんまり焦らされるの好きじゃないんですから」
+						CASE "一般"
+							PRINTFORMW 「ねぇ、もっとリリーと愉しみましょう？」
+							PRINTFORMW 「%CNAME(MASTER)%がそんな態度じゃリリーもつまんないんですよ」
+						CASE "低い"
+							PRINTFORMW 「そんなに焦らさないで、ね？」
+							PRINTFORMW 「でないと……本気で襲っちゃいますよ？　ふふっ♪」
+					ENDSELECT
+			ENDSELECT
+		ELSEIF AFFECTION("恐怖")
+			PRINTFORMW 「リリーの言う%RAND_SPLIT("事聞いて/通りにして")%くれるのは嬉しいんですけど…」
+			PRINTFORMW 「もう少し%RAND_SPLIT("積極的になって/ちゃんとして")%くれなきゃダメですよ？」
+		ELSE
+			;BASE:8 満足派生
+			SELECTCASE TENSION(TARGET, 8)
+				CASE "高い"
+					PRINTFORMW 「もう…もっとちゃんとしてくださいよ」
+					PRINTFORMW 「リリーはあんまり焦らされるの好きじゃないんですから」
+				CASE "一般"
+					PRINTFORMW 「ねぇ、もっとリリーと愉しみましょう？」
+					PRINTFORMW 「%CNAME(MASTER)%がそんな態度じゃリリーもつまんないんですよ」
+				CASE "低い"
+					PRINTFORMW 「そんなに焦らさないで、ね？」
+					PRINTFORMW 「でないと……本気で襲っちゃいますよ？　ふふっ♪」
+			ENDSELECT
+		ENDIF
+	;派生：消極的だけどいいか
+	ELSE
+		;2/3
+		IF RAND:3
+			SELECTCASE GET_COM_RANK()
+				;自然な行動
+				;%CALLNAME:MASTER%は%CALLNAME%に逆えない…
+				CASE "自然な行動"
+					PRINTFORMW 「そうそう、%RAND_SPLIT("素直が一番ですよ/ちゃんとリリーの言う事聞いてくださいね")%♪」
+					PRINTFORMW 「もっと積極的なら%RAND_SPLIT("嬉しいん/いいん")%ですけど…今はこれで満足してあげますっ♪」
+				;無理のない行動
+				;%CALLNAME:MASTER%はどうにか%CALLNAME%の言う通りにしている…
+				CASE "無理のない行動"
+					PRINTFORMW 「%RAND_SPLIT("ちょっと/なんだか")%必死な感じですね？　%RAND_SPLIT("ふふ/くす")%っ」
+					PRINTFORMW 「その調子でもっともっと%RAND_SPLIT("積極的になって/堕ちて行って")%くださいねっ♪」
+				CASE "無理をした行動"
+					;実はまんざらでもない
+					;%CALLNAME:MASTER%は自分から行動する勇気がないようだ…
+					IF COMCOR_POSI()
+						PRINTFORMW 「もう…リリーがリードしなきゃ何にもできないんですか？」
+						PRINTFORMW 「そんなんじゃ%RAND_SPLIT("立派な奴隷さんにはなれ/ごほーびはあげられ")%ませんよ？　%RAND_SPLIT("ふふ/くす")%っ」
+					;実は嫌
+					;%CALLNAME:MASTER%は悔しそうにしつつも逆らおうとはしない…
+					ELSE
+						PRINTFORMW 「ふふっ、リリーの言う通りにしてくれるなんて可愛い人ですね」
+						PRINTFORMW 「その調子でもっと%RAND_SPLIT("従順/積極的")%になってくれると嬉しいですっ♪」
+					ENDIF
+			ENDSELECT
+		;1/3
+		ELSE
+			IF 0
+			ELSEIF AFFECTION("相思相愛") && !T_COND("怒り")
+				SELECTCASE RANDCOM (2, 31)
+					CASE 0
+						PRINTFORMW 「%RAND_SPLIT("んぅ/あれ")%、今日は%RAND_SPLIT("気分がのりませんか？/なんだか消極的ですね")%」
+						PRINTFORMW 「まぁ、リリーは焦らされるのも好きだからいいんですけどね♪」
+					CASE 1
+						PRINTFORMW 「うーん…なんだか今日は%RAND_SPLIT("ノリが悪いですね/やる気が感じられませんね")%…」
+						PRINTFORMW 「%RAND_SPLIT("ほら/ねぇ")%、もっと愉しまなきゃ損ですよっ♪」
+				ENDSELECT
+			ELSEIF AFFECTION("恐怖") || T_COND("怒り") || TENSION(TARGET, 7) == "高い"
+				PRINTFORMW 「もう、イヤイヤな気持ちが顔に出ちゃってますよ？」
+				PRINTFORMW 「もっと%RAND_SPLIT("積極的になって/愉しんで")%くれなきゃつまんないです…」
+			ELSE
+				PRINTFORMW 「%RAND_SPLIT("むぅ/もぅ")%、%RAND_SPLIT("ちょっと消極的/なんだか適当")%じゃないですか？」
+				PRINTFORMW 「折角リリーと二人きりなんですから…愉しまなきゃそんですよ？　ふふっ♪」
+			ENDIF
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+;──────────────────────────────────
+;COM42, 積極的やる
+;──────────────────────────────────
+;・REACT分類:積極的従う
+;・REACT印象:好印象大
+;・我慢フラグ解消
+;-------------------------------------------------
+;・REACT派生なし
+;=================================================
+@KOJO_COM_K15_42
+;=================================================
+;会話系はREACTで完結させているので枠を設けない
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COM42, 積極的やる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+		;実はまんざらでもない
+			;%CALLNAME:MASTER%は自分より%CALLNAME%を優先しようとしている…
+		;実は嫌
+			;%CALLNAME:MASTER%は意識して殊勝に振る舞おうとしているようだ…
+		;無理のない行動
+			;%CALLNAME:MASTER%は進んで%CALLNAME%に尽くしている…
+		;自然な行動
+			;%CALLNAME:MASTER%はとにかく%CALLNAME%を喜ばせたいようだ…
+	;騎乗位はMENUMATCHで拾う可能性があるので、条件追加して弾く
+	;=================================================
+	;奉仕
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "奉仕") && (!IS_NOWACTNAME("騎乗位") || TEQUIP:性交中 != 3)
+		IF (SOURCE:快Ｃ + SOURCE:快Ｖ + SOURCE:快Ａ + SOURCE:快Ｂ > 10)
+			IF AFFECTION("調教完了") && PERCENT(70)
+				SELECTCASE RANDCOM(2, 0)
+					CASE 0
+						PRINTFORM 「%RAND_SPLIT("あ/はぁ/ん")%っ…積極的で、ッ、%RAND_SPLIT("とっても/すっごく")%いい感じですっ…あぁ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「その調子で…もっとごほーしっ、がんばってくださいね
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「%RAND_SPLIT("ひぅ/んぅ/あっん")%…っ…そんなにされたら…ッ%RAND_SPLIT("…ぁああっ/…ひぃあっ/はぁ/")%
+						CALL HEARTCB
+						PRINTFORMW 」 
+						PRINTFORM 「ごほーしで…%RAND_SPLIT("イかされちゃいます/イっちゃいそうです")%っ
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			ELSE
+				SELECTCASE RANDCOM(2, 1)
+					CASE 0
+						PRINTFORMW 「%RAND_SPLIT("あ/はぁ/ん")%っ…ワンちゃんみたいでっ、可愛いですっ♪」
+						PRINTFORM 「%RAND_SPLIT("ねぇ/ほら")%、その調子で…もっとごほーしっ、がんばってくらさいね
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORMW 「%RAND_SPLIT("ひぅ/んぅ/あっん")%…%RAND_SPLIT("とっても/すっごく")%上手ですよ♪」
+						PRINTFORM 「いい子%RAND_SPLIT("には/にしてたら")%ちゃんとご褒美あげますから、んっ、もっとリリーを悦ばせてくださいね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			ENDIF
+		ELSE
+			IF AFFECTION("調教済み") && PERCENT(70)
+				SELECTCASE RANDCOM(2, 2)
+					CASE 0
+						PRINTFORMW 「ふふっ…積極的で%RAND_SPLIT("とっても/すっごく")%いい感じですっ…あぁっ♪」
+						PRINTFORM 「ほら、その調子でごほーしがんばってくださいね
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「%RAND_SPLIT("あん/ふふ")%っ♪　積極的になってくれて嬉しいですっ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「ほら、いい子いい子して欲しかったら、ちゃんとごほーししてくださいね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			ELSE
+				SELECTCASE RANDCOM(2, 3)
+					CASE 0
+						PRINTFORMW 「%RAND_SPLIT("あはは/ふふ/あん")%っ、ワンちゃんみたいで可愛いですっ♪」
+						PRINTFORM 「%RAND_SPLIT("ねぇ/ほら/ほらほら")%、その調子で…もっとごほーし頑張ってくださいね
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORMW 「%RAND_SPLIT("あはは/ふふ/あん")%っ♪　ごほーしするの楽しくなっちゃいましたか？」
+						PRINTFORM 「%RAND_SPLIT("えっちな奴隷さんですね/えっちな子ですね/すっかりヘンタイさんになっちゃって/可愛い豚さん")%…んっ…ほら、その調子でもっとリリーを悦ばせてくださいねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;性交奉仕＆騎乗位（性交）
+	;=================================================
+	IF 口上記入チェック(100) && ((MENUMATCH(TFLAG:ACT, "性奉") || IS_NOWACTNAME("騎乗位") || TEQUIP:性交奉仕中 || TEQUIP:性交中 == 3) && (SOURCE:快Ｃ + SOURCE:快Ｖ + SOURCE:快Ａ + SOURCE:快Ｂ > 10))
+		IF TEQUIP:性交中 == 3 || IS_NOWACTNAME("騎乗位") && PERCENT(70)
+			PRINTFORM 「ほらぁ…んっ…リリーが動いてあげるから、好きなだけ気持ち良くなっていいんですよっ
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTFORM 「おちんちんで子宮に%RAND_SPLIT("ちゅって/キス")%して、お股とろとろにしてあげますねっ
+			CALL HEARTCB
+			PRINTFORMW 」
+		ELSE
+			SELECTCASE RANDCOM(2, 4)
+				CASE 0
+					PRINTFORM 「%RAND_SPLIT("あ/はぁ/ん")%っ、あんっ、もっとっ、%RAND_SPLIT("パンパンして/おまんこいじめて/おちんちん")%くらさいっ
+					CALL HEARTCB
+					PRINTFORMW 」
+					PRINTFORM 「その調子でっ%RAND_SPLIT("あ/はぁ/ん")%っ！　いちばん奥のとこっ、%RAND_SPLIT("トントンして/掻き混ぜて")%欲しいれすっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORM 「%RAND_SPLIT("あ/はぁ/ん")%っ！%RAND_SPLIT("あ/ひぃん/あん")%っ！激しいのっ好きですよっ
+					CALL HEARTCB
+					PRINTFORMW 」
+					PRINTFORM 「リリーがイクまでっ、%RAND_SPLIT("ひぅ/ぁあ/ん゛ぅ")%っ！　止めちゃヤですよっ
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;無理をした行動
+		;実はまんざらでもない
+			;%CALLNAME:MASTER%は自分より%CALLNAME%を優先しようとしている…
+		;実は嫌
+			;%CALLNAME:MASTER%は意識して殊勝に振る舞おうとしているようだ…
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+			SELECTCASE RANDCOM(2, 5)
+				CASE 0
+					PRINTFORMW 「%RAND_SPLIT("あはは/ふふ")%っ♪　頑張ってリリーに尽くしてくれるんですね」
+					PRINTFORMW 「嬉しいです、もっともっとリリーを悦ばせてくださいねっ♪」
+				CASE 1
+					PRINTFORMW 「あれ、%RAND_SPLIT("なんだか/ずいぶん")%積極的ですね？　ふふっ♪」 
+					PRINTFORMW 「ちょっと%RAND_SPLIT("無理してるみたい/表情が硬い")%ですけど…%CNAME(MASTER)%の気持ち、嬉しいですよっ♪」
+			ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;汎用処理
+		;無理のない行動
+			;%CALLNAME:MASTER%は進んで%CALLNAME%に尽くしている…
+		;自然な行動
+			;%CALLNAME:MASTER%はとにかく%CALLNAME%を喜ばせたいようだ…
+	;-------------------------
+	IF AFFECTION("相思相愛") && PERCENT(70)
+		SELECTCASE RANDCOM(2, 6)
+			CASE 0
+				PRINTFORMW 「積極的になっちゃって、もうすっかりリリーの%RAND_SPLIT("奴隷さん/ペット/虜")%になっちゃいましたね？　ふふっ♪」
+				PRINTFORM 「ほら、もっとリリーに溺れていいんですよ…リリーもいっぱい愛してあげますからねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			CASE 1
+				PRINTFORMW 「ふふっ♪　なんだかワンちゃんみたいで可愛いですっ」
+				PRINTFORMW 「ほら、いい子いい子してあげますから、もっとリリーを悦ばせてくださいねっ♪
+		ENDSELECT
+	ELSE
+		SELECTCASE RANDCOM(2, 7)
+			CASE 0
+				PRINTFORMW 「ふふっ、こういうのが好きなんですか？」
+				PRINTFORMW 「それなら、もっともっと態度で示してリリーを%RAND_SPLIT("悦ばせて/愉しませて")%くださいねっ♪」
+			CASE 1
+				PRINTFORMW 「リリーの事%RAND_SPLIT("好きになっちゃいましたか/悦ばせてくれるんですか")%？　嬉しいですっ♪」
+				PRINTFORM 「その調子で、もっともっとリリーに尽くしてくださいねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;──────────────────────────────────
+;COM43, 愛情を込めてやる
+;──────────────────────────────────
+;・一定以上の好感度、調教レベルが必要
+;・REACT分類:積極的従う
+;・REACT印象:好印象大
+;・我慢フラグ解消
+;・反発刻印があると弾かれる
+;・依存度変化(+6, +10)
+;=================================================
+@KOJO_COM_K15_43
+;=================================================
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COM43, 愛情を込めてやる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:REACT派生
+		;無理をした行動
+			;%CALLNAME:MASTER%は平静を装っているが、嬉しそうな表情を隠せない…
+		;無理のない行動
+			;%CALLNAME:MASTER%はうっとりした顔で丁寧に命令をこなした…
+		;自然な行動
+			;%CALLNAME:MASTER%の態度は愛しい人に尽くす際のそれそのものだった…
+;IF TEQUIP:バイブ || TEQUIP:アナルバイブ || TEQUIP:アナルビーズ || TEQUIP:浣腸器＋プラグ
+;IF TEQUIP:アイマスク || TEQUIP:ボールギャグ || TEQUIP:縄
+;IF GETBIT(TEQUIP:自慰中, 1) || GETBIT(TEQUIP:自慰中, 0)
+	;=================================================
+	;ACT分類が性交（騎乗位）
+	;調教対象がオトコの場合は発生しない
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性交") && TEQUIP:性交中 == 3
+		SELECTCASE RANDCOM(2, 1)
+			CASE 0
+				PRINTFORM 「%RAND_SPLIT("あ/ん")%っ、自分よりリリーを優先してくれるなんて%RAND_SPLIT("可愛い/優しい/いい")%子ですねっ、%RAND_SPLIT("はぁ/あん")%っ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORM 「ほら、リリー%RAND_SPLIT("がイケるように/のおちんちん感じて、もっと/の上で")%もっと%RAND_SPLIT("えっちに/淫らに/いやらしく")%踊ってみてくださいっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			CASE 1
+				PRINTFORM 「%RAND_SPLIT("んぅ/はぁ")%っ！　ごほーしされてるのにっ、まるでリリーが%RAND_SPLIT("食べられ/犯され/逆レされ")%ちゃってるみたいですっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORM 「ねぇっもっと%RAND_SPLIT("パンパン/上下に/奥まで届くように")%腰振ってくださいっ！　あんっ
+				CALL HEARTCB
+				PRINTFORMW 」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類が奉仕
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "奉仕")
+		;-------------------------------------------------
+		;ACT足舐め強制
+		;-------------------------------------------------
+		IF 口上記入チェック(100) && IS_NOWACTNAME("足舐め強制")
+			;SIFはENDIF無し
+			SIF TEQUIP:アイマスク
+				PRINTFORMW 「もしかして、見えない方がこーふんしちゃうんですか？　%RAND_SPLIT("ふふ/あはは/ねぇ、ヘンタイさん")%っ♪」
+			SELECTCASE RANDCOM(2, 2)
+				CASE 0
+					PRINTFORM 「んっ♪　ほら、もっと%RAND_SPLIT("指の間まで/フェラするみたいに/美味しそうに")%%RAND_SPLIT("しゃぶって/ぺろぺろして")%くださいねっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORM 「ほらぁ♪　赤ちゃんがママのおっぱい%RAND_SPLIT("飲む/吸う/ちゅぅちゅぅする")%みたいに一生懸命おしゃぶりするんでちゅよっ
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+			;調教者自慰
+			IF GETBIT(TEQUIP:自慰中, 1)
+				PRINTFORM 「リリーもっ、%RAND_SPLIT("あ/は/はぁん")%っ
+				CALL HEARTCB
+				PRINTFORM 　%RAND_SPLIT("あなたの情けない姿/あなたのえっちな姿/ヘンタイさんの事")%%RAND_SPLIT("見つめながら/オカズにして")%オナニーしちゃますねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			;あなた自慰
+			ELSEIF GETBIT(TEQUIP:自慰中, 0)
+				IF !PENIS(MASTER)
+					PRINTFORM 「オナニーも止めちゃダメですよっ♪　リリーはちゃ～んと見てるんですからっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				ELSE
+					PRINTFORM 「%RAND_SPLIT("おちんぽ/おちんちん")%%RAND_SPLIT("シコシコするのも/扱くのも")%止めちゃダメですからねっ♪　リリーは%RAND_SPLIT("ぜ～んぶ/ちゃんと")%見てるんですからっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				ENDIF
+			ENDIF
+		RETURN 1
+		ENDIF
+		
+		;---------------------
+		;その他
+		;手で愛撫を強制/口で愛撫を強制/パイズリ/素股/イラマチオ/胸愛撫強制
+		;---------------------
+		;調教者がイきそう
+		IF TCVAR:イきそう
+			;調教者自慰
+			IF GETBIT(TEQUIP:自慰中, 1)
+				PRINTFORM 「おなにーもっ、ごほーしも気持ち良くて…%RAND_SPLIT("ああんっ/はぁん/んんっ")%
+				CALL HEARTCB
+				PRINTFORMW 」
+			ENDIF
+			SELECTCASE RANDCOM(2, 3)
+				CASE 0
+					PRINTFORM 「やさしいの%RAND_SPLIT("に/すき/だいすき/に凄いの")%っ、%RAND_SPLIT("ンッ、/あッ、/")%もうっ、%RAND_SPLIT("イっちゃいます/イかされちゃいます/イっちゃう")%っ
+					CALL HEARTCB
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORM 「%CNAME(MASTER)%の気持ちが伝わってくるみたいで…%RAND_SPLIT("あ/は/ん")%…これ、%RAND_SPLIT("すきです/だいすきです/すぐイっちゃいそう")%っ
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+		;その他
+		ELSE
+			;調教者自慰
+			IF GETBIT(TEQUIP:自慰中, 1)
+				PRINTFORM 「おなにーもっ、ごほーしも気持ち良くて…%RAND_SPLIT("ああんっ/はぁん/んんっ")%
+				CALL HEARTCB
+				PRINTFORMW 」
+			ENDIF
+			SELECTCASE RANDCOM(2, 4)
+				CASE 0
+					PRINTFORM 「%RAND_SPLIT("えっちで/いやらしくて")%優しいごほーし…んっ…もっと%RAND_SPLIT("して/続けて/いっぱい")%くださいっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORM 「%CNAME(MASTER)%のごほーし…はぁ…とっても%RAND_SPLIT("優しくて/甘くて")%リリーとろけちゃいそうです
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類が性奉
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性奉")
+		;アイマスク
+		IF TEQUIP:アイマスク && PERCENT(80)
+			SELECTCASE RANDCOM(2, 5)
+				CASE 0
+					PRINTFORM 「見えない方が感じちゃいます？　ふふ%RAND_SPLIT("/っ、ヘンタイさんですね/っ、えっちな子ですね")%っ
+					CALL HEARTCB
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORM 「見えないけど大丈夫ですか？　ほら、%RAND_SPLIT("リリーは/おまんこは/気持ちい穴は")%『ココ』ですよっ
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+		;ご主人様妊娠中！！
+		ELSEIF TALENT:TARGET:妊娠 == 1 && PERCENT(70)
+			SELECTCASE RANDCOM(2, 6)
+				CASE 0
+					PRINTFORM 「リリーは%RAND_SPLIT("妊娠してる/赤ちゃんがいる")%んですから…優しくね
+					CALL HEARTCB
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORM 「%RAND_SPLIT("お腹の/子宮の")%赤ちゃんに伝わる様に…いっぱい愛してくださいね
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+		;大鏡
+		ELSEIF TEQUIP:大鏡 && PERCENT(80)
+			SELECTCASE RANDCOM(2, 7)
+				CASE 0
+					PRINTFORM 「えっちな姿が鏡に映って…んはぁ…リリーもいつもより%RAND_SPLIT("こーふんし/ドキドキし/濡れ")%ちゃいますっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORM 「ほらぁ、鏡の中だけじゃなくて…現実のリリーにも夢中になってくださいねっ
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+		;野外プレイ
+		ELSEIF TEQUIP:野外プレイ && PERCENT(80)
+			SELECTCASE RANDCOM(2, 8)
+				CASE 0
+					PRINTFORM 「お外ですると興奮しちゃいますか？　ふふ%RAND_SPLIT("/っ、ヘンタイさんですね/っ、えっちな子ですね")%っ
+					CALL HEARTCB
+					PRINTFORMW 」
+				CASE 1
+					PRINTFORM 「お外だと…んはぁ…リリーもいつもより%RAND_SPLIT("こーふんし/ドキドキし/濡れ")%ちゃいますっ
+					CALL HEARTCB
+					PRINTFORMW 」
+			ENDSELECT
+		ENDIF
+		SELECTCASE GET_ACTNAME(TFLAG:ACT)
+			CASE "正常位させる"
+				SELECTCASE RANDCOM(2, 9)
+					CASE 0
+						PRINTFORM 「%RAND_SPLIT("お顔見/キスし")%ながら…%RAND_SPLIT("ん/はぁ")%っ…%RAND_SPLIT("子宮をトントンってして/優しく突いて/ゆっくり突いて/奥まで突いて")%くださいね
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「ぁあっ…%RAND_SPLIT("おちんちん/らぶらぶエッチ")%っ、気持ちいれす…%RAND_SPLIT("ひぃん/ぁあああん/くぅぅん")%
+						CALL HEARTCB
+						PRINTFORM 　おまんこが%CNAME(MASTER)%の形%RAND_SPLIT("覚えちゃうくらい/忘れないように")%ぃっ、もっとしてくらひゃい
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「お顔が見えると安心します、んっ
+						CALL HEARTCB
+						PRINTFORM 　ねっ、もっと%RAND_SPLIT("いっぱい掻き混ぜて/奥まで突いて")%ください
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「イく時はっ、%RAND_SPLIT("ひん/あん")%っ、リリーがぎゅーって%RAND_SPLIT("抱きしめて/だいしゅきホールドして")%あげますからね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "後背位させる"
+				SELECTCASE RANDCOM(2, 10)
+					CASE 0
+						PRINTFORM 「もっと%RAND_SPLIT("無理矢理しても/強引でも/えっちな気持ちぶつけてくれても")%いいのに…%RAND_SPLIT("ん/はぁ")%っ…%RAND_SPLIT("優しく突かれると/優しくされると")%感じ過ぎちゃってぇ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「後ろからぁ…%RAND_SPLIT("ひぃん/んはぁああ/くぅぅん")%
+						CALL HEARTCB
+						PRINTFORM 　%RAND_SPLIT("パンパン/ぱこぱこ")%されるのっ、気持ひいいれすっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「%RAND_SPLIT("バックだと犯されてる/動物さんのセックス")%みたいでっ、んっ
+						CALL HEARTCB
+						PRINTFORM 　おちんちんっ、いつもより%RAND_SPLIT("感じちゃう/奥まで届いて")%っああんっ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「腰抜けひゃっ、%RAND_SPLIT("ひん/あん")%っんぅ、ひゃんとリリーのことっ%RAND_SPLIT("抱きしめて/支えてて")%くらさいね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "対面座位させる"
+				SELECTCASE RANDCOM(2, 11)
+					CASE 0
+						PRINTFORM 「ちゃんと%RAND_SPLIT("抱っこしててね/キスも忘れないでね/ぎゅってしててね")%…%RAND_SPLIT("ちゅ/はぁ")%っ…ほら、%RAND_SPLIT("子宮をトントンってして/優しく突いて/ゆっくり突いて/奥まで突いて")%
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「ぁあっ…っ%RAND_SPLIT("ちゅむっ、れりゅっ…れぅ/んちゅっ、ちゅっ…ふ")%っ…%RAND_SPLIT("ひぃん/ひっ―――ッ/んくぅぅん")%
+						CALL HEARTCB
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「ぎゅーってして、んっ
+						CALL HEARTCB
+						PRINTFORM 　おまんこだけじゃなくて、おっぱいもお口も%RAND_SPLIT("いっぱい/ぜーんぶ")%気持ちよくしてくださいねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「イく時はっ、%RAND_SPLIT("ひん/あん")%っ、ぎゅーって%RAND_SPLIT("抱きしめて/だいしゅきホールドして")%あげますからね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "背面座位させる"
+				SELECTCASE RANDCOM(2, 12)
+					CASE 0
+						PRINTFORM 「ね、%RAND_SPLIT("乳首/おっぱい/クリ")%もなでなでして…%RAND_SPLIT("ん/はぁ")%っ…っ、とっても%RAND_SPLIT("上手/気持ちい")%ですよ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「%RAND_SPLIT("子宮をトントンってするの/子宮に優しいキスされてるみたいで/おちんちん奥まで届いて")%…%RAND_SPLIT("ひぃん/ぁああん/くぅぅん")%
+						CALL HEARTCB
+						PRINTFORM 　%RAND_SPLIT("優しいのに/激しくないのに")%どんどん気持ひよくなっひゃます
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「足を開きますから…んんっ
+						CALL HEARTCB
+						PRINTFORM 　はぁ、お豆さんも%RAND_SPLIT("なでなでして/気持よくして")%くださいね
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「%RAND_SPLIT("ひぃん/あはぁ")%っ、%RAND_SPLIT("恥ずかしい場所丸見えで/おちんちん奥まで届いて")%っ、気持ひぃれす
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "アナルセックスさせる"
+				SELECTCASE RANDCOM(2, 13)
+					CASE 0
+						;ご主人様A感覚4以上
+						IF ABL:Ａ感覚 >= 4 && PERCENT(70)
+							PRINTFORM 「%RAND_SPLIT("おひりえっち/お尻えっち/あなるせっくす")%気持ひっ%RAND_SPLIT("ん/はぁ")%っ
+							CALL HEARTCB
+							PRINTFORMW 　%RAND_SPLIT("おちんちん挿れるとこじゃないのに/膣裏トントンされると")%感じ過ぎちゃってぇ
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「優しくてっとろけちゃいまふっ%RAND_SPLIT("ひぃん/んはぁああ/くぅぅん")%
+							CALL HEARTCB
+							PRINTFORMW 」
+						ELSE
+							PRINTFORM 「おしりの穴もっ、%RAND_SPLIT("ん/はぁ")%っ…%RAND_SPLIT("優しく突いて/ゆっくり突いて/奥まで突いて")%くださいね
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「ぁあっ…%RAND_SPLIT("これ/それ")%っ、気持ちいれす…%RAND_SPLIT("ひぃん/ぁあああん/くぅぅん")%
+							CALL HEARTCB
+							PRINTFORM 　おひりがおちんちんの形%RAND_SPLIT("覚えちゃうくらい/忘れないように")%ぃっ、もっとしてくらひゃい
+							CALL HEARTCB
+							PRINTFORMW 」
+						ENDIF
+					CASE 1
+						PRINTFORM 「おしりでもいっぱい%RAND_SPLIT("愛して/感じさせて")%くださいね、んっ
+						CALL HEARTCB
+						PRINTFORM 　っ、遠慮しないで%RAND_SPLIT("いっぱい掻き混ぜて/ぱこぱこして/奥まで突いて")%いいんですよ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「%RAND_SPLIT("ひぃん/あはぁ")%っ、%RAND_SPLIT("優しいおしりえっち/裏側から子宮トントンされてるみたいで/おちんちんお腹の奥まで届いて")%っ、気持ひぃれす
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "逆レイプ"
+				SELECTCASE RANDCOM(2, 14)
+					CASE 0
+						PRINTFORM 「リリーに%RAND_SPLIT("おちんちん食べられちゃったねぇ/逆レされるの嬉しいんだぁ")%…ふふっ、%RAND_SPLIT("ん/はぁ")%っ
+						CALL HEARTCB
+						PRINTFORM 　繋がってるところが見えるように、%RAND_SPLIT("えっちに/ガニ股になって/いやらしく/お下品に")%腰振っちゃいますねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「ひぁっ%RAND_SPLIT("ひぃん/ぁあああん/くぅぅん")%
+						CALL HEARTCB
+						PRINTFORM 　いっぱい%RAND_SPLIT("パンパンして/愛情込めて")%っ、ふたりで気持ひよくなりましょうね
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「%CNAME(MASTER)%も腰振ってくれるんですか？　あんっ
+						CALL HEARTCB
+						PRINTFORM 　優しいのにっ、%RAND_SPLIT("気持ちいいところに当たって…んんっ/奥まで響いてきますよ")%
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「リリーもおちんぽとろけちゃうくらいっ%RAND_SPLIT("ひぃん/あはぁ")%っ、%RAND_SPLIT("気持ちよくして/愛して")%あげますからね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+		ENDSELECT
+		;あなたイきそう
+		IF TCVAR:MASTER:イきそう
+			;焦らし度派生
+			SELECTCASE TCVAR:MASTER:焦らし度
+				;焦らし中
+				CASE IS > 1
+					;実は調教者もイきそう
+					IF TCVAR:イきそう
+						PRINTFORM 「リリーももうちょっとでイっちゃいますからっ、%RAND_SPLIT("パンパン/ぱこぱこ/腰振るの")%止めちゃらめれすよっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					ELSE
+						PRINTFORM 「まだイかせてあげませんから、ひぅっ
+						CALL HEARTCB
+						PRINTFORM 　もっともっと限界まで我慢してくらしゃいねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					ENDIF
+				;焦らし終了
+				CASE 1
+					;実は調教者もイきそう
+					IF TCVAR:イきそう
+						PRINTFORM 「リリーもイっひゃいましゅからぁっ
+						CALL HEARTCB
+						PRINTFORM 　一緒にっイっひゃいましょう
+						CALL HEARTCB
+						PRINTFORMW 」
+					ELSE
+						PRINTFORM 「%RAND_SPLIT("んひ/はぁ")%っ
+						CALL HEARTCB
+						PRINTFORM 　%RAND_SPLIT("スピード上げちゃいますから/もうイくの我慢しなくていいからね/いっぱい締め付けてあげましゅから")%っ、リリーのおまんこでイっちゃいましょうねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					ENDIF
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;-------------------------
+	;その他
+	;-------------------------
+	;無理をした行動
+	;%CALLNAME:MASTER%は平静を装っているが、嬉しそうな表情を隠せない…
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+		SELECTCASE RANDCOM(2, 30)
+			CASE 0
+				PRINTFORM 「ニヤニヤしちゃって……ふふっ、可愛いんですからっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「もっともっとリリーを好きになって、一緒に気持ちよくなりましょうねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			CASE 1
+				PRINTFORMW 「ふふっ♪　ニヤニヤしちゃってどうしたんですか？」
+				PRINTFORM 「もう%CNAME(MASTER)%の気持ちはバレバレなんですから、隠さなくってもいいんですよっ
+				CALL HEARTCB
+				PRINTFORMW 」
+		ENDSELECT
+	;無理のない行動
+	;%CALLNAME:MASTER%はうっとりした顔で丁寧に命令をこなした…
+	;自然な行動
+	;%CALLNAME:MASTER%の態度は愛しい人に尽くす際のそれそのものだった…
+	ELSE
+		SELECTCASE RANDCOM(2, 31)
+			CASE 0
+				PRINTFORM 「うぅ……なんだか%RAND_SPLIT("恥ずかしいです/照れちゃいますね/ドキドキしちゃいますね")%……えへへっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORM 「もっともっと……好きって気持ちでリリーを満たしてくださいねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			CASE 1
+				PRINTFORM 「%RAND_SPLIT("えへへっ/えへへぇ/うふふっ")%♪　%CNAME(MASTER)%の気持ち、いっぱい伝わってきますよっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORM 「ほら、『%RAND_SPLIT("大/")%好き』って言って♪　もっともっと愉しみましょうっ
+				CALL HEARTCB
+				PRINTFORMW 」
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;COM44, 平然とやる
+;────────────────────────────────────
+;・REACT分類:平然と従う
+;・REACT印象:好印象小
+;・依存度変化(+2, -2)
+;-------------------------------------------------
+;・REACT派生なし
+;=================================================
+@KOJO_COM_K15_44
+;=================================================
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COM44, 平然とやる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:REACT派生
+		;実はまんざらでもない
+			;%CALLNAME:MASTER%は平常心を保とうとしている…
+		;実は嫌
+			;%CALLNAME:MASTER%は無理をしつつも平静を装っている…
+		;無理のない行動
+			;%CALLNAME:MASTER%は%CALLNAME%を悦ばせて歓心を誘おうとしている…
+		;自然な行動
+			;%CALLNAME:MASTER%には%CALLNAME%の様子を伺うだけの余裕があるようだ…
+	;=================================================
+	;ACT分類が性奉
+	;=================================================
+	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性奉")
+		SELECTCASE GET_ACTNAME(TFLAG:ACT)
+			CASE "正常位させる"
+				SELECTCASE RANDCOM(2, 10)
+					CASE 0
+						PRINTFORM 「そんなに余裕があるなら…%RAND_SPLIT("ん/はぁ")%っ…もっと%RAND_SPLIT("子宮をトントンってして/ごほーしして/奥まで突いて")%くださいねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「おまんこが%CNAME(MASTER)%の形%RAND_SPLIT("覚えちゃうくらい/忘れないように")%ぃっ、いっぱいハメてくらさいっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「余裕な表情ですね、んっ
+						CALL HEARTCB
+						PRINTFORM 　ねっ、もっと%RAND_SPLIT("いっぱい掻き混ぜて/奥まで突いて")%ください
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「えっちなトロ顔っ、%RAND_SPLIT("ひん/あん")%っ、リリーにもっと見せて%RAND_SPLIT("欲しいな/くださいね")%
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "後背位させる"
+				SELECTCASE RANDCOM(2, 11)
+					CASE 0
+						PRINTFORM 「そんなに平然とされたら…%RAND_SPLIT("ん/はぁ")%っ…リリーが犯されてるみたいでっひぅ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「後ろからぁ…%RAND_SPLIT("ひぃん/んはぁああ/くぅぅん")%
+						CALL HEARTCB
+						PRINTFORM 　%RAND_SPLIT("パンパン/ぱこぱこ")%されるのっ、気持ひいいれすっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「%RAND_SPLIT("バックだと犯されてる/動物さんのセックス")%みたいでっ、んっ
+						CALL HEARTCB
+						PRINTFORM 　おちんちんっ、いつもより%RAND_SPLIT("感じちゃう/奥まで届いて")%っああんっ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「腰抜けひゃっ、%RAND_SPLIT("ひん/あん")%っんぅ、ひゃんとリリーのことっ%RAND_SPLIT("抱きしめて/支えてて")%くらさいね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "対面座位させる"
+				SELECTCASE RANDCOM(2, 12)
+					CASE 0
+						PRINTFORM 「ちゃんと%RAND_SPLIT("抱っこしててね/ぎゅってしててね")%…%RAND_SPLIT("ちゅ/はぁ")%っ…%RAND_SPLIT("うふふ/ふふ/えへへ")%っ、%RAND_SPLIT("まだまだ/なんだか")%余裕そうですね
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「キスもいっぱいしましょうね…っ%RAND_SPLIT("ちゅむっ、れりゅっ…れぅ/んちゅっ、ちゅっ…ふ")%っ…%RAND_SPLIT("ひぃん/んくぅ")%
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「%RAND_SPLIT("うふふ/ふふ/えへへ")%っ、なんだか余裕みたいですね
+						CALL HEARTCB
+						PRINTFORM 　ほら、おっぱいもお口も%RAND_SPLIT("いっぱい/ぜーんぶ")%気持ちよくしてくださいねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「いっぱい腰振って、%RAND_SPLIT("ひん/あん")%っ、%RAND_SPLIT("獣みたいな/動物みたいな")%えっちしましょうね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "背面座位させる"
+				SELECTCASE RANDCOM(2, 13)
+					CASE 0
+						PRINTFORM 「%RAND_SPLIT("子宮にキスされてるみたいで/おちんちん奥まで届いて")%…%RAND_SPLIT("ひぃん/ぁああん/くぅぅん")%
+						CALL HEARTCB
+						PRINTFORM 　はぁっ、%CNAME(MASTER)%の余裕の表情…すぐにトロ顔に変えてあげますからね
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「リリー重たくないですか？…ふふっ
+						CALL HEARTCB
+						PRINTFORM 　それじゃ、もっと%RAND_SPLIT("体重掛けて/ぐりぐり押し付けて")%あげますね
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「%RAND_SPLIT("うっはぁ/あはぁ")%っ…余裕なんて無くなるくらい、気持ちよくしちゃいますからね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "アナルセックスさせる"
+				SELECTCASE RANDCOM(2, 14)
+					CASE 0
+						;ご主人様A感覚4以上
+						IF ABL:Ａ感覚 >= 4 && PERCENT(70)
+							PRINTFORM 「%RAND_SPLIT("おしりグリグリされると/おちんちん挿れるとこじゃないのに/膣裏トントンされると")%感じ過ぎちゃってぇ
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「もっろ突いてっ、%RAND_SPLIT("気持ひよくして/ごほーしして")%くださひっ%RAND_SPLIT("ひぃん/んはぁああ/くぅぅん")%
+							CALL HEARTCB
+							PRINTFORMW 」
+						ELSE
+							PRINTFORM 「おしりの穴なら我慢出来そうですかっ？　%RAND_SPLIT("ん/はぁ")%っ、%RAND_SPLIT("ちょっと/なんだか")%ナマイキですっ
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「%RAND_SPLIT("きゅっきゅって/いっぱい")%締め付けてっ、%RAND_SPLIT("ひぃん/ぁああ/ぅんん")%
+							CALL HEARTCB
+							PRINTFORM 　すぐに%RAND_SPLIT("えっちなお顔に/トロ顔に")%してあげますからね
+							CALL HEARTCB
+							PRINTFORMW 」
+						ENDIF
+					CASE 1
+						PRINTFORM 「おしりもいっぱい%RAND_SPLIT("ごほーしして/感じさせて")%くださいね、んっ
+						CALL HEARTCB
+						PRINTFORM 　ほらっ、余裕ならもっと%RAND_SPLIT("いっぱい掻き混ぜて/ぱこぱこして/奥まで突いて")%くれなきゃダメですよ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「%RAND_SPLIT("ひぃん/あはぁ")%っ、%RAND_SPLIT("おちんちんおっきくて/えっちな腰使い")%っ気持ひぃれす
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+			CASE "逆レイプ"
+				SELECTCASE RANDCOM(2, 15)
+					CASE 0
+						PRINTFORM 「リリーに%RAND_SPLIT("おちんちん食べられちゃったねぇ/逆レされるの嬉しいんだぁ")%…ふふっ、%RAND_SPLIT("ん/はぁ")%っ
+						CALL HEARTCB
+						PRINTFORM 　繋がってるところが見えるように、%RAND_SPLIT("えっちに/ガニ股になって/いやらしく/お下品に")%腰振っちゃいますねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「ほらほらぁっ
+						CALL HEARTCB
+						PRINTFORM 　余裕なお顔するなんて%RAND_SPLIT("ナマイキですよ/許しませんからね/百年早いんですからね")%
+						CALL HEARTCB
+						PRINTFORMW 」
+					CASE 1
+						PRINTFORM 「%CNAME(MASTER)%も腰振ってくれるんですか？　あんっ
+						CALL HEARTCB
+						PRINTFORM 　%RAND_SPLIT("気持ちいいところに当たって…んんっ/奥までトントンって響いてきますよ")%
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「リリーもおちんぽとろけちゃうくらいっ%RAND_SPLIT("ひぃん/あはぁ")%っ、%RAND_SPLIT("気持ちよくして/締め付けて/きゅ～～ってして")%あげますからね
+						CALL HEARTCB
+						PRINTFORMW 」
+				ENDSELECT
+		ENDSELECT
+		;あなたイきそう
+		IF TCVAR:MASTER:イきそう
+			;焦らし度派生
+			SELECTCASE TCVAR:MASTER:焦らし度
+				;焦らし中
+				CASE IS > 1
+					;実は調教者もイきそう
+					IF TCVAR:イきそう
+						PRINTFORM 「リリーももうちょっとでイっちゃいますからっ、%RAND_SPLIT("パンパン/ぱこぱこ/腰振るの")%止めちゃらめれすよっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					ELSE
+						PRINTFORM 「まだイかせてあげませんから、ひぅっ
+						CALL HEARTCB
+						PRINTFORM 　もっともっと限界まで我慢してくらしゃいねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					ENDIF
+				;焦らし終了
+				CASE 1
+					;実は調教者もイきそう
+					IF TCVAR:イきそう
+						PRINTFORM 「リリーもイっひゃいましゅからぁっ
+						CALL HEARTCB
+						PRINTFORM 　一緒にっイっひゃいましょう
+						CALL HEARTCB
+						PRINTFORMW 」
+					ELSE
+						PRINTFORM 「%RAND_SPLIT("んひ/はぁ")%っ
+						CALL HEARTCB
+						PRINTFORM 　%RAND_SPLIT("スピード上げちゃいますから/もうイくの我慢しなくていいからね/いっぱい締め付けてあげましゅから")%っ、リリーのおまんこでイっちゃいましょうねっ
+						CALL HEARTCB
+						PRINTFORMW 」
+					ENDIF
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;-------------------------
+	;その他を処理
+	;-------------------------
+	SELECTCASE GET_COM_RANK()
+		CASE "自然な行動"
+			PRINTFORMW 「むぅ、なんだか余裕って感じですね…」
+			PRINTFORMW 「素直なのはいいんですけど、もっと面白い反応して欲しいな…ふふっ♪」
+		CASE "無理のない行動"
+			PRINTFORMW 「んぅ、えっちな下心が透けて見える気がします…」
+			PRINTFORMW 「ほら、リリーを%RAND_SPLIT("喜ばせ/悦ばせ/愉しませ")%たいならもっと頑張ってくれなきゃダメですよっ♪」
+		CASE "無理をした行動"
+			;実はまんざらでもない
+			IF COMCOR_POSI()
+				PRINTFORMW 「ふふっ、無理しちゃって可愛いんですから…」
+				PRINTFORMW 「その余裕がいつまで続くか楽しみですっ♪」
+			;実は嫌
+			ELSE
+				PRINTFORMW 「無理してるのバレバレですよ？」
+				PRINTFORMW 「もっと素直になって、%RAND_SPLIT("気持ちよくなっちゃい/楽しんじゃい")%ましょう？　ふふっ♪」
+			ENDIF
+	ENDSELECT
+	RETURN 1
+ENDIF
+

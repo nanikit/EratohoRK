@@ -1,0 +1,896 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上(対象限定) イベント口上ファイル
+;
+;		調教終了口上をまとめたファイル
+;
+;	EXTRAモードでN09咲夜をMASTERに選択した場合のみ表示
+;
+;Version		Reason
+;1.70			@口上記入チェック仕様に。その他細かな修正
+;1.61			一部処理を関数化。その他細かな修正
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;-------------------------------------------------
+;関連変数…
+;FIRSTEVENT
+;初回EVENT判定関数　TFLAG:イベント番号（TFLAG:10）を自動で参照し、
+;現在発生しているEVENTごとに番号が独立して保存される
+;-------------------------------------------------
+;-------------------------------------------------
+;EV13 FIRSTTIME(0) ～ (16), RANDEVENT(0) ～ (19)
+;	調教対象が失神した FIRSTTIME(0)
+;	エンディング終了後 FIRSTTIME(1)(2)
+;	両想い（好意3000以上・好感度3000以上）
+;		ルートＢII　初回 FIRSTTIME(3)
+;		ルートＡII　初回 FIRSTTIME(4)
+;		ルートＢIII FIRSTTIME(5)
+;			ルートＢエンディング解除判定KFLAG:(FLAG:ご主人様):9
+;		ルートＡIII FIRSTTIME(6)
+;			ルートＡエンディング解除判定KFLAG:(FLAG:ご主人様):8
+;		ルートＢ, FIRSTTIME以外
+;			RANDEVENT(0)(1)
+;		ルートＡ, FIRSTTIME以外
+;			RANDEVENT(2)(3)(4)(5)(6)(7)
+;			内部分岐用KFLAG:(FLAG:ご主人様):6
+;	大満足ボーナスを得ている FIRSTTIME(7)
+;	調教完了（好意2000以上） FIRSTTIME(8)
+;	溺愛（好感度2000以上） FIRSTTIME(9)
+;	調教済み（好意1000以上） FIRSTTIME(10)
+;	不倶戴天（好意-300未満） FIRSTTIME(11)
+;	恐怖（好意200未満・トラウマLv5以上） FIRSTTIME(12)
+;	反抗（好意0以下・反抗刻印Lv3以上） FIRSTTIME(13)
+;	目覚め（好意300以上） FIRSTTIME(14)
+;	順応（好意100以上・好感度100以上） FIRSTTIME(15)
+;	序盤（条件なし） FIRSTTIME(16)
+;-------------------------------------------------
+
+;========================================================================
+;EV13, 調教終了口上 FIRSTEVENT(0) ～ (16)
+;========================================================================
+;・@EVENTCOMENDから呼び出される
+;・口上主が調教終了する直前に表示
+;・ARG:1, ARG:2の場合は地の文表示後にPRINTLで空行。その後に口上を表示
+;・ARG:0の場合は固有の地の文なし。口上表示の前にPRINTLで空行が入る
+;・RESULT 0以上を返すと口上表示後にPRINTLで空行が入る
+;-------------------------------------------------
+;関連変数…
+;FLAG:日常制御	調教終了時状況(1=通常/2=精力0/3=一回休み/4=失神した)
+;-------------------------------------------------
+@KOJO_NO9_MS_EVENT_K14_13(ARG)
+;-------------------------------------------------
+;引数内訳…
+;ARG=(0, 普通に終了、1, 調教対象が疲れている、2, 調教対象が失神した)
+;-------------------------------------------------
+
+;フラグ初期化
+IF 0
+ELSEIF FLAG:日常 != 0
+	FLAG:日常 = 0
+ELSEIF FLAG:奴隷妊娠 != 0
+	FLAG:奴隷妊娠 = 0
+ELSE
+ENDIF
+
+;イベント用フラグを初期化
+KFLAG:(FLAG:ご主人様):6 = 0
+
+;────────────────────────────────────
+;ARG:1, ARG:2, 疲労・失神による調教終了 FIRSTEVENT(0)～
+;────────────────────────────────────
+;・調教対象消耗度に応じて疲労/失神に分かれる
+;・呼び出しタイミングは地の文の表示→PRINTL→口上の表示
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象が疲れている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 1
+	PRINTFORMW 「――やれやれ。その様子じゃもう無理みたいね」
+	PRINTFORMW 「まあいいわ。ここで終わりにしましょう」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象が失神した FIRSTEVENT(30)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && ARG == 2
+	PRINTFORMW 「やりすぎちゃったみたいね…」
+	PRINTFORMW 「今日は終わりにしましょう」
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ARG:0 普通に終了 FIRSTEVENT(10)～
+;────────────────────────────────────
+;・通常の調教終了時の口上
+;・地の文なし。PRINTLによる空行の後に口上表示
+;-------------------------------------------------
+
+[SKIPSTART]
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;エンディング終了後
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;枠は設けたけど、ここまでやるかどうか
+;-------------------------------------------------
+IF 口上記入チェック(0) && TRUECHECK(KFLAG:(FLAG:ご主人様):4 == 1, KFLAG:(FLAG:ご主人様):5 == 1) > 0
+	;=================================================
+	;TRUE END後
+	;=================================================
+	IF 口上記入チェック(0) && KFLAG:(FLAG:ご主人様):4 == 1
+	ENDIF
+	
+	;=================================================
+	;GOOD END後
+	;=================================================
+	IF 口上記入チェック(0) && KFLAG:(FLAG:ご主人様):5 == 1
+	ENDIF
+ENDIF
+[SKIPEND]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;両想い（好意3000以上・好感度3000以上） FIRSTEVENT(3)(4) RANDEVENT(0) ～ (7)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・相思相愛時に表示
+;・エンディングまでルート毎に完全に切り分ける
+;-------------------------------------------------
+;ルートＡII/KFLAG:(FLAG:ご主人様):0(基本ルート用) ルートＡIII/KFLAG:(FLAG:ご主人様):2(イベント解除用)
+;ルートＢII/KFLAG:(FLAG:ご主人様):1(基本ルート用) ルートＢIII/KFLAG:(FLAG:ご主人様):3(イベント解除用)
+;-------------------------------------------------
+IF 口上記入チェック(100) && AFFECTION("相思相愛") && KFLAG:(FLAG:ご主人様):11 == 1
+	;=================================================
+	;ルートＢII　初回 FIRSTEVENT(3)
+	;=================================================
+	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):1 == 1 && FIRSTEVENT(3)
+		PRINTFORMW 「ねぇ咲夜、怒らないで聞いて欲しいんだけど…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大丈夫よ、怒ったりしないわ」")
+		PRINTFORMW 「咲夜と最初に会った、そう、あの異変の時…何故か懐かしい感じがしたの」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「うん」")
+		PRINTFORMW 「それがどうしてか良く判らなかったんだけど、今頃になって気付いたの」
+		PRINTFORMW 「私が良く知ってる人に似てるのよ、咲夜って」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私に似てるってのがどんな人だったのか、ちょっと興味あるわね」")
+		PRINTFORMW 「ん、そうね……姉のようでもあり、母のようでもある人」
+		PRINTFORMW 「多忙な母親の代わりに良く面倒見て貰ってた。そして悪戯しては叱られてた記憶があるわ」
+		PRINTFORMW 「咲夜と同じメイドなの。何でも出来て、強くて、カッコよくて、幼いながら憧れてた」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それなら怒る理由なんてないわ。私としては寧ろ光栄に思うべきかしら」")
+		PRINTFORMW 「ふふっ、ま、そんなところね。私の大切な記憶。懐かしくて、暖かい思い出。ただ、でもね……」
+		
+		;フェードイン
+		CALL FADE(25, COLOR_K14("black"), COLOR2_K14("ALICE"), "「私、判るの。この記憶は本当の記憶じゃないって」")
+		
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリ、ス？」")
+		PRINTFORMW 「これはきっと、私でない誰かの記憶。私に埋め込まれた記憶」
+		PRINTFORMW 「この記憶は私のものであって、私のものじゃない。私じゃない誰か、そう…本来魔界でアリスと呼ばれてた存在の記憶」
+		PRINTFORMW 「本当の私なんて何処にもいない！ 私は創られた存在なのよ！ だから、私はっ！！」
+		PRINTL
+		PRINTFORMDW 咲夜はアリスを優しくなだめながら言った…
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「もういいのよ、アリス。もう何も心配しなくていいの」")
+		PRINTFORMW 「だ、だって咲夜っ！ 私はきっと魔界人ですらないのよ！？  恐らく何かを寄り代に創りだされた、おぞましい存在なのよ！？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんなの関係ない！ アリスはアリスよ！」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「今こうして私の目の前にいる、貴女こそがアリスなのよ！」")
+		PRINTFORMW 「さ、さくやぁ…わたし、判らない…自分が、わからないの……」
+		PRINTL
+		PRINTFORMDW 咲夜はアリスを抱きしめながら言った…
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大丈夫、大丈夫よ。私はちゃんと判ってる」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私にとってアリスは貴女だけ。そして……私が大好きなアリスは貴女だけなのよ」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「誰であれ、貴女を傷つけるのは許さない。貴女を否定する者の存在なんて認めない」")
+		PRINTFORMW 「さく、や……」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「この先何があっても、私はずっと貴女の傍に居る。それじゃ不満かしら」")
+		PRINTFORMW 「そんな、不満なんて……」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「じゃ、この話はおしまい。今はゆっくり眠りなさい、アリス。でも一つだけ約束して」")
+		PRINTFORMW 「約束…？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、約束。次に目覚めた時には、笑顔に戻るって約束して」")
+		PRINTFORMW 「ん、わかった…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それでいいわ。おやすみなさい、アリス」")
+		PRINTFORMW 「うん、おやすみ、咲夜…」
+		PRINTFORMDW 咲夜が見守る中、アリスは安らかな寝息をたてはじめた…
+		
+		KFLAG:(FLAG:ご主人様):3 = 1
+		CALL TWAIT3_K14
+		
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ルートＡII　初回 FIRSTEVENT(4)
+	;=================================================
+	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):0 == 1 && FIRSTEVENT(4)
+		CALL PRINTCOLORL(COLOR_K14("咲夜"), "「私、思ったんだけど」")
+		PRINTFORMW 「うん」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリスの身体ってつめたいなって」")
+		PRINTFORMW 「そうね…、代謝、吸収の仕組みが人とは違うもの。ほら、心音だって静かでしょう？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「言われてみればそうね」")
+		PRINTFORMW 「咲夜は全部逆よね？ 身体は熱を帯びていて、心音も私よりずっと大きいわ」
+		PRINTFORMW 「全身が生きてる、って主張してる。それがどうって訳じゃないんだけど…」
+		PRINTL
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「こういうのは嫌いかしら？」")
+		PRINTFORMW 「そんな事……でも正直、最初の頃はちょっと苦手だったわ」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「えっ、そうなの？」")
+		PRINTFORMW 「ふふっ、もう過去の話よ。今は悪くないって思ってる。あぁこれが咲夜なんだ、って感じがしてね」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「結構違うものね、私達」")
+		PRINTFORMW 「…………」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ん、どうかした？」")
+		PRINTFORMW 「私のこと…好き？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「えぇ、好きよ…」")
+		PRINTFORMDW 咲夜はアリスの掌に口づけしながら言った…
+		
+		;フェードイン
+		CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「愛してるわ」")
+		
+		PRINTFORMW 「本当に？ 咲夜はそれでいいの？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「言ったはずよ？ 貴女の時間を私に預けてって。それに…」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私の時間も貴女に預けるわ、アリス。だから、もう何も心配しなくていいの」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ずっと貴女の傍にいるわ」")
+		PRINTFORMW 「ん、わかった。ありがとう、咲夜…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…礼なんて。寧ろ私の方から言いたいくらいよ」")
+		PRINTFORMW 「そうなの？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「えぇ、そうよ。逃げてるばかりじゃ駄目って気付かされたわ」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それが大切なものなら尚更、ね」")
+		PRINTFORMW 「うん…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私はずっと逃げてた。でも貴女は正面から向きあってた」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「自分を情けないと思ったし、アリスが私に真剣に向き合ってくれたのが嬉しかった」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「その方法は…まぁ正直、ちょっとアレだったけど。でも、今となってはどうでもいい事よ」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「終わり良ければ全て良し、ってね」")
+		PRINTFORMW 「それ、前に私が言わなかった？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「覚えてない」")
+		PRINTFORMW 「耄碌するにはちょっと早いんじゃない？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女さえ居ればどうだっていいわよ…そんなの」")
+		PRINTFORMW 「……言うじゃない。でも、まぁ…そうよね」
+		
+		;フェードアウト
+		CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「くすっ」")
+		CLEARLINE 1
+		
+		;フェードアウト
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ふふっ」")
+		CLEARLINE 1
+		
+		KFLAG:(FLAG:ご主人様):2 = 1
+		CALL TWAIT3_K14
+		
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ルートＢIII　KFLAG:(FLAG:ご主人様):5に代入が行われた場合 FIRSTEVENT(5)
+	;=================================================
+	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):5 == 1 && FIRSTEVENT(5)
+		PRINTFORMW 「ねぇ咲夜」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ん？ なに？」")
+		PRINTFORMW 「そろそろ戻った方がいいんじゃないかしら。結界はもう消えたし、その…」
+		PRINTFORMW 「メイド長が居なくて紅魔舘は大変な事になってるんじゃ」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はぁ、そうだったわね。私が居ない間、どんな事になってるやら…」")
+		PRINTFORMW 「実質的に咲夜が居ないと認識されてるのは、この数時間位のはずよ。でも…」
+		PRINTFORMW 「これまで咲夜が居なかった事実は変わりないから…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「考えると気が重いわね…」")
+		PRINTFORMW 「ごめんなさい咲夜、私のせいで……」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何の事かしら？ 私には判らないから、謝る必要なんてないのではなくて？」")
+		PRINTFORMW 「ん、ありがとう…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「謝ったり感謝してみたり、今日のアリスは忙しいわね？」")
+		PRINTFORMW 「もうっ！ からかわないでよ！」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ふふっ…じゃ、そんな訳でそろそろ戻るわ」")
+		PRINTFORMW 「うん、気をつけて…って、ちょっと咲夜！？」
+		PRINTFORMDW 立ち上がりかけた咲夜は激しい目眩に襲われ、思わず壁に手を付いた…
+		PRINTL
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だ、大丈夫よ。多分、ただの立ち眩みだから…」")
+		PRINTFORMW 「ホントに？ 何ならもう少し休んでから帰っても…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「本当に大丈夫だから。仕事の事を考えると、あまりゆっくりしてられないしね」")
+		PRINTFORMW 「そう…、まぁ咲夜がそこまで言うなら」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうそう、何の心配も要らないわ。じゃ、もう行くわね」")
+		PRINTFORMW 「今度こそ気をつけてね…」
+		PRINTL
+		PRINTFORML 手を振りながら笑顔で立ち去る咲夜の姿を見送りながら、私は言い知れぬ不安感を抱いた
+		PRINTFORMW しかしそれが何であるのか、その時の私には知りようも無かった…
+		
+		KFLAG:(FLAG:ご主人様):9 = 1
+		CALL TWAIT3_K14
+		
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ルートＡIII　KFLAG:(FLAG:ご主人様):4に代入が行われた場合 FIRSTEVENT(6)
+	;=================================================
+	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):4 == 1 && FIRSTEVENT(6)
+		PRINTFORMW 「どうやらようやく結界が解けたみたい」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…やれやれ。それは何よりね」")
+		PRINTFORMW 「ま、そうね。これでようやく一段落ってとこかしら」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「張本人が人事みたいに言うわね？」")
+		PRINTFORMW 「それを言われると流石に何も言い返せないわ…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「責めてる訳じゃないのよ？ ただ、この位の皮肉を言う権利はあるかと思ってね♪」")
+		PRINTFORMW 「人が悪いわね、咲夜…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはお互い様ね。まぁそれは兎も角…私は一旦戻ったほうがいいかしら」")
+		PRINTFORMW 「そうね、今頃咲夜が居ない事に気付いて、騒ぎになってるんじゃ…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「結局、今までは私の存在自体が無いものとなってた、って事でいいのかしら？」")
+		PRINTFORMW 「そのはずよ。ただ、まぁ…咲夜が居ない紅魔舘がどうなってるかなんて想像もつかないけど」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それは私も考えたくないわね……仕事が山積になってる予感がするわ」")
+		PRINTFORMW 「ご愁傷様♪ ま、私が悪いんだけどね…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「気にする事ないわ。これまでの事に比べたらどうって事ないし…」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私の仕事だからね」")
+		PRINTFORMW 「そう…」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ほら、もうそんな顔しない。私は気にしてないし」")
+		PRINTFORMW 「ん、わかった」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それにまた何時でも会えるもの。時間の都合なんてどうにでもなるしね」")
+		PRINTFORMW 「ホント…、時間に干渉できるって反則よね？ 時々羨ましいと思うわ」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あら、アリスの人形操術こそ羨ましいわよ」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私にその能力があればもっと楽できるのに、って思うわ」")
+		PRINTFORMW 「メイド妖精は働き悪いし？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんなところね、ふふっ」")
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「じゃ、そろそろ戻るわ。取りあえず何があったかは伏せておくから」")
+		PRINTFORMW 「大丈夫なの？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「信用ないのね？ その位の事は任せて貰いたいものだわ」")
+		PRINTFORMW 「わかった、信用する」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「素直でよろしい♪ じゃ、またあとで」")
+		PRINTFORMW 「うん、気をつけてね」
+		
+		KFLAG:(FLAG:ご主人様):8 = 1
+		CALL TWAIT3_K14
+		
+		RETURN 1
+	ENDIF
+	
+	;FIRSTEVENT(3)(4)(5)(6)終了後はここで処理
+	;=================================================
+	;ルートＢ FIRSTEVENT以外
+	;=================================================
+	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):3 == 1
+		IF TIME ;夜
+			PRINTFORMDL 窓から差し込む月の光が熱く火照った二人の身体を冷ましていく
+			PRINTFORMDW 夜は静かに、ゆっくりと更けていく…
+			
+			SELECTCASE RANDEVENT(2, 0)
+				CASE 0
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「月が綺麗ね…（もう一回しない？）」")
+					PRINTFORMW 「そうね…（いいかげんにしてよ、ばか）」
+					PRINTL
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはそれとして、月って魔法に関係が深いのよね？」")
+					PRINTFORMW 「…唐突な切りかえしね。ま、そうね…正確に言えば、魔術に関わるのは月に限らないわ」
+					PRINTFORMW 「全ての惑星は影響力と意味を持っていて、それぞれ魔術に深く関わってるの」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「面白そうね。じゃ、月の場合ってどうなの？」")
+					PRINTFORML 「ふふっ、そんな事聞くなんて珍しいわね？ まぁいいわ。月の場合だと…」
+					PRINTFORMW 「死者の霊の復活。愛と和解。ヴィジョンの発見。透明になること。窃盗。水。そんなとこかしら」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「他のは別として、愛と和解だなんて私達にぴったりね」")
+					PRINTFORMW 「そう思う？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ええ、これ以上ない位に、ね」")
+					PRINTFORMW 「咲夜ってば…そんな事言っちゃって少し変よ？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「変な事なんて何も無いと思うけど。私はいたって普通よ？」")
+					PRINTFORMW 「私知ってる。変な人は皆そう言うのよ」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別に変だって構わないわ。こうして過ごせる日々が続くなら」")
+					PRINTFORMW 「ふふ、そうね。私もそう思うわ…」
+				CASE 1
+					PRINTL
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「今日の月は欠けてるわね」")
+					PRINTFORMW 「こういう時は憎悪と不和に関わる魔術に相応しいのよ」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あまりぞっとしない話ね…」")
+					PRINTFORMW 「ま、そうでしょうね。ちなみに雲がかかってる時は死と破壊の魔法に相応しいの」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「”死”ねぇ。それって死者を生き返らせる事も出来るのかしら？」")
+					PRINTFORML 「”生き返る”の定義次第ね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どういう事？」")
+					PRINTFORMW 「そうね…例えばの話だけど、単に死者を起き上がらせて動かすってだけなら難しい話じゃないの」
+					PRINTFORMW 「ただ、そこには生前の本人の意思も魂も介在しない。言ってみればただの操り人形ね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なんか聞かなきゃよかったって思い始めたんだけど…」")
+					PRINTFORMW 「ならやめとく？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大丈夫。折角だから続けて頂戴」")
+					PRINTL
+					PRINTFORMW 「わかった。本当の意味で生き返らせるっていうのも出来ない事はないらしいわ」
+					PRINTFORMW 「方法論としては確立されてる、って事らしいの。でも私は知らないし、それを記した文献も見たことがない」
+					PRINTFORMW 「正直、今の私ではやりかたが判ったとしても出来る気がしないけど、ね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私が生きてる間になんとかして貰わないとね」")
+					PRINTFORMW 「無理ね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうなの？」")
+					PRINTFORMW 「死や魂を扱うのって簡単にはいかないって事」
+					PRINTFORMW 「術者が未熟だったり、理解が足りなかったりするときっと悲惨な結末になる」
+					PRINTFORMW 「魔法使いが生涯をかけてなんとか習得できるかどうか、ってところじゃないかしら」
+					PRINTL
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なるほど。そんな都合よくはいかないって事ね」")
+					PRINTFORMW 「まぁね？ 人格を持たない人形にするなら難しくないんだけど」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「笑えない冗談ね…」")
+					PRINTFORMW 「なによ、和ませるつもりだったのに」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それで和ませようする事自体どうかしてるわ」")
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ホント、魔法使いの考える事は判らないわね…」")
+					PRINTFORMW 「ふふっ、いずれ慣れるわよ。私達にはまだ時間がいっぱいあるんだから」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だと、いいんだけどね…」")
+					PRINTFORMW 「咲夜…？」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なんでもないわ。気にしないで」")
+			ENDSELECT
+		ELSE ;昼
+			SELECTCASE RANDEVENT(2, 1)
+				CASE 0
+					PRINTFORMW 「もう着替えたのね」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「一度戻らないといけないのよ。仕事が残ってるしね」")
+					PRINTFORMW 「私ね、咲夜はその格好してる方が好き」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なにそれ？」")
+					PRINTFORMW 「なんて言うんだろ……より咲夜らしいって言うのかな」
+					PRINTFORMW 「着てる時の方が色気があるっていうか…」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なんとなく前にも言われた気がするけど…」")
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「素直に喜ぶべきか微妙なところね」")
+					PRINTFORMW 「褒めてるつもりよ？ だって…」
+					PRINTFORMW 「このまま帰したくないって思うくらいなのに」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大丈夫、すぐにまた会えるわ。ちゅっ…」")
+					PRINTFORMW 「…ん。わかった。いってらっしゃい」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…ちょっと変な感じもするけど。でも、それも悪くないわね♪」")
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…いってきます」")
+				CASE 1
+					PRINTFORMW 「ねぇ、ふと思ったんだけど…」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なに？」")
+					PRINTFORMW 「昼間からこういう事してていいのかなって」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別にいいんじゃない？ 誰かに迷惑掛けてる訳でもないし。それに…」")
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何よりも、お互いがそう望んでるんだから」")
+					PRINTFORMW 「そう、そうよね…」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「らしくないわね？ どうしたのよ」")
+					PRINTFORMW 「別に大した事じゃないの。ただその、なんていうか…」
+					PRINTFORMW 「…やっぱりやめとく。ごめんなさい、忘れて」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「気になるけど、そう言うなら仕方無いわね」")
+					PRINTFORMW 「咲夜のそういうとこ好きよ。ありがとう」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どういたしまして♪」")
+					PRINTFORMW 「…そういうとこは嫌い」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「えっ！？ そう、なの…？」")
+					PRINTFORMW 「うん…」
+			ENDSELECT
+		ENDIF
+		PRINTL
+		RETURN 1
+	ENDIF
+	
+	;FIRSTEVENT(3)(4)(5)(6)終了後はここで処理
+	;=================================================
+	;ルートＡ FIRSTEVENT以外
+	;=================================================
+	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):2 == 1
+		IF TIME ;夜
+			PRINTFORMDL 窓から差し込む月の光が熱く火照った二人の身体を冷ましていく
+			PRINTFORMDW 夜は静かに、ゆっくりと更けていく…
+			
+			SELECTCASE RANDEVENT(2, 2)
+				CASE 0
+					SELECTCASE FLAG:季節
+						CASE 0, 1 ;春/夏
+							PRINTFORMW 「ねぇ、ちょっと離れてくれない？ 流石に暑苦しいんだけど」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「嫌…」")
+							PRINTFORMW 「嫌って…こっちはいい迷惑よ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だって…アリスの身体冷たくて気持ちいいんだもん！」")
+							PRINTFORMW 「貴女、そういうこと言う人だったかしら？」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大丈夫、こんな事言うのはアリスと居る時だけだから」")
+							PRINTFORMW 「…なるほど。私としては光栄に思うべきなのかしらね？」
+							
+							CALL PRINTCOLOR(COLOR_K14("咲夜"), "「そういう事")
+							CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"), "　ね、だから…もっと……」")
+							
+							PRINTFORMW 「…まったく。仕様の無い人ね」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ふふ、ホントは満更でもないんでしょう？」")
+							PRINTFORMW 「ウルサイわよ。ばか咲夜」
+						CASE 2, 3 ;秋/冬
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス…」")
+							PRINTFORMW 「ん？ なによ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「この季節だと流石に冷たいわ。少し離れてくれない？」")
+							PRINTFORMW 「イヤよ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私が風邪でもひいたらどうするのよ」")
+							PRINTFORMW 「その時は面倒みるわ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはどうも。って、そういう問題じゃないんだけど…」")
+							
+							PRINTFORM 「ふふっ、咲夜の身体…あったかくて気持ちいい
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…やれやれ、ね」")
+					ENDSELECT
+				CASE 1
+					PRINTFORMW 「ねぇ、咲夜。そろそろ寝た方が…」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大丈夫よ。今はもう少しこのままでいさせて」")
+					PRINTFORMW 「そう、好きにすれば」
+					
+					CALL PRINTCOLOR(COLOR_K14("咲夜"), "「じゃ、そうする")
+					CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"))
+					
+					PRINTFORMDW 二人は窓に映る月を見上げながら、ただ静かに時の流れに身を任せた…
+					PRINTL
+					PRINTFORMW 「このまま時が止まればいいのに…」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私の出番かしら？」")
+					PRINTFORMW 「…まったく。無粋な事言わないで頂戴。でも、咲夜なら出来ちゃうのよね。ふふ」
+					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「くすくす…」")
+			ENDSELECT
+		ELSE ;昼
+			SELECTCASE FLAG:季節
+				CASE 0 ;春
+					PRINTFORMDL 開け放った窓から暖かな春の日差しが降り注ぎ
+					PRINTFORMDW 柔らかな風が二人の頬をそっと撫でた…
+					PRINTL
+					
+					SELECTCASE RANDEVENT(3, 3)
+						CASE 0
+							PRINTFORMW 「風がきもちいいわね…」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね…いい風だわ」")
+							PRINTFORMW 「私達、こんな季節をあと何回迎えられるかしら…」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「先の事ばかり考えるのはやめたんじゃなかった？」")
+							PRINTFORMW 「ごめんなさい、そうだったわね」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別に気にしてないわ。私だって考える事はあるし」")
+							PRINTFORMW 「そうなの？」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「人並程度にはね。ま、そんな事より…」")
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「新しいワインが手に入ったの。良かったらお裾分けを持ってくるけど」")
+							PRINTL
+							PRINTFORMW 「えっ、ホントに？」
+							CALL PRINTCOLOR(COLOR_K14("咲夜"), "「ええ本当。")
+							
+							;ワインはブルゴーニュ産に限ると思う勢。水代わりに飲むなら何でもいいけど
+							SELECTCASE RANDEVENT(4, 4)
+								CASE 0
+									;ポマール
+									CALL PRINTCOLORW(COLOR_K14("咲夜"), "ポマール、しかもプルミエ・クリュよ」")
+									KFLAG:(FLAG:ご主人様):6 = 1
+								CASE 1
+									;シャブリ
+									CALL PRINTCOLORW(COLOR_K14("咲夜"), "シャブリ、しかもプルミエ・クリュよ」")
+									KFLAG:(FLAG:ご主人様):6 = 2
+								CASE 2
+									;ヴォルネイ
+									CALL PRINTCOLORW(COLOR_K14("咲夜"), "ヴォルネイ・ドメーヌ・ニコラ・ロシニョールよ」")
+									KFLAG:(FLAG:ご主人様):6 = 3
+								CASE 3
+									;コート・ド・ボーヌ
+									CALL PRINTCOLORW(COLOR_K14("咲夜"), "ボーヌ・クロ・デ・モンスニエール・ブランよ」")
+									KFLAG:(FLAG:ご主人様):6 = 4
+							ENDSELECT
+							
+							;今見返すと統合してよさそうだけど書く段階では分けて考えたかったのでこんな感じに
+							;まぁ面倒なのでとりあえずこのままで
+							SELECTCASE KFLAG:(FLAG:ご主人様):6
+								CASE 1
+									PRINTFORMW 「ブルゴーニュの赤は最高よね♪ でもプルミエ・クリュなんてよく手に入ったわね？」
+								CASE 2
+									PRINTFORMW 「凄い！ シャブリのプルミエ・クリュが飲めるなんて思ってもいなかったわ♪」
+								CASE 3
+									PRINTFORMW 「ニコラ・ロシニョールって最近評判よね？ ヴォルネイの赤も楽しみだわ♪」
+								CASE 4
+									PRINTFORMW 「シャトー・ド・ラ・ヴェルね。白は久しぶりだから楽しみ♪」
+							ENDSELECT
+						
+							SELECTCASE KFLAG:(FLAG:ご主人様):6
+								CASE 1
+									CALL PRINTCOLORW(COLOR_K14("咲夜"), "「まぁ色々とね。ドメーヌ・パランだから期待していいと思うわよ」")
+								CASE 2
+									CALL PRINTCOLORW(COLOR_K14("咲夜"), "「白って何故か手に入り難いのよねぇ。ましてやプルミエ・クリュなんて余計にね」")
+								CASE 3
+									CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いずれはヴォルネイ村のトップ・ドメーヌになるって言われてるわね」")
+								CASE 4
+									CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ラベルもちょっと素敵よね。柑橘果実の香りが強いから、貴女に合うといいんだけど」")
+							ENDSELECT
+						
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「まぁそんな訳で、次来るとき持ってくるわ。楽しみにしてて」")
+							PRINTL
+							PRINTFORMW 「ふふっ、わかった…楽しみにしてる。ね…咲夜」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なに？」")
+							PRINTFORMW 「大好き…」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女、ワインに対して言ってるんじゃないの？」")
+							PRINTFORMW 「それもあるかも」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「正直ね…」")
+							PRINTFORMW 「そんなに褒めないでよ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…まったく。でも、こんな日々がずっと続いて欲しいわね」")
+							PRINTFORMW 「そうね……ホントに、そう思うわ」
+						CASE 1
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「春の風…、って感じね」")
+							PRINTFORMW 「そうね……あぁそうそう。春で思い出したけど、咲夜は福寿草って知ってる？」
+							PRINTFORMW 「色々使い道がありそうだから、うちにも植えてみようかと思ってるんだけど」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはもう。なんてったって紅魔舘の庭にも植えてあるもの」")
+							PRINTFORMW 「そうなんだ？」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「お嬢様のお茶にも煎じて混ぜてみたりとか」")
+							PRINTFORMW 「主人のお茶に毒を混ぜるメイドってどうなのかしら？ まぁ吸血鬼に影響があるとも思えないけど」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「失礼ね。私は良かれと思ってやっただけよ」")
+							PRINTFORMW 「確かに根の部分には強心作用があるけど…正しい知識もなく扱うのは感心しないわね」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あら、私は判ってるつもりよ？」")
+							PRINTFORMW 「余計にタチが悪いわよ……。それでよくメイドを首にならないわね？」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「お互い承知の上だからね。色々とあるのよ」")
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ある種の信頼感といってもいいかしら？」")
+							PRINTFORMW 「……嫌な信頼感ね」
+						CASE 2
+							PRINTFORMW 「咲夜、三つ編みが解けてるわ。私が編んであげる」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「できるの？」")
+							PRINTFORMW 「私を誰だと思ってるのかしら？ 器用さでは咲夜に負けないつもりよ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうだったわね。じゃ、お願いしようかしら」")
+							
+							PRINTFORM 「お任せあれ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							
+							PRINTFORMDW アリスは毛束を三等分すると器用に編み上げはじめた…
+							PRINTL
+							PRINTFORMW 「端の毛束を真ん中に、逆端の毛束を真ん中に、中心の毛束を下にしてっと」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「流石ね。上手いもんだわ」")
+							PRINTFORMW 「あ、ちょっと待って。折角だからいつもとは少し変えてみようと思うの」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あまり変なのはお断りよ？」")
+							PRINTFORMW 「大丈夫、少しルーズにしてカジュアルな感じにするだけだから」
+							PRINTFORMW 「ほら、網目を少し崩すと印象が違うでしょ？」
+							PRINTFORMDW アリスは手鏡を咲夜に渡しながらそう言った…
+							PRINTL
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…ん。悪くない、かも…」")
+							
+							PRINTFORM 「でしょう？ 少し若返った感じで可愛いわよ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…失礼ね。まだまだ十分若いつもりよ」")
+							PRINTFORMW 「ふふっ、そうだったわね」
+					ENDSELECT
+				CASE 1 ;夏
+					SELECTCASE RANDEVENT(2, 5)
+						CASE 0
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「流石に日差しが強くなってきたわね」")
+							PRINTFORMW 「そうね。まぁ私の場合、季節を肌で感じることは殆ど無いんだけど」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ちょっと羨ましいわね。特にこれからの時期は」")
+							PRINTFORMW 「私は四季を感じ取れる貴女を羨ましく思うわ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そういうもの？」")
+							PRINTFORMW 「そういうものよ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「上手くいかないものね」")
+							PRINTFORMW 「お互いに、ね」
+							
+							;フェードアウト
+							CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「ふふっ」")
+							CLEARLINE 1 ;行削除
+							
+							;フェードアウト
+							CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「くすくす…」")
+							CLEARLINE 1 ;行削除
+						CASE 1
+							PRINTFORMDW 咲夜はアリスに抱きつきながら、その体温の違いを愉しんでいる…
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…ふふふ、最高」")
+							PRINTFORMW 「……鬱陶しい」
+							PRINTL
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「この季節はアリスに抱きついてるに限るわね♪」")
+							PRINTFORMW 「少しはこっちの身にもなって…って、ほっぺたスリスリしないの！」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「イ・ヤ・よ」")
+							PRINTFORMW 「瀟洒な従者の名が泣くわよ、そんな事じゃ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どうでもいいわ。何とでも言って頂戴。ふふふ…」")
+							PRINTFORMW 「はぁ～～やれやれ、ね」
+					ENDSELECT
+				;以下の部分は実際に目にする人はまずいないという確信があるけど、勢いでなんとなくやってしまう。まぁ趣味の領域
+				CASE 2 ;秋
+					PRINTFORMDL 涼しげな風が秋の到来を告げる
+					PRINTFORMDW 秋晴れの空はどこまでも高く、青く澄みきっている…
+					;一行空ける
+					PRINTL
+					
+					SELECTCASE RANDEVENT(2, 6)
+						CASE 0
+							PRINTFORMW 「大分秋らしくなってきたわね」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね。やっと過ごしやすくなった感じね」")
+							PRINTFORMW 「こんなに天気がいいのに、こういう事してていいのかしら。私達」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それは言わない約束」")
+							PRINTFORMW 「ふふっ…ま、そうよね」
+						CASE 1
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「天高く馬肥ゆる秋ね」")
+							PRINTFORMW 「油断してると咲夜も肥えるわよ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「油断とか私には縁遠い話ね」")
+							PRINTFORMW 「そうかしら？ 私は結構怪しいと思うわよ？ その辺りは、ね」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「これでも完全で瀟洒で通ってるんですけど？」")
+							PRINTFORML 「そうだったわね、でも油断は禁物」
+							PRINTFORMW 「今だってほら、お腹の辺りとか…」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「冗談にしても度が過ぎてるわ、それ…」")
+							PRINTFORMW 「そうね、ごめんなさい。ふふ」
+					ENDSELECT
+				CASE 3 ;冬
+					PRINTFORMDL 冬枯れの空、雪と氷に閉ざされた景色。
+					PRINTFORMDW 昼なお暗い魔法の森は、ただ静かに春の到来を待ち受ける…
+					;一行空ける
+					PRINTL
+					
+					SELECTCASE RANDEVENT(2, 7)
+						CASE 0
+							PRINTFORMW 「見て、また雪が降ってきたわ」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…やれやれね。もう雪はうんざりよ」")
+							PRINTFORMW 「ホント、咲夜ってそういう人よね？ まぁでも…その気持ちは判らないでもないけど」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「人形に雪かきさせてる人は楽でいいわよねぇ」")
+							PRINTFORMW 「貴女のとこには妖精メイドがいるじゃない」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「うちのメイド達を”役に立たない”って言ってた人の言葉とも思えないわね」")
+							PRINTFORMW 「そういえばそんな事もあったかしらね？ ふふっ」
+						CASE 1
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「また雪……ホント冬は嫌ねぇ。早く春にならないかしら」")
+							PRINTFORMW 「そればっかりはどうしようもないわね。大人しく待ってれば？」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「でも、そう考えない人もいるのよ。ま、人じゃないんだけど」")
+							PRINTFORMW 「なんとなく判った…」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私は別にいいんだけどね？ それなりに愉しんでるから」")
+							PRINTFORMW 「流石、瀟洒なメイドってとこかしら」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あら、それで終わり？ もっと褒めていいのよ？」")
+							PRINTFORMW 「……自惚れないで頂戴」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…手厳しいわね。まぁでも、ここまでにしておきますわ」")
+							PRINTFORMW 「その喋り方、なんか嫌なんだけど？」
+							CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ふふ、そうね…気をつける事にするわ」")
+					ENDSELECT
+			ENDSELECT
+		ENDIF
+		PRINTL
+		RETURN 1
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;大満足ボーナスを得ている FIRSTEVENT(7) RANDEVENT(10)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:今回で大満足 && TALENT:TARGET:ご主人様
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(7)
+		PRINTFORMW 「咲夜もやればできるんじゃない。悪くなかったわ」
+		PRINTFORMW 「まぁでも、私としてはもっと期待してるんだけど、ね」
+		RETURN 1
+	ENDIF
+	
+	;その他
+	PRINTFORMW 「ふふ……今日はよかったわよ…」
+	PRINTFORMW 「次も期待してるわね…♪」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教完了（好意2000以上） FIRSTEVENT(8) RANDEVENT(11)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AFFECTION("調教完了")
+	SELECTCASE RANDEVENT(2, 11)
+		CASE 0
+			PRINTFORMW 「最近随分大人しいんじゃない？ ホントは何か企んでるんじゃないかしら」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「勘ぐり過ぎよ。私はただあるがままを受け入れてるだけ」")
+			PRINTFORMW 「そう？ でも、貴女がそう言うのを素直には受け取れないのよね…」
+		CASE 1
+			PRINTFORMW 「ねぇ、咲夜…ホントはこんな事終わりにしたいでしょう？」
+			PRINTFORMW 「貴女みたいな人がいつまでも大人しくしてるのも不自然ですものね」
+			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何を言ってるのか判らないわね」")
+			PRINTFORMW 「そう？ ま、そういう事にしておいてもいいけど…ね」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;溺愛（好感度2000以上） FIRSTEVENT(9) RANDEVENT(12)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AFFECTION("溺愛")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(9)
+		PRINTFORMW 「ねぇ、少しは慣れてくれたかしら？」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「さぁね。私にも良く判らないわ」")
+		PRINTFORMW 「そう、まぁ別にいいけど。どうせ貴女はどこにも行けやしないわ」
+		PRINTFORMW 「私の人形としてずっと可愛がってあげる。愉しみにしてて…」
+		PRINTFORMW 「んっ…ちゅっ…ん、ん…ん…」
+		PRINTFORMDW アリスは調教が終わった後も、%CALLNAME:MASTER%の唇を貪り続けた…
+		RETURN 1
+	ENDIF
+	
+	;汎用処理
+	SELECTCASE RANDEVENT(2, 12)
+		CASE 0
+			PRINTFORMW 「あとはゆっくり休んで頂戴。私の可愛い殺人ドールさん♪」
+			PRINTFORMDW アリスはそう言うと咲夜に軽くキスをし、部屋を後にした…
+		CASE 1
+			PRINTFORMW 「フ、フフッ…%CNAME(MASTER, TARGET)%、本当に可愛いわね…」
+			PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%」
+			PRINTFORMDW %CALLNAME:MASTER%の口内を蹂躙し、満足したアリスは部屋を後にした…
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教済み（好意1000以上） FIRSTEVENT(10) RANDEVENT(13)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AFFECTION("調教済み") && TALENT:TARGET:ご主人様
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(10)
+		PRINTFORMW 「もう終わり？ って顔してるわね」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「！？ き、気のせいではないかしら…」")
+		PRINTFORMW 「それは残念ね。貴女も大分私の事受け入れてくれたと思っていたんだけど」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だから、私は最初から！」")
+		PRINTFORMW 「いいのよ、無理にそんな事言わなくて…」
+		PRINTFORMW 「私が求めてるのは、そんな偽りの感情ではないもの」
+		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「偽りだなんて、そんな」")
+		PRINTFORMW 「もういいいわ、今回はこのへんにしておくから…」
+		PRINTFORMDW アリスはそう言うと部屋を後にした…
+		RETURN 1
+	ENDIF
+	
+	;その他
+	PRINTFORMW 「そうよ…素直にしてれば悪いようにはしないわ…」
+	PRINTFORMW 「続きはまた今度、ね……私も楽しみにしてるから♪」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;嫌悪（好意-100未満） FIRSTEVENT(11) RANDEVENT(14)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AFFECTION("嫌悪")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(11)
+		PRINTFORMW 「あら、怖い顔…穏やかじゃないわね」
+		PRINTFORMW 「でも嫌いじゃないわ、そういうの」
+		PRINTFORMDW アリスは邪悪な笑みを浮かべながら、%CALLNAME:MASTER%に近づき耳元で囁いた…
+		PRINTFORMW 「心が折れた%CNAME(MASTER, TARGET)%が、どんな顔するのか…」
+		PRINTFORMW 「今から楽しみね……フフフ……」
+		RETURN 1
+	ENDIF
+	
+	;その他
+	PRINTFORMW 「そんなに睨まないで頂戴」
+	PRINTFORMW 「そんな顔されると、私……自分を抑えられなくなっちゃうから」
+	PRINTFORMW 「フフフ……」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;恐怖（好意200未満・トラウマLv3以上） FIRSTEVENT(12) RANDEVENT(15)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・心に傷を作られ、ご主人様の姿を見るだけで怯えてしまう
+;・トラウマの種は「%ACTSTR(CFLAG:MASTER:8)%」で表示できる
+;　例）PRINTFORMW 「もう%ACTSTR(CFLAG:MASTER:8)%は嫌ですって？」
+;-------------------------------------------------
+IF 口上記入チェック(100) && AFFECTION("恐怖")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(12)
+		PRINTFORMW 「すっかり怯えてるわね…」 
+		PRINTFORMW 「でもね……、そんな顔されると、私」
+		PRINTFORMW 「もっと、もっと酷い事したくなっちゃうの…♪」
+		PRINTFORMW 「フフフ……」
+		RETURN 1
+	ENDIF
+	
+	;その他
+	PRINTFORMW 「そんなに怯えられると、もっと虐めたくなるんだけど？」
+	PRINTFORMW 「%CNAME(MASTER, TARGET)%……、分かっててやってるのかしら、ねぇ？」
+	PRINTFORMW 「フフッ、次回を楽しみにしてて頂戴……」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;反抗（好意0以下・反抗刻印Lv1以上） FIRSTEVENT(13) RANDEVENT(16)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && AFFECTION("反抗")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(13)
+		PRINTFORMW 「使えないわね。 興醒めだわ…」
+		PRINTFORMW 「逆らってどうにかなる状況じゃないってのが、分からないのかしら？」
+		PRINTFORMW 「愚鈍、ね……」
+		RETURN 1
+	ENDIF
+	
+	;その他
+	PRINTFORMW 「まだ逆らうつもりなのね……」
+	PRINTFORMW 「自分の立場が悪くなるだけなのが、分からないのかしら？」
+	PRINTFORMW 「愚鈍、ね……」
+	RETURN 1
+ENDIF
+
+[SKIPSTART]
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;目覚め（好意500以上） FIRSTEVENT(14) RANDEVENT(17)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("目覚め")
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;順応（好意100以上・好感度100以上） FIRSTEVENT(15) RANDEVENT(18)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("順応")
+ENDIF
+[SKIPEND]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;序盤（条件なし） FIRSTEVENT(16) RANDEVENT(19)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTEVENT(16)
+		PRINTFORMW 「とりあえずこんなところかしら」
+		PRINTFORMW 「慌てる必要もないものね」
+		RETURN 1
+	ENDIF
+	
+	;その他
+	PRINTFORMW 「時間はいくらでもあるわ…」
+	PRINTFORMW 「じっくり慣らしていってあげる。楽しみにしてて頂戴……」
+	RETURN 1
+ENDIF

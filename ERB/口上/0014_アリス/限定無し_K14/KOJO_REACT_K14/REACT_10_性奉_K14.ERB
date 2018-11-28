@@ -1,0 +1,2055 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上 性交奉仕系個別リアクション口上ファイル
+;
+;	性交奉仕系リアクション口上をまとめたファイル
+;
+;Version		Reason
+;1.71			@口上記入チェック仕様に
+;1.68			消極的反応分岐の条件無し部分をIS_NOWCOMNAMEに
+;1.67			REACT分類"受け入れる"分岐を追加。拒絶系処理を追加。REACT分類"消極的従う"分岐を改変。
+;1.62			@IS_NOWCOMNAMEの新設に伴いSELECTCOMをIS_NOWCOMNAMEに変更。一部分岐の表示確率を見直し
+;1.60			ACT分類単体ファイルとして独立
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;性交奉仕系
+;========================================================================
+;・COM20, 腰を振るはACTによってREACT分類が変化する
+;・逆レイプの場合はREACT分類("受け入れる")
+;・その他性交奉仕ACTではREACT分類("積極的従う")扱いとなる
+;・この変化は関数@SEX_INITIATIVEにて行われる
+;-------------------------------------------------
+
+;────────────────────────────────────
+;REACT95, 正常位させる・個別リアクション
+;────────────────────────────────────
+;・TFLAG:ACT派生(0=通常/1=連続/2=Ｖ性交奉仕系から/3=Ａ性交系から/4=Ｖ性交系から/5=Ａ性交奉仕系から)
+;-------------------------------------------------
+;想定されるCOM…
+;愛撫系反応
+;	COM:恥ずかしがる/嫌がる/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る
+;苦痛系反応
+;	COM:暴れる
+;奉仕系反応
+;	COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+;その他反応
+;	COM:イかせて！
+;-------------------------------------------------
+@KOJO_REACT_K14_95
+;-------------------------------------------------
+;・地の文はREAC分類で分岐
+;・REACT分類が暴れる/拒否の場合はキャンセル扱い
+;・ACTがキャンセルとなった場合はTEQUIP:性交奉仕中もリセット
+;・その他のREACT分類(受け入れる/積極的従う/平然と従う/許しを乞う/消極的やる)の場合は受容扱いとなる
+;・調教対象が童貞なら童貞喪失、調教者が処女なら処女喪失が起こる
+;・TEQUIP:性交奉仕中が立っている際にREACT分類が暴れるだと拒絶扱いになる(即ち、性交奉仕系ACT以外でも拒絶処理となる場合がある)
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W("処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類が暴れる/逃げる/拒否
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("暴れる/逃げる/拒否") && FLAG:地の文制御 == 2
+	CALL PRINT_ACTGR_10_REJECT_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;焦らし開始
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TCVAR:MASTER:イきそう && TCVAR:MASTER:焦らし度 > 1 && IS_COMGRONAME("積極的従う/平然と従う/受け入れる")
+	CALL TEXTDISPLAY_CATEGORY_10_TEASE_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COM, 快感を我慢する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(55) && IS_NOWCOMNAME("快感を我慢する") && TCVAR:MASTER:我慢
+	CALL TEXTDISPLAY_CATEGORY_10_COM14_K14
+	RETURN 1
+ENDIF
+
+;COM15,快感を受け入れる/COM16,気持ち良い！等を想定。ACT103,逆レイプの場合、COM20,腰を振るもREACT分類受け入れるになる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類, 受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる")
+	;=================================================
+	;調教対象がイきそう		子宮口に届くほど深く云々…
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		CALL PRINT_ACTGR_10_ACCEPT_0_K14
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者がイきそう
+	;=================================================
+	IF 口上記入チェック(100) && PALAM:快Ｖ > 8500
+		CALL PRINT_ACTGR_10_ACCEPT_1_K14
+		RETURN 1
+	ENDIF
+	
+	;調教対象/調教者がイきそうな場合以外を処理
+	;=================================================
+	;その他
+	;=================================================
+	IF 口上記入チェック(70)
+		CALL PRINT_ACTGR_10_ACCEPT_2_K14
+		RETURN 1
+	ENDIF
+;条件から漏れたら汎用リアクション（COM）へ
+RETURN 0
+ENDIF
+
+;消極的反応をまとめる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類, 消極的に従った
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う/許しを乞う")
+	;=================================================
+	;REACT負荷2(無理をした行動)
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+		;実は積極
+		IF COMCOR_POSI()
+			PRINTFORMW 「…ん。恥ずかしがってみせたところで、腰は止まらないのね…」
+			PRINTFORMW 「\@ AFFECTION("相思相愛") ? ねぇ、 # \@少しは素直になったらどう\@ TENSION(TARGET, 7) == "高い" ? なのよっ！ # ？ \@」
+			SIF IS_COMGRONAME("消極的従う")
+				PRINTFORMW 「あと%CNAME(MASTER, TARGET)%…、私から視線を逸らすの、\@ AFFECTION("相思相愛") ? やめなさいよっ！ # やめてもらえる？ \@」
+		;実は嫌
+		ELSE
+			PRINTFORMW 「…\@ IS_COMGRONAME("消極的従う") ? 単調でつまらないわ # 私の動きに合わせる事もできないとか\@。退屈%RAND_SPLIT("なのよ/ね")%、%CNAME(MASTER, TARGET)%…」
+			PRINTFORMW 「だから、そうじゃなくって！ ああもう…、本当に%RAND_SPLIT("焦れったい/もどかしい/イライラする")%\@ TENSION(TARGET, 7) == "高い" ? のよっ！ # わね… \@」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;REACT派生1, 消極的なのが気に入らないの場合はCOMで処理
+	;=================================================
+	;COM41,消極的やる「消極的だけどいいか」
+	;=================================================
+	IF 口上記入チェック(55) && IS_NOWCOMNAME("消極的やる") && TFLAG:REACT派生 == 0
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「ああっ…あん……あぁっ……」
+			PRINTFORMW 「ねぇ…焦らさないで……もっと激しくしてよ…っ…！」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「もどかしくて……おかしくなりそう…」
+			PRINTFORMW 「ねぇ……もっと、もっと…ッ…！」
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「なんか消極的ね……もどかしいわ…」
+		ELSE
+			PRINTFORMW 「もっと腰振りなさいよ…」
+			PRINTFORMW 「ほら、もっと思いっきり…っ」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;腰を振る
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_NOWCOMNAME("腰を振る")
+	;=================================================
+	;イきそう状態
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		SELECTCASE TCVAR:MASTER:焦らし度
+			CASE 1 ;焦らし終了
+				;@AUOTHEART系を使い、地の文捏造箇所を分岐させてやれば一つに纏められそうだけど後回し
+				IF AFFECTION("相思相愛")
+					;RR 2
+					SELECTCASE RANDREACT(2, 2)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「んぁぁっ！ ば、ばかっ！ そんなに激しく突かれたらッ！」
+							CALL QUAKE(4)
+							PRINTFORM 「やっ、激しッ！ あんっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あっ、あぁっ！！」")
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「はぅっ！ あっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あぁっ！ こ、こんなの…ってッ！」")
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+					PRINTFORMDW 子宮口まで抉られる感覚に、アリスは髪を振り乱し喘ぎ悶えている…
+				ELSE
+					;RR 3
+					SELECTCASE RANDREACT(2, 3)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「んぁぁっ！ ば、ばかっ！ そんなに激しく突かれたらッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「やっ、激しッ！ あぅっ、あぁっ！！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORMW 「はぅっ！ あっ、あぁっ！ こ、こんなの…ってッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+					PRINTFORMDW 膣内の最奥まで擦り上げられる感覚に、アリスは狂ったように喘ぎ悶えている…
+				ENDIF
+			CASEELSE ;焦らし無し
+				IF AFFECTION("相思相愛")
+					;RR 4
+					SELECTCASE RANDREACT(2, 4)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORM 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							CALL QUAKE(4)
+							PRINTFORMW 「やぁっ、そこっ！ ぐりぐりされたらぁっ！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「あぁっ、あっ
+							CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+							PRINTFORM 　あんっ、はぁっ！ んんぁっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							CALL QUAKE(4)
+							PRINTFORM 「こ、こんなの…ッ！ た、耐えられる訳……
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+					ENDSELECT
+				ELSE
+					;RR 5
+					SELECTCASE RANDREACT(2, 5)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「やぁっ、そこっ！ ぐりぐりされたらぁっ！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁっ、あっ！ あんっ、はぁっ！ んんぁっ！！」
+							CALL QUAKE(4)
+							PRINTFORMW 「こ、こんなの…ッ！ た、耐えられる訳……！」
+					ENDSELECT
+				ENDIF
+				PRINTFORMDW 子宮口に届くほどの深く激しい突きこみに、アリスは全身を震わせながら喘ぎ悶えている…
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;互いに情欲
+	;=================================================
+	IF 口上記入チェック(100) && (M_COND("情欲") && T_COND("情欲"))
+		CALL QUAKE(4)
+		PRINTFORMW 「はぅっ、あんっ！ ああ……あっ…あぁっ、あぁぁっ！！」
+		CALL QUAKE(4)
+		PRINTFORMW 「んぁぁっ！ も、もう……ホントにっ！ お、おかしくなっちゃうっ！」
+		PRINTFORMDW 情欲に滾る二人は互いに狂おしく求め合い、獣のように激しく交わっている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教対象が情欲
+	;=================================================
+	IF 口上記入チェック(100) && M_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「あっ、ふぁっ！ こ、こんなの…もう、耐えられッ！ あ…あ゛ぁ…」
+		CALL QUAKE(4)
+		PRINTFORMW 「あッ、はぁッ！ や…もっ、ダメッ！ あっ、あぁぁっ！」
+		PRINTFORMDW 情欲に滾る%CALLNAME:MASTER%の激しい突きこみに、アリスは髪を振り乱しながら激しく喘いでいる…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者が情欲
+	;=================================================
+	IF 口上記入チェック(100) && T_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「ふぁっ！ や、やだ……腰…とまらなくなっちゃうぅっ！」
+		CALL QUAKE(4)
+		PRINTFORMW 「んっ、ふぅっ…はっ、あんっ！ そ、そこっ！ あぅっ、あぁ…」
+		PRINTFORMDW 情欲に滾るアリスは腰を激しく打ちつけ、快楽を貪っている…
+		RETURN 1
+	ENDIF
+	
+	;確率で汎用リアクションに
+	;=================================================
+	;その他
+	;=================================================
+	IF 口上記入チェック(60)
+		IF AFFECTION("相思相愛")
+			;RR 6
+			SELECTCASE RANDREACT(2, 6)
+				CASE 0
+					PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%　ねぇもっと、もっとっ…！」
+					CALL QUAKE(4)
+					PRINTFORM 「ふぁっ、あ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　そんな、激しくッ！ あんっ、あぁっ！」")
+				CASE 1
+					CALL QUAKE(4)
+					PRINTFORMW 「ハァ、ハァ……んぅっ…んッ！ あ……ああっ！」
+					CALL QUAKE(4)
+					PRINTFORM 「あっ……あ、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　んッ、んぁぁっ！」")
+					PRINTFORMDW アリスは潤んだ瞳で%CALLNAME:MASTER%を見つめながら、激しい突きこみを受け止めている…
+			ENDSELECT
+		ELSE
+			;RR 7
+			SELECTCASE RANDREACT(2, 7)
+				CASE 0
+					PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%　しながらのキスも悪くない、わね…」
+					CALL QUAKE(4)
+					PRINTFORMW 「ふぁっ、あっ！ そんな、激しくッ！ あんっ、あぁっ！」
+				CASE 1
+					CALL QUAKE(4)
+					PRINTFORMW 「ハァ、ハァ……んぅっ…んッ！ あ……ああっ！」
+					CALL QUAKE(4)
+					PRINTFORMW 「あっ……あ、あっ！ んッ、んぁぁっ！」
+					PRINTFORMDW アリスは%CALLNAME:MASTER%をじっと見つめながら、激しい突きこみを受け止めている…
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;REACT96, 後背位させる・個別リアクション
+;────────────────────────────────────
+;・TFLAG:ACT派生(0=通常/1=連続/2=Ｖ性交奉仕系から/3=Ａ性交系から/4=Ｖ性交系から/5=Ａ性交奉仕系から)
+;-------------------------------------------------
+;想定されるCOM…
+;愛撫系反応
+;	COM:恥ずかしがる/嫌がる/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る
+;苦痛系反応
+;	COM:暴れる
+;奉仕系反応
+;	COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+;その他反応
+;	COM:イかせて！
+;-------------------------------------------------
+@KOJO_REACT_K14_96
+;-------------------------------------------------
+;・地の文はREAC分類で分岐
+;・REACT分類が暴れる/拒否の場合はキャンセル扱い
+;・ACTがキャンセルとなった場合はTEQUIP:性交奉仕中もリセット
+;・その他のREACT分類(受け入れる/積極的従う/平然と従う/許しを乞う/消極的やる)の場合は受容扱いとなる
+;・調教対象が童貞なら童貞喪失、調教者が処女なら処女喪失が起こる
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W("処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類が暴れる/逃げる/拒否
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("暴れる/逃げる/拒否") && FLAG:地の文制御 == 2
+	CALL PRINT_ACTGR_10_REJECT_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;焦らし開始
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TCVAR:MASTER:イきそう && !TCVAR:MASTER:焦らし度 > 1 && IS_COMGRONAME("積極的従う/平然と従う/受け入れる")
+	CALL TEXTDISPLAY_CATEGORY_10_TEASE_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;快感を我慢する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(55) && IS_NOWCOMNAME("快感を我慢する")
+	IF TCVAR:MASTER:我慢
+		CALL TEXTDISPLAY_CATEGORY_10_COM14_K14
+	ENDIF
+	RETURN 1
+ENDIF
+
+;COM15,快感を受け入れる/COM16,気持ち良い！等を想定。ACT103,逆レイプの場合、COM20,腰を振るもREACT分類受け入れるになる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類, 受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる")
+	;=================================================
+	;調教対象がイきそう		子宮口に届くほど深く云々…
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		CALL PRINT_ACTGR_10_ACCEPT_0_K14
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者がイきそう
+	;=================================================
+	IF 口上記入チェック(100) && PALAM:快Ｖ > 8500
+		CALL PRINT_ACTGR_10_ACCEPT_1_K14
+		RETURN 1
+	ENDIF
+	
+	;調教対象/調教者がイきそうな場合以外を処理
+	;=================================================
+	;その他
+	;=================================================
+	IF 	口上記入チェック(70)
+		CALL PRINT_ACTGR_10_ACCEPT_2_K14
+		RETURN 1
+	ENDIF
+;条件から漏れたら汎用リアクション（COM）へ
+RETURN 0
+ENDIF
+
+;消極的反応をまとめる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;消極的に従った
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う/許しを乞う")
+	;=================================================
+	;REACT負荷2(無理をした行動)
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+		;実は積極
+		IF COMCOR_POSI()
+			PRINTFORMW 「…ん。\@ IS_COMGRONAME("許しを乞う") ? この格好が恥ずかしいって…、%CNAME(MASTER, TARGET)%が恥ずかしがってどうするのよ！# 恥ずかしがってみせたところで、腰は止まらないのね… \@」
+			PRINTFORMW 「ほら、そんなのじゃ私…、全然足りないのよ。もっと激しくシて頂戴…」
+		;実は嫌
+		ELSE
+			PRINTFORMW 「…\@ IS_COMGRONAME("消極的従う") ? 単調でつまらないわ # 私の動きに合わせる事もできないとか \@。退屈ね、%CNAME(MASTER, TARGET)%…」
+			PRINTFORMW 「だから、そうじゃなくって！ ああもう…、本当に%RAND_SPLIT("焦れったい/もどかしい/イライラする")%\@ TENSION(TARGET, 7) == "高い" ? のよっ！ # わね… \@」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;REACT派生1, 消極的なのが気に入らないの場合はCOMで処理
+	;=================================================
+	;COM41,消極的やる「消極的だけどいいか」
+	;=================================================
+	IF 口上記入チェック(55) && IS_NOWCOMNAME("消極的やる") && TFLAG:REACT派生 == 0
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「ねぇ……もっと……いつもみたいに犯してよ……」
+			PRINTFORMW 「肉人形を扱うみたいに……壊れるくらい、激しく突いてよ…ッ…！」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「どうしたのよ……ほら、もっと突いてよ」
+			PRINTFORMW 「浅いとこ嬲られて……もどかしくて…気が狂いそうよ…」
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「なんか消極的ね……もどかしいわ…」
+		ELSE
+			PRINTFORMW 「もっと腰振りなさいよ…」
+			PRINTFORMW 「ほら、もっと思いっきり…っ」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;腰を振る
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_NOWCOMNAME("腰を振る")
+	;=================================================
+	;イきそう状態
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		SELECTCASE TCVAR:MASTER:焦らし度
+			CASE 1 ;焦らし終了
+				;HEARTのある無しだけのお手軽処理でお茶を濁す！
+				IF AFFECTION("相思相愛")
+					;RR 2
+					SELECTCASE RANDREACT(2, 2)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「んぁぁっ！ ば、ばかっ！ そんなに激しく突かれたらッ！」
+							CALL QUAKE(4)
+							PRINTFORM 「やっ、激しッ！ あんっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あっ、あぁっ！！」")
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「はぅっ！ あっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あぁっ！ こ、こんなの…ってッ！」")
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+				ELSE
+					;RR 3
+					SELECTCASE RANDREACT(2, 3)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「んぁぁっ！ ば、ばかっ！ そんなに激しく突かれたらッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「やっ、激しッ！ あぅっ、あぁっ！！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORMW 「はぅっ！ あっ、あぁっ！ こ、こんなの…ってッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+				ENDIF
+				PRINTFORMDW 背後からの激しい突きこみに、アリスは%RAND_SPLIT("髪を振り乱し/狂ったように")%喘ぎ悶えている…
+			CASEELSE ;焦らし無し
+				IF AFFECTION("相思相愛")
+					;RR 4
+					SELECTCASE RANDREACT(2, 4)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORM 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							CALL QUAKE(4)
+							PRINTFORMW 「やぁっ、そこっ！ ぐりぐりされたらぁっ！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「あぁっ、あっ
+							CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+							PRINTFORM 　あんっ、はぁっ！ んんぁっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							CALL QUAKE(4)
+							PRINTFORM 「こ、こんなの…ッ！ た、耐えられる訳……
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+					ENDSELECT
+				ELSE
+					;RR 5
+					SELECTCASE RANDREACT(2, 5)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「やぁっ、そこっ！ ぐりぐりされたらぁっ！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁっ、あっ！ あんっ、はぁっ！ んんぁっ！！」
+							CALL QUAKE(4)
+							PRINTFORMW 「こ、こんなの…ッ！ た、耐えられる訳……！」
+					ENDSELECT
+				ENDIF
+				PRINTFORMDW 背後からの責めに被虐心を刺激され、アリスは全身を震わせながら喘ぎ悶えている…
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;互いに情欲
+	;=================================================
+	IF 口上記入チェック(100) && M_COND("情欲") && T_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「はぅっ、あんっ！ ああ……あっ…あぁっ、あぁぁっ！！」
+		CALL QUAKE(4)
+		PRINTFORMW 「んぁぁっ！ も、もう……ホントにっ！ お、おかしくなっちゃうっ！」
+		PRINTFORMDW 情欲に滾る二人は互いに狂おしく求め合い、獣のように激しく交わっている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教対象が情欲
+	;=================================================
+	IF 口上記入チェック(100) && M_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「あっ、ふぁっ！ や、やだっ！こんな格好…あ…あ゛ぁ…」
+		CALL QUAKE(4)
+		PRINTFORMW 「あッ、はぁッ！ や…もっ、ダメッ！ あっ、あぁぁっ！」
+		PRINTFORMDL 情欲に滾る%CALLNAME:MASTER%はアリスの両手を掴み、
+		PRINTFORMDW 弓なりになったその身体を背後から存分に貪った…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者が情欲
+	;=================================================
+	IF 口上記入チェック(100) && T_COND("情欲") ;調教者が情欲
+		CALL QUAKE(4)
+		PRINTFORMW 「ふぁっ！ や、やだ……腰…とまらなくなっちゃうぅっ！」
+		CALL QUAKE(4)
+		PRINTFORMW 「んっ、ふぅっ…はっ、あんっ！ そ、そこっ！ あぅっ、あぁ…」
+		PRINTFORMDW 情欲に滾るアリスは上体を仰け反らせながら激しく腰を振り、快楽を貪っている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他
+	;=================================================
+	IF 口上記入チェック(60)
+		IF AFFECTION("相思相愛")
+			;RR 6
+			SELECTCASE RANDREACT(2, 6)
+				CASE 0
+					CALL QUAKE(4)
+					PRINTFORM 「あ
+					CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+					PRINTFORM 　ああ……あっ、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+					PRINTFORMW 「や、やだコレっ！ 凄く、興奮しちゃっ…てッ！」
+				CASE 1
+					CALL QUAKE(4)
+					PRINTFORM 「んっ…、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　ふぅ…んんっ…！」")
+					PRINTFORM 「やだ、私…こんな格好なのに……はぅっ、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あぁっ！！」")
+					CALL QUAKE(4)
+			ENDSELECT
+		ELSE
+			;RR 7
+			SELECTCASE RANDREACT(2, 7)
+				CASE 0
+					CALL QUAKE(4)
+					PRINTFORMW 「あ……ああ……あっ、あっ！」
+					PRINTFORMW 「や、やだコレっ！ 私……凄く、興奮しちゃっ…てッ！」
+				CASE 1
+					CALL QUAKE(4)
+					PRINTFORMW 「んっ…、あっ！ ふぅ…んんっ…！」
+					PRINTFORMW 「やだ、私…こんな格好なのに……はぅっ、あっ、あぁっ！！」
+					CALL QUAKE(4)
+			ENDSELECT
+		ENDIF
+		PRINTFORMDL 背後からの突きこみに、
+		PRINTFORMDW アリスは%PLEASURE_DESCRIPTION(TARGET)%喘いでいる…
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;REACT97, 対面座位させる・個別リアクション
+;────────────────────────────────────
+;・TFLAG:ACT派生(0=通常/1=連続/2=Ｖ性交奉仕系から/3=Ａ性交系から/4=Ｖ性交系から/5=Ａ性交奉仕系から)
+;-------------------------------------------------
+;想定されるCOM…
+;愛撫系反応
+;	COM:恥ずかしがる/嫌がる/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る
+;苦痛系反応
+;	COM:暴れる
+;奉仕系反応
+;	COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+;その他反応
+;	COM:イかせて！
+;-------------------------------------------------
+@KOJO_REACT_K14_97
+;-------------------------------------------------
+;・地の文はREAC分類で分岐
+;・REACT分類が暴れる/拒否の場合はキャンセル扱い
+;・ACTがキャンセルとなった場合はTEQUIP:性交奉仕中もリセット
+;・その他のREACT分類(受け入れる/積極的従う/平然と従う/許しを乞う/消極的やる)の場合は受容扱いとなる
+;・調教対象が童貞なら童貞喪失、調教者が処女なら処女喪失が起こる
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W("処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類が暴れる/逃げる/拒否
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("暴れる/逃げる/拒否") && FLAG:地の文制御 == 2
+	CALL PRINT_ACTGR_10_REJECT_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;焦らし開始
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TCVAR:MASTER:イきそう && TCVAR:MASTER:焦らし度 > 1 && IS_COMGRONAME("積極的従う/平然と従う/受け入れる")
+	IF TCVAR:MASTER:焦らし度 > 1
+		CALL TEXTDISPLAY_CATEGORY_10_TEASE_K14
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;快感を我慢する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(55) && IS_NOWCOMNAME("快感を我慢する") && TCVAR:MASTER:我慢
+	IF TCVAR:MASTER:我慢
+		CALL TEXTDISPLAY_CATEGORY_10_COM14_K14
+	ENDIF
+	RETURN 1
+ENDIF
+
+;COM15,快感を受け入れる/COM16,気持ち良い！等を想定。ACT103,逆レイプの場合、COM20,腰を振るもREACT分類受け入れるになる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類, 受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる")
+	;=================================================
+	;調教対象がイきそう		子宮口に届くほど深く云々…
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		CALL PRINT_ACTGR_10_ACCEPT_0_K14
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者がイきそう
+	;=================================================
+	IF 口上記入チェック(100) && PALAM:快Ｖ > 8500
+		CALL PRINT_ACTGR_10_ACCEPT_1_K14
+		RETURN 1
+	ENDIF
+	
+	;調教対象/調教者がイきそうな場合以外を処理
+	;=================================================
+	;その他
+	;=================================================
+	IF 口上記入チェック(70)
+		CALL PRINT_ACTGR_10_ACCEPT_2_K14
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;消極的に従った
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う/許しを乞う")
+	;=================================================
+	;REACT負荷2(無理をした行動)
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動" && !TEQUIP:アイマスク
+		;実は積極
+		IF COMCOR_POSI()
+			PRINTFORMW 「…ん。\@ IS_COMGRONAME("許しを乞う") ? 今更キスが恥ずかしいとか、まったく… # 恥ずかしがってみせたところで、腰は止まらないのね… \@」
+			PRINTFORMW 「ほら、\@ IS_COMGRONAME("許しを乞う") ? 恥ずかしがらないで # ちゃんと私を見て \@。もっと激しく動いて…」
+		;実は嫌
+		ELSE
+			PRINTFORMW 「…\@ IS_COMGRONAME("消極的従う") ? 単調でつまらないわ # 私の動きに合わせる事もできないとか\@。退屈ね、%CNAME(MASTER, TARGET)%…」
+			PRINTFORMW 「だから、そうじゃなくって！ ああもう…、本当に%RAND_SPLIT("焦れったい/もどかしい/イライラする")%\@ TENSION(TARGET, 7) == "高い" ? のよっ！ # わね… \@」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;REACT派生1, 消極的なのが気に入らないの場合はCOMで処理
+	;=================================================
+	;COM41,消極的やる「消極的だけどいいか」
+	;=================================================
+	IF 口上記入チェック(55) && IS_NOWCOMNAME("消極的やる") && TFLAG:REACT派生 == 0
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「もっとキスして……もっと激しくして……」
+			PRINTFORMW 「こんなのじゃ足りないわ……ねぇ、私が壊れちゃうくらいっ…激しく突いてよ…ッ…！」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「どうしたのよ……ほら、もっと突いてよ」
+			PRINTFORMW 「浅いとこ嬲られて……もどかしくて…気が狂いそうよ…」
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「なんか消極的ね……もどかしいわ…」
+		ELSE
+			PRINTFORMW 「もっと腰振りなさいよ…」
+			PRINTFORMW 「ほら、もっと思いっきり」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;腰を振る
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_NOWCOMNAME("腰を振る")
+	;==================================================
+	;イきそう状態
+	;==================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		SELECTCASE TCVAR:MASTER:焦らし度
+			CASE 1 ;焦らし終了
+				IF AFFECTION("相思相愛")
+					;RR 2
+					SELECTCASE RANDREACT(2,2)
+						CASE 0
+							PRINTFORMW 「もっとっ、もっと強く抱いて！ %KOJO_RAND_K14(("キス"), 1)%」
+							CALL QUAKE(4)
+							PRINTFORM 「やっ、激しッ！ あんっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あっ、あぁっ！！」")
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「はぅっ！ あっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あぁっ！ こ、こんなの…ってッ！」")
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+					;RR 3
+					SELECTCASE RANDREACT(2, 3)
+						CASE 0
+							PRINTFORMD 抱きしめられながら最奥まで抉られ、
+						CASE 1
+							PRINTFORMD 子宮口まで抉られる感覚に、
+					ENDSELECT
+					PRINTFORMDW アリスは%CALLNAME:MASTER%の腕の中で激しく喘いでいる……
+				ELSE
+					;RR 4
+					SELECTCASE RANDREACT(2, 4)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「んぁぁっ！ ば、ばかっ！ そんなに激しく突かれたらッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「やっ、激しッ！ あぅっ、あぁっ！！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORMW 「はぅっ！ あっ、あぁっ！ こ、こんなの…ってッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+					PRINTFORMDW アリスは%CALLNAME:MASTER%の背中に手をまわしてしがみ付きながら、激しく喘ぎ悶えている…
+				ENDIF
+			CASEELSE ;焦らし無し
+				IF AFFECTION("相思相愛")
+					;RR 5
+					SELECTCASE RANDREACT(2, 5)
+						CASE 0
+							PRINTFORMW 「ねぇもっと、キス…%KOJO_RAND_K14(("キス"), 1)%」
+							CALL QUAKE(4)
+							PRINTFORM 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「あぁっ、あっ
+							CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+							PRINTFORM 　あんっ、はぁっ！ んんっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							PRINTFORM 「わたしっ…結構参っちゃってるわね……んっ！ あっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							CALL QUAKE(4)
+					ENDSELECT
+					;RR 6
+					SELECTCASE RANDREACT(2, 6)
+						CASE 0
+							PRINTFORMD アリスは貪欲に唇を求めながら、
+						CASE 1
+							PRINTFORMD アリスは自らも腰を激しく打ちつけながら、
+					ENDSELECT
+					PRINTFORMDW %CALLNAME:MASTER%の腕の中で激しく喘いでいる…
+				ELSE
+					;RR 7
+					SELECTCASE RANDREACT(2, 7)
+						CASE 0
+							PRINTFORMW 「ほら、もっとキスして…%KOJO_RAND_K14(("キス"), 1)%」
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ！」
+						CASE 1
+							PRINTFORMW （悪く、ないわね……これ。なんか安心する……）
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁっ、あっ！ あんっ、はぁっ！ んんぁっ！！」
+					ENDSELECT
+					PRINTFORMDW アリスは%CALLNAME:MASTER%にしっかりとしがみ付きながら、快楽に喘いでいる…
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;互いに情欲
+	;=================================================
+	IF 口上記入チェック(100) && (M_COND("情欲") && T_COND("情欲"))
+		PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%」
+		CALL QUAKE(4)
+		PRINTFORMW 「はぅっ、あんっ！ ああ……あっ…あぁっ、あぁぁっ！！」
+		PRINTFORMDW 情欲に滾る二人は互いの唇を貪りながら、獣のように激しく交わっている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教対象が情欲
+	;=================================================
+	IF 口上記入チェック(100) && M_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「あっ、ふぁっ！ こ、こんなの…もう、耐えられッ！ あ…あ゛ぁ…」
+		CALL QUAKE(4)
+		PRINTFORMW 「あッ、はぁッ！ や…もっ、ダメッ！ あっ、あぁぁっ！」
+		PRINTFORMDW 情欲に滾る%CALLNAME:MASTER%の激しい突き上げに、アリスは髪を振り乱しながら激しく喘いでいる…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者が情欲
+	;=================================================
+	IF 口上記入チェック(100) && T_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「んっ、ふぅっ…はっ、あんっ！ そ、そこっ！ あぅっ、あぁ…」
+		PRINTFORMW 「ねぇ、もっと！ キス……してっ！」
+		PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%」
+		PRINTFORMDW 情欲に滾るアリスは%CALLNAME:MASTER%の唇を求めながら、腰を激しく打ちつけている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他
+	;=================================================
+	IF PERCENT(60)
+		IF AFFECTION("相思相愛")
+			;RR 8
+			SELECTCASE RANDREACT(2, 8)
+				CASE 0
+						CALL QUAKE(4)
+					PRINTFORM 「あ
+						CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+					PRINTFORM 　ああ……あっ、あっ
+						CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+						CALL QUAKE(4)
+					PRINTFORMW 「ねぇもっと！ もっとキスし…てッ！　%KOJO_RAND_K14(("キス"), 1)%」
+				CASE 1
+					PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%　（こうしてると、凄く安心するわね…）」
+						CALL QUAKE(4)
+					PRINTFORM 「あ…っ
+						CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　はぁっ…ふぁ、あぁぁっ！」")
+			ENDSELECT
+		ELSE
+			;RR 9
+			SELECTCASE RANDREACT(2, 9)
+				CASE 0
+						CALL QUAKE(4)
+					PRINTFORMW 「あ…ああ……あっ、あっ！」
+						CALL QUAKE(4)
+					PRINTFORMW 「ほらもっと、もっとキスしなさいよ…　%KOJO_RAND_K14(("キス"), 1)%」
+				CASE 1
+					PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%　（こうしてると、なんか安心するわね…）」
+						CALL QUAKE(4)
+					PRINTFORMW 「あ…っ！ はぁっ…ふぁ、あぁぁっ！」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;REACT98, 背面座位させる・個別リアクション
+;────────────────────────────────────
+;・TFLAG:ACT派生(0=通常/1=連続/2=Ｖ性交奉仕系から/3=Ａ性交系から/4=Ｖ性交系から/5=Ａ性交奉仕系から)
+;-------------------------------------------------
+;想定されるCOM…
+;愛撫系反応
+;	COM:恥ずかしがる/嫌がる/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る
+;苦痛系反応
+;	COM:暴れる
+;奉仕系反応
+;	COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+;その他反応
+;	COM:イかせて！
+;-------------------------------------------------
+@KOJO_REACT_K14_98
+;-------------------------------------------------
+;・地の文はREAC分類で分岐
+;・REACT分類が暴れる/拒否の場合はキャンセル扱い
+;・ACTがキャンセルとなった場合はTEQUIP:性交奉仕中もリセット
+;・その他のREACT分類(受け入れる/積極的従う/平然と従う/許しを乞う/消極的やる)の場合は受容扱いとなる
+;・調教対象が童貞なら童貞喪失、調教者が処女なら処女喪失が起こる
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W("処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類が暴れる/逃げる/拒否
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("暴れる/逃げる/拒否") && FLAG:地の文制御 == 2
+	CALL PRINT_ACTGR_10_REJECT_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;焦らし開始
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TCVAR:MASTER:イきそう && TCVAR:MASTER:焦らし度 > 1 && IS_COMGRONAME("積極的従う/平然と従う/受け入れる")
+	CALL TEXTDISPLAY_CATEGORY_10_TEASE_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;快感を我慢する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(55) && IS_NOWCOMNAME("快感を我慢する") && TCVAR:MASTER:我慢
+	CALL TEXTDISPLAY_CATEGORY_10_COM14_K14
+	RETURN 1
+ENDIF
+
+;COM15,快感を受け入れる/COM16,気持ち良い！等を想定。ACT103,逆レイプの場合、COM20,腰を振るもREACT分類受け入れるになる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類, 受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる")
+	;=================================================
+	;調教対象がイきそう		子宮口に届くほど深く云々…
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		CALL PRINT_ACTGR_10_ACCEPT_0_K14
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者がイきそう
+	;=================================================
+	IF 口上記入チェック(100) && PALAM:快Ｖ > 8500
+		CALL PRINT_ACTGR_10_ACCEPT_1_K14
+		RETURN 1
+	ENDIF
+	
+	;調教対象/調教者がイきそうな場合以外を処理
+	;=================================================
+	;その他
+	;=================================================
+	IF 口上記入チェック(70)
+		CALL PRINT_ACTGR_10_ACCEPT_2_K14
+		RETURN 1
+	ENDIF
+;条件から漏れたらRETURN返さず汎用リアクション（COM）へ
+RETURN 0
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;消極的に従った
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う/許しを乞う")
+	;=================================================
+	;REACT負荷2(無理をした行動)
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+		;実は積極
+		IF COMCOR_POSI()
+			PRINTFORMW 「\@ IS_COMGRONAME("許しを乞う") ? 戸惑ってみせた割りには積極的じゃない… # 恥ずかしがってみせたところで、腰は止まらないのね… \@」
+			PRINTFORMW 「\@ IS_COMGRONAME("許しを乞う") ? いいわよ、そこ…、もっと弄って # ほら、もっと動いて \@。壊れちゃうくらい激しくシて…」
+		;実は嫌
+		ELSE
+			PRINTFORMW 「…\@ IS_COMGRONAME("消極的従う") ? 単調でつまらないわ # 私の動きに合わせる事もできないとか\@。退屈ね、%CNAME(MASTER, TARGET)%…」
+			PRINTFORMW 「だから、そうじゃなくって！ ああもう…、本当に%RAND_SPLIT("焦れったい/もどかしい/イライラする")%\@ TENSION(TARGET, 7) == "高い" ? のよっ！ # わね… \@」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;REACT派生1, 消極的なのが気に入らないの場合はCOMで処理
+	;=================================================
+	;COM41,消極的やる「消極的だけどいいか」
+	;=================================================
+	IF 口上記入チェック(55) && IS_NOWCOMNAME("消極的やる") && TFLAG:REACT派生 == 0
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「ねぇ……焦らさないで、もっと激しくしてよ…」
+			PRINTFORMW 「ほら、おっぱいもっと弄って……私をあまり虐めないでよ…」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「や、やだっ……焦らさないでよ…」
+			PRINTFORMW 「こんなの、じれったくて……おかしくなっちゃうっ…！」
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「なんか消極的ね……もどかしいわ…」
+		ELSE
+			PRINTFORMW 「ほらっ、もっと腰振りなさいよ」
+			PRINTFORMW 「使えないわね……」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;腰を振る
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_NOWCOMNAME("腰を振る")
+	;=================================================
+	;イきそう状態
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		SELECTCASE TCVAR:MASTER:焦らし度
+			CASE 1 ;焦らし終了
+				IF AFFECTION("相思相愛")
+					;RR 2
+					SELECTCASE RANDREACT(2, 2)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「んぁぁっ！ ば、ばかっ！ そんなに激しく突かれたらッ！」
+							CALL QUAKE(4)
+							PRINTFORM 「やっ、激しッ！ あんっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あっ、あぁっ！！」")
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「はぅっ！ あっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あぁっ！ こ、こんなの…ってッ！」")
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+				ELSE
+					;RR 3
+					SELECTCASE RANDREACT(2, 3)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「んぁぁっ！ ば、ばかっ！ そんなに激しく突かれたらッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「やっ、激しッ！ あぅっ、あぁっ！！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORMW 「はぅっ！ あっ、あぁっ！ こ、こんなの…ってッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+				ENDIF
+				PRINTFORMDW 背後からの激しい突きこみに、アリスは%RAND_SPLIT("髪を振り乱し/狂ったように")%喘ぎ悶えている…
+			CASEELSE ;焦らし無し
+				IF AFFECTION("相思相愛")
+					;RR 4
+					SELECTCASE RANDREACT(2, 4)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORM 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							CALL QUAKE(4)
+							PRINTFORMW 「やぁっ、そこっ！ ぐりぐりされたらぁっ！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「あぁっ、あっ
+							CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+							PRINTFORM 　あんっ、はぁっ！ んんぁっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							CALL QUAKE(4)
+							PRINTFORM 「こ、こんなの…ッ！ た、耐えられる訳……
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+					ENDSELECT
+				ELSE
+					;RR 5
+					SELECTCASE RANDREACT(2, 5)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「やぁっ、そこっ！ ぐりぐりされたらぁっ！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁっ、あっ！ あんっ、はぁっ！ んんぁっ！！」
+							CALL QUAKE(4)
+							PRINTFORMW 「こ、こんなの…ッ！ た、耐えられる訳……！」
+					ENDSELECT
+				ENDIF
+				SELECTCASE RANDREACT(2, 6)
+					CASE 0
+						PRINTFORMDW 背後からの責めに被虐心を刺激され、アリスは全身を震わせながら喘ぎ悶えている…
+					CASE 1
+						PRINTFORMDW %CALLNAME:MASTER%はアリスの髪の香りに恍惚としながら、夢中で腰を振り続けた…
+				ENDSELECT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;互いに情欲
+	;=================================================
+	IF 口上記入チェック(100) && (M_COND("情欲") && T_COND("情欲"))
+		CALL QUAKE(4)
+		PRINTFORMW 「はぅっ、あんっ！ ああ……あっ…あぁっ、あぁぁっ！！」
+		CALL QUAKE(4)
+		PRINTFORMW 「んぁぁっ！ も、もう……ホントにっ！ お、おかしくなっちゃうっ！」
+		PRINTFORMDW 情欲に滾る二人は互いに狂おしく求め合い、獣のように激しく交わっている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教対象が情欲
+	;=================================================
+	IF 口上記入チェック(100) && M_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「あっ、ふぁっ！ こ、こんなの…もう、耐えられッ！ あ…あ゛ぁ…」
+		CALL QUAKE(4)
+		PRINTFORMW 「あッ、はぁッ！ や…もっ、ダメッ！ あっ、あぁぁっ！」
+		PRINTFORMDW 情欲に滾る%CALLNAME:MASTER%の背後からの激しい突きこみに、アリスは髪を振り乱しながら激しく喘いでいる…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者が情欲
+	;=================================================
+	IF 口上記入チェック(100) && T_COND("情欲") ;調教者が情欲
+		CALL QUAKE(4)
+		PRINTFORMW 「ふぁっ！ や、やだ……腰…とまらなくなっちゃうぅっ！」
+		CALL QUAKE(4)
+		PRINTFORMW 「んっ、ふぅっ…はっ、あんっ！ そ、そこっ！ あぅっ、あぁ…！」
+		PRINTFORMDL 情欲に滾るアリスは妖しく火照った顔で%CALLNAME:MASTER%を振り返りながら、
+		PRINTFORMDW その肢体をくねらせ、激しく喘ぎ悶えている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他
+	;=================================================
+	IF PERCENT(60)
+		IF AFFECTION("相思相愛")
+			;RR 6
+			SELECTCASE RANDREACT(2, 7)
+				CASE 0
+					CALL QUAKE(4)
+					PRINTFORM 「あ
+					CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+					PRINTFORM 　ああ……あっ、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+					PRINTFORMW 「や、やだコレっ！ 凄く、興奮しちゃっ…てッ！」
+				CASE 1
+					CALL QUAKE(4)
+					PRINTFORM 「んっ…、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　ふぅ…んんっ…！」")
+					PRINTFORM 「やだ、私…こんな格好なのに……はぅっ、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あぁっ！！」")
+					CALL QUAKE(4)
+			ENDSELECT
+		ELSE
+			;RR 7
+			SELECTCASE RANDREACT(2, 8)
+				CASE 0
+					CALL QUAKE(4)
+					PRINTFORMW 「あ……ああ……あっ、あっ！」
+					PRINTFORMW 「や、やだコレっ！ 私……凄く、興奮しちゃっ…てッ！」
+				CASE 1
+					CALL QUAKE(4)
+					PRINTFORMW 「んっ…、あっ！ ふぅ…んんっ…！」
+					PRINTFORMW 「やだ、私…こんな格好なのに……はぅっ、あっ、あぁっ！！」
+					CALL QUAKE(4)
+			ENDSELECT
+		ENDIF
+		PRINTFORMDL 背後からの突きこみに、
+		PRINTFORMDW アリスは%PLEASURE_DESCRIPTION(TARGET)%喘いでいる…
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;REACT99, アナルセックスさせる・個別リアクション
+;────────────────────────────────────
+;・TFLAG:ACT派生(0=通常/1=連続/2=Ａ性交系から/3=Ｖ性交奉仕系から/4=Ｖ性交系から)
+;-------------------------------------------------
+;想定されるCOM…
+;愛撫系反応
+;	COM:恥ずかしがる/嫌がる/快感を我慢する/快感を受け入れる/気持ち良い！
+;性交系反応
+;	COM:腰を振る
+;苦痛系反応
+;	COM:暴れる
+;奉仕系反応
+;	COM:拒否する/消極的やる/積極的やる/愛情を込めてやる/平然とやる
+;その他反応
+;	COM:イかせて！
+;-------------------------------------------------
+;このコマンドは口上側で相思相愛時のイベント経過によって開放する仕様にしている
+;故にこの箇所で好感度系の分岐は不要
+;-------------------------------------------------
+@KOJO_REACT_K14_99
+;-------------------------------------------------
+;・地の文はREAC分類で分岐
+;・REACT分類が暴れる/拒否の場合はキャンセル扱い
+;・ACTがキャンセルとなった場合はTEQUIP:性交奉仕中もリセット
+;・その他のREACT分類(受け入れる/積極的従う/平然と従う/許しを乞う/消極的やる)の場合は受容扱いとなる
+;・調教対象が童貞でも童貞喪失にはならない
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W("バックバージン喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類が暴れる/逃げる/拒否
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("暴れる/逃げる/拒否") && FLAG:地の文制御 == 2
+	CALL PRINT_ACTGR_10_REJECT_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;焦らし開始
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TCVAR:MASTER:イきそう && TCVAR:MASTER:焦らし度 > 1 && IS_COMGRONAME("積極的従う/平然と従う/受け入れる")
+	CALL TEXTDISPLAY_CATEGORY_10_TEASE_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;快感を我慢する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(55) && IS_NOWCOMNAME("快感を我慢する") && TCVAR:MASTER:我慢
+	CALL TEXTDISPLAY_CATEGORY_10_COM14_K14
+	RETURN 1
+ENDIF
+
+;COM15,快感を受け入れる/COM16,気持ち良い！等を想定。ACT103,逆レイプの場合、COM20,腰を振るもREACT分類受け入れるになる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類, 受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる") && FLAG:地の文制御 == 2
+	;TCVAR:焦らし度 == 1とそれ以外で分けるのもあり。ただ、地の文にそれほど差異はないのが現状
+	;TEQUIP:ペニスバンドを参照するのもありだけど、これもまた面倒なんで忘れる事に
+	;=================================================
+	;調教対象がイきそう
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		CALL PRINT_ACTGR_10_ACCEPT_0_K14
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者がイきそう
+	;=================================================
+	IF 口上記入チェック(100) && PALAM:快Ａ > 8500
+		CALL PRINT_ACTGR_10_ACCEPT_1_K14
+		RETURN 1
+	ENDIF
+	
+	;調教対象/調教者がイきそうな場合以外を処理
+	;=================================================
+	;その他
+	;=================================================
+	IF 口上記入チェック(70)
+		CALL PRINT_ACTGR_10_ACCEPT_2_K14
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;消極的に従った
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う/許しを乞う")
+	;=================================================
+	;REACT負荷2(無理をした行動)
+	;=================================================
+	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+		;実は積極
+		IF COMCOR_POSI()
+			PRINTFORMW 「%RAND_SPLIT("んッ/くっ/あっ")%！ 意外と…、やるじゃない。\@ TENSION(TARGET, 8) == "高い" ? 悪く、ないわよ # ちょっと生意気 \@…」
+			PRINTFORMW 「ほら、いいわよ。%RAND_SPLIT("もっと激しくしても/壊れちゃうくらい、激しくシて")%…」
+		;実は嫌
+		ELSE
+			PRINTFORMW 「…\@ IS_COMGRONAME("消極的従う") ? まともに動く事もできないとか # 許して、許してってもううんざり \@。退屈%RAND_SPLIT("なのよ/ね")%、%CNAME(MASTER, TARGET)%…」
+			PRINTFORMW 「だから、そうじゃなくって！ ああもう…、本当に%RAND_SPLIT("焦れったい/もどかしい/イライラする")%\@ TENSION(TARGET, 7) == "高い" ? のよっ！ # わね… \@」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;REACT派生1, 消極的なのが気に入らないの場合はCOMで処理
+	;=================================================
+	;COM41,消極的やる「消極的だけどいいか」
+	;=================================================
+	IF 口上記入チェック(55) && IS_NOWCOMNAME("消極的やる") && TFLAG:REACT派生 == 0
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「やっ…お尻の入り口……嬲らないでよ……」
+			PRINTFORMW 「はやく……奥まで満たしてくれないと、私…っ…！」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「ねぇ……焦らさないで…もっと激しくしてよ…」
+			PRINTFORMW 「じれったくて……もどかしくて……私、もう……」
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「なんか消極的ね……もどかしいわ…」
+		ELSE
+			PRINTFORMW 「ほらっ、もっと腰振りなさいよ！」
+			PRINTFORMW 「使えないわね……」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;腰を振る
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_NOWCOMNAME("腰を振る")
+	;=================================================
+	;互いに情欲
+	;=================================================
+	IF 口上記入チェック(100) && M_COND("情欲") && T_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「はぅっ、あんっ！ ああ……あっ…あぁっ、あぁぁっ！！」
+		CALL QUAKE(4)
+		PRINTFORMW 「んぁぁっ！ も、もう……ホントにっ！ お、おかしくなっちゃうっ！」
+		PRINTFORMDW 情欲に滾る二人は互いに狂おしく求め合い、獣のように激しく交わっている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教対象が情欲
+	;=================================================
+	IF 口上記入チェック(100) && M_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「あっ、ふぁっ！ こ、壊れるっ！ おしり…こわれちゃうぅっ！ あ…あ゛ぁっ…！」
+		CALL QUAKE(4)
+		PRINTFORMW 「あッ、はぁッ！ や…もっ、ダメッ！ あっ、あぁぁっ！」
+		PRINTFORMDW 情欲に滾る%CALLNAME:MASTER%の激しい突きこみに、アリスは髪を振り乱しながら激しく喘いでいる…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者が情欲
+	;=================================================
+	IF 口上記入チェック(100) && T_COND("情欲") ;調教者が情欲
+		CALL QUAKE(4)
+		PRINTFORMW 「ふぁっ！ や、やだ……腰…とまらなくなっちゃうぅっ！」
+		CALL QUAKE(4)
+		PRINTFORMW 「んっ、ふぅっ…はっ、あんっ！ そ、そこっ！ あぅっ、あぁ…」
+		PRINTFORMDW 情欲に滾るアリスは腰を激しく打ちつけ、快楽を貪っている…
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他
+	;=================================================
+	IF PERCENT(70)
+		SELECTCASE RANDREACT(2, 2)
+			CASE 0
+				CALL QUAKE(4)
+				PRINTFORMW 「うぅっ、あぁぁっ！ わ、私っ！ おしり突かれて、こんなに…ッ！」
+				CALL QUAKE(4)
+				PRINTFORMW 「やぁっ、ダメっ！ こ、こんなの……耐えられないっ！」
+			CASE 1
+				CALL QUAKE(4)
+				PRINTFORMW 「はぅっ、あぁっ！ あっ！ もうっ、もうっっ！」
+				CALL QUAKE(4)
+				PRINTFORMW 「おしり、犯されてっ！ おかしくなっちゃうぅっ…ッ！」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;REACT103, 逆レイプ・個別リアクション
+;────────────────────────────────────
+;・TFLAG:ACT派生(0=通常/1=連続/2=Ｖ性交奉仕系から/3=Ａ性交系から/4=Ｖ性交系から/5=Ａ性交奉仕系から)
+;-------------------------------------------------
+;想定されるCOM…
+;会話系反応
+;	COM:許しを乞う
+;愛撫系反応
+;	COM:恥ずかしがる/嫌がる/快感を我慢する/快感を受け入れる/気持ち良い！
+;苦痛系反応
+;	COM:悲鳴を上げる/暴れる/怯える
+;性交系反応
+;	COM:腰を振る
+;奉仕系反応
+;	COM:消極的やる/積極的やる/愛情を込めてやる/平然とやる
+;その他反応
+;	COM:イかせて！
+;-------------------------------------------------
+@KOJO_REACT_K14_103
+;-------------------------------------------------
+;・地の文はREAC分類で分岐
+;・他の性交奉仕系と異なり、調教対象は拒絶できない
+;・COM20,腰を振るはREACT分類:受け入れるにセットされる
+;・調教対象が童貞なら童貞喪失、調教者が処女なら処女喪失が起こる
+;・COM:嫌がる/暴れるはREACT分類:暴れる(即ち、暴れが通る状況)にはならない
+;-------------------------------------------------
+;オートモード用処理
+[IF_DEBUG]
+	IF TCVAR:処女喪失 && FLAG:オートモード && FLAG:オートモード表示設定 == 0 && FIRSTREACT(100)
+		CALL PRINT_RAINBOW2W("処女喪失", 20)
+		CALL GAME_OVER_K14
+		FORCEWAIT
+		RETURN 1
+	ENDIF
+[ENDIF]
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;焦らし開始		焦らし中でも条件にヒットしない場合は下位へ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TCVAR:MASTER:イきそう && TCVAR:MASTER:焦らし度 > 1 && IS_COMGRONAME("積極的従う/平然と従う/受け入れる")
+	CALL TEXTDISPLAY_CATEGORY_10_TEASE_K14
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COMが快感を我慢する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(55) && IS_NOWCOMNAME("快感を我慢する") && TCVAR:MASTER:我慢
+	CALL TEXTDISPLAY_CATEGORY_10_COM14_K14
+	RETURN 1
+ENDIF
+
+;COM15,快感を受け入れる/COM16,気持ち良い！等を想定。ACT103,逆レイプの場合、COM20,腰を振るはREACT分類受け入れるになるので弾く
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類, 受け入れる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("受け入れる") && !IS_NOWCOMNAME("腰を振る")
+	;=================================================
+	;調教対象がイきそう		子宮口に届くほど深く云々…
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		CALL PRINT_ACTGR_10_ACCEPT_0_K14
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者がイきそう
+	;=================================================
+	IF 口上記入チェック(100) && PALAM:快Ｖ > 8500
+		CALL PRINT_ACTGR_10_ACCEPT_1_K14
+		RETURN 1
+	ENDIF
+	
+	;調教対象/調教者がイきそうな場合以外を処理
+	;=================================================
+	;その他
+	;=================================================
+	IF 口上記入チェック(70)
+		CALL PRINT_ACTGR_10_ACCEPT_2_K14
+		RETURN 1
+	ENDIF
+ENDIF
+
+;消極的反応をまとめる。ここだけ他の性交奉仕系REACTと構造が異なる。汎用リアクションには流さずにここで完結させる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT分類が消極的に従った/許しを乞う
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_COMGRONAME("消極的従う/許しを乞う")
+	;最後まで一連の処理として扱う為、途中でRETURNしない
+	LOCALS = %RAND_SPLIT("あっ/んっ/ふぁ/んんッ/あぁっ/んぁ")%
+	;REACT分類が許しを乞う			刻んでもいいのかも知れない
+	IF IS_COMGRONAME("許しを乞う")
+		;REACT負荷が(0=自然な行動/1=無理のない行動)
+		IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動")
+			PRINTFORMW 「\@ GET_COM_RANK() == "無理のない行動" ? 抵抗できない # 嫌がる \@%CNAME(MASTER, TARGET)%を犯すの、凄く興奮しちゃう\@ T_COND("情欲") ? っ！ # … \@」
+			PRINTFORMW 「ほらっ！ どうなの？ 本当は気持ち良いんでしょ？ 思いっきり突き上げたいんでしょう？」
+			PRINTFORMW 「いいわ…%CNAME(MASTER, TARGET)%がそういう態度なら、徹底的に犯してあげる……」
+		;無理をした行動
+		ELSE
+			;実は積極
+			IF COMCOR_POSI()
+				PRINTFORM 「%LOCALS%…
+				CALL AUTOHEARTCB_K14
+				PRINTFORMW 　嫌がった癖に…、腰は動いちゃうのね」
+				PRINTFORMW 「ほら、キモチ良い？ キモチ良いのよね？ 私に犯されて興奮しちゃうのよね？」
+				PRINTFORMW 「素直になれないのなら、存分に嬲ってあげるから……」
+			;実は嫌
+			ELSE
+				PRINTFORMW 「良い表情じゃない……その悔しそうな顔、ゾクゾクしちゃうわ…」
+				PRINTFORMW 「でもそんな顔したって…、身体は反応しちゃうみたいだけど。ねぇ？」
+			ENDIF
+		ENDIF
+	;REACT分類が消極的従う
+	ELSE
+		;REACT負荷が(0=自然な行動/1=無理のない行動)
+		IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動")
+			PRINTFORMW 「どう？ 無理やり犯されるのは悔しい？ でも%CNAME(MASTER, TARGET)%…本当は気持ちよくて堪らないのよね？」
+			PRINTFORMW 「ふん、意地を張るならそれもいいわ。思いっきり犯してあげるから、覚悟して…」
+		;無理をした行動
+		ELSE
+			;実は積極
+			IF COMCOR_POSI()
+				PRINTFORMW 「…ん。なによ…嫌がった割りに、腰は動いちゃってるみたいだけど」
+				PRINTFORMW 「本当はキモチ良いんでしょう？ 私に犯されるのが嬉しくて堪らないんでしょう？」
+			;実は嫌
+			ELSE
+				PRINTFORMW 「…真っ赤な顔しちゃって。そんな顔見せられると、余計に興奮しちゃう…」
+				PRINTFORMDL %CALLNAME%は視線を逸らせようとする%CALLNAME:MASTER%の顔を両手で捉え、
+				PRINTFORMDW 吐息がかかる距離まで顔を寄せながら囁いた…
+				SIF !TEQUIP:アイマスク
+					PRINTFORMW 「ほら、目を開けて、ちゃんと私を見るのよ。逆らったって、今更どうにもなりはしないわ」
+				PRINTFORMW 「大人しく、あるがままを受け入れなさい…」
+			ENDIF
+		ENDIF
+	ENDIF
+	PRINTL
+	;調教者が情欲、もしくはBASE:満足50%以上
+	IF T_COND("情欲") || TENSION(TARGET, 8) == "高い"
+		PRINTFORM 「%LOCALS%…
+		CALL AUTOHEARTCB_K14
+		PRINTFORMW 　無理やりするのって……凄く興奮し…て…っ！」
+		CALL QUAKE(4)
+		PRINTFORM 「んっ、くっ…あっ…
+		CALL AUTOHEARTCB_K14
+		PRINTFORM 　%RAND_SPLIT("ふ/")%あっ、%RAND_SPLIT("ん/あ゛/")%あぁっ…
+		CALL PRINT_SYMBOL2_K14
+		CALL QUAKE(4)
+		PRINTFORMW 「%RAND_SPLIT("やっ/やだ")%、%RAND_SPLIT("これ/コレ")%……止まらなく、なっちゃうぅっ…ッ！」
+	;REACTが無理をした行動
+	ELSEIF GET_COM_RANK() == "無理をした行動"
+		;実は積極
+		IF COMCOR_POSI()
+			PRINTFORMW 「ほらほらっ！ もっと突き上げ%RAND_SPLIT("てみな/")%なさいよっ…！」
+			PRINTFORMW 「ほら、もっと思いっきり…ッ！」
+		;実は嫌
+		ELSE
+			PRINTFORM 「%LOCALS%…
+			CALL AUTOHEARTCB_K14
+			PRINTFORMW 　や、やだこれっ！ %RAND_SPLIT("凄/すご")%く、\@ PALAM:快Ｖ > 4000 ? キモチいいっ！ # いい…… \@」
+			PRINTFORMW 「%RAND_SPLIT("ゾクゾク/興奮")%が、止まらなくっ……てッ！」
+		ENDIF
+	;その他
+	ELSE
+		PRINTFORMW 「これ、凄い興奮し%RAND_SPLIT("ちゃっ/")%て……%RAND_SPLIT("もう、/")%%RAND_SPLIT("おかしく/変に")%なりそう…」
+		CALL QUAKE(4)
+		PRINTFORM 「あ%RAND_SPLIT("ん/ぁ/")%っ、あっ…
+		CALL AUTOHEARTCB_K14
+		PRINTFORM 　%RAND_SPLIT("ふ/ん/")%あっ…%RAND_SPLIT("あ/は/ん")%ぅっ…
+		CALL PRINT_SYMBOL2_K14
+	ENDIF
+	;RETURNは終端でのみ行う
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COMが腰を振る
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && IS_NOWCOMNAME("腰を振る")
+	;==================================================
+	;イきそう状態
+	;==================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		SELECTCASE TCVAR:MASTER:焦らし度
+			CASE 1 ;焦らし終了
+				IF AFFECTION("相思相愛")
+					;RR 2
+					SELECTCASE RANDREACT(2,2)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「んぁぁっ！ ば、ばかっ！ そんなに激しく突き上げたらッ！」
+							CALL QUAKE(4)
+							PRINTFORM 「やっ、激しッ！ あんっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あっ、あぁっ！！」")
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「はぅっ！ あっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あぁっ！ こ、こんなの…ってッ！」")
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+				ELSE
+					;RR 3
+					SELECTCASE RANDREACT(2, 3)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「んぁぁっ！ ば、ばかっ！ そんなに激しく突き上げたらッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「やっ、激しッ！ あぅっ、あんっ、あぁっ！！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORMW 「はぅっ！ あっ、あぁっ！ こ、こんなの…ってッ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「や、壊れるっ！ こわれちゃうぅっ！」
+					ENDSELECT
+				ENDIF
+				PRINTFORMDW %CALLNAME:MASTER%の激しい突き上げに、アリスは%RAND_SPLIT("髪を振り乱し/狂ったように")%喘ぎ悶えている…
+			CASEELSE ;焦らし無し
+				IF AFFECTION("相思相愛")
+					;RR 4
+					SELECTCASE RANDREACT(2, 4)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORM 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							CALL QUAKE(4)
+							PRINTFORMW 「やぁっ、そこっ！ ぐりぐりされたらぁっ！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORM 「あぁっ、あっ
+							CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+							PRINTFORM 　あんっ、はぁっ！ んんぁっ
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+							CALL QUAKE(4)
+							PRINTFORM 「こ、こんなの…ッ！ た、耐えられる訳……
+							CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+					ENDSELECT
+				ELSE
+					;RR 5
+					SELECTCASE RANDREACT(2, 5)
+						CASE 0
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁぁっ！ お、奥に当たってッ！ あぅっ、あぁっ！」
+							CALL QUAKE(4)
+							PRINTFORMW 「やぁっ、そこっ！ ぐりぐりされたらぁっ！」
+						CASE 1
+							CALL QUAKE(4)
+							PRINTFORMW 「あぁっ、あっ！ あんっ、はぁっ！ んんぁっ！！」
+							CALL QUAKE(4)
+							PRINTFORMW 「こ、こんなの…ッ！ た、耐えられる訳……！」
+					ENDSELECT
+				ENDIF
+				;RR 6
+				SELECTCASE RANDREACT(2, 6)
+					CASE 0
+						PRINTFORMDW 子宮口を抉られる感覚に、アリスは全身を震わせながら喘ぎ悶えている…
+					CASE 1
+						PRINTFORMDW %CALLNAME:MASTER%はアリスの痴態に興奮しながら、夢中で腰を突き上げた…
+				ENDSELECT
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;==================================================
+	;特定条件から発生
+	;=================================================
+	IF 口上記入チェック(100) && GETBIT(KFLAG:TARGET:201, 1)
+		CALL QUAKE(4)
+		PRINTFORM 「あんっ
+		CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+		;半角スペース
+		PRINTFORM  すごっ……、イイッ！ んんっ！ あっ
+		CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+		CALL QUAKE(4)
+		PRINTFORM 「ほらもっと！ もっとよ！ あっ、あぁっ
+		;半角スペース
+		CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), " 奥まで…、キてるっ！」")
+		PRINTFORMDW アリスは%CALLNAME:MASTER%を組み伏せ、その上で腰を激しく揺すりながら快楽を貪っている…
+		RETURN 1
+	ENDIF
+	
+	;==================================================
+	;調教対象が情欲
+	;==================================================
+	IF 口上記入チェック(100) && M_COND("情欲")
+		CALL QUAKE(4)
+		PRINTFORMW 「あっ、ふぁっ！ こ、こんなの…もう、耐えられッ！ あ…あ゛ぁ…」
+		CALL QUAKE(4)
+		PRINTFORMW 「あッ、はぁッ！ や…もっ、ダメッ！ あっ、あぁぁっ！」
+		PRINTFORMDW 情欲に滾る%CALLNAME:MASTER%の激しい突き上げに、アリスは背中を仰け反らせながら激しく喘いでいる…
+		RETURN 1
+	ENDIF
+	
+	;==================================================
+	;その他
+	;==================================================
+	IF PERCENT(60)
+		IF AFFECTION("相思相愛")
+			;RR 7
+			SELECTCASE RANDREACT(2, 7)
+				CASE 0
+					CALL QUAKE(4)
+					PRINTFORM 「あ
+					CALL HEARTCB(COLOR2_K14("pink"), 1, "ＭＳ Ｐゴシック")
+					PRINTFORM 　ああ……あっ、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
+					PRINTFORMW 「や、やだコレっ！ 凄く、興奮しちゃっ…てッ！」
+				CASE 1
+					CALL QUAKE(4)
+					PRINTFORM 「んっ…、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　ふぅ…んんっ…！」")
+					PRINTFORM 「やだ、私…こんなことしてるのに……はぅっ、あっ
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　あぁっ！！」")
+					CALL QUAKE(4)
+			ENDSELECT
+		ELSE ;その他
+			;RR 8
+			SELECTCASE RANDREACT(2, 8)
+				CASE 0
+					CALL QUAKE(4)
+					PRINTFORMW 「あ……ああ……あっ、あっ！」
+					PRINTFORMW 「や、やだコレっ！ 私……凄く、興奮しちゃっ…てッ！」
+				CASE 1
+					CALL QUAKE(4)
+					PRINTFORMW 「んっ…、あっ！ ふぅ…んんっ…！」
+					PRINTFORMW 「やだ、私…こんなことしてるのに……はぅっ、あっ、あぁっ！！」
+					CALL QUAKE(4)
+			ENDSELECT
+		ENDIF
+		PRINTFORMDL %CALLNAME:MASTER%の激しい突き上げに、
+		PRINTFORMDW アリスは%PLEASURE_DESCRIPTION(TARGET)%喘いでいる…
+		RETURN 1
+	ENDIF
+ENDIF
+
+;***********************************************************
+;関数類
+;***********************************************************
+;汎用処理を関数化しここに纏める
+;-------------------------------------------------
+
+;-------------------------------------------------
+;焦らし開始 AUTORAND(100)(101)
+;-------------------------------------------------
+@TEXTDISPLAY_CATEGORY_10_TEASE_K14
+IF IS_COMGRONAME("積極的従う/平然と従う")
+	PRINTFORM 「%RAND_SPLIT("あっ/んっ/ふぁ/んんッ/あぁっ/んぁ")%…
+	CALL AUTOHEARTCB_K14
+	SELECTCASE AUTORAND(4, 100)
+		CASE 0
+			PRINTFORM 　切なそうな\@ IS_NOWACTNAME("正常位させる/対面座位させる/逆レイプ") ? 顔 # 声出 \@しちゃって…。\@ IS_NOWACTNAME("正常位させる/対面座位させる/逆レイプ") ? 良い眺め # 可愛い \@…
+			CALL PRINT_SYMBOL_K14
+			PRINTFORM 「イきたいのよね？　
+			;Ａセックス以外
+			IF IS_NOWACTNAME("逆レイプ/正常位させる/後背位させる/対面座位させる/背面座位させる")
+				PRINTFORM \@ PENIS(MASTER) ? 私の膣内にぶちまけたい # イかせて欲しい \@
+			;Ａセックス
+			ELSE
+				PRINTFORM \@ PENIS(MASTER) ? 私のおしりにぶちまけたい # イかせて欲しい \@
+			ENDIF
+			PRINTFORMW のよね？」
+			PRINTFORMW 「でも私…、こんなのじゃまだ足りないのよ。もう少し、%RAND_SPLIT("付き合/頑張")%ってもらうから…」
+		CASE 1
+			PRINTFORMW 　夢中で腰\@ IS_NOWACTNAME("逆レイプ/背面座位") ? 突き上げたって #  振ったって \@駄目よ……。まだイかせるつもり、ないもの…」
+			PRINTFORMW 「でも%CNAME(MASTER, TARGET)%、私に\@ PENIS(MASTER) ? 射精を管理 # 快感をコントロール \@されるの、嫌いじゃないでしょう？」
+			PRINTFORMW 「ふふっ…その情けない\@ IS_NOWACTNAME("正常位させる/対面座位させる/逆レイプ") ? 顔 # 声 \@、ゾクゾクしちゃう…。\@ IS_NOWACTNAME("正常位させる/対面座位させる/逆レイプ") ? キスしたく # 堪らなく \@なっちゃうわ…」
+			IF IS_NOWACTNAME("正常位させる/対面座位させる/逆レイプ")
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("キス"), 1)%")
+				CLEARLINE 1
+				CALL SET_KISS
+			ENDIF
+		CASE 2
+			PRINTFORMW 　そんな馬鹿みたいに腰振っ%RAND_SPLIT("たって/ても")%、まだイかせ%RAND_SPLIT("るつもりはないわよ/ないわよ、悪いけど")%」
+			PRINTFORMW 「私が満足するまで、まだ頑張ってもらう%RAND_SPLIT("わ/から")%…」
+		CASE 3
+			PRINTFORMW 　%CNAME(MASTER, TARGET)%、もうイク事しか頭に無いのね。私の\@ PENIS(MASTER) ? 膣内に射精したくて # 中でイきたくて \@堪らないのね…」
+			PRINTFORMW 「…でも駄目よ。%RAND_SPLIT("悪い/残念だ")%けど、またイかせるつもり、ないから…」
+	ENDSELECT
+ELSE
+	PRINTFORM 「%RAND_SPLIT("んっ、はぁっ/あんっ、あぁっ/んんっ")%
+	CALL AUTOHEARTCB_K14
+	SELECTCASE AUTORAND(3, 101)
+		CASE 0
+			PRINTFORMW 　くっ、だめよ…簡単にはイかせないから…」
+		CASE 1
+			PRINTFORMW 　まだ、だめよ…私、まだ足りないわ…」
+		CASE 2
+			PRINTFORMW 　勝手にはイかせないわよ……もう少し頑張ってもらうから……」
+	ENDSELECT
+ENDIF
+SIF PALAM:快Ｃ > 8500 || PALAM:快Ｖ > 8500
+	CALL FADEIN(13, @"（%RAND_SPLIT("でも私……、ちょっとヤバい、かも…/って、私が先にイっちゃいそう……/とか言いながら、私、もう駄目、かも…")%）")
+
+;-------------------------------------------------
+;COM:快感を我慢する AUTORAND(102)
+;-------------------------------------------------
+@TEXTDISPLAY_CATEGORY_10_COM14_K14
+SELECTCASE AUTORAND(3, 102)
+	CASE 0
+		PRINTFORMW 「なによ、%RAND_SPLIT("必死に我慢しちゃって/我慢だなんて可愛くないわ")%……」
+		PRINTFORMW 「そういう事されると、%RAND_SPLIT("むりやり/無理やり")%\@ TEQUIP:ペニスバンド ? イかせ # 搾り取り \@たくなるのよね…」
+	CASE 1
+		PRINTFORMW 「隠%RAND_SPLIT("そうっ/し")%たってイきそうなのは\@ TENSION(TARGET, 8) == "高い" ? バレバレよ？ # 判っているのよ… \@」
+		PRINTFORM 「\@ TEQUIP:ペニスバンド ? こんな玩具越しでも、伝わってくるもの # 私の中で、こんなにビクビクさせちゃてるのに \@…
+		CALL PRINT_SYMBOL_K14
+	CASE 2
+		PRINTFORMW 「\@ ALI(0) ? へぇ # ふふ \@、面白いわね？ いいわ…%CNAME(MASTER, TARGET)%がいつまで%RAND_SPLIT("我慢でき/耐えられ")%るか、試してあげる\@ ALI(0) ? ♪ # … \@」
+		CALL FADEIN(13, @"「…%RAND_SPLIT("精々頑張りなさい/ま、無駄だと思うけど。ふふ…/精々頑張る事ね")%」")
+		WAIT
+ENDSELECT
+
+;-------------------------------------------------
+;拒絶処理（ACT103, 逆レイプは抵抗できないので含めない）AUTORAND(103)
+;-------------------------------------------------
+@PRINT_ACTGR_10_REJECT_K14
+;性交奉仕中からの拒絶		TFLAG:ACT派生の枠内で処理しないと整合性がおかしくなる場合があるかな？
+IF (IS_NOWACTNAME("正常位させる/後背位させる/対面座位させる/背面座位させる") && V_SEX(MASTER)) || (IS_NOWACTNAME("アナルセックスさせる") && A_SEX(MASTER))
+	SELECTCASE V_SEX(MASTER) ? PALAM:快Ｖ # PALAM:快Ａ
+		;そりゃまぁ怒るだろうっていう
+		CASE IS >= 8500
+			PRINTFORMW 「ちょ、な、なによそれ\@ TENSION(TARGET, 8) == "高い" ? ！？ # ！ \@　今頃になってどういうつもりよっ！」
+			CALL FADEIN(13, "「…許さない」")
+			PRINTFORMW 「絶\@ TENSION(TARGET, 8) == "高い" ? っっっ # \@対に許さないわよ！ そんな事！」
+		CASE IS >= 5000
+			PRINTFORMW 「ちょっと%CNAME(MASTER, TARGET)%！ 一体どういうつもり？」
+			PRINTFORMW 「%RAND_SPLIT("今頃になって/今更")%嫌とか…、ありえないわよ！」
+		CASEELSE
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%…、ふざけてるの？」
+			PRINTFORMW 「そんな勝手な真似、許すつもりはないわよ…」
+	ENDSELECT
+	;ACT103[逆レイプ]
+	TCVAR:行動予約 = 103
+;ACT開始時の拒絶
+ELSE
+	SELECTCASE AUTORAND(2, 103)
+		CASE 0
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%…、この私に恥をかかせるつもり？」
+			PRINTFORMW 「絶対に許さないわよ、そんな事……」
+		CASE 1
+			PRINTFORMW 「へぇ、そう…この私の言う事が聞けないって訳」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%…、覚悟は出来てるんでしょうねぇ？」
+	ENDSELECT
+	;ACT60[スパンキング]	@ACT_SETが実装されると楽に色々できそう
+	TCVAR:行動予約 = 60
+ENDIF
+;状態変化[怒り]
+TCVAR:状態変化 = 6
+
+;-------------------------------------------------
+;REACT分類"受け入れる"の汎用処理群(0) ～ (2)
+;-------------------------------------------------
+
+;*****************************
+;・0, TCVAR:MASTER:イきそう用 AUTORAND(104)(105)
+;*****************************
+@PRINT_ACTGR_10_ACCEPT_0_K14
+;最初にQUAKE
+CALL QUAKE(4)
+;共用部分
+PRINTFORM 「%RAND_SPLIT("ふあ、あぁっ/あぅっ/く、あっ/んぁっ/うぁ…あっ/はぅっ、あ…あ゛ッ/あ…あ゛っ！ や")%…
+;AH2
+CALL AUTOHEARTCB_K14
+;Ａ性交奉仕以外			Ａ性交とその他で別ける
+IF IS_NOWACTNAME("逆レイプ/正常位させる/後背位させる/対面座位させる/背面座位させる")
+	PRINTFORM 　%RAND_SPLIT("そんな、奥…まで/お、奥に…当たって/そんなに、されたら…わ、わたし")%
+;Ａ性交奉仕
+ELSE
+	PRINTFORM 　%RAND_SPLIT("おかしくなっちゃうっ！ 私…おしりなんかで/やだ…おしり、良すぎて/やっ！ どうして、おしり…こんなに")%
+ENDIF
+;RAND_SPLIT挟んで
+PRINTFORM %RAND_SPLIT("っ/ッ")%
+;PS2で括弧を閉じる
+CALL PRINT_SYMBOL2_K14
+CALL QUAKE(4)
+;調教者の感覚4以上		面倒になったので共通処理
+IF (IS_NOWACTNAME("逆レイプ/正常位させる/後背位させる/対面座位させる/背面座位させる") && ABL:TARGET:Ｖ感覚 > 4) || (IS_NOWACTNAME("アナルセックスさせる") && ABL:TARGET:Ａ感覚 > 4)
+	SELECTCASE AUTORAND(2, 104)
+		CASE 0
+			PRINTFORM 「%RAND_SPLIT("んは/ふ/は/あ")%ぁっ！ あぁぅっ！ %RAND_SPLIT("あ/ん")%…ああぁっ
+		CASE 1
+			PRINTFORM 「%RAND_SPLIT("あ/は/ん")%ぁっ！ い、いいっ！ そこ、もっと…もっとぉっ
+	ENDSELECT
+;その他
+ELSE
+	SELECTCASE AUTORAND(2, 105)
+		CASE 0
+			PRINTFORM 「%RAND_SPLIT("あ/ん/や/は")%んっ! んっ…%RAND_SPLIT("ん/く")%っ！ く…、あぁぅっ
+		CASE 1
+			PRINTFORM 「んんっ！ はっ、%RAND_SPLIT("は/ん/ふ/く")%ぁっ！ ひ…あぁっ
+	ENDSELECT
+ENDIF
+CALL PRINT_SYMBOL2_K14
+;地の文を処理
+PRINTFORMD %CALLNAME%は
+IF IS_NOWACTNAME("逆レイプ/正常位させる/後背位させる/対面座位させる/背面座位させる")
+	PRINTFORMDL \@ ABL:TARGET:Ｖ感覚 > 4 ? 開発されきった # 不慣れな \@膣奥まで突かれる\@ ABL:TARGET:Ｖ感覚 > 4 ? 狂おしいまでの快楽に激しく%RAND_SPLIT("悶え/乱れ")%ながら # 感覚に戸惑いながら \@、
+ELSE
+	PRINTFORMDL \@ ABL:TARGET:Ａ感覚 > 4 ? ほぐれきった # 未だ馴染まぬ \@%ANUS_DESCRIPTION(TARGET)%を最奥まで貫かれ、
+	PRINTFORMD \@ ABL:TARGET:Ａ感覚 > 4 ? その%RAND_SPLIT("倒錯的な悦楽/ゾクリと寒気を伴うような快感")%に # %RAND_SPLIT("沸きあが/湧きおこ")%る奇妙な感覚に戸惑いつつ \@、
+ENDIF
+PRINTFORMDW %PLEASURE_DESCRIPTION(TARGET)%喘いでいる…
+
+;*****************************
+;・1, PALAM:快Ｘ > 8500用
+;*****************************
+@PRINT_ACTGR_10_ACCEPT_1_K14
+CALL QUAKE(4)
+PRINTFORM 「%RAND_SPLIT("あ゛ぁっ/ひあっ/う…あ")%…
+CALL AUTOHEARTCB_K14
+PRINTFORMW 　%RAND_SPLIT("だ、駄目っ！ こんなに、されたらっ！/あたまの中、真っ白…にっ！/や、やだっ！ わたし、もう…っ！/ヤダコレっ！ とける！ とけちゃうぅっ！")%」
+
+;*****************************
+;・2, 汎用
+;*****************************
+@PRINT_ACTGR_10_ACCEPT_2_K14
+;ACT共通部分
+PRINTFORM 「%RAND_SPLIT("はーっ、はぁ…/あ…ああ…んっ/あっ、ああ…っ/くっ！ あ……んあぁっ/んんっ……あん！ あぁっ")%
+CALL AUTOHEARTCB_K14
+SELECTCASE GET_ACTNAME(TFLAG:ACT)
+	;ACT正常位させる
+	CASE "正常位させる"
+		;自然な/無理のない行動
+		IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動")
+			PRINTFORMW 　\@ GET_COM_RANK() == "自然な行動" ? い、いいわっ！ ねぇもっと…、もっとっ！ # は、激しい…、わね… \@」
+		;無理をした行動
+		ELSE
+			PRINTFORMW 　いいわよ…、もっと激しくシても……」
+		ENDIF
+	;ACT後背位させる
+	CASE "後背位させる"
+		PRINTFORMW 　%RAND_SPLIT("なによ、これ…ちょっと、すご、いっ！/やだこれ…すごく……、興奮しちゃうっ！/や…そんな……獣、みたいにっ！")%」
+	;ACT対面座位させる
+	CASE "対面座位させる"
+		;自然な/無理のない行動
+		IF GROUPMATCH(GET_COM_RANK(), "自然な行動", "無理のない行動")
+			PRINTFORMW 　\@ TALENT:MASTER:小柄 ? 可愛いわね…キスしたくなっちゃう # ほら、こっちを向いて \@……」
+		;無理をした行動
+		ELSE
+			PRINTFORMW 　\@ AFFECTION("相思相愛") ? ねぇ…キス、して # ほら、私にキスしなさい \@……」
+		ENDIF
+		;コンフィグでFADEがONかつ1/2の確率でフェードアウト
+		IF ANIME_CONFIG("FADE") && !RAND:2
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("キス"), 1)%")
+			CLEARLINE 1
+		;漏れたらPRINT
+		ELSE
+			PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%」
+		ENDIF
+	;ACT背面座位させる
+	CASE "背面座位させる"
+		IF 0
+		;負荷0, 自然な行動。確率で真
+		ELSEIF GET_COM_RANK() == "自然な行動" && PERCENT(60)
+			PRINTFORM 　%RAND_SPLIT("あ、浅いトコ、擦られると…切なくなっちゃう/そ、ソコっ！ くちゅくちゅされるの…キモチ良くって")%
+			CALL PRINT_SYMBOL2_K14
+		;負荷1, 無理のない行動。確率で真
+		ELSEIF GET_COM_RANK() == "無理のない行動" && PERCENT(50)
+			PRINTFORMW 　\@ AFFECTION("相思相愛") ? ねぇ # ほら \@、もっと…、私に\@ AFFECTION("相思相愛") ? 触って # 触れて \@……」
+		;漏れてきたらここで拾って完結
+		ELSE
+			;共用部分。TENSION派生へ続く
+			PRINTFORM 　%RAND_SPLIT("後ろから/おっぱい")%%RAND_SPLIT("弄/触")%られるの…
+			;調教者BASE:満足派生		@BASERATION嫌い。@TENSION好き
+			IF GROUPMATCH(TENSION(TARGET, 8), "高い", "一般")
+				;三項で一行に
+				PRINTFORM 　\@ TENSION(TARGET, 8) == "高い" ? %RAND_SPLIT("好き/興奮、しちゃう/キモチ、良い")% # %RAND_SPLIT("感じ、ちゃう/凄く、いい")% \@
+				;PALAM:快Xが一定以上
+				IF PALAM:快Ｃ > 4000 || PALAM:快Ｖ > 4000 || PALAM:快Ｂ > 4000
+					PRINT っ…
+					CALL PRINT_SYMBOL2_K14
+				;その他
+				ELSE
+					PRINTW ……」
+				ENDIF
+			ELSE
+				PRINTFORMW %RAND_SPLIT("悪くない/ちょっといい/キモチ良い")%、わね…」
+			ENDIF
+		ENDIF
+	;ACTアナルセックスさせる
+	CASE "アナルセックスさせる"
+		PRINTFORM 　%RAND_SPLIT("は、はげしいぃ…のよ/そ、そんなに…激し、く/やだコレっ！ おしり、おかしく")%
+		;PALAM:快Ａが一定以上ならPS2をCALLする
+		IF PALAM:快Ａ > 4000
+			PRINT っ…
+			CALL PRINT_SYMBOL2_K14
+		;その他なら普通に終わる
+		ELSE
+			PRINTW ……」
+		ENDIF
+	;ACT逆レイプ
+	CASE "逆レイプ"
+		;REACT負荷派生			地の文派生に対応させる
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				PRINTFORM 　%RAND_SPLIT("んッ！ これ……、奥まで、届いて/やだ私…、腰、止まらなくなっちゃう/凄く、深くて…いいとこに、当たって")%
+			CASE "無理のない行動"
+				PRINTFORM 　%RAND_SPLIT("ほら、もっと！ もっと…、下から、突き上げて/ねぇキモチ良い？ キモチ、良いてしょ？ あぁ/ほらっ！ どうなの？ 私に犯されるの…、キモチ良いの？ んぁ")%
+			CASE "無理をした行動"
+				PRINTFORM 　%RAND_SPLIT("ほら/さぁ")%、もっと！ %CNAME(MASTER, TARGET)%の%RAND_SPLIT("情けない/だらしない")%%RAND_SPLIT("声…、聞かせて/顔…、私に見せて")%
+		ENDSELECT
+		;PALAM:快Ｖが一定以上ならPS2をCALLする
+		IF PALAM:快Ｖ > 4000
+			PRINT っ…
+			CALL PRINT_SYMBOL2_K14
+		;その他なら普通に終わる
+		ELSE
+			PRINTW ……」
+		ENDIF
+		;調教者が情欲か朦朧、若しくは満足度50%以上かつ1/2の確率で真
+		IF GROUPMATCH(GET_CONDITION(TARGET), "情欲", "朦朧") > 0 || (TENSION(TARGET, 8) == "高い" && !RAND:2)
+			;コンフィグでFADEがONの場合1/2の確率で真
+			IF ANIME_CONFIG("FADE") && !RAND:2
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("キス"), 1)%")
+				CLEARLINE 1
+			;漏れたらPRINT
+			ELSE
+				PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%」
+			ENDIF
+			PRINTFORMW 「ん…\@ TALENT:MASTER:小柄 ? かわいいわ、%CNAME(MASTER, TARGET)% # 堪らないわ、これ \@……」
+			PRINTFORMDW %CALLNAME%は前のめりになり、%CALLNAME:MASTER%の唇を貪りながら腰を激しく振りたてた…
+			;キスを捏造
+			CALL SET_KISS
+		;その他
+		ELSE
+			PRINTFORMD %CALLNAME%は
+			;逆レイプに派生を！という要望が却下されたので口上で捏造する。いずれ条件きめうちしてRANDは捨てたい感
+			SELECTCASE AUTORAND(3, 106)
+				CASE 0
+					PRINTFORMDW %CALLNAME:MASTER%の胸に手をつき、腰を上下に振りたてながら快楽を貪っている…
+				CASE 1
+					PRINTFORMDL 後ろに仰け反りながら腰をグラインドさせ、
+					PRINTFORMDW %CALLNAME:MASTER%の反応を愉しみつつも、自身も快楽に溺れている…
+				CASE 2
+					PRINTFORMDL 腰を妖しく蠢かし、時折骨盤にクリトリスをこすりつけながら、
+					PRINTFORMDW %CALLNAME:MASTER%を犯す、その倒錯的な悦びに夢中になっている…
+			ENDSELECT
+		ENDIF
+ENDSELECT

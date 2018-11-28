@@ -1,0 +1,988 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上 オープニング、エンディング口上ファイル
+;
+;	オープニング, エンディングイベント口上のファイル
+;
+;Version		Reason
+;1.71			@口上記入チェック仕様に。その他細かな修正。二つ名をちょっと弄る
+;1.70			EV2をMSに
+;1.69			モード毎に分かれていたGAMEBASE参照処理を口上関数直下に統合
+;1.67Rel5		KFLAG:(FLAG:ご主人様):102によるED経過判定処理を追加
+;1.61			OP開幕のエフェクトにREDRAW 0。一部処理の関数化。その他
+;1.60			単体ファイルとして独立
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;EV1, オープニング口上	Oh I can't escape
+;========================================================================
+;・口上主(TARGET)が主人である場合にのみ表示される
+;・戻り値を2とした場合はOP後の本体側のタイトルロゴは表示されない
+;・ノーマルモード以外の場合、調教対象がNO:MASTER == 0(いわるゆるあなた)でない可能性あり
+;-------------------------------------------------
+;関連変数…
+;FLAG:モード(0=通常/1=サンドボックス/9=エキストラ)
+;-------------------------------------------------
+@KOJO_EVENT_K14_1(ARG)
+;-------------------------------------------------
+;Revの場合調教対象がMASTERである事に注意。調教者はTARGETである
+;そしてTARGETがご主人様で無い場合がある事にも注意を向ける必要がある
+;その場合は(FLAG:2)を使えばご主人様を参照できる。これを使えばご主人様がTARGETでない場合も引き合いに出す事が可能
+;CNAMEは%CNAME(名前を表示させたい対象(MASTER, TARGET, (FLAG:2), ASSI等), それを呼ぶ人物(TARGET, ASSI, (FLAG:2)等)%となっている
+;呼ぶ人物を指定しない場合は自動的にTARGETとなる
+;TARGETがMASTERを呼ぶ場合には%CNAME(MASTER, TARGET)% 助手を呼ぶ場合には%CNAME(ASSI)%でok
+;プレイヤーがどのような設定にするか分からない以上
+;%CALLNAME:MASTER%は地の文での使用に留め、会話文では呼び名を代入した%CNAME(MASTER, TARGET)%を使う事を強くお勧めする
+;「%CALLNAME:MASTER%！　あんた云々」みたいな事は避けたい。「%CALLNAME:MASTER%さん」みたいなのも悲惨である
+;CNAMEなら口上側で定義してやれば、それらを避ける事が出来る。"さん"付けだろうが"様"だろうが如何様にも定義出来る
+;readmeに"名前を設定して下さい"云々等も書く必要もなく、口上側で全て完結する事が可能。
+;-------------------------------------------------
+#LOCALSIZE 3
+
+;---------------------------------------------
+;バリアント判定処理
+;---------------------------------------------
+CALL CHK_GAMEBASE_K14
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ノーマルモード時
+;RESULT値(1,OPを表示した後本体のタイトルロゴを表示/2, 本体のタイトルロゴを表示しない)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && FLAG:モード == 0
+	;-------------------------------------------------
+	;召喚可能助手代入
+	;-------------------------------------------------
+	CSTR:召喚可能助手 = 霊夢/魔理沙/パチュリー/咲夜/レミリア/紫/メディスン/幽香/雛/早苗/サニーミルク/ルナチャイルド/スターサファイア/
+	
+	NO_14_二つ名 = \@ RAND:2 ? 七色の人形遣い # 雹の人形遣い \@
+	
+	;-------------------------------------------------
+	;各種封印処理
+	;-------------------------------------------------
+	;異常系はまず出る事ないんで不要な気もするけど、万が一出られても困るんで封印。そもそもこれらのコマンドは大嫌い
+	;現状対応できないんで指挿入れを封印
+	CFLAG:1019 = 100
+	;フィストファックを封印
+	CFLAG:1070 = 100
+	;アナルフィストを封印
+	CFLAG:1071 = 100
+	;両穴フィストを封印
+	CFLAG:1072 = 100
+	;公衆肉便器プレイを封印
+	CFLAG:1074 = 100
+	;アナルセックスさせるを封印(相思相愛時に処女でなければ解放)
+	CFLAG:1099 = 100
+	;修正された臭いんでコメントアウト
+	;性器を擦り合うの挙動が怪しいので封印(相思相愛時に処女でなければ解放)
+	;CFLAG:1016 = 100
+	
+	;------------------------------------------------------------------------------------------------------
+	;MASTERの呼び名を代入(整合性の観点から会話文中でプレイヤーの定義した名前を表示させたくないので強制的に貴方or貴女にする)
+	;------------------------------------------------------------------------------------------------------
+	;プレイヤーが名前を設定している場合
+	IF NO:MASTER == 0 && CALLNAME:MASTER != "あなた"
+		;名前入力済みかつ男
+		IF TALENT:MASTER:オトコ
+			CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴方/%CSTR:(TARGET):呼び方リスト%
+		;名前入力済みかつふたなり
+		ELSEIF TALENT:MASTER:ふたなり
+			CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴女/%CSTR:(TARGET):呼び方リスト%
+		;名前入力済みかつそれ以外（女）
+		ELSE
+			CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴女/%CSTR:(TARGET):呼び方リスト%
+		ENDIF
+	;男の場合
+	ELSEIF TALENT:MASTER:オトコ
+		CSTR:(TARGET):呼び方リスト = あなた_貴方/%CSTR:(TARGET):呼び方リスト%
+	;ふたなりの場合
+	ELSEIF TALENT:MASTER:ふたなり
+		CSTR:(TARGET):呼び方リスト = あなた_貴女/%CSTR:(TARGET):呼び方リスト%
+	;それ以外（女）
+	ELSE
+		CSTR:(TARGET):呼び方リスト = あなた_貴女/%CSTR:(TARGET):呼び方リスト%
+	ENDIF
+	
+	[SKIPSTART]
+	;---------------------------------------------
+	;OPスキップ処理
+	;---------------------------------------------
+	PRINTFORMDW 　オープニングをスキップしますか？
+	PRINTL
+	PRINTFORMDL [0] はい
+	PRINTFORMDL [1] いいえ
+	CALL INPUTINTD(0, 1)
+	SELECTCASE RESULT
+		CASE 0
+			GOTO SKIP
+		CASE 1
+			PRINTL
+	ENDSELECT
+	[SKIPEND]
+	
+	;背景色を夜用に
+	SETBGCOLOR 0, 0, 20
+	;---------------------------------------------
+	;全画面カットイン用の一連の処理
+	;---------------------------------------------
+	;文字色リセット
+	RESETCOLOR
+	;フォントをセット
+	CALL SETFONT_K14
+	
+	LOCAL:2 = CURRENTREDRAW()
+	REDRAW 0
+	
+	;中央で表示
+	ALIGNMENT CENTER
+	;FULLCUTINを強制表示(TIMES, 1で一度のみ)
+	CALLF ANIME_CONFIG("TIMES", 1)
+	;全画面カットイン
+	CALL FULLCUTIN2(0, 17, "ある夜、魔法の森の一角にて――")
+	;左寄せに戻す
+	ALIGNMENT LEFT
+	CALL KOJO_COLOR(TARGET)
+	;フォントを戻す
+	CALL RESETFONT_K14
+	;コメントアウト
+	;CALL TWAIT1_K14
+	
+	;---------------------------------------------
+	;OP用エフェクト
+	;---------------------------------------------
+	FOR LOCAL:1, 0, 10
+		SIF LOCAL:1 > 1 && (GLOBAL:11 & 8) == 0
+			SETBGCOLOR 65536*13*LOCAL:1 + 256*13*LOCAL:1 + 13*LOCAL:1
+		TWAIT (350 - LOCAL:1*30), 1
+		CLEARLINE 1
+		PRINTL  
+		PRINTL  
+		PRINTL  
+		SIF LOCAL:1 > 5
+			PRINTL  
+	NEXT
+	;REDRAWを戻す
+	REDRAW LOCAL:2
+	;背景色を夜用に
+	SETBGCOLOR 0, 0, 20
+	;-------------------------------------------------------------------------------------
+	;各種テスト用エリア
+	;-------------------------------------------------------------------------------------
+	[SKIPSTART]
+	[SKIPEND]
+	
+	;---------------------------------------------
+	;OP開始
+	;---------------------------------------------
+	PRINTFORMW 「あら、目が覚めたみたいね」
+	PRINTL
+	;------------------------------------------------------------------------------------------------------
+	;キャラカットイン CSVで定義されたものが呼ばれる。
+	;(CSTR:ASSI:10, CSTR:ASSI:11, CSTR:ASSI:12)のような事も可能。CSVCSTRで任意のキャラのカットインを呼ぶ事も可能
+	;------------------------------------------------------------------------------------------------------
+	CALL CHARA_CUTIN(NO_14_二つ名, CSTR:登場名, CSTR:ローマ字)
+	PRINTL
+	PRINTFORMDW 声の方に振り向くと、そこには綺麗なブロンドの髪をした美しい少女の姿があった。
+	PRINTFORMDW そう、確かに美しいと言っていい。だが可憐な外見と裏腹な、ただならぬ何かを感じる。
+	PRINTFORMDW そして酷い頭痛もする。現在の状況が飲み込めない。
+	PRINTL
+	PRINTFORMW 「あまりじろじろ見ないで欲しいものね。汚らわしい…」
+	PRINTL
+	;------------------------------------------------------------------------------------------------------
+	;ＢＧＭカットイン(CSTR:13, CSTR:14でCSVで定義されたものを呼び、直接記述する事で任意の内容に変更する事も出来る)
+	;------------------------------------------------------------------------------------------------------
+	CALL BGM_CUTIN("Romantic Children", 1)
+	PRINTFORMDW 少女の物言いに%CALLNAME:MASTER%は一瞬カッとなったが、彼女のえもいわれぬ威圧感に圧倒され押し黙った。
+	PRINTFORMDW と、そこで%CALLNAME:MASTER%はふと我に帰った。自分がなぜ、どういった経緯で現在の状況にあるのか。
+	PRINTFORMDW そして、昨夜からの記憶がプッツリと途切れている事に気付く。
+	PRINTFORMDW 里の外れにある自宅に帰る途中までは思い出せるが、それ以降の記憶が無い…
+	PRINTL
+	PRINTFORMW 「ようやくその鈍い頭でも、物が考えられるようになったかしら…？」
+	PRINTL
+	PRINTFORMDW 今度こそ何か言い返そうとしたが、彼女の刺す様な視線に射すくめられ、言葉を紡ぐ事が出来ない。
+	PRINTFORMDW そして%CALLNAME:MASTER%はある事に気付く。そう、自分は彼女の事を知っている。彼女には見覚えがある。
+	PRINTFORMDW 里で人形芸を披露していた人形使い、魔法の森に住むといわれる魔法使い…
+	PRINTL
+	PRINTFORMW 「フフ… ようやく気が付いてもらえたようね」 
+	PRINTFORMW 「私アリスよ。アリス・マーガトロイド。七色の人形遣いと呼ばれる事もあるわ」
+	PRINTL
+	PRINTFORMDW %CALLNAME:MASTER%は彼女から感じていた違和感に得心すると共に、安堵に胸を撫で下ろした。
+	PRINTFORMDW そう、彼女は人ではないが人に害為す存在では無いと聞き及んでいる。
+	PRINTL
+	PRINTFORMW 「とりあえず、状況を説明させてもらうわね」
+	PRINTFORMDW アリスは語り始めた。
+	PRINTL
+	PRINTFORMW 「この森の外れで倒れてる%CNAME(MASTER, TARGET)%を、たまたま通りかかった私が見つけたの」
+	PRINTFORMW 「夜、人里の外に居るのが、どれだけ危険かは%CNAME(MASTER, TARGET)%も知ってるわよね…？」
+	PRINTFORMW 「見捨てる訳にはいかないし、かといって%CNAME(MASTER, TARGET)%の家を知ってる訳でもないから…」
+	PRINTFORMW 「とりあえず我が家に招待した、ってところなんだけど…」
+	PRINTL
+	PRINTFORMDW 態度にはやや難有りだが、噂通り人に害為す類の魔法使いではないらしい。
+	PRINTFORMDW ようやく事態が飲み込めた%CALLNAME:MASTER%は、助けてくれた礼をする為にアリスに向き直ろうとした。
+	PRINTFORMDW しかし動かせるのは頭のみで、体は言うことを聞かない…
+	PRINTL
+	PRINTFORMW 「ふふっ…無駄よ。今の%CNAME(MASTER, TARGET)%は自由に動く事はできないわ」
+	CALL BGM_CUTIN("the Grimoire of Alice", 1)
+	PRINTL
+	PRINTFORMDW %CALLNAME:MASTER%はアリスの言葉の意味を図りかね、暫し混乱した。
+	PRINTL
+	PRINTFORMW 「あら、愚鈍ね。分からないのかしら…？」
+	PRINTFORMW 「%CNAME(MASTER, TARGET)%はこの私の支配下にあるの。私の意志に背いて動く事は出来ない。気の毒だけど…」
+	PRINTL
+	PRINTFORMDW 途端にアリスの雰囲気は禍々しくなり、部屋の空気は一変した。
+	PRINTL 
+	PRINTFORMW 「最初は朝になったら帰してあげるつもりだったんだけど」
+	PRINTFORMW 「急に気が変わったのよ。自分でもよく分からないのだけど…」
+	PRINTFORMW 「気まぐれ？ 気の迷い？ ちょっとした好奇心？ うーん…」
+	PRINTFORMW 「心の揺らぎを言語化するのって、案外難しいわね…♪」
+	PRINTL
+	PRINTFORMDW アリスは楽しげに話しているが、その隠れもしない狂気に%CALLNAME:MASTER%は戦慄した…
+	PRINTL
+	PRINTFORMW 「まぁ、そんな事はどうだっていいわ」
+	PRINTFORMW 「そして%CNAME(MASTER, TARGET)%には言っておく事があるの…」
+	PRINTL
+	PRINTFORMDW アリスは暫し沈黙した後に口を開いた
+	PRINTL
+	;ＢＧＭカットイン 人形裁判　～ 人の形弄びし少女
+	CALL BGM_CUTIN(CSTR:曲１, 1)
+	PRINTFORMW 「%CNAME(MASTER, TARGET)%には私の人形になってもらうわ」
+	PRINTFORMW 「私の意志に忠実である限り、%CNAME(MASTER, TARGET)%の身の安全は保障する…」
+	PRINTFORMW 「ただ、%CNAME(MASTER, TARGET)%自身の為にも、変な考えは起こさない方がいいと思うわよ…？」
+	PRINTL
+	PRINTFORMDW そう語るアリスの姿はまさしく魔女そのものの禍々しさに満ち溢れている…
+	PRINTL
+	PRINTFORMW 「そうそう、逃げようとしても無駄だからね…？」
+	PRINTFORMW 「唯一の出入り口は、私の魔力に反応する以外の方法では開かないから」
+	PRINTFORMW 「それじゃ、今夜は遅いからゆっくり休むといいわ。朝になったらまた会いましょう…♪」
+	PRINTL
+	PRINTFORMDW 部屋を出て行くアリスの後姿を見送りながら、%CALLNAME:MASTER%は己の運命に絶望しすすり泣いた…
+	PRINTL
+	CALL TWAIT3_K14
+	;コメントアウト
+	;$SKIP
+	;OP経過判定(以降モード判定に用いる)
+	KFLAG:(FLAG:ご主人様):50 = 1
+	;RESULT値2を返してタイトルロゴを表示させない
+	RETURN 2
+ENDIF
+
+;ノーマルモード以外の場合はCNAMEに代入した上で本体の汎用OPに飛ばす
+;汎用OPに飛ばした際はこの箇所の戻り値に関わらずタイトルロゴが表示される
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;サンドボックスまたはエキストラモード時
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && FLAG:モード != 0
+	;---------------------------------------------
+	;CNAMEへの代入処理
+	;---------------------------------------------
+	IF NO:MASTER == 0 && CALLNAME:MASTER != "あなた"        ;プレイヤーが名前を設定している場合
+		;名前入力済みかつ男
+		IF TALENT:MASTER:オトコ
+			CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴方/%CSTR:(TARGET):呼び方リスト%
+		;名前入力済みかつふたなり
+		ELSEIF TALENT:MASTER:ふたなり
+			CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴女/%CSTR:(TARGET):呼び方リスト%
+		;名前入力済みかつそれ以外（女）
+		ELSE
+			CSTR:(TARGET):呼び方リスト = %NAME:MASTER%_貴女/%CSTR:(TARGET):呼び方リスト%
+		ENDIF
+	ELSEIF TALENT:MASTER:オトコ ;男の場合
+		CSTR:(TARGET):呼び方リスト = あなた_貴方/%CSTR:(TARGET):呼び方リスト%
+	ELSEIF TALENT:MASTER:ふたなり ;ふたなりの場合
+		CSTR:(TARGET):呼び方リスト = あなた_貴女/%CSTR:(TARGET):呼び方リスト%
+	ELSE ;それ以外（女）
+		CSTR:(TARGET):呼び方リスト = あなた_貴女/%CSTR:(TARGET):呼び方リスト%
+	ENDIF
+	;RETURN 0で汎用に投げる
+	RETURN 0
+ENDIF
+
+;========================================================================
+;EV2, エンディングイベント口上
+;========================================================================
+;・開始30日以降、日時の更新時にシステム側からEVENT2が呼び出される
+;・戻り値1が返ると本体側でFLAG:END達成が立ち、以降はシステム側から呼び出される事はない
+;・現状では戻り値1以外は同じ扱いなので0でも2でもED経過扱いにはならない
+;・という訳で、LOCAL = 2 RETURN LOCAL等では複数回EDが表示される事に
+;・LOCAL = 1 RETURN LOCALなり終端でRETURN 1してしまうのが望ましいです
+;・FIRSTEVENTを使っておくと万が一の保険にはなりますし、仕様変更にも強いです
+;-------------------------------------------------
+;カットインは結果的にアレンジが多目な結果に
+;ピンとこない人は曲名で検索すると幸せになれるかも知れない
+;Ending No. 2は勿忘草の花言葉を知ってるとより理解し易いかも
+;カットイン含めて俺得爆発してるけど異論は受け付けない
+;他の条件のEDは納得いくものができなかったので止めた
+;ED後にゲーム続行した場合に整合性のとれないED No.2とNo.4は強制的に終了
+;-------------------------------------------------
+;v1.60でED条件を改変。KFLAG:(FLAG:ご主人様):101の代入により分岐させる事に
+;何となく少し手入れしたい気分。ちょっと考えてみよう
+;-------------------------------------------------
+@KOJO_MS_EVENT_K14_2(ARG)
+;-------------------------------------------------
+;0617安定版だと別枠処理は不要なんでコメントアウト
+;0617安定版は本体側でED経過の判定はしていないんで初回判定関数等を通しておかないと何度も表示される
+;現行のtest版は本体側でフラグ立つようになっている
+;-------------------------------------------------
+;とりあえず保険の意味でFIRSTEVENTを噛ませておく。何があっても確実だし
+;-------------------------------------------------
+;V1.70で呼び出しをMSで決めうち
+;-------------------------------------------------
+
+;最終的には特定のイベントをトリガーにインクリメントしてEDへ、という感じにもっていきたい感
+;CFLAG:依存度による他のED分岐やら考えはするけど、手間的にもなかなかおいつかなくてもどかしい現状
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;NORMALエンディング
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):100 == 1 && FLAG:オートモード表示設定 == 0 && FIRSTEVENT(0)
+	CALL ENDING_K14
+	;エンディング経過フラグ
+	KFLAG:(FLAG:ご主人様):102 = 1
+	;戻り値は関数内で分岐毎に決めうちしてRETURN RESULTの方がいいのかも
+	RETURN 1
+ENDIF
+
+;コメントアウト
+;=================================================
+;@KOJO_EVENT_K14_11_ENDING
+;==================================================
+;IF KFLAG:(FLAG:ご主人様):100 == 1 && FIRSTTIME(0)
+;	CALL ENDING_K14
+;	RETURN 1
+;ENDIF
+
+;-------------------------------------------------
+;エンディング関数
+;-------------------------------------------------
+@ENDING_K14
+#LOCALSIZE 1
+CALL TWAIT3_K14
+PRINTFORMW 「ねぇ、ちょっと来てもらえないかしら」
+CALL BGM_CUTIN("With Tears In Your Eyes")
+PRINTL
+PRINTFORMDW その言った時のアリスはいつもと少し様子が違っていた。
+PRINTFORMDW 言われるままについていくとどうやら地下室へ向かうようだった。
+PRINTFORMDW そこはかつては%CALLNAME:MASTER%が監禁されていた部屋。だが今ではすっかり様変わりしていた。
+PRINTL
+PRINTFORMDW 部屋の中心には魔方陣らしきものが描かれていた。 
+PRINTFORMDW そこには、YEVH,yod he vau heの文字。陣の中心にはen to panと描かれている。
+PRINTL
+PRINTFORMDW en to pan（すべてはひとつなり） 三つの言葉と七つの文字…
+PRINTFORMDW 数秘術的に言うと3+7=10となりそれは（あらゆるもの）を意味し1へと還元される…
+PRINTFORMDW 以前アリスに教えられた言葉の意味を少しずつ思い出す。 
+PRINTL
+PRINTFORMDW yod he vau heは確か四大元素を表すものだ。それがすべてはひとつを意味する言葉を経て
+PRINTFORMDW 1という数字に集約されると… そう、数秘術は数字が一桁になるまで計算されるもの。
+PRINTFORMDW 三つの言葉と七つの文字で構成されるen to panは最終的には1になる。
+PRINTL
+PRINTFORMDW 1は最初の数であり足し算によって奇数を偶数に変え、偶数を奇数に変える。
+PRINTFORMDW そして1に1をかけても割っても1という数字は変わらない。
+PRINTFORMDW それが表すのは支配、不屈、創造、唯一なるものであり、また全ての根源を表すものでもある。
+PRINTL
+PRINTFORMDW 一方アリスは未だ言葉を発せず、こちらに背を向けて立ち尽くしている。
+PRINTFORMDW 彼女の真意は依然分からないが、これがただならぬ状況なのは理解できた…
+PRINTL
+PRINTFORMW 「最初に１つ言わせて」
+PRINTFORMDW アリスが意を決したように振り向いて言った。
+PRINTL
+CALL BGM_CUTIN("不思議の国のアリス - Piano Arrangement")
+PRINTFORMW 「愛してるわ。今までも、そしてこれからも…」
+PRINTFORMW 「私が愛するのは%CNAME(MASTER, TARGET)%が最初で最後。たとえどんな事になっても永遠に愛し続けるわ」
+PRINTL
+PRINTFORMDW まるで今生の別れであるかのようなアリスの言葉に、%CALLNAME:MASTER%は戸惑いを覚えた…
+PRINTL
+PRINTFORMW 「魔女なんて本来孤独なもの。私もそれは理解してたし、そんな境遇を受け入れてもいたわ」
+PRINTFORMW 「でも私は%CNAME(MASTER, TARGET)%と出会ってしまった。愛する喜び、愛される喜びを知ってしまった…」
+PRINTFORMW 「そして%CNAME(MASTER, TARGET)%は人間。とても脆弱でその生はあまりにも短いわ」
+PRINTL
+PRINTFORMW 「最初はこのままでも良いと思ってた。二人で年月を重ねていくのも悪くないって」
+PRINTFORMW 「でも、%CNAME(MASTER, TARGET)%は朽ちていってしまう。いずれ私を残して去っていってしまう…」
+PRINTFORMW 「私怖いの！ 苦しいの！ もう%CNAME(MASTER, TARGET)%無しで生きていくなんて考えられないの！」
+PRINTL
+PRINTFORMW 「体を重ねている時も不安だった。満たされると同時に心がズキズキ痛くって…」
+PRINTFORMW 「わたし、もう……こんなの……耐えられないっ！」
+PRINTL
+PRINTFORMDW そう言ってアリスは泣き崩れた。嗚咽を漏らし肩を震わせ泣き続けた…
+PRINTFORMDW 肩を抱き落ち着かせようとするが、掛けるべき言葉は見つからなかった。
+PRINTL
+PRINTFORMW 「ごめんなさい。私、%CNAME(MASTER, TARGET)%に迷惑かけてばかりね…」
+PRINTFORMDW アリスは自嘲気味に言うと、何かを決意したような表情に変わった。
+PRINTL
+PRINTFORMW 「ねぇ、これを見て。%CNAME(MASTER, TARGET)%覚えてるかしら…？」
+PRINTFORMDW そう言ってアリスは二体の人形を取り出した。
+PRINTL
+PRINTFORMDW それは以前、アリスが人形づくりをしている部屋を覗いた時に見たものだった
+PRINTFORMDW ついに完成したのだ。そして最高傑作にすると言っていた言葉に違わぬ見事な出来栄えだ。
+PRINTFORMDW 人形はアリス自身と%CALLNAME:MASTER%を模して作られているようだった。
+PRINTFORMDW ただ、それが人形というにはあまりに精緻で生々しいのが気にかかる…
+PRINTL
+PRINTFORMW 「気がついたみたいね… そう、これは私達を可能な限り再現してつくってある」
+PRINTFORMW 「そして単なる人形じゃない。言うなれば、そう…容れ物といったところかしら…？」
+PRINTL
+PRINTFORMDW 咄嗟には分からなかった。何かを収納できるような感じには見えない。
+PRINTFORMDW それに人形に一体何を容れるというのだろう。
+PRINTL
+PRINTFORMW 「魂よ……そう、これは魂の容れ物……」
+PRINTL
+PRINTFORMW 「これは生きとし生けるものの魂を定着させる事が出来るようつくってあるの…」
+PRINTFORMW 「魂を封じると結界が展開して周囲から保護されるわ。多少の事ではびくともしない程度に」
+PRINTFORMW 「そして元の肉体は本来の存在としての形を留めなくなる…」
+PRINTL
+PRINTFORMW 「以降は魂の映し出す影とでも言うべきものになる。それは霊的身体と呼ばれる事もあるわ」
+PRINTFORMW 「朽ちる事なく本来の自然的身体のもつあらゆる枷から開放される」
+PRINTFORMW 「それはいつまでも自分本来のイメージを具現化したものでありつづけるわ」
+PRINTL
+PRINTFORMW 「通常の意味ではほぼ永遠の存在… でも、魂が滅びればその影にすぎない霊的身体も消滅するの」
+PRINTFORMW 「実際に魂というものが最終的にどうなるかなんて、誰にも分からないのだけど…」
+PRINTFORMW 「永遠不滅ではなくいずれ朽ちて消滅するという説もあるのは確かなの」
+PRINTFORMW 「今の私にもそれ以上の事は分からないわ…」
+PRINTL
+PRINTFORMW 「そして%CNAME(MASTER, TARGET)%には選んで欲しいの」
+PRINTFORMW 「私と共に永遠にありつづけるか否かを…」
+PRINTL
+PRINTFORMW 「%CNAME(MASTER, TARGET)%だけに犠牲を強いるつもりはないわ。その時は私も一緒よ」
+PRINTFORMW 「限りなく不老不死に近い魔女がそうする意味が薄いのは認めるわ」
+PRINTFORMW 「それに自身に術をかけるのは、不確定要素も多いしリスクがあるのも確かだけど…」
+PRINTFORMW 「それでも覚悟はできてるわ。これは私なりのケジメなの」
+PRINTL
+PRINTFORMW 「でも最終的には%CNAME(MASTER, TARGET)%次第よ。私は%CNAME(MASTER, TARGET)%がどんな選択をしても受け入れる」
+PRINTFORMW 「それに%CNAME(MASTER, TARGET)%が本心から望まない限りこの術は成り立たないわ」
+PRINTFORMW 「ただ、その選択は今でないと駄目なの…」
+PRINTL
+PRINTFORMW 「今のままの状態が続けば、きっと私は壊れてしまう…」
+PRINTFORMW 「そうなっては遅いし、私のそんな姿……%CNAME(MASTER, TARGET)%にだけは見せたくないの……」
+PRINTL
+PRINTFORMW 「ねぇ、答えを聞かせてもらう前にお礼を言わせて」
+PRINTFORMW 「私、幸せだった。%CNAME(MASTER, TARGET)%と過ごした日々の事はずっと忘れないわ。ありがとう……」
+PRINTFORMW 「今の正直な気持ちよ。結果がどうあれ私のこの思いが変わらない事だけは信じて欲しいの…」
+PRINTL
+PRINTFORMW 「私の覚悟はできてる。お願い、正直に答えて」
+PRINTFORMW 「%CNAME(MASTER, TARGET)%はこんな私でも受け入れてくれる？」
+PRINTW
+PRINTL
+IF KFLAG:(FLAG:ご主人様):101 == 1
+	;相思相愛エンド1 Ｂパート 選択で分岐	Tell me, tell me your final wish?
+	CALL HTMLPRINTDL(@"%HTMLBUTTON("[0] アリスと共に永遠を生きる", "0", "Ending, 0001へ")%")
+	CALL HTMLPRINTDL(@"%HTMLBUTTON("[1] 限りある命でもいい。自分は人間でいたい", "1", "Ending, 0002へ")%")
+	CALL INPUTINTD(0, 1)
+	SELECTCASE RESULT
+		;エンディング1
+		CASE 0
+			CALL TWAIT3_K14
+			PRINTFORMDW 家の中を走る騒がしい音が聞こえる。アリスだろうか…？
+			CALL BGM_CUTIN("raison d'etre", 1)
+			PRINTFORMDW しかしアリスが家の中を走り回る姿は想像しずらいし、良く聴いてみれば足音も違う。
+			PRINTL
+			PRINTFORMDW 人形だろうか？ だが基本的に騒がしい事を嫌うアリスが、自分で操る人形を
+			PRINTFORMDW 態々走らせる理由が思いつかない。そうしてるうちにも、音は次第にこちらに近づいてくる。
+			PRINTL
+			PRINTFORMDW ドアが開く。しかし足音の主らしき姿は見えない、と思った刹那、足元に走り寄る”何か”に気付く。
+			PRINTFORMDW 驚きと若干の恐怖に身を竦める。そしてその”何か”は胸元に飛び込んできた！
+			PRINTFORMDW 瞬間、思わず目を瞑ってしまう。だが、どうやらこちらに対する害意はないらしい。
+			PRINTFORMDW 意を決して目を開けてみる。するとそこにいたのは上海だった…
+			PRINTL
+			PRINTFORMDW どうやらアリスの悪戯だったようだと、思わずほっと胸を撫で下ろす。
+			PRINTFORMDW すると当のアリスが悪戯っぽい笑みを浮かべながら部屋に入ってきた。
+			PRINTL
+			PRINTFORMW 「ごめんなさい。驚かせちゃったかしら…？」
+			PRINTL
+			PRINTFORMDW そんな事を言いつつも、してやったりという雰囲気は隠そうともしない。
+			PRINTFORMDW やられっぱなしでは面白くない。悔しいので少し憤慨したふりをしてみせる。
+			PRINTL
+			PRINTFORMW 「うふふっ… そんな怒った振りをしても駄目よ？ ちゃんと分かってるんだから」
+			PRINTL
+			PRINTFORMDW 確かにアリスの言う通りだった…
+			PRINTFORMDW そう…魂を人形に移し変えたあの日……二人の魂は一部溶けあってしまったのであった。
+			PRINTFORMDW 以来、物言わずとも互いの気持ちが分かるようになっていた。
+			PRINTL
+			PRINTFORMDW とはいえ噂に名高い覚り妖怪のように、相手の心の中がすべて読み取れる訳ではない。
+			PRINTFORMDW 必要以上の事は分からず、しかし相手の微妙な心の機微は感じ取れる…
+			PRINTFORMDW そんな距離感は中々心地よいものであり、それはアリスにとっても同様であるらしかった。
+			PRINTL
+			PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%はまだ気づかないのかしら…？」
+			PRINTFORMW 「上海はちょっとおかんむりみたいよ」
+			PRINTL
+			PRINTFORMDW アリスの言葉に促され上海の方を見やる。確かに少し怒ってるようだ。
+			PRINTFORMDW だがどうも様子がおかしい。アリスの操術は見事で人形の表情を操作する事など
+			PRINTFORMDW いとも簡単に、それも自然にやってのける。
+			PRINTFORMDW しかし今の上海からは、それだけでは説明できない何かが感じられた。
+			PRINTL
+			PRINTFORMW 「ふふっ、鈍い%CNAME(MASTER, TARGET)%でもようやく気がついたみたいね」
+			PRINTFORMDW 久しぶりに”鈍い”と言われた気がする。否定できないのが悔しいが正直ちょっとへこむ。
+			PRINTL
+			PRINTFORMW 「やだ、そんなに落ち込まないでよ。軽い冗談じゃない」
+			PRINTFORMW 「そんな事より、上海をよく見てあげて頂戴」
+			PRINTFORMW 「私が動かしてる訳じゃないのよ。今の上海は自律しているの」
+			PRINTL
+			PRINTFORMDW アリスがそういうと上海は腰に両手を当て、ちょっと得意気な表情をしてみせた。
+			PRINTFORMDW 手を差し出してみると満面の笑みでじゃれついてくる。
+			PRINTFORMDW ちょっと指でつついてみる。少し迷惑そうな様子ながらも楽しそうだ。
+			PRINTFORMDW さらに指でつついてみる。どうやら怒らせてしまったようで、髪を引っ張られた…
+			PRINTL
+			PRINTFORMW 「こら、あまり虐めちゃ駄目よ」
+			PRINTFORMDW アリスに釘を刺された。上海はアリスの後ろから落ち誇ったような表情でこちらを見ている…
+			PRINTL
+			PRINTFORMDW それにしても感情の表現が実に豊かだ。
+			PRINTFORMDW なるほど、確かに今の上海が自律しているのは間違いないらしい。
+			PRINTFORMDW そう言えば自律人形をつくるのが目標だと、以前アリスは言っていた。
+			PRINTFORMDW となると、ついに念願かなったと言う事なのだろうか？
+			PRINTL
+			PRINTFORMW 「この子の自律はまだ完全じゃないのよ」 
+			PRINTFORMW 「まだ改善の余地が沢山あるの。おそらく持って今夜まで、ってところかしら」
+			PRINTL
+			PRINTFORMW 「いずれ少しずつ自律していられる時間を延ばせるようになると思うけど」
+			PRINTFORMW 「今は一日程度が限界なの。ごめんね上海」
+			PRINTL
+			PRINTFORMDW アリスの言葉に上海は元気良く頷いた。
+			PRINTFORMDW 制限付きの自律とはいえ、今は自由に動けるのが嬉しくてたまらない様子だった。
+			PRINTL
+			PRINTFORMDW アリスと上海のそんなやりとりを見て微笑ましく思いつつ、幸せをかみ締める。
+			PRINTL
+			PRINTFORMDW あの時、自分のとった選択は間違っていなかったように思える。
+			PRINTFORMDW 結果、自分とアリスはもはや人でも妖でもない存在になったけれども。
+			PRINTL
+			PRINTFORMDW これから先、どれだけの年月を重ねる事になるのか…
+			PRINTFORMDW いずれ永遠ともいえる生に倦むことになるのか…
+			PRINTFORMDW 何の不安もないと言えば嘘になるのは確かだ。
+			PRINTL
+			PRINTFORMDW だが今は、小さな出来事にも幸せを感じる事の出来る、この日々がたまらなく愛おしい。
+			PRINTFORMDW 願わくば、ずっとこのままであって欲しい。
+			PRINTFORMDW まるで母子のようなアリスと上海の姿を見ながら、そう切に願った。
+			PRINTL
+			PRINTFORMW 「ぼんやりしてるとこ悪いけど、そろそろ食事の時間よ」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%はテーブルの支度をお願い。上海は私を手伝って頂戴」
+			PRINTFORMDW ふいに現実に引き戻される。離れ際にアリスが笑顔で振り向いて言った。
+			PRINTFORMW 「今日の夕食はハナマルハンバーグよ♪」
+			;-------------------------------------
+			;タイトル:人形少女言葉無し
+			;原曲:プラスチックマインド
+			;サークル:Minstrel
+			;ヴォーカル:3L
+			;アルバム:夢と幻と泡と影
+			;-------------------------------------
+			CALL BGM_CUTIN("人形少女言葉無し", 1)
+			CALL TWAIT3_K14
+			;フォントをセット
+			CALL SETFONT_K14
+			
+			;フェードアウトx3		ここは"FORCE"でもいいかも知れないｗ
+			CALL FADE(40, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　いつしか魔法の森に住む人形遣いの話は伝説となっていった…",)
+			CLEARLINE 1
+			CALL FADE(35, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　　　　魔女のつれあいと共に多くの人形達に囲まれ")
+			CLEARLINE 1
+			CALL FADE(50, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　今もそこで静かに、そして幸せに暮らしているという……")
+			CLEARLINE 1
+			
+			PRINTL
+			PRINTL
+			;デフォルトカラーにする
+			RESETCOLOR
+			;太字にする
+			FONTSTYLE 1
+			CUSTOMDRAWLINE -=
+			;エンディングタイトル
+			CALL SCROLLTEXT("　　　　　　　【Ending No. 0001】(七色の人形遣い）", 2, 6, 117, 0, 1)
+			;フォントを戻す
+			CALL RESETFONT_K14
+			PRINTL
+			PRINTL
+			PRINTL
+			;ゲームオーバー(選択肢x3)
+			CALL GAME_OVER_K14
+		;エンディング2	 I can't forget
+		CASE 1
+			CALL TWAIT3_K14
+			PRINTFORMDW 目を覚ました時はまだ深夜だった。酷い頭痛がする。
+			PRINTFORMDW 何か夢を見ていたような気がする。幸せな夢を。でもはっきりとは思い出せない。
+			PRINTFORMDW ふいに人と恋しさを覚え部屋を見渡すが、元々天涯孤の身。誰かがいるはずもない。
+			PRINTL
+			PRINTFORMDW 夜風に誘われ、ふと窓の外を見る。
+			PRINTFORMDW そこには月明かりに照らされ、辺り一面に咲き乱れる青い勿忘草の姿があった。
+			PRINTFORMDW 自分で植えた覚えはなく、少々違和感を覚えたが頭痛のせいもありそのまま眠る事にする。
+			PRINTL
+			PRINTFORMDW 翌朝家の外に出ると勿忘草の姿が目に入った。どうやら夢ではなかったらしい。
+			PRINTFORMDW 本来花を愛でる趣味はなかったが、この勿忘草にはなぜか愛おしさを感じる。
+			PRINTFORMDW そしてとても大切なもののような気がする。
+			PRINTL
+			PRINTFORMDW その日以来、毎日欠かさず手入れをするよになった。
+			PRINTFORMDW 毎年春先には美しく花を咲かせ、その様は里でも評判になっていった。
+			PRINTFORMDW 種が喘息に効くという事で医者に種を分け与える事も度々あった。
+			PRINTL
+			PRINTFORMDW そんな日々の中でもある事に気がついていた。
+			PRINTFORMDW 自分の心には何かが欠けている。とても大切な事を忘れている気がする。
+			PRINTFORMDW だが、それが何であるかについてはどうしても思い出せなかった…
+			PRINTL
+			PRINTFORMDW そういえば、以前は里で度々人形劇を披露していた人物を見かけなくなった気がする。
+			PRINTFORMDW いや、この場合人物というより魔女といった方が正確だろうか。
+			PRINTFORMDW 魔法の森に住む魔女であるという噂を聞いたことがある。
+			PRINTL
+			PRINTFORMDW 魔女なんて気まぐれなものなのだろう。人間を相手にするのに飽きたか、何処かへ去ったのか。
+			PRINTFORMDW 里の幾人かはその魔女を何度か見かけたという話もあったが、いずれにせよ自分には関係のない事。
+			PRINTFORMDW 所詮は日々の生活の中で埋没してしまう程度の話である。だが何かが引っかかるのも確かだ。
+			PRINTL
+			PRINTFORMDW 時々そんな自分の心に折り合いをつけるのが難しくなる。大切な何かを忘れているのに
+			PRINTFORMDW それを思い出せないもどかしさが常についてまわった。しかしそういったものに拘泥して
+			PRINTFORMDW 生きていく訳にもいかず、努めて忘れようとした。
+			PRINTL
+			PRINTFORMDW そして長い年月が過ぎ去っていった……
+			CALL TWAIT3_K14
+			PRINTFORMDW 年老いた%CALLNAME:MASTER%は今や死の床にあった…
+			PRINTFORMDW 生涯孤独で子をなす事もなく、一人ひっそりと世を去ろうとしていた。
+			PRINTFORMDW 最後を看取ってくれる相手がいないのが、まったく寂しくないと言えば嘘になるが
+			PRINTFORMDW こんな終わり方も自分らしいし、思えばそう悪い人生でもなかった気がする。
+			PRINTL
+			PRINTFORMDW 薄れゆく意識、そして静かに目を閉じる…
+			PRINTFORMDW その瞬間、顔に温かな何かの感触。どうやら人の掌のようだ。
+			PRINTL
+			PRINTFORMDW 最後の力を振り絞り目を開けると、朧気な人影が見える。
+			PRINTFORMDW 女、若い女だ。その表情は悲しげな中にも慈愛のこもった何かを感じさせる。
+			PRINTFORMDW なぜか酷く懐かしい感じがする。自分にとって大切な相手のような気がする。
+			PRINTFORMDW しかしその理由は分からない…
+			PRINTL
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%はもう十分頑張ったわ…」
+			PRINTFORMW 「いいのよ…何も心配しないで。ゆっくり休んで……」
+			PRINTL
+			PRINTFORMDW なぜかしらその言葉に安堵をおぼえ静かに目を閉じた…
+			PRINTFORMDW そしてその目は二度と開く事はなかった。
+			PRINTL
+			;まぁなんというか、凋叶棕とめらみさんの組み合わせは好き過ぎる
+			;-------------------------------------
+			;タイトル：ヒカリ
+			;原曲：the Grimoire of Alice
+			;サークル：凋叶棕
+			;ヴォーカル：めらみぽっぷ
+			;アルバム：綴
+			;-------------------------------------
+			CALL BGM_CUTIN("ヒカリ", 1)
+			PRINTFORMW 「愛してた……何よりも……誰よりも……」
+			PRINTFORMW 「さようなら……私の愛しい人…」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%の事……忘れない……ずっと…いつまでも…」
+			PRINTL
+			PRINTFORMDW 家の外では勿忘草が静かに風に揺れていた。
+			PRINTFORMDW それは手入れをする者がいなくなった後も、毎年美しい花を咲かせたという。
+			PRINTL
+			PRINTL
+			PRINTW
+			PRINTFORMDW その後、七色の人形遣いの姿を見たものは誰もいない…
+			PRINTL
+			CALL TWAIT3_K14
+			PRINTL
+			;フォントをセット
+			CALL SETFONT_K14
+			
+			;ALIGNMENT CENTERでいいかも知れない
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　　　　ヒカリがありますように")
+			CLEARLINE 1
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　　　　ヒカリとありますように")
+			CLEARLINE 1
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　　　　ヒカリでありますように")
+			CLEARLINE 1
+			CALL FADE(45, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　　　　やがてヒカリになりますように…")
+			CLEARLINE 1
+			
+			PRINTL
+			PRINTL
+			;デフォルトカラーにする
+			RESETCOLOR
+			;太字にする
+			FONTSTYLE 1
+			CUSTOMDRAWLINE -=
+			;エンディングタイトル
+			CALL SCROLLTEXT("　　　　　　　【Ending No. 0002】（夢のあと）", 2, 6, 117, 0, 1)
+			;フォントを戻す
+			CALL RESETFONT_K14
+			PRINTL
+			PRINTL
+			PRINTL
+			;ゲームオーバー2で終了させる
+			CALL GAME_OVER2_K14
+	ENDSELECT
+;KFLAG:(FLAG:ご主人様):101に代入が行われていない場合
+ELSE
+	;相思相愛エンド2 Ｂパート 選択で分岐
+	CALL HTMLPRINTDL(@"%HTMLBUTTON("[0] アリスと共に永遠を生きる", "0", "Ending, 0003へ")%")
+	CALL HTMLPRINTDL(@"%HTMLBUTTON("[1] 限りある命でもいい。自分は人間でいたい", "1", "Ending, 0004へ")%")
+	CALL INPUTINTD(0, 1)
+	SELECTCASE RESULT
+		;エンディング3
+		CASE 0
+			CALL TWAIT3_K14
+			PRINTFORMDW その部屋には沢山の人形があった。かつては生き生きと動いていた人形達。
+			PRINTFORMDW しかし、今はただの人形として、時の流れの中に静かにその身を置くだけであった。
+			PRINTL
+			PRINTFORMDW 頃合をみてアリスを起こしてやる。
+			PRINTFORMDW その顔に表情はない。開け放たれた瞳はこちらを見る事もなく、ただぼんやりと中空を見つめるのみ。
+			PRINTFORMDW 言葉を発する事も無く、自ら動く事もない。今の彼女はそう、まさしく人形そのものだった…
+			PRINTL
+			PRINTFORMDW あの日以来、すべてが変わってしまっていた。
+			PRINTFORMDW アリスと共に永遠に生きる事を選択したあの日から…
+			PRINTL
+			PRINTFORMDW もはや自分は人ではなかった。
+			PRINTFORMDW 人間本来の肉体の制約から解き放たれ、今では食事も睡眠も必要としない体になっていた。
+			PRINTFORMDW それらの事も望めば可能ではあった。しかし、この状況で食事や睡眠をとる気分にはなれず
+			PRINTFORMDW 今は、それらの事柄に煩わされることのない、この体が有難かった。
+			PRINTL
+			PRINTFORMDW アリスを窓のそばまで運び、椅子に深く座らせる。髪を梳かし服を整えてやる。
+			PRINTFORMDW 朝には起こして、こうするのがいつもの日課だった。
+			PRINTFORMDW そして夜にはベッドに運び目を閉じさせ寝かしつける。実際に寝ているとは思えなかったが…
+			PRINTL
+			PRINTFORMDW 一見無意味とも思える、これら一連の事を毎日繰り返す。
+			PRINTFORMDW だがたとえ無意味であろうと、今は酷く大切な事のように思えるのだ。
+			PRINTL
+			PRINTFORMDW 或いはある種の現実逃避なのかも知れないと思う事もある。
+			PRINTFORMDW そしてその度に、そうした思いを振り払う。そんな毎日の繰り返しだった。
+			PRINTL
+			PRINTFORMDW 空いた時間はすべて解決策を見つける為に費やした。
+			PRINTFORMDW 手掛かりになりそうな文献を読み漁り、各地の魔術に造詣が深い者達を訪ね歩いた。
+			PRINTFORMDW それでも解決の糸口と呼べるようなものにさえ、中々辿り着く事は出来なかった。
+			PRINTL
+			PRINTFORMDW ただ、その過程で分かってきた事もある。
+			PRINTFORMDW アリスの行った術が錬金術に深く関わりのあるものであるらしい事。
+			PRINTFORMDW そして彼女の現在の状態は術の反動によるものであるらしかった。
+			PRINTFORMDW あるものはそれをマナの反動と呼んでいたが、場合によっては術者が反動により消し飛ぶ
+			PRINTFORMDW 事も有り得るという話だった。
+			PRINTL
+			PRINTFORMDW 術自体かなり危険なものであり、アリスにとっても魔術師としての能力の限界に近い
+			PRINTFORMDW ものだったという事も分かってきた。
+			PRINTFORMDW そう、今ならはっきり分かる。アリスがあの時どれだけ悲壮な覚悟で事に臨んでいたか。
+			PRINTFORMDW そして募る焦燥感に、次第に正気を保つのが難しくなってきている自分を奮い立たせる。
+			PRINTL
+			PRINTFORMDW それでも解決の糸口さえ掴めぬまま時は過ぎていく…
+			PRINTL
+			CALL BGM_CUTIN("世界の果て　～ Worlds End", 1)
+			PRINTFORMDW そんなある日の事、家を訪ねてきた者がいた。頭からフードを被りその表情は伺えず
+			PRINTFORMDW その赤色の服はローブのようにもドレスのようにも見え、どうにも胡散臭い。
+			PRINTL
+			PRINTFORMDW 聞けば何処かから噂を聞きつけたのか、アリスを診てやろうと言う事らしい。
+			PRINTFORMDW しかしどう考えても、こんな胡散臭い祈祷師紛いの者を家に入れる事は出来ない。
+			PRINTFORMDW 仮に診せたところで、何もできないであろう事は容易に想像できる。
+			PRINTFORMDW どうせ結果如何に関わらず、高額な報酬を要求するつもりなのだろう。
+			PRINTL
+			PRINTFORMDW しかし必要ない旨を伝え、帰らせようとするが中々引き下がらない。
+			PRINTFORMDW 面倒になって最後は半ば強引に押し返しドアを閉めた。
+			PRINTFORMDW まったく迷惑この上ない。訳の分からないものに関わってる暇はないのだ。
+			PRINTL
+			PRINTFORMDW しばらく経ち、今日も手掛かりを探す為に家を出る。
+			PRINTFORMDW 先程の事もあり、いつもより厳重に戸締りをした。
+			PRINTFORMDW 去り際に振り返り窓辺を見やるとアリスの姿が見えた。
+			PRINTFORMDW こちらを見る事もなく手を振る事もない。ただ静かにそこに座っているだけであった…
+			CALL TWAIT1_K14
+			PRINTFORMDW 結局この日も大した収穫はなく、手に入ったのは微かな情報の断片のみだった。
+			PRINTFORMDW それでも何もないよりは良い、そう自分を納得させ家路を急いだ。
+			PRINTL
+			PRINTFORMDW 森を抜け家が見える場所まで来たその時、説明のつかない違和感を感じた。
+			PRINTFORMDW 自分でも良く分からない。しかしどうも嫌な予感がする…
+			PRINTL
+			PRINTFORMDW 不安に駆られ家まで全力で走る。心臓は早鐘を打ち、物凄い疲労感に襲われる。
+			PRINTFORMDW 本来それらの感覚から無縁であるはずの体だが、今は確かに感じとれる。
+			PRINTFORMDW 家が近づいてきた。ふと窓をみるとそこにあるはずのアリスの姿がない。
+			PRINTFORMDW さらに玄関のドアも開け放たれている。
+			PRINTL
+			PRINTFORMDW 最悪の事態が頭をよぎると共に視界が霞んでくる…
+			PRINTFORMDW そして不審な人物の来訪があった日に家を留守にした自分を呪った。
+			PRINTL
+			PRINTFORMDW 恐怖と自責の念に半ば気が狂いそうになりながら、死に物狂いで走る。
+			PRINTFORMDW ようやく到着し、息せき切って家に飛び込む。家の中は静まり返り何の気配も感じ取れない。
+			PRINTFORMDW 全身の力が抜けていく。もはや立っているも出来ず、その場にへたり込んだ……
+			PRINTFORMDW その時、急に背後に気配を感じた。慌てて振り返ると両手を腰に仁王立ちした人影が目に入る。
+			PRINTL
+			PRINTFORMW 「私を一人にして何処ほっつき歩いてたのよ！」
+			PRINTFORMW 「まったく……本当に使えないわね！」
+			;-------------------------------------
+			;タイトル:Can't release
+			;原曲:不思議の国のアリス
+			;サークル:Alice Music
+			;ヴォーカル:calo
+			;アルバム:ありすほりっく
+			;-------------------------------------
+			CALL BGM_CUTIN("Can't release", 1)
+			PRINTL
+			PRINTFORMDW 罵倒の言葉を投げかけながら優しくほほえむその姿…
+			PRINTFORMDW 今、自分が在るのはすべてこの瞬間の為だった。そう、確かに思えた……
+			CALL TWAIT3_K14
+			CALL FPRINTW("『あらあら、なんか凄い場面を見ちゃったみたい♪』", COLOR2_K14("RED"))
+			CALL FPRINTW("『って…ちょ、ちょっと待って。もう少し見させて、ね？ 夢子ちゃ～ん』", COLOR2_K14("RED"))
+			PRINTL
+			PRINTL
+			;デフォルトカラーにする
+			RESETCOLOR
+			;太字にする
+			FONTSTYLE 1
+			CUSTOMDRAWLINE -=
+			;エンディングタイトル
+			CALL SCROLLTEXT("　　　　　　　Ending No.0003】（在るべき理由）", 2, 6, 117, 0, 1)
+			;フォントを戻す
+			CALL RESETFONT_K14
+			PRINTL
+			PRINTL
+			PRINTL
+			;ゲームオーバー(選択肢x3)
+			CALL GAME_OVER_K14
+		;エンディング4
+		CASE 1
+			CALL TWAIT3_K14
+			PRINTFORMDW 平凡な日々、変わらぬ毎日、とはいえ不満がある訳ではない。
+			PRINTFORMDW 所詮人生なんてそんなものの積み重ね。贅沢を言ってはきりがない。
+			PRINTFORMDW ただ、そんな日々の中でも、ある事が気になっていた。
+			PRINTFORMDW 自分の心には何かが欠けている。とても大切な事を忘れている気がする。
+			PRINTFORMDW だが、それが何であるかについてはどうしても思い出せなかった…
+			PRINTL
+			PRINTFORMDW そんな時ある噂を耳にした。
+			PRINTFORMDW 里で人形劇を披露していた人形使いがこのところ姿を見せていないらしい。
+			PRINTFORMDW 心待ちにしていた子供も大勢いたようで、皆一様に酷く落胆しているという事だった。
+			PRINTL
+			PRINTFORMDW その話を聞いたとき、心の中に何かが引っかかった。
+			PRINTFORMDW まず人形劇も人形遣いも、自分にはまったく記憶がなかった。
+			PRINTFORMDW しかし里の他の者達は人形遣いが人形劇を披露していた事を当然の事のように話している。
+			PRINTFORMDW 皆の話しを聞く限り、どうやら知らないのは自分ひとりであるようだった。
+			PRINTL
+			PRINTFORMDW 欠けた心、欠落した記憶、どうやらただの偶然ではないように思える。
+			PRINTFORMDW そして全ての鍵を握るのは、人形遣いその人である可能性が高い。
+			PRINTL
+			PRINTFORMDW 調べてみると魔法の森に住んでいるらしい事はわかったが、それ以上の事を知る者は
+			PRINTFORMDW 誰もいなかった。そしてこれは良い知らせでもあり、悪い知らせでもあった。
+			PRINTL
+			PRINTFORMDW まず魔法の森自体が瘴気に満ち溢れており、人間が長時間活動するのは難しい。
+			PRINTFORMDW さらにその広大な面積に加え、目印となるものがなく慣れない者が迷う事は必至である。
+			PRINTFORMDW 日没以降の危険は言わずもがな、しかしそれでもやるしかなかった。
+			PRINTL
+			PRINTFORMDW 手始めに周辺部の探索から始める。そして徐々に行動半径を広げていく事にした。
+			PRINTFORMDW 最初は僅かな時間しか森の瘴気に耐えられなかった体も、日を追う毎に慣れ
+			PRINTFORMDW 少しずつ行動範囲は広がっていった。そしてすべて同じに見えていたた森の風景も
+			PRINTFORMDW 慣れてくるに従って見分けがつくようになっていった。
+			PRINTL
+			PRINTFORMDW 人であろうと妖であろうと、そこに住んでいれば周辺に何らかの痕跡を残すはず。
+			PRINTFORMDW そう固く信じて幾日も探索に費やした。
+			PRINTL
+			PRINTFORMDW そして或る日、ようやく痕跡らしきものを見つけた。良く見ないと見落とす程度の
+			PRINTFORMDW ものだったがそれは確かになにかが歩いた跡だった。
+			PRINTFORMDW そこは周囲より僅かに踏み固められているようであり、獣以外の何か、それが人によるものか
+			PRINTFORMDW 人ならざるものによって付けられた跡なのかははっきりとしないが、二足歩行によって
+			PRINTFORMDW つけられた跡なのは間違いなさそうだった。
+			PRINTL
+			PRINTFORMDW 跡を辿り、さらに森の奥へと進んでいく。昼間だというのに辺りは薄暗い。
+			PRINTFORMDW 暫くすると前方に光が見えてくる。そして少し開けた場所に出た。
+			PRINTFORMDW そこには一軒の家があった。あまり見慣れない造りではあったが
+			PRINTFORMDW 何者かが住む、または住んでいた場所である事は間違いないように思われた。
+			PRINTL
+			PRINTFORMDW 周囲に不審な気配はないようだ。そして意を決して家に近づいていく。
+			PRINTFORMDW 家屋の状態からここが現在でも使われている事は確からしい。
+			PRINTFORMDW 扉を見つけ叩いてみるが応答はなく、辺りは静寂に包まれたまであった。
+			PRINTFORMDW だが扉は施錠されていないようだ。本能は今すぐ此処から立ち去るべきと告げていたが
+			PRINTFORMDW 折角ここまで来たという思いと、好奇心には抗えず扉を開け家の中に入る。
+			PRINTL
+			PRINTFORMDW やはり中には誰もいないようだ。それぞれの部屋は掃除が行き届くており
+			PRINTFORMDW 家具や調度品は家主の趣味の良さを感じさせた。
+			PRINTFORMDW 僅かにドアの開いた部屋があり、慎重に中を覗いてみる。
+			PRINTL
+			PRINTFORMDW そこは工房かなにかのようであり、部屋の中には数多くの人形が並べられていた。
+			PRINTFORMDW ここが捜し求めた人形遣いの家である事は、もはや疑いようが無かった。
+			PRINTFORMDW と、ここである人形が気にかかる。それは二体の人形だった。
+			PRINTFORMDW 他の人形と離れた場所に置かれたそれは、どうやらここの主である人形遣いにとって
+			PRINTFORMDW 特別な意味を持つ物であるように思われた。
+			PRINTL
+			PRINTFORMDW 興味をそそられ近づいて手に取ろうとした瞬間、違和感に気づいた。
+			PRINTFORMDW 二体の人形のうち一体はどこか自分に似ている感じがする。
+			PRINTFORMDW 手に取り仔細に眺めるうち、それは似ている等というものではなく
+			PRINTFORMDW 細部に至るまで自分自身に模して作られている事に気づいた。
+			PRINTL
+			PRINTFORMDW そしてもう一体の人形にはなぜか見覚えがあった。
+			PRINTFORMDW 軽いウェーブがかかったブロンドの髪、青い瞳、肩には白いショールを掛け
+			PRINTFORMDW 青のワンピースの各所にリボンをあしらったその姿…
+			PRINTL
+			PRINTFORMDW 自分そっくりな人形にどこか見覚えのある人形…
+			PRINTFORMDW もはや単なる偶然で片付けられるものではなかった。
+			PRINTFORMDW 今やすべての真実は手を伸ばせば届く距離にあると思った刹那、心の奥底から
+			PRINTFORMDW 予期せぬ感情の激流が噴き出してきた。
+			PRINTL
+			PRINTFORMDW それは心の欠けた部分を、今この瞬間に一気に埋めようとするかのようであり
+			PRINTFORMDW そのあまりの激しい感情の流れに身が引き裂かれそうだった。
+			PRINTL
+			PRINTFORMDW 訳が分からない。いったいどうなっているのか、自分はどうしてしまったのか…
+			PRINTFORMDW 気がついた時には走り出していた。此処から早く離れねば、自分は狂ってしまう。
+			PRINTL
+			PRINTFORMDW 一気に家の外まで駆け抜けたところで、足がもつれ派手に転んだ。
+			PRINTFORMDW 呼吸は乱れ、心音がはっきりと聞こえる。全身の力が抜け、起き上がる気力もない。
+			PRINTFORMDW ふいに何かが頬を伝い落ちる感覚に我に返る。これは涙？　自分は今泣いているのか…？
+			PRINTFORMDW 滲む視界、呼び覚まされる記憶、流れ落ちる涙一滴ごとに様々な思いが甦ってくる。
+			PRINTL
+			PRINTFORMDW 雨が降ってきた。やがて木々の葉を叩く音は次第に大きくなり、本格的な土砂降りになった。
+			PRINTFORMDW 雨に打たれつつ、あの日の事を思い出していた。そう、自分がアリスを拒絶した日の事を。
+			PRINTFORMDW 今、胸に去来するものは後悔だろうか、自責の念だろうか、それとも悲しみだろうか。
+			PRINTFORMDW その答えは自分自身でも、ようとして知れなかった。
+			PRINTL
+			PRINTFORMDW 雨が弱まった気がした。
+			PRINTFORMDW だが雨音の激しさは変わっておらず、それは周囲を見渡しても確かだった。
+			PRINTFORMDW ふいに何かに包まれる感触。それは優しく、温かで、懐かしい香りがした…
+			PRINTL
+			PRINTFORMW 「もう泣かないで……いいのよ……%CNAME(MASTER, TARGET)%は何も悪くない…」
+			PRINTL
+			PRINTFORMDW それはアリスだった…
+			PRINTL
+			PRINTFORMW 「元々わたしの身勝手ではじめた事……そう、悪いのは全部このわたし…」
+			PRINTFORMW 「でも%CNAME(MASTER, TARGET)%はこんな私でも愛してくれた。愛する喜び、愛される喜びを教えてくれた…」
+			PRINTFORMW 「だから、%CNAME(MASTER, TARGET)%が泣く事なんてないのよ…」
+			PRINTL
+			PRINTFORMW 「私あの時言ったでしょ？　%CNAME(MASTER, TARGET)%がどんな選択をしても受け入れるって」
+			PRINTFORMW 「私が愛した最初で最後の人…　その人が望んだ結果だもの」
+			PRINTFORMW 「確かに私にとって残念な結果だったのは否定しないけど…」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%には自分の選んだ道で幸せになって欲しい、これは偽らざる気持ちよ」
+			PRINTL
+			PRINTFORMW 「あと1つ正直に言わせてもらうとね、%CNAME(MASTER, TARGET)%の記憶を奪ったのはわたしなの」
+			PRINTFORMW 「と言っても、もう気がついてるでしょうけど」
+			PRINTL
+			PRINTFORMW 「わたしなりに気を利かせたつもりだったのだけど」
+			PRINTFORMW 「本当、%CNAME(MASTER, TARGET)%には迷惑かけてばかりね。わたし…」
+			PRINTFORMW 「恨んでくれても構わない、でも、でも…」
+			PRINTFORMW 「嫌いになられたらちょっと悲しい、かな…」
+			PRINTL
+			;-------------------------------------
+			;タイトル:RetroAtmosphere
+			;原曲:ブクレシュティの人形師
+			;サークル:efs
+			;Vocal:阿部左
+			;アルバム:Mystic Heart
+			;-------------------------------------
+			CALL BGM_CUTIN("RetroAtmosphere", 1)
+			PRINTFORMDW そしてアリスは優しく口づけをして言った。
+			PRINTFORMW 「さようなら……わたし、いつまでも忘れない……」
+			CALL TWAIT3_K14
+			PRINTFORMDW 気がついた時には一人きりだった。そして家があった場所にはもはや何も無く
+			PRINTFORMDW 一瞬夢でも見ていたような感覚におそわれたが、記憶は鮮明に残っていた。
+			PRINTL
+			PRINTFORMDW アリスは今度は記憶を消さなかった。その真意がどこにあるのか自分には分からない。
+			PRINTFORMDW ただ今は、今後別々の人生を歩んだとしても、同じ思い出を分かち合えるのが嬉しかった。
+			PRINTL
+			PRINTFORMDW そして生きていればいつかまた会える、そんな予感がするのだ……
+			PRINTL
+			PRINTL
+			;フォントをセット
+			CALL SETFONT_K14
+		
+			;フェードアウトx4
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), @"　　　　　　　　　　　　　強がる事を覚えた、軋む心%CNAME(MASTER, TARGET)%には見せない")
+			CLEARLINE 1
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　　　　心をどこに預けて、どう微笑んでみせればいい…？")
+			CLEARLINE 1
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　　　　私が過ぎ行く森は、可憐な花も毒牙に変えれる")
+			CLEARLINE 1
+			CALL FADE(50, COLOR_K14("white"), COLOR_K14("black"), "　　　　　　　　　　　　　闇夜を深く切り裂いて、今も一つの月を待つ……")
+			CLEARLINE 1
+		
+			PRINTL
+			PRINTL
+			;デフォルトカラーに
+			RESETCOLOR
+			;太字に
+			FONTSTYLE 1
+			CUSTOMDRAWLINE -=
+			;エンディングタイトル
+			CALL SCROLLTEXT("　　　　　　　【Ending No.0004】（別離）", 2, 6, 117, 0, 1)
+			;フォントを戻す
+			CALL RESETFONT_K14
+			PRINTL
+			PRINTL
+			PRINTL
+			;ゲームオバー2で終了させる
+			CALL GAME_OVER2_K14
+	ENDSELECT
+ENDIF

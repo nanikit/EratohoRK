@@ -1,0 +1,666 @@
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;雛口上 会話系アクション口上ファイル
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;##############
+;会話系 ACT0～9
+;##############
+[SKIPSTART]
+	#TFLAG:ACT
+		0=今の気分を聞く
+		1=自分への気持ちを聞く
+		2=性についての話をする
+		3=優しく慰める
+		4=厳しく脅す
+		5=衣装の変更を要求する
+		6=合意を求める
+		7=お仕置きと宣言する
+		8=怒鳴る
+		9=不気味に笑う
+	#TFLAG:ACT分類 == 0に該当
+	#ACT9, 不気味に笑うは異常系ACT分類から派生する場合がある
+	#汎用リアクションにおいてはMENUMATCH(TFLAG:ACT, "会話")で拾う事が可能
+
+	*口上記入チェック（表示確率を入力。省略すると真）
+	*RESULT値        （=0, 汎用ACTにパス、1, これ以上表示しない、2, 媚薬等口上をスキップしてこれ以上表示しない）
+[SKIPEND]
+
+
+;////////////////////
+;ACT0, 今の気分を聞く
+;////////////////////
+[SKIPSTART]
+	#今の気分について聞いてくる
+	#調教対象の反応に応じてREACT以降でACT派生への代入が行われる
+	#ターン方針が"異常"なら発生しない
+[SKIPEND]
+@KOJO_MALE_ACT_K39_0
+
+;初回 //行動予約によって調教初回の最初にここにくる設定
+;====
+IF FIRSTACT(0)
+	PRINTFORML 「気分はどうですか…？」
+	PRINTFORMW 「心配しないで、全部私にまかせてくださいね」
+	RETURN 1
+ENDIF
+
+;性交奉仕系で膣内射精の後
+;========================
+IF TFLAG:前回中出し == 2
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		CALL HTMLPRINTW("「うふ、厄がいっぱい出たわね…%HTML_PS_K39()%」")
+		PRINTFORMW 「私の膣内、そんなに良かった…？」
+	ELSE
+		PRINTFORML 「厄がたくさん出ましたね」
+		PRINTFORMW 「私の膣内、良かったですか…？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;調教対象がイキそうかつ手淫/口淫中である場合 //TEQUIP:調教対象Ｃ使用=(1,手淫/2,口淫)
+;===========================================
+IF TCVAR:MASTER:イきそう && GROUPMATCH(TEQUIP:調教対象Ｃ使用, 1, 2) > 0
+	;イキそうなのを我慢している＆焦らし中ではない場合
+	IF TCVAR:MASTER:我慢 > 0 && TCVAR:焦らし度 < 2
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「ねぇ、イきそうなんでしょ…？」
+			CALL HTMLPRINTW(@"「我慢なんてする事ないのに%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORMW 「我慢は体に良くありませんよ？」
+		ENDIF
+	;その他
+	ELSE
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			CALL HTMLPRINTW(@"「もうイっちゃいそう？　いいよ、すぐに楽にしてあげる…%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORML 「イきそうなんですね？」
+			CALL HTMLPRINTW(@"「いいですよ、すぐ楽にしてあげます%HTML_PS_K39()%」")
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+;勃起
+;====
+IF TCVAR:MASTER:勃起度 >= 1000
+	;手淫/口淫中でない場合
+	IF !TEQUIP:TEQUIP:調教対象Ｃ使用
+		PRINTFORMDW %CALLNAME%は%PENIS_DESCRIPTION(MASTER)%%CALLNAME:MASTER%のペニスを見咎めた…
+		PRINTL
+	ENDIF
+	{
+	PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+	? %RAND_SPLIT("あら、ちょっと元気過ぎるんじゃない？/うふ、厄い、厄いわ♪")% 
+	# %RAND_SPLIT("もうそんなになってしまって…/あら、随分元気そうですね？")% \@」
+	}
+	;射精直後
+	SIF TCVAR:MASTER:射精後経過ターン == 1
+		{
+		CALL HTMLPRINTW(@"「さっき射精したばかりなのに\@ 
+		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? ね…%HTML_PS_K39()% 
+		# 。%RAND_SPLIT("ふふ/くすっ")% \@」")
+		}
+	RETURN 1
+ENDIF
+
+;その調教の最初のアクション
+;==========================
+IF TFLAG:経過時間 == 1
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORML 「ねぇ、気分はどう%RAND_SPLIT("かしら/？")%」
+		{
+		CALL HTMLPRINTW(
+		@"「%CNAME(MASTER, TARGET)%の厄、全部吸い出してあげる" + 
+		@"%RAND_SPLIT("わ/から/")%…%HTML_PS_K39()%」")
+		}
+	ELSE
+		PRINTFORML 「気分はどうですか…？」
+		{
+		CALL HTMLPRINTW(
+		@"「心配しなくても、%CNAME(MASTER, TARGET)%の厄は全部吸い" + 
+		@"出してあげます%RAND_SPLIT("よ/から/")%…%HTML_PS_K39()%」")
+		}
+	ENDIF
+	RETURN 1
+ENDIF
+
+;その他・条件なし
+;================
+IF 口上記入チェック(100)
+	{
+	PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+	? ねぇ、気分はどう 
+	# 気分はどうですか \@…？」
+	}
+	RETURN 1
+ENDIF
+
+
+;//////////////////////////
+;ACT1, 自分への気持ちを聞く
+;//////////////////////////
+[SKIPSTART]
+	#自分のことをどう思うか聞く
+	#調教対象の反応に応じてREACT以降でACT派生への代入が行われる
+	#ターン方針が"異常"なら発生しない
+	#話題『好意』が既出となり、以後、同一調教中では抑制される
+[SKIPEND]
+@KOJO_MALE_ACT_K39_1
+
+;初回
+;====
+IF FIRSTACT(0)
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「この際だからはっきり言うけど、私は%CNAME(MASTER, TARGET)%の事好きよ」
+		PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%はどうなの？ はっきり言って欲しいの…」
+	ELSE
+		PRINTFORML 「あの、ひとつ聞いてもいいでしょうか…」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%は私の事、どう思っていますか？」
+		PRINTFORMDW %CALLNAME:TARGET%はおどおどしながら尋ねてきた…
+	ENDIF
+	RETURN 1
+ENDIF
+
+;性交奉仕系で膣内射精の後
+;========================
+IF TFLAG:前回中出し == 2
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORML 「ねぇ、私の中気持ちよかったでしょ…？」
+		PRINTFORMW 「これだけ出しといて、良くなかったなんて言わ%RAND_SPLIT("せないから…/ないでね！")%」
+	ELSE
+		PRINTFORML 「私の中は気持ちよかったですか？」
+		CALL HTMLPRINTW("「是非教えてください%HTML_PS_K39()%」")
+	ENDIF
+	RETURN 1
+ENDIF
+
+;勃起
+;====
+IF TCVAR:MASTER:勃起度 >= 1000
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORML 「私を見てムラムラして勃っちゃったの？」
+		PRINTFORMW 「もしそうなら嬉しいけど…」
+	ELSE
+		PRINTFORML 「もうそんなになってしまって…」
+		PRINTFORMW 「私に興奮したと言うのなら嬉しいですけど」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;その調教の最初のアクション
+;==========================
+IF TFLAG:経過時間 == 1
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「ねぇ、聞かせて…」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%は私の事、どう思っているの？」
+	ELSE
+		PRINTFORMW 「突然ですけど教えて下さい」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%は私の事、どう思っていますか？」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;その他・条件なし
+;================
+IF 口上記入チェック(100)
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「私、%CNAME(MASTER, TARGET)%が好き…」
+		PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%はどうなの？ 教えて…」
+	ELSE
+		PRINTFORML 「あの……、私の事どう思いますか？」
+		PRINTFORMW 「聞かせてください…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;//////////////////////////
+;ACT2, 性についての話をする
+;//////////////////////////
+[SKIPSTART]
+	#調教者が性についての知識を語り始める
+	#TFLAG:お仕置きフラグが立っていると発生しない
+	#ターン方針が"異常"だと発生しない
+	#調教者に性知識が無いと発生しない
+	#話題『知識』が既出となり、以後、同一調教内では抑制される
+[SKIPEND]
+@KOJO_MALE_ACT_K39_2
+
+;初回 //KFLAGの状態によっては弾く
+;====
+IF !GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) && FIRSTACT(0)
+	PRINTFORML 「%CNAME(MASTER, TARGET)%には、私の事をもっと知って貰う必要がありそうです」
+	PRINTFORMW 「さぁ、よく聞いてくださいね…」
+	RETURN 1
+ENDIF
+
+;その他・条件なし
+;================
+IF 口上記入チェック(100)
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		{
+		PRINTFORMW 「%RAND_SPLIT(
+		"ねぇ、こんな話聞いた事ある？/" + 
+		"新しい事思いついたんだけど、ちょっと聞いてもらえる？/" + 
+		"じゃあそうね…こんな話を聞かせてあげようか。ふふ/" + 
+		"そうそう、私、この前気がついたんだけど…")%」
+		}
+	ELSE
+		SELECTCASE RANDACT(3, 1)
+			CASE 0
+				PRINTFORML 「厄神といっても一人の女なんですよ」
+				PRINTFORMW 「もっと私の事、知ってくださいね…」
+			CASE 1
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%はこんな話を聞いたことありますか？」
+				PRINTFORMW 「ええっと、そうですね。例えば……」
+			CASE 2
+				{
+				CALL HTMLPRINTW(
+				@"「さて、今回はどんな話を聞かせてあげましょうか。ふふ…\@ 
+				AFFECTION("溺愛") 
+				? %HTML_PS_K39()% 
+				# \@」")
+				}
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;//////////////////
+;ACT3, 優しく慰める
+;//////////////////
+[SKIPSTART]
+	#調教者が優しい言葉で慰めてくる
+	#TFLAG:お仕置きフラグが立っていると発生しない
+	#ターン方針が"ハード", "異常"だと発生しない
+	#話題『慰め』が既出となり、以後、同一調教内では抑制される
+[SKIPEND]
+@KOJO_MALE_ACT_K39_3
+
+;性交奉仕系で膣内射精の後
+;========================
+IF TFLAG:前回中出し == 2
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「なに？ もしかして、ちょっと落ち込んでるの？」
+		PRINTFORMW 「私がいいって言ってるんだから、気にする事なんてないのに…」
+	ELSE
+		PRINTFORML 「%CNAME(MASTER, TARGET)%が気にする事ないですよ」
+		PRINTFORMW 「厄を受け止めるのは、私の務めですから」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;調教対象がイキそうかつ手淫/口淫中である場合
+;===========================================
+IF TCVAR:MASTER:イきそう && GROUPMATCH(TEQUIP:調教対象Ｃ使用, 1, 2) > 0
+	;イキそうなのを我慢している＆焦らし中ではない場合
+	IF TCVAR:MASTER:我慢 > 0 && TCVAR:焦らし度 < 2
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「別にイっちゃっても私は構わないわよ？」
+			CALL HTMLPRINTW(@"「気にする事なんて無い%RAND_SPLIT("わ…/のに")%%HTML_PS_K39()%」")
+		ELSE 
+			PRINTFORML 「我慢しないでイってしまっていいんですよ？」
+			CALL HTMLPRINTW(@"「私、%CNAME(MASTER, TARGET)%がイク時の表情大好きですから%HTML_PS_K39()%」")
+		ENDIF
+	;その他
+	ELSE
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「イきそうだからって気にしなくてもいいのに」
+			CALL HTMLPRINTW(@"「そんなの気にしないで愉しんで？ ふふ…%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORMW 「何も恥じる事はありませんよ%RAND_SPLIT("？/")%」
+			CALL HTMLPRINTW("「そうなっても、仕方の無い事をしてるのですから%HTML_PS_K39()%」")
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+;その他・条件なし
+;================
+IF 口上記入チェック(100)
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		SELECTCASE RANDACT(3, 0)
+			CASE 0
+				PRINTFORMW 「ねぇ、何か心配事でもあるの？」
+			CASE 1
+				PRINTFORMW 「厄の事は全部私に任せて」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%が心配する事ないのよ？」
+			CASE 2
+				PRINTFORMW 「何かある時は隠さずに言ってくれると、私は嬉しいかな…」
+		ENDSELECT
+	ELSE
+		SELECTCASE RANDACT(3, 1)
+			CASE 0
+				PRINTFORML 「何も心配する事はありませんよ」
+				PRINTFORMW 「厄の事は、全部私に任せて下さいね」
+			CASE 1
+				PRINTFORMW 「色々と不安もあるでしょうが、今は私を信じてください」
+				PRINTFORMW 「決して悪いようにはしませんから」
+			CASE 2
+				PRINTFORMW 「何か気になる事があれば、私に言って下さいね？」
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;////////////////
+;ACT4, 厳しく脅す
+;////////////////
+[SKIPSTART]
+	#厳しい言葉で脅す
+	#TFLAG:お仕置きフラグが立っていると発生しない
+	#ターン方針が"ソフト", "異常"だと発生しない
+	#話題『脅す』が既出となり、以後、同一調教内では抑制される
+[SKIPEND]
+@KOJO_MALE_ACT_K39_4
+#LOCALSSIZE 1
+VARSET LOCALS
+LOCALS:0 '= RAND_SPLIT("クスクス/くすくす/ふふ/ふふっ")
+
+;初回 //
+;====
+IF !GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) && FIRSTACT(0)
+	PRINTFORML 「これは全部%CNAME(MASTER, TARGET)%の厄を祓う為なんです…」
+	PRINTFORMW 「素直に従ってくれないと、いずれ大変な事になりますよ？」
+	PRINTFORMW 「良く覚えておいてくださいね」
+	RETURN 1
+ENDIF
+
+;性交奉仕系で膣内射精の後
+;========================
+IF TFLAG:前回中出し == 2
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORML 「こんなにいっぱい出してくれちゃって…」
+		{
+		PRINTFORMW 「赤ちゃん出来ちゃったら、責任取って%RAND_SPLIT(
+		"くれるんでしょう？/" + 
+		"もらうわよ…/" +
+		"もらいますからね！/" +
+		"くれるのよね？")%」
+		}
+	ELSE
+		PRINTFORML 「厄神といえど妊娠はするのですけど。ええ、たぶん……」
+		PRINTFORMW 「もしできてしまったら、責任はとってもらいますよ？」
+	ENDIF
+	CALL FADEIN(15, @"「%LOCALS:0%……」")
+	RETURN 1
+ENDIF
+
+;その他・条件なし
+;================
+IF 口上記入チェック(100)
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORML 「ねぇ、よく覚えておいて…？」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%が厄神の傍にいても不幸にならないのは、私がそうしてるから」
+		PRINTFORMW 「私を怒らせると、きっと大変な事になるわよ？　%LOCALS:0%…」
+	ELSE
+		PRINTFORML 「余計な事は考えず、すべて私に任せてくださいね」
+		PRINTFORMW 「でないと…、どうなっても知りませんよ%RAND_SPLIT("…？/……")%」
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;//////////////////////////
+;ACT5, 衣装の変更を要求する
+;//////////////////////////
+[SKIPSTART]
+	#調教者が衣装の変更を要求してくる
+	#調教対象の反応に応じて、何枚脱ぐか、あるいは脱がないのかにREACT以降で派生する
+	#TEQUIP:押し倒し中には発生しない
+	#TEQUIP:縄が真になっていると発生しない
+[SKIPEND]
+@KOJO_MALE_ACT_K39_5 ;TFLAG:ACT派生(0=服を脱ぐように命令/1=服を着るように命令)
+
+;ACT派生0, 服を脱ぐように命令
+;============================
+IF !TFLAG:ACT派生
+	;初回 //相思相愛ならば弾く
+	;====
+	IF !GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) && FIRSTACT(0)
+		PRINTFORMW 「では早速、服を脱いでいただけますか？」
+		PRINTFORMW 「その…、なんというか、着たままでは厄を祓いにくいので……」
+		RETURN 1
+	ENDIF
+
+	;勃起
+	;====
+	IF TCVAR:MASTER:勃起度 >= 1000
+		;手淫/口淫中でない場合は地の文を挟む
+		IF !TEQUIP:調教対象Ｃ使用
+			PRINTFORMDW %CALLNAME%は%PENIS_DESCRIPTION(MASTER)%%CALLNAME:MASTER%のペニスを見咎めた…
+			PRINTL
+		ENDIF
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「へぇ、もう勃ってるのね…」
+			CALL HTMLPRINTW(@"「さぁ脱いで。早く見せて%RAND_SPLIT("頂戴/")%…%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORML 「うふ、もう待ちきれないんですか？」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;その調教の最初のアクション
+	;==========================
+	IF TFLAG:経過時間 == 1
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「とりあえず脱いでもらえる？」
+			PRINTFORMW 「服着てちゃ始まらないでしょ…？」
+		ELSE
+			PRINTFORML 「先ず服を脱いでもらいましょうか」
+			PRINTFORMW 「恥ずかしがる事ありませんよ」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;その他・条件なし
+	;================
+	IF 口上記入チェック(100)
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			CALL HTMLPRINTW(@"「はい、じゃぁ脱いで。よーく見ててあげるから…%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORML 「では、服を脱いでもらいましょうか」
+			CALL HTMLPRINTW(@"「恥ずかしがらなくていいんですよ…%HTML_PS_K39()%」")
+		ENDIF
+		;BASE:満足が50%以上
+		SIF TENSION(TARGET, 8) == "高い"
+			CALL FADEIN(10, @"「%RAND_SPLIT("ふふ/クスクス/くすっ")%」")
+		RETURN 1
+	ENDIF
+ENDIF
+
+;ACT派生1, 服を着るように命令
+;============================
+IF TFLAG:ACT派生 == 1
+	{
+	PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+	? ちょっと気が変わったんだけど…ねぇ、服を着てもらえる 
+	# あの、服を着てもらえますか \@？」
+	}
+	RETURN 1
+ENDIF
+
+
+;//////////////////
+;ACT6, 合意を求める
+;//////////////////
+[SKIPSTART]
+	#初めてを貰ってもいいかと聞く
+	#初めて＝処女or童貞(両方の場合もある)
+	#既に合意を得ている場合は発生しない
+	#調教対象が処女でも童貞でもない場合は発生しない
+	#TFLAG:お仕置きフラグが立っていると発生しない
+	#ターン方針が"異常"だと発生しない
+	#話題『合意』が既出となり、以後、同一調教内では抑制される
+[SKIPEND]
+@KOJO_MALE_ACT_K39_6
+
+;相思相愛初回イベントを経過していない場合にのみ表示する
+IF !GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+	;初回
+	;====
+	IF FIRSTACT(0)
+		PRINTFORMW 「あの、その。えっと……」
+		PRINTFORMW 「わ、私をっ……%CNAME(MASTER, TARGET)%の…初めての女にしてもらえませんか…」
+		PRINTFORMDW %CALLNAME:TARGET%は恥ずかしそうに、しかし熱っぽい様子で%CALLNAME:MASTER%に迫ってきた…
+		RETURN 1
+	ENDIF
+
+	;調教対象への好感度1000以上
+	;==========================
+	IF AFFECTION("眷愛")
+		CALL FADEIN(10, "「お願いです……」")
+		{
+		PRINTFORMW 「わ、私を\@ 
+		TENSION(TARGET, 8) == "高い" 
+		? っ！　 
+		# …、
+		\@%CNAME(MASTER, TARGET)%の、初めての女にしてください……」
+		}
+		PRINTFORMDW %CALLNAME:TARGET%は微かに震えつつも、真剣な様子で%CALLNAME:MASTER%に迫ってきた…
+		RETURN 1
+	ENDIF
+
+	;その他・条件なし
+	;================
+	IF 口上記入チェック(100)
+		PRINTFORML 「あの、えっと」
+		PRINTFORMDW %CALLNAME:TARGET%は少しためらいがちに切り出した…
+		PRINTL 
+		CALL FADEIN(10, @"「%CNAME(MASTER, TARGET)%の初めて、私にください……」")
+		PRINTFORMW 「えっ、何をって……私にそこまで言わせる気ですか！？」
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;////////////////////////
+;ACT7, お仕置きと宣言する
+;////////////////////////
+[SKIPSTART]
+	#これからお仕置きすると言い出す
+	#このACTが発生している時点でTFLAG:お仕置きフラグは立っている
+	#ターン方針が"ソフト", "異常"だと発生しない
+	#TEQUIP:押し倒し中時には発生しない
+[SKIPEND]
+@KOJO_MALE_ACT_K39_7
+TCVAR:行動予約 = 60 ;宣言したからには実行する
+
+;初回
+;====
+IF FIRSTACT(0)
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORMW 「そういえば、今までお仕置きって無かったわね？」
+		PRINTFORMW 「今頃最初のお仕置きなんて、ちょっと変な話ね。ふふ」
+	ELSE
+		PRINTFORML 「あの、ご免なさい…」
+		PRINTFORMW 「今からお仕置きをしますね」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;前COMが「気持ち良くして」 //（この恥知らず！）
+;========================
+IF IS_PREVCOMNAME("気持ち良くして") ;//PREVCOMで拾っても派生内容によっては微妙にアレな感じになる可能性もないではない感
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		{
+		CALL HTMLPRINTW(	@"「恥知らずでいやらしい\@ 
+		TALENT:MASTER:小柄 
+		? 子 
+		# 人 
+		\@には、お仕置きをしてあげる%HTML_PS_K39()%」")
+		}
+	ELSE
+		PRINTFORML 「まだ厄が抜けきってないんですね……」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%の為にも、お仕置きが必要みたいです…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;前COMが「もっとハードにして」//（この豚め！）
+;============================
+IF IS_PREVCOMNAME("もっとハードにして")
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORML 「ふ、ふふ。なんて厄いのかしら……」
+		CALL HTMLPRINTW(@"「いいよ。お仕置きで厄を祓ってあげるから%HTML_PS_K39()%」")
+	ELSE
+		PRINTFORML 「本当に厄に塗れた人なんですね……」
+		CALL HTMLPRINTW(@"「判りました。私も本気でいかせてもらいますね%HTML_PS_K39()%」")
+	ENDIF
+	RETURN 1
+ENDIF
+
+;前COMが「許しを乞う」 //（許してもらえませんでした）
+;====================
+IF IS_PREVCOMNAME("許しを乞う")
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		CALL HTMLPRINTW(@"「だ～め%HTML_PS_K39()%」")
+		CALL FADEIN(10, @"「大人しく諦めてね。%RAND_SPLIT("くすっ/ふふ/クスクス")%…」")
+	ELSE
+		PRINTFORML 「駄目です。これも厄を祓う為なんですよ…？」
+		PRINTFORMW 「大人しく諦めてくださいね」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;前ACTが会話系かつ
+;前COMが「勝手に自慰をする」または調教対象が自慰中 //（人の話を聞け！）
+;=================================================
+{
+IF IS_PREVACTNAME(
+"今の気分を聞く/自分への気持ちを聞く/性についての話をする/優しく慰める/" + 
+"厳しく脅す/衣装の変更を要求する/合意を求める/お仕置きと宣言する/怒鳴る/不気味に笑う") && 
+(IS_PREVCOMNAME("自慰し始める") || GETBIT(TEQUIP:自慰中, 0))
+}
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORML 「人が話してるのに、それはないと思うけど……」
+		PRINTFORMW 「ねぇ、お仕置きして欲しいの？」
+	ELSE
+		PRINTFORML 「これは、凄く厄いですね……」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%には、ちょっと躾が必要でしょうか」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;その他・条件なし
+;================
+IF 口上記入チェック(100) && GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+	PRINTFORML 「ちょっとお仕置きが必要みたい…」
+	PRINTFORMW 「いい？ %CNAME(MASTER, TARGET)%が悪いんだからね？」
+ELSE
+	PRINTFORML 「気は進まないのですが、厄を祓う為には仕方ないんです…」
+	PRINTFORMW 「諦めてお仕置きを受け入れて下さいね？」
+ENDIF
+RETURN 1
+
+
+;////////////
+;ACT8, 怒鳴る
+;////////////
+[SKIPSTART]
+	#大声で怒鳴る
+	#ターン方針が"ソフト", "ノーマル"では発生しない
+	#TFLAG:お仕置きフラグに関わらず、発生する可能性がある
+		（お仕置き中にさらに怒鳴る可能性等）
+[SKIPEND]
+@KOJO_MALE_ACT_K39_8
+RETURN 0
+
+
+;//////////////////
+;ACT9, 不気味に笑う
+;//////////////////
+[SKIPSTART]
+	#不気味な微笑を浮かべる
+	#異常系から発生する場合もある
+	#今日の方針が"イチャイチャ"だと発生しない
+	#話題『嗤う』が既出となり、以後、同一調教内では抑制される
+[SKIPEND]
+@KOJO_MALE_ACT_K39_9
+RETURN 0

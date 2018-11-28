@@ -1,0 +1,570 @@
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;雛口上 加虐系個別リアクション口上ファイル
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;##################
+;加虐系 REACT60～68
+;##################
+[SKIPSTART]
+	#TFLAG:ACT
+		60 = スパンキング
+		61 = 鞭
+		62 = 針
+		63 = 縄
+		64 = アイマスク
+		65 = ボールギャグ
+		66=  罵倒
+		67 = 三角木馬
+		68 = 浣腸セット
+
+・ACT分類:加虐系の場合、苦痛系COM(COM30~COM32)を中心に、会話系、愛撫系の一部が選択肢となる
+・状況によってはその他のものが選択肢に含まれる可能性もある
+・※持続効果のあるTEQUIPで愛撫系反応が選択肢となる場合がある
+[SKIPEND]
+
+
+;///////////////////////////////////////
+;REACT60, スパンキング・個別リアクション
+;///////////////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	会話系反応
+		COM:もっとハードにして/許しを乞う
+	愛撫系反応
+		COM:不敵に笑う
+	苦痛系反応
+		COM:痛みを我慢する/悲鳴を上げる/暴れる
+
+・固有の地の文なし。調教対象の反応に応じてREACTION_MESSAGEで汎用処理
+[SKIPEND]
+@KOJO_MALE_REACT_K39_60 ;ACT派生なし
+
+;REACT60, 痛みを我慢する(65%)
+;============================
+IF 口上記入チェック(65) && IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT60, 悲鳴を上げる(60%)
+;==========================
+IF 口上記入チェック(60) && IS_NOWCOMNAME("悲鳴を上げる") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT60, スパンキング
+
+
+;/////////////////////////////
+;REACT61, 鞭・個別リアクション
+;/////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	会話系反応
+		COM:許しを乞う
+	愛撫系反応
+		COM:不敵に笑う
+	苦痛系反応
+		COM:痛みを我慢する/悲鳴を上げる/暴れる
+
+・固有の地の文なし。調教対象の反応に応じてREACTION_MESSAGEで汎用処理
+[SKIPEND]
+@KOJO_MALE_REACT_K39_61 ;ACT派生なし
+
+;REACT61, 痛みを我慢する(65%)
+;============================
+IF 口上記入チェック(65) && IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT61, 悲鳴を上げる(60%)
+;==========================
+IF 口上記入チェック(60) && IS_NOWCOMNAME("悲鳴を上げる") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT61, 鞭
+
+
+;/////////////////////////////
+;REACT62, 針・個別リアクション
+;/////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	会話系反応
+		COM:許しを乞う
+	愛撫系反応
+		COM:不敵に笑う
+	苦痛系反応
+		COM:痛みを我慢する/悲鳴を上げる/暴れる
+
+・固有の地の文なし。調教対象の反応に応じてREACTION_MESSAGEで汎用処理
+・ペニス、もしくはクリトリス、及び乳首に針を突き刺す
+・刺された箇所からは出血し、血液汚れが追加される
+[SKIPEND]
+@KOJO_MALE_REACT_K39_62 ;ACT派生なし
+
+;REACT62, 痛みを我慢する(65%)
+;============================
+IF 口上記入チェック(65) && IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT62, 悲鳴を上げる
+;=====================
+IF 口上記入チェック(60) && IS_NOWCOMNAME("悲鳴を上げる") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT62, 針
+
+
+;/////////////////////////////
+;REACT63, 縄・個別リアクション
+;/////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	会話系反応
+		COM:沈黙する/皮肉を言う/もっとハードにして/許しを乞う
+	愛撫系反応
+		COM:不敵に笑う
+	苦痛系反応
+		COM:痛みを我慢する/悲鳴を上げる/暴れる/怯える
+
+・固有の地の文なし。調教対象の反応に応じてREACTION_MESSAGEで汎用処理
+[SKIPEND]
+@KOJO_MALE_REACT_K39_63 ;TFLAG:ACT派生(0=拘束/1=解除)
+;ACT派生1, 解除ならRETURN 1して終わり
+SIF TFLAG:ACT派生 == 1
+	RETURN 1
+
+;哀願を聞き入れ拘束を解いた
+;==========================
+[SKIPSTART]
+REACT分類が許しを乞うである場合は必ずキャンセルになる
+キャンセル処理はTEQUIP参照なので、他のACTでもREACT分類が許しを乞うなら発生し得る
+現状、当該REACT以外でこの挙動を確実に拾える方法はない
+[SKIPEND]
+IF IS_COMGRONAME("許しを乞う")
+	CALL PRINT_KOJO_REACT_GRU_30_TEQUIP_CHANCEL_K39
+	RETURN RESULT
+ENDIF
+
+;REACT63, 痛みを我慢する(65%)
+;============================
+IF 口上記入チェック(65) && IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT63, 悲鳴を上げる(60%)
+;==========================
+IF 口上記入チェック(60) && IS_NOWCOMNAME("悲鳴を上げる") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT63, 縄
+
+
+;/////////////////////////////////////
+;REACT64, アイマスク・個別リアクション
+;/////////////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	会話系反応
+		COM:沈黙する/皮肉を言う/もっとハードにして/許しを乞う
+	愛撫系反応
+		COM:不敵に笑う
+	苦痛系反応
+		COM:痛みを我慢する/悲鳴を上げる/暴れる/怯える
+	その他反応
+		COM:道具を外す
+
+・固有の地の文なし。調教対象の反応に応じてREACTION_MESSAGEで汎用処理
+[SKIPEND]
+@KOJO_MALE_REACT_K39_64 ;TFLAG:ACT派生(0=装着/1=解除)
+;ACT派生1/解除ならRETURN 1して終わり
+SIF TFLAG:ACT派生 == 1
+	RETURN 1
+
+;哀願を聞き入れ拘束を解いた
+;==========================
+[SKIPSTART]
+REACT分類が許しを乞うである場合は必ずキャンセルになる
+キャンセル処理はTEQUIP参照なので、他のACTでもREACT分類が許しを乞うなら発生し得る
+現状、当該REACT以外でこの挙動を確実に拾える方法はない
+[SKIPEND]
+IF IS_COMGRONAME("許しを乞う")
+	CALL PRINT_KOJO_REACT_GRU_30_TEQUIP_CHANCEL_K39
+	RETURN 1
+ENDIF
+
+;REACT64, 痛みを我慢する(65%)
+;============================
+IF 口上記入チェック(65) && IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT64, 悲鳴を上げる(60%)
+;==========================
+IF 口上記入チェック(60) && IS_NOWCOMNAME("悲鳴を上げる") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT64, アイマスク
+
+
+;///////////////////////////////////////
+;REACT65, ボールギャグ・個別リアクション
+;///////////////////////////////////////
+[SKIPSTART]
+想定されるCOM…
+	会話系反応
+		COM:沈黙する
+	愛撫系反応
+		COM:不敵に笑う
+	苦痛系反応
+		COM:痛みを我慢する/悲鳴を上げる/暴れる/怯える
+	その他反応
+		COM:道具を外す
+
+・沈黙する以外の会話系及び言葉を伴う系統の反応は不可能になる
+・固有の地の文なし。調教対象の反応に応じてREACTION_MESSAGEで汎用処理
+[SKIPEND]
+@KOJO_MALE_REACT_K39_65 ;TFLAG:ACT派生(0=装着/1=解除)
+;解除ならここで終了
+SIF TFLAG:ACT派生 == 1
+	RETURN 1
+
+;哀願を聞き入れ拘束を解いた // ボールギャグの場合COM:怯えるの場合にのみ、この箇所に該当すると思われる
+;==========================
+IF IS_COMGRONAME("許しを乞う")
+	CALL PRINT_KOJO_REACT_GRU_30_TEQUIP_CHANCEL_K39
+	RETURN RESULT
+ENDIF
+
+;REACT65, 悲鳴を上げる(60%)
+;==========================
+IF 口上記入チェック(60) && IS_NOWCOMNAME("悲鳴を上げる") && TFLAG:REACT負荷 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+
+
+
+;後から見直して、各REACTの内容に殆ど差異がねぇな…となったので全て汎用処理することに
+
+;///////////////////////////
+;COM痛みを我慢するの汎用処理
+;///////////////////////////
+@PRINT_KOJO_REACT_GRU_30_COM_30_K39
+#DIM  DYNAMIC FAV_RATING
+#DIMS DYNAMIC SYMBOL
+#DIMS DYNAMIC STRING
+#DIMS DYNAMIC MSTR
+FAV_RATING = GET_KFLAG_K39("相思相愛")
+SYMBOL    '= HTML_PS_K39()
+STRING    '= RAND_SPLIT("ふふ/うふ/ふふっ/うふっ/くすっ/クスクス") + "…"
+MSTR      '= CNAME(MASTER, TARGET)
+
+IF 0
+;調教対象のマゾっ気6以上かつ相思相愛でREACT派生が痛いけど気持ち良い！ // 25%の確率で下層へ
+ELSEIF ABL:MASTER:マゾっ気 >= 6 && TFLAG:REACT派生 == 1 && PERCENT(75)
+	SELECTCASE AUTORAND(2, 260)
+		CASE 0
+			PRINT 「もうすっかり
+			;ACT毎の派生を見る
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "スパンキング"
+					PRINT おしり叩かれて
+				CASE "鞭"
+					PRINT 鞭で叩かれて
+				CASE "針"
+					PRINT 針で
+				CASE "縄"
+					PRINT 縛られて
+				CASE "アイマスク"
+					PRINT 目隠しされて
+			ENDSELECT
+			PRINTFORMW 悦ぶ変態って感じ\@ !FAV_RATING ? です # \@ね…」
+			CALL HTMLPRINTW(@"「まぁ、私にも責任がある\@ FAV_RATING ? んだ # のでしょう \@けど%SYMBOL%」")
+		CASE 1
+			PRINTW 「あまりこんな事したく\@ FAV_RATING ? ない # ありません \@けど…」
+			{
+			CALL HTMLPRINTW(@"「\@ FAV_RATING 
+			? %RAND_SPLIT(@"%MSTR%…、コレ、嫌いじゃないものね？/これがいいって言うなら仕方ないかな。")% %STRING%%SYMBOL% 
+			# %MSTR%がこれを望んでいるよう%RAND_SPLIT("だった/でした")%ので…%SYMBOL %\@」")
+			}
+	ENDSELECT
+	RETURN 1
+;調教対象のマゾっ気3以上
+ELSEIF ABL:MASTER:マゾっ気 > 3
+	SELECTCASE AUTORAND(4, 261)
+		CASE 0
+			PRINTL 「痛いのを我慢っていうか、悦んでるように見えるん\@ FAV_RATING ? だけど？ # ですけど… \@」
+			PRINTW 「\@ FAV_RATING ? ねぇ、その辺どうなの # その辺どうなんでしょう \@？ %STRING%」
+		CASE 1
+			PRINTFORM 「\@FAV_RATING ? ねぇ # あの \@本当は…、
+			;ACT毎の派生を見る
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "スパンキング"
+					PRINT おしり叩か
+				CASE "鞭"
+					PRINT 鞭で叩か
+				CASE "針"
+					PRINT 針で虐めら
+				CASE "縄"
+					PRINT 縛ら
+				CASE "アイマスク"
+					PRINT 目隠しさ
+			ENDSELECT
+			PRINTFORMW れるのが好きな\@ FAV_RATING ? んじゃないの # のではないですか \@？」
+			CALL HTMLPRINTW(@"「ほら…恥ずかしがらないで。正直に言ってみて\@ !FAV_RATING ? ください # \@%SYMBOL%」")
+		CASE 2
+			{
+			PRINTFORMW 「痛み\@ IS_NOWACTNAME("アイマスク") 
+			? というか、恐怖というか # を我慢というか 
+			\@、何か違うものを我慢しているように見える\@ FAV_RATING 
+			? んだけど # のですけど \@…」
+			}
+			PRINTFORMW 「本当のところはどうな\@ FAV_RATING ? の # んでしょう \@？ %SYMBOL%」
+		CASE 3
+			;ACT毎の派生を見る
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "スパンキング"
+					PRINT 自分からお尻を突き出している
+				CASE "鞭"
+					PRINT 鞭で叩かれるのを望んでる
+				CASE "針"
+					PRINT %CNAME(MASTER, TARGET)%自身がこれを望んでいる
+				CASE "縄"
+					PRINT 拘束されて悦んでる
+				CASE "アイマスク"
+					PRINT 視界を奪われて悦んでる
+			ENDSELECT
+			PRINTFORMW ように見えるのは私の気の所為\@ !FAV_RATING ? でしょうか # \@？」
+			CALL HTMLPRINTW(@"「実はこれが…、%HTMLFONT("<b>好きになってきた</b>", , ,)%、とか。%STRING%」」")
+	ENDSELECT
+	RETURN 1
+;その他を処理
+ELSE
+	SELECTCASE AUTORAND(7, 263)
+		CASE 0
+			{
+			PRINTFORML 「こういうのは好き\@ FAV_RATING ? じゃ # では \@なかったはずな\@ 
+			FAV_RATING ? んだけど # のですけど \@」
+			}
+			PRINTFORMW 「何か私も…、変な気持ちになっ\@ FAV_RATING ? てきちゃう # てしまいます \@…」
+		CASE 1
+			PRINTFORM 「\@ FAV_RATING ? ねぇ、# あの \@実は
+			;ACT毎の派生を見る
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "スパンキング"
+					PRINT おしり叩か
+				CASE "鞭"
+					PRINT 鞭で叩か
+				CASE "針"
+					PRINT 針で刺さ
+				CASE "縄"
+					PRINT 縄で縛ら
+				CASE "アイマスク"
+					PRINT 目隠しさ
+			ENDSELECT
+			PRINTFORMW れるの……%RAND_SPLIT("結構すき/けっこう好き")%だったりし\@ FAV_RATING ? ない # ませんか \@？」
+			CALL FADE_TO_CLEARLINE(15, @"「%STRING%」")
+		CASE 2
+			{
+			PRINTFORMW 「可哀相な気も\@ FAV_RATING ? する # します \@けど、\@ 
+			FAV_RATING ? なんか私、興奮しちゃうかも、コレ # なぜか私…、興奮してしまいます \@…」
+			}
+		CASE 3
+			PRINTFORMW 「なかなか我慢強い\@ FAV_RATING ? わ # です \@ね…」
+		CASE 4
+			PRINTFORMW 「まだ余裕がありそう\@ !FAV_RATING ? です # \@ね？」
+		CASE 5
+			PRINTFORMW 本当はこういうの、嫌いじゃな\@ FAV_RATING ? いんじゃない # かったりしませんか \@？
+		CASE 6
+			PRINTFORM 「%MSTR%
+			;ACT毎の派生を見る
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "スパンキング", "鞭", "針"
+					PRINT が痛みに耐えるその姿……
+				CASE "縄"
+					PRINT の拘束された姿を見ると
+				CASE "アイマスク"
+					PRINT の目隠しされた姿を見ると
+			ENDSELECT
+			PRINTFORMW 、ちょっと興奮し\@ FAV_RATING ? ちゃうわね # てしまいますね \@
+			CALL PRINT_SYMBOL_K39
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;////////////////////////////////////
+;哀願を聞き入れ拘束を解いたの汎用処理
+;////////////////////////////////////
+@PRINT_KOJO_REACT_GRU_30_TEQUIP_CHANCEL_K39
+#DIM  DYNAMIC FAV_RATING
+FAV_RATING = GET_KFLAG_K39("相思相愛")
+PRINTFORMW 「――仕方ない\@ FAV_RATING ? わね # ですね\@。%CNAME(MASTER, TARGET)%がそこまで言うなら……」
+PRINTFORM 「\@ FAV_RATING ? ほら # さぁ \@、今
+SELECTCASE GET_ACTNAME(TFLAG:ACT)
+	CASE "縄"
+		PRINT 解い
+	CASE "アイマスク"
+		PRINT 外し
+	CASE "ボールギャグ"
+		PRINT 取っ
+ENDSELECT
+PRINTFORMW てあげ\@ FAV_RATING ? るわ # ますよ \@」
+RETURN 1
+
+;/////////////////////////
+;COM悲鳴を上げるの汎用処理
+;/////////////////////////
+@PRINT_KOJO_REACT_K39_COMMON_260
+#DIM  DYNAMIC FAV_RATING
+#DIMS DYNAMIC SYMBOL
+#DIMS DYNAMIC STRING
+#DIMS DYNAMIC AHEART
+#DIMS DYNAMIC MSTR
+FAV_RATING = GET_KFLAG_K39("相思相愛")
+SYMBOL    '= HTML_PS_K39()
+AHEART    '= HTML_AH_K39()
+STRING    '= RAND_SPLIT("ふふ/うふ/ふふっ/うふっ/くすっ/クスクス") + "…"
+MSTR      '= CNAME(MASTER, TARGET)
+
+;調教対象のマゾっ気5以上かつ好意好感度が一定以上 // 25%の確率でネストを抜け下層に流れるように
+IF ABL:MASTER:マゾっ気 >= 6 && FAV_RATING && PERCENT(75)
+	SELECTCASE AUTORAND(2, 265)
+		CASE 0
+			PRINTFORMW 「そんな声聴かされると、ゾクゾクしちゃって……」
+			;ACTボールギャグでない場合は派生
+			{
+			CALL HTMLPRINTW(@"「もうっ、堪らなくなっちゃう%HTML_AH2_K39()% \@ 
+			!IS_NOWACTNAME("ボールギャグ") ? %STRING% # \@」")
+			}
+			;ACTボールギャグの場合
+			SIF IS_NOWACTNAME("ボールギャグ")
+				CALL HTMLPRINTW("「ほら、涎が垂れてるわよ%HTML_AH2_K39()% %STRING%」")
+		CASE 1
+			PRINTFORML 「甘い声で鳴いちゃって、もうどうしようもないわね……」
+			PRINTFORMW 「――なんでこんな人を好きなったのかしら」
+			{
+			CALL HTMLPRINTW(@"「\@ RAND:3 
+			? とか、言ってみたりして…%HTML_AH2_K39()% %STRING% 
+			# でもこうなったのも、私にも責任があるのよね… \@」")
+			}
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;調教対象のマゾっ気3以上
+IF ABL:MASTER:マゾっ気 > 3
+	SELECTCASE AUTORAND(4, 266)
+		CASE 0
+			PRINTFORMW 「%STRING%、もう悦んでいるようにしか聞こえ\@ FAV_RATING ? ないわね # ませんね \@」
+			{
+			CALL HTMLPRINTW(@"「\@ FAV_RATING 
+			? ほら # さあ 
+			\@、もっと鳴いて\@ FAV_RATING 
+			? ？ # … 
+			\@もっと私を愉しませて\@ !FAV_RATING ? ください # \@%SYMBOL%」")
+			}
+		CASE 1
+			PRINTFORMW 「そんな声で鳴かれると興奮し\@ FAV_RATING ? ちゃうんだけど # てしまいます \@…」
+			{
+			PRINTFORMW 「\@ FAV_RATING 
+			? ねぇ# あの 
+			\@それ…、わざとやって\@ FAV_RATING 
+			? るんじゃないの # ませんか \@？」
+			}
+		CASE 2
+			PRINTFORML 「少し甘い声が混じっている\@ FAV_RATING ? わよ # ようですね \@…」
+			;ACTアイマスクの場合は派生する
+			{
+			PRINTFORMW 「実は\@ IS_NOWACTNAME("アイマスク") 
+			? 視界を奪われて # 
+			\@悦んでいる\@ FAV_RATING 
+			? んじゃないの # のではないですか \@？」
+			}
+		CASE 3
+			PRINTFORMW 「同じ悲鳴でもちょっと違う感じが\@ FAV_RATING ? するわね # しますね \@…」
+			{
+			CALL HTMLPRINTW(@"「その、なんというか…私、ちょっと興奮し\@ 
+			FAV_RATING ? ちゃうかも # てしまいます \@%SYMBOL%」")
+			}
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;;;;;;;;;;;
+;以下その他
+;;;;;;;;;;;
+
+;ACTボールギャグの場合
+IF IS_NOWACTNAME("ボールギャグ")
+	SELECTCASE AUTORAND(2, 267)
+		CASE 0
+			CALL HTMLPRINTW(@"「%STRING%、鳴いても聞こえ\@ FAV_RATING ? ないわ #  ません \@よ%SYMBOL%」")
+		CASE 1
+			{
+			PRINTFORMW 「流石にちょっとその状態では……、悲鳴になって\@ 
+			FAV_RATING ? ないわよ？ # いませんね。 \@ %STRING%」
+			}
+			{
+			CALL HTMLPRINTW(@"「でもそんな声きかされると、ちょっと変な気持ちになっ\@ 
+			FAV_RATING ? ちゃう # てしまいます \@%SYMBOL%」")
+			}
+		CASE 2
+			{
+			PRINTFORMW 「\@ FAV_RATING 
+			? ねぇ # あの、 
+			\@もしかして…、ちょっと不安\@ FAV_RATING 
+			? だったりする？ # を感じてますか \@？」
+			}
+			PRINTFORMW 「でも私…、%MSTR%が何を言ってるか聞き取れない\@ FAV_RATING ? んだけど # のですけど \@…」
+	ENDSELECT
+ELSE
+	SELECTCASE AUTORAND(4, 268)
+		CASE 0
+			{
+			PRINTFORMW 「\@ FAV_RATING ? ねぇ、# 気の所為でしょうか… 
+			\@ちょっと嬉しそうに鳴いてる気が\@ 
+			FAV_RATING ? するんだけど？ # しますね \@」
+			}
+			;ACT縄/アイマスクの場合
+			SIF IS_NOWACTNAME("縄/アイマスク")
+				{
+				PRINTFORMW 「本当は\@ IS_NOWACTNAME("縄") ? 縛ら # 目隠しさ 
+				\@れるの、嫌いじゃないんじゃない？ %SYMBOL%」
+				}
+		CASE 1
+			{
+			CALL HTMLPRINTW(@"「%STRING%、そんなに鳴かれると興奮し\@ 
+			FAV_RATING ? ちゃう # てしまいます \@%SYMBOL%」")
+			}
+		CASE 2
+			{
+			PRINTFORMW 「%MSTR%の悲鳴を聴く度に、ちょっと変な気持ちになっ\@ 
+			FAV_RATING ? ちゃうわ # てしまいます \@…」
+			}
+		CASE 3
+			;ACT縄/アイマスクの場合
+			SIF IS_NOWACTNAME("縄/アイマスク")
+				{
+				PRINTFORMW 「\@ IS_NOWACTNAME("縄") ? ちょっと縄がきつ # 視界を奪われるのは怖 
+				\@かったでしょうか？ でも…」
+				}
+			{
+			CALL HTMLPRINTW(@"「そんなに鳴かれると、ちょっと興奮し\@ 
+			FAV_RATING ? ちゃうかも # てしまいますね \@…%SYMBOL%」")
+			}
+	ENDSELECT
+ENDIF
+RETURN 1

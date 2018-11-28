@@ -1,0 +1,443 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+;	雛口上　エンディング口上ファイル
+
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+
+;EV2, エンディングイベント口上
+;#############################
+;開始30日以降、日時の更新時にシステム側からEVENT2が呼び出される
+;戻り値1以上が返ると本体側でFLAG:END達成が立ち、以降はシステム側から呼び出される事はない
+
+
+@KOJO_MALE_EVENT_K39_2(ARG)
+[SKIPSTART]
+	ルートＢ選択肢[1]は未完の為コメントアウト
+	一部の描写は省きすぎかも知れず
+
+	FIRSTEVENTがなくても現状、複数回表示されてしまう事はないけど、まぁ保険の意味で
+	FLAG:END達成については色々と企んでいたりもするけど、予定は未定という状態
+[SKIPEND]
+
+;エンディング
+;============
+IF (KFLAG:(FLAG:ご主人様):0 == 1 || KFLAG:(FLAG:ご主人様):1 == 1) && FLAG:オートモード表示設定 == 0 && FIRSTEVENT(0)
+	CALL ENDING_K39
+	RETURN 1
+ENDIF
+
+
+;エンディング関数
+;================
+@ENDING_K39
+#LOCALSIZE 1
+
+;背景色を夜用に
+;SETBGCOLOR 0, 0, 20
+CALL TWAIT3_K39
+PRINTFORMDW その日、%CALLNAME:TARGET%の姿は朝から見えなかった
+PRINTFORMDW 恐らく厄祓いにでも行っているのだろう。そう思って特に気を止める事もなかったが
+PRINTFORMDW 夜になっても帰ってくる様子はなく、%CALLNAME:MASTER%も流石に心配になってきた。と、その時…
+PRINTL
+;雛帰宅。%CALLNAME:MASTER%を外に連れ出す
+PRINTFORMW 「ごめんなさい、遅くなってしまって…」
+PRINTFORMW 「でも、どうしても今日中にやっておきたかったの。今日じゃないと駄目だから」
+PRINTFORMDW %CALLNAME:MASTER%は何の事か判らず、%CALLNAME:TARGET%に尋ねてみた
+PRINTFORMDW %CALLNAME:TARGET%は暫しの間言い淀んでいたが、何かを決意したかのように%CALLNAME:MASTER%に向き直り語り始める…
+PRINTL
+PRINTFORMW 「%CNAME(MASTER, TARGET)%を元の世界に帰す準備ができたわ。そしてそれが出来るのは今日だけなの」
+
+;ルートＡ
+IF KFLAG:(FLAG:ご主人様):0 == 1
+	PRINTFORMW 「%CNAME(MASTER, TARGET)%言っていたわよね、元の世界に未練があるって」
+	PRINTFORMW 「正直に言うとね？ 私はがっかりしたし、ちょっと落ち込んだの」
+	PRINTFORMW 「もしかしたら、このままここに留まってくれるんじゃないか…なんて、少しだけ思ってた。でも…」
+	PRINTFORMW 「本来属すべき世界に戻りたいのは当然だと思うし、%CNAME(MASTER, TARGET)%がそう望むなら私はそれを叶えてあげたい」
+	PRINTFORMW 「他ならぬ、%CNAME(MASTER, TARGET)%の願いだからこそ……」
+;ルートＢ
+ELSE
+	PRINTFORMW 「%CNAME(MASTER, TARGET)%は言ってくれたわよね。ここに残っても良いって」
+	CALL HTMLPRINTW(@"「私ね？ 凄く嬉しかった。%HTMLFONT("幸せ", , 0xC0C0C0)%というものがあるとすれば、こういう事なのかなって思ったわ」")
+	PRINTFORMW 「でも私といる限り%CNAME(MASTER, TARGET)%は幸せになれない。私は不幸を振りまく事しかできないから…」
+	PRINTFORMW 「そんなの絶対に嫌なの。私の傍にいるおかげで%CNAME(MASTER, TARGET)%が不幸になるなんて耐えられない！」
+	PRINTFORMW 「だって、%CNAME(MASTER, TARGET)%は……私に幸せを与えてくれた人だから」
+ENDIF
+
+PRINTL
+PRINTFORMDL %CALLNAME:TARGET%は%CALLNAME:MASTER%の手を取り言った
+PRINTFORMW 「ついてきて。そんなに遠くはないから」
+CALL TWAIT1_K39
+PRINTFORMDW %CALLNAME:TARGET%に連れられ森を抜け、着いた場所は小さな池だった
+PRINTFORMDW 澄んだ水面は何処までも透明で、目を凝らせば底まで見えるよな気さえする
+PRINTFORMW 「綺麗でしょう？ 此処は人の流した厄が流れ着く場所。溜まり渦巻き廻る場所なの」
+PRINTFORMW 「厄は他の場所でも集められるけど、此処はちょっと特別な場所なのよ」
+PRINTFORMW 「不吉な場所として人も妖も近づかない、厄のおかげで魚もいない寂しい場所。でも…」
+PRINTFORMW 「私には沢山の厄が見える。人の様々な思いの成れの果て。棄てられ、流されてここで私を待ってるの」
+PRINTFORMDW %CALLNAME:TARGET%がそう言いつつ水面に一歩踏み出すとその身体は沈む事なく水面に浮く
+PRINTFORMDW 足元からは小さな波紋が幾重にも広がり、幾重にも重なり、澄んだ水面一面に広がっていく
+PRINTFORMDW 水面でくるくると廻る%CALLNAME:TARGET%。%CALLNAME:MASTER%は見る事はかなわずともその周囲に何かが集まり、渦巻く気配は感じ取れた
+PRINTFORMW 「ふふ、%CNAME(MASTER, TARGET)%にも判るみたいね。私と長く居過ぎたせいかしら」
+PRINTFORMW 「そう、私はいつもこうやって厄を集めてるの。人間の元に戻らないように、人に災いをもたらさないように」
+PRINTFORMDW %CALLNAME:TARGET%は手を差し出し、そこにある%CALLNAME:MASTER%には見えない”何か”を慈しむように見つめながら言った
+PRINTL
+PRINTFORMW 「これは人や妖に忌み嫌われるもの。でも私にとってはそうじゃない」
+PRINTFORMW 「付き合いの長い友人のようで、とても愛しく感じられるものなの」
+PRINTFORMW 「だって…棄てられ、流されたのは私も同じだから、ね」
+PRINTFORMDW %CALLNAME:TARGET%は%CALLNAME:MASTER%に振り向きながら言った…
+PRINTL
+PRINTFORMW 「そして%CNAME(MASTER, TARGET)%に残っていた最後の厄も、私の元に集まってきているわ」
+PRINTFORMW 「私の力だけじゃどうしても祓えなかったけど、やっぱりこの場所の影響なのかしら。不思議ね…」
+PRINTFORMW 「これで%CNAME(MASTER, TARGET)%の厄祓いは全てお終い。そして今こそ厄を転じて福となす時よ」
+PRINTFORMDW %CALLNAME:TARGET%はそう言うと左腕のリボンを解き、%CALLNAME:MASTER%に手渡した
+PRINTL
+PRINTFORMW 「餞別、という訳じゃないの。これは%CNAME(MASTER, TARGET)%を厄から、これから行う事から守ってくれる」
+PRINTFORMW 「元の世界に辿り着く頃にはボロボロになってしまうでしょうけど、きっとそれまでは…」
+PRINTFORMW 「この場所に満ちる厄を%CNAME(MASTER, TARGET)%から貰った魔力を使って別の力に転化させるわ」
+PRINTFORMW 「そして%CNAME(MASTER, TARGET)%を元居た場所へ、%CNAME(MASTER, TARGET)%が心に思い描く場所へ送り返してあげる」
+PRINTFORMDW %CALLNAME:TARGET%は%CALLNAME:MASTER%に近づき言った…
+PRINTL
+PRINTFORMW 「さよならは言わないわ。忘れないでなんて未練がましい事も言わない。でも…」
+PRINTFORMW 「私、%CNAME(MASTER, TARGET)%が好きだった……」
+PRINTFORMDW %CALLNAME:TARGET%は%CALLNAME:MASTER%にそっと口づけして言った
+PRINTL
+;こういうフェードインの使い方は好き過ぎる。人によっては鬱陶しいだけかもだけど
+CALL FADEIN(25, "「愛していたわ」")
+TWAIT 1500, 0
+PRINTL
+PRINTFORMW 「さぁもう時間がないわ。リボンをしっかり握って、準備して」
+PRINTFORMDW %CALLNAME:TARGET%はそう言うと胸の前で両手を合わせ、何か唱え始めた
+PRINTFORMDW 水面が淡く光り輝き、%CALLNAME:TARGET%の周囲で渦巻いていた”何か”が青白い光りの粒に転化する
+PRINTFORMDW それは周囲一帯から立ち上り、上空に向かってゆっくりと上昇していく
+PRINTFORMDW 気がつくと足は地面を離れ、身体が宙に浮き始めた
+PRINTFORMDW %CALLNAME:TARGET%を見やるとその口元が微かに動いていたが、%CALLNAME:MASTER%には聞き取れなかった
+PRINTFORMDW ただ、周囲の光りに照らされ目元から零れ落ちる涙だけは、はっきりと見て取る事ができた…
+PRINTL
+PRINTFORMDW %CALLNAME:MASTER%の身体は光りに包まれ、どんどん上昇していく
+PRINTFORMDW そして気がつくと世界は反転し、足下の宵闇の空へ吸い込まれていく
+PRINTFORMDW 遠ざかる幻想郷に%CALLNAME:MASTER%はそっと心の中で別れを告げる
+PRINTFORMDW そのうち微かな音が聞こえてきた。いや、心の中から聞こえてくるのかも知れない
+PRINTFORMDW ともかくそれは%CALLNAME:MASTER%の意識に達した
+PRINTFORMDW 次第に音はいっそう高まり、律動的ではあるが、耳障りな不協和音となり、頭の中に雷のように鳴り響いて
+PRINTFORMDW 身体を貫いて脈打ち、鈍い痛みのような感覚を生み出した
+PRINTFORMDW そして赤と黒の渦巻く波が押し寄せてきて、それを突き抜けると音はピタリと鳴り止んだ
+PRINTL
+;紫登場。そしてルート毎に分岐させる
+CALL FPRINTW("「あら、また迷い込みに……って、今回はそうではないようね」", COLOR2_K39("紫"))
+;キャラカットイン(紫)
+CALL CHARA_CUTIN(CSVCSTR(22, 10, 0), CSVCSTR(22, 11, 0), CSVCSTR(22, 12, 0))
+PRINTL
+
+;ルートＡ　KFLAG:0
+;=================
+IF KFLAG:(FLAG:ご主人様):0 == 1
+	CALL FPRINTW(@"「…成る程。%CNAME(MASTER, TARGET)%は選択し、厄神様が頑張ったようね」", COLOR2_K39("紫"))
+	;本当にそれで良かったのかしら云々
+	CALL FPRINTW("「でも、本当にそれで良かったのかしら？」", COLOR2_K39("紫"))
+	CALL FPRINTW(@"「%CNAME(MASTER, TARGET)%の因果の糸は、これでどちらの世界からも切り離されてしまった」", COLOR2_K39("紫"))
+	PRINTL
+	;元居た時間と場所に戻れるとは限らない云々
+	CALL FPRINTW(@"「尤も、%CNAME(MASTER, TARGET)%は既に選択を済ませているし、今更後戻りはできないわ」", COLOR2_K39("紫"))
+	CALL FPRINTW("「自身の存在が忘れ去られた世界に戻るしかないのよ。そして…」", COLOR2_K39("紫"))
+	CALL FPRINTW("「これから戻る世界が元居た時間と場所であるとも限らない」", COLOR2_K39("紫"))
+	PRINTL
+	CALL FPRINTW(@"「ふふ、でも……少なくても%CNAME(MASTER, TARGET)%には覚悟ができているようね」", COLOR2_K39("紫"))
+	PRINTL
+	CALL FPRINTL("「ま、それもいいでしょう。でも一つだけ言わせて貰うと…」", COLOR2_K39("紫"))
+	CALL FPRINTW("「もし同じ事があるなら、今度は違う選択をすべきね」", COLOR2_K39("紫"))
+	CALL FPRINTW("「さてと。そろそろおやすみの時間ね」", COLOR2_K39("紫"))
+	CALL FPRINTW("「後は私が送って差し上げますわ。ただ、何処に辿り着くかまでは保障しかねますけど」", COLOR2_K39("紫"))
+	PRINTL
+	;強制表示する
+	CALLF ANIME_CONFIG("TIMES", 1)
+	;フェードアウト
+	CALL FADE_TO_CLEARLINE2(30, COLOR2_K39("YUKARI"), GETBGCOLOR(), "「それではおやすみなさい。覚めるころには……」")
+	CALL TWAIT3_K39
+	;帰還
+	;（そこはかとないムアコック風味に気付く人はいるだろうか？）
+	PRINTFORMDL 気がつくと%CALLNAME:MASTER%はしっかりとした芝生の上に立っていた
+	PRINTFORMDW 色褪せた太陽の下、鼻には草の匂いがあった。そしてこの場所には見覚えがある
+	PRINTL
+	PRINTFORMDW ――此処は幼い頃過ごした場所
+	PRINTL
+	PRINTFORMDL その風景は当時とまるで変わる事なく鮮明ではあったが、
+	PRINTFORMDW %CALLNAME:MASTER%の目にそれは色褪せて見えた。そして違和感を感じる
+	PRINTFORMDW 全てが鮮明でくっきりとしているにも関わらず、この世界は色彩に乏しい
+	PRINTFORMDW これが因果から切り離されたという事なのだろうか？
+	PRINTFORMDW この世界において、自分は存在する事を許されない者になってしまったという事なのだろうか？
+	PRINTL
+	;過去の自分との対面
+	PRINTFORMDW %CALLNAME:MASTER%は草を踏んで前方の低くこんもりした森をさして歩き出した
+	PRINTFORMDW 森のへりにつくと中には入らず、ぐるりをまわってゆくうちに森から流れ出て遠くに消えている小川に辿り着く
+	PRINTFORMDW その輝く澄んだ水には覚えがある。そう、ここは幼い頃の%CALLNAME:MASTER%お気に入りの場所だった
+	PRINTFORMDW 懐かしさに駆られ、服が濡れるのも構わずに小川に足を踏み入れる
+	PRINTFORMDW %CALLNAME:MASTER%は水の冷たさに備え、若干身体を強張らせたがそれは無駄な事だった
+	PRINTFORMDW 川の水は、まるで%CALLNAME:MASTER%がそこに居ないかのように流れるのみで
+	PRINTFORMDW %CALLNAME:MASTER%自身も濡れる事もなく、水の冷たさを感じ取る事も出来なかった…
+	PRINTL
+	PRINTFORMDW なぜこうなるのかは判らない。ただ、どうやらこの世界に拒絶されているらしい
+	PRINTFORMDW 少なくともその事だけは%CALLNAME:MASTER%にもはっきりと感じ取れる
+	PRINTL
+	PRINTFORMDW そう、最早%CALLNAME:MASTER%の帰るべき場所はないのだ――
+	PRINTL
+	PRINTFORMDW そう思った刹那、%CALLNAME:MASTER%は自分の姿が希薄になるつつある事に気付く
+	PRINTFORMDW 身体は徐々に実体を失い、向こう側が透けて見える。それでも例外がひとつあった
+	PRINTFORMDW ――それは雛に手渡されたリボンだった
+	PRINTFORMDW 今やすっかりボロボロになっていたが、未だに実体を失わず、消え行く身体にもその存在はしっかりと感じ取れた
+	PRINTL
+	PRINTFORMDW ふいに人の視線を感じ、%CALLNAME:MASTER%がそちらに振り向くとそこには子供の姿があった
+	PRINTFORMDW 見間違いようも無い。これはかつての自分。幼い頃の%CALLNAME:MASTER%自身だ
+	PRINTFORMDW 恐らくこちらの姿が見えていないのだろう
+	PRINTFORMDW その視線は今や実体を失いつつあるこの手に握られたリボンに向けられている
+	PRINTFORMDW 子供が手を伸ばしリボンを掴もうとし、%CALLNAME:MASTER%は手を差し出す
+	PRINTFORMDW リボンを手にした子供は、最初不思議そうにそれを眺め、大事そうにポケットに仕舞うと何処かを目指して駆け出してゆく
+	PRINTL
+	PRINTFORMDW その後ろ姿を見送りながら%CALLNAME:MASTER%は理解した
+	PRINTFORMDW 全ては偶然ではなく必然だったのだと。これは自身に定められた運命なのだと
+	PRINTFORMDW 存在が薄れ、世界から消えゆきながら%CALLNAME:MASTER%は思った
+	PRINTFORMDW 少なくとも何かは続いてゆくのだ。もしこれが啓示なら、心やすまる啓示といえる
+	PRINTL
+	
+	;Free me
+	;Free me
+	;Free me from this world
+	
+	;Can you free me, free me from this world
+	
+	;フェードイン
+	CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "心からそう思えた……")
+	TWAIT 1000, 0
+	CALL TWAIT3_K39
+	PRINTFORMW 「はぁ、すっかり遅くなっちゃたわね。なんで今日は厄がこんなに、って…ん、何かしら？」
+	;ＢＧＭカットイン 運命のダークサイド
+	CALL BGM_CUTIN(CSTR:13, 1)
+	PRINTFORMW 「…あれは人、よね。どうしてこんなところで倒れて…」
+	CALL TWAIT1_K39
+	;フォントをセット
+	CALL SETFONT_K39
+	;中央で表示
+	ALIGNMENT CENTER
+	;そして幕引き
+	;フェードインx2 そして振り出しに戻る
+	CALL FADE(20, GETBGCOLOR(), COLOR2_K39("HINA"), "私は鍵山雛、人の厄を祓う厄神です")
+	TWAIT 2500, 0
+	PRINTL
+	CALL FADE(20, GETBGCOLOR(), COLOR2_K39("HINA"), "貴方の厄災、私が全て引き受けましょう")
+	TWAIT 3000, 0
+	CALl TWAIT3_ZWEI_K39
+	;フォントを戻す
+	CALL RESETFONT_K39
+	;強制表示する！
+	CALLF ANIME_CONFIG("TIMES", 4)
+	;フェードインx3 TWAIT挟んだ方がいい気もする
+	CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "THIS IS")
+	;太字にして
+	FONTSTYLE 1
+	CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "THE END")
+	;戻す
+	FONTREGULAR
+	CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "OF THE BEGINNING")
+	;左寄せに戻す
+	ALIGNMENT LEFT
+	PRINTL
+	TWAIT 500, 0
+	PRINTL
+	;SCROLLTEXTでエンディングタイトル
+	RESETCOLOR
+	FONTSTYLE 1
+	CUSTOMDRAWLINE -=
+	;タイトル思いつかないので放り投げる
+	CALL SCROLLTEXT("　　　　　　　【Ending No.0001】", 2, 6, 117, 0, 1)
+	CALL RESETFONT_K39
+	PRINTL
+	TWAIT 500, 0
+	PRINTL
+	;ゲームオーバー2で終了させる
+	CALL GAME_OVER2_K39
+
+;ルートＢ　KFLAG:1
+;=================
+ELSEIF KFLAG:(FLAG:ご主人様):1 == 1
+	;紫登場
+	CALL FPRINTW(@"「…成る程。%CNAME(MASTER, TARGET)%としては心残りがあるのね」", COLOR2_K39("紫"))
+	CALL FPRINTW("「でも厄神様の気持ちは踏みにじりたくない。困らせたくない、と」", COLOR2_K39("紫"))
+	CALL FPRINTW("「ふふ、お互いに不器用で微笑ましい事。って、ちょっと余計だったわね」", COLOR2_K39("紫"))
+	CALL FPRINTW(@"「お詫びと言ってはなんですけど、%CNAME(MASTER, TARGET)%にはもう一度選択の機会を差し上げましょう」", COLOR2_K39("紫"))
+	PRINTL
+	CALL FPRINTW(@"「さぁ選びなさい。%CNAME(MASTER, TARGET)%が本当はどうしたいのか。どちらの道を望むのか」", COLOR2_K39("紫"))
+	PRINTL
+	CALL HTMLPRINTDL(@"%HTMLBUTTON("[0]", "0", "Ending, 0002へ")% 雛の元へ…")
+	;コメントアウト
+	;CALL HTMLPRINTDL(@"%HTMLBUTTON("[1]", "1", "Ending, 0003へ")% 元の世界へ…")
+	CALL INPUTINTD(0, 1)
+	;オートなら止める
+	SIF FLAG:オートモード > 0
+		FORCEWAIT
+	SELECTCASE RESULT
+		;選択肢 0
+		CASE 0
+			CALL FPRINTW("「そう……たとえ自分が不幸になっても想いを貫きたい、と」", COLOR2_K39("紫"))
+			CALL FPRINTL("「判りました、それもいいでしょう。ただし…」", COLOR2_K39("紫"))
+			CALL FPRINTW(@"「%CNAME(MASTER, TARGET)%の因果の糸は一度幻想郷から断ち切られてしまっている」", COLOR2_K39("紫"))
+			CALL FPRINTW("「恐らく厄神様も貴方の事は覚えていないでしょう」", COLOR2_K39("紫"))
+			CALL FPRINTW("「でも、ふふ……少なくても貴方には覚悟ができているようね」", COLOR2_K39("紫"))
+			PRINTL
+			;そこまで覚悟してるならよくってよ云々
+			CALL FPRINTW("「さてと、後は私が送って差し上げますわ。少しの間眠って貰う事になりますけど」", COLOR2_K39("紫"))
+			CALL FPRINTW("「それでは、おやすみなさい」", COLOR2_K39("紫"))
+			PRINTL
+			;ユーザーの都合なんて知ったことか！的なTIMES 1
+			CALLF ANIME_CONFIG("TIMES", 1)
+			CALL FADE(20, GETBGCOLOR(), COLOR2_K39("YUKARI"), "「――覚めるころには、幻想ですわ」")
+			CALL TWAIT3_K39
+			;そして幻想郷へ…
+			SETBGCOLOR 20, 15, 0 ;背景色を昼に
+			PRINTFORMDW 気がつくと%CALLNAME:MASTER%はしっかりとした芝生の上に立っていた
+			;春以外は意味が無いが、ついついやってしまう
+			;というかまぁルートＡとの対比でもあるので
+			SELECTCASE FLAG:季節
+				CASE 0     ;春
+					PRINTD 暖かな春の日差しの下
+				CASE 1     ;夏
+					PRINTD 照りつける真夏の太陽の下
+				CASE 2     ;秋
+					PRINTD 秋の柔らかな日差しの下
+				CASE 3     ;冬
+					PRINTD にぶい冬の日差しの下
+			ENDSELECT
+			PRINTFORMDW 、鼻には草の匂いがあった
+			PRINTFORMDW 離れていたのは僅かと思われるのにそれは懐かしく感じられ、たまらなく郷愁をかきたてられる
+			;佇む雛、そして再会
+			PRINTFORMDW %CALLNAME:MASTER%は期待と不安を胸に秘めながら、%CALLNAME:TARGET%の家の方角を目指した
+			PRINTFORMDW あの胡散臭い人物は言っていた。恐らく%CALLNAME:TARGET%は覚えていないだろうと
+			PRINTFORMDW それでももう一度会いたかった。会わずにはいられなかった
+			PRINTFORMDW 会って伝えたかった。これは自分の選択であり、どのような結果になろうとも受け入れる覚悟がある事を
+			PRINTL
+			PRINTFORMDW しばらく歩くうちに日が傾いてきた。夜になると色々と面倒だ
+			PRINTFORMDW %CALLNAME:MASTER%はそう思い歩みを速める
+			PRINTFORMDW すると前方に人影が見えてきた。人だろうか？ 妖怪だろうか？
+			PRINTFORMDW 注意を払いながら、夕暮れの太陽に照らされた人影の方に近づく
+			PRINTL
+			PRINTFORMW 「そこの%CNAME(MASTER, TARGET)%、私と同じ道を歩かない方がいいわよ」
+			PRINTFORMW 「そのままだと%CNAME(MASTER, TARGET)%に厄が降り注いでしまうわ」
+			PRINTL
+			PRINTFORMDW ――間違いない。それは%CALLNAME:TARGET%だった
+			PRINTL
+			PRINTFORMW 「な～んて話がまかり通ってるみたいだけど。ま、今更誤解を解く気にもならないけどね」
+			PRINTFORMDL %CALLNAME:TARGET%はそう言うと、%CALLNAME:MASTER%の方に近づいてきた
+			PRINTL
+			PRINTFORMW 「私を見ても驚かないのね？ 珍しいというか何と言うか…」
+			PRINTFORMW 「あぁ、厄の事なら大丈夫よ。私の周りの厄は全部山の神様に渡してきたところだから」
+			PRINTFORMW 「と言っても、%CNAME(MASTER, TARGET)%は私が誰だか判らないみたいだけど」
+			PRINTFORMDW %CALLNAME:TARGET%はそう言うと立ち去ろうとした
+			PRINTFORMW 「そろそろ日が暮れるわ。この辺りも安全とは言い難いし、早くお帰りなさい」
+			PRINTL
+			PRINTFORMDW どうやらあの胡散臭い人物の言った事は本当のようだった
+			PRINTFORMDW %CALLNAME:TARGET%は%CALLNAME:MASTER%の事を覚えておらず、
+			PRINTFORMDW この幻想郷において、その存在は最初から無かった事になっているようだった
+			PRINTFORMDW %CALLNAME:MASTER%は酷く落胆しつつも今はどうする事も出来ず、仕方なくその場を離れようとした
+			PRINTFORMDW と、その時……
+			PRINTL
+			;まちなさい、何処に行くつもり？
+			PRINTFORMW 「私を置いて何処に行くつもり？」
+			PRINTFORMDW 振り返ると笑顔の、そして目には涙を溜めた%CALLNAME:TARGET%の姿がそこにはあった
+			;雛の笑顔、涙、そして抱き合う二人
+			PRINTFORMDW どちらともなく駆け寄りしっかりと抱き合う
+			PRINTFORMDW %CALLNAME:MASTER%はここに至る経緯を%CALLNAME:TARGET%に話し、自分の想いの全てを告げた…
+			PRINTL
+			PRINTFORMW 「本当に？ %CNAME(MASTER, TARGET)%はそれでいいの？ 本当に私なんかでいいの？」
+			PRINTFORMW 「…なんて言うのは、逆に%CNAME(MASTER, TARGET)%に失礼よね。%CNAME(MASTER, TARGET)%のその覚悟に対しても」
+			PRINTL
+			PRINTFORMW 「いいわ、私も覚悟を決める。私は%CNAME(MASTER, TARGET)%を幸せには出来ない。でも……」
+			PRINTFORMW 「不幸にならないように精一杯頑張るから。それと、もう一つだけ言わせて」
+			PRINTL
+
+			;You can follow me. 
+			;I will always keep you safe, 
+			;Follow me, 
+			;You can trust in me. 
+			;I will always protect you, my love.
+
+			CALLF ANIME_CONFIG("TIMES", 2)
+			;フェードイン
+			CALL FADE(30, GETBGCOLOR(), COLOR2_K39("HINA"), "「おかえりなさい」")
+			;ＢＧＭカットイン 厄神様の通り道　～ Dark Road
+			CALL BGM_CUTIN(CSTR:14, 1)
+			TWAIT 1500, 0
+			PRINTL
+			PRINTFORMDL そして月日は流れ……
+			TWAIT 500, 0
+			CALL TWAIT3_K39
+			;少し後日談をいれつつ
+			PRINTFORMW 「ほら、だからそうじゃなくって……ちょっと！ それじゃ頭が逆さまよ！」
+			PRINTFORMW 「はぁ、こんな調子で雛祭りに間に合うのかしら？ %CNAME(MASTER, TARGET)%がこんなに不器用だとは知らなかったわ」
+			PRINTFORMW 「でも、ふふ……、折り雛を二人で作るのは楽しいわね」
+			CALL TWAIT1_K39
+			;フォントをセット
+			CALL SETFONT_K39
+			;中央で表示
+			ALIGNMENT CENTER
+			;強制表示する！
+			CALLF ANIME_CONFIG("TIMES", 7)
+			;フェードインx5
+			CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "幻想郷には二柱の厄神がいるという")
+			TWAIT 2500, 0
+			PRINTL
+			;噂は真実とかけ離れている場合が多い。まぁこの場合は余計な説明を省いてそれぞれの解釈に任せる的な感じ
+			CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "うち一柱は元人間という噂もある")
+			TWAIT 2500, 0
+			PRINTL
+			PRINTL
+			CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "いつしか、その仲睦まじい姿は人々の評判となり")
+			TWAIT 2500, 0
+			PRINTL
+			CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "今や厄神としてではなく、縁結び、恋結びの神として")
+			TWAIT 2500, 0
+			PRINTL
+			CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "幻想郷で、広く信仰されているという……")
+			TWAIT 3000, 0
+			CALL TWAIT3_ZWEI_K39
+			;フォントを戻す
+			CALL RESETFONT_K39
+			;太字にする
+			FONTSTYLE 1
+			;フェードインで"終"
+			CALL FADE(20, GETBGCOLOR(), COLOR2_K39("white"), "終")
+			CALL RESETFONT_K39
+			;左寄せに戻す
+			ALIGNMENT LEFT
+			PRINTL
+			TWAIT 500, 0
+			PRINTL
+			;SCROLLTEXTでエンディングタイトル
+			;デフォルトカラーにする
+			RESETCOLOR
+			;太字にする
+			FONTSTYLE 1
+			CUSTOMDRAWLINE -=
+			CALL SCROLLTEXT("　　　　　　　【Ending No.0002】　　――秘神流し雛", 2, 6, 117, 0, 1)
+			;フォントを戻す
+			CALL RESETFONT_K39
+			PRINTL
+			TWAIT 500, 0
+			PRINTL
+			;ED経過判定（フラグ立てても使い道あるかどうか？）
+			KFLAG:(FLAG:ご主人様):150 = 1
+			;ゲームオーバー(選択肢x3)
+			CALL GAME_OVER_K39
+		;選択肢 1
+		CASE 1
+			;ここも何とかしないといけない
+			RESETCOLOR
+			FONTSTYLE 1
+			CUSTOMDRAWLINE -=
+			CALL SCROLLTEXT("　　　　　　　【Ending No.0003】ここにタイトル", 2, 6, 117, 0, 1)
+			FONTREGULAR
+			SETFONT
+			PRINTL
+			TWAIT 500, 0
+			PRINTL
+			;ゲームオーバー2で終了させる
+			CALL GAME_OVER2_K39
+	ENDSELECT
+ENDIF

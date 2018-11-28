@@ -1,0 +1,1171 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上 加虐系アクション口上ファイル
+;
+;	加虐系アクション口上をまとめたファイル
+;
+;Version		Reason
+;1.71			@口上記入チェック仕様に。一部加筆。その他細かな修正
+;1.68			ACT60,スパンキングにTEQUIP:調教対象Ｃ使用分岐を追加(仕様変更によりこれが発生する。最高！ｗ)
+;1.67			全面的に改修
+;1.60			ACT分類単体ファイルとして独立。旧仕様のACTを削除
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;    So knives out
+;        Catch the mouse
+;            Squash his head
+;                Put him in the pot
+
+;========================================================================
+;加虐系 ACT60～68
+;========================================================================
+;・TFLAG:ACT(60=スパンキング/61=鞭/62=針/63=縄/64=アイマスク/65=ボールギャグ/66=罵倒/67=三角木馬/68=浣腸セット)
+;・TFLAG:ACT分類 == 6に該当
+;・汎用リアクションにおいてはMENUMATCH(TFLAG:ACT, "加虐")で参照する事が可能
+;・TEQUIP系は基本、ACT開始時点で装着される
+;・ACTによっては調教対象の反応次第でキャンセルされる事がある
+;・縄/アイマスク/ボールギャグ/三角木馬はTEQUIPで管理され当該ACT/REACT以外でもTEQUIP:縄等で参照できる
+;-------------------------------------------------
+
+;────────────────────────────────────
+;ACT60, スパンキング
+;────────────────────────────────────
+;・調教者が調教対象の尻を平手で叩く
+;・ACT開始時点ですでに叩いている
+;・性交奉仕中には発生しない
+;・顔面騎乗系は解除される
+;・調教者が自慰中である場合は解除される
+;-------------------------------------------------
+@KOJO_ACT_K14_60
+;-------------------------------------------------
+;・ACTの派生なし
+;-------------------------------------------------
+;・地の文に分岐なし
+;・@TARGET_DESCRIPTIONで状況描写が入る可能性あり
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT60, スパンキング
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%を躾けるには、こういうのが一番かもしれないわ」
+		PRINTFORMW 「さぁ、覚悟はいいかしら。精々いい声を聞かせて頂戴」
+		PRINTFORMW 「豚みたいに啼かせてあげるから…」
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;お仕置き発動中
+	;=================================================
+	IF 口上記入チェック(100) && TFLAG:お仕置きフラグ
+		;同一調教内で一度のみ表示する
+		IF ONCEACT(1)
+			SELECTCASE RANDACT(2, 1)
+				CASE 0
+					PRINTFORMW 「突然だけど、お仕置きの時間よ」
+					PRINTFORMW 「さぁ、覚悟して頂戴…」
+				CASE 1
+					PRINTFORMW 「フフ、良い格好ね。%CNAME(MASTER, TARGET)%にはお似合いよ」
+					PRINTFORMW 「あら？ \@ ABL:MASTER:マゾっ気 > 4 ? %CNAME(MASTER, TARGET)%、ちょっと嬉しそうね？ ホント、度し難い変態だわ！ # そんな顔したって駄目よ。やめるつもりないもの \@」
+					PRINTFORMW 「\@ ABL:MASTER:マゾっ気 > 4 ? ま、精々愉しんで頂戴 # さぁ、いい声を聞かせて頂戴 \@…」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;性交奉仕で中出し時早漏、かつ一定条件を満たすとアリス様がぶちきれてお仕置きされるという
+	;=================================================
+	;前回射精が早漏
+	;=================================================
+	IF 口上記入チェック(100) && (KFLAG:TARGET:200 > 1 && GETBIT(KFLAG:TARGET:201, 1) && GROUPMATCH(TFLAG:前回中出し, 4, 8) > 0 && IS_PREVACTNAME("正常位させる/後背位させる/対面座位させる/背面座位させる/逆レイプ/アナルセックスさせる"))
+		PRINTFORMW 「仕方無いわよねぇ？ %CNAME(MASTER, TARGET)%が悪いんだもの」
+		PRINTFORMW 「大人しく、罰を受け入れなさい」
+		SIF ABL:MASTER:マゾっ気 > 4
+			PRINTFORMW 「尤も、%CNAME(MASTER, TARGET)%にとってはこれ…、ご褒美にしかならないのよね……」
+		RETURN 1
+	ENDIF
+	
+	;工夫が足りぬ
+	;=================================================
+	;連続実行
+	;=================================================
+	IF 口上記入チェック(100) && TFLAG:ACT == TFLAG:前ACT
+		PRINTFORMW 「フフっ、ちょっと愉しくなってきたわねぇ」
+		PRINTFORMW 「ほらほら！ まだまだいくわよっ！」
+		RETURN 1
+	ENDIF
+	
+	;TEQUIP:調教対象Ｃ使用 == 2(口で愛撫継続中)はまず成立しないと思うので考慮しない
+	;あとから見直して、書いた時のテンションの高さに自分で圧倒されるのは割りとありがちな話ｗ
+	;=================================================
+	;Ｃ愛撫継続中
+	;=================================================
+	IF 口上記入チェック(100) && TEQUIP:調教対象Ｃ使用 == 1
+		;調教対象がイきそう
+		IF TCVAR:MASTER:イきそう
+			SELECTCASE TENSION(TARGET, 8)
+				CASE "高い"
+					PRINTFORMW 「へぇ、%CNAME(MASTER, TARGET)%…イきそうになってるわね。あら、今更否定とか、往生際が悪いわよ」
+					PRINTFORMW 「だって、ねぇ？ \@ PENIS(MASTER) ? 搾り取って # イかせて \@欲しくて、まるでセックスしてるみたいに腰が動いちゃってるのに」
+					PRINTFORMW 「ふふっ、あははっ！ 傑作、ホント傑作よ！」
+					PRINTFORMW 「犬みたいな格好で、おしり叩かれてるのによくなっちゃうとか」
+					PRINTFORMW 「まったく、どうしようもないわね。この変態…」
+				CASE "一般"
+					PRINTFORMW 「随分いい声で鳴いてくれるじゃない。でもそれって…、キモチ良い時に出る声よね？」
+					PRINTFORMW 「ほら、\@ PENIS(MASTER) ? 射精したいんでしょう？ 搾り取って欲しいんでしょう？ # イきたいんでしょう？ イかせて欲しいんでしょう？ \@」
+					PRINTFORMW 「\@ ALI(0) ? ふふふ # フフフ \@…、犬みたいな格好の%CNAME(MASTER, TARGET)%を屈服させるのも、悪くないわね…」
+				CASE "低い"
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%…、おしり叩かれてるのにイきそうになってる訳？」
+					PRINTFORMW 「嘘ついても無駄よ。だってこんなに\@ PENIS(MASTER) ? ビクビク # ヒクヒク \@させちゃってるのに、ね…」
+			ENDSELECT
+			PRINTFORMDL %CALLNAME%は%CALLNAME:MASTER%の耳元で囁きながら、
+			PRINTFORMDW 絶頂への期待に\@ PENIS(MASTER) ? ビクビクと震えるペニスを激しく扱きあげ # ぷっくりと膨らんだクリトリスを妖しい指使いで責め立て \@、その屈服の瞬間を待ち受けている…
+		;その他
+		ELSE
+			SELECTCASE TENSION(TARGET, 8)
+				CASE "高い"
+					PRINTFORMW 「あら？ 腰が動いてるようだけど、どうしたのかしら」
+					PRINTFORMW 「痛みから逃れるって、動きじゃないわよねぇ？」
+					PRINTFORMW 「私の手の動きに合わせるみたい、というか…何かおねだりしてるみたいよね」
+					PRINTL
+					PRINTFORMDW %CALLNAME%は%CALLNAME:MASTER%の耳元に口を寄せ囁いた…
+					PRINTFORMW 「ほら、キモチ良いんでしょう？ おしり叩かれて余計に興奮しちゃうんでしょう？」
+					PRINTFORML 「正直に言えたなら…」
+					CALL FADEIN(13, @"「この格好のまま\@ PENIS(MASTER) ? 抜いて # イかせて \@あげてもいいのよ…」")
+					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? ふふふ # ウフフ \@…」")
+					CLEARLINE 1
+				CASE "一般"
+					PRINTFORMW 「ん？ なによ。おしり叩かれてるのに、こっちの方が随分\@ PENIS(MASTER) ? 元気みたい # 濡れちゃってるみたい \@ねぇ」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%…、むしろ叩かれて興奮しちゃってるとか？」
+					PRINTFORMW 「ほら、どうなの？ 正直に言ってみなさいよ…」
+				CASE "低い"
+					PRINTFORMW 「ほら、どう？ 犬みたいな格好でおしり叩かれながら\@ PENIS(MASTER) ? シゴか # 弄ら \@れるの」
+					PRINTFORMW 「痛いのかしら？ キモチ良いのかしら？ それとも…」
+					PRINTFORMW 「その両方なのかしら。ねぇ？」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;面倒なんでまとめてしまった。上層部分は確率にして下位の分岐を無駄にしない。ファジーな構造好き
+	;-------------------------
+	;その他
+	;-------------------------
+	IF 0
+	;調教対象のマゾっ気6以上＆1/3の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 6 && !RAND:3
+		PRINTFORMW 「ねぇ、痛くされるのがいいんでしょ？ これが好きなんでしょう…？」
+		PRINTFORMW 「ほら、どうなの…？ はっきり言いなさいよ…　ほら早くっ！」
+		PRINTFORM 「この変態変態変態変態っ…
+		CALL PRINT_SYMBOL_K14
+	;調教対象のマゾっ気4以上＆1/3の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 4 && !RAND:3
+		PRINTFORMW 「そんな嬉しそうな顔されると、なんだか拍子抜けするわね」
+		PRINTFORM 「%RAND_SPLIT("マッタク/まったく/全く")%……どうしようもないわね！ この変態…
+		;2/3の確率で真				うｎ？
+		IF RAND:3
+			PRINTW ！」
+		;1/3
+		ELSE
+			CALL PRINT_SYMBOL_K14
+		ENDIF
+	;相思相愛＆1/3の確率
+	ELSEIF AFFECTION("相思相愛") && !RAND:3
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%が大好きなお仕置きの時間よ！」
+		PRINTFORM 「さぁ、お尻をこっちに向けなさい…
+		CALL PRINT_SYMBOL_K14
+	;その他でRANDACT
+	ELSE
+		SELECTCASE RANDACT(3, 20)
+			CASE 0
+				PRINTFORMW 「あらあら、犬には相応しい姿ねぇ。とってもよくお似合いよ」
+				PRINTFORMW 「さぁて、今回はどんな声で啼いてくれるのかしら」
+				CALL FADEIN(13, "「…愉しみね」")
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ウフフ…」")
+				CLEARLINE 1
+			CASE 1
+				PRINTFORMW 「これから何をされるか、言われなくても判るわよね？」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%が今感じてるのは恐怖？ それとも期待？」
+				PRINTFORM 「ま、どちらにしても…すぐに判る事だけど。ね
+				CALL PRINT_SYMBOL_K14
+			CASE 2
+				PRINTFORMW 「さぁて、これから何をするか、もう判ってるわよね？」
+				PRINTFORM 「%CNAME(MASTER, TARGET)%みたいな
+				IF TALENT:MASTER:オトコ
+					PRINTFORM \@ TALENT:MASTER:小柄 ? 男の子 # オトコ \@
+				ELSE
+					PRINTFORM \@ TALENT:MASTER:小柄 ? 女の子 # 可愛い子 \@
+				ENDIF
+				PRINTFORMW 虐めるのって、ゾクゾクしちゃうのよ」
+				PRINTFORM 「ま、%RAND_SPLIT("我ながら度し難いとは/自分でもちょっとどうかと")%思うけど。ね
+				CALL PRINT_SYMBOL_K14
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT61, 鞭
+;────────────────────────────────────
+;・調教者が鞭を大きく振り上げ思いっきり振り下ろす
+;・ACT開始時点ですでに叩いている
+;・ターン方針が"ソフト"だと発生しない
+;・性交中/性交奉仕中には発生しない
+;-------------------------------------------------
+@KOJO_ACT_K14_61
+;-------------------------------------------------
+;・ACTの派生なし
+;-------------------------------------------------
+;0616で鞭を持たせると割りと叩いてくれる印象
+;方針、子作りで中出し後に甘々な台詞吐いたあと、おもむろに鞭で叩いたりするのはご愛嬌ｗ
+;規制してもいいけど、面白いからまぁいいやという感じ
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT61, 鞭
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		PRINTFORMW 「これが何が判るかしら…？」
+		PRINTFORMW 「ふふ…ご名答。じゃ、今から何されるか…言わなくても判るわよね？」
+		PRINTFORMW 「半端な事するつもりはないから、しっかりと歯を食いしばって耐えなさい」
+		PRINTFORMW 「さぁ、覚悟はできたかしら？」
+		RETURN 1
+	ENDIF
+	
+	;楽しくなってきた
+	;=================================================
+	;同一調教内で一度のみ表示
+	;=================================================
+	IF 口上記入チェック(100) && ONCEACT(0)
+		SELECTCASE RANDACT(4, 0)
+			CASE 0
+				PRINTFORMW 「これ、手で叩くより楽でいいのよね%RAND_SPLIT("ぇ/")%。それに…」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%の叫び声も一味違うし。フフ…」
+				PRINTFORMW 「さぁ、%CNAME(MASTER, TARGET)%の身体に刻み込んであげる」
+				PRINTFORMW 「私の所有物である証を、ね……」
+			CASE 1
+				PRINTFORMW 「私に限って、加減を誤るなんて事はないと思うけど…」
+				PRINTFORMW 「痛かったら言って頂戴。ただし…、それでやめるとは限らないけど。フフ」
+			CASE 2
+				PRINTFORMW 「鞭を振った時の音って、先端が音速に達したから出るものらしいわよ？」
+				PRINTFORMW 「そう考えると、凄く酷いことしてる気がするわね」
+				PRINTFORMW 「まぁ普通に考えても…、酷いことに違いはないと思うけど。ウフフ…」
+			CASE 3
+				PRINTFORMW 「腕を振る速度より、手首をいかに利かせるかが肝心なのよね\@ TENSION(TARGET, 8) == "高い" ? ぇ # \@」
+				PRINTFORM 「鞭のしなりを生かして…、
+				CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "こう", 1)
+				PRINTFORM ！ ほら聞こえる？ この音。ふふ…
+				CALL PRINT_SYMBOL_K14
+				SIF !TEQUIP:アイマスク
+					PRINTFORMDW %CALLNAME%は実に愉しげな様子で、鞭を振る様を%CALLNAME:MASTER%に見せつけている…
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	IF 0
+	;調教対象のマゾっ気6以上＆1/3の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 6 && !RAND:3
+		PRINTFORMW 「随分傷跡が増えたわね…」
+		PRINTFORMW 「それは%CNAME(MASTER, TARGET)%がこの私、アリス・マーガトロイドのものである証…」
+		PRINTFORMW 「よく覚えておきなさい…」
+	;調教対象のマゾっ気4以上＆1/3の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 4 && !RAND:3
+		PRINTFORMW 「傷を見る度に思い出しなさい…」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%が、誰のものなのかって事……」
+	;相思相愛＆1/3の確率
+	ELSEIF AFFECTION("相思相愛") && !RAND:3
+		PRINTFORM 「さて、今日もいい声で鳴いて%RAND_SPLIT("頂戴/もらうわ")%
+		CALL PRINT_SYMBOL_K14
+		PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%は気がついているかしら…？」
+		PRINTFORMW 「鞭を振るっている時の私が、だらしなくグショグショになってる事…」
+	;その他はRANDACT
+	ELSE
+		SELECTCASE RANDACT(4, 10)
+			CASE 0
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%が私の所有物だと言うことを思い知らせてあげるわ」
+			CASE 1
+				PRINTFORMW 「さて、今日はどんな声で鳴いてくれるのかしら。ねぇ？ フフ…」
+				PRINTFORMW 「手加減するつもりはないから、精々頑張って耐えなさい」
+			CASE 2
+				PRINTFORMW 「家畜のような扱われて、人としての尊厳を踏みにじられて、%CNAME(MASTER, TARGET)%はどんな気持ちなのかしら？」
+				PRINTFORML 「正直、その辺りは疎いのよねぇ。だって私…」
+				CALL FADEIN(13, "「…もう人間じゃないもの」")
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ウフフ…」")
+				CLEARLINE 1
+			CASE 3
+				PRINTFORMW 「こんな酷い事をしていても、%CNAME(MASTER, TARGET)%の事は大切に思っているのよ」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%、その辺判っているのかしら？」
+				PRINTFORMW 「こう見えても私、自分の所有物は大切にするの。でも、時々…」
+				PRINTFORMW 「無性に壊したくなる時もあるんだけど、ね……」
+		ENDSELECT
+	ENDIF
+	;条件に関わらず共用する箇所
+	PRINTFORMW 「%RAND_SPLIT("さぁ、/ほら、/じゃ、/そろそろ")%いくわよ。%RAND_SPLIT("準備/覚悟")%はいいかしら？」
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT62, 針
+;────────────────────────────────────
+;・乳首と性器に針を突き刺す
+;・ACT開始時点ですでに刺している
+;・調教対象にペニスがある場合はペニスに、無い場合はクリトリスに突き刺す
+;・胸と性器(ペニス/ヴァギナ)から出血し、血液汚れが追加される
+;・ターン方針が"ソフト", "ノーマル"だと発生しない
+;・性交中/性交奉仕中には発生しない
+;・顔面騎乗系、自慰系は解除される
+;-------------------------------------------------
+@KOJO_ACT_K14_62
+;-------------------------------------------------
+;・ACTの派生なし
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT62, 針
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		PRINTFORMW 「\@ !TEQUIP:アイマスク ? ほら、見て… # ねぇ、わかるかしら \@。これを%CNAME(MASTER, TARGET)%の一番敏感なところに刺すのよ」
+		PRINTFORMW 「その結果がどうなるか、いちいち言わなくても判るわよね？ フフ…」
+		PRINTFORMW 「さぁ、豚のように無様に泣き叫ぶ姿……私に見せて頂戴……」
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;アイマスク装着中
+	;=================================================
+	IF 口上記入チェック(100) && TEQUIP:アイマスク
+		PRINTFORMW 「いつ、どんな感じに刺されるか、分からないのってどんな感じかしら？」
+		PRINTFORMW 「目隠し外したら、取り返しの付かない事になってたりとか……」
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? ウフフ # ふふ \@…」")
+		CLEARLINE 1
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	IF 0
+	;調教対象のマゾっ気6以上
+	ELSEIF ABL:MASTER:マゾっ気 > 6
+		SELECTCASE RANDACT(2, 10)
+			CASE 0
+				PRINTFORMW 「こんな事で悦ぶのって、%CNAME(MASTER, TARGET)%くらいのものよね」
+				PRINTFORM 「あら、嘘は良くないわ。私、ちゃんと判ってるんだから…
+				CALL PRINT_SYMBOL_K14
+			CASE 1
+				PRINTFORMW 「針が痛くない理由として、針の細さ、刺し方、針先の形ってのがあるらしいけど」
+				PRINTFORMW 「ま、私の刺し方は兎も角…この針自体はどうなのかしらね？ 尤も…」
+				PRINTFORM 「変態\@ TALENT:MASTER:オトコ ? マゾ # メス \@豚の%CNAME(MASTER, TARGET)%は、何でも悦んじゃうんでしょうけど…
+				CALL PRINT_SYMBOL_K14
+		ENDSELECT
+	;調教対象のマゾっ気4以上＆1/2の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 4 && !RAND:2
+		PRINTFORMW 「痛みにも大分慣れてきた感じかしら？ あら、誤魔化したって駄目よ」
+		PRINTFORMW 「時々甘い声が混じるの、私が聞き逃すはずないでしょ？ ふふふ…」
+	;その他
+	ELSE
+		PRINTFORMW 「さぁ、%CNAME(MASTER, TARGET)%が無様に泣き叫ぶ姿…私に見せて頂戴…」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT63, 縄
+;────────────────────────────────────
+;・調教対象を縄で縛ろうとする
+;・地の文は"縛ろうとした…"となっているが処理的にはACT開始時点で縛られている
+;・TEQUIP:縄 で縛りの強度を参照できる
+;・既に装備していた場合は解除になる
+;・既に装着済み、かつTFLAG:お仕置きフラグが立っている場合は発生しない(即ち、解除されない)
+;・TEQUIP:縄自体はREACT分類が"許しを乞う"の場合に解除される
+;・0616版時点の仕様でこの挙動を確実に参照する手段なし。本体側の改善が求められる
+;・(REACT63以外でもキャンセル処理になる場合がある為)
+;・性交中/性交奉仕中には発生しない
+;・拘束時に自慰や顔面騎乗、調教対象のペニス使用中は解除される
+;-------------------------------------------------
+@KOJO_ACT_K14_63
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=装着/1=解除)
+;-------------------------------------------------
+;・反抗刻印、調教者調教レベル、技巧、縛り上手素質に応じて拘束SOURCE増加
+;・拘束SOURCEに応じて強度上昇
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT63_0, 縄装着
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		PRINTFORMW 「ほら、大人しくしてなさい」
+		PRINTFORMW 「下手に暴れると、%CNAME(MASTER, TARGET)%の為にならないわよ」
+		PRINTFORMW 「余計に痛い思いするの、嫌でしょう？」
+		RETURN 1
+	ENDIF
+	
+	IF 0
+	;調教対象の拘束中毒6以上＆1/3の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 6 && !RAND:3
+		PRINTFORMW 「あら、良く似合ってるわよ」
+		PRINTFORM 「%CNAME(MASTER, TARGET)%も悦んでるみたいで、なによりね…
+		CALL PRINT_SYMBOL_K14
+	;調教対象の拘束中毒4以上＆1/3の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 4 && !RAND:3
+		PRINTFORMW 「ねぇ、ココはきつめに縛った方がいいかしら？」
+		PRINTFORMW 「こっちはもっと食い込ませてあげる。ふふふ…」
+	;調教対象の拘束中毒2以上＆1/3の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 2 && !RAND:3
+		PRINTFORMW 「どうかしら、ちょっと癖になってきたんじゃない…？」
+		PRINTFORM 「ふふ…、私の目は誤魔化せないわよ…
+		CALL PRINT_SYMBOL_K14
+	;調教対象のマゾっ気6以上＆1/3の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 6 && !RAND:3
+		PRINTFORMW 「変態\@ TALENT:MASTER:オトコ ? マゾ # メス \@豚には、お似合いの姿ね」
+		PRINTFORMW 「ほら、期待していいわよ？ 思いっきり虐めてあげるから…」
+	;調教対象のマゾっ気4以上＆1/3の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 4 && !RAND:3
+		PRINTFORMW 「拘束されて動きを封じられるのって、%CNAME(MASTER, TARGET)%には嬉しいものみたいね…」
+		PRINTFORMW 「あら、今更否定しても遅いわよ…？」
+		PRINTFORM 「%CNAME(MASTER, TARGET)%がマゾの変態って事は、とっくにお見通しなんだから…
+		CALL PRINT_SYMBOL_K14
+	;その他RANDACT
+	ELSE
+		SELECTCASE RANDACT(3, 10)
+			CASE 0
+				PRINTFORMW 「四肢緊縛、亀甲縛り、吊り下げ」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%はどれがお望みかしら…？」
+			CASE 1
+				PRINTFORMW 「こういうのって悪くないわ。ちょと意外な発見ね」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%の身体を縛り、心まで縛る」
+				PRINTFORMW 「それは決して切れない心の手綱…なーんて、言うつもりはないんだけど」
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「クスクス…」")
+				SIF ANIME_CONFIG("FADE")
+					CLEARLINE 1
+			CASE 2
+				PRINTFORMW 「時々思うのよね。縄じゃなくて魔力の糸で縛ったらどうかなって」
+				PRINTFORML 「でも、視覚化って大切なのよ」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%もこの方が縛られてるって実感があるだろうし」
+				PRINTFORMW 「私的にも、この方が色々と得るものが多いのよねぇ」
+				PRINTFORMW 「人形操術にも生かせそうだし。色んな意味で、ね？ フフフ…」
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;縄解除に派生した時点で、"TEQUIP:縄 = 0"となるので解除時に縛り強度は参照できない
+;装着と強度で同じTEQUIPを使いまわしている為、このようになってしまう
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT63_1, 縄解除
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	IF 0
+	;調教対象の拘束中毒6以上＆1/3の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 6 && !RAND:3
+		PRINTFORMW 「あらあら、子供みたいに駄々こねちゃって…」
+		PRINTFORMW 「そんなに好きなら…ふふ……、一日中拘束して、何処かに放置してあげましょうか？」
+	;調教対象の拘束中毒4以上＆1/3の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 4 && !RAND:3
+		PRINTFORMW 「あら、ちょっと不満そうね？」
+		PRINTFORMW 「縛られるのがそんなに気に入ったのかしら。まぁ…」
+		PRINTFORMW 「お気に召したようで、何よりね？」
+	;調教対象の拘束中毒2以上＆1/3の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 2 && !RAND:3
+		PRINTFORMW 「本当はちょっと名残惜しいのでしょう？」
+		PRINTFORMW 「ほら、正直に言いなさい。ちゃんと言えたなら、また縛ってあげてもいいわよ」
+	;その他RANDACT
+	ELSE
+		SELECTCASE RANDACT(3, 19)
+			CASE 0
+				PRINTFORMW 「さぁ、解いてあげるから動かないで頂戴」
+				PRINTFORMW 「ほら、だから…動かれるとやりにくいのよ！ まったく…」
+			CASE 1
+				PRINTFORMW 「ん？ 痕が少し残ってるわね。加減したはずなんだけど…」
+				PRINTFORMW 「言ったでしょう？ 下手に動くとこうなるのよ」
+			CASE 2
+				PRINTFORM 「お疲れ様…
+				CALL PRINT_HEARTCBW_K14(COLOR_K14("pink"), , , COLOR2_K14("ALICE"), "　愉しんで貰えたかしら？」")
+				PRINTFORMW 「\@ ABL:MASTER:拘束中毒 > 3 ? あら、そう。愉しめたのなら何よりね？ # ん？ 愉しめる訳ないって？ ま、普通そうよねぇ \@」
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ふふふ…」")
+				CLEARLINE 1
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT64, アイマスク
+;────────────────────────────────────
+;・調教者がアイマスクを着けさせようとする
+;・地の文では"着けさせようとした…"となっているが処理上はACT開始時点で装着されている
+;・既に装備していた場合は解除になる
+;・既に装着済み、かつTFLAG:お仕置きフラグが立っている場合は発生しない(即ち、解除されない)
+;・TEQUIP:アイマスクはREACT分類が"許しを乞う"であった場合に解除される
+;・0616版時点の仕様でこの挙動を確実に参照する手段なし。本体側の改善が求められる
+;・(REACT64以外でもキャンセル処理になる場合がある為)
+;・性交中/性交奉仕中には発生しない
+;・顔面騎乗系は解除される
+;・調教者が自慰中であった場合は解除される
+;-------------------------------------------------
+@KOJO_ACT_K14_64
+;-------------------------------------------------
+;・TFLAG:ACT派性(0=装着/1=解除)
+;-------------------------------------------------
+;・顔面騎乗系は解除される
+;・調教者が自慰中であった場合は解除される
+;・調教対象にペニスがある場合、マゾっ気に応じて勃起度上昇
+;-------------------------------------------------
+;アイマスクとか、和製英語は嫌い
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT64_0, アイマスク装着
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		PRINTFORMW 「さて、%CNAME(MASTER, TARGET)%には目隠しを付けてもらうわ」
+		PRINTFORMW 「実際、付けたからってどうなる訳でもないけど…」
+		PRINTFORM 「視界を奪われた%CNAME(MASTER, TARGET)%がどんな反応するのか、今から愉しみね
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	IF 0
+	;調教対象の拘束中毒6以上＆1/2の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 6 && !RAND:2
+		PRINTFORMW 「もう興奮してるんでしょ？ ふふ、言わなくても判るわ」
+		PRINTFORMW 「変態\@ TALENT:MASTER:オトコ ? マゾ # メス \@豚に相応しい仕打ち…、期待して%RAND_SPLIT("て頂戴/いいわよ")%」
+	;調教対象の拘束中毒4以上＆1/2の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 4 && !RAND:2
+		PRINTFORMW 「ほら、どう…？ 見えないと感覚が研ぎ澄まされて、敏感にな%RAND_SPLIT("らない/るでしょ")%…？」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%も判ってるはずよね？ ふふふ……」
+	;調教対象の拘束中毒2以上＆1/2の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 2 && !RAND:2
+		PRINTFORMW 「視界を奪われて、%CNAME(MASTER, TARGET)%は何を思うのかしら？」
+		PRINTFORMW 「不安…？　恐怖…？　それとも別の事だったり、とか…」
+	;調教対象のマゾっ気4以上＆1/2の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 4 && !RAND:2
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%、餌をねだる犬みたいになってるわよ？」
+		PRINTFORM 「ふふ、%RAND_SPLIT("本当…、度し難い変態/犬には犬に相応しい扱いをしてあげないと")%ね…
+		CALL PRINT_SYMBOL_K14
+	;調教対象のマゾっ気2以上＆1/2の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 2 && !RAND:2
+		PRINTFORMW 「ねぇ、目隠しを外した時、手足が無くなってたりとか…」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%…、考えてみた事あるかしら？」
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%RAND_SPLIT("ウフフ/ふふふ")%」")
+		CLEARLINE 1
+	;その他
+	ELSE
+		PRINTFORMW 「さぁ、目隠しをしてもらうわ」
+		PRINTFORMW 「ねぇ、想像してみて。視界を奪われた%CNAME(MASTER, TARGET)%に、私が、何をするのかを……」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT64_1, アイマスク解除
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	IF 0
+	;調教対象の拘束中毒6以上＆1/2の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 6 && !RAND:2
+		PRINTFORMW 「なによ、外されるのがそんなに嫌なの？」
+		PRINTFORM 「そんな我侭言わないで、ちゃんと私を見て頂戴…
+		CALL PRINT_SYMBOL_K14
+	;調教対象の拘束中毒4以上＆1/2の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 4 && !RAND:2
+		PRINTFORMW 「ちょっと不満そうに見えるのは、私の気のせいじゃないわよね？」
+		PRINTFORMW 「ふふ、そんなに力いっぱい否定する事もないと思うけど」
+	;調教対象の拘束中毒2以上＆1/2の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 2 && !RAND:2
+		PRINTFORMW 「楽しんでるとこ悪いけど、もうおしまいよ」
+		PRINTFORMW 「ん？ そんな事ないって？ ふふ、まぁいいけど」
+		PRINTFORM 「そういう事にしておいてあげるわ
+		CALL PRINT_SYMBOL_K14
+	;その他RANDACT
+	ELSE
+		SELECTCASE RANDACT(2, 19)
+			CASE 0
+				PRINTFORMW 「じゃ、外すわよ。ちょっと眩しいかも知れな%RAND_SPLIT("いわ/けど")%」
+			CASE 1
+				PRINTFORM 「さて、外してあげるわ。お疲れ様…
+				CALL PRINT_SYMBOL_K14
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT65, ボールギャグ
+;────────────────────────────────────
+;・調教者がボールギャグを嵌めさせようとする
+;・地の文では"嵌めさせようとした…"となっているが処理上はACT開始時点で装着されている
+;・既に装備していた場合は解除になる
+;・既に装着済み、かつTFLAG:お仕置きフラグが立っている場合は発生しない(即ち、解除されない)
+;・TEQUIP:ボールギャグはREACT分類が"許しを乞う"であった場合に解除される
+;・0616版時点の仕様でこの挙動を※確実に参照する手段なし。本体側の改善が求められる
+;・※REACT64以外でもキャンセル処理になる場合がある為
+;・ターン方針が"ソフト", "ノーマル"の場合は発生しない
+;・性交中/性交奉仕中には発生しない
+;・顔面騎乗系は解除される
+;・調教者が自慰中であった場合は解除される
+;-------------------------------------------------
+@KOJO_ACT_K14_65
+;-------------------------------------------------
+;・TFLAG:ACT派性(0=装着/1=解除)
+;-------------------------------------------------
+;・調教者が自慰中であった場合は解除される
+;・調教対象にペニスがある場合、マゾっ気に応じて勃起度上昇
+;-------------------------------------------------
+
+;装着中のキスがACT_ABLEで規制されてるけど解除しても良い
+;むしろ派生に入れるべきかも知れない
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT65_0, ボールギャグ装着
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		PRINTFORMW 「折角用意したんだから、これも使ってみないとね」
+		PRINTFORM 「%CNAME(MASTER, TARGET)%みたいな
+		SIF TALENT:MASTER:反抗的
+			PRINT 反抗的な
+		SIF TALENT:MASTER:気丈
+			PRINT 頑固
+		SIF TALENT:MASTER:生意気
+			PRINT 生意気
+		PRINTFORMW 変態\@ TALENT:MASTER:オトコ ? マゾ # メス \@豚下僕の口を塞ぐには、ピッタリの代物よ」
+		PRINTFORM 「ただ…、%CNAME(MASTER, TARGET)%の\@ TALENT:MASTER:オトコ ? 情けない # 可愛い \@悲鳴も聞けなくなるのは、ちょっと残念かもだけど。ね…
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	IF 0
+	;調教対象の拘束中毒6以上＆1/2の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 6 && !RAND:2
+		PRINTFORMW 「さぁ、%CNAME(MASTER, TARGET)%の情けない格好を見せてもらうわ」
+		PRINTFORMW 「でも%CNAME(MASTER, TARGET)%って、こういうの大好きよね？ ふふ…」
+	;調教対象の拘束中毒4以上＆1/2の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 4 && !RAND:2
+		PRINTFORMW 「ねぇ…こんなに涎垂らして、情けない気持ちにならない？」
+		PRINTFORMW 「ま、変態マゾの%CNAME(MASTER, TARGET)%には、%RAND_SPLIT("相応しい姿ではあるけど/良くお似合いよ")%」
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? クスクス # ウフフ \@…」")
+		CLEARLINE 1
+	;調教対象の拘束中毒2以上＆1/2の確率
+	ELSEIF ABL:MASTER:拘束中毒 > 2 && !RAND:2
+		PRINTFORMW 「あら、何か言いたい事でもあるの？」
+		PRINTFORMW 「でも残念ね。%CNAME(MASTER, TARGET)%が何を言ってるのか、私には判らないわ。ふふっ…」
+	;調教対象のマゾっ気4以上＆1/2の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 4 && !RAND:2
+		PRINTFORMW 「無様だわ…　変態\@ TALENT:MASTER:オトコ ? マゾ # メス \@豚に相応しい姿ね」
+		PRINTFORMW 「でも%CNAME(MASTER, TARGET)%…、こんな事でも興奮してるんでしょ？ ふふふ…」
+	;調教対象のマゾっ気2以上＆1/2の確率
+	ELSEIF ABL:MASTER:マゾっ気 > 2 && !RAND:2
+		PRINTFORMW 「…涎垂れ流しちゃって。無様ね…」
+		PRINTFORMW 「でも、%CNAME(MASTER, TARGET)%は満更でもないんでしょう？　ふふ…」
+	;その他RANDACT
+	ELSE
+		SELECTCASE RANDACT(3, 10)
+			CASE 0
+				PRINTFORMW 「さぁ、%CNAME(MASTER, TARGET)%にはコレを着けてもらうわよ」
+				PRINTFORM 「暫くは喋れないから、言いたい事があるなら今のうちに聞いておくわ…
+				CALL PRINT_SYMBOL_K14
+			CASE 1
+				PRINTFORMW 「少しの間、黙っていてもらうわよ。ま、何か言ってもいいけど…」
+				PRINTFORM 「私には判らないから、そのつもりで。ね
+				CALL PRINT_SYMBOL_K14
+			CASE 2
+				PRINTFORMW 「さ、%CNAME(MASTER, TARGET)%にお似合いのアクセサリーを付けてもらうわよ」
+				PRINTFORMW 「それにね？ わたし…、声にならない声で唸ってる%CNAME(MASTER, TARGET)%の姿」
+				CALL FADEIN(13, "「大好きなのよね」")
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? ウフフ # くすくす \@…」")
+				CLEARLINE 1
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT65_1, ボールギャグ解除
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	;調教者BASE:満足派生	高い=50%以上/一般=25%以上/低い= 25%以下
+	SELECTCASE TENSION(TARGET, 8)
+		CASE "高い"
+			PRINTFORMW 「口枷を付けた姿も\@ AFFECTION("相思相愛") ? 好きだ # 悪くない \@けど、そろそろ%CNAME(MASTER, TARGET)%の声が聞きたいわ」
+			PRINTFORMW 「ほら、外してあげる。%CNAME(MASTER, TARGET)%の\@ TALENT:MASTER:オトコ ? 情けない # 可愛い \@声、私に聞かせて…」
+		CASE "一般"
+			PRINTFORMW 「\@ ALI(0) ? ふふ # フフ \@…、涎垂らしちゃってだらしない。まぁでも…」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%のそういう姿、嫌いじゃないわ。むしろ好きかも？」
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? ふふっ # ウフフ \@…」")
+		CASE "低い"
+			PRINTFORML 「さぁ、外してあげるわ」
+			PRINTFORMW 「大人しくして%RAND_SPLIT("なさい/て頂戴")%…」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT66, 罵倒
+;────────────────────────────────────
+;・挑発するように調教対象の痴態を声に出す
+;・会話系から発生する場合もある
+;・ターン方針が"ソフト"だと発生しない
+;・会話系から派生する場合もある
+;-------------------------------------------------
+@KOJO_ACT_K14_66
+;-------------------------------------------------
+;・ACTの派生なし
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT66, 罵倒
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		PRINTFORMW 「そうねぇ、今の%CNAME(MASTER, TARGET)%を表現するなら…」
+		PRINT 「
+		;罵倒語表現関数を呼ぶ
+		CALL SWEARWORDS_NO9(1)
+		PRINTFORMW と言ったところかしらね」
+		PRINTFORMW 「あら、異論があるなら聞いてあげてもいいわよ？ ただ…」
+		PRINT 「言った事を撤回するつもりはないけど、ね
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	;TEQUIP分岐はもうちょっと充実させたい。まぁ現状はこんな感じでお茶を濁しておく
+	;=================================================
+	;調教対象が自慰中
+	;=================================================
+	IF 口上記入チェック(100) && GETBIT(TEQUIP:自慰中, 0) && !GETBIT(TEQUIP:自慰中, 1) ;調教者が自慰中の場合は弾く。話が合わなくなるんでｗ
+		PRINTFORMW 「間抜けな顔しちゃって…人前でよく平気でオナニーできるものね？」
+		PRINTFORMW 「\@ TCVAR:MASTER:イきそう ? しかも%CNAME(MASTER, TARGET)%、もうイきそうになってるじゃない # …まったく。恥知らずにも程があるわ \@」
+		PRINTFORMW 「嫌ならやめてもいいけど、%CNAME(MASTER, TARGET)%にそのつもりは無いのよねぇ？」
+		PRINTFORMW 「%RAND_SPLIT("ホント/本当")%、どうしようもない変態ね\@ TENSION(TARGET, 8) == "高い" ? っ！ # … \@」
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;顔面騎乗中
+	;=================================================
+	IF 口上記入チェック(100) && TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+		;前REACT分類派生
+		SELECTCASE PREVCOMGRONAME()
+			CASE "積極的従う", "受け入れる", "平然と従う"
+				PRINTFORMW 「あらあら、嬉しそうに%RAND_SPLIT("ペロペロ舐め/むしゃぶりつい")%ちゃって…、ホント犬みたいね」
+			CASE "消極的従う", "許しを乞う"
+				PRINTFORMW 「ほら、もっとしっかり味わいなさい。ご主人様に舌で奉仕できるなんて、犬としては幸せでしょう？」
+			CASEELSE
+				PRINTFORMW 「嫌がるなら無理やり押し付けるまでよ。ほら、ご主人様の大事な所…、%RAND_SPLIT("しっかりと/")%味わいなさい」
+		ENDSELECT
+		;シックスナイン状態、かつ調教対象がイきそう
+		IF GROUPMATCH(TEQUIP:調教対象Ｃ使用, 1, 2) > 0 && TCVAR:MASTER:イきそう
+			PRINTFORMW 「って%CNAME(MASTER, TARGET)%…、もう\@ PENIS(MASTER) ? 射精し # イき \@そうになってるじゃない」
+			PRINTFORM 「まったく恥知らずで浅ましい
+			;調教対象がオトコ
+			IF TALENT:MASTER:オトコ
+				PRINTFORM \@ TALENT:MASTER:小柄 ? 男の子 # オトコ \@
+			;その他
+			ELSE
+				PRINTFORM \@ TALENT:MASTER:小柄 ? 女の子 # オンナ \@
+			ENDIF
+			PRINTW ね！」
+		;その他
+		ELSE
+			PRINTFORMW 「まぁでも…%CNAME(MASTER, TARGET)%にはお似合いの姿よ。本当に、ね」
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? フフフ # クスクス \@…」")
+			CLEARLINE 1
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他 RANDACT(0)
+	;-------------------------
+	SELECTCASE RANDACT(2, 10)
+		CASE 0
+			PRINT 「普通、
+			;式中版をつくるとよさげかもしれず
+			CALL SWEARWORDS_NO9(1)
+			PRINTW …」
+			PRINTFORMW 「…って言われて、誰の事か気づかない程%RAND_SPLIT("馬鹿/愚か/愚鈍")%じゃないとは思うけど」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%の場合、ちょっと怪しい%RAND_SPLIT("のよね/わよねぇ？")%」
+		CASE 1
+			PRINTFORMW 「うーん、そうねぇ。今の%CNAME(MASTER, TARGET)%はさしずめ…」
+			PRINT 「
+			CALL SWEARWORDS_NO9(1)
+			PRINTFORMW って感じよね」
+			PRINTFORMW 「あら、事実を言ったまでよ？ 悪いけど」
+	ENDSELECT
+	CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? ウフフ # くすくす \@…」")
+	SIF ANIME_CONFIG("FADE")
+		CLEARLINE 1
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT67, 三角木馬
+;────────────────────────────────────
+;・調教対象を木馬に乗せようとする
+;・地の文は"乗せようとした…"となっているが処理上はACT開始時点で乗せられている
+;・実は快Ｃではなく快Ｖが入る(生えてる木馬！？)
+;・MASTERが処女なら、処女喪失が起こる(@ACTION_APPLY2で処理。REACT分類が許しを乞うの場合は回避される)
+;・調教対象がオトコの場合は発生しない
+;・ターン方針が"ソフト", "ノーマル"時には発生しない
+;・TEQUIP(バイブ/アナルバイブ/アナルビーズ/浣腸器＋プラグ/ペニスバンド)装着時には発生しない
+;・性交中/性交奉仕中には発生しない
+;・野外プレイ時には発生しない
+;・押し倒し中には発生しない
+;・異常系から発生する場合もある
+;・既に装備していた場合は解除になる
+;・既に装着済み、かつTFLAG:お仕置きフラグが立っている場合は発生しない(即ち、解除されない)
+;・TEQUIP:三角木馬はREACT分類が"許しを乞う"であった場合に解除される
+;・0203版時点の仕様でこの挙動を※確実に参照する手段なし。本体側の改善が求められる
+;・※REACT67以外でもキャンセル処理になる場合がある為
+;-------------------------------------------------
+@KOJO_ACT_K14_67
+;-------------------------------------------------
+;TFLAG:ACT派生(0=装着/1=解除)
+;-------------------------------------------------
+
+;快Ｃではなく快Ｖが入る生えてる木馬とか死ねばいい。男の子が乗れないじゃんっていう
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT67_0, 三角木馬装着
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;初回 FIRSTACT(0)
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%はこれ知ってるかしら…？」
+		PRINTFORMW 「元々は拷問用だったらしいのだけど…　私もそんなに詳しい訳じゃないのよね」
+		PRINTFORM 「そんな訳だから……%CNAME(MASTER, TARGET)%で試させてもら事にするわ…
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	;哀願によるキャンセルを想定しないとまずいっぽい
+	;-------------------------
+	;その他
+	;-------------------------
+	;階層イベントx3 全部見たらCASEELSE以降で処理
+	SELECTCASE ORDERACT(0)
+		CASE 0
+			PRINTFORMW 「これ、場合によっては裂けるらしいの」
+			PRINTFORM 「%CNAME(MASTER, TARGET)%の場合
+			IF 0
+			ELSEIF TALENT:MASTER:長身
+				PRINTFORMW その大柄な身体だと、ちょっと大変よね」
+			ELSEIF TALENT:MASTER:小柄
+				PRINTFORMW 体重も軽いし、負担はそれ程ないかもだけど」
+			ELSE
+				PRINTFORMW 、暴れなければそう酷い事にはならないと思うけど」
+			ENDIF
+			PRINTFORML 「さて、そろそろ乗ってもらうわよ」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%のその被虐趣味、存分に満足させてあげるわ…」
+		CASE 1
+			PRINTFORMW 「今回はね、背の部分にちょっと幅と丸みをもたせてみたの」
+			PRINTFORMW 「あまり苦痛が大きすぎるのもどうかと思ってね？」
+			PRINTFORMW 「私としても…、%CNAME(MASTER, TARGET)%が苦痛と快楽の狭間で悶える姿を愉しみたいし、ねぇ」
+		CASE 2
+			;無茶なことを言う…、と後から見なおして思うｗ
+			PRINTFORMW 「前回はちょっと楽過ぎたかも、って事で重りを用意したわ」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%の場合、この位じゃないと満足しないかと思ってね？」
+			PRINTFORM 「さ、はじめるわよ。今日はどんな声で鳴いてくれるのかしら。愉しみ、ね
+			CALL PRINT_SYMBOL_K14
+		;その他RANDACT
+		CASEELSE
+			SELECTCASE RANDACT(3, 0)
+				CASE 0
+					PRINTFORMW 「まぁしかし…、倒錯的というか、嗜虐趣味もここに極まれりって感じよねぇ」
+					PRINTFORMW 「正直、私はそれほど好きでもないんだけど%CNAME(MASTER, TARGET)%…、大好きですものね？」
+					PRINTFORMW 「あら、今更否定する事ないわよ。私、ちゃんと判ってるんだから」
+					PRINTFORMW 「今日も優しく、でも徹底的に虐めてあげるわ…」
+				CASE 1
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%…、\@ !TEQUIP:アイマスク ? 木馬を見た瞬間、目の色が変わったわね？ # 見えなくても、これから何されるか判ってるようね \@」
+					PRINTFORMW 「ふふ、嘘つく必要なんてないわ」
+					PRINTFORMW 「ゾクゾクしちゃうんでしょう？ もう疼いちゃって辛いんでしょう？」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%の望み……、このアリス様が叶えてあげるわ…」
+				CASE 2
+					PRINTFORMW 「しかし、なんていうか…元々拷問用だったものを嗜虐趣味に生かそうだなんて、一体誰が考えたのかしら」
+					PRINTFORMW 「ホント、馬鹿よね？ 人間って。まぁでも…」
+					PRINTFORMW 「私もあまり他人の事言えた義理じゃないんだけど、ね」
+					PRINTFORMW 「あら、ちょっと無駄話が過ぎたかしら。ふふ…じゃ、そろそろはじめるわよ」
+			ENDSELECT
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;TEQUIPキャンセルの際にはここで拾える訳でない事に注意
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT67_1, 三角木馬解除
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	;=================================================
+	;初回 FIRSTACT(1)
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(1)
+		PRINTFORMW 「どう？ 初めて乗った感想は。って…」
+		PRINTFORM 「今そんな事聞くのは野暮かしら。ね
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	PRINTFORMW 「%RAND_SPLIT("はい/ふふ")%、お疲れ様。今、降ろしてあげるわ」
+	;調教対象状態変化派生
+	SELECTCASE GET_CONDITION(MASTER)
+		CASE "疲弊"
+			PRINTFORMW 「あら、随分消耗したみたいね？ ちょっとハード過ぎたかしら…」
+		CASE "衰弱"
+			PRINTFORMW 「やだ、ちょっと気の毒なくらい衰弱してるわね…」
+		CASE "無気力"
+			PRINTFORMW 「なんか…、抜け殻みたいになっちゃったわね」
+		CASE "朦朧"
+			PRINTFORMW 「ぼんやりしちゃって…、まだ余韻に浸ってるのね」
+		CASE "情欲"
+			PRINTFORMW 「ふふ、まだ興奮が冷めないみたいね」
+		CASE "怒り"
+			PRINTFORMW 「機嫌悪そうね。そんなに嫌だったのかしら」
+		CASE "退屈"
+			PRINTFORMW 「なによ、そんなに退屈だった訳？」
+		CASE "通常"
+			PRINTFORMW 「どう？ 愉しんで貰えたかしら」
+	ENDSELECT
+	SELECTCASE GET_CONDITION(MASTER)
+		CASE "朦朧", "情欲", "通常"
+			PRINTFORMW 「ま、そういう訳で…次の機会を愉しみにしてて」
+		CASE "疲弊", "衰弱"
+			PRINTFORMW 「次回はやり過ぎないようにしないと駄目みたいね」
+		CASEELSE
+			PRINTFORMW 「次はもう少し趣向を凝らす必要があるのかも…」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT68, 浣腸セット
+;────────────────────────────────────
+;・浣腸液の注入/追加/排出
+;・最初の注入時(ACT派生=0)は量1～3。追加時(ACT派生=2)は量1～4。それぞれランダムで処理される
+;・;既に装備している場合、浣腸液追加になる
+;・浣腸液が5本入っている場合、浣腸プラグ解除になる
+;・浣腸液の分量はTEQUIP:浣腸器＋プラグで参照できる
+;・TEQUIP(アナルバイブ/アナルビーズ/ペニスバンド/三角木馬)装着時には発生しない
+;・性交中/性交奉仕中には発生しない
+;・ターン方針が"ソフト"だと発生しない
+;・道具系から派生する場合もある
+;-------------------------------------------------
+@KOJO_ACT_K14_68
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=装着/1=解除/2=浣腸液追加)
+;-------------------------------------------------
+
+;TEQUIPは"浣腸器＋プラグ装着"だがACT名称は"浣腸セット"であることに注意
+;IS_NOWACTNAME("浣腸器＋プラグ装着")とかTEQUIP:浣腸セットなどは通らない！
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT68_0, 浣腸器＋プラグ装着
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;AUTOORDERに統合してもよさそう
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		PRINTFORMW 「とりあえず練成してはみたけれど…」
+		PRINTFORMW 「実は、私も良く知らないのよね」
+		PRINTFORM 「と、言う訳で……%CNAME(MASTER, TARGET)%で試させてもらう事にするわ…
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	;階層イベントx3 全部見たらELSE以降で処理
+	SELECTCASE ORDERACT(0)
+		CASE 0
+			PRINTFORMW 「前回で少しは慣れたかしら？ ってのも変な話よね。ふふ」
+			PRINTFORMW 「ほら、大人しくして。ちゃんと栓をしないと溢れてきちゃうわ」
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? ウフフ # くすくす \@…」")
+			;FADEがONなら行削除
+			SIF ANIME_CONFIG("FADE")
+				CLEARLINE 1
+		CASE 1
+			PRINTFORM 「でもあれよね？　
+			IF TALENT:MASTER:小柄
+				PRINTFORM 小さな\@ TALENT:MASTER:オトコ ?  男 # 女 \@の子
+			ELSE
+				PRINTFORM \@ TALENT:MASTER:オトコ ? 大の男 # %CNAME(MASTER, TARGET)%みたいな子 \@
+			ENDIF
+			PRINTFORMW が浣腸液を注がれて、おしり震わせてる姿…、ちょっと堪らないわ」
+			PRINTFORMW 「なんていうか、もっと\@ ALI(0) ? 虐めたく # 酷い事したく \@なっちゃうの」
+			PRINTFORMW 「自分でもどうかしてると思うけど、ま、仕方無いよね\@ ALI(0) ? ？ # ぇ？ \@」
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? フフフ # クスクス \@…」")
+			CLEARLINE 1
+		CASE 2
+			PRINTFORM 「そろそろ大分慣れてきたんじゃない？ って、そういう問題じゃない気もするけど
+			CALL PRINT_SYMBOL_K14
+			PRINTFORMW 「ま、正直…、こういうのって、ちょっとどうかと思わないでもないんだけど。でもね…」
+			PRINTFORMW 「恥辱に歪む%CNAME(MASTER, TARGET)%の表情、わたし…、大好きなのよ」
+			PRINTFORMW 「ほら、じっとしてなさい。ここで溢れさせたくはないでしょう？」
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? フフ # くす \@っ…」")
+			SIF ANIME_CONFIG("FADE")
+				CLEARLINE 1
+		CASEELSE
+			;調教者にペニスあり、もしくはペニスバンド装着中時に1/2の確率で真
+			IF PENIS(TARGET) || (TEQUIP:調教者ペニスバンド && !RAND:2)
+				SELECTCASE RANDACT(2, 0)
+					CASE 0
+						PRINTFORMW 「生卵を溶いて浣腸するとね？ 後で挿入するときスムーズにいくらしいのよ」
+						PRINTFORMW 「ま、%CNAME(MASTER, TARGET)%次第なんだけど…ちょっと試してみる？ ふふふ…」
+					CASE 1
+						PRINTFORMW 「折角こういう事するんだから、綺麗にしたら%CNAME(MASTER, TARGET)%のおしりで愉しみたいものね？」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%を\@ TALENT:MASTER:オトコ ? 女の子みたいに # おしりで \@鳴かせる事考えると、ワクワクしちゃうわ」
+						PRINTFORM 「まぁでも、その時の気分次第だから…なんとも言えないけど。ね
+						CALL PRINT_SYMBOL_K14
+				ENDSELECT
+			;その他
+			ELSE
+				SELECTCASE RANDACT(3, 1)
+					CASE 0
+						PRINTFORMW 「どう？ 私の手際も大分良くなってきたと思わない？」
+						PRINTFORMW 「なーんて言ったところで、今の%CNAME(MASTER, TARGET)%に答える余裕はないかしら。ねぇ？」
+					CASE 1
+						PRINTFORMW 「慣れちゃうと当たり前のような事に思えてくるけど…」
+						PRINTFORMW 「よく考えると、ちょっと普通じゃないわよね？ 色々な意味で」
+					CASE 2
+						PRINTFORMW 「注入の仕方も色々あるらしいのよね。%CNAME(MASTER, TARGET)%、知っていたかしら」
+						PRINTFORMW 「一挙に入れると凄く効くらしいんだけど、ちょっと試してみる？」
+				ENDSELECT
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? ウフフ # うふふ \@…」")
+				SIF ANIME_CONFIG("FADE")
+					CLEARLINE 1
+			ENDIF
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT68_1, 浣腸器＋プラグ解除
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ここに派生する時点で液量は5になっている
+;------------------------------------------------
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	;階層イベントx3 全部見たらELSE以降で処理
+	SELECTCASE ORDERACT(11)
+		CASE 0
+			PRINTFORMW 「栓を抜いたらすぐにでもお漏らししちゃいそうね？」
+			PRINTFORMW 「あら何？ トイレ？ フフ…、駄目よ。%CNAME(MASTER, TARGET)%にはここで、私の目の前でしてもらうわ」
+			PRINTFORMW 「そう…人として、一番恥ずかしい姿をこの私に見せるの」
+			PRINTFORMW 「ほら、そろそろ抜けるわよ。%CNAME(MASTER, TARGET)%の全て、曝け出してもらうわ…」
+		CASE 1
+			PRINTFORMW 「心配しなくていいわよ。こんな事で、%CNAME(MASTER, TARGET)%%RAND_SPLIT("を嫌ったりはしないから/に幻滅したりしないから")%」
+			PRINTFORMW 「だって…ねぇ？ こんな事まで受け入れる%CNAME(MASTER, TARGET)%は、私にとって得難い存在ですもの」
+			PRINTFORMW 「どんなに惨めで無様で姿でも受け入れて、全力で\@ AFFECTION("相思相愛") ? 愛して # 可愛がって \@あげる」
+			PRINTFORMW 「この私に従ってる限りは……、ね」
+		CASE 2
+			PRINTFORMW 「今、%CNAME(MASTER, TARGET)%は何を思うのかしら？」
+			PRINTFORMW 「情けない姿を見られる恥ずかしさ？ 解放感への期待？」
+			PRINTFORMW 「それとも、その両方なのかしら？ ま、いずれにしても…」
+			PRINTFORMW 「すぐに楽にしてあげる。%CNAME(MASTER, TARGET)%の一番恥ずかしい姿、私に見せて頂戴…」
+		CASEELSE
+			SELECTCASE RANDACT(3, 12)
+				CASE 0
+					PRINTFORMW 「%RAND_SPLIT("どう/辛そうね")%？ そろそろお漏らししちゃいそう？ でも…」
+					PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の耳元に口を寄せ、囁いた…
+					CALL FADEIN(13, "「…勝手に漏らしたらお仕置きするから」")
+					WAIT
+					PRINTL
+					PRINTFORMW 「栓は抜いてあげるから、私がいいと言うまで我慢するの。いいわね？」
+					PRINTFORMW 「さぁ…、いま楽にしてあげる。思う存分、解放感を味わ%RAND_SPLIT("えば/うと")%良いわ」
+				CASE 1
+					PRINTFORMW 「…情けない顔しちゃって。そろそろ限界かしらね？」
+					PRINTFORMW 「さぁ、お待ちかね。栓を抜いてあげるわ…」
+					PRINTFORMW 「ほら、思いっきりぶち撒けて。%RAND_SPLIT("無様/惨め")%な姿を私に見せて頂戴。ただし…」
+					PRINTFORMW 「ちゃんと所定の場所でしないと、あとで掃除させるから」
+					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「クスクス…」")
+					SIF ANIME_CONFIG("FADE")
+						CLEARLINE 1
+				CASE 2
+					PRINTFORMW 「ねぇ、お腹苦しい？ ほら、どうなの…？」
+					PRINTFORMDW アリスは膨張しきった%CALLNAME:MASTER%の下腹部を圧迫しながら囁いてきた…
+					PRINTFORMW 「いいわ、すぐに楽にしてあげる。でも…」
+					PRINTFORMW 「栓を抜いてもすぐ出しては駄目よ？ 私がいいと言うまで我慢なさい」
+					PRINTFORM 「ただ…今の%CNAME(MASTER, TARGET)%に、それができるとも思えないんだけど。ね
+					CALL PRINT_SYMBOL_K14
+			ENDSELECT
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT68_2, 浣腸液追加
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;既に注入済みの場合にこの箇所に派生
+;------------------------------------------------
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 2
+	;浣腸液分量派生			嫌な派生だなｗ
+	SELECTCASE TEQUIP:浣腸器＋プラグ
+		CASE IS >= 4
+			SELECTCASE RANDACT(2, 21)
+				CASE 0
+					PRINTFORMW 「どう？ %CNAME(MASTER, TARGET)%ならまだいけるわよね…？」
+					PRINTFORMW 「え、何…死んじゃう？ ふふ、大丈夫」
+					PRINTFORM 「この程度で死ぬ事はないはずよ？ 安心して愉しんで頂戴
+					CALL PRINT_SYMBOL_K14
+				CASE 1
+					PRINTFORMW 「流石にちょっと辛い感じかしら？ でも%CNAME(MASTER, TARGET)%なら…」
+					PRINTFORMW 「もう少しいけるわよね？ \@ ALI(0) ? フフ # ふふ \@…」
+			ENDSELECT
+		CASE 3
+			SELECTCASE RANDACT(2, 22)
+				CASE 0
+					PRINTFORMW 「お腹が膨れて妊娠してるみたい…」
+					SIF TALENT:MASTER:オトコ
+						PRINTFORMW 「男の癖に、ね？ フフフ…」
+					PRINTFORMW 「ねぇ、どうなの？　辛いの？　それとも……」
+				CASE 1
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%には、まだ物足りないでしょう？」
+					PRINTFORM 「ほら、まだ余裕がありそう。もう一本分追加してあげるわ…
+					CALL PRINT_SYMBOL_K14
+			ENDSELECT
+		CASE 2
+			PRINTFORMW 「さぁ、もう一本入れるわよ」
+			PRINTFORM 「あら、何か言ったかしら？ ふふ…ごめんなさい。よく聞こえないわ…
+			CALL PRINT_SYMBOL_K14
+		;ELSEはたぶん無意味
+		CASEELSE
+			PRINTFORMW 「ふふ…辛そうね」
+			PRINTFORMW 「じゃぁもっと入れてあげるわ」
+	ENDSELECT
+	RETURN 1
+ENDIF

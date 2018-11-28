@@ -1,0 +1,55 @@
+﻿;映姫＠Crow
+@CHARAMAKE_K36(ARG)
+PRINTFORML 「目を開けて下さい」
+PRINTFORMW 「私が見えますか？　うふふ、こっちです」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:ローマ字)
+PRINTL 
+PRINTFORML 「では、私からも一つ問いましょう」
+PRINTFORML 「貴方が今までに犯した最も酷い悪行を思い浮かべなさい」
+PRINTFORMW 「その被害者の立場になった場合、相手を許すことができますか？」
+PRINTL 
+PRINTFORMDL [0] 答えない
+PRINTFORMDL [1] 悪行など身に覚えがない
+PRINTFORMDL [2] 許せる
+PRINTFORMDL [3] たぶん許せると思う
+PRINTFORMDL [4] 絶対に許せないよ
+CALL INPUTINTD(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「……わかりました」
+		CALLF CM_PROF("衝動", -10)
+		CALLF CM_PROF("好奇心", -10)
+		CALLF CM_PROF("羞恥", 10)
+		CALLF CM_PROF("神経質", 10)
+	CASE 1
+		PRINTFORML 「貴方は少し嘘を吐き過ぎる」
+		CALLF CM_PROF("攻撃",      +5)
+		CALLF CM_PROF("プライド", +10)
+		CALLF CM_PROF("素直さ",   -20)
+		CALLF CM_PROF("楽観",     +20)
+
+	CASE 2
+		PRINTFORML 「ふふ、良いでしょう」
+		PRINTFORML 「貴方が再びこの地へ来たとき、答えを出しましょうか」
+		CALLF CM_PROF("モラル",   +20)
+		CALLF CM_PROF("プライド", -10)
+		CALLF CM_PROF("素直さ",   -10)
+		CALLF CM_PROF("楽観",     +10)
+
+	CASE 3
+		PRINTFORML 「加害者と被害者では受け止め方がまるで違います」
+		PRINTFORML 「貴方がハッキリ出来ないということは、きっとそういうことなのでしょう」
+		CALLF CM_PROF("モラル",   +10)
+		CALLF CM_PROF("プライド", -10)
+		CALLF CM_PROF("素直さ",   +10)
+		CALLF CM_PROF("神経質",   +10)
+	CASE 4
+		PRINTFORML 「生きている限り、犯した罪は貴方を縛り、相手をも縛り続けます」
+		PRINTFORML 「死後に私達のような存在が必要とされる所以です」
+		CALLF CM_PROF("プライド",  20)
+		CALLF CM_PROF("素直さ",   +20)
+		CALLF CM_PROF("神経質",   +20)
+ENDSELECT
+PRINTFORMW 「さあ、行きなさい」
+RETURN 1

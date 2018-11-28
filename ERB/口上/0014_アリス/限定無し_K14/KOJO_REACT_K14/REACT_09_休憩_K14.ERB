@@ -1,0 +1,371 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	アリス口上 休憩系個別リアクション口上ファイル
+;
+;		休憩系リアクション口上をまとめたファイル
+;
+;Version		Reason
+;1.71			@口上記入チェック仕様に
+;1.67修正1		栄養剤を飲ませるで現行仕様のREACT分類に対応できていなかったのを修正
+;1.65			TFLAG:REACT負荷 < 2の場合COMに流れるように
+;1.62			SELECTCOMをIS_NOWCOMNAMEに変更
+;1.60			ACT分類単体ファイルとして独立
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;────────────────────────────────────
+;休憩系
+;────────────────────────────────────
+
+;*************************************************
+;REACT90, 休ませる・個別リアクション
+;*************************************************
+;=================================================
+@KOJO_REACT_K14_90
+;=================================================
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT90_0, 普通に休んだ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 0
+	;=================================================
+	;沈黙する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("沈黙する") && TFLAG:REACT負荷 < 2
+		PRINTFORMW 「なに黙ってるのよ。可愛くないわね…」
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;気弱く応答する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("気弱く応答する") && TFLAG:REACT負荷 < 2 && TFLAG:REACT派生 < 1
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「あまり元気がないわね…」
+			PRINTFORMW 「ねぇ、疲れちゃったの…？」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「まだ疲れが取れてないみたい…」
+			PRINTFORMW 「ねぇ、大丈夫…？」
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「元気がないわね…？」
+		ELSEIF AFFECTION("嫌悪")
+			PRINTFORMW 「少しは回復したようね」
+			PRINTFORMW 「これでまた、心置きなく虐めてあげられるわ…♪」
+			PRINTFORMW 「ふふふふふ……」
+		ELSE
+			PRINTFORMW 「体調でも悪いのかしら…？」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;無愛想に応答する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("無愛想に応答する") && TFLAG:REACT負荷 < 2
+		PRINTFORMW 「%RAND_SPLIT("本当に可愛くないわね/気に入らないわね。そういう態度")%…」
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;愛想よく応答する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("愛想よく応答する") && TFLAG:REACT負荷 < 2
+		IF AFFECTION("相思相愛")
+			PRINTFORMW 「すっかり元気そうね…？」
+			PRINTFORM 「さぁ、続きをしましょう。まだまだ愉しませてね
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「どう？ ちゃんと回復できたかしら…？」
+			PRINTFORM 「ふふ… 元気になったみたいね。さぁ、続きをしましょう…
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORMW 「ちゃんと回復できたかしら…？」
+			PRINTFORM 「さぁ、続きをしましょう…
+		ELSE
+			PRINTFORMW 「少しは休めたかしら？」
+			PRINTFORM 「じゃぁ続きを始めるわよ
+		ENDIF
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;強気に応答する
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("強気に応答する") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+		SELECTCASE RANDREACT(3, 0)
+			CASE 0
+				PRINTFORMW 「あぁそう。勝手にすればいいわ！」
+			CASE 1
+				PRINTFORMW 「こんな時だけ強気でも意味が無いと思うけどね？」
+			CASE 2
+				PRINTFORMW 「そういう態度してると%RAND_SPLIT("張り倒す/痛い目にあわせる")%わよ……」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;もっとハードにして
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("もっとハードにして") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+		PRINTFORM 「あらあら、%RAND_SPLIT("可愛いこと言うじゃない/本当にいいのかしら")%
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;気持ちよくして
+	;=================================================
+	IF 口上記入チェック(100) && IS_NOWCOMNAME("気持ち良くして") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+		PRINTFORMW 「うふっ、もう待ちきれないの？」
+		RETURN 1
+	ENDIF
+	
+	;気付いたらCOMの方が充実してたんで、とりあえずoffっておく
+	;=================================================
+	;イかせて！
+	;=================================================
+	;IF 口上記入チェック(0) && IS_NOWCOMNAME("イかせて！")
+	;	IF AFFECTION("相思相愛")
+	;		PRINTFORMW 「それはいいけど…」
+	;		PRINTFORMW 「とりあえずゆっくり休んだらどうなの？」
+	;	ELSE
+	;		PRINTFORMW 「フフッ…休憩が終わるまで待てないの？」
+	;	ENDIF
+	;	RETURN 1
+	;ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT90_1, 道具のせいであまり休めなかった
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	PRINTFORMW 「あら、落ち着いて休めなかったかしら…？」
+	PRINTFORMW 「%RAND_SPLIT(@"ごめんなさいね/外したら%CNAME(MASTER, TARGET)%が機嫌を損ねると思ってね")%。 フフフ…」
+	RETURN 1
+ENDIF
+
+;勝手にオナニーするなに派生したら弾く
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT90_2, 勝手に自慰をし始めた
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 2
+	IF IS_NOWCOMNAME("自慰し始める") && TFLAG:REACT派生 < 1
+		SELECTCASE RANDREACT(2, 1)
+			CASE 0
+				PRINTFORMW 「そんな事してたら休憩にならないでしょう！」
+				PRINTFORMW 「……まったく。どうしようもないオナニー狂いの変態ね…」
+			CASE 1
+				PRINTFORMW 「……猿と一緒ね」
+				PRINTFORMDW アリスは軽蔑しきった表情で%CALLNAME:MASTER%を見ている…
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;*************************************************
+;REACT91, 栄養剤を飲ませる・個別リアクション
+;*************************************************
+;=================================================
+@KOJO_REACT_K14_91
+;=================================================
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT91_1, 栄養剤を捨てた
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	;=================================================
+	;KFLAG:TARGET:91が立っている場合
+	;=================================================
+	IF 口上記入チェック(100) && GROUPMATCH(KFLAG:TARGET:91, 1, 2, 3) > 0
+		;人形達はALIGNMENT RIGHT
+		SELECTCASE KFLAG:TARGET:91
+			CASE 1
+				CALL FPRINTW("「ﾌｻﾞｹﾝﾅﾖ､ﾊﾞｶｼﾞｬﾈｰﾉ!」", COLOR2_K14("上海"), "RIGHT")
+				PRINTFORMDW %CALLNAME:MASTER%は上海に叱られた…
+			CASE 2
+				CALL FPRINTW("「ｵｼｵｷｻﾚﾙｿﾞ､ﾊﾞｶｼﾞｬﾈｰﾉ?」", COLOR2_K14("上海"), "RIGHT")
+				PRINTFORMDW %CALLNAME:MASTER%は蓬莱に叱られた…
+			CASE 3
+				CALL FPRINTW("「ﾓｯﾀｲﾅｲﾀﾞﾛ､ﾊﾞｶｼﾞｬﾈｰﾉ」", COLOR2_K14("上海"), "RIGHT")
+				PRINTFORMDW %CALLNAME:MASTER%は\@ KFLAG:TARGET:92 == 1 ? 上海 # 蓬莱 \@に叱られた…
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	IF AFFECTION("相思相愛") && PERCENT(60)
+		PRINTFORMW 「こら、子供みたいな事はやめなさいよ！」
+		SIF TALENT:MASTER:小柄
+			PRINTFORMW 「……って、子供に言っても仕方無いわね…」
+	ELSE
+		SELECTCASE RANDREACT(2, 7)
+			CASE 0
+				PRINTFORMW 「あら、行儀が悪いのね」
+				PRINTFORMW 「お仕置きするわよ…？」
+			CASE 1
+				PRINTFORMW 「やってくれるわね…」
+				PRINTFORMW 「そんなに私を怒らせたいのかしら」
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT91_0, 栄養剤を飲んだ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 0
+	;楽しくなってきた
+	;=================================================
+	;KFLAG:TARGET:91が立っている場合
+	;=================================================
+	IF 口上記入チェック(100) && GROUPMATCH(KFLAG:TARGET:91, 1, 2, 3) > 0
+		;人形達はALIGNMENT RIGHT
+		SELECTCASE KFLAG:TARGET:91
+			CASE 1
+				PRINTFORMW 「ちゃんと飲んでくれたみたいよ。上海？」
+				CALL FPRINTW("「＼ｼｬﾝﾊｰｲ／」", COLOR2_K14("上海"), "RIGHT")
+				PRINTFORMDW %CALLNAME%の問いかけに、上海は嬉しそうに応えた…
+			CASE 2
+				PRINTFORMW 「全部飲んだのね。持っていった甲斐があったわね。蓬莱？」
+				CALL FPRINTW("「＼ﾎﾗｰｲ／」", COLOR2_K14("上海"), "RIGHT")
+				PRINTFORMDW %CALLNAME%の問いかけに、蓬莱は満足げに応えた…
+			CASE 3
+				PRINTFORM 「ふふ、綺麗に飲みきったわね。無駄にならなかったみたいよ？
+				PRINTFORMW 　\@ KFLAG:TARGET:92 == 1 ? 上海 # 蓬莱 \@」
+				CALL FPRINTW(@"「\@ KFLAG:TARGET:92 == 1 ? ＼ｼｬﾝﾊｰｲ／ # ＼ﾎﾗｰｲ／ \@」", COLOR2_K14("上海"), "RIGHT")
+				IF !TEQUIP:アイマスク
+					PRINTFORMD 扉の影から顔を覗かせ応えた\@ KFLAG:TARGET:92 == 1 ? 上海 # 蓬莱 \@の姿は
+					PRINTFORMDW どこか%RAND_SPLIT("嬉しげ/満足げ")%なものに、%CALLNAME:MASTER%には見えた…
+				ENDIF
+		ENDSELECT
+		;EDを経過している場合		コメントアウト@v1.71
+		;SIF KFLAG:(FLAG:ご主人様):102
+		;	PRINTFORMDW その感情豊かな様子は、もはや単なる人形以上のものに思えた…
+		RETURN 1
+	ENDIF
+	
+	;負荷2は弾く
+	;=================================================
+	;REACT分類が平然と従う/積極的従う/受け入れる
+	;=================================================
+	IF 口上記入チェック(100) && IS_COMGRONAME("平然と従う/積極的従う/受け入れる") && TFLAG:REACT負荷 < 2
+		LOCALS:0 = %RAND_SPLIT("ふふっ/クスクス/うふふっ/くすくす/ふふ")%
+		LOCALS:1 = %RAND_SPLIT("あら/へぇ/ふ～ん")%
+		IF AFFECTION("相思相愛")
+			SELECTCASE RANDREACT(3, 4)
+				CASE 0
+					PRINTFORMW 「腰に手を当てて飲むのって何か意味があるの…？」
+					PRINTFORM 「%LOCALS:0%…、面白いわね
+				CASE 1
+					PRINTFORMW 「駆けつけ三杯ってなに…？」
+					PRINTFORM 「%LOCALS:0%…面白い事を言うのね
+				CASE 2
+					PRINTFORMW 「なに？　おかわりしたいの…？」
+					PRINTFORM 「それはいいけど…、鼻血が止まらなくなっても知らないから…
+			ENDSELECT
+			;PSで閉じる
+			CALL PRINT_SYMBOL_K14
+		ELSEIF AFFECTION("溺愛")
+			SELECTCASE RANDREACT(3, 5)
+				CASE 0
+					PRINTFORM 「%LOCALS:0%、いい飲みっぷりね。　私も頑張って作った甲斐があったわ
+					CALL PRINT_SYMBOL_K14
+				CASE 1
+					PRINTFORM 「%LOCALS:0%、一気に飲んだわね。気に入ってもらえたみたいで嬉しいわ
+					CALL PRINT_SYMBOL_K14
+				CASE 2
+					PRINTFORMW 「どう？ 美味しかった…？」
+					PRINTFORMW 「%LOCALS:0%…この私が作ったんだから、美味しいのは当然よっ！」
+			ENDSELECT
+		ELSEIF AFFECTION("眷愛")
+			PRINTFORM 「%LOCALS:1%、
+			SELECTCASE RANDREACT(3, 6)
+				CASE 0
+					PRINTFORMW %CNAME(MASTER, TARGET)%の口に合ったみたいね…？」
+				CASE 1
+					PRINTFORMW 気に入ったみたいね…？」
+				CASE 2
+					PRINTFORMW %CNAME(MASTER, TARGET)%こういうのが好きなのね…？」
+			ENDSELECT
+		ELSE
+			;2/3の確率で汎用処理
+			IF RAND:3
+				CALL PRINT_REACT_91_NO9_K14
+			;その他
+			ELSE
+				PRINTFORMW 「%LOCALS:1%、もう飲んだの？ お気に召したようでなによりね…」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;負荷2は弾く
+	;=================================================
+	;その他のREACT分類
+	;=================================================
+	IF 口上記入チェック(100) && !IS_COMGRONAME("平然と従う/積極的従う/受け入れる") && TFLAG:REACT負荷 < 2
+		IF AFFECTION("相思相愛")
+			SELECTCASE RANDREACT(3, 0)
+				CASE 0
+					PRINTFORMW 「ねぇ、本当は美味しくなかったのでしょう…？」
+					PRINTFORMW 「変に気を使われると、逆に傷つくんだけど…」
+				CASE 1
+					PRINTFORMW 「さぁ、\@ !TEQUIP:アイマスク ? ちゃんと私の目を見て。# \@正直に言いなさい……」
+					PRINTFORMW 「本当は不味かったんでしょ…？　ねぇ、そうでしょ！そうよね！？」
+				CASE 2
+					PRINTFORMW 「……で？　結局、%CNAME(MASTER, TARGET)%の言った事を簡単にまとめると…」
+					PRINTFORMW 「『不味かった』って事でいいのかしらねぇ…　フ　フ　フ……」
+					PRINTL
+					PRINTFORMDW アリスにこってり絞られた%CALLNAME:MASTER%は、嘘が下手な自分を呪った…… 
+			ENDSELECT
+		ELSEIF AFFECTION("溺愛")
+			SELECTCASE RANDREACT(3, 1)
+				CASE 0
+					PRINTFORMW 「なっ…なによっ、その気まずそうな態度…」
+					PRINTFORMW 「不味かったなら、はっきりそう言いなさいよ…！」
+				CASE 1
+					PRINTFORMW 「いいの。何も言わないで…」
+					PRINTFORMW 「顔を見れば、美味しくなかった事ぐらい分かるわよ…」
+				CASE 2
+					PRINTFORMW 「美味しくなかったのね……」
+					PRINTFORMW 「本当はね、正直に言うとね…？　こうなるような予感は、ちょっとしてたのよ…♪」
+			ENDSELECT
+		ELSEIF AFFECTION("眷愛")
+			SELECTCASE RANDREACT(3, 2)
+				CASE 0
+					PRINTFORMW 「口に合わなかったみたいね…？」
+				CASE 1
+					PRINTFORMW 「好みに合わなかったかしら…？」
+				CASE 2
+					PRINTFORMW 「美味しくなかったみたいね…？」
+			ENDSELECT
+		ELSEIF AFFECTION("嫌悪")
+			IF RAND:3
+				SELECTCASE RANDREACT(3, 3)
+					CASE 0
+						PRINTFORMW 「あらあら、お気に召さなかったようねぇ」
+						PRINTFORMW 「ま、私にとってはどうでもいいのだけど…」
+					CASE 1
+						PRINTFORMW 「ねぇ……この栄養剤が何から作られてるか、知りたくない…？」
+						PRINTFORMW 「ま、聞いたらリバースしちゃうかもだけれど…ね♪」
+					CASE 2
+						PRINTFORMW 「あら、アレを飲んでまだ無事だなんて…」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%、案外見込みがあるかも…？　あははっ！」
+				ENDSELECT
+			;1/3の確率で汎用処理
+			ELSE
+				CALL PRINT_REACT_91_NO9_K14
+			ENDIF
+		ELSE
+			;2/3の確率で汎用処理
+			IF RAND:3
+				CALL PRINT_REACT_91_NO9_K14
+			ELSE
+				PRINTFORMW 「あまり気に入ってもらえなかったようで、残念ね」
+				PRINTFORMW 「ま、別にいいけど…」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF

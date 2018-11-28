@@ -1,0 +1,112 @@
+﻿;小町＠CPMの人
+@CHARAMAKE_K35(ARG)
+PRINTFORML 「やあ、おはよう」
+PRINTFORMW 「ちょいと来てくれ。何、難しい事はさせないさ」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:ローマ字)
+PRINTL 
+PRINTFORML 「さて、そこらに小石が転がってるだろ。それを適当に積んでおいてくれ」
+PRINTFORML 「その間に私はちょっと寝てるから、良いほど積んだら起こしてくれ」
+PRINTFORMW 「じゃ、頑張れよ」
+LOCAL = 0
+LOCAL:1 = 0
+$SET_LOOP
+FOR LOCAL:2, 0, LOCAL
+	PRINTD ■
+NEXT
+PRINTL 
+PRINTFORMDL [0] 帰る
+PRINTFORMDL [1] 積む
+PRINTFORMDL [2] 起こす
+INPUT
+IF RESULT == 0
+	PRINTFORML 「何も言わずにお帰り、かい」
+	PRINTFORMW 「やれやれ」
+	CALLF CM_PROF("衝動", -10)
+	CALLF CM_PROF("好奇心", -10)
+	CALLF CM_PROF("羞恥", 10)
+	CALLF CM_PROF("神経質", 10)
+	RETURN 1
+ELSEIF RESULT == 1
+	LOCAL++
+ELSEIF RESULT == 2
+	GOTO LOOP_BREAK
+ENDIF
+IF PERCENT((LOCAL-6)*10)
+	PRINTFORMDW 積んでいた石は崩れてしまった……
+	LOCAL = 2
+	LOCAL:1++
+ENDIF
+GOTO SET_LOOP
+$LOOP_BREAK
+IF LOCAL:1 == 0
+	SELECTCASE LOCAL
+		CASE IS <= 3
+			PRINTFORML 「なんだ、全然積んで無いじゃないか」
+			PRINTFORML 「まあ、それで良いほどってなら、仕方ない」
+			CALLF CM_PROF("素直さ", -20)
+			CALLF CM_PROF("衝動", 30)
+			CALLF CM_PROF("楽観", 30)
+			CALLF CM_PROF("モラル", -30)
+			CALLF CM_PROF("神経質", -30)
+			CALLF CM_PROF("潔癖", -30)
+			CALLF CM_PROF("Ｃ好き", 20)
+			CALLF CM_PROF("Ｖ好き", -20)
+			CALLF CM_PROF("Ｂ好き", -10)
+			CALLF CM_PROF("Ａ好き", -10)
+			
+		CASE IS <= 10
+			PRINTFORML 「ふーん。そこそこ積めたみたいじゃないか」
+			CALLF CM_PROF("素直さ", 10)
+			CALLF CM_PROF("衝動", -10)
+			CALLF CM_PROF("楽観", 10)
+			CALLF CM_PROF("モラル", 10)
+			CALLF CM_PROF("神経質", 10)
+			CALLF CM_PROF("Ｃ好き", 10)
+			CALLF CM_PROF("Ｖ好き", 10)
+			CALLF CM_PROF("Ｂ好き", 10)
+			CALLF CM_PROF("Ａ好き", -10)
+			
+		CASEELSE
+			PRINTFORML 「ほほぉ。こりゃまた沢山積んだもんだ」
+			CALLF CM_PROF("素直さ", 30)
+			CALLF CM_PROF("衝動", -30)
+			CALLF CM_PROF("楽観", -30)
+			CALLF CM_PROF("モラル", 30)
+			CALLF CM_PROF("神経質", 30)
+			CALLF CM_PROF("潔癖", 30)
+			CALLF CM_PROF("Ｃ好き", -20)
+			CALLF CM_PROF("Ｖ好き", 30)
+			CALLF CM_PROF("Ｂ好き", 20)
+			CALLF CM_PROF("Ａ好き", 20)
+			
+	ENDSELECT
+ELSE
+	IF LOCAL == 2 && LOCAL:1 == 1
+		PRINTFORML 「ん、崩れちまった？　まあ、そう言う事もあるさ」
+		PRINTFORML 「気を落としなさんな」
+		CALLF CM_PROF("楽観", -30)
+		CALLF CM_PROF("モラル", -10)
+		CALLF CM_PROF("神経質", -20)
+		CALLF CM_PROF("潔癖", -30)
+		CALLF CM_PROF("Ｃ好き", 10)
+		CALLF CM_PROF("Ｖ好き", -10)
+		CALLF CM_PROF("Ｂ好き", 10)
+		CALLF CM_PROF("Ａ好き", -10)
+		
+	ELSE
+		PRINTFORML 「ほうほう。途中で崩れたけど、頑張ったと」
+		PRINTFORML 「偉い偉い」
+		CALLF CM_PROF("楽観", 20)
+		CALLF CM_PROF("モラル", 30)
+		CALLF CM_PROF("神経質", 20)
+		CALLF CM_PROF("潔癖", 30)
+		CALLF CM_PROF("Ｃ好き", -10)
+		CALLF CM_PROF("Ｖ好き", 30)
+		CALLF CM_PROF("Ｂ好き", 10)
+		CALLF CM_PROF("Ａ好き", 30)
+		
+	ENDIF
+ENDIF
+PRINTFORMW 「帰してやるから、ゆっくり眠りな」
+RETURN 1

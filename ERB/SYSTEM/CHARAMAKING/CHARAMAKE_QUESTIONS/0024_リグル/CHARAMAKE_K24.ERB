@@ -1,0 +1,60 @@
+﻿;リグル＠むのう
+@CHARAMAKE_K24(ARG)
+PRINTFORMW 「やぁ、目は覚めた？」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:ローマ字)
+PRINTL 
+PRINTFORML 「聞きたい事があるの、答えてもらうわよ」
+PRINTFORMW 「虫ってどう思う？　やっぱり気持ち悪い？」
+PRINTL 
+PRINTFORMDL [0] 答えない
+PRINTFORMDL [1] 気持ち悪いと思います
+PRINTFORMDL [2] 昆虫大好きです
+PRINTFORMDL [3] そんなことより、蹴らないでくれませんか
+PRINTFORMDL [4] そんなことより、パンツの下はどうなってますか？
+CALL INPUTINTD(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「虫だけに無視ってこと？　寒いよ！」
+		PRINTFORMW 「もういいから、さっさと寝なよ！」
+		;無回答の補正値は固定
+		CALLF CM_PROF("衝動", -10)
+		CALLF CM_PROF("好奇心", -10)
+		CALLF CM_PROF("羞恥", 10)
+		CALLF CM_PROF("神経質", 10)
+	CASE 1
+		PRINTFORML 「正直ね！」
+		PRINTFORMW 「でも、綺麗な虫もいるのよ、忘れないでね」
+		CALLF CM_PROF("素直さ", 20)
+		CALLF CM_PROF("モラル", 10)
+		CALLF CM_PROF("神経質", 10)
+		CALLF CM_PROF("潔癖", 10)
+		CALLF CM_PROF("好奇心", -10)
+	CASE 2
+		PRINTFORML 「へー！　珍しい人ね」
+		PRINTFORMW 「聞きたいことも聞けたし、もういいわよ、おやすみ」
+		CALLF CM_PROF("好奇心", 20)
+		CALLF CM_PROF("同性愛", 10)
+		CALLF CM_PROF("知性", 10)
+		CALLF CM_PROF("潔癖", -10)
+	CASE 3
+		PRINTFORML 「蹴ってないわよ！　そっちが勝手に突っ込んできてるだけでしょ！」
+		PRINTFORML 「大体こっちに来る方が悪いのよ、落ちてくるのを待ってれば…」
+		PRINTFORMW 「って勝手に寝るなー！」
+		CALLF CM_PROF("被虐", -30)
+		CALLF CM_PROF("Ｖ好き", 30)
+		CALLF CM_PROF("Ａ好き", 30)
+		CALLF CM_PROF("衝動", 20)
+		CALLF CM_PROF("倒錯", 20)
+	CASE 4
+		PRINTFORML 「え？　どうって…別に何もついて……って何言わせるの！」
+		PRINTFORML 「なんなのよあなた、ちゃんと質問の意味分かってる？」
+		PRINTFORMW 「はぁ……もういい、もう寝なさい」
+		CALLF CM_PROF("衝動", 20)
+		CALLF CM_PROF("好奇心", 30)
+		CALLF CM_PROF("同性愛",20)
+		CALLF CM_PROF("Ｃ好き",30)
+		CALLF CM_PROF("モラル", -30)
+		CALLF CM_PROF("神経質", -30)
+ENDSELECT
+RETURN 1

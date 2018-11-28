@@ -1,0 +1,2999 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	[リリーホワイト]口上 愛撫系アクション口上ファイル
+;
+;	愛撫系アクション口上をまとめたファイル
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;愛撫系 ACT10～19 & 27
+;========================================================================
+;・TFLAG:ACT(10=手で愛撫/11=胸愛撫/12=口で愛撫/13=アナル愛撫/14=アナル舐め/15=キス/16=性器を擦り合う/17=パイズリする/18=足コキする/19=指挿入れ/27=押し倒す)
+;・TFLAG:ACT分類 == 1に該当
+;・ACT18, 足コキは異常系から派生する場合あり
+;・汎用リアクションにおいてはMENUMATCH(TFLAG:ACT, "愛撫")で拾う事が可能
+;・調教者が調教対象を愛撫する。この口上の時点で調教者はすでに手を出している
+;・媚薬を使用するケースがある
+;-------------------------------------------------
+;・戻り値(RESULT)について
+;・システム側では口上側のRESULT(終端のRETURN 1など)によって口上が表示されたのか否か、
+;・また箇所毎の特有の挙動(媚薬等口上をスキップなど)を制御しています
+;・@口上記入チェックの場合代入処理を省略できますが、RESULT値は口上側で決めうちする必要があります
+;・特別な理由がない限り、テンプレとしてはRETURN 1を記述しておきます
+;-------------------------------------------------
+
+;────────────────────────────────────
+;ACT10, 手で愛撫(ACT10_0, 愛撫する/ACT10_1, 手淫する/ACT10_2, ペニスバンド手淫)
+;────────────────────────────────────
+;・Ｃ中心に愛撫する
+;・調教対象にペニスがある場合、及びペニスバンド装着時には派生コマンドになる
+;・調教対象が自慰中の場合は解除される
+;・調教者の手に汚れがある場合不快SOURCEが変動する
+;・調教者技巧、愛撫、器用な指先素質に応じて勃起度上昇
+;-------------------------------------------------
+@KOJO_ACT_K15_10
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=愛撫/1=手淫/2=ペニスバンド手淫)
+;-------------------------------------------------
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT10_1, 手淫する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・男性器への愛撫を行う、つまり手コキ
+;・他の派生と比べてSOURCE:MASTER:快Ｃは+200%
+;・調教者技巧、愛撫、器用な指先素質に応じて勃起度上昇
+;-------------------------------------------------
+;必要に応じて、TEQUIP:オナホールやTCVAR:MASTER:勃起度
+;PANTSCHECK(1)等で分岐を設ける事もできます。
+;まともにやると手間が尋常じゃないので、効率よく記述する事をお勧めします
+;-------------------------------------------------
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	;-------------------------------------------------
+	;小分岐
+	;=================================================
+	;着衣初回
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0) && PANTSCHECK(1)
+		PRINTFORMW 「もしかして、女の子に触られるのは初めてなんですか？」
+		PRINTFORMW 「えと……リリーが相手じゃ、素敵な思い出にはならないかもしれませんが……」
+		PRINTFORM 「せめて、気持ちいい思い出に……してあげますね
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTL  
+		PRINTFORMDW リリーは%CALLNAME:MASTER%を安心させるように優しく微笑み、そっと身体を密着させる
+		PRINTL  
+		PRINTFORMW 「……それじゃあ、おちんちん……触っちゃいますね……」
+		PRINTFORMW 「なでなでっ、すりすりっ……ふふっ♪　気持ちいですか？」
+		PRINTL  
+		PRINTFORMDW 下着越しにリリーの小さな手が男性器を優しく撫で上げる
+		PRINTFORMDW マッサージをするように全体を丁寧に揉み込み、時折指先でカリ首をくすぐる
+		PRINTL  
+		PRINTFORMW 「あっ……えっちなお汁でぱんつに染みができちゃいましたよ……」
+		PRINTFORMW 「感じてくれたみたいで、なんだか嬉しいです……えへへっ」
+		PRINTFORM 「ほら、リリーのおててで……もっと気持ちよくなってくださいね
+		CALL HEARTCB
+		PRINTFORMW 」
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;脱衣初回
+	;IF 口上記入チェック(0)
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0) && P_DATUICHECK(1) == 3
+		PRINTFORMDW %CALLNAME:MASTER%は下着を脱がされ、その全てをリリーの眼前に晒している
+		PRINTFORMDW リリーは熱く息を荒げ、%CALLNAME:MASTER%の浅黒く充血した勃起陰茎をじっと見つめている……
+		PRINTL  
+		PRINTFORMW 「おちんちん……直接さわっちゃいますね？」
+		PRINTFORMW 「……すごく熱い……んっ♪……布越しとは全然違います……はぁ♪」
+		PRINTFORMW 「初めてですから、痛くないように優しくなでなでしてあげますね♪」
+		PRINTL  
+		PRINTFORMDW リリーの白く細い指が竿肌に優しく絡みつく
+		PRINTFORMDW 根元から先端へ、亀頭を一周し這うように陰嚢へ……
+		PRINTFORMDW ぞわりとした官能の震えが走り、先走りに濡れた肉竿が更に硬く屹立する……
+		PRINTL  
+		PRINTFORMW 「えっちなぬるぬるが溢れて……ビクビクしてきましたよ♪」
+		PRINTFORMW 「……%CNAME(MASTER, TARGET)%の"精"、リリーがぜんぶ受け止めてあげますから」
+		PRINTFORM 「気持ちいいの我慢しないで、せーえきでリリーのおてて汚してくださいね
+		CALL HEARTCB
+		PRINTFORMW 」
+		RETURN 1
+	ENDIF
+
+	;=================================================
+	;調教内初回
+	;=================================================
+	IF 口上記入チェック(0) && ONCEACT(0)
+		IF FAVOR(0, 2000)
+			PRINTFORMW 「せーえきいっぱいっ♪　元気いっぱいですね♪」
+			PRINTFORMW 「今日もリリーのおててでいっぱい搾ってあげますからね♪」
+		ELSE
+			PRINTFORMW 「せーえきちゃんと溜めてきましたか？　ふふっ♪」
+			PRINTFORMW 「もしリリーに内緒でシたら、ちゃーんとわかっちゃうんですからね？」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+		;オナホール装着中
+		;・雑感　「焦らし」は「イきそう」分岐増やした方が楽しそう
+	;=================================================
+	IF 口上記入チェック(100) && TEQUIP:オナホール
+		;童貞でアイマスク装着中
+		IF TALENT:MASTER:童貞 && TEQUIP:アイマスク
+			;イきそう
+			IF TCVAR:MASTER:イきそう
+				PRINTFORMW 「イクの？　童貞ちんぽオナホコキで射精しちゃうの？　あははっ♪」
+				PRINTFORM 「見えない方が興奮するなんて、ほんとヘンタイさんですねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「ね、リリーのえっちな声と妄想せっくすしましょうか♪　ほら♪　あっ、ぁ、ひぁああんっ♪」
+				PRINTL  
+				PRINTFORMDW 複雑な肉ひだが絶えず陰茎を根元から扱きあげ、リリーの艶声が切なげに高まっていく
+				PRINTFORMDW 既に射精限界まで高まっていた%CALLNAME:MASTER%の快感が、一気に絶頂の縁へ押し上げられる
+				PRINTL  
+				PRINTFORMW 「あっ、んうぅぅ♪　リリーのおまんこ想像してっ、特濃ザーメンぴゅっぴゅしてくださいね♪　あんっ♪」
+				PRINTFORMW 「ほらぁ♪　　いいよっ出してっ♪　　リリーのオナホまんこに中出ししちゃえッ♪」
+			;通常
+			ELSE
+				PRINTFORMW 「真っ暗で興奮しちゃいますか？　ふふっ♪」
+				PRINTFORMW 「童貞さんの敏感ちんぽ、しこしこしちゃいますね♪　えいっ♪」
+				PRINTL  
+				PRINTFORMDW アイマスクで視界を塞がれ敏感になった勃起陰茎に、
+				PRINTFORMDW オナホールの複雑な突起が絶え間ない快楽を与えてくる
+				PRINTFORMDW リリーの切なげな吐息がオナホールの動きとシンクロして、
+				PRINTFORMDW 本当に性行為をしているかと錯覚してしまう
+				PRINTL  
+				PRINTFORMW 「もしかしてリリーのおまんこの感触想像しちゃってます？　あははっ♪」
+				PRINTFORMW 「いいですよ♪　リリーをオナペットにしてっ、思う存分孕ませセックスしてください♪」
+			ENDIF
+		;童貞でアイマスク未装着
+		ELSEIF TALENT:MASTER:童貞
+			;イきそう
+			IF TCVAR:MASTER:イきそう
+				PRINTFORMW 「オナホで扱かれてイっちゃうんですか？　あははっ♪」
+				PRINTFORMW 「いいですよ♪ 我慢しないで思いっ切りぴゅっぴゅしてください♪」
+				PRINTL  
+				PRINTFORMDW “ちゅぶっずちゅっ”と粘っこい水音を立ててオナホールが肉竿に絡みつく
+				PRINTFORMDW 複雑なヒダが亀頭をなぞりあげ、強烈な快楽にビクンと腰が跳ね上がる
+				PRINTL  
+				PRINTFORMW 「あんっ♪ 暴れたら上手にシコシコできませんよぉ♪」
+				PRINTFORMW 「ねぇ、リリーのお顔を見て？ リリーのおまんこの感触想像してみてっ♪」
+				PRINTFORMW 「リリーのオナホまんこが孕んじゃうくらいっ♪ 思いっきり中出ししゃせーしてっ♪」
+			;通常
+			ELSE
+				PRINTFORMW 「ねぇ、このオナホールって『リリーとそっくり』なんですって♪」
+				PRINTFORMW 「何がそっくりなんでしょうねー？ ふふっ♪」
+				PRINTL  
+				PRINTFORMDW 複雑なヒダヒダの内壁がペニスを根元まで咥え込み、きゅっきゅと亀頭に吸い付く
+				PRINTFORMDW 挿入しているだけで甘美な痺れが腰全体に広がり、ぶるりと腰が震えてしまう
+				PRINTFORMDW リリーは満足げに微笑むと、ゆっくりとオナホールを持った手を動かし始めた
+				PRINTL  
+				PRINTFORMW 「ちゃんと想像できましたね♪　ふふっ♪」
+				PRINTFORMW 「ほら、リリーのお顔も見て？　リリーのおまんこの感触、たっぷり味わってね♪」
+			ENDIF
+		;非童貞でアイマスク装着中
+		ELSEIF TEQUIP:アイマスク
+			;イきそう
+			IF TCVAR:MASTER:イきそう
+				PRINTFORMW 「イクの？　オナホコキで射精しちゃうの？　あははっ♪」
+				PRINTFORM 「見えない方が興奮するなんて、ほんとヘンタイさんですねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「ね、リリーのえっちな声と妄想せっくすしましょうか♪　ほら♪　あっ、ぁ、ひぁああんっ♪」
+				PRINTL  
+				PRINTFORMDW 複雑な肉ひだが絶えず陰茎を根元から扱きあげ、リリーの艶声が切なげに高まっていく
+				PRINTFORMDW 既に射精限界まで高まっていた%CALLNAME:MASTER%の快感が、一気に絶頂の縁へ押し上げられる
+				PRINTL  
+				PRINTFORM 「あっ、んうぅぅ♪　あんっ、おちんちんきもひーれしゅっ
+				CALL HEARTCB
+				PRINTFORMW 　あははっ♪」
+				PRINTFORMW 「ほらぁ♪　　いいよっ出してっ♪　　リリーのオナホまんこに中出ししちゃえッ♪」
+			;通常
+			ELSE
+				PRINTFORMW 「真っ暗で興奮しちゃいますか？　ふふっ♪」
+				PRINTFORMW 「敏感になったおちんちん、しこしこしちゃいますね♪　えいっ♪」
+				PRINTL  
+				PRINTFORMDW アイマスクで視界を塞がれ敏感になった勃起陰茎に、
+				PRINTFORMDW オナホールの複雑な突起が絶え間ない快楽を与えてくる
+				PRINTFORMDW リリーの切なげな吐息がオナホールの動きとシンクロして、
+				PRINTFORMDW 本当に性行為をしているかと錯覚してしまう
+				PRINTL  
+				PRINTFORMW 「もしかしてリリーとのせっくす思い出しちゃってます？　あははっ♪」
+				PRINTFORMW 「いいですよ♪　リリーをオナペットにしてっ、思う存分孕ませセックスしてください♪」
+			ENDIF
+		;非童貞でアイマスク未装着
+		ELSE
+			;イきそう
+			IF TCVAR:MASTER:イきそう
+				PRINTFORMW 「オナホで扱かれてイきそうなんですか？　あははっ♪」
+				PRINTFORMW 「いいですよ♪ 我慢しないで思いっ切りぴゅっぴゅしてください♪」
+				PRINTL  
+				PRINTFORMDW “ちゅぶっずちゅっ”と粘っこい水音を立ててオナホールが肉竿に絡みつく
+				PRINTFORMDW 複雑なヒダが亀頭をなぞりあげ、強烈な快楽にビクンと腰が跳ね上がる
+				PRINTL  
+				PRINTFORMW 「あんっ♪ 暴れたら上手にシコシコできませんよぉ♪」
+				PRINTFORMW 「ねぇ、リリーのお顔を見て？ リリーのおまんこの感触想像してみてっ♪」
+				PRINTFORMW 「リリーのオナホまんこが孕んじゃうくらいっ♪ 思いっきり中出ししゃせーしてっ♪」
+			;通常
+			ELSE
+				PRINTFORMW 「ねぇ、このオナホールって『リリーとそっくり』なんですって♪」
+				PRINTFORMW 「いったい何がそっくりなんでしょうねー？ ふふっ♪」
+				PRINTL  
+				PRINTFORMDW 複雑なヒダヒダの内壁がペニスを根元まで咥え込み、きゅっきゅと亀頭に吸い付く
+				PRINTFORMDW 挿入しているだけで甘美な痺れが腰全体に広がり、ぶるりと腰が震えてしまう
+				PRINTFORMDW リリーは満足げに微笑むと、ゆっくりとオナホールを持った手を動かし始めた
+				PRINTL  
+				PRINTFORMW 「リリーの膣内とオナホールどっちが気持ちいいですか？」
+				PRINTFORM 「やっぱりいつもみたいに中出ししゃせーしないと比べられないかなぁ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「いいですよ♪　オナホおまんこでイっちゃうまで、いっぱいシコシコしてあげますね♪」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;イきそう
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		;焦らし　体感で3回くらい連続で選択される
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				IF FAVOR(0, 2000)
+					IF RAND:2 == 0
+						PRINTFORMW 「しこしこしこっ♪……しこぉしこぉ♪……あははっ♪
+						PRINTFORMW 「ガマン汁止まんないね……そんなにイキたいんですか？」
+						PRINTL  
+						PRINTFORMDW 射精のタイミングを完全にコントロールされ、%CALLNAME:MASTER%は痴悦の縁で焦らされ続けている
+						PRINTFORMDW 肉竿を激しく扱き、亀頭を撫で、鈴口を舐り…………あと一歩の瞬間、ピタリとリリーの手が止まる
+						PRINTFORMDW ガマン汁で白く泡立った肉幹が、吐精の瞬間に期待して媚びるようにビクンと跳ねた
+						PRINTL  
+						PRINTFORMW 「…………まだまだイカせてあげませんよ♪」
+						PRINTFORM 「かわいくおねだりできないと……ずぅっとこのままですからね
+						CALL HEARTCB
+						PRINTFORMW 」
+					ELSE
+						PRINTFORMW 「だめですよ、まだイかせてあげません♪」
+						PRINTFORMW 「我慢して溜め込んだ精子は、とぉっても濃くて美味しくなるんです♪」
+						PRINTL  
+						PRINTFORMDW 射精のタイミングを完全にコントロールされ、射精まであと一歩ののところで焦らされ続ける
+						PRINTFORMDW ガマン汁で白く泡立った肉幹が、吐精の瞬間に期待して媚びるようにビクンと跳ねた
+						PRINTL  
+						PRINTFORMW 「だから、もっともっと限界までお射精我慢して……」
+						PRINTFORMW 「そしたら、リリーがぜーんぶ搾り取ってあげますからねっ♪」
+					ENDIF
+				ELSE
+					PRINTFORMW 「だめですよ、まだイかせてあげません♪」
+					PRINTFORMW 「我慢して溜め込んだ精子は、とぉっても濃くて美味しくなるんですもん♪」
+					PRINTL  
+					PRINTFORMDW 射精のタイミングを完全にコントロールされ、射精まであと一歩ののところで焦らされ続ける
+					PRINTFORMDW ガマン汁で白く泡立った肉幹が、吐精の瞬間に期待して媚びるようにビクンと跳ねた
+					PRINTL  
+					PRINTFORMW 「だから、もっともっと限界までお射精我慢して……」
+					PRINTFORMW 「そしたら、リリーがぜーんぶ搾り取ってあげますからねっ♪」
+				ENDIF
+			;焦らし終了（トドメ））
+			CASE 1
+				SELECTCASE NOWEX:MASTER:射精
+					;空射精で搾り取る
+					CASE 1
+						PRINTFORMDW %CALLNAME:MASTER%の精液はリリーによって搾り尽くされ、既に射精の叶わない状態にある
+						PRINTFORMDW 粘つく悦楽の跡に塗れ、リリーの華奢な身体が白く淫靡に煌いている……
+						PRINTL  
+						PRINTFORMW 「むー……タマタマ空っぽになっちゃったんでしょうか」
+						PRINTFORMW 「こんなに焦らしてるのに全然せーえき溜まらないですよ？」
+						PRINTL  
+						PRINTFORMDW 不満げに頬を膨らませながら、リリーはその細指で竿肌を扱き続けている
+						PRINTFORMDL 絶え間なく絶頂を繰り返し、全ての精液を吐き出した%CALLNAME:MASTER%の男性器は
+						PRINTFORMDW 射精機能の無いただの肉バイブとなり果ててなお快楽をせがんで硬く屹立している
+						PRINTL  
+						PRINTFORM 「そっか……リリーの為に限界までしゃせーしてくれたんだもんね
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「とっても頑張った%CNAME(MASTER, TARGET)%には、とっておきの『ごほーび』あげなきゃね
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTL  
+						CALL QUAKE(2)
+						PRINTFORM 「頑張った子しか味わえない、最高に気持ち良い『えっちなお潮
+						CALL HEARTCB
+						PRINTFORM 』噴かせてあげますね
+						CALL HEARTCB
+						PRINTFORMW 」
+					;その他
+					CASEELSE
+						IF RAND:2 == 0
+							PRINTFORM 「いっぱい我慢したごほーびに……ザーメンぜーんぶヌキヌキしてあげますね
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTL  
+							PRINTFORMDW リリーの許しを得て、焦らされ続けた肉幹が一気に最高硬度まで達してしまう
+							PRINTFORMDW %CALLNAME:MASTER%は悲鳴のような嬌声を漏らし、吐精を懇願してひたすらに腰を突き上げる
+							PRINTFORMDW 全身の"精"がリリーを求め、愉悦に震える肉棒の先端へと集まってくる……
+							PRINTL  
+							PRINTFORM 「ほらっほらぁ♪　タマタマ空っぽになるまで、ずぅーーーっとシコシコして……
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「ドロドロザーメン びゅぅぅー
+							CALL HEARTCB
+							PRINTFORM びゅるるぅー
+							CALL HEARTCB
+							PRINTFORM って搾り取っちゃいますっ
+							CALL HEARTCB
+							PRINTFORMW 」
+						ELSE
+							PRINTFORM 「いっぱい我慢できた子には、えっちなごほーびあげないとね
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「溜め込んだせーえき、ぴゅっぴゅしちゃおうか
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「……ほらぁ♪ どんどん早く、激しくシちゃいますよ
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTL  
+							PRINTFORMDW 快感のレベルが一気に跳ね上がり、淫悦に脳が痺れ桃色の靄に視界が染まっていく……
+							PRINTFORMDW リリーの名前を呼び、はしたなく腰をくねらせる度に、未知の快楽が全身を駆け抜けていく……
+							PRINTL  
+							PRINTFORM 「ふふっ♪　%CNAME(MASTER, TARGET)%の一番気持ち良いタイミングでしゃせーしていいよ
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「リリーがぜーんぶ受け止めてあげますから
+							CALL HEARTCB
+							PRINTFORM  リリーにあっついザーメンシャワーぶっかけてください
+							CALL HEARTCB
+							PRINTFORMW 」
+						ENDIF
+				ENDSELECT
+			CASEELSE
+				;焦らし無し
+				;イきそうなのを我慢している
+				IF TCVAR:MASTER:イきそう > 5
+					IF FAVOR(0, 2000)
+						IF RAND:2 == 0
+							PRINTFORMW 「我慢なんてしなくていいんですよ？　ふふっ♪」
+							PRINTFORM 「だって……我慢したって無駄ですもん
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTL  
+							PRINTFORMDW リリーは色欲に満ちた表情で静かに囁くと、おもむろに細い指先を竿肌に絡めた
+							PRINTFORMDW カリ首を強く弾かれたと思ったら、先端から中程までをなぞられる……
+							PRINTFORMDW 息つく間もなく、今度はヒクヒクと震える鈴口を人差し指の先で強く弾かれる……
+							PRINTFORMDW 天真爛漫な姿とは裏腹な巧みな指使いに、思わず腰が跳ねあがる
+							PRINTL  
+							PRINTFORMW 「ほら、もうお汁でぬるぬるになっちゃいました……ふふっ♪」
+							PRINTFORMW 「%CNAME(MASTER, TARGET)%が頑張って溜め込んだ精……ぜーんぶ搾り取っちゃいますね♪」
+						ELSE
+							PRINTFORM 「はぁん……おちんちん気持ちいいね♪　もう出ちゃいそうなのかな
+							CALL HEARTCB
+							PRINTW 」
+							PRINTFORMW 「いっぱい溜めたせーえき、せーんぶぴゅっぴゅしちゃいましょうね♪」
+							PRINTL  
+							PRINTFORMDW リリーはうっとりとした表情で%CALLNAME:MASTER%の顔と怒張を交互に見つめると、
+							PRINTFORMDW ピアノでも奏でるような優雅な指使いで、こしょこしょと剛直の先端を弄ぶ
+							PRINTFORMDW 既に射精限界まで高まっていた快感が、鈴口に向けて一気に押し上げられ
+							PRINTFORMDW 無意識に腰をがくがくと揺らし、肉棒を突き上げてしまう
+							PRINTL  
+							PRINTFORMW 「どんどん熱くなって……んっ、匂いも濃くなって……はぁ、とっても苦しそう……」
+							PRINTFORM 「いっぱい我慢したもんね……今解放してあげるっ
+							CALL HEARTCB
+							PRINTFORMW 」
+						ENDIF
+					ELSE
+						PRINTFORMW 「あれ？　もしかして我慢してるんですか？」
+						PRINTFORMW 「……我慢するの辛いですよね？　でも、もう無理しなくていいんですよ？」
+						PRINTL  
+						PRINTFORMDW 先走りで濡れた鈴口に指先を押し付け、見せつけるように透明の糸を引く
+						PRINTFORMDW 空いた手を肉棒の根元に這わせ、精液を搾り出すように、ゆっくり、ゆっくりと肉棒を扱きあげた。
+						PRINTL  
+						PRINTFORMW 「どんどん熱くなって……んっ、匂いも濃くなって……はぁ、とっても苦しそう……」
+						PRINTFORM 「リリーが%CNAME(MASTER, TARGET)%の中の意地っ張りな心……全部吐き出させてあげますね
+						CALL HEARTCB
+						PRINTFORMW 」
+					ENDIF
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;媚薬コキ
+	;=================================================
+	IF 口上記入チェック(0) && GETBIT(TFLAG:104, 1)
+		;媚薬使用口上処理済チェック(媚薬使用の地の文カットする際はTFLAG:媚薬等使用地の文スキップのコメントを解除)
+		CLEARBIT TFLAG:媚薬等使用口上, 1
+		;CLEARBIT TFLAG:媚薬等使用地の文スキップ, 1
+		PRINTFORMW 
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;押し倒し状態
+	;=================================================
+	IF 口上記入チェック(0) && TEQUIP:押し倒し中
+		;連続実行
+		IF TFLAG:ACT派生 == 2
+			PRINTFORMW 
+			PRINTFORMW 
+		;通常
+		ELSE
+			PRINTFORMW 
+			PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;連続実行
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && TFLAG:ACT派生 == 2
+		IF FAVOR(0, 2000)
+			IF RAND:5 == 0
+				PRINTFORM 「はぁん……おちんちん気持ちいいね♪　もう出ちゃいそうなのかな
+				CALL HEARTCB
+				PRINTW 」
+				PRINTFORMW 「いっぱい溜めたせーえき、せーんぶぴゅっぴゅしちゃいましょうね♪」
+				PRINTL  
+				PRINTFORMDW リリーはうっとりとした表情で%CALLNAME:MASTER%の顔と怒張を交互に見つめると、
+				PRINTFORMDW ピアノでも奏でるような優雅な指使いで、こしょこしょと剛直の先端を弄ぶ
+				PRINTFORMDW 既に射精限界まで高まっていた快感が、鈴口に向けて一気に押し上げられ
+				PRINTFORMDW 無意識に腰をがくがくと揺らし、肉棒を突き上げてしまう
+				PRINTL  
+				PRINTFORMW 「どんどん熱くなって……んっ、匂いも濃くなって……はぁ、とっても苦しそう……」
+				PRINTFORM 「いっぱい我慢したもんね？　無理しないで♪　今解放してあげる
+				CALL HEARTCB
+				PRINTFORMW 」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「おちんちん……ビクビクして、熱くなってきたよ？」
+				PRINTFORM 「もう出そうなんだよね？　いいよ、リリーのおててでいっぱい気持ちよくしてあげます
+				CALL HEARTCB
+				PRINTW 」
+				PRINTL  
+				PRINTFORMDW そう言って優しく微笑みかけながら、小さな手がはち切れんばかりに膨らんだ肉幹を撫で
+				PRINTFORMDW 先端から溢れたカウパーが裏筋を伝い、ぐちゅぐちゅと淫らな水音を響かせる……
+				PRINTFORMDW まだ幼さの残るリリーの表情と、剛直を扱く光景のミスマッチさが%CALLNAME:MASTER%の劣情を掻き立てる……
+				PRINTL  
+				PRINTFORMW 「くちゅっくちゅっ♪　ぬりゅりゅるっ♪　ふふっ、おちんちんきもちーねっ♪」
+				PRINTFORM 「せーえきでリリーのおててが孕んじゃうくらい、いっぱいぴゅっぴゅしちゃおうね
+				CALL HEARTCB
+				PRINTFORMW 」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「はぁっ♪　はぁっ♪　せーえき溢れちゃいそうですっ♪」
+				PRINTFORMW 「ビクビクって震えちゃって、とっても気持ちよさそうです……ふふっ♪」
+				PRINTFORMW 「ほらぁ♪　亀頭をくりゅくりゅしながらぁ♪　根元からしこしこしますね♪」
+				PRINTL  
+				PRINTFORMDW 手のひらで亀頭を撫で回し、先端まで張り詰めた肉棒を丹念に扱きあげられる
+				PRINTFORMDW 精巣が絶えず精を吐き出し、絶頂の瞬間を期待して一気に尿道を満たしていく
+				PRINTL  
+				PRINTFORMW 「んっ、はぁっ♪　イクの我慢しなくていいですからね♪」
+				PRINTFORM 「好きな時にしゃせーして♪　リリーのおてて%CNAME(MASTER, TARGET)%のせーえきで汚してくださいっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「うぅ……おてて疲れちゃいました……ふふっ♪」
+				PRINTFORMW 「ねぇ、おちんちん大きいと“シコシコ”するのはとっても大変なんですよ？」
+				PRINTL  
+				PRINTFORMDW リリーは怒張の根元を押えると、空いた手のひらで亀頭を優しく包み込んだ
+				PRINTFORMDW 指を器用に動かして鈴口とカリ首を刺激しながら、丁寧に亀頭全体を撫でまわしてくる
+				PRINTL  
+				PRINTFORM 「%CNAME(MASTER, TARGET)%は甘えんぼさんだから、“なでなで”されるの大好きだもんね
+				CALL HEARTCB
+				PRINTW 」
+				PRINTFORMW 「なでなでっ♪　ぬりゅぬりゅっ♪　ふふっ、これならリリーも疲れません♪」
+				PRINTFORMW 「ビクビクしてとっても気持ちよさそう♪　ほら、お汁がどんどん溢れてきましたっ♪」
+				PRINTFORMW 「もっと続けてあげますね♪　なーでなでっ♪　ぬりゅるりゅぅ♪…………」
+				PRINTL  
+				PRINTL  
+				PRINTFORMW 「…………さて、リリーはたっぷり休憩出来ましたし、%CNAME(MASTER, TARGET)%も限界ですね♪」
+				PRINTFORM 「それじゃ、溜まったせーえきびゅーびゅーしちゃいましょうか
+				CALL HEARTCB
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW 「リリーのおててそんなに気持ちいいの？　じゃあ、もっとしてあげます♪」
+				PRINTFORM 「リリーのとっておきだから、遠慮なくイっちゃっていいですからね
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDL そう言うやいなやリリーの手のひらが怒張を包むように覆い被さり、
+				PRINTFORMDW 鈴口から竿幹へ、陰嚢からカリ首へと変幻自在に這いずり回る……
+				PRINTFORMDW 十本の指が別々の意思を持ったように怒張を弄び、未知の快楽にたまらず嬌声が漏れる……
+				PRINTFORMDW リリーは%CALLNAME:MASTER%の表情を窺いながら、更に淫悦の縁へと追い込んでいく……
+				PRINTL  
+				PRINTFORMW 「女の子みたいな声出しちゃって、ふふっ♪」
+				PRINTFORMW 「リリーがぜんぶ受け止めてあげますから、安心してびゅーびゅーしてくださいね♪」
+			ENDIF
+		ELSE
+			IF RAND:4 == 0
+				PRINTFORMW 「えっちな匂い……どんどん濃くなってきました」
+				PRINTFORMW 「もう出そうなんですよね？　ふふっ、バレバレですよ♪」
+				PRINTFORMW 「リリーも……正直我慢できません♪　今すぐヌいてあげますね」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%のおちんちん、ガマン汁でぬりゅぬりゅしてすごくえっちです……」
+				PRINTFORM 「リリーのおててで、もっとえっちにしてあげますね……えいっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW そう言うとリリーは一気に肉棒を扱く手の動きを速めていった
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「おてて気持ちいいの？　それじゃ、もっとしこしこ続けちゃいますね♪」
+				PRINTFORMW 「ほら……濃っいぃ"精"がおちんちんに集まってきてるのわかりますか？」
+				PRINTL  
+				PRINTFORMDW リリーは細い指先を竿肌に絡めると、根元から搾り上げるように扱き始める……
+				PRINTFORMDW ぐちゅぐちゅと淫らな水音が響き、快楽の波がせり上がってくる……
+				PRINTL  
+				PRINTFORMW 「こんな風に……あなたの"精"がぬるぬるのお汁になって、おちんちんの先から溢れてるの」
+				PRINTFORMW 「もっともっと気持ちよくなって、真っ白な"精"をリリーに捧げてくださいね♪」
+			ELSE
+				PRINTFORMW 「リリーの小さなおててで扱かれて、興奮しちゃいましたか？　ふふっ♪」
+				PRINTFORMW 「遠慮しないでいいんですよー？　もっともっとリリーで興奮してくださいね」
+				PRINTL  
+				PRINTFORMDW リリーの右手がしっかりと竿肌を扱き、左手がやわやわと陰嚢を撫で上げる……
+				PRINTFORMDW 限界まで膨れた亀頭がビクンと震え、さらに潤滑油を注ぎ足す……
+				PRINTL  
+				PRINTFORMW 「だって%CNAME(MASTER, TARGET)%のドキドキする気持ちが、快楽が、リリーの糧になるんだから」
+				PRINTFORMW 「ほら、もう射精しちゃうよ♪　リリーの為にいっぱいぴゅっぴゅしてくださいね♪」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;野外プレイ中
+	;=================================================
+	IF 口上記入チェック(100) && TEQUIP:野外プレイ
+		PRINTFORMW 「もーっ、見られる為にお外に来たのに、おちんちん隠しちゃだめですよ♪」
+		PRINTFORM 「ふふっ♪　それじゃあ、リリーがおててで“シコシコ
+		CALL HEARTCB
+		PRINTFORMW ”してあげますからね♪」
+		PRINTL  
+		PRINTFORMDW %CALLNAME:MASTER%は羞恥で首元まで紅潮させ、幼い顔前に勃起陰茎を晒す……
+		PRINTFORMDW リリーは片手に引き紐を持ったまま、白い五本の指で肉棒を扱き始める……
+		PRINTL  
+		PRINTFORMW 「リリーに首輪を引かれて、お外で勃起ちんちんシコシコされて興奮してるの？」
+		PRINTFORMW 「……ふふっ♪　リリーも興奮してるから、二人ともヘンタイさんだね♪」
+		PRINTFORM 「ほら、お外でイっちゃいましょうね♪　ヘンタイせーえきぴゅっぴゅしちゃえっ
+		CALL HEARTCB
+		PRINTFORMW 」
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;羞恥プレイ中
+	;記入チェック
+	;LOCAL:1 = PERCENT(50)
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && TEQUIP:大鏡
+		IF FAVOR(0, 2000)
+			IF RAND:2 == 0
+				PRINTFORMW 「視線を逸らさないで、ちゃーんと鏡を見ててくださいね」
+				PRINTFORMW 「いきますよ♪　しこしこ♪……しこしこ♪……ふふっ♪」
+				PRINTL  
+				PRINTFORMDW 大鏡の前でリリーが鏡越しに行為を見せつけてくる
+				PRINTFORMDW リリーの小さな手が、浅黒く醜悪なペニスをねっとりと撫で回し、
+				PRINTFORMDW 陰嚢を弄び、根元から先端までを扱き上げ、細い指先で鈴口をくすぐる……
+				PRINTFORMDW 淫靡とは程遠く思える可憐な少女が、極上の手淫で奉仕を続けていた……
+				PRINTL  
+				PRINTFORMW 「ちょっと気が散ってませんか？　ちゃんと鏡の中とおちんちんに集中してくださいね♪」
+				PRINTL  
+				PRINTFORMDW 陰茎に絡みつく細指のように、リリーは足を絡ませ、上体を擦りつけてくる
+				PRINTFORMDW 妖精らしい華奢な肢体は庇護欲求をくすぐるが、かといって未成熟な印象はない
+				PRINTFORMDW 豊かな胸の先端が擦れ、吐息交じりに上ずった艶声が漏れ出る
+				PRINTFORMDW リリーは愛おしそうに鏡の中の男を見つめながら、段々と手の動きを早めていく……
+			ELSE
+				PRINTFORMW 「ほら、%CNAME(MASTER, TARGET)%の恥ずかしいところ、せーんぶ鏡に映ってますよ♪」
+				PRINTFORM 「リリーにおちんちん扱かれて、だらしなくアヘってるお顔もぜーんぶです
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW 大鏡の前でリリーが鏡越しに行為を見せつけてくる
+				PRINTFORMDW 小さな手で浅黒く醜悪なペニスをねっとりと撫で回し、
+				PRINTFORMDW 可愛らしい声で痴態を煽りながら、段々と手の動きを早めていく……
+				PRINTL  
+				PRINTFORMW 「しこしこ早くするね♪……ふふっ、もうイっちゃいそうになってる♪」
+				PRINTFORMW 「せーえきぴゅっぴゅするところも、ちゃーんと見ててあげますねー♪」
+			ENDIF
+		;それ以外
+		ELSE
+			PRINTFORMW 「視線を逸らさないで……鏡の中をよーく見てください」
+			PRINTFORMW 「リリーみたいな小さな妖精に勃起ちんちん扱かせて、ヘンタイさんですね……」
+			PRINTFORMW 「ほら、お顔真っ赤にして腰をカクカクさせちゃってますよ……あははっ♪」
+			PRINTL  
+			PRINTFORMDW 大鏡の前でリリーが鏡越しに行為を見せつけてくる
+			PRINTFORMDW 小さな手で浅黒く醜悪なペニスをねっとりと撫で回し、
+			PRINTFORMDW 可愛らしい声で痴態を煽りながら、段々と手の動きを早めていく……
+			PRINTL  
+			PRINTFORMW 「きっと、このまま見られながらしゃせーしちゃうんだね♪」
+			PRINTFORM 「ほらっ♪　リリーのおててで気持ちよくイっちゃいましょう
+			CALL HEARTCB
+			PRINTFORMW 」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;勃起
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:勃起度 >= 1000
+		IF FAVOR(0, 2000)
+			IF RAND:4 == 0
+				PRINTFORMW 「パンパンにおっきしたおちんちんはね、優しく撫でてあげるんです」
+				PRINTFORMW 「愛情を込めて……根元から、すり、すり、すり、って♪」
+				PRINTL  
+				PRINTFORMDW リリーの小さな手のひらに包まれ、陰茎が吐精に備えて更に一段硬度を増す
+				PRINTFORMDW 柔らかな手が竿肌を這いまわり、細指が的確に性感帯を刺激し続ける……
+				PRINTL  
+				PRINTFORM 「ほら……先端までぎゅーって精が満ちて、立派なおちんちんになりましたよ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMW 「今度は一気に激しくシコシコしてあげると……」
+				PRINTFORM 「……噴水みたいに"精"が噴き出してイっちゃうんです
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORM 「イきますよっ♪　しこしこっ♪　しこしこぉっ♪　どぴゅっびゅるるぅ～
+				CALL HEARTCB
+				PRINTFORMW 」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「ふふっ、おちんちんおっきしちゃっいましたね～」
+				PRINTFORMW 「ほら、リリーのおてての中でビクンビクンって跳ねてますよ♪」
+				PRINTFORMW 「……それじゃ、おっきしたらごほーびに……いーっぱいシコシコしてあげますね♪」
+				PRINTL  
+				PRINTFORMDW リリーはいきり立った肉棒に指を絡め、ゆっくりと丹念に扱きあげる
+				PRINTFORMDW 指先で鈴口を撫で、溢れ出た先走り汁を竿全体に塗り込んでいく
+				PRINTFORMDW にちゅにちゅと卑猥な水音が立ち、急き立てる様にだんだんと手の動きが激しくなる……
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「ほらほらっ♪ リリーの指がおちんちんいーっぱいしこしこして……」
+				PRINTFORM 「全身の"精"を奪い取っちゃいますよー
+				CALL HEARTCB
+				PRINTW 」
+				PRINTL  
+				PRINTFORMDW リリーは色欲に満ちた表情で静かに囁くと、細い指先を男根に絡みつける
+				PRINTFORMDW カウパーを全体に塗り広げ、裏筋をなぞる様にしてゆっくりと上下させる
+				PRINTFORMDW 今度はヒクヒクと震える鈴口を人差し指の先で強く弾き、一気に根元から精を扱き上げる……
+				PRINTFORMDW 一扱き毎に股間の奥底から欲望がが渦を巻き、怒張の先端へ昇り詰めていく……
+				PRINTL  
+				PRINTFORM 「"精"のいっぱい詰まったドロドロのせーえき……ぜーんぶ吐き出しちゃおうねっ
+				CALL HEARTCB
+				PRINTW 」
+			ELSE
+				PRINTFORM 「びくんっびくんって……おちんちんとっても悦んでるよ
+				CALL HEARTCB
+				PRINTW 」
+				PRINTL  
+				PRINTFORMDW リリーの小さな手のひらに包まれ、陰茎が吐精に備えて一段硬度を増す
+				PRINTFORMDW 柔らかな手が竿肌を這いまわり、細指が的確に性感帯を刺激し続ける……
+				PRINTL  
+				PRINTFORMW 「ほら、“手のひら気持ちいいっ♪　手のひら孕ませたいっ♪”って震えてるの」
+				PRINTFORMW 「………いいよ♪　%CNAME(MASTER, TARGET)%のせーえきでリリーのおてて孕ませて♪」
+				PRINTFORM 「リリーのおててとせっくすして、どっぴゅーって中出ししゃせーしてね
+				CALL HEARTCB
+				PRINTFORMW 」
+			ENDIF
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「パンパンにおっきしたおちんちんはね、優しく撫でてあげるんです」
+				PRINTFORMW 「愛情を込めて……根元から、すり、すり、すり、って♪」
+				PRINTL  
+				PRINTFORMDW リリーの小さな手のひらに包まれ、陰茎が吐精に備えて更に一段硬度を増す
+				PRINTFORMDW 柔らかな手が竿肌を這いまわり、細指が的確に性感帯を刺激し続ける……
+				PRINTL  
+				PRINTFORM 「ほら……先端までぎゅーって"精"が満ちて、立派なおちんちんになりましたよ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORM 「それじゃ、しこしこ
+				CALL HEARTCB
+				PRINTFORMW  続けてあげますね♪」
+			ELSE
+				PRINTFORMW 「おちんちんおっきしちゃいましたね♪」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%が溜めてくれた"精"、リリーがぜーんぶ頂いちゃいますっ♪」
+				PRINTFORM 「イきますよーっ♪　しこしこっ
+				CALL HEARTCB
+				PRINTFORM 　しこしこっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		IF FAVOR(0, 2000)
+			IF RAND:3 == 0
+				PRINTFORMW 「リリーのおててで気持ちよくなってね♪」
+				PRINTFORMW 「ほら、%CNAME(MASTER, TARGET)%の感じてる顔見ながらしこしこしてあげます♪」
+				PRINTL  
+				PRINTFORMDW リリーの五本の指が張り詰めた竿幹に絡み付く……
+				PRINTFORMDW ピアノでも奏でるような優雅な指使いで剛直の先端を弄び、
+				PRINTFORMDW 先端へ精を送り出すように、段々とスピードを速めていく……
+				PRINTL  
+				PRINTFORMW 「……お顔真っ赤だね♪　おちんちんもどんどん硬くなってきました」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%が気持ちいいとね、リリーの心もぽかぽかしてくるの」
+				PRINTFORMW 「だから我慢しないで、もっともっと気持ちよくなってくださいねっ♪」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「ねぇ、リリーのおててとえっちなことしましょう♪」
+				PRINTFORM 「%CNAME(MASTER, TARGET)%の特濃ザーメンで……リリーのおててを汚しちゃう遊び
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW リリーの細指がおもむろに竿肌に絡みつき、ねっとりとした上下運動を始める
+				PRINTFORMDW 天真爛漫な姿からは想像できない巧みな指使いに、一気に射精感が高まっていく
+				PRINTL  
+				PRINTFORM 「んぅっ♪　えっちなお汁がさきっぽから溢れてきましたぁ
+				CALL HEARTCB
+				PRINTW 」
+				PRINTFORMW 「はぁっ♪　あぁっ♪　ゼリーみたいなぷるぷるのザーメンちょーだいっ♪」
+				PRINTFORM 「おててが孕んじゃうくらいっ、ぜーんぷリリーにぶっかけてくださいっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%の中のあっつぅいせーえき♪　リリーに頂戴っ♪」
+				PRINTL  
+				PRINTFORMDW おもむろに剛直を絡めとられ、裏筋から陰嚢まで丹念に撫で上げられる
+				PRINTFORMDW 息つく暇もなく今度は鈴口を捉えられ、雄汁に濡れた手のひらが亀頭全体を這いまわる
+				PRINTFORMDW 興奮で脳が痺れ、射精をせがんで腰が勝手に跳ね上がる
+				PRINTL  
+				PRINTFORMW 「あはぁ♪　勃起ちんちんがエッチなお汁でヌルヌルです♪」
+				PRINTFORM 「リリーがお手伝いしますから、"精"が空っぽになるくらいきもちーしゃせいしてくださいね
+				CALL HEARTCB
+				PRINTFORMW 」
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORMW 「おちんちん気持ちよくしてあげますね♪」
+				PRINTFORMW 「根元から搾り出すようにして……きゅっきゅっきゅぅ～♪」
+				PRINTL  
+				PRINTFORMDW リリーは柔らかな手のひらで陰茎を包み込み、にぎにぎと甘く圧迫する
+				PRINTFORMDW 下半身に流れる血流が一層激しさを増し、ズキンと痛いほど勃起してしまう
+				PRINTL  
+				PRINTFORMW 「ドクン、ドクン、って"精"が集まってきましたよ♪」
+				PRINTFORMW 「このままリリーのおてての中でぴゅっぴゅぅ～ってしちゃいましょうね♪」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「リリーの小さなおててで シコシコしてあげますね」
+				PRINTFORMW 「頭の中とろけちゃうくらい、%CNAME(MASTER, TARGET)%を春色に染めちゃいますっ♪」
+				PRINTL  
+				PRINTFORMDW リリーは親指と人差し指で小さな輪っかを作り、剛直を扱き始める
+				PRINTFORMDW カリ首がキュッと締め付けられ、押し出されるように先端から雄汁が溢れる
+				PRINTL  
+				PRINTFORMW 「にゅるにゅるして、もうカチコチですよ♪」
+				PRINTFORM 「ほら、リリーのこと見て？　イクまでシコシコしてあげるっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%の"精"いただいちゃいますね」
+				PRINTFORMW 「敏感な場所ですから、ゆっくりと……優しく扱いてあげます」
+				PRINTL  
+				PRINTFORMDW カウパーを塗り広げる様に、手のひらで竿肌をまんべんなく撫でまわされる
+				PRINTFORMDW 悦波が局所から広がり、ガクガクと腰が勝手に動いてしまう
+				PRINTL  
+				PRINTFORMW 「んしょ……よいしょ……んぅ、どうでしょうか」
+				PRINTFORMW 「リリーのおてて、気持ちいいですか？」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「ほら、%CNAME(MASTER, TARGET)%の大好きなぴゅっぴゅの時間ですよ♪」
+				PRINTFORMW 「おっきくなーれっ♪　なでなでっ♪　しこしこっ♪」
+				PRINTL  
+				PRINTFORMDW 硬く勃起したペニスをリリーの小さな手が縦横無尽に這いまわる
+				PRINTFORMDW 全ての性感を満遍なく刺激され、たちまち淫らな水音が響き始める
+				PRINTL  
+				PRINTFORMW 「気持いいお汁溢れてきたね♪　我慢しないでいっぱい感じてくださいね♪」
+			ELSE
+				PRINTFORMW 「おちんちんに溜まったドロドロせーえき、搾り出しちゃいますね」
+				PRINTFORMW 「ちゃーんとぴゅっぴゅしないと病気になっちゃいますから♪」
+				PRINTL  
+				PRINTFORMDW リリーの白い細指がおもむろに剛直に絡みつく
+				PRINTFORMDW 根元からリズミカルに扱き上げられ、鈴口から卑猥な雫が溢れ出す
+				PRINTL  
+				PRINTFORMW 「溜まってたんですね？　もうお汁でにゅるにゅるになっちゃいました♪」
+				PRINTFORMW 「んぅっ♪　ほら、もう少しですよっ♪　わるーいせーえき出しちゃおうね♪」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+;ACT10_1, 手淫する
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT10_2, ペニスバンド手淫
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・調教対象がペニスバンド装着時に発生
+;・快ＣSOURCE的にはTFLAG:ACT派生 == 1か否かでしか見てないっぽいので、事実上手淫ではなく愛撫と同等？
+;・快Ｖも見てないような感じ。そして部位の汚れも参照できないんじゃないかなと
+;-------------------------------------------------
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 2
+	;-------------------------------------------------
+	;イきそう
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && PALAM:快Ｖ > 8500
+		PRINTFORMW 「あっ♪　あっ♪　もうイきそうですね♪」
+		PRINTFORM 「偽物のおちんちんシコシコされてイっちゃうんですね
+		CALL HEARTCB
+		PRINTW 」
+		PRINTL  
+		PRINTFORMDW エラ張った張形が柔肉を蹂躙する度に、背筋を伝って全身に愉悦が走る
+		PRINTFORMDW 『ごりゅっ』と膣奥を圧されると、とろとろに蕩けた媚肉がキュウと収縮し偽男根を締め付ける
+		PRINTFORMDW リリーは膣肉の感触を確かめるようにピストンにひねりを加え、絶頂の縁へと押し上げる……
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;連続実行
+	;-------------------------------------------------
+	IF 口上記入チェック(100) && TFLAG:前ACT == 10
+		PRINTFORMW 「バイブと何が違うのかって？」
+		PRINTFORMW 「ふふ……こんなこともできるんだよ、コレ」
+		PRINTL  
+		PRINTFORMDW 双頭ディルドに頬を寄せる様にして股ぐら潜り込み、潤んだ瞳で%CALLNAME:MASTER%を見上げた……
+		PRINTFORMDW 物欲しげな牝の表情……貪欲にその小さな口元を広げ、舌を突き出し……
+		PRINTL  
+		PRINTFORM 「ん…、ちゅぷ
+		CALL HEARTCB
+		PRINTW 」
+		PRINTL  
+		PRINTFORMDW 贋造の男根を惜しげもなく内に含み、そして口淫を始めた
+		PRINTFORMDW 頬肉にしっかり絡み付かれた偽根は、リリーの首の動きに合わせて上下にスライドを始める……
+		PRINTFORMDW 手で動かされるのとは違う、粘つく様な雁首の変位に%CALLNAME:MASTER%は不思議な快感を覚えて嘆息する……
+		PRINTL  
+		PRINTFORM 「ん…、ちゅぷ♪　あ……ん
+		CALL HEARTCB
+		PRINTW 」
+		PRINTFORMW 「気持ちいい……だけじゃないでしょう？」
+		PRINTFORMW 「たとえ偽物でも、おちんちんちゅぷちゅぷされると興奮、しちゃうでしょ？」
+		PRINTFORM 「きっと“もし自分が男だったら、リリーにしゃぶらせたい”って、夢想してたんじゃないかな
+		CALL HEARTCB
+		PRINTW 」
+		RETURN 1
+	ENDIF
+
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		IF FAVOR(0, 2000)
+			PRINTFORMW 「立派なカリ高おちんちん……リリーが扱いてあげますね♪」
+			PRINTFORM 「とーっても気持ちよくて、腰の奥までビクビクしちゃういますよ
+			CALL HEARTCB
+			PRINTW 」
+			PRINTL  
+			PRINTFORMDW リリーは硬く上向く偽根の先端を握り締め、根元を掘り返すようにゆっくりと扱き始める
+			PRINTFORMDW 快楽に震える下肢を掴み、無防備に晒された膣奥を執拗に捏ね上げていく……
+			PRINTFORMDW 抗いようのない快楽が全身を駆け巡り、反射的に腰が浮き張形を深く咥え込もうと動いてしまう……
+		ELSE
+			PRINTFORMW 「すごく太くて硬いね……これの半分が%CNAME(MASTER, TARGET)%のおまんこに入ってるんだよ？」
+			PRINTFORMW 「美味しそうに奥まで咥え込んじゃって……シコシコしたらどうなっちゃうんだろうね♪」
+			PRINTFORMW 「ふふっ♪　たーっぷり教えてあげますね♪」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+;ACT10_2, ペニスバンド手淫
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT10_0, 愛撫する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・女性器への愛撫を行う
+;・SOURCE的には快Ｂと快Ｃは同等
+;-------------------------------------------------
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;イかせて！選択時
+	;=================================================
+	IF 口上記入チェック(100) && TFLAG:126
+		SELECTCASE TFLAG:126
+			;焦らし中1
+			CASE IS > 1
+				IF RAND:3 == 0
+					PRINTFORMW 「まだイっちゃだめですよ♪ 限界まで焦らしてあげます♪」
+					PRINTFORMW 「腰ビクンビクン跳ねちゃって、苦しいくらい気持ちいんだね♪」
+					PRINTFORMDW %CALLNAME:MASTER%はイかせてもらえず、快感だけを蓄積させられてゆく
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「おまんこぐしゅぐしゅでお漏らししてるみたいですね♪」
+					PRINTFORMW 「ちゅくっちゅくって、すごくえっちな音立てちゃって……」
+					PRINTFORMW 「ふふっ♪ イっちゃうギリギリの快感、もっともぉっと教えてあげます♪ 」
+				ELSE
+					PRINTFORMW 「おまんこ泡吹いちゃって、本気汁出まくりですね」
+					PRINTFORMW 「うふふ……もっと激しくして欲しいですか？」
+					PRINTFORMW 「…………だーめ♪ そんなおねだりじゃダメダメです♪」
+					PRINTFORMW 「もっともっと、焦らしちゃいますねぇっ♪」
+				ENDIF
+			;焦らし中3(とどめ)
+			CASEELSE
+				PRINTFORMW 「もう限界かな？ リリーの指で思いっ切りおまんこアクメしちゃおうか♪」
+				PRINTFORM 「ぱんぱんに溜まった快楽全部吐き出して♪ ……いいよ、イっちゃえッ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMDW リリーは無邪気に微笑みながら手の動きを加速させていった…
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	;-------------------------------------------------
+	;押し倒し状態
+	;=================================================
+	IF 口上記入チェック(0) && TEQUIP:押し倒し中
+		;連続実行
+		IF TFLAG:前ACT == 10
+			PRINTFORMW 
+			PRINTFORMW 
+		;通常
+		ELSE
+			PRINTFORMW 
+			PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;-------------------------------------------------
+	;連続実行
+	;=================================================
+	IF 口上記入チェック(100) && TFLAG:前ACT == 10
+		IF FAVOR(0, 2000)
+			IF RAND:2 == 0
+				PRINTFORM 「ほらぁ、まだまだ終わりませんよ
+				CALL HEARTCB
+				PRINTW 」
+				PRINTL  
+				PRINTFORMDW 優しくなじりながら、リリーは濃密な愛液の溢れる源泉へ指をねじ入れる
+				PRINTFORMDW 蕩けきった膣肉は容易くそれを受け止め、きゅんきゅんと纏わりついて歓待する
+				PRINTFORMDW 全身にピリピリと痺れるような淫悦が閃き、意図せずふしだらな喘ぎ声が溢れだす
+				PRINTL  
+				PRINTFORMW 「声、我慢しなくていいからね……」
+				PRINTFORMW 「“きもちいい”……それだけで頭いっぱいになっちゃうね……」
+				PRINTFORMW 「ふわとろに蕩けて……ほら、もう我慢できないね……」
+				PRINTL  
+				PRINTFORMDW 肢体をくすぐるリリーの長い髪から甘い香りが漂い、抵抗の意思を奪っていく
+				PRINTFORMDW ぷっくりと膨れた陰核を、ねっとり蕩けた膣肉を弄ばれ、
+				PRINTFORMDW 意識は瞬く間に絶頂の縁へと追い詰められていく
+				PRINTL  
+				PRINTFORMW 「いいよ、イこう……リリーの指でイかせてあげるね」
+			ELSE
+				PRINTFORMDW リリーの指先がヒクリと跳ねる下腹をなぞり、柔らかな恥毛の先へ下りていくと
+				PRINTFORMDW 赤く充血した粘膜が淫悦を期待してごぽりと蜜を溢れさせている
+				PRINTL  
+				PRINTFORMW 「もうすっかりとろとろですね……♪」
+				PRINTFORM 「……もっと、壊れちゃうくらい……シてあげるね
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW 淫悦に晒され続けた陰核からズキンと痛いほどの悦波が広がっていく
+				PRINTFORMDW リリーにされるがまま、%CALLNAME:MASTER%は痴悦に溺れてふしだらに全身をくねらせる
+				PRINTL  
+				PRINTFORM 「はぁ……ん
+				CALL HEARTCB
+				PRINTFORMW 　ほらぁ、リリーがちゃんと見ててあげますから……♪」
+				PRINTFORM 「おまんこでイっちゃう、淫乱な%CNAME(MASTER, TARGET)%のアクメ顔……っっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			ENDIF
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「えっちなお汁とまんないね」
+				PRINTFORMW 「リリーの指そんなに好きなのかな？……ふふっ♪」
+				PRINTL  
+				PRINTFORMDW リリーは艶めかしく微笑み、可愛らしい声で%CALLNAME:MASTER%の痴態をなじる……
+				PRINTFORMDW ヒクヒクと蠢く肉壁は%CALLNAME:MASTER%の意思に反し、濃密な愛液を吐き出してそれに応えた
+				PRINTL  
+				PRINTFORMW 「おまんこ気持ちぃもんね……くちゅくちゅだいしゅきだもんねぇっ♪」
+				PRINTFORMW 「もう我慢しなくていいからね……ほら、リリーの指でイっちゃえっ♪」
+			ELSE
+				PRINTFORMW 「痛くないよぅにぃ♪　じーっくり楽しみましょうね♪」
+				PRINTL  
+				PRINTFORMDW リリーの指先が秘所をなぞる動きは、もどかしいほど弱く小さい……
+				PRINTFORMDW じわじわと局部に与えられる快楽は、%CALLNAME:MASTER%を確実に絶頂の縁へと追い詰めていく
+				PRINTFORMDW %CALLNAME:MASTER%は快楽から逃れようと、前後する指の動きに合わせ切なげに腰をくねらせた
+				PRINTL  
+				PRINTFORMW 「きゅんきゅんおしゃぶりしちゃって……とってもえっちです♪」
+				PRINTFORMW 「ふふっ、いいですよ♪　リリーの指、好きなだけおしゃぶりしてくださいねぇ♪」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		IF FAVOR(0, 2000)
+			IF RAND:2 == 0
+				PRINTFORMW 「リリーの手で愛してあげますね」
+				PRINTL  
+				PRINTFORMDW リリーは%CALLNAME:MASTER%にピタリと密着し、秘所と胸部に手を這わせながら淫蕩に囁く
+				PRINTFORMDW 左手の指が%CALLNAME:MASTER%のヒクついた秘唇をなぞり始めると、
+				PRINTFORMDW 蠢く膣肉の奥から“ごぽり”と濃密な愛液が零れ、ゆっくりと太ももを伝い落ちた
+				PRINTL  
+				PRINTFORMW 「……%CNAME(MASTER, TARGET)%のおまんこ、すっかりとろとろですね」
+				PRINTFORMW 「息遣いが荒いね……もう気持ち良くなっちゃいました？……ふふっ♪」
+				PRINTL  
+				PRINTFORMDW リリーの声がねっとりと、%CALLNAME:MASTER%の耳に絡み付き、
+				PRINTFORMDW 勃起陰核を弄ばる度に、喉の奥から卑猥な喘ぎ声が漏れる……
+				PRINTFORMDW じっくりねっとりと……%CALLNAME:MASTER%の精神は愉悦の縁へと追い詰められていく
+				PRINTL  
+				PRINTFORM 「ふふふ……
+				CALL HEARTCB
+				PRINTW 」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%の感じてるところ、丸見えだよ……♪」
+				PRINTFORMW 「ねぇ、無駄な力を抜いて……身も心も……リリーに委ねましょう？」
+			ELSE
+				PRINTFORMW 「リリーの手で、気持ちよくなっちゃいましょうね」
+				PRINTL  
+				PRINTFORMDW リリーは%CALLNAME:MASTER%の秘所の周りを擦りながら耳元で淫蕩に囁くと、
+				PRINTFORMDW そのか細い指を、少しずつ秘裂へと伸ばしていく……
+				PRINTFORMDW 陰唇の肉をかき分けるように、上下に秘裂をなぞり始めた……
+				PRINTL  
+				PRINTFORMW 「ほら、気持ち良かったら顔に出していいんだよ♪」
+				PRINTFORM 「かわいく悶えちゃう%CNAME(MASTER, TARGET)%の顔、ずっと見ていてあげる
+				CALL HEARTCB
+				PRINTW 」
+				PRINTL  
+				PRINTFORMDW リリーの無垢な眼差しが%CALLNAME:MASTER%を高みへと追い詰めて行く……
+				PRINTFORMDW %CALLNAME:MASTER%が高みへと上り詰めるのを促す様に、
+				PRINTFORMDW リリーは手のひらを表に見せて、中指の腹で上へ上へと陰唇をなぞり上げる……
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORMW 「気持ちいいところ いっぱいいじってあげますね♪」
+				PRINTL  
+				PRINTFORMDW 性感のスイッチを入れるように、軽く乳首をピンと弾かれる
+				PRINTFORMDW 細い指先で秘所を上下に擦られただけで、強烈な快楽がぞわりと背筋を駆け抜けていく
+				PRINTL  
+				PRINTFORMW 「ちゃんと素直にしてたら、もっと気持ちぃこと、好きなだけ、好きな時に……」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%の望むまま、リリーがい～っぱいシてあげます……♪」
+				PRINTFORMW 「もっともっと、素直に感じてみようね……ほらっ♪ くちゅくちゅくちゅ～♪」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「リリーの小さなお手手で気持ちよくなりましょうね♪」
+				PRINTFORMW 「まずはお胸から……乳首もちゃ～んといじってあげますからね」
+				PRINTFORMW 「……あはっ……おまたモゾモゾさせてどうしちゃったのかな～♪」
+				PRINTFORMW 「いいですよ♪ 敏感な所をくちゅくちゅ、転がしてあげます……でももうちょっと焦れましょうか♪」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「おまんこの弄り方、教えてあげますね」
+				PRINTFORMW 「ふふ……ぷにぷにしてかわいい……ほら、ぬるぬるが奥から溢れてきてますよ♪」
+				PRINTFORMW 「おつゆをクリトリスに塗り付けて……くりゅくりゅっていじると、とっても気持ち良いんです♪」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「おまんこはとっても敏感ですから丁寧にいじってあげますね」
+				PRINTL  
+				PRINTFORMDW 細指がぬめる秘裂に押し当てられ、じわりと甘い快感が走る
+				PRINTFORMDW リリーは掌でクリトリス圧迫しながら、秘裂を掻き分けるようにゆっくりと円運動を始める
+				PRINTFORMDW すり、すり、と肌が擦れ合う音に“くちゅり”と艶っぽい音が加わるのにそう時間はかからなかった
+				PRINTL  
+				PRINTFORMW 「おまんこ優しくいじられて、すぐにぬるぬるになっちゃう……リリーと一緒ですね♪」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%の感じるその快楽が、%CNAME(MASTER, TARGET)%の精がリリーの糧になるんですよ」
+			ELSE
+				PRINTFORMW 「ふふっ……どうですか？　リリーのお手手のやわらかいでしょ♪」
+				PRINTFORMW 「じっくりじんわり、気持ち良くなりましょうね」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+;ACT10_0, 愛撫する
+
+;────────────────────────────────────
+;ACT11, 胸愛撫
+;────────────────────────────────────
+;・胸愛撫/乳首吸い/乳の揉み合い/乳首責め
+;・特定の条件で「乳首吸い」「乳の揉み合い」「乳首責め」へ派生する
+;・調教対象がオトコの場合は必ず「乳首責め」になり、他に派生する事はない
+;-------------------------------------------------
+@KOJO_ACT_K15_11
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=胸愛撫/1=乳首吸い/2=揉み合い/3=乳首責め)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT11_0, 胸愛撫
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・全ての派生条件から漏れると通常の胸愛撫になる
+;・調教者の欲望+Ｂ感覚が3以上の場合1/2の確率で揉み合いに派生
+;・それから漏れた場合にのみ、通常の胸愛撫となる
+;-------------------------------------------------
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+;一般　RAND:4は乳首吸い、いいよね
+	IF FAVOR(0, 2000)
+		IF RAND:4 == 0
+			PRINTFORM 「おっぱいにも『キス』してあげますね
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTL  
+			PRINTFORMDW リリーの桜色の唇が膨らみの頂点に『ちゅっ』と音を立てて吸い付いた
+			PRINTFORMDW 淡く色付いた乳輪の周りを舌が這いまわり、再びその先端が口内で舐られる……
+			PRINTFORMDW 甘噛みしたり、啜ったり、ねっとり舐め上げたり……
+			PRINTL  
+			PRINTFORM 「れぅ、んちゅ……ん、ぁむ……ちゅっ、ちゅるるぅっ
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTL  
+			PRINTFORMDW 切ない快楽が頂点に達した瞬間、リリーが口を窄めて一気に乳首を吸い上げた
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「おっぱい触っちゃいますね♪」
+			PRINTL  
+			PRINTFORMDW リリーの小さな手がつーっと胸の曲線をなぞり、その中心へ向かって伸びていく
+			PRINTFORMDW 柔らかな膨らみの頂点に無防備に晒されたピンクの突起がピンと弾かれる
+			PRINTFORMDW じんわりと広がる焦れったい様な切ない快楽に%CALLNAME:MASTER%はぶるりと身悶えした
+			PRINTL  
+			PRINTFORM 「くすっ、かわいいね……%CNAME(MASTER, TARGET)%
+			CALL HEARTCB
+			PRINTW 」
+			PRINTFORM 「ほら、乳首だけじゃないよ……%CNAME(MASTER, TARGET)%の全部、もみくちゃにしてあげる……
+			CALL HEARTCB
+			PRINTFORMW 」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「おっぱいのマッサージしましょうねー♪」
+			PRINTFORMW 「とっても気持ちよくてビックリしちゃうよ♪」
+			PRINTL  
+			;貧乳
+			IF TALENT:MASTER:貧乳
+				PRINTFORMDW %CALLNAME:MASTER%のなだらかな双丘が、リリーの小さな手のひらに包まれる
+			;巨乳
+			ELSEIF TALENT:MASTER:巨乳
+				PRINTFORMDW リリーの細い指先が%CALLNAME:MASTER%の豊かに成熟した双丘に埋没していく
+			;普通
+			ELSE
+				PRINTFORMDW %CALLNAME:MASTER%の張りのある双丘が、リリーの小さな手のひらに包まれる
+			ENDIF
+			PRINTFORMDW ピンクの突起が人差しと中指に挟まれ、ぷるぷると小刻みに揺さぶられる……
+			PRINTFORMDW 胸の中心からぴりぴりとした快楽が全身へと伝わり、%CALLNAME:MASTER%から甘い吐息が漏れ始める……
+		ELSE
+			PRINTFORM 「お胸、気持ちよくしてあげますね
+			CALL HEARTCB
+			PRINTW 」
+			PRINTL  
+			;前から愛撫
+			IF TCVAR:MASTER:位置前後 == 1
+				PRINTFORMW リリーは%CNAME(MASTER, TARGET)%の羞恥に染まる表情を楽しむ様に、ゆっくりと身体を撫で上げていく……
+			;後ろから愛撫
+			ELSE
+				PRINTFORMW リリーは背後から抱きしめる様にして、その細指で%CNAME(MASTER, TARGET)%の肢体を撫で上げる……
+			ENDIF
+			PRINTFORMDW 無防備に晒された乳房に小さな手がピタリと張り付き、むにゅむにゅと執拗に揉みしだかれる……
+			PRINTFORMDW 計十本の指が各々別の生き物のように這いまわり、乳首を弾き、肌にめり込む……
+			PRINTL  
+			PRINTFORMW 「柔らかいのに、コリコリして……ふふっ♪」
+			PRINTFORM 「ほら、このままお胸でイかせてあげるね
+			CALL HEARTCB
+			PRINTFORMW 」
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORMW 「お胸でも……感じさせてあげますね」
+			PRINTFORMW 「ほら、おっぱいの先っぽがジンジンして気持ちいいねー♪」
+			PRINTFORMW 「どんどん硬くなって……ふふっ、なんだか楽しくなってきました♪」
+		ELSE
+			PRINTFORMW 「ふふっ……綺麗なおっぱい♪」
+			PRINTFORMW 「リリーとどっちが大きいんでしょう……？」
+			PRINTL  
+			PRINTFORMDW リリーは大きさを確かめる様に乳房を持ち上げたり、左右に揺すったりしている
+			PRINTL  
+			PRINTFORMW 「あれ、気持ちよくなっちゃいましたか？　ふふっ♪」
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT11_1, 乳首吸い
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・前回ACTが胸愛撫の場合乳首系になる
+;・その際、調教者に幼稚か舌使いがあると3/4、なければ1/4で乳首吸いとなる
+;-------------------------------------------------
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	;上半身服装が要押し退け			服をまくりあげて
+	;IF BRACHECK(1, 1)
+	;	PRINTFORMW
+	;その他
+	;ELSE
+	;	PRINTFORMW
+	;ENDIF
+;一般
+	PRINTFORM 「おっぱいにも『キス』してあげますね
+	CALL HEARTCB
+	PRINTFORMW 」
+	PRINTL  
+	PRINTFORMDW リリーの桜色の唇が膨らみの頂点に『ちゅっ』と音を立てて吸い付いた
+	PRINTFORMDW 淡く色付いた乳輪の周りを舌が這いまわり、再びその先端が口内で舐られる……
+	PRINTFORMDW 甘噛みしたり、啜ったり、ねっとり舐め上げたり……
+	PRINTL  
+	PRINTFORM 「れぅ、んちゅ……ん、ぁむ……ちゅっ、ちゅるるぅっ
+	CALL HEARTCB
+	PRINTFORMW 」
+	PRINTL  
+	PRINTFORMDW 切ない快楽が頂点に達した瞬間、リリーが口を窄めて一気に乳首を吸い上げた
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT11_2, 乳の揉み合い
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・胸の揉み合いを要求する。この時点での調教対象の反応は未定
+;・乳首系の条件から漏れた場合、調教者の欲望+Ｂ感覚３以上なら、1/2で胸の揉み合いになる
+;-------------------------------------------------
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 2
+	;=================================================
+	;上半身服装が邪魔			服の上から
+	;=================================================
+	IF 口上記入チェック(0) && BRACHECK(1)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;上半身上着が要押し退け		上着をまくり上げ
+	;=================================================
+	IF 口上記入チェック(0) && UPPERJACKET(1) == 1
+		;下着もまくり上げた
+		IF UPPERUNDER(1) == 1
+			PRINTFORMW 
+		;その他
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;上半身上着が要押し退け		下着の裾から手を忍ばせ
+	;=================================================
+	IF 口上記入チェック(0) && UPPERUNDER(1) == 1
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		IF FAVOR(0, 2000)
+			;揉み合い
+			IF RAND:4 == 0
+				PRINTFORMW 「おっぱい揉みっこしましょう♪」
+				PRINTFORMW 「もみもみっ♪ もみもみっ♪　ふふっ、やわらかーい♪」
+				PRINTL  
+				PRINTFORMDW むにゅり、と柔らかな空間へとリリーの細指が埋没していく
+				PRINTFORMDW 揉まれ、捏ねられ、もみくちゃにされる……
+				PRINTL  
+				PRINTFORMW 「どうしよう……%CNAME(MASTER, TARGET)%の胸で遊んでいたら私も胸が疼いちゃう……」
+				PRINTFORMW 「ねぇ……%CNAME(MASTER, TARGET)%も……私にして？　いっぱい触って♪」
+			;揉み合い（自慰公開っぽく
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「ひとりえっちする時みたいに、おっぱいいじめっこしよう？」
+				PRINTFORMW 「だって……%CNAME(MASTER, TARGET)%が普段どう弄ってるか気になるんですもん」
+				PRINTFORM 「ほら、お胸に手を当てて……んっ、ぁっ、ああっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW 乳房に与えられる快楽以上に%CALLNAME:MASTER%は興奮してしまっている
+				PRINTFORMDW リリーの自慰を、誰も知らない彼女の痴悦を疑似体験しているような不思議な感覚……
+				PRINTFORMDW 同時に自分の手技ではしたない声を漏らすリリーに自分を重ね、羞恥にも似た快感が走る……
+				PRINTL  
+				PRINTFORM 「はぁ……んぅ♪　こんな風にっ、シテるんらねっ
+				CALL HEARTCB
+				PRINTW 」
+				PRINTFORMW 「もっとリリーにもきもち―こと教えて……♪」
+				PRINTFORMW 「リリーの身体におっぱいオナニー教えてください♪」
+				PRINTFORMW 「おっぱいすりすりして、二人で気持ちよくなろうね♪」
+			;乳首吸い・揉み
+			ELSEIF RAND:2 == 0
+				PRINTFORM 「お胸ぺろぺろしちゃうね♪ んっ、あーむっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW リリーが授乳中の赤ん坊の様に『ちゅっ、ちゅっ』と音を立てて勃起した乳頭に吸い付く
+				PRINTFORMDL 快楽のツボを知り尽くした舌先が、乳首を執拗に舐めしゃぶり"精"を吸い出していく
+				PRINTFORMDW %CALLNAME:MASTER%は片手でリリーの頭をギュッと抱き抱え、悦波に抗うように身体を震わせる
+				PRINTL  
+				PRINTFORM 「んちゅっ、ちゅ、れりゅ……ちゅぅっ……んっ、ふぁああっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW たまらず伸ばした手が偶然リリーの柔らかな双丘の先端を弾き、一瞬その動きを止めた
+				PRINTFORMDW %CALLNAME:MASTER%は快楽に震えながら、リリーの無防備に晒された乳首を摘み、弾き、必死に捏ねまわした
+				PRINTFORMDW %CALLNAME:MASTER%の腕の中でリリーは不意の快楽に身を捩り、乳頭に吸い付いたままくぐもった喘ぎを漏らした
+				PRINTL  
+				PRINTFORM 「やぁ、んっ、なめらりぇなんうぅうう
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORM 「んぅ
+				CALL HEARTCB
+				PRINTFORM  ひっ……あむっ、ちゅっ、ちゅぶっ、れう、んっ！んむ
+				CALL HEARTCB
+				PRINTFORM ―――
+				CALL HEARTCB
+				PRINTFORMW 」
+			;胸ズリ、擦りつけ合い
+			ELSE
+				PRINTFORM 「ね、リリーの事ぎゅぅーってして
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「抱き合ってお胸、すり、すり、ってするとすごく気持ちいいんだよ♪」
+				PRINTFORMW 「はいっ、ぎゅうぅぅ～♪」
+				PRINTL  
+				PRINTFORMDW 二人の張りのある乳房が『むにゅり』という感触と共に形を変えていく
+				PRINTFORMDW キメ細やかな肌が二人の汗でぬめり、甘くもどかしい疼きに夢中で肌をすり合わせた
+				PRINTL  
+				PRINTFORM 「ねっ♪　ぬるぬるでっ、あったかくてっ、全身がびりびり痺れちゃうの
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORM 「……でも、こうするとっ♪　もっとちくび切なくてっ
+				CALL HEARTCB
+				PRINTFORM すりすり止まんなくなっひゃうんだよっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW リリーはまるで自慰をする様に『むにゅ、むにゅ』と両乳房を揉み、ピンと勃起した乳首を擦りつけてきた
+				PRINTFORMDW 硬く勃起した乳首が柔らかな乳房を這いまわり、先端が触れ合う度にどちらともなく甘い嬌声が漏れる……
+				PRINTFORMDW 強烈な密着感と、舌とも指とも違う焦れったく甘美な快感に、二人は卑猥な声をあげだらしなく腰を震わせた……
+			ENDIF
+		ELSE
+			IF RAND:4 == 0
+				PRINTFORMW 「おっぱい気持ち良くしてあげますね」
+				PRINTFORMW 「興奮してくれてるのかな？」
+				PRINTFORMW 「汗でしっとりして、もちもちのおっぱいが手に吸い付いてくるよ♪」
+				PRINTFORM 「リリーのおっぱいもしっとりもちもちですよ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「ほら、確かめてみてくださいね♪」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「ねっ、揉みっこしましょう♪」
+				PRINTFORMW 「……どこをって……おっぱいですよ？　ふふっ」
+				PRINTFORMW 「お胸の奥、いっぱいドキドキさせてくださいね♪」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「リリーより大きい……でも張りなら……むー？」
+				PRINTFORMW 「わからない時は触って確かめるのが一番ですね！」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%もリリーのおっぱい触っていーですよ♪」
+			ELSE
+				PRINTFORMW 「綺麗なおっぱい……張りがあって、きめ細やかで……」
+				PRINTFORMW 「乳首の色だって、とっても綺麗です……」
+				PRINTFORMW 「同じ女の子として……負け……いや……」
+				PRINTL  
+				PRINTFORMW 「ま、まぁリリーはもっと色も白いですし、感度も抜群ですけどねっ！」ﾄﾞﾔｧ…
+				PRINTFORMW 「疑うんですか？　じゃあ揉みっこして確かめてみましょうか♪」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT11_3, 乳首責め
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・前回ACTが胸愛撫の場合乳首系になる
+;・その際、調教者に幼稚か舌使いがあると1/4、なければ3/4で乳首責めとなる
+;・調教対象がオトコの場合は乳首責めにしかならない
+;-------------------------------------------------
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 3
+	;=================================================
+	;調教対象がオトコかふたなり（竿付き）
+	;=================================================
+	IF 口上記入チェック(0) && TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
+		;前から愛撫
+		;IF TCVAR:MASTER:位置前後 == 1
+		;	PRINTFORMW 
+		;後ろから愛撫
+		;ELSE
+		;	PRINTFORMW 
+		;ENDIF
+		IF FAVOR(0, 2000)
+			IF RAND:4 == 0
+				PRINTFORMW 「小さくて可愛い乳首……ふふっ♪」
+				PRINTFORMW 「リリーがたっぷり可愛がってあげますねー♪」
+				PRINTL  
+				PRINTFORMDW %CALLNAME:MASTER%を焦らす様に、リリーの細指が乳首の周りで円を描く……
+				PRINTFORMDW 気まぐれにピンと勃起した乳首が弾かれ、ピクンと腰が震えてしまう……
+				PRINTL  
+				PRINTFORMW 「抓んで欲しい？　捏ね繰り回して……欲しいでしょ？」
+				PRINTFORMW 「ふふっ……可愛く胸でおねだりできたら……いっぱいしてあげますよ♪」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「ほら、リリーに乳首弄られて感じちゃおうね♪」
+				PRINTFORMW 「くにくにっ♪　コリコリっ♪　ふふっ、気持ちいいね♪」
+				PRINTL  
+				PRINTFORMDW 硬く勃起した乳首がリリーの細指で捏ねられ、じんわりとした快楽が胸全体に広がる
+				PRINTFORMDW 今度は広がった性感を一転に集中させるように、先端をカリカリと爪の先で引っ掻かれる
+				PRINTFORMDW 交互に打ち寄せる悦波にぶるりと腰が震え、ペニスからは先走りが溢れてしまう……
+				PRINTL  
+				PRINTFORMW 「触ってもないのにおちんちんも濡れちゃったの？　あははっ♪」
+				PRINTFORM 「いいですよ♪ 乳首でおちんちん射精しちゃうくらい気持ちよくしてあげますね
+				CALL HEARTCB
+				PRINTW 」
+			ELSEIF RAND:2 == 0
+				PRINTFORM 「おっぱいにも『キス』しちゃうね
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW リリーが『ちゅっ』と音を立てて胸の先端に吸い付いた
+				PRINTFORMDW 軽く歯を立てて舌先で舐り、今度は乳輪の周りをねっとりと舐め上げる……
+				PRINTFORMDW 甘噛みしたり、啜ったり、ねっとり舐め上げたり……
+				PRINTL  
+				PRINTFORM 「れぅ、んちゅ……ん、ぁむ……ちゅっ、ちゅるるぅっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW 切ない快楽が頂点に達した瞬間、リリーが口を窄めて一気に乳首を吸い上げた
+				PRINTFORMDW 屈服の証が陰茎から溢れ、%CALLNAME:MASTER%ははしたない声をあげて快楽に身を捩った……
+			ELSE
+				PRINTFORMW 「乳首も気持ちよくしてあげますね♪」
+				PRINTFORMW 「ふふっ、女の子みたいにエッチに喘がせちゃいます♪」
+				PRINTL  
+				PRINTFORMDW リリーが爪の先でカリカリと乳首を刺激する
+				PRINTFORMDW 他の部分には一切触れず、突起の先端だけに小刻みな刺激を与え続ける……
+				PRINTFORMDW 痺れるような快感が肺を締め付け、視界が桃色の靄に染まっていく……
+				PRINTL  
+				PRINTFORM 「あっ♪ 今、えっちな声が聞こえましたよ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「かわいい……もっともっと気持ち良くしてあげますね♪」
+			ENDIF
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMW 「リリーが乳首の弄り方、教えてあげますね♪」
+				PRINTFORMW 「こーやって、爪の先で引っ掻いたり……摘んだり……」
+				PRINTL  
+				PRINTFORMW 「……ほら、もう勃起しちゃいましたよ♪」
+				PRINTFORMW 「敏感なんですね……じゃあ、もっとしてあげます♪」
+			ELSE
+				PRINTFORMW 「乳首ってとっても凄いんですよ」
+				PRINTFORMW 「だって、いじれば弄るほど敏感になっちゃうんですもん♪」
+				PRINTL  
+				PRINTFORMDW リリーが中指の爪を立て、乳首をピンっと弾いた
+				PRINTFORMDW それほど強くない刺激の筈が、%CALLNAME:MASTER%は嬌声を押えることができなかった
+				PRINTL  
+				PRINTFORMW 「素質ありますね♪……毎日コリコリして乳首開発したら……ふふっ♪」
+				PRINTFORMW 「そのうち、お洋服が擦れるだけで腰が跳ねるようになってぇ……」
+				PRINTFORM 「最後には乳首を弾いただけでっ、せーえき射精出来るようになるんですっ
+				CALL HEARTCB
+				PRINTFORMW 」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		IF RAND:2 == 0
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%の乳首って可愛くて好きなんですよね♪」
+			PRINTFORM 「ちっちゃくて、綺麗で、とっても敏感で
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTFORMW 「たっぷりいじめてあげますから、女の子みたいに喘いでね♪」
+		ELSE
+			PRINTFORMW 「乳首いじめて欲しいんですか？　ふふっ♪」
+			PRINTFORMW 「かわいい子、キスしてあげます♪　ん、ちゅっ……ちゅぷ……」
+			PRINTL  
+			PRINTFORMDW 熱くぬめる口内に乳首が吸い込まれ、はしたない声が漏れてしまう
+			PRINTFORMDW 柔らかな唇が乳輪を揉み上げ、先端が歯と舌先でくにゅくにゅと弄ばれる……
+			PRINTL  
+			PRINTFORMW 「れりゅっ、んちゅるっ……ぷぁっ♪　もっとかわいい声、聞かせてくださいね♪」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT12, 口で愛撫
+;────────────────────────────────────
+;・クンニする/フェラチオする
+;・下半身の衣装が残っていても発生することがある。調教者にTALENT:壁抜けがない場合はずらして実行する
+;・ターン方針が"異常"なら発生しない
+;・TEQUIP(バイブ/オナホール/ペニスバンド/三角木馬)装着中には発生しない
+;・性交中/性交奉仕中には発生しない
+;・調教対象にペニスがあると、必ずフェラになる
+;-------------------------------------------------
+@KOJO_ACT_K15_12
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=クンニ/1=フェラ)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT12_0, クンニする
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;=================================================
+	;調教対象がイきそう
+	;記入チェック
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		;焦らし度派生処理
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1 ;焦らし中
+				IF RAND:3 == 0
+					PRINTFORMW 「まだまだイかせてあげませんよ♪」
+					PRINTFORMW 「イかないようにぃ、ゆぅ～っくり舐めてあげますね♪」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「イけなくて辛いんですか？」
+					PRINTFORMW 「でも、もうすこーしだけ……我慢しましょうね♪」
+					PRINTFORM 「%CNAME(MASTER, TARGET)%が一番気持ちがいいタイミングで、思いっ切りイかせてあげますから
+					CALL HEARTCB
+					PRINTFORMW 」
+				ELSE
+					PRINTFORMW 「おまめさん、真っ赤になっちゃってとっても辛そう……」
+					PRINTFORMW 「痛くないように、ゆ～っくりぺろぺろして……癒してあげますね♪」
+					PRINTFORM 「んっ♪　れる……ちゅっ……ふふっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				ENDIF
+			;焦らし終了
+			CASE 1
+				IF RAND:2 == 0
+					PRINTFORMW 「いっぱい我慢したもんね♪」
+					PRINTFORM 「リリーのお口でちゅぅ～って吸われて……イっちゃおうね
+					CALL HEARTCB
+					PRINTFORMW 」
+					PRINTFORM 「あむっ♪　ちゅっ、れちゅっ……ちゅみゅるるぅ～～
+					CALL HEARTCB
+					PRINTFORMW 」
+				ELSE
+					PRINTFORM 「エッチなお汁でえろえろになっちゃいましたぁ
+					CALL HEARTCB
+					PRINTFORMW 」
+					PRINTFORMW 「頑張って我慢したごほーびに♪　リリーのお口でイかせてあげるね♪」
+					PRINTFORM 「んっ～～ちゅっ
+					CALL HEARTCB
+					PRINTFORM 　ちゅむ、くちゅる……れりゅるっんっ、んっふぇうぅぅ
+					CALL HEARTCB
+					PRINTFORMW 」
+				ENDIF
+			;焦らし無し
+			CASEELSE
+				PRINTFORMW 「もうイキそうなんですか？」
+				PRINTFORM 「ふふっ♪　リリーのお口にメロメロですね
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「いいですよ♪　えっちなお汁いっぱい飲ませてくださいね♪」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;連続実行
+	;=================================================
+	IF 口上記入チェック(100) && TFLAG:前ACT == 12
+		IF RAND:2 == 0
+			PRINTFORMW 「まだまだ止めてあげませんよっ♪　あむっ♪」
+			PRINTL  
+			PRINTFORMDW まるでキスをする様に、リリーの唇が何度も陰唇に押し付けられる
+			PRINTFORMDW 絶妙な舌使いで秘裂をなぞられ、たまらず淫らな声を漏らしてしまう……
+			PRINTL  
+			PRINTFORMW 「……えへへっ、もっともっとエッチに喘がせちゃうんですから♪」
+			PRINTFORMW 「ん～ちゅっ♪　れりゅ、ちゅむっ、ちゅりゅゆぅ～♪」
+		ELSE
+			PRINTFORMW 「うー……お口の周りべたべたになっちゃいました……」
+			PRINTFORM 「ん……ちょっとしょっぱくて、なんだかえっちな味がします
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTL  
+			PRINTFORMDW リリーがぺろりと舌を出し、蜜液に濡れた唇を舐める……
+			PRINTFORMDW ぷっくりと柔らかな唇の間を、舌先がゆっくりとスライドしていく……
+			PRINTFORMDW 快楽を教え込まれた%CALLNAME:MASTER%の陰唇は、その柔らかさを思い出して愛蜜を零してしまう……
+			PRINTL  
+			PRINTFORMW 「おまたもじもじさせて、どうしたんですか」
+			PRINTFORMW 「……そんなにリリーのお口が恋しいのかな？　ふふっ♪」
+			PRINTFORMW 「いいですよ♪　なら、もっと続けてあげますね♪」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;LOWERJACKET(1) == 1「まくりあげて」LOWERUNDER(1) == 1「ずらして」等で拡張するのも良いでしょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(100)
+		;顔面騎乗中
+		IF TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%の舌、気持ちいよ……あんっ、あはぁ♪」
+			PRINTL  
+			PRINTFORMDW リリーは%CALLNAME:MASTER%の顔にペタンと尻たぶを乗せ、秘所を這う舌の感触に艶めかしく腰を揺すっている
+			PRINTFORMDW %CALLNAME:MASTER%に奉仕を求めながらリリーは器用に態勢を変え、%CALLNAME:MASTER%の股座へ顔を埋めた……
+			PRINTL  
+			PRINTFORMW 「……ごほーびにリリーもぺろぺろしてあげますね♪」
+			PRINTFORM 「６９って言うんでしたっけ？　いっぱい感じてくださいね
+			CALL HEARTCB
+			PRINTFORMW 」
+		;一般
+		ELSE
+			IF RAND:2 == 0
+				PRINTFORMDW 
+				PRINTFORMDW 
+				PRINTL  
+				PRINTFORM 「あ・そ・こ♪ ぺろぺろしちゃいますね
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「んーあむ……れぅ、ちゅっ……ちゅぷぷ……」
+				PRINTFORMW 「ろれすか？……んちゅっ……気持ちよくなっへくらさいね♪」
+				PRINTL  
+				PRINTFORMDW 
+					PRINTFORMDW 
+			ELSE
+				PRINTFORMDW 
+				PRINTFORMDW 
+				PRINTL  
+				PRINTFORMW 「リリーごほーししますから、じっとしてて下さいね♪」
+				PRINTFORMW 「んーちゅっ、れりゅ、んむゅ……ふふっ、くすぐったいですか？」
+				PRINTFORMW 「すぐに……んちゅっ……気持ひよくひへあげまふからね♪」
+				PRINTL  
+				PRINTFORMDW 
+				PRINTFORMDW 
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT12_1, フェラチオする
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+	;=================================================
+	;初回
+	;記入チェック
+	;=================================================
+	IF 口上記入チェック(100) && FIRSTACT(0)
+		;調教者が自慰中（我慢できなくなっちゃった）
+		IF GETBIT(TEQUIP:自慰中, 1)
+			PRINTFORMW 「んぅっ♪　あぅ、またリリーばっかり気持ちよくなってますね……」
+			PRINTFORMW 「むー……ねぇ、%CNAME(MASTER, TARGET)%もオナニーしていいですよ♪」
+			PRINTFORM 「……んちゅ、むむ……ほら、あーん
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTL  
+			PRINTFORMDW リリーは%CALLNAME:MASTER%の足元にペタリと座り込み、餌をねだる小鳥のように大きく口を開けた
+			PRINTFORMDW そして『ここ』とでも言うように、たっぷりの唾液で満たされた口内を指さし%CALLNAME:MASTER%の反応を待っている……
+			PRINTL  
+			PRINTFORMW 「んく……だからですね、えっと……」
+			PRINTFORM 「リリーのお口を使って、オナニーしていいですよ
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTFORMW 「リリーは、んくっ、自分のことで忙しいので構ってあげられませんし……ねっ♪」
+			PRINTL  
+			PRINTFORMDW リリーは%CALLNAME:MASTER%の興奮を誘うように秘所を慰め、再び口を大きく開けて%CALLNAME:MASTER%に催促をした
+			PRINTFORMDW 唾液が糸を引き、湯気の立つような熱い吐息が『はぁ、はぁ』と亀頭に吐きかけられる
+			PRINTFORMDW 桜色の唇で縁取られた肉粘膜の壺の中で、リリーの小さな舌がペニスを求め淫らに蠢いている
+			PRINTL  
+			PRINTFORMW 「ほあ、今らけの特別なごほーびでうから♪」
+			PRINTFORM 「りりーの気が変ららないうちに、どーぞっ
+			CALL HEARTCB
+			PRINTFORMW 」
+		;あなた童貞
+		ELSEIF TALENT:MASTER:童貞
+			;射精後すぐ（お掃除フェラ）
+			IF TCVAR:MASTER:射精後経過ターン == 1
+				PRINTFORMW 「はぁんっ♪　今日もいっぱいぴゅっぴゅできましたねっ♪」
+				PRINTL  
+				PRINTFORMDW 射精を終えたペニスを労る様に、リリーが満足げに竿肌を撫で上げる
+				PRINTFORMDW まだ少し尿道に残っていた精液が白い雫となって鈴口から溢れ、リリーの細指を濡らした
+				PRINTL  
+				PRINTFORMW 「そういえば、いつもおて手でしてばっかりでしたね」
+				PRINTFORMW 「……ねぇ、リリーの『お口』でシて欲しい？」
+				PRINTL  
+				PRINTFORMW 「……なんてね、本当はリリーが%CNAME(MASTER, TARGET)%にシてあげたいんです♪」
+				PRINTL  
+				PRINTFORMDW リリーは%CALLNAME:MASTER%の足元にペタリと座り込み、くたりと頭を垂らした陰茎に頬を寄せる
+				PRINTFORMDW いじらしい言葉とその背徳的な光景に、マグマのような熱が込み上げてくる
+				PRINTL  
+				PRINTFORM 「おちんちんに残ってるせーえき……吸い出してあげますねっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「あーむっ♪……ぉぐっ、んぐっ、ぐぶっ、じゅぶぷぷぷぅ……」
+				PRINTFORM 「んじゅっ、ぐゅぷ、ぷじゅっんぇぉ……んぁおおぁ？……んふぅっ、んちゅっじゅるぅぅ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW アツアツに蕩けきった粘膜が亀頭を包み込み、ピッタリと張り付きながら一気に根元まで吸い付いてくる
+				PRINTFORMDW 喉奥に亀頭を密着させたまま、リリーは舌と頬を器用に使って剛直を舐めしゃぶるっている
+				PRINTFORMDW %CALLNAME:MASTER%は未知の快楽に何度も全身を跳ねさせ、夢中で腰を突き上げる
+				PRINTL  
+				PRINTFORM 「んぢゅっ、じゅっ、ふぁぉえぅぉ♪……じゅぷっぢゅぷっじゅぢゅるるぅっ～～～～……ちゅぽっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW リリーは%CALLNAME:MASTER%の痴態に満足げに目を細め、尿道内に残った精液を一気に吸い上げる
+				PRINTFORMDW 頬を限界まで窄め、柔らかな唇で竿肌を強く締め付けながら、最後の一滴まで啜り上げていく……
+				PRINTFORMDW 亀頭を包み込む唇が名残惜し気に鈴口を一吸いし、ようやく%CALLNAME:MASTER%の剛直は口腔粘膜から解放された
+				PRINTL  
+				PRINTFORMW 「おちんちん、食べひゃいました……えっへっへ♪」
+				PRINTFORMW 「……お口の中、まだ%CNAME(MASTER, TARGET)%の味がします
+				CALL HEARTCB
+				PRINTFORMW 」
+			;童貞（たぶんこれが一番多い）
+			ELSE
+				;ふたなり（フェラ＋膣指入れ）
+				IF TALENT:MASTER:ふたなり
+					PRINTFORMW 「リリーのお口……試してみたいですか？」
+					PRINTFORMW 「まぁリリーが試してみたいっていうのが本音なんですけどね……ふふっ♪」
+				;ふたなり以外
+				ELSE
+					PRINTFORMW 「そういえば、いつもおて手ばっかりでしたねぇ」
+					PRINTFORMW 「んー……ねぇ、リリーの『お口』でシてあげましょうか？」
+					PRINTFORM 「どーてーさんには刺激が強過ぎるかな？　ふふふっ
+					CALL HEARTCB
+					PRINTFORMW 」
+				ENDIF
+				PRINTL  
+				PRINTFORMDW リリーは%CALLNAME:MASTER%の足元にペタリと座り込み、浅黒く充血した肉幹に頬を寄せる
+				PRINTFORMDW たっぷりと唾液を絡ませた舌が竿肌を這い上がり、亀頭に甘いキスをする
+				PRINTL  
+				PRINTFORM 「もし我慢できなくなったら、お口に出してもいーですからね
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「あーむっ♪……ぉぐっ、んぐっ、ぐぶっ、じゅぶぷぷぷぅ……」
+				PRINTFORM 「んじゅっ、ぐゅぷ、ぷじゅっんぇぉ……んぁおおぁ？
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW 硬く張り詰めた肉幹がリリーの蕩けきった口腔粘膜に包み込まれる
+				PRINTFORMDW リリーは舌を器用に動かし、頬を窄め、喉奥まで使って竿全体を丁寧に舐めしゃぶっている
+				PRINTFORMDW %CALLNAME:MASTER%は未知の快楽に何度も全身を跳ねさせ、女の子のような甘い嬌声をあげてしまう
+				PRINTL  
+				PRINTFORM 「んぢゅっ、じゅっ、ふぁぉえぅぉ♪……じゅぷっ、ぢゅぷっ、じゅぢゅっんちゅれぅっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW リリーは%CALLNAME:MASTER%の痴態に満足げに目を細めると、扱くようにストロークを早めていく
+				PRINTFORMDW 震える腰をしっかりと抱え込まれ、股座の間でリリーの可愛らしい顔が激しく前後に揺れ続ける
+				PRINTFORMDW 熱くぬめる粘膜が肉棒に激烈な刺激を与え続け、我慢の堰を切らせようと誘惑してくる……
+				PRINTL  
+				PRINTFORMW 「じゅるっ、んちゅっぅあぅ……っぷぇ……えっへっへ♪」
+				PRINTFORM 「ねぇ、リリーのお口気持ちイイでしょ♪　今日の為に練習したんですもんっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「ふふ～ん♪　リリーのお口でもっと感じてくださいね♪」
+			ENDIF
+		;非童貞、ほかの調教者によって開発済み？
+		ELSE
+			PRINTFORMW 「ねぇ、リリーのお口でしてあげましょうか？」
+			PRINTFORMW 「もしかしたら、おまんこより気持ちいかもしれませんね？　ふふっ♪」
+				PRINTL  
+				PRINTFORMDW リリーは%CALLNAME:MASTER%の足元にペタリと座り込み、浅黒く充血した肉幹に頬を寄せる
+				PRINTFORMDW たっぷりと唾液を絡ませた舌が竿肌を這い上がり、亀頭に甘いキスをする
+				PRINTL  
+				PRINTFORM 「もし我慢できなくなったら、お口に出してもいーですからね
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「あーむっ♪……ぉぐっ、んぐっ、ぐぶっ、じゅぶぷぷぷぅ……」
+				PRINTFORM 「んじゅっ、ぐゅぷ、ぷじゅっんぇぉ……んぁおおぁ？
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW 硬く張り詰めた肉幹がリリーの蕩けきった口腔粘膜に包み込まれる
+				PRINTFORMDW リリーは舌を器用に動かし、頬を窄め、喉奥まで使って竿全体を丁寧に舐めしゃぶっている
+				PRINTFORMDW %CALLNAME:MASTER%は未知の快楽に何度も全身を跳ねさせ、女の子のような甘い嬌声をあげてしまう
+				PRINTL  
+				PRINTFORM 「んぢゅっ、じゅっ、ふぁぉえぅぉ♪……じゅぷっ、ぢゅぷっ、じゅぢゅっんちゅれぅっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTL  
+				PRINTFORMDW リリーは%CALLNAME:MASTER%の痴態に満足げに目を細めると、扱くようにストロークを早めていく
+				PRINTFORMDW 震える腰をしっかりと抱え込まれ、股座の間でリリーの可愛らしい顔が激しく前後に揺れ続ける
+				PRINTFORMDW 熱くぬめる粘膜が肉棒に激烈な刺激を与え続け、我慢の堰を切らせようと誘惑してくる……
+				PRINTL  
+				PRINTFORMW 「じゅるっ、んちゅっぅあぅ……っぷぇ……えっへっへ♪」
+				PRINTFORM 「ねぇ、リリーのお口気持ちイイでしょ♪　今日の為に練習したんですもんっ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「ふふ～ん♪　リリーのお口でもっと感じてくださいね♪」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;パイズリ→フェラ = パイズリフェラ
+	;=================================================
+	IF 口上記入チェック(100) && TFLAG:前ACT == 17
+		;貧乳（ナイズリフェラ）
+		IF TALENT:貧乳
+			PRINTFORMW 「おっぱいとお口で気持ちよくして欲しいって……」
+			PRINTFORMW 「むー、頑張ってみますけど……気持ちよくなくても文句言っちゃ嫌ですよ？」
+			PRINTL  
+			PRINTFORMDW リリーは懸命にパイズリフェラに挑戦してみたが、そのささやかな胸では到底叶いそうにない……
+			PRINTFORMDW 仕方なく、今度は亀頭を口腔でたっぷりと舐めしゃぶった後、潤滑の増した亀頭を乳首に擦りつけ始める
+			PRINTFORMDW 二つの事なる刺激が交互に押し寄せ、焦れったい快感に%CALLNAME:MASTER%の腰が自然と浮いてしまう
+			PRINTL  
+			PRINTFORMW 「んっれりゅっ……気持ち良さそうで安心ですっ♪……くぷっ、ちゅぶっ♪」
+		;巨乳、普乳（パイズリフェラ）
+		ELSE
+			PRINTFORM 「それじゃ、今度はお口も使って気持ちよくしてあげますねっ
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTFORM 「リリーのお口の中にぴゅっぴゅするの、大好きですもんねぇ♪　ふふっ
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTL  
+			PRINTFORMDW 再び竿全体がリリーの柔らかな双丘の谷間にずにゅぅぅと埋まってゆく…
+			PRINTFORMDW リリーは胸部の熱を愉しむ様に、上下左右、時には交互に変化をつけながら肉幹を責め立てる…
+			PRINTFORMDW とろける様な快感に%CALLNAME:MASTER%が腰を突き出した瞬間、谷間から飛び出した亀頭にリリーの口が勢いよく吸い付いた…
+			PRINTL  
+			PRINTFORM 「んっくぷっ、ちゅぶっ、じゅりゅりゅぅ……んじゅ……っぱ
+			CALL HEARTCB
+			PRINTFORMW 」
+			PRINTFORM 「ふふっ、気持ちよかったら我慢しないで、んちゅっ、いつでもぴゅっぴゅしてくださいね
+			CALL HEARTCB
+			PRINTFORMW 」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;イきそう＋焦らし
+	;=================================================
+	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
+		;焦らし
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				IF RAND:2 == 0
+					PRINTFORMDW 射精のタイミングを完全にコントロールされ、%CALLNAME:MASTER%は痴悦の縁で焦らされ続けている
+					PRINTFORMDW 肉竿を激しく扱き、亀頭を撫で、鈴口を舐り…………あと一歩の瞬間、ピタリとリリーの手が止まる
+					PRINTFORMDW ガマン汁で白く泡立った肉幹が、吐精の瞬間に期待して媚びるようにビクンと跳ねた
+					PRINTL  
+					PRINTFORMW 「…………まだまだイカせてあげませんよ♪」
+					PRINTFORM 「かわいくおねだりできないと……ずぅっとこのままですからね
+					CALL HEARTCB
+					PRINTFORMW 」
+				ELSE
+					PRINTFORMW 「だめですよ、まだイかせてあげません♪」
+					PRINTFORMW 「我慢して溜め込んだ精子は、とぉっても濃くて美味しくなるんです♪」
+					PRINTL  
+					PRINTFORMDW 射精のタイミングを完全にコントロールされ、射精まであと一歩ののところで焦らされ続ける
+					PRINTFORMDW ガマン汁で白く泡立った肉幹が、吐精の瞬間に期待して媚びるようにビクンと跳ねた
+					PRINTL  
+					PRINTFORMW 「だから、もっともっと限界までお射精我慢して……」
+					PRINTFORMW 「そしたら、リリーがぜーんぶ搾り取ってあげますからねっ♪」
+				ENDIF
+			;焦らし終了（トドメ））
+			CASE 1
+				SELECTCASE NOWEX:MASTER:射精
+					;空射精で搾り取る
+					CASE 1
+						PRINTFORMDW %CALLNAME:MASTER%の精液はリリーによって搾り尽くされ、既に射精の叶わない状態にある
+						PRINTFORMDW 粘つく悦楽の跡に塗れ、リリーの華奢な身体が白く淫靡に煌いている……
+						PRINTL  
+						PRINTFORMW 「むー……タマタマ空っぽになっちゃったんでしょうか」
+						PRINTFORMW 「こんなに焦らしてるのに全然せーえき溜まらないですよ？」
+						PRINTL  
+						PRINTFORMDW 不満げに頬を膨らませながら、リリーはその細指で竿肌を扱き続けている
+						PRINTFORMDL 絶え間なく絶頂を繰り返し、全ての精液を吐き出した%CALLNAME:MASTER%の男性器は
+						PRINTFORMDW 射精機能の無いただの肉バイブとなり果ててなお快楽をせがんで硬く屹立している
+						PRINTL  
+						PRINTFORM 「そっか……リリーの為に限界までしゃせーしてくれたんだもんね
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「とっても頑張った%CNAME(MASTER, TARGET)%には、とっておきの『ごほーび』あげなきゃね
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTL  
+						CALL QUAKE(2)
+						PRINTFORM 「頑張った子しか味わえない、最高に気持ち良い『えっちなお潮
+						CALL HEARTCB
+						PRINTFORM 』噴かせてあげますね
+						CALL HEARTCB
+						PRINTFORMW 」
+					;その他
+					CASEELSE
+						IF RAND:2 == 0
+							PRINTFORM 「いっぱい我慢したごほーびに……ザーメンぜーんぶヌキヌキしてあげますね
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTL  
+							PRINTFORMDW リリーの許しを得て、焦らされ続けた肉幹が一気に最高硬度まで達してしまう
+							PRINTFORMDW %CALLNAME:MASTER%は悲鳴のような嬌声を漏らし、吐精を懇願してひたすらに腰を突き上げる
+							PRINTFORMDW 全身の"精"がリリーを求め、愉悦に震える肉棒の先端へと集まってくる……
+							PRINTL  
+							PRINTFORM 「ほらっほらぁ♪　タマタマ空っぽになるまで、ずぅーーーっとシコシコして……
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「ドロドロザーメン びゅぅぅー
+							CALL HEARTCB
+							PRINTFORM びゅるるぅー
+							CALL HEARTCB
+							PRINTFORM ってリリーのおててで搾り取っちゃいますっ
+							CALL HEARTCB
+							PRINTFORMW 」
+						ELSE
+							PRINTFORM 「いっぱい我慢できた子には、えっちなごほーびあげないとね
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「溜め込んだせーえき、ぴゅっぴゅしちゃおうか
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「……ほらぁ♪ どんどん早く、激しくシちゃいますよ
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTL  
+							PRINTFORMDW 快感のレベルが一気に跳ね上がり、淫悦に脳が痺れ桃色の靄に視界が染まっていく……
+							PRINTFORMDW リリーの名前を呼び、はしたなく腰をくねらせる度に、未知の快楽が全身を駆け抜けていく……
+							PRINTL  
+							PRINTFORM 「ふふっ♪　%CNAME(MASTER, TARGET)%の一番気持ち良いタイミングでしゃせーしていいよ
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTFORM 「リリーがぜーんぶ受け止めてあげますから
+							CALL HEARTCB
+							PRINTFORM  リリーにあっついザーメンシャワーぶっかけてください
+							CALL HEARTCB
+							PRINTFORMW 」
+						ENDIF
+				ENDSELECT
+			CASEELSE
+				;焦らし無し
+				;イきそうなのを我慢している
+				IF TCVAR:MASTER:イきそう > 5
+					IF FAVOR(0, 2000)
+						IF RAND:2 == 0
+							PRINTFORMW 「我慢なんてしなくていいんですよ？　ふふっ♪」
+							PRINTFORM 「だって……我慢したって無駄ですもん
+							CALL HEARTCB
+							PRINTFORMW 」
+							PRINTL  
+							PRINTFORMDW リリーは色欲に満ちた表情で静かに囁くと、おもむろに細い指先を竿肌に絡めた
+							PRINTFORMDW カリ首を強く弾かれたと思ったら、先端から中程までをなぞられる……
+							PRINTFORMDW 息つく間もなく、今度はヒクヒクと震える鈴口を人差し指の先で強く弾かれる……
+							PRINTFORMDW 天真爛漫な姿とは裏腹な巧みな指使いに、思わず腰が跳ねあがる
+							PRINTL  
+							PRINTFORMW 「ほら、もうお汁でぬるぬるになっちゃいました……ふふっ♪」
+							PRINTFORMW 「%CNAME(MASTER, TARGET)%が頑張って溜め込んだ精……ぜーんぶ搾り取っちゃいますね♪」
+						ELSE
+							PRINTFORM 「はぁん……おちんちん気持ちいいね♪　もう出ちゃいそうなのかな
+							CALL HEARTCB
+							PRINTW 」
+							PRINTFORMW 「いっぱい溜めたせーえき、せーんぶぴゅっぴゅしちゃいましょうね♪」
+							PRINTL  
+							PRINTFORMDW リリーはうっとりとした表情で%CALLNAME:MASTER%の顔と怒張を交互に見つめると、
+							PRINTFORMDW ピアノでも奏でるような優雅な指使いで、こしょこしょと剛直の先端を弄ぶ
+							PRINTFORMDW 既に射精限界まで高まっていた快感が、鈴口に向けて一気に押し上げられ
+							PRINTFORMDW 無意識に腰をがくがくと揺らし、肉棒を突き上げてしまう
+							PRINTL  
+							PRINTFORMW 「どんどん熱くなって……んっ、匂いも濃くなって……はぁ、とっても苦しそう……」
+							PRINTFORM 「いっぱい我慢したもんね……今解放してあげるっ
+							CALL HEARTCB
+							PRINTFORMW 」
+						ENDIF
+					ELSE
+						PRINTFORMW 「あれ？　もしかして我慢してるんですか？」
+						PRINTFORMW 「……我慢するの辛いですよね？　でも、もう無理しなくていいんですよ？」
+						PRINTL  
+						PRINTFORMDW 先走りで濡れた鈴口に指先を押し付け、見せつけるように透明の糸を引く
+						PRINTFORMDW 空いた手を肉棒の根元に這わせ、精液を搾り出すように、ゆっくり、ゆっくりと肉棒を扱きあげた。
+						PRINTL  
+						PRINTFORMW 「どんどん熱くなって……んっ、匂いも濃くなって……はぁ、とっても苦しそう……」
+						PRINTFORM 「リリーが%CNAME(MASTER, TARGET)%の中の意地っ張りな心……全部吐き出させてあげますね
+						CALL HEARTCB
+						PRINTFORMW 」
+					ENDIF
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	;-------------------------------------------------
+	;連続実行　IF LOCAL:1 && TFLAG:前ACT == 12
+	;=================================================
+	IF 口上記入チェック(0) && TFLAG:ACT == TFLAG:前ACT
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;野外プレイ中
+	;=================================================
+	IF 口上記入チェック(0) && TEQUIP:野外プレイ
+		;顔面騎乗中
+		IF TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+			PRINTFORMDW リリーは片手に引き紐を持ったまま、
+			PRINTL  
+			PRINTFORMW 「」
+		;通常
+		ELSE
+			PRINTFORMDW リリーは片手に引き紐を持ったまま、
+			PRINTL  
+			PRINTFORMW 「」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;勃起
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:勃起度 >= 1000
+		RETURN 1
+	ENDIF
+
+	;ここを最初に書きましょう
+	;LOWERJACKET(1) == 1「まくりあげて」LOWERUNDER(1) == 1「ずらして」等で拡張するのも良いでしょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		SELECTCASE NOWEX:MASTER:射精
+			;空射精後更に搾り取る
+			CASE 1
+					PRINTFORMW 「」
+			;一般
+			CASEELSE
+				;射精後すぐ（お掃除フェラ）
+				IF TCVAR:MASTER:射精後経過ターン == 1
+					PRINTFORMW 「」
+				;アイマスク
+				ELSEIF TEQUIP:アイマスク
+					PRINTFORMW 「」
+				;顔面騎乗中
+				ELSEIF TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+					PRINTFORMW 「」
+				;調教者が自慰中（我慢できなくなっちゃった）
+				ELSEIF GETBIT(TEQUIP:自慰中, 1)
+					PRINTFORMW 「」
+				;通常
+				ELSE
+					PRINTFORMW 「」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT13, アナル愛撫
+;────────────────────────────────────
+;・アナル愛撫/前立腺刺激/アナルバイブ出し入れ
+;・アナルバイブ装備中は、アナルバイブ出し入れに派生
+;・連続実行の場合、前立腺刺激に派生
+;・イきそうor快Ｃが5000以上の場合、調教者の愛撫スキルに応じて前立腺刺激に派生
+;・勃起度が低い場合、調教者の愛撫スキルに応じて前立腺刺激に派生
+;・要強制勃起の場合、前立腺刺激に派生
+;・TFLAG:お仕置きフラグが立っていると発生しない
+;・ターン方針が"ソフト", "異常"だと発生しない
+;・TEQUIP(三角木馬/ペニスバンド/アナルビーズ)装着中には発生しない
+;・性交奉仕中には発生しない
+;-------------------------------------------------
+@KOJO_ACT_K15_13
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;・TFLAG:ACT派生（0=アナル愛撫/1=前立腺刺激/2=アナルバイブ出し入れ）
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT13_0, アナル愛撫
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && !TFLAG:ACT派生
+	;=================================================
+	;顔面騎乗中
+	;=================================================
+	IF 口上記入チェック(0) && TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;下半身服装が要押し退け
+	;=================================================
+	IF 口上記入チェック(0) && PANTSCHECK(1, 1)
+		;下半身上着をまくりあげ
+		IF LOWERJACKET(1) == 1
+			PRINTFORMW 
+		;下着越しに
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT13_1, 前立腺刺激(アナル愛撫)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象がオトコの場合のみに派生
+;ふたなりの前立腺は尿道、つまり膣の上にあるとし、Ｇスポット刺激に
+;-------------------------------------------------
+IF 口上記入チェック(0) && TFLAG:ACT派生 == 1
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT13_2, アナルバイブ出し入れ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・アナルバイブ装備中は、アナルバイブ出し入れになる
+;-------------------------------------------------
+IF 口上記入チェック(0) && TFLAG:ACT派生 == 2
+	;調教対象がオトコ
+	IF TALENT:MASTER:オトコ
+		PRINTFORMW 
+	;その他
+	ELSE
+		PRINTFORMW 
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT14, アナル舐め
+;────────────────────────────────────
+;・アナル舐め
+;・TFLAG:お仕置きフラグが立っていると発生しない
+;・ターン方針が"ソフト", "異常"だと発生しない
+;・TEQUIP(アナルバイブ/アナルビーズ/浣腸器＋プラグ/ペニスバンド/三角木馬)装着中には発生しない
+;・性交中/性交奉仕中には発生しない
+;・TCVAR:MASTER:焦らし度が真になっている場合は発生しない
+;・舌による前立腺刺激への派生は「そんなところまで舌が届くわけないじゃないかｗｗｗ」という事で粛清されています
+;・現時点でACTが派生する事はないが、ACT改変の可能性に備え、TFLAG:ACT派生 == 0で指定
+;-------------------------------------------------
+@KOJO_ACT_K15_14
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;・ACT派生なし
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT14_0, アナル舐め
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && !TFLAG:ACT派生
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTACT(0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教内初回
+	;=================================================
+	IF 口上記入チェック(0) && ONCEACT(0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者が自慰中
+	;=================================================
+	IF 口上記入チェック(0) && GETBIT(TEQUIP:自慰中, 1)
+		;調教者がペニスバンド身に付けている
+		IF TEQUIP:調教者ペニスバンド
+			PRINTFORMW
+		;その他
+		ELSE
+			PRINTFORMW
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;顔面騎乗中
+	;=================================================
+	IF 口上記入チェック(0) && TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教対象が自慰中
+	;=================================================
+	IF 口上記入チェック(0) && GETBIT(TEQUIP:自慰中, 0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;下半身服装が要押し退け
+	;=================================================
+	IF 口上記入チェック(0) && PANTSCHECK(1, 1)
+		;下半身上着をまくりあげ
+		IF LOWERJACKET(1) == 1
+			PRINTFORMW 
+		;下着越しに
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT15, キス
+;────────────────────────────────────
+;・キス/媚薬キス
+;・TFLAG:お仕置きフラグが立っていると発生しない
+;・ターン方針が"ハード", "異常"だと発生しない
+;・調教者にTALENT:壁抜けが無い場合、TEQUIP:ボールギャグ装着中は弾かれる
+;-------------------------------------------------
+@KOJO_ACT_K15_15
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT15, キス 初回
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && FIRSTACT(0)
+	;=================================================
+	;お互いに初めて
+	;=================================================
+	IF 口上記入チェック(0) && EXP:MASTER:キス経験 == 0 && EXP:TARGET:キス経験 == 0
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教対象が初めて
+	;=================================================
+	IF 口上記入チェック(0) && EXP:MASTER:キス経験 == 0
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教者が初めて
+	;=================================================
+	IF 口上記入チェック(0) && EXP:TARGET:キス経験 == 0
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;"初回"のネストを開放し、各条件の分岐を放置するならここで補完しましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT15_0, キス
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;!GETBIT(TFLAG:媚薬等使用, 1)等の条件を削除して!TFLAG:ACT派生でまとめてしまっても良いと思います
+;無理に全ての箇所を埋める事はないので、必要に応じて使い分けて下さい
+;-------------------------------------------------
+IF 口上記入チェック(0) && !TFLAG:ACT派生 && !GETBIT(TFLAG:媚薬等使用, 1)
+	;=================================================
+	;性交中（調教者挿入）
+	;=================================================
+	IF 口上記入チェック(0) && TEQUIP:性交中
+		;体位を派生処理
+		SELECTCASE TEQUIP:性交中
+			;正常位					頭をつかんで情熱的なキスをした…
+			CASE 1
+				PRINTFORMW 
+			;後背位					振り向かせ唇を奪った…
+			CASE 2
+				PRINTFORMW 
+			;騎乗位					下から突き上げながら情熱的に口づけした…
+			CASE 3
+				PRINTFORMW 
+			;対面座位				ぎゅっと抱きしめるとそのまま唇を奪った…
+			CASE 4
+				PRINTFORMW 
+			;背面座位				振り向かせそのまま唇を奪った…
+			CASE 5
+				PRINTFORMW 
+			;アナルセックス			アヌスを犯しながらキスしてきた…
+			CASE 6
+				PRINTFORMW 
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;性交奉仕中（調教対象挿入）
+	;=================================================
+	IF 口上記入チェック(0) && TEQUIP:性交奉仕中
+		;焦らし度による派生			TCVAR:MASTER:イきそうで囲んではいないので、CASEELSEは通常の状態を意味する
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				PRINTFORMW 
+			;焦らし終了
+			CASE 1
+				PRINTFORMW 
+			;焦らし無し
+			CASEELSE
+				PRINTFORMW 
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT15_1, 媚薬キス
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・調教対象に口移しで媚薬を飲ませる
+;-------------------------------------------------
+;RESULT値を2として@KOJO_USE_KXの媚薬等使用口上を呼び出さない設定をデフォルトとしておきます
+;必要に応じて戻り値を設定してください
+;-------------------------------------------------
+IF 口上記入チェック(0) && !TFLAG:ACT派生 && GETBIT(TFLAG:媚薬等使用, 1)
+	;媚薬使用口上処理済チェック(媚薬使用の地の文カットする際はTFLAG:媚薬等使用地の文スキップのコメントを解除)
+	CLEARBIT TFLAG:媚薬等使用口上, 1
+	;CLEARBIT TFLAG:媚薬等使用地の文スキップ, 1
+	;=================================================
+	;性交中（調教者挿入）
+	;=================================================
+	IF 口上記入チェック(0) && TEQUIP:性交中
+		;体位を派生処理
+		SELECTCASE TEQUIP:性交中
+			;正常位					頭をつかんで情熱的なキスをした…
+			CASE 1
+				PRINTFORMW 
+			;後背位					振り向かせ唇を奪った…
+			CASE 2
+				PRINTFORMW 
+			;騎乗位					下から突き上げながら情熱的に口づけした…
+			CASE 3
+				PRINTFORMW 
+			;対面座位				ぎゅっと抱きしめるとそのまま唇を奪った…
+			CASE 4
+				PRINTFORMW 
+			;背面座位				振り向かせそのまま唇を奪った…
+			CASE 5
+				PRINTFORMW 
+			;アナルセックス			アヌスを犯しながらキスしてきた…
+			CASE 6
+				PRINTFORMW 
+		ENDSELECT
+		RETURN 2
+	ENDIF
+	
+	;=================================================
+	;性交奉仕中（調教対象挿入）
+	;=================================================
+	IF 口上記入チェック(0) && TEQUIP:性交奉仕中
+		;焦らし度による派生			TCVAR:MASTER:イきそうで囲んではいないので、CASEELSEは通常の状態を意味する
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				PRINTFORMW 
+			;焦らし終了
+			CASE 1
+				PRINTFORMW 
+			;焦らし無し
+			CASEELSE
+				PRINTFORMW 
+		ENDSELECT
+		RETURN 2
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		RETURN 2
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT16, 性器を擦り合う
+;────────────────────────────────────
+;・貝合わせ/素股する
+;・調教対象にペニスがある場合はACT派生 == 1「素股する」へ派生する
+;・調教対象がペニスバンド装着中は、ACT派生 == 2「ペニスバンド素股」になる
+;・ターン方針が"ハード", "異常だと発生しない
+;・調教対象が女の子でバイブ装着中だと発生しない
+;・TEQUIP(オナホール/三角木馬)装着中には発生しない
+;・性交中/性交奉仕中には発生しない
+;・調教者にペニスがあると発生しない（奉仕系の素股強制になる）
+;-------------------------------------------------
+@KOJO_ACT_K15_16
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;・TFLAG:ACT派生（=0,貝あわせ/=1,素股/=2,ペニスバンド素股）
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT16_0, 貝合わせ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && !TFLAG:ACT派生
+	;=================================================
+	;調教対象がイきそう
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:イきそう
+		;焦らし度派生
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				PRINTFORMW 
+			;焦らし終了
+			CASE 1
+				PRINTFORMW 
+			;焦らし無し
+			CASEELSE
+				PRINTFORMW 
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;連続実行
+	;=================================================
+	IF 口上記入チェック(0) && TFLAG:ACT == TFLAG:前ACT
+		;仰向け
+		IF TFLAG:仰向け
+			PRINTFORMW
+		;その他
+		ELSE
+			PRINTFORMW
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;地の文は調教対象の下半身服装毎の分岐あり。必要に応じて拡張してください
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		;仰向け
+		IF TFLAG:仰向け
+			PRINTFORMW
+		;その他
+		ELSE
+			PRINTFORMW
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT16_1, 素股する
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・女性器と太股で男性器を挟んで愛撫する
+;・調教対象にペニスがあると、必ず素股するになる
+;-------------------------------------------------
+IF 口上記入チェック(0) && TFLAG:ACT派生 == 1
+	;=================================================
+	;調教対象がイきそう
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:イきそう
+		;焦らし度派生
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				PRINTFORMW 
+			;焦らし終了
+			CASE 1
+				PRINTFORMW 
+			;焦らし無し
+			CASEELSE
+				PRINTFORMW 
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;連続実行
+	;=================================================
+	IF 口上記入チェック(0) && TFLAG:ACT == TFLAG:前ACT
+		;仰向け
+		IF TFLAG:仰向け
+			PRINTFORMW
+		;その他
+		ELSE
+			PRINTFORMW
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;地の文は調教対象の下半身服装毎の分岐あり。必要に応じて拡張してください
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		;仰向け
+		IF TFLAG:仰向け
+			PRINTFORMW
+		;その他
+		ELSE
+			PRINTFORMW
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT16_2, ペニスバンド素股
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;・調教対象がペニスバンド装着中は、ペニスバンド素股になる
+;-------------------------------------------------
+IF 口上記入チェック(0) && TFLAG:ACT派生 == 2
+	;=================================================
+	;連続実行
+	;=================================================
+	IF 口上記入チェック(0) && TFLAG:ACT == TFLAG:前ACT
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;地の文は調教対象の下半身服装毎の分岐あり。必要に応じて拡張してください
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		;仰向け
+		IF TFLAG:仰向け
+			PRINTFORMW
+		;その他
+		ELSE
+			PRINTFORMW
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT17, パイズリする
+;────────────────────────────────────
+;・TFLAG:お仕置きフラグがたっていると発生しない
+;・ターン方針が"ハード", "異常"の場合は発生しない
+;・TEQUIP(オナホール/三角木馬)装着中には発生しない
+;・調教対象にペニスがない場合は発生しない
+;・調教者がオトコの場合は発生しない
+;・現在ACT派生は存在しないが将来の改変に備え、ACT派生 == 0とする
+;-------------------------------------------------
+@KOJO_ACT_K15_17
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;・ACT派生なし
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT17_0, パイズリする
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && !TFLAG:ACT派生
+	;地の文は調教者の胸のサイズで分岐します。
+	;素質を変更する事が可能なので、必要に応じて拡張するのも良いでしょう
+	;=================================================
+	;調教対象がイキそう
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:イきそう
+		;焦らし度によって分岐
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				PRINTFORMW 
+			;焦らし終了
+			CASE 1
+				PRINTFORMW 
+			;焦らし無し
+			CASEELSE
+				PRINTFORMW 
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;連続実行
+	;=================================================
+	IF 口上記入チェック(0) && TFLAG:ACT == TFLAG:前ACT
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		[SKIPSTART]
+		;---------------------------------------------------
+		;地の文には着衣の状態による分岐が存在しますが、書き分けも面倒なので必要に応じてコメントアウトを外すなり
+		;望む形に改変するなりして使用して下さい
+		;---------------------------------------------------
+		;干渉する衣服が存在する時
+		IF TRUECHECK(TEQUIP:上半身下着, TEQUIP:上半身上着, TEQUIP:全身上着) > 0 || (TEQUIP:MASTER:下半身下着 && !TALENT:壁抜け) || CFLAG:衣装 == 3
+			;露出状況により分岐
+			SELECTCASE TEQUIP:着衣露出 & 6
+				;干渉箇所全露出時
+				CASE 6
+					PRINTFORMW 
+				;調教対象性器露出時
+				CASE 4
+					PRINTFORMW 
+				;調教者胸露出時
+				CASE 2
+					PRINTFORMW 
+				;干渉箇所非露出時
+				CASEELSE
+					PRINTFORMW 
+			ENDSELECT
+		;その他
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		[SKIPEND]
+		;他に分岐を設けないのなら、ここは書いておきましょう
+		;分岐を設けるならここのPRINTは空行を生むので削除しましょう
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT18, 足コキする
+;────────────────────────────────────
+;・足コキする
+;・調教対象にペニスがない場合は発生しない
+;・異常系から派生する場合もある
+;・TFLAG:お仕置きフラグがたっていると発生しない
+;・今日の方針が"イチャイチャ"だと発生しない
+;・TEQUIP(オナホール/三角木馬)装着中は発生しない
+;・性交中/性交奉仕中は発生しない
+;・調教者に足が無いと発生しない
+;・調教対象が女の子だと発生しない
+;・現在ACT派生は存在しないが将来の改変に備え、ACT派生 == 0とする
+;-------------------------------------------------
+@KOJO_ACT_K15_18
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;・ACT派生なし
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT18, 足コキする
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && !TFLAG:ACT派生
+	;地の文にTCVAR:MASTER:焦らし度等の分岐は存在しない箇所
+	;=================================================
+	;調教対象がイキそう				両足で%CALLNAME:MASTER%のペニスを荒々しくしごいてきた…
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:イきそう
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;足コキは作者の趣味ではないようで、地の文は割りと手抜きだったり
+	;逆に言えば、色々とやっても地の文との整合性が崩れる心配はあまりないので、好きなようにやると良いでしょう
+	;=================================================
+	;連続実行						愉快そうに%CALLNAME:MASTER%を見下ろしながらペニスをぐりぐりと踏みつけている…
+	;=================================================
+	IF 口上記入チェック(0) && TFLAG:ACT == TFLAG:前ACT
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;地の文に派生は設けてありませんが、これは割りと必要と思われるので
+	;=================================================
+	;靴下履いたまま足コキ(デフォルトで靴下履いていないキャラは表示されない)
+	;=================================================
+	IF 口上記入チェック(0) && TEQUIP:靴下
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;調教者にTALENT:壁抜けがない場合、布越しになる
+	;=================================================
+	;下半身服装が邪魔
+	;=================================================
+	IF 口上記入チェック(0) && PANTSCHECK(1)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT19, 指挿入れ(ACT19_0, 指挿入れ/ACT19_1, Ｇスポット刺激/ACT19_2, バイブ出し入れ)
+;────────────────────────────────────
+;・調教対象がふたなり若しくはオンナの場合に発生
+;・調教対象が処女の場合Ｇスポット刺激等に派生しない＆快Ｖにマイナス補正
+;・バイブ装備中はバイブ出し入れに派生
+;・TFLAG:お仕置きフラグが立っていると発生しない
+;・ターン方針が"異常"だと発生しない
+;・TEQUIP(三角木馬/ペニスバンド)装着中には発生しない
+;・性交中/性交奉仕中には発生しない
+;・調教対象がオトコだと発生しない
+;・調教対象がふたなりの場合、焦らし中には発生しない
+;-------------------------------------------------
+;※調教対象が処女ではない
+;※連続実行の場合
+;※イきそうor快Ｃが5000以上の場合、調教者の愛撫スキルに応じて
+;※勃起度が低い場合、調教者の愛撫スキルに応じて
+;※要強制勃起の場合
+;・上記条件の場合Ｇスポット刺激に派生する
+;-------------------------------------------------
+@KOJO_ACT_K15_19
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;・TFLAG:ACT派生(0=指挿入れ/1=Ｇスポット刺激/2=バイブ出し入れ)
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT19_0, 指挿入れ					膣口に指先をあてがい、そっと奥へ押し込んだ…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && !TFLAG:ACT派生
+	;=================================================
+	;顔面騎乗中
+	;=================================================
+	IF 口上記入チェック(0) && TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;位置前後分岐は必要に応じて
+	;何処かで統合してしまうのも良いと思います
+	;=================================================
+	;後ろから
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:位置前後 == 2
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;前から
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:位置前後 == 1
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT19_1, Ｇスポット刺激					指を進入させＧスポットを直接刺激した…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;イきそうor快Ｃが5000以上の場合、調教者の愛撫スキルに応じてＧスポット刺激
+;Ｇスポット責めに派生すると前立腺刺激扱いになる
+;-------------------------------------------------
+;調教対象がふたなりの場合でも発生するので、必要に応じてPENIS(MASTER)なり!PENIS(MASTER)で分岐を設けると良いと思います
+;-------------------------------------------------
+IF 口上記入チェック(0) && TFLAG:ACT派生 == 1
+	;=================================================
+	;後ろから
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:位置前後 == 2
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;前から
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:位置前後 == 1
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;ここを最初に書きましょう
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT19_2, バイブ出し入れ					Ｇスポットを抉るように激しく動かした…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;地の文自体に派生はありませんが、@TARGET_DESCRIPTIONでの状況描写が入る可能性があります
+;-------------------------------------------------
+IF 口上記入チェック(0) && TFLAG:ACT派生 == 2
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ACT27, 押し倒す
+;────────────────────────────────────
+;・押し倒す/押し倒し終了
+;・既に押し倒している場合、解放になる
+;・TFLAG:お仕置きフラグがたっていると発生しない
+;・今日の方針が"イチャイチャ"だと発生しない
+;・TEQUIP:ペニスバンド装着中には発生しない
+;・焦らし中には発生しない
+;-------------------------------------------------
+@KOJO_ACT_K15_27
+;口上独自内部処理
+CALL DECIDEACTCHECK_K15
+;-------------------------------------------------
+;TFLAG:ACT派生（=0,押し倒す/=1,押し倒し終了）
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT27_0, 押し倒す			%CALLNAME:MASTER%を押し倒した…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;地の文に派生はありませんが、@TARGET_DESCRIPTIONで状況描写が入る可能性があります
+;-------------------------------------------------
+IF 口上記入チェック(100) && !TFLAG:ACT派生
+	;アイマスク装着中
+	IF TEQUIP:アイマスク
+		PRINTFORMW 「周りが見えないと不安ですか？　ふふっ♪」
+		PRINTFORM 「大丈夫……リリーが傍に居ますから
+		CALL HEARTCB
+		PRINTFORMW 」
+		PRINTL  
+	ENDIF
+	IF FAVOR(0, 2000)
+		SELECTCASE RANDACT(4, 0)
+			CASE 0
+				PRINTFORMW 「ほら、これでもう動けないね」
+				PRINTFORMW 「これからいっぱいエッチな事してあげますからね♪」
+			CASE 1
+				PRINTFORM 「すこしの間……ぎゅってさせてくださいね……んー
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「……ふふっ♪　やっぱり%CNAME(MASTER, TARGET)%って優しいね」
+				PRINTFORMW 「このままエッチな事してあげますね……」
+			CASE 2
+				PRINTFORMW 「リリーのドキドキ、伝わってますか？」
+				PRINTFORMW 「……んー、わからないなら……教えてあげますね♪」
+			CASE 3
+				PRINTFORMW 「ねぇ、リリーの欲しいものわかりますか？」
+				PRINTFORMW 「……『精』ですか？　………ぶーっ！不正解ですっ！」
+				PRINTL  
+				PRINTFORM 「正解は……『%CNAME(MASTER, TARGET)%』ですよ
+				CALL HEARTCB
+				PRINTFORMW 」
+				PRINTFORMW 「もう間違わない様に、ちゃんと教えてあげますね♪」
+		ENDSELECT
+	ELSE
+		SELECTCASE RANDACT(4, 0)
+			CASE 0
+				PRINTFORMW 「リリーに押し倒されちゃったね」
+				PRINTFORMW 「イタズラ妖精に押し倒された子はどうなちゃうんでしょう？」
+				PRINTFORMW 「ふふっ♪　わからないなら教えてあげますね♪」
+			CASE 1
+				PRINTFORMW 「動けませんか？ ふふっ♪」
+				PRINTFORMW 「それじゃぁ、たっぷりイタズラしちゃいますね♪」
+			CASE 2
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%のドキドキ、伝わってきますよ……」
+				PRINTFORMW 「緊張、恐怖、不安……あれ、期待もありますね？ ふふっ♪」
+				PRINTFORMW 「期待通り、えっちなイタズラしちゃいますねっ♪」
+			CASE 3
+				PRINTFORMW 「ねぇ、リリーの欲しいものわかりますか？」
+				PRINTFORMW 「……『精』ですか？　………ふふっ、正解ですっ♪」
+				PRINTL  
+				PRINTFORMW 「正解したごほーびに……たーっぷり搾り取ってあげますね♪」
+		ENDSELECT
+	ENDIF
+	
+	;ACT分類　0,会話、1,愛撫、2,道具、3,性交、4,羞恥、5,奉仕、6,加虐、7,異常、8,使役、9,休憩
+	;調教方針　1,ノーマルプレイ、2,異常プレイ、3,休憩、4,ハードプレイ、5,ソフトプレイ
+	;行動予約/方針予約/ACT分類予約
+	;今日の方針が子作り
+	IF IS_POLICY("今日", "子作り") && PERCENT(90)
+			;分類性交
+			TFLAG:ACT分類予約 = 3
+			WAIT
+	ELSEIF AFFECTION("相思相愛") && PERCENT(50)
+		IF !TALENT:MASTER:処女 && TEQUIP:アイマスク && PERCENT(30)
+			;逆レイプ
+			TCVAR:行動予約 = 103
+			WAIT
+		ELSEIF !TALENT:MASTER:処女 && PERCENT(30)
+			;分類性交
+			TFLAG:ACT分類予約 = 3
+			WAIT
+		ELSEIF PERCENT(30)
+			;口で愛撫
+			TCVAR:行動予約 = 12
+			WAIT
+		ELSEIF PERCENT(30)
+			;パイズリする
+			TCVAR:行動予約 = 17
+			WAIT
+		ELSEIF PERCENT(30)
+			;アナル舐め
+			TCVAR:行動予約 = 14
+			WAIT
+		ELSEIF PERCENT(30)
+			;性器を擦り合う
+			TCVAR:行動予約 = 16
+			WAIT
+		ENDIF
+	ELSEIF AFFECTION("調教完了") && PERCENT(50)
+		IF !TALENT:MASTER:処女 && TEQUIP:アイマスク && PERCENT(30)
+			;逆レイプ
+			TCVAR:行動予約 = 103
+			WAIT
+		ELSEIF !TALENT:MASTER:処女 && PERCENT(20)
+			;分類性交
+			TFLAG:ACT分類予約 = 3
+			WAIT
+		ELSEIF PERCENT(30)
+			;口で愛撫
+			TCVAR:行動予約 = 12
+			WAIT
+		ELSEIF PERCENT(30)
+			;パイズリする
+			TCVAR:行動予約 = 17
+			WAIT
+		ELSEIF PERCENT(30)
+			;性器を擦り合う
+			TCVAR:行動予約 = 16
+			WAIT
+		ELSEIF PERCENT(30)
+			;アナル舐め
+			TCVAR:行動予約 = 14
+			WAIT
+		ENDIF
+	ELSEIF AFFECTION("目覚め") && PERCENT(50)
+		IF PERCENT(30)
+			;パイズリする
+			TCVAR:行動予約 = 17
+			WAIT
+		ELSEIF PERCENT(30)
+			;口で愛撫
+			TCVAR:行動予約 = 12
+			WAIT
+		ELSEIF PERCENT(30)
+			;アナル舐め
+			TCVAR:行動予約 = 14
+			WAIT
+		ELSEIF PERCENT(30)
+			;性器を擦り合う
+			TCVAR:行動予約 = 16
+			WAIT
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ACT27_1, 押し倒し終了		%CALLNAME:MASTER%を自由にした…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && TFLAG:ACT派生 == 1
+	PRINTFORMW 
+	RETURN 1
+ENDIF

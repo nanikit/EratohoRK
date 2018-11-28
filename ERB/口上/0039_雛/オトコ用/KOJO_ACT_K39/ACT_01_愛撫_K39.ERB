@@ -1,0 +1,2456 @@
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;雛口上 愛撫系アクション口上ファイル
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;#####################
+;愛撫系 ACT10～19 & 27
+;#####################
+[SKIPSTART]
+	#TFLAG:ACT
+		10=手で愛撫
+		11=胸愛撫
+		12=口で愛撫
+		13=アナル愛撫
+		14=アナル舐め
+		15=キス
+		16=性器を擦り合う
+		17=パイズリする
+		18=足コキする
+		19=指挿入れ
+		27=押し倒す
+	#TFLAG:ACT分類 == 1に該当
+	#ACT18, 足コキは異常系から派生する場合あり
+	#汎用リアクションにおいてはMENUMATCH(TFLAG:ACT, "愛撫")で拾う事が可能
+	#調教者が調教対象を愛撫する。この口上の時点で調教者はすでに手を出している
+	#媚薬を使用するケースがある
+
+
+	*戻り値(RESULT)について
+		システム側では口上が表示されたのか否か、また箇所毎の特有の挙動(媚薬等口上をスキップなど)を
+		口上側のRESULT(終端のRETURN 1など)によって制御しています
+		@口上記入チェックの場合LOCAL代入処理を省略できますが、RESULT値は口上側で決めうちする必要があります
+		特別な理由がない限り、テンプレとしてはRETURN 1を記述しておきます
+[SKIPEND]
+
+
+;///////////////
+;ACT10, 手で愛撫
+;///////////////
+[SKIPSTART]
+	#ACT10_0, 愛撫する/ACT10_1, 手淫する/ACT10_2, ペニスバンド手淫
+	#Ｃ中心に愛撫する
+	#調教対象にペニスがある場合、及びペニスバンド装着時には派生コマンドになる
+	#調教対象が自慰中の場合は解除される
+	#調教者の手に汚れがある場合不快SOURCEが変動する
+	#調教者技巧、愛撫、器用な指先素質に応じて勃起度上昇
+[SKIPEND]
+@KOJO_MALE_ACT_K39_10 ;TFLAG:ACT派生(0=愛撫/1=手淫/2=ペニスバンド手淫)
+#LOCALSIZE  2
+#LOCALSSIZE 2
+VARSET LOCAL
+VARSET LOCALS
+
+SIF GROUPMATCH(TFLAG:ACT派生, 0, 2)
+	RETURN 0
+
+;ACT10_1, 手淫する
+;=================
+[SKIPSTART]
+	#男性器への愛撫を行う、つまり手コキ
+	#他の派生と比べてSOURCE:MASTER:快Ｃは+200%
+	#調教者技巧、愛撫、器用な指先素質に応じて勃起度上昇
+[SKIPEND]
+IF TFLAG:ACT派生 == 1
+	{
+	LOCALS:0 '= RAND_SPLIT(
+	"妖艶な笑みを浮かべつつ/" + 
+	"自らの愛液を塗しつつ/" + 
+	"自らの唾液を塗しつつ/" + 
+	"ねっとりとした視線を絡めながら")
+	}
+
+	[SKIPSTART]
+	これはアレだ。どちらかというとREACT向けだな
+	;=================================================
+	;イキそうなのを我慢
+	;=================================================
+	IF 口上記入チェック(0) && TCVAR:MASTER:我慢
+		;パンツ越しに
+		IF PANTSCHECK(1, 1)
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORMW 「必死に我慢しちゃって…やっぱりパンツの中には出したくないの？」
+				PRINTFORM 「でも、これに何時まで耐えられるかしら
+			;それ以外
+			ELSE
+				PRINTFORMW 「下着の中ではイキたくないんでしょうか？」
+				PRINTFORM 「でも、こんなに滲みだらけにしてしまっては、もう同じ事だと思いますけど
+			ENDIF
+			CALL PRINT_SYMBOL_K39
+		;直接
+		ELSE
+			;相思相愛
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				;RA 0
+				SELECTCASE RANDACT(3, 0)
+					CASE 0
+						PRINTFORML 「うふ、イきそうなんでしょ？ 我慢してても分かるんだからね？」
+					CASE 1
+						PRINTFORMW 「ほら、これでも耐えられる？ うふふ」
+					CASE 2
+						PRINTFORMW 「ビックンビックンしてて、どう見てもイきそうなんだけど…」
+						PRINTFORM 「ねぇ、まだ頑張るつもり？　じゃ、少し激しくシてあげる
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			;その他
+			ELSE
+				;RA 1
+				SELECTCASE RANDACT(3, 1)
+					CASE 0
+						PRINTFORM 「必死に耐えてるみたいですね？　ちょっと意地悪したくなってしまいます
+						CALL PRINT_SYMBOL_K39
+					CASE 1
+						PRINTFORMW 「まだ頑張るんですか…？　うふふ、中々愉しませてくれますね」
+					CASE 2
+						PRINTFORMW 「我慢してる姿が可愛いですね…」
+						PRINTFORM 「無理矢理にでも、搾り取りたくなってしまいます
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			ENDIF
+		ENDIF
+		PRINTFORMDL %CALLNAME%は%RAND_SPLIT("愛液を塗しつつ/唾液を塗しつつ/片手で陰嚢を優しく揉み解しながら")%、
+		PRINTFORMDW より激しく%CALLNAME:MASTER%のペニスをしごき始めた…
+		RETURN 1
+	ENDIF
+	[SKIPEND]
+
+	;オナホール装着中
+	;================
+	IF TEQUIP:オナホール
+		;調教対象が童貞
+		;==============
+		IF TALENT:MASTER:童貞
+			;調教対象がアイマスク装着中
+			;==========================
+			IF TEQUIP:アイマスク
+				;調教対象がイきそうかつ焦らし中でない場合
+				IF TCVAR:MASTER:イきそう && TCVAR:MASTER:焦らし度 < 2
+					;好意、好感度で派生
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						PRINTFORML 「目隠しされてこんな玩具でシゴかれて気持ちよくなっちゃうんだ…」
+						PRINTFORMW 「ねぇ、童貞だから敏感なの…？」
+						PRINTFORMDW %CALLNAME%は視界を奪われた%CALLNAME:MASTER%のペニスを、オナホール越しに激しく扱きあげた…
+					ELSE
+						PRINTFORML 「目隠しまでして、凄く厄いですね。私も興奮しちゃいます…」
+						PRINTFORMW 「童貞でここまで体験してるのは、%CNAME(MASTER, TARGET)%だけかも知れませんね？」
+						CALL FADE_TO_CLEARLINE(10, "「クスクス…」")
+					ENDIF
+				;その他
+				ELSE
+					;好意、好感度で派生
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						PRINTFORML 「ねぇ、目隠しされるといつもより気持ちいいの…？」
+						CALL HTMLPRINTW(@"「腰がくがくさせちゃって、凄く可愛い…%HTML_PS_K39()%」")
+					ELSE
+						PRINTFORML 「視界を奪われるとちょっと違う感じでしょうか？」
+						CALL HTMLPRINTW(@"「今の%CNAME(MASTER, TARGET)%、凄く気持ちよさそうですよ…%HTML_PS_K39()%」")
+					ENDIF
+				ENDIF
+				RETURN 1
+			ENDIF
+
+			;アイマスク未装着
+			;================
+			IF !TEQUIP:アイマスク
+				;調教対象がイきそうかつ焦らし中でない場合
+				IF TCVAR:MASTER:イきそう && TCVAR:MASTER:焦らし度 < 2
+					;好意、好感度で派生
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						PRINTFORML 「腰が浮いてきてる……童貞にはちょっと刺激が強過ぎ？」
+						PRINTFORMW 「ねぇ、イきそうなの？ ほら、もっと激しくしてあげる…」
+					ELSE
+						PRINTFORML 「童貞の%CNAME(MASTER, TARGET)%には刺激が強すぎるでしょうか？」
+					ENDIF
+					PRINTFORMDW %CALLNAME%は%CALLNAME:MASTER%のペニスを、オナホール越しに激しく扱きあげた…
+				;その他
+				ELSE
+					;好意、好感度で派生
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						PRINTFORML 「ほら、このオナホを私のおまんこだと思って集中してみて…」
+						{
+						CALL HTMLPRINTW(
+						@"「あっ！？　大きくなった…%HTML_AH2_K39()% 　" + 
+						"今は、とりあえずコレで我慢してね？　クスクス…」")
+						}
+					ELSE
+						PRINTFORML 「どうです、気持ちいいですか…？」
+						PRINTFORMW 「今はコレで我慢して下さいね。クスクス…」
+					ENDIF
+				ENDIF
+				RETURN 1
+			ENDIF
+		ENDIF
+
+		;調教対象が童貞ではない場合
+		;==========================
+		IF !TALENT:MASTER:童貞
+			;アイマスク装着中
+			;================
+			IF TEQUIP:アイマスク
+				;調教対象がイきそうかつ焦らし中でない場合
+				IF TCVAR:MASTER:イきそう && TCVAR:MASTER:焦らし度 < 2
+					;好意、好感度で派生
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						PRINTFORML 「凄くビクビクしてる……目隠しされてると気持ちいいみたいね…」
+						PRINTFORMW 「ねぇ、もうイっちゃうの？ 一人でイっちゃうの？　クスクス」
+					ELSE
+						PRINTFORML 「見えないと敏感になるものなんでしょうか…？」
+					ENDIF
+					PRINTFORMDW %CALLNAME%は視界を奪われた%CALLNAME:MASTER%のペニスを、オナホール越しに激しく扱きあげた…
+				;その他
+				ELSE
+					;好意、好感度で派生
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						PRINTFORML 「見えない方が%CNAME(MASTER, TARGET)%は興奮しちゃうみたいね…」
+						PRINTFORMW 「ねぇ…このオナホと私とシてるときと、どっちが気持ちいいの？」
+						{
+						CALL FADE_TO_CLEARLINE(
+						15, 
+						@"「%RAND_SPLIT("ふふ/くす")%\@ 
+						TENSION(TARGET, 8) == "高い" 
+						? っ 
+						# \@……」")
+						}
+					ELSE
+						PRINTFORML 「なんというか、凄く倒錯的ですね、これ…」
+						PRINTFORMW 「でも、大人しく扱かれてる姿がとっても可愛いくて……」
+						PRINTFORMDW %CALLNAME%はキスをしながら%CALLNAME:MASTER%のペニスをオナホールで扱き続けた…
+					ENDIF
+				ENDIF
+				RETURN 1
+			ENDIF
+
+			;アイマスク未装着
+			;================
+			IF !TEQUIP:アイマスク
+				;調教対象がイきそうかつ焦らし中でない場合
+				IF TCVAR:MASTER:イきそう && TCVAR:MASTER:焦らし度 < 2
+					;好意、好感度で派生
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+						PRINTFORMW 「ほら、キスされながら扱かれると凄く興奮するでしょう？」
+						{
+						CALL HTMLPRINTW(
+						@"「うふ、大きくなった…%HTML_AH2_K39()%　" + 
+						"ねぇ、そろそろトドメを刺して欲しいんじゃない？」")
+						}
+						PRINTFORMDW %CALLNAME%は%CALLNAME:MASTER%のペニスを、オナホール越しに激しく扱きあげた…
+					ELSE
+						PRINTFORML 「そろそろ厄が出るんじゃないですか？」
+						{
+						CALL HTMLPRINTW(
+						"「でも、簡単にイってもらってはつまらないですね。" + 
+						@"さて、どうしましょうか…%HTML_PS_K39()%」")
+						}
+					ENDIF
+				;その他
+				ELSE
+					;好意、好感度で派生
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						PRINTFORMW 「凄く気持ちよさそう……何処かの妖怪じゃないけど、なんか妬ましいわね…」
+					ELSE
+						PRINTFORML 「今の%CNAME(MASTER, TARGET)%、凄くだらしない顔になってますね」
+						{
+						CALL HTMLPRINTW(
+						"「…それだけ気持ちいいんですね。ほら、" + 
+						@"こっちも触ってあげますよ…%HTML_PS_K39()%」")
+						}
+					ENDIF
+				ENDIF
+				RETURN 1
+			ENDIF
+		ENDIF
+	ENDIF
+
+	;前COMが「気持ちよくして」かつ焦らし中でない場合 //これはREACT向きじゃねぇかな…みたいな感ある
+	;===============================================
+	IF IS_PREVCOMNAME("気持ち良くして") && TCVAR:MASTER:焦らし度 < 2
+		;布地越しかつ調教対象がイきそう
+		IF PANTSCHECK(1) && TCVAR:MASTER:イきそう
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORMW 「気持ち良くしてなんて言っちゃって、このままパンツの中に出しちゃっていいの？」
+				CALL HTMLPRINTW(@"「ま、でも…素直な子にはご褒美をあげないとね%HTML_PS_K39()%」")
+			ELSE
+				CALL HTMLPRINTW(@"「そこまでおねだりされては、期待に応えない訳にいきませんね%HTML_PS_K39()%」")
+				PRINTFORMW 「でも良いんですか？ このままパンツの中に出してしまって…」
+				CALL FADE_TO_CLEARLINE(10, "「クスクス…」")
+			ENDIF
+		;直に
+		ELSE
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				CALL HTMLPRINTW(@"「もうっ！　そんな事言われると堪らなくなっちゃう%HTML_PS_K39()%」")
+				CALL HTMLPRINTW(@"「いいよ、思いっきりサービスしてあげる%HTML_PS_K39()%」")
+			ELSE
+				PRINTFORMW 「ふふ、随分素直なんですね」
+				CALL HTMLPRINTW(@"「いいですよ、もっと気持ち良くしてあげます%HTML_PS_K39()%」")
+			ENDIF
+		ENDIF
+		{
+		PRINTFORMDW %CALLNAME:TARGET%はより入念に、より激しく\@ 
+		PANTSCHECK(1) 
+		? 、布地の上から 
+		# \@しごき始めた…
+		}
+		RETURN 1
+	ENDIF
+
+	;調教対象がイキそう //オナホとPREVCOMの条件に掛からないイきそう状態はここで処理
+	;==================
+	IF TCVAR:MASTER:イきそう
+		;前から愛撫
+		;==========
+		IF TCVAR:MASTER:位置前後 == 1
+			;焦らし度による派生
+			SELECTCASE TCVAR:MASTER:焦らし度 ;MASTERが焦らされている度合いを表す
+				;焦らし中
+				CASE IS > 1
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						{
+						PRINTFORMW 「%RAND_SPLIT(
+						"駄目よ？ まだイっちゃダ～メ！/" + 
+						"そう簡単にはイかせないわよ？/" + 
+						"残念ね。まだイかせてあげるつもりはないの…")%」
+						}
+						CALL HTMLPRINTW(@"「もっと焦らしてあげるから%HTML_PS_K39()%」")
+					ELSE
+						{
+						PRINTFORMW 「%RAND_SPLIT(
+						"駄目ですよ？ もう少し我慢してもらいますから…/" + 
+						"そう簡単にはイかせませんよ？ ふふ/" + 
+						"ふふ、ちょっと気が早いんじゃないですか？")%」
+						}
+						CALL HTMLPRINTW(@"「もうちょっとだけ、付き合ってもらいますよ…%HTML_PS_K39()%」")
+					ENDIF
+					;我慢フラグが立っている場合
+					SIF TCVAR:MASTER:我慢
+						{
+						PRINTFORMW 「というか…、%CNAME(MASTER, TARGET)%もまだイきたくなさそう\@ 
+						GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+						? ね？ 
+						# ですね…… \@」
+						}
+				;焦らし終了
+				CASE 1
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						{
+						PRINTFORMW 「%RAND_SPLIT(
+						"うふ、そろそろ頃合かしら/" + 
+						"流石に限界みたいね？ じゃ、そろそろとどめをさしてあげる/" + 
+						"これ以上焦らすのも可哀相ね")%」
+						}
+					ELSE
+						{
+						PRINTFORMW 「%RAND_SPLIT(
+						"うふ、そろそろ頃合でしょうか/" + 
+						"流石に限界みたいですね？ では、そろそろ…/" + 
+						"これ以上焦らすのは可哀相ですかね")%」
+						}
+					ENDIF
+					;汎用処理
+					CALL HANDJOB_K39
+				;焦らし無し
+				CASEELSE
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						SELECTCASE RANDACT(4, 14)
+							CASE 0
+								PRINTFORML 「ほらほら、気持ちよくて蕩けそうでしょ？」
+							CASE 1
+								PRINTFORMW 「ほらほらっ、このまま手でシゴかれてイっちゃいなさいよ！」
+							CASE 2
+								{
+								CALL HTMLPRINTW(
+								@"「イきそうになってる%CNAME(MASTER, TARGET)%の顔、" + 
+								@"もう堪らないわ……大好き%HTML_PS_K39()%」")
+								}
+							CASE 3
+								PRINTFORMW 「手の中で大きくなって…」
+								PRINTFORMW 「ねぇ、イきそうなんてしょ？ このまま出したいんでしょ？」
+						ENDSELECT
+					ELSE
+						SELECTCASE RANDACT(5, 15)
+							CASE 0
+								PRINTFORMW 「そろそろイきそうなんですか？ ふふ…」
+							CASE 1
+								PRINTFORMW 「もう限界みたいですね…ちょっと激しくしてあげましょうか？」
+							CASE 2
+								PRINTFORML 「手の中でビクビクいってますね」
+								PRINTFORMW 「そろそろイきそうでしょうか？」
+							CASE 3
+								PRINTFORMW 「もうイきそうなんですね？ 見ていればわかりますよ」
+							CASE 4
+								CALL HTMLPRINTW(@"「手の中で大きくなって……もう限界みたいですね%HTML_PS_K39()%」")
+						ENDSELECT
+					ENDIF
+					;汎用処理
+					CALL HANDJOB_K39
+			ENDSELECT
+			RETURN 1
+		ENDIF
+
+		;後ろから愛撫
+		;============
+		IF TCVAR:MASTER:位置前後 == 2
+			;焦らし度によって分岐
+			SELECTCASE TCVAR:MASTER:焦らし度
+				;焦らし中
+				CASE IS > 1
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						SELECTCASE RANDACT(2, 16)
+							CASE 0
+								PRINTFORMW 「ねぇ、凄いガチガチなんだけど。やっぱり後ろからされるのがいいのかしら？」
+								CALL HTMLPRINTW(@"「でも簡単にはイかせないから、もうちょっと我慢して%HTML_PS_K39()%」")
+							CASE 1
+								PRINTFORMW 「こんなにビクビクさせちゃって…後ろから握られるのがそんなに嬉しい？」
+								PRINTFORMW 「ふふ、それならすぐにイったらつまらないわよね？」
+								CALL HTMLPRINTW(@"「もう少しこのまま焦らしてあげるから%HTML_PS_K39()%」")
+						ENDSELECT
+					ELSE
+						SELECTCASE RANDACT(2, 17)
+							CASE 0
+								PRINTFORMW 「後ろからされるのはどうでしょう？ ふふ」
+								{
+								CALL HTMLPRINTW(
+								"「もう限界みたいですけど、もう少しこのまま" + 
+								@"我慢してくださいね%HTML_PS_K39()%」")
+								}
+							CASE 1
+								PRINTFORMW 「もどかしくて腰を動かしたくなりますか？ でも、これじゃ動けませんよね」
+								CALL HTMLPRINTW(@"「もうちょっとだけこの感覚、味わってもらいますよ%HTML_PS_K39()%」")
+						ENDSELECT
+					ENDIF
+				;焦らし終了
+				CASE 1
+					LOCALS:1 = \@ RAND:2 ? %HTML_PS_K39()% # \@
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						{
+						CALL HTMLPRINTW(@"「%RAND_SPLIT(
+						"ふふ、腰までビクビクさせちゃって…もう限界みたいね/" + 
+						"ねぇ…、後ろからシコシコされるの気持ちいいの？ うふ…/" + 
+						"どう？ 後ろからされるの気持ちいい？ ふふ…/" + 
+						"後ろからされてよくなっちゃうなんて、どうしようもない感じね"
+						)%%LOCALS:1%」")
+						}
+					ELSE
+						{
+						CALL HTMLPRINTW(@"「%RAND_SPLIT(
+						"ふふ、後ろからされるのが堪らないみたいですね/" + 
+						"さて、そろそろ限界ですかね…/" +
+						"後ろからされるの…気持ちいいですか？ ふふ…/" + 
+						"腰までビクビクさせて、もう限界みたいですね"
+						)%%LOCALS:1%」")
+						}
+					ENDIF
+					;汎用処理」
+					CALL HANDJOB_K39
+				;焦らし無し
+				CASEELSE
+					IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+						{
+						PRINTFORMW 「%RAND_SPLIT(
+						"ほら、大人しくして。このままイかせてあげるから/" + 
+						"この感じだと、すぐに出ちゃいそうね。ふふ…/" +
+						"ふふ、これだと逃げられないわよね？")%」
+						}
+					ELSE
+						{
+						PRINTFORMW 「%RAND_SPLIT(
+						"大人しくして下さいね。このままイかせてあげますから/" + 
+						"あら、もうダメみたいですね？ それなら、このまま…/" + 
+						"これだと逃げられませんよね？ ふふ")%」
+						}
+					ENDIF
+					;汎用処理
+					CALL HANDJOB_K39
+			ENDSELECT
+			RETURN 1
+		ENDIF
+	ENDIF
+
+	;媚薬コキ
+	;========
+	IF GETBIT(TFLAG:媚薬等使用, 1) ;//フラグ名が長すぎる。CLEARBITでスキップが成立するのも判り難い仕様
+		;媚薬使用口上処理済チェック(媚薬使用の地の文カットする際は"TFLAG:媚薬等使用地の文スキップ"のコメントを解除)
+		CLEARBIT TFLAG:媚薬等使用口上, 1
+		CLEARBIT TFLAG:媚薬等使用地の文スキップ, 1
+		;布地越しに
+		IF PANTSCHECK(1)
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				CALL HTMLPRINTW(@"「下着の上から媚薬といっしょにしごいてあげる%HTML_PS_K39()%」")
+				PRINTFORMW 「どうせベトベトになるから、穿いたまま出しちゃっても一緒よね？」
+				CALL FADE_TO_CLEARLINE(10, "「クスクス…」")
+			ELSE
+				PRINTFORMW 「下着の上からだと効果は薄いのですが…」
+				CALL HTMLPRINTW(@"「それでも、十分に愉しんでもらえると思いますよ%HTML_PS_K39()%」")
+			ENDIF
+		;直に
+		ELSE
+			{
+			PRINTFORML 「\@ 
+			GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+			? ほら、媚薬を塗った手でシゴいてあげる 
+			# さぁ、媚薬ごとシゴいてあげます \@…」
+			}
+		ENDIF
+		{
+		PRINTFORMDW %CALLNAME%は媚薬塗れの手で、\@ 
+		PANTSCHECK(1) 
+		? 布地越しに 
+		# 
+		\@%CALLNAME:MASTER%のペニスを扱きはじめた…
+		}
+		RETURN 1
+	ENDIF
+
+	;押し倒し状態 //RANDACT(40)~
+	;============
+	IF TEQUIP:押し倒し中
+		;連続実行
+		IF TFLAG:ACT == TFLAG:前ACT
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				CALL HTMLPRINTL(@"「これ、無理やりシてるみたいで、凄く興奮しちゃう%HTML_PS2_K39()%」")
+				PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%も興奮してるんでしょ？ いつもより、凄く硬いよ…」
+			ELSE
+				PRINTFORML 「私、凄く興奮しちゃって…、止まらなくなりそうです…」
+				PRINTFORMW 「あの、ちょっと激しくいかせてもらいますね？」
+			ENDIF
+		;通常
+		ELSE
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORML 「身動き出来なくされて、一方的にヤられるのって興奮しない？」
+				{
+				CALL HTMLPRINTW(
+				@"「%RAND_SPLIT("あら/ふふ")%…、何も言えない位、" + 
+				@"%RAND_SPLIT("気持ち/")%よくなっちゃってるみたいね%HTML_PS_K39()%」")
+				}
+			ELSE
+				PRINTFORML 「押し倒されてシゴかれる気分はどうでしょうか？」
+				PRINTFORMW 「私は…、自分でも怖いくらい興奮しちゃってます……」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;連続実行 //RANDACT(50)~
+	;========
+	IF TFLAG:ACT == TFLAG:前ACT
+		;体勢による派生
+		;顔面騎乗
+		;========
+		;IF 口上記入チェック(0) && TEQUIP:顔面騎乗
+		;ENDIF
+
+		;前から愛撫 //確率で汎用ACTに流す
+		;==========
+		IF 口上記入チェック(50) && TCVAR:MASTER:位置前後 == 1
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				CALL HTMLPRINTW(@"「うふ、手の中でビクビクしちゃって可愛い%HTML_PS_K39()%」")
+				PRINTFORMW 「ねぇねぇ、こんなのはどう…？」
+			ELSE
+				PRINTFORML 「腰が跳ねてますよ？ 気に入ってもらえたんでしょうか…」
+				CALL HTMLPRINTW(@"「でも、ここからが本番ですよ%HTML_PS_K39()%」")
+			ENDIF
+			PRINTFORMDW %CALLNAME:TARGET%は%CALLNAME:MASTER%の反応を窺いつつ、強弱をつけながらしごき続けた…
+			RETURN 1
+		ENDIF
+
+		;背後から
+		;========
+		IF TCVAR:MASTER:位置前後 == 2
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORMW 「私の気のせい？ 後ろから扱かれる時の方がなんか嬉しそうなんだけど」
+				{
+				CALL HTMLPRINTW(@"「ふふ、\@ 
+				TALENT:MASTER:小柄 
+				? 女の子みたいな 
+				# オトコの癖に可愛い 
+				\@声だしちゃって…%HTML_PS_K39()%」")
+				}
+			ELSE
+				PRINTFORMW 「後ろからされるといつもより興奮するみたいですね…」
+				{
+				PRINTFORMW 「それは判りますよ。\@ 
+				TALENT:MASTER:小柄 
+				? 女の子みたいな 
+				# 可愛いらしい 
+				\@声を聞けば誰だって」
+				}
+				CALL HTMLPRINTW(@"「自分で気づいてます？ ふふ…%HTML_PS_K39()%」")
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+
+	;勃起 //RANDACT(50)~ 確率で汎用ACTへ
+	;====
+	IF 口上記入チェック(50) && TCVAR:MASTER:勃起度 >= 1000
+		;布地越しに
+		IF PANTSCHECK(1)
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORMW 「クスクス、そんなに膨らませちゃって」
+				{
+				CALL HTMLPRINTW(
+				"「どうせ脱ぐのも待てないんでしょ？ いいよ、" + 
+				@"このままシゴいてあげるから%HTML_PS_K39()%」")
+				}
+			ELSE
+				PRINTFORMW 「ふふ、随分元気がいいですね。もう待ちきれないんでしょうか」
+				CALL HTMLPRINTW(@"「では、このまま下着越しにしごいてあげますよ…」")
+			ENDIF
+		;直に
+		ELSE
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORMW 「もうこんなにぱんぱんにしちゃって…」
+				CALL HTMLPRINTW(@"「待ってて。 すぐに手で蕩かしてあげるから%HTML_PS_K39()%」")
+			ELSE
+				PRINTFORMW 「厄が今にも溢れそうですね…」
+				CALL HTMLPRINTW(@"「私の手で、すぐに楽にしてあげます%HTML_PS_K39()%」")
+			ENDIF
+		ENDIF
+		PRINTFORMDW %CALLNAME:TARGET%は%LOCALS:0%、その手で優しく%CALLNAME:MASTER%のペニスを包みこんだ…
+		RETURN 1
+	ENDIF
+
+	;背後から
+	;========
+	IF TCVAR:MASTER:位置前後 == 2
+		{
+		PRINTFORMW 「\@ 
+		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? ほら、大人しくして。きもちよくさせてあげる 
+		# ふふ、偶には趣向を変えみるのもいいかも知れませんね \@」
+		}
+		{
+		PRINTFORMDW %CALLNAME:TARGET%は%CALLNAME:MASTER%\@ 
+		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? を背後から押さえつけ 
+		# の背後から手をまわし 
+		\@、\@ 
+		PANTSCHECK(1) 
+		? 下着越しに 
+		# 
+		\@激しくペニスをしごき始めた…
+		}
+		RETURN 1
+	ENDIF
+
+	;その他・条件なし //50%で表示、漏れたら汎用ACTに流す
+	;================
+	IF 口上記入チェック(50)
+		;服又はパンツ越しに
+		IF PANTSCHECK(1, 1)
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				CALL HTMLPRINTW(@"「ほら、パンツの上からシゴいてあげる%HTML_PS_K39()%」")
+				PRINTFORMW 「こういうのも嫌いじゃないんじゃない？」
+			ELSE
+				PRINTFORMW 「下着越しに扱かれるのはどんな感じでしょうか」
+				CALL HTMLPRINTW(@"「このままイってしまったら、ちょっと大変かも知れませんけど%HTML_PS_K39()%」")
+			ENDIF
+		;直接に
+		ELSE
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORML 「お待ちかねって感じ？ うふっ、嘘ついたって駄目」
+				CALL HTMLPRINTW(@"「手でシゴかれるのが大好きな事は、ちゃんと判ってるんだから%HTML_PS_K39()%」")
+			ELSE
+				PRINTFORML 「さぁ、私の手で厄を抜いてあげますよ…」
+				PRINTFORMW 「存分に愉しんでくださいね…？」
+			ENDIF
+		ENDIF
+		PRINTFORMDW %CALLNAME:TARGET%は%LOCALS:0%、その手で優しく%CALLNAME:MASTER%のペニスを包みこんだ…
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;///////////////
+;ACT11, 胸愛撫//
+;///////////////
+[SKIPSTART]
+	#胸愛撫/乳首吸い/乳の揉み合い/乳首責め
+	#特定の条件で「乳首吸い」「乳の揉み合い」「乳首責め」へ派生する
+	#調教対象がオトコの場合は必ず「乳首責め」になり、他に派生する事はない
+[SKIPEND]
+@KOJO_MALE_ACT_K39_11 ;TFLAG:ACT派生(0=胸愛撫/1=乳首吸い/2=揉み合い/3=乳首責め)
+
+;調教対象の性別で排他となる箇所は枠組みだけ設置してコメントアウト
+
+;ACT11_0, 胸愛撫
+;===============
+[SKIPSTART]
+	#全ての派生条件から漏れると通常の胸愛撫になる
+	#調教者の欲望+Ｂ感覚が3以上の場合1/2の確率で揉み合いに派生
+	#それから漏れた場合にのみ、通常の胸愛撫となる
+[SKIPEND]
+;IF 口上記入チェック(0) && !TFLAG:ACT派生
+;ENDIF
+
+
+;ACT11_1, 乳首吸い
+;=================
+[SKIPSTART]
+	#前回ACTが胸愛撫の場合乳首系になる
+	#その際、調教者に幼稚か舌使いがあると3/4、なければ1/4で乳首吸いとなる
+[SKIPEND]
+;IF 口上記入チェック(0) && TFLAG:ACT派生 == 1
+;ENDIF
+
+
+;ACT11_2, 乳の揉み合い
+;=====================
+[SKIPSTART]
+	#胸の揉み合いを要求する。この時点での調教対象の反応は未定
+	#乳首系の条件から漏れた場合、調教者の欲望+Ｂ感覚３以上なら、1/2で胸の揉み合いになる
+[SKIPEND]
+;IF 口上記入チェック(0) && TFLAG:ACT派生 == 2
+;ENDIF
+
+
+;ACT11_3, 乳首責め
+;=================
+[SKIPSTART]
+	#前回ACTが胸愛撫の場合乳首系になる
+	#その際、調教者に幼稚か舌使いがあると1/4、なければ3/4で乳首責めとなる
+	#調教対象がオトコの場合は乳首責めにしかならない
+[SKIPEND]
+;1/2の確率で汎用ACTへ
+IF 口上記入チェック(50) && TFLAG:ACT派生 == 3
+	;好意、好感度で派生
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		SELECTCASE RANDACT(2, 0)
+			CASE 0
+				PRINTFORML 「本当は乳首弄られるの好きでしょ…？」
+				CALL HTMLPRINTW(@"「嘘つい%RAND_SPLIT("ても/たって")%駄目よ…%HTML_PS_K39()%」")
+			CASE 1
+				PRINTFORMW 「ねぇ、いつも同じじゃつまらないでしょ？」
+				PRINTFORMW 「ちょっと痛いの試してみる？ クスクス…」
+		ENDSELECT
+	ELSE
+		SELECTCASE RANDACT(2, 1)
+			CASE 0
+				PRINTFORML 「さぁ、乳首を弄ってあげます…」
+				PRINTFORMW 「男も女も、気持ち良いところは一緒なんですよ…」
+			CASE 1
+				PRINTFORMW 「本当は胸を弄られるのが好きなのではないですか？」
+				CALL HTMLPRINTW(@"「%RAND_SPLIT("う/")%ふふ、もっと正直になって欲しいですね%HTML_PS_K39()%」")
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;/////////////////
+;ACT12, 口で愛撫//
+;/////////////////
+[SKIPSTART]
+	#クンニする/フェラチオする
+	#下半身の衣装が残っていても発生することがある。調教者にTALENT:壁抜けがない場合はずらして実行する
+	#ターン方針が"異常"なら発生しない
+	#TEQUIP(バイブ/オナホール/ペニスバンド/三角木馬)装着中には発生しない
+	#性交中/性交奉仕中には発生しない
+	#調教対象にペニスがあると、必ずフェラになる
+[SKIPEND]
+@KOJO_MALE_ACT_K39_12 ;TFLAG:ACT派生(0=クンニ/1=フェラ)
+
+;ACT12_0, クンニする //オトコ用なので不要
+;===================
+;IF 口上記入チェック(0) && !TFLAG:ACT派生
+;ENDIF
+
+
+;ACT12_1, フェラチオする
+;=======================
+IF TFLAG:ACT派生 == 1
+	;初回
+	;====
+	IF !GET_KFLAG_K39("相思相愛") && FIRSTACT(0)
+		;童貞の場合 //被口淫経験とかあっても良さそうな気はする
+		IF TALENT:MASTER:童貞
+			PRINTFORML 「女性経験がないということは…」
+			PRINTFORMW 「当然、こんなことは初めてですよね？」
+			CALL HTMLPRINTW(@"「ふふ%HTML_AH2_K39()%　では、失礼しますね…」")
+			[SKIPSTART]
+			PRINTFORML 「こういうことされるのは初めてでしょうか…？」
+			PRINTFORMW 「…そうですか、私が最初なんですね。ふふ」
+			PRINTFORM 「さぁ、厄神の舌技をたっぷり堪能してくださいね
+			[SKIPEND]
+		;その他
+		ELSE
+			PRINTFORML 「%CNAME(MASTER, TARGET)%にどれ程の経験があるか判りませんけど…」
+			PRINTFORMW 「少なくても私とはこれが初めてですよね？」
+			CALL HTMLPRINTW(@"「さて…愉しんでもらえるといいのですけど。ふふ…%HTML_PS_K39()%」")
+			;PRINTFORML 「さぁ、私の口で厄を抜いてあげます…」
+			;PRINTFORM 「厄神の舌技をたっぷり堪能してくださいね…
+		ENDIF
+		;調教対象が童貞かつイきそうな場合
+		IF TALENT:MASTER:童貞 && TCVAR:MASTER:イきそう
+			;焦らし中か否かで分岐
+			{
+			PRINTFORMW 「でも\@ TCVAR:MASTER:焦らし度 > 1 
+			? 今は、簡単にイかせてあげるつもりはないんですけど 
+			# この様子では、すぐに果ててしまいそうですけど \@…」
+			}
+		ENDIF
+		;顔面騎乗でない場合
+		IF ALLSAMES(1, !TEQUIP:顔面騎乗, !TEQUIP:顔面騎乗アナル)
+			PRINTL
+			PRINTFORMDL %CALLNAME:TARGET%は微かに笑みを浮かべつつ、どこか挑発的ともいえる視線を投げかけながら、
+			PRINTFORMDW %PENIS_DESCRIPTION(MASTER)%%CALLNAME:MASTER%のペニスを口に含んだ…
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	[SKIPSTART]
+	;前回COMがイかせて！ //前回ターンの絶頂種は拾えない(@EVENTTRAINでリセットしてる)のであまり望ましくない
+	;==================  //かといってリセット箇所がバラけるのもアレ
+	IF IS_PREVCOMNAME("イかせて！")
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				;好意、好感度で派生
+				IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+					IF RAND:2
+						PRINTFORML 「うふふ、だ～め。まだ我慢してもらうから」
+						PRINTFORMW 「まだまだしゃぶり足りないよ……%KOJO_RAND_K39(("フェラ"), 1)%」
+					ELSE
+						PRINTFORML 「ぷはっ……クスクス…もうイきたくて仕方無いみたいね？」
+						CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+					ENDIF
+				ELSE
+					IF RAND:2
+						CALL HTMLPRINTW(@"「駄目ですよ。私はまだ味わい足りませんから%HTML_PS_K39()%」")
+						PRINTFORMW 「うふ、この匂い…クラクラしちゃう……」
+					ELSE
+						PRINTFORML 「まだイっては駄目ですよ？ もう少し我慢してくださいね…」
+						CALL HTMLPRINTW(@"「限界まで焦らしてあげます%HTML_AH2_K39()%　%KOJO_RAND_K39(("フェラ"), 1)%」")
+					ENDIF
+				ENDIF
+			;焦らしなし
+			CASEELSE
+				;好意、好感度で派生
+				IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+					PRINTFORML 「…っ、大きくなって。ねぇ、そろそろ限界？」
+					PRINTFORMW 「いいよ……、このまま口でイかせてあげる…」
+				ELSE
+					PRINTFORML 「ビクビクしてますね、限界でしょうか」
+					PRINTFORMW 「いいですよ……%CNAME(MASTER, TARGET)%の厄、全部私の口に出してください…」
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	[SKIPEND]
+
+	;調教対象がイきそうなのを我慢しているかつ焦らし中でない場合
+	;==========================================================
+	IF TCVAR:MASTER:イきそう && TCVAR:MASTER:我慢 && TCVAR:MASTER:焦らし度 < 2
+		;好意、好感度によって派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(2, 10)
+				CASE 0
+					PRINTFORML 「やんっ、腰がビクビクって……ねぇ、イきそうなんでしょ？」
+					PRINTFORMW 「そんなに必死で我慢しちゃって、どうするつもりなの？ クスクス…」
+				CASE 1
+					CALL HTMLPRINTW(@"「我慢してるの見ると、ちょっと意地悪したくなっちゃう%HTML_PS_K39()%」")
+					PRINTFORMW 「ほら、もっと激しくシてあげる。どこまで耐えられるかしら？」
+			ENDSELECT
+		ELSEIF AFFECTION("溺愛")
+			SELECTCASE RANDACT(2, 11)
+				CASE 0
+					PRINTFORML 「中々頑張りますね、まだ我慢するつもりですか…？」
+					PRINTFORMW 「うふっ、ではこんな感じはどうでしょうか」
+				CASE 1
+					PRINTFORML 「必死に耐えてるみたいですが、何時まで続くでしょうか」
+					CALL HTMLPRINTW(@"「ほら、少し激しくしてあげます%HTML_PS_K39()%」")
+			ENDSELECT
+		ELSE
+			PRINTFORML 「意外と我慢強いんですね…？」
+			PRINTFORMW 「でも、これにも耐えられるでしょうか」
+		ENDIF
+		PRINTFORMDW %CALLNAME%は喉奥まで咥え込み、その口でより激しく%CALLNAME:MASTER%のペニスをしごき始めた…
+		RETURN 1
+	ENDIF
+
+	;調教対象がイキそう //RANDACT(20)~
+	;==================
+	IF TCVAR:MASTER:イきそう
+		;焦らし度によって派生
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				;好意、好感度によって派生
+				IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+					SELECTCASE RANDACT(2, 20)
+						CASE 0
+							CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+							CALL HTMLPRINTW(@"（ふふ、凄いビクビクしてる。もうちょっとだけ我慢してね%HTML_PS_K39()%）")
+						CASE 1
+							PRINTFORMW （可哀相だけどもう少し愉しませて貰うわ、ふふ）
+							CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+					ENDSELECT
+				ELSE
+					SELECTCASE RANDACT(2, 21)
+						CASE 0
+							CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+							CALL HTMLPRINTW(@"（今にも出そうだけど、もう少しだけ…%HTML_PS_K39()%）")
+						CASE 1
+							PRINTFORMW （ふふ、ちょっと辛そう…でも、もうちょっとだけ…）
+							CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+					ENDSELECT
+				ENDIF
+			;焦らし終了
+			CASE 1
+				;好意、好感度によって派生
+				IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+					SELECTCASE RANDACT(3, 22)
+						CASE 0
+							CALL HTMLPRINTW(@"（…うふ、全部搾り出してあげる%HTML_PS_K39()%）")
+						CASE 1
+							PRINTFORMW （…ん。喉奥で暴れちゃって、ふふ）
+						CASE 2
+							PRINTFORMW （ふふ、いまラクにしてあげる…）
+					ENDSELECT
+				ELSE
+					{
+					PRINTFORMW （%RAND_SPLIT(
+					"…どのくらい出るかしら？ ふふ/" + 
+					"…情けない声だしちゃって。くすっ/" + 
+					"いまラクにしてあげます。ふふ…")%）
+					}
+				ENDIF
+				CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+				;調教者のアライメントが正か否かで派生
+				{
+				PRINTFORMW （\@ ALI(0, TARGET) 
+				? ん、袋も弄ってあげるとよさそうね… 
+				# …こうすると、一滴残らず搾り取れるかしら \@）
+				}
+			;焦らし無し
+			CASEELSE
+				;顔面騎乗中
+				IF TEQUIP:顔面騎乗 || TEQUIP:顔面騎乗アナル
+					;好意、好感度で派生
+					{
+					CALL HTMLPRINTW(@"（\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+					? ん、私もよくなってきちゃうけど…こっちの方が先みたいね 
+					# ん、舌使いがイヤラシイ…でも、私の舌使いの方が上かしら。ふふ 
+					\@%HTML_PS_K39()%）")
+					}
+				;その他
+				ELSE
+					{
+					CALL HTMLPRINTW(@"（\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+					? ん…、もう限界みたいね。ふふ… 
+					# ふふ、すっかり興奮しちゃって 
+					\@%HTML_PS_K39()%）")
+					}
+				ENDIF
+				CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	;同時にアナル愛撫 //RANDACT(30)~
+	;================
+	IF TFLAG:追加行動 == 3 ;//TFLAG:追加行動(1=Ｃ愛撫1/2=Ｖ愛撫/3=Ａ愛撫/4=Ｂ愛撫)
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(3, 30)
+				CASE 0
+					PRINTFORML 「おしりの穴弄ると凄く硬くなって…」
+					CALL HTMLPRINTW(@"「うふ%HTML_AH2_K39()%　面白いわね…、これ」")
+				CASE 1
+					PRINTFORML 「ほら…、おしりの穴も弄られると、もっと気持ち良いでしょう？」
+					CALL HTMLPRINTW(@"「こんな硬くしてるのに、いまさら誤魔化しても説得力無いよ%HTML_PS_K39()%」")
+				CASE 2
+					PRINTFORMW 「ほらほら、おしり責められながらされるのが良いんでしょう？」
+					PRINTFORMW 「嘘ついたってダメよ。身体は正直なんだから…」
+			ENDSELECT
+			CALL FADE_TO_CLEARLINE(15, @"「%RAND_SPLIT("クスクス/ふふ")%…」")
+		ELSE
+			PRINTFORML 「んんっ、凄いです…」
+			PRINTFORMW 「おしりを弄ると、こんなになってしまうんですね？」
+			CALL HTMLPRINTW(@"「これは、中々愉しめそうですね%HTML_PS_K39()%」")
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;押し倒し状態     //RANDACT(40)~
+	;============
+	IF TEQUIP:押し倒し中
+		;連続実行
+		IF TFLAG:ACT == TFLAG:前ACT
+			;好意、好感度によって派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORMW 「クラクラしちゃう……%TNAME_K39()%、おちんぽに夢中なただの雌になっちゃう…」
+			ELSEIF AFFECTION("溺愛")
+				CALL HTMLPRINTW(@"「うふ、美味しい%HTML_AH2_K39()%　%CNAME(MASTER, TARGET)%も愉しんでくださいね？」")
+				CALL HTMLPRINTW(@"「私も厄祓い抜きで愉しませてもらいますから%HTML_PS_K39()%」")
+			ELSE
+				;処理なし
+			ENDIF
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+			PRINTFORMDW %CALLNAME%は押し倒され身動きの取れない%CALLNAME:MASTER%のペニスを夢中で貪っている…
+		;通常
+		ELSE
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORML 「なんかこれ、%CNAME(MASTER, TARGET)%をレイプしてるみたいで……凄く興奮しちゃう……」
+				PRINTFORM 「どう？ 動けないでしょ？ 思いっきりしゃぶってあげるから覚悟して
+			ELSE
+				PRINTFORML 「さぁ、もう逃げられませんよ…」
+				PRINTFORM 「大人しくしててくださいね？ 私の口で厄を抜いてあげますから
+			ENDIF
+			CALL PRINT_SYMBOL_K39
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;連続実行         //50%で表示
+	;========
+	IF 口上記入チェック(50) && TFLAG:ACT == TFLAG:前ACT
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+		{
+		PRINTFORMW （…\@ TENSION(TARGET, 8) == "高い" 
+		? なんか私も興奮してきちゃうわね 
+		# ふふ、情けない声だしちゃって \@）
+		}
+		PRINTFORMDW %CALLNAME%は%CALLNAME:MASTER%のペニスを一心不乱に貪り続けた… 
+		RETURN 1
+	ENDIF
+
+	;勃起             //60%で表示
+	;====
+	IF 口上記入チェック(60) && TCVAR:MASTER:勃起度 >= 1000
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「ギンギンになっちゃって…もうっ…可愛い…大好きっ！」
+			CALL HTMLPRINTW(@"「さ、%TNAME_K39()%のお口で蕩けるまでしてあげる%HTML_PS_K39()%」")
+		ELSE
+			CALL HTMLPRINTW(@"「ふふ、厄がいっぱい詰まって美味しそうですね%HTML_PS_K39()%」")
+			PRINTFORMW 「さ、私の口で厄を抜いてあげますよ…」
+		ENDIF
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+		RETURN 1
+	ENDIF
+
+	;その他・条件なし //50%で表示。漏れたら汎用ACTにパス
+	;================
+	IF 口上記入チェック(50)
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「口でシてもらうのが、もう待ちきれないって感じ？」
+			CALL HTMLPRINTW(@"「ほら、舐めてあげるからちゃんと出して%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORML 「うふ、とっても厄いですね…」
+			CALL HTMLPRINTW(@"「では私の口で厄を抜いてあげましょう…%HTML_PS_K39()%」")
+		ENDIF
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "フェラ", 1)
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;///////////////////
+;ACT13, アナル愛撫//
+;///////////////////
+[SKIPSTART]
+	#アナル愛撫/前立腺刺激/アナルバイブ出し入れ
+	#アナルバイブ装備中は、アナルバイブ出し入れに派生
+	#連続実行の場合、前立腺刺激に派生
+	#イきそうor快Ｃが5000以上の場合、調教者の愛撫スキルに応じて前立腺刺激に派生
+	#勃起度が低い場合、調教者の愛撫スキルに応じて前立腺刺激に派生
+	#要強制勃起の場合、前立腺刺激に派生
+	#TFLAG:お仕置きフラグが立っていると発生しない
+	#ターン方針が"ソフト", "異常"だと発生しない
+	#TEQUIP(三角木馬/ペニスバンド/アナルビーズ)装着中には発生しない
+	#性交奉仕中には発生しない
+[SKIPEND]
+@KOJO_MALE_ACT_K39_13 ;TFLAG:ACT派生（0=アナル愛撫/1=前立腺刺激/2=アナルバイブ出し入れ）
+
+;ACT13_0, アナル愛撫
+;===================
+IF !TFLAG:ACT派生
+	;押し倒し状態 //顔面騎乗中なら弾く
+	;============
+	IF TEQUIP:押し倒し中 && ALLSAMES(0, TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) ;0で見るか1で見るか悩む
+		;連続実行
+		IF TFLAG:ACT == TFLAG:前ACT
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				CALL HTMLPRINTW(@"「指で弄るたびに腰がビクッって…%HTML_PS_K39()%」")
+				PRINTFORMW 「ねぇ、無理やり犯されてるみたいで、余計に興奮しちゃうの…？」
+			ELSEIF AFFECTION("溺愛")
+				CALL HTMLPRINTW(@"「大人しく私にお尻の穴を弄られてる姿が、とっても可愛いですよ%HTML_PS_K39()%」")
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%を見てると、何か私も変な気分に……」
+			ELSE
+				PRINTFORML 「そのまま大人しくしてて下さいね…」
+				PRINTFORMW 「ほら、指でこんな風に弄られるのはどうですか？ うふふ…」
+			ENDIF
+		;通常
+		ELSE
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORMW 「うふ、動けないでしょ？ そのまま大人しくしててね」
+				CALL HTMLPRINTW(@"「%CNAME(MASTER, TARGET)%のおしりの穴、たっぷり虐めてあげるから…%HTML_PS_K39()%」")
+			ELSE
+				PRINTFORML 「これでもう逃げられませんよ…」
+				CALL HTMLPRINTW(@"「さ、大人しくお尻の穴を弄らせてくださいね…%HTML_PS_K39()%」")
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;調教対象挿入中
+	;==============
+	IF TEQUIP:性交奉仕中
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「ほら、おしりの穴弄ってあげる……ねぇ、どんな感じ…？」
+			PRINTFORMW 「あぁっ、凄く硬くなってっ……！」
+			PRINTFORMW 「やっ、ダメぇ！ こ、こんなので突かれたら壊れちゃうよぉっ…！」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「後ろを弄ってあげましょう。ほら、どうですか…？」
+			PRINTFORMW 「あっ、中で凄く硬くなって……」
+			PRINTFORMW 「や、だめです。こんなので突かれたら…私…おかしく……っ」
+		ELSE
+			PRINTFORML 「ちょっと柔らかいみたいですね？ では、後ろを弄ってあげましょう…」
+			PRINTFORMW 「うふ、すっかり硬くなりましたね…」
+			PRINTFORMW 「さ、その硬くなったモノで思いっきり突いてください…」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;勃起
+	;====
+	IF TCVAR:MASTER:勃起度 >= 1000
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「おしり弄られるの期待して、こんなに勃たせてるの？」
+			PRINTFORM 「うふ、いいよ……おしり弄ってミルクを出させちゃうから
+		ELSE
+			PRINTFORML 「あら、何を期待してこんなに勃たせてるのでしょう…？」
+			PRINTFORM 「うふ、冗談です。おしりの穴弄って欲しいんですよね？ 判ってますよ
+		ENDIF
+		CALL PRINT_SYMBOL_K39
+		RETURN 1
+	ENDIF
+
+	;萎えた
+	;======
+	IF TCVAR:MASTER:勃起度 < TCVAR:MASTER:前の勃起度
+		{
+		PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? 何よ？ 元気がないわね 
+		# あら、元気がないですね \@…」
+		}
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「萎えたのも可愛いけど、これじゃ愉しめないから…」
+			PRINTFORM 「おしりの穴弄って勃たせてあげる
+		ELSE
+			PRINTFORML 「大丈夫ですよ。すぐに勃たせてあげます…」
+			PRINTFORM 「どうせお尻の穴弄れば、一発ですから
+		ENDIF
+		CALL PRINT_SYMBOL_K39
+		RETURN 1
+	ENDIF
+
+	;顔面騎乗中
+	;==========
+	IF TEQUIP:顔面騎乗 || TEQUIP:顔面騎乗アナル
+		{
+		PRINTFORMW 「この体勢だと、\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? あとは私のやりたい放題ね 
+		# こっちはすっかり無防備ですね？ \@」
+		}
+		CALL FADE_TO_CLEARLINE(12, "「ふふ…」")
+	ENDIF
+
+	;その他・条件なし //汎用ACTにはパスしない
+	;================
+	IF 口上記入チェック(100)
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			;調教対象のＡ感覚が一定以上
+			IF ABL:MASTER:Ａ感覚 > 4
+				PRINTFORML 「%RAND_SPLIT("おしりの穴/こっちを")%弄ってもらうのが待ちきれないんでしょ？」
+				CALL HTMLPRINTW(@"「――嘘をついても駄目。私、全部判ってるんだから…%HTML_PS_K39()%」")
+			ELSE
+				PRINTFORML 「さて、こっちの方も%RAND_SPLIT("可愛がって/虐めて")%あげる」
+				PRINTFORMW 「ふふ…、%CNAME(MASTER, TARGET)%%RAND_SPLIT("は気に入ってくれ/に気に入って貰え")%るかしら」
+			ENDIF
+		ELSE
+			PRINTFORML 「さぁ、お尻を弄ってあげますよ…」
+			PRINTFORMW 「恥ずかしがらないで、思いっきり愉しんでくださいね？」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;ACT13_1, 前立腺刺激(アナル愛撫)
+;===============================
+[SKIPSTART]
+	#調教対象がオトコの場合のみに派生
+	#ふたなりの前立腺は尿道、つまり膣の上にあるとし、Ｇスポット刺激に
+[SKIPEND]
+IF TFLAG:ACT派生 == 1
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		PRINTFORML 「萎えたおちんぽもここを弄れば……」
+		PRINTFORM 「ほら、大きくなった
+	ELSE
+		PRINTFORMW 「すぐ勃たせてあげますね。ほら、どうでしょうか…？」
+		PRINTFORM 「うふ、判り易いんですね
+	ENDIF
+	CALL PRINT_SYMBOL_K39
+	RETURN 1
+ENDIF
+
+
+;ACT13_2, アナルバイブ出し入れ
+;=============================
+;	#アナルバイブ装備中は、アナルバイブ出し入れになる
+IF TFLAG:ACT派生 == 2
+	LOCALS:0 '= RAND_SPLIT("ふふ/くすくす/ふふっ/ふふふ")
+	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+		CALL FADEIN(10, "「……まったく、オトコの癖に」")
+		WAIT
+		PRINTFORML 「大人しく、そんなものを咥えこんでる姿をみると…」
+		PRINTFORMW 「ちょっと虐めてあげたくなっちゃうのよね。%LOCALS:0%」
+	ELSE
+		PRINTFORMW 「折角の機会ですし…」
+		PRINTFORMW 「こっちもちょっと弄ってあげないと、ですね。%LOCALS:0%」
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;///////////////////
+;ACT14, アナル舐め//
+;///////////////////
+[SKIPSTART]
+	#TFLAG:お仕置きフラグが立っていると発生しない
+	#ターン方針が"ソフト", "異常"だと発生しない
+	#TEQUIP(アナルバイブ/アナルビーズ/浣腸器＋プラグ/ペニスバンド/三角木馬)装着中には発生しない
+	#性交中/性交奉仕中には発生しない
+	#TCVAR:MASTER:焦らし度が真になっている場合は発生しない
+	#舌による前立腺刺激への派生は「そんなところまで舌が届くわけないじゃないかｗｗｗ」という事で粛清されています
+[SKIPEND]
+@KOJO_MALE_ACT_K39_14 ;ACT派生なし
+
+;派生0で決め打ちしておく
+IF !TFLAG:ACT派生
+	;初回
+	;====
+	;IF FIRSTACT(0)
+	;ENDIF
+
+	;押し倒し状態
+	;============
+	IF TEQUIP:押し倒し中
+		;連続実行
+		IF TFLAG:ACT == TFLAG:前ACT ;//押し倒し中かつ連続実行とかレア過ぎる感が
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORML 「%KOJO_RAND_K39(("口で愛撫"), 1)%　ヒクヒクさせちゃって…」
+				PRINTFORMW 「ねぇ、誘ってるのかしら…？ クスクス」
+			ELSE
+				PRINTFORML 「押し倒されて、お尻の穴を舐められるのはどんな気分ですか…？」
+				CALL HTMLPRINTW(@"「嫌と言ったところで、やめる気はありませんけど%HTML_PS_K39()%」")
+			ENDIF
+		;通常
+		ELSE
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORML 「うふ、もう逃げられないでしょ？」
+				PRINTFORM 「舌でおしりの穴を嬲ってあげる
+			ELSE
+				PRINTFORML 「どうです、動けませんよね？」
+				PRINTFORM 「お尻の穴、たっぷり舐めさせてもらいます
+			ENDIF
+			CALL PRINT_SYMBOL_K39
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;同時に手淫 //オトコ専用なのでPENIS(MASTER)は無くても問題無いが、保険の意味も込めて置いておく
+	;==========
+	IF PENIS(MASTER) && TFLAG:追加行動 == 1
+		;一般追加行動口上処理済チェック(一般追加行動の地の文カットする際はTFLAG:追加行動地の文スキップのコメントを解除)
+		CLEARBIT TFLAG:追加行動口上, 0
+		CLEARBIT TFLAG:追加行動地の文スキップ, 0
+		PRINTFORMDW %CALLNAME%は%CALLNAME:MASTER%のペニスを扱きながらアヌスに舌を這わせた…
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「んっ…ちゅぷっ……おしり舐めるたびに硬くなる…」
+			PRINTFORMW 「喘いじゃって、可愛い……じゅぷ…ちゅくっ…」
+		ELSE
+			PRINTFORML 「恥ずかしがらずに、声をだしてもいいんですよ？」
+			CALL HTMLPRINTW(@"「私、そういうの大好きですから%HTML_PS_K39()%」")
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;勃起
+	;====
+	IF TCVAR:MASTER:勃起度 >= 1000
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「うふ、分かってる……おしりの穴舐めて欲しいんでしょ…？」
+			PRINTFORM 「いいよ…思いっきり喘がせてあげるから
+		ELSE
+			PRINTFORML 「お尻舐められるのを期待して、そんなになってるんですか…？」
+			PRINTFORM 「…うふ、それなら期待に応えない訳にはいきませんね
+		ENDIF
+		CALL PRINT_SYMBOL_K39
+		RETURN 1
+	ENDIF
+
+	;萎えた
+	;======
+	IF TCVAR:MASTER:勃起度 < TCVAR:MASTER:前の勃起度
+		CLEARBIT TFLAG:追加行動口上, 0
+		CLEARBIT TFLAG:追加行動地の文スキップ, 0
+		PRINTFORMDW %CALLNAME%はしなびた%CALLNAME:MASTER%の男性器を見咎めた…
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「なにそれ、だらしないわね……」
+			PRINTFORM 「まぁいいわ。どうせおしりの穴を舐めれば一発だし……すぐに勃たせてあげる
+		ELSE
+			PRINTFORML 「萎えてしまったんですか？ でも、大丈夫ですよ」
+			PRINTFORM 「後ろの穴を舐めてあげれば済む事ですし、ね
+		ENDIF
+		CALL PRINT_SYMBOL_K39
+		RETURN 1
+	ENDIF
+
+	;その他・条件なし //汎用ACTにはパスしない
+	;================
+	IF 口上記入チェック(100)
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(2, 0)
+				CASE 0
+					PRINTFORML 「ねぇ、おしりの穴舐めて欲しいんでしょ？」
+					PRINTFORMW 「ちゃんとおねだり出来たら舐めてあげる」
+					PRINTL
+					PRINTFORML 「ほら、言ってみて……」
+					{
+					CALL HTMLPRINTW(
+					@"「%HTMLFONT("<b>『おしりの穴舐めて下さい</b>", , COLOR2_K39("白"))%%HTMLFONT("<b>雛</b>", , 
+					COLOR2_K39("赤"))%%HTMLFONT("<b>様お願いします』</b>", , COLOR2_K39("白"))%って…」")
+					}
+					CALL FADE_TO_CLEARLINE(10, "「クスクス……」")
+				CASE 1
+					PRINTFORML 「ほら、舐めてあげるから、おしりをこっちに向けて…？」
+					{
+					CALL HTMLPRINTW(
+					@"「%RAND_SPLIT("いつも焦らしたら可哀相だし、/偶には")%こういうのもいいでしょ？ " + 
+					@"%RAND_SPLIT("う/")%ふふ…%HTML_PS_K39()%」")
+					}
+			ENDSELECT
+		ELSE
+			PRINTFORML 「さ、お尻の穴を舐めてあげますよ…」
+			PRINTFORMW 「存分に愉しんでくださいね？」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;/////////////
+;ACT15, キス//
+;/////////////
+[SKIPSTART]
+	#キス/媚薬キス
+	#TFLAG:お仕置きフラグが立っていると発生しない
+	#ターン方針が"ハード", "異常"だと発生しない
+	#調教者にTALENT:壁抜けが無い場合、TEQUIP:ボールギャグ装着中は弾かれる
+[SKIPEND]
+@KOJO_MALE_ACT_K39_15 ;ACT派生なし
+
+;ACT15_0, キス
+;=============
+IF !GETBIT(TFLAG:媚薬等使用, 1)
+	;調教対象挿入中
+	;==============
+	IF TEQUIP:性交奉仕中
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(2, 0)
+				CASE 0
+					PRINTFORMW 「ねぇ、キスして……」
+					CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+					{
+					CALL HTMLPRINTW(
+					@"「んっ…好き%HTML_AH_K39()%　大好き%HTML_AH_K39()%　" + 
+					@"あいしてる……%KOJO_RAND_K39(("キス"), 1)%」")
+					}
+				CASE 1
+					CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+					CALL HTMLPRINTW(@"「はっ…んっ%HTML_AH_K39()%　中で大きくなってッ……%HTML_PS2_K39()%」")
+			ENDSELECT
+			PRINTFORMDW %CALLNAME%は繋がった状態のまま\@ IS_CONDITION(TARGET, "情欲") ? 、情熱的に # \@舌を絡めてきた…
+		ELSEIF AFFECTION("溺愛")
+			SELECTCASE RANDACT(2, 1)
+				CASE 0
+					{
+					CALL HTMLPRINTW(
+					@"「あ%RAND_SPLIT("ぁ/")%っ%HTML_AH_K39()%　" + 
+					@"あんっ%HTML_AH_K39()%　お願い、キスして……」")
+					}
+					PRINTFORMW 「%KOJO_RAND_K39(("キス"), 1)%　体だけの関係でも、私は……」
+				CASE 1
+					PRINTFORMW 「%KOJO_RAND_K39(("キス"), 1)%　なんだかとても幸せ…」
+					CALL HTMLPRINTW(@"「あ%RAND_SPLIT("ぁ/")%っ%HTML_AH_K39()%　いいですっ……もっと、突いてください！」")
+			ENDSELECT
+		ELSE
+			CALL HTMLPRINTW(@"「あっ%HTML_AH_K39()%　んんっ%HTML_AH_K39()%　さ、キスしてあげます…」")
+			PRINTFORMW 「ちゅっ、 ん……中で大きくなって……」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;仰向けもしくは押し倒し中
+	;========================
+	IF TFLAG:仰向け || TEQUIP:押し倒し中
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「動いちゃだめ。ほら、キスしてあげる……」
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「さぁ、キスしましょう。そのまま動かないで……」
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+		ELSE
+			PRINTFORML 「そのままでいてください…」
+			PRINTFORMW 「キスしてあげますから……んっ…ちゅっ…」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;その他・条件なし //汎用ACTにはパスしない
+	;================
+	IF 口上記入チェック(100)
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「ねぇ、キスするのとされるのと、どっちが好き…？」
+			CALL HTMLPRINTW(@"「ふふ、私はどっちも大好き……ほら、キスしてあげる%HTML_PS_K39()%」")
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「私は%CNAME(MASTER, TARGET)%とキスするの好きですよ」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%はどうですか…？」
+			PRINTFORMW 「もし、同じ気持ちでいてくれるのなら、私……」
+		ELSE
+			PRINTFORML 「さ、キスをしてあげますよ」
+			PRINTFORMW 「私の唇の感触、愉しんでくださいね……」
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;ACT15_1, 媚薬キス
+;=================
+[SKIPSTART]
+	#調教対象に口移しで媚薬を飲ませる
+	#この箇所はRESULT値2を返して媚薬等口上をスキップする
+[SKIPEND]
+IF GETBIT(TFLAG:媚薬等使用, 1)
+	;媚薬使用口上処理済チェック(媚薬使用の地の文カットする際はTFLAG:媚薬等使用地の文スキップのコメントを解除)
+	CLEARBIT TFLAG:媚薬等使用口上, 1
+	CLEARBIT TFLAG:媚薬等使用地の文スキップ, 1
+	PRINTFORMDL %CALLNAME%は自ら媚薬を口に含み、キスをしながら口移しで%CALLNAME:MASTER%に飲ませてきた…
+
+	;調教対象挿入中
+	;==============
+	IF TEQUIP:性交奉仕中
+		LOCALS:0 '= GROUPMATCH(TEQUIP:性交奉仕中, 3, 4, 5) ? "突き上げ" # "叩きつけ" 
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			CALL HTMLPRINTW(@"「？！ や…やぁぁ……はげしっ%HTML_AH_K39()%　激しいよぉっ……！」")
+			PRINTL
+			PRINTFORMDL %CALLNAME:MASTER%は体の奥から湧き上がる情欲に突き動かされ
+			PRINTFORMDW 狂ったように腰を叩きつけながら、%CALLNAME:TARGET%の身体を存分に貪った…
+		ELSEIF AFFECTION("溺愛")
+			CALL HTMLPRINTW(@"「んぁっ！？ いいですっ…%HTML_AH_K39()%　もっとっ%HTML_AH_K39()%　もっと突いて……」")
+			PRINTFORMDW 湧き上がる情欲に突き動かされ、%CALLNAME:MASTER%は激しく腰を%LOCALS:0%た…
+		ELSE
+			CALL HTMLPRINTW(@"「んっ%HTML_AH_K39()%　抑えられないんですね。いいですよ、きてください……」")
+			PRINTFORMDW 湧き上がる情欲に突き動かされ、%CALLNAME:MASTER%は激しく腰を%LOCALS:0%た…
+		ENDIF
+		RETURN 2
+	ENDIF
+
+	;仰向けもしくは押し倒し中
+	;========================
+	IF TFLAG:仰向け || TEQUIP:押し倒し中
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「動かないで、キスしてあげるから……」
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+			PRINTL
+			PRINTFORML 「ね、ムラムラしてきたでしょ？ 抑えられないでしょ？」
+			PRINTFORMW 「全部受け止めてあげる……思いっきりシていいよ……」
+			PRINTFORMDW %CALLNAME:TARGET%は%RAND_SPLIT("妖艶/蠱惑的")%な笑みを浮かべ、%CALLNAME:MASTER%の欲情を煽った…
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「さぁ、キスしましょう。そのままじっとしてて…」
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+			PRINTL
+			PRINTFORML 「%CNAME(MASTER, TARGET)%の身体、熱くなってきてるのが分かりますよ…」
+			{
+			PRINTFORMW 「%RAND_SPLIT(
+			"さて、これからどうしてあげましょうかね？/" + 
+			"どうです？ このままじゃつらいでしょう？ ふふ/" + 
+			@"さ、いいですよ。今度は%CNAME(MASTER, TARGET)%から……")%」
+			}
+		ELSE
+			PRINTFORMW 「そのままでいてください…キスしてあげますから……んっ…ちゅっ…」
+			PRINTL
+			PRINTFORML 「気がつきましたか？ そう、媚薬ですよ…」 
+			PRINTFORMW 「どうです、身体の奥から熱くなってくるでしょう？ うふふ」
+		ENDIF
+		RETURN 2
+	ENDIF
+
+	;その他・条件なし //汎用ACTにはパスしない
+	;================
+	IF 口上記入チェック(100)
+		LOCALS:0 '= RAND_SPLIT("ふふ/うふ")
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(, , "キス", 1)
+		{
+		PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? ねぇ、ムラムラしてきたでしょ？ %LOCALS:0%… 
+		# %LOCALS:0%、体の奥が熱くなってきましたか…？ \@」
+		}
+		RETURN 2
+	ENDIF
+ENDIF
+
+
+;///////////////////////
+;ACT16, 性器を擦り合う//
+;///////////////////////
+[SKIPSTART]
+	#貝合わせ/素股する
+	#調教対象にペニスがある場合はACT派生 == 1「素股する」へ派生する
+	#調教対象がペニスバンド装着中は、ACT派生 == 2「ペニスバンド素股」になる
+	#ターン方針が"ハード", "異常だと発生しない
+	#調教対象が女の子でバイブ装着中だと発生しない
+	#TEQUIP(オナホール/三角木馬)装着中には発生しない
+	#性交中/性交奉仕中には発生しない
+	#調教者にペニスがあると発生しない（奉仕系の素股強制になる）
+[SKIPEND]
+@KOJO_MALE_ACT_K39_16 ;TFLAG:ACT派生（=0,貝あわせ/=1,素股/=2,ペニスバンド素股）
+
+;ACT16_1, 素股する
+;=================
+IF TFLAG:ACT派生 == 1
+	;調教対象がイキそうなのを我慢しているかつ焦らし中ではない場合（長い）
+	;============================================================
+	IF TCVAR:MASTER:イきそう && TCVAR:MASTER:我慢 && TCVAR:MASTER:焦らし度 < 2
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「あら、だらしないのね。もうイきそうみたい」
+			PRINTFORMW 「ほらっ、もっと擦ったらどうなっちゃうの？ クスクス…」
+		ELSE
+			PRINTFORML 「もう限界ですか？ 意外とだらしないんですね」
+			CALL HTMLPRINTW(@"「では、もっと激しくしてあげましょうか%HTML_PS_K39()%」")
+		ENDIF
+		PRINTFORMDW %CALLNAME:TARGET%は%CALLNAME:MASTER%の上でペニスを挟みこんだまま、激しく腰を振りはじめた…
+		RETURN 1
+	ENDIF
+
+	;調教対象がイキそう
+	;==================
+	IF TCVAR:MASTER:イきそう
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				;好意、好感度で派生
+				IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+					{
+					PRINTFORMW 「%RAND_SPLIT(
+					"ふふ、もどかしくて腰が動いちゃう？/" + 
+					"そろそろ限界みたいね…？/" + 
+					"もうイきたくて堪らないみたいね？")%」
+					}
+					PRINTFORM 「でも、もう少し我慢して貰うから
+				ELSE
+					{
+					PRINTFORMW 「%RAND_SPLIT(
+					"ふふ、イきたくて仕方無いんですね？/" + 
+					"そろそろ限界みたいですね。でも…/" +
+					"そう簡単にはイかせませんよ？")%」
+					}
+					PRINTFORM 「もう少しだけ我慢してもらいます
+				ENDIF
+				CALL PRINT_SYMBOL_K39
+			;焦らし終了
+			CASE 1
+				;好意、好感度で派生
+				IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+					SELECTCASE RANDACT(3, 2)
+						CASE 0
+							PRINTFORMW 「流石に限界かしら？ ほら、いいわよ」
+							CALL HTMLPRINTW(@"「このままイかせてあげる%HTML_PS_K39()%」")
+						CASE 1
+							CALL HTMLPRINTW(@"「最後は私のココで擦ってイかせてあげる%HTML_PS_K39()%」")
+							PRINTFORMW 「ふふ、今にも爆発しそうね」
+						CASE 2
+							PRINTFORMW 「いいよ…イかせてあげる」
+							PRINTFORMW 「%CNAME(MASTER, TARGET)%の精液、ここにかけて…」
+					ENDSELECT
+				ELSE
+					SELECTCASE RANDACT(2, 3)
+						CASE 0
+							PRINTFORMW 「流石に限界みたいですね？」
+							PRINTFORM 「いいですよ。このままイかせてあげます
+						CASE 1
+							PRINTFORMW 「すぐにでもイってしまいそうですね？」
+							PRINTFORM 「最後は私のココで擦ってイかせてあげます
+					ENDSELECT
+					CALL PRINT_SYMBOL_K39
+				ENDIF
+			;焦らし無し
+			CASEELSE
+				;好意、好感度で派生
+				IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+					SELECTCASE RANDACT(2, 4)
+						CASE 0
+							PRINTFORMW 「ほら、これでよく判るかしら？」
+							PRINTFORM 「自分がイク瞬間、よく見てて
+						CASE 1
+							PRINTFORML 「ほら、ちゃんと見てないと駄目…」
+							PRINTFORM 「%CNAME(MASTER, TARGET)%のがどこでどう擦られてどうイっちゃうのか、よく見てて
+					ENDSELECT
+				ELSE
+					SELECTCASE RANDACT(2, 5)
+						CASE 0
+							PRINTFORMW 「ん、これでよく判るでしょうか…」
+							PRINTFORM 「自分がイク瞬間、よく見てて下さいね
+						CASE 1
+							PRINTFORMW 「ちゃんと見てないと駄目ですよ？」
+							PRINTFORM 「私が%CNAME(MASTER, TARGET)%をどうやってイかせるのか、よく見てて下さいね
+					ENDSELECT
+				ENDIF
+				CALL PRINT_SYMBOL_K39
+		ENDSELECT
+		RETURN 1
+	ENDIF
+
+	;押し倒し状態もしくは仰向け
+	;==========================
+	IF TFLAG:仰向け || TEQUIP:押し倒し中
+		;連続実行
+		IF TFLAG:ACT == TFLAG:前ACT
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				{
+				CALL HTMLPRINTL(
+				@"「んっ%HTML_AH_K39()%　や…あぁっ%HTML_AH_K39()%　" + 
+				"挿入れられてるみたいで、興奮しちゃう……」")
+				}
+				PRINTFORMW 「でも…こういうのも悪くない、かも……」
+			ELSE
+				PRINTFORML 「私に一方的に嬲られてどんな感じでしょう…？」
+				PRINTFORMW 「こういうのも、意外と嫌いではないみたいですけど。クスクス…」
+			ENDIF
+		;通常
+		ELSE
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORML 「さぁ、そのまま大人しくしてて。太股で愉しませてあげる…」
+				PRINTFORM 「というか、%RAND_SPLIT("私も/こっちが")%愉しませてもらうんだけど。ね…
+			ELSE
+				PRINTFORM 「大人しくしててくださいね。私のフトモモで擦ってあげます…
+			ENDIF
+			CALL PRINT_SYMBOL_K39
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;連続実行
+	;========
+	IF TFLAG:ACT == TFLAG:前ACT
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			;2/3で真 //汎用ACTの分がこの箇所向きと思われたので移設。汎用ACT分は削除
+			IF RAND:3
+				SELECTCASE RANDACT(2, 10)
+					CASE 0
+						PRINTFORMW 「ほら、裏スジが擦れて気持ちいいでしょ？」
+					CASE 1
+						CALL HTMLPRINTL(@"「ふふ、ビクビクさせちゃって%HTML_PS_K39()%」")
+						PRINTFORMW 「ねぇ、これがそんなに気持ちいいの？」
+				ENDSELECT
+				SELECTCASE RANDACT(2, 11)
+					CASE 0
+						PRINTFORMW 「もっと激しい方がいい？ こんな感じ？ それともこう？ うふっ…」
+					CASE 1
+						CALL HTMLPRINTW(@"「これ、グチュグチュ音がして…すごくイヤラシイ感じね%HTML_PS_K39()%」")
+				ENDSELECT
+			;1/3で真
+			ELSE
+				PRINTFORML 「擦れるところがグチュグチュいって、凄くいやらしい……」
+				CALL HTMLPRINTW("「やっ、だめっ%HTML_AH_K39()%　腰が、止まらなくなっちゃう…ッ…%HTML_PS2_K39()%」")
+			ENDIF
+		ELSE
+			;2/3で真
+			IF RAND:3
+				SELECTCASE RANDACT(2, 12)
+					CASE 0
+						PRINTFORMW 「挿入されてるみたいで、ちょっと興奮してしまいますね…」
+					CASE 1
+						{
+						CALL HTMLPRINTW(
+						@"「んっ%HTML_AH_K39()%　敏感なとこに当たって、" + 
+						"私も気持ちよくなってしまいますね…」")
+						}
+				ENDSELECT
+				SELECTCASE RANDACT(2, 13)
+					CASE 0
+						{
+						CALL HTMLPRINTW(
+						@"「もっと激しくいきましょうか？ うふ、" + 
+						"あなたも動いていいんですよ%HTML_PS_K39()%」")
+						}
+					CASE 1
+						PRINTFORMW 「こんな感じでしょうか？ それともこうがいいですか？」
+				ENDSELECT
+			;1/3で真
+			ELSE
+				CALL HTMLPRINTW(@"「んっ%HTML_AH_K39()%　くっ…いいところが擦れて……」")
+				CALL HTMLPRINTW(@"「わたし、興奮しちゃってッ…%HTML_AH_K39()%　あっ、んっ…%HTML_AH_K39()%」")
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;勃起 //60%で表示
+	;====
+	IF 口上記入チェック(60) && TCVAR:MASTER:勃起度 >= 1000 && !FLAG:オートモード ;//オートモード簡略表示なら弾く
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(2, 20)
+				CASE 0
+					CALL HTMLPRINTW(@"「うふっ%HTML_AH2_K39()%　太ももで挟んで欲しいんでしょ…？」")
+					PRINTFORMW 「でも、ちゃんとおねだりをしないと駄目……」
+					PRINTFORMW 「ほら、言ってみて……」
+					PRINTL
+					PRINTFORMDL [ 0] %CALLNAME:TARGET%様の太股でしごいて下さいお願いします！
+					PRINTFORMDL [ 1] だが断る
+					CALL INPUTINTD(0, 1)
+					SELECTCASE RESULT
+						CASE 0
+							CALL HTMLPRINTW(@"「そうそう、素直が一番ね%HTML_PS_K39()%」")
+						CASE 1
+							PRINTFORML 「…………」
+							PRINTFORMDW %CALLNAME%の周囲には禍々しい厄が渦巻き、その様に%CALLNAME:MASTER%は恐怖した……
+							PRINTFORMW 「ねぇ、もう一度チャンスをあげてもいいけど。どうする…？」
+							PRINTL
+							PRINTFORMDL [ 0] %CALLNAME:TARGET%様の太股で扱いて下さいお願いします！
+							CALL INPUTINTD(0)
+							SELECTCASE RESULT
+								CASE 0
+									PRINTFORMW 「もうっ、最初からそう言えばいいのに！」
+							ENDSELECT
+					ENDSELECT
+				CASE 1
+					PRINTFORML 「分かってる。素股をして欲しいんでしょ…？」
+					CALL HTMLPRINTW(@"「いいよ…たまにはおねだり無しでもしてあげる…%HTML_PS_K39()%」")
+			ENDSELECT
+		;その他
+		ELSE
+			PRINTFORML 「あら、素股をして欲しいんですね？　いいですよ」
+			CALL HTMLPRINTW(@"「私の太股の感触、存分に堪能してくださいね%HTML_PS_K39()%」")
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;その他・連続実行ではない場合
+	;============================
+	IF TFLAG:ACT != TFLAG:前ACT
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(2, 30)
+				CASE 0
+					PRINTFORMW 「さぁ、この雛様が太股で挟んであげる。感謝しなさいよっ！」
+					PRINTFORMW 「……なーんて。%RAND_SPLIT("ふふ/クスクス")%…」
+				CASE 1
+					PRINTFORML 「普通にするのも好きだけど…」
+					PRINTFORMW 「素股も違った良さがある感じ。ねぇ、%CNAME(MASTER, TARGET)%はどう？」
+			ENDSELECT
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「さぁ、私の素股で愉しんでくださいね…」
+			CALL HTMLPRINTW(@"「%CNAME(MASTER, TARGET)%が悦んでくれると、私も嬉しいんですよ%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORML 「%CNAME(MASTER, TARGET)%から見て私の脚はどうでしょう？ 魅力的ですか…？」
+			PRINTFORMW 「気に入ってもらえると嬉しいです…」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;/////////////////////
+;ACT17, パイズリする//
+;/////////////////////
+[SKIPSTART]
+	#TFLAG:お仕置きフラグがたっていると発生しない
+	#ターン方針が"ハード", "異常"の場合は発生しない
+	#TEQUIP(オナホール/三角木馬)装着中には発生しない
+	#調教対象にペニスがない場合は発生しない
+	#調教者がオトコの場合は発生しない
+[SKIPEND]
+@KOJO_MALE_ACT_K39_17 ;ACT派生なし
+
+;派生0で決め打ちしておく
+IF !TFLAG:ACT派生
+	;調教対象がイキそうなのを我慢しているかつ焦らし中ではない場合
+	;============================================================
+	IF TCVAR:MASTER:イきそう && TCVAR:MASTER:我慢 && TCVAR:MASTER:焦らし度 < 2
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(2, 0)
+				CASE 0
+					PRINTFORML 「んーまだ頑張るつもり…？ そろそろ出して欲しいんだけど…」
+					PRINTFORMW 「ねぇ、こんな精液大好きな神様を軽蔑する…？」
+					PRINTL
+					{
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%のだからだよ……%TNAME_K39()%は%CNAME
+					(MASTER, TARGET)%の精液だから好きなの…だから…」
+					}
+					PRINTFORMW 「我慢なんてしないで、さっさと出しちゃいなさいよっ！ クスクス」
+				CASE 1
+					CALL HTMLPRINTL("「我慢したってどうせイっちゃうのに、面白い人ね%HTML_PS_K39()%」")
+					PRINTFORMW 「ほら、これにも耐えられる…？」
+			ENDSELECT
+		ELSEIF AFFECTION("溺愛")
+			SELECTCASE RANDACT(2, 1)
+				CASE 0
+					PRINTFORML 「我慢してる%CNAME(MASTER, TARGET)%もとっても可愛いのですが…」
+					PRINTFORMW 「そろそろ厄を出して欲しいです…」
+					PRINTL
+					{
+					CALL HTMLPRINTW(
+					@"「%CNAME(MASTER, TARGET)%はそのままでいてくださいね。" + 
+					@"ちょっと激しくいかせてもらいますから%HTML_PS_K39()%」")
+					}
+				CASE 1
+					CALL HTMLPRINTW(@"「うふ%HTML_AH2_K39()%　まだ耐えるんですね。では、こういうのはどうでしょう…？」")
+			ENDSELECT
+		ELSE
+			SELECTCASE RANDACT(2, 2)
+				CASE 0
+					PRINTFORML 「こんなはちきれそうなのに、まだ我慢するんですか？ なかなか強情ですね…」
+					CALL HTMLPRINTW(@"「これは、私も本気を出す必要があるみたいです%HTML_PS_K39()%」")
+					PRINTFORMW 「さぁ、そのまま動かないでくださいね…」
+				CASE 1
+					PRINTFORML 「我慢しないで素直に感じてもらいたいのですが…」
+					CALL HTMLPRINTW(@"「でも、そろそろ限界みたいですね？ うふ…%HTML_PS_K39()%」")
+			ENDSELECT
+		ENDIF
+		PRINTL
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(COLOR2_K39("WHITE"), , "パイズリ", , 1)
+		;調教者の満足度が高い場合
+		SIF TENSION(TARGET, 8) == "高い"
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(COLOR2_K39("WHITE"), , "パイズリ", , 1)
+		{
+		PRINTFORMDW %CALLNAME%は乳房を両手で\@ IS_CONDITION(TARGET, "情欲") 
+		? きつく 
+		# しっかりと 
+		\@締め付け、%RAND_SPLIT("快楽に喘ぐ/")%%CALLNAME:MASTER%を激しく責め立てた…
+		}
+		RETURN 1
+	ENDIF
+
+	;調教対象がイキそう //このへん単調だなぁ感ある
+	;==================
+	IF TCVAR:MASTER:イきそう
+		;焦らし度によって派生
+		SELECTCASE TCVAR:MASTER:焦らし度
+			;焦らし中
+			CASE IS > 1
+				;好意、好感度で派生
+				{
+				PRINTFORMW 「\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+				? %RAND_SPLIT("ふふ、もどかしくて腰が動いちゃう/もうイきたくて堪らないみたいね")% 
+				# %RAND_SPLIT("ふふ、イきたくて仕方無いんですね/そう簡単にはイかせませんよ")% \@？」
+				}
+				{
+				CALL HTMLPRINTW(
+				@"「\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? でも、# \@もう少し我慢して" + 
+				@"\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? 貰うから # もらいます\@%HTML_PS_K39()%」")
+				}
+			;焦らし終了
+			CASE 1
+				;好意、好感度で派生
+				IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+					PRINTFORML 「ねぇ、もうイきたいの？ 胸にかけたいの…？」
+					CALL HTMLPRINTW(@"「うふ、そんな目で見られたら断れないわね%HTML_PS_K39()%」")
+					PRINTFORMW 「いつでもいいよ……%TNAME_K39()%を%CNAME(MASTER, TARGET)%の精液塗れにして…」
+				ELSEIF AFFECTION("溺愛")
+					PRINTFORML 「んっ、凄く熱くなって……もう限界ですか？」
+					CALL HTMLPRINTW(@"「いいですよ、このままイかせてあげますから%HTML_PS_K39()%」")
+				ELSE
+					PRINTFORML 「もう限界みたいですね？ いいですよ…、そのままじっとしてて下さい…」
+					PRINTFORMW 「このまま私の胸で厄を搾り取ってあげます…」
+				ENDIF
+			;焦らし無し
+			CASEELSE
+				;好意、好感度で派生
+				IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+					PRINTFORML 「もう限界みたいね……いいよ、好きなときに出して…」
+					PRINTFORMW 「%TNAME_K39()%が全部受け止めてあげるから……」
+				ELSEIF AFFECTION("溺愛")
+					CALL HTMLPRINTL(@"「あっ%HTML_AH_K39()%　胸の間でビクビクしてます。イきそうなんですね？」")
+					PRINTFORMW 「私の胸で感じてくれて、なんだかとっても嬉しいです……」
+				ELSE
+					PRINTFORML 「もう厄が出そうですね？ いいんですよ、このままイってしまって…」
+					PRINTFORMW 「好きなときに私の胸に出してくださいね…」
+				ENDIF
+		ENDSELECT
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(COLOR2_K39("WHITE"), , "パイズリ", , 1)
+		RETURN 1
+	ENDIF
+
+	;調教対象が仰向けもしくは押し倒し状態
+	;====================================
+	IF TFLAG:仰向け || TEQUIP:押し倒し中
+		;連続実行
+		IF TFLAG:ACT == TFLAG:前ACT
+			CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(COLOR2_K39("WHITE"), , "パイズリ", , 1)
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				CALL HTMLPRINTL(@"「あっ%HTML_AH_K39()%　んんっ%HTML_AH_K39()%　これ、すごくいやらしい……」")
+				PRINTFORMW 「おっぱい犯されてるみたいで、凄く興奮しちゃうの……」
+			ELSEIF AFFECTION("溺愛")
+				CALL HTMLPRINTL(@"「んっ%HTML_AH_K39()%　乳首が擦れると、私もなんだか切なくって……」")
+				PRINTFORMW 「この匂いも堪らなくなります。所詮私もただの女、という事でしょうか……」
+			ELSE
+				CALL HTMLPRINTL(@"「大人しく私の胸で擦られてる姿が、とっても可愛いですね%HTML_PS_K39()%」")
+				PRINTFORMW 「さぁ、たまった厄は全部出してしまいましょう…」
+			ENDIF
+		;通常
+		ELSE
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				CALL HTMLPRINTL(@"「うふ%HTML_AH2_K39()%　動けないでしょ…？」")
+				{
+				CALL HTMLPRINTW(
+				@"「%TNAME_K39()%のおっぱいで抜いてあげる。" + 
+				@"%CNAME(MASTER, TARGET)%大好きでしょ、これ%HTML_PS_K39()%」")
+				}	
+			ELSEIF AFFECTION("溺愛")
+				{
+				CALL HTMLPRINTL(
+				@"「%CNAME(MASTER, TARGET)%を押し倒していると、" + 
+				@"なんだか興奮してしまいます%HTML_PS_K39()%」")
+				}
+				PRINTFORMW 「さ、私の胸で愉しんでくださいね…」
+			ELSE
+				CALL HTMLPRINTL(@"「はい、これでもう逃げられませんよ%HTML_PS_K39()%」")
+				PRINTFORMW 「諦めて私の胸で搾り取られてくださいね。ふふ…」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;連続実行
+	;========
+	IF TFLAG:ACT == TFLAG:前ACT
+		CALL CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(COLOR2_K39("WHITE"), , "パイズリ", , 1)
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			CALL HTMLPRINTL(@"「うふ、ビクビクさせちゃって可愛い%HTML_PS_K39()%」")
+			PRINTFORMW 「ほら、もっと%TNAME_K39()%のおっぱいで気持ちよくなって…」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「%CNAME(MASTER, TARGET)%を私の胸で包んでいると、とても幸せな気分になります」
+			PRINTFORMW 「自分の務めなど忘れて、いっそこのまま……」
+		ELSE
+			PRINTFORML 「腰がビクビクしてますね、気持ちいいですか？」
+			PRINTFORMW 「気に入ってもらえると、私も嬉しいのですけど…」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;勃起 //50%で表示。漏れたら条件なし分岐へ
+	;====
+	IF 口上記入チェック(50) && TCVAR:MASTER:勃起度 >= 1000
+		CLEARBIT TFLAG:追加行動口上, 0
+		CLEARBIT TFLAG:追加行動地の文スキップ, 0
+		PRINTFORMDW %CALLNAME%は%RAND_SPLIT("いきり立った/限界まで怒張した")%%CALLNAME:MASTER%の男性器を見咎めた…
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(2, 40)
+				CASE 0
+					PRINTFORML 「言わなくても分かるわよ…おっぱいで挟んで欲しいんでしょ…？」
+					PRINTFORMW 「じゃ、なんて言えばいいか判ってるわよね？」
+					PRINTL
+					PRINTFORML 「さぁ、言ってみて……」
+					;今はオトコ用にコンバートしてしまったのでこの三項演算子の箇所はまぁ不要
+					{
+					PRINTFORMW 「『\@ TALENT:MASTER:オトコ 
+					? 僕 
+					# 私 
+					\@のいやらしい変態ちんぽを%CALLNAME:TARGET%様の胸で挟んで扱いてくださいお願いします』って…」
+					}
+					PRINTFORMW 「クスクス…」
+					PRINTL
+				CASE 1
+					PRINTFORML 「――そんなに勃たせちゃって。おっぱいで挟んで欲しいんでしょ…？」
+					CALL HTMLPRINTW(@"「いいよ、おねだり無しでシてあげるから%HTML_PS_K39()%」")
+			ENDSELECT
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「そんなの見せられると、私もドキドキしてしまいます…」
+			PRINTFORMW 「胸で挟んで欲しいんですね？ いいですよ……」
+		ELSE
+			PRINTFORML 「うふ、本当に厄塗れなんですね…」
+			CALL HTMLPRINTW(@"「いいですよ、私の胸で厄を抜いてあげます%HTML_PS_K39()%」")
+		ENDIF
+		;汎用処理を呼ぶ
+		CALL PRINT_ACT_17_0_K39
+		RETURN 1
+	ENDIF
+
+	;その他・条件なし //50%で汎用ACTへパス
+	;================
+	IF 口上記入チェック(50)
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(2, 50)
+				CASE 0
+					PRINTFORMDW %CALLNAME%は唐突に%CALLNAME:MASTER%をビシっと指差し、高らかに言い放った…
+					{
+					CALL HTMLPRINTW(
+					@"「さぁ、%CNAME(MASTER, TARGET)%の粗末なモノを私の胸でしごいて" + 
+					@"%HTMLFONT("<b>アゲル</b>", , )%。感謝することねっ…！」")
+					}
+					PRINTL
+					PRINTFORMW 「なによ！？ どうして笑うの……」
+					{
+					PRINTFORMDL %CALLNAME:TARGET%は%RAND_SPLIT(
+					"鋭い視線を投げつけながら/" + 
+					"意地の悪い笑みを浮かべながら/" + 
+					"少し機嫌悪そうに/少し怒りながら")%、
+					}
+					PRINTFORMDW その\@ TALENT:巨乳 ? 豊かな # \@胸で%CALLNAME:MASTER%のペニスを激しくしごき始めた…
+				CASE 1
+					PRINTFORML 「じゃ、%CNAME(MASTER, TARGET)%が大好きなのシてあげる」
+					CALL HTMLPRINTW(@"「うふ、とぼけてもダ～メ。おっぱい大好きな癖に…%HTML_PS_K39()%」")
+					CALL PRINT_ACT_17_0_K39
+			ENDSELECT
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「さ、私の胸で気持ちよくなってください…」
+			CALL HTMLPRINTW(@"「%CNAME(MASTER, TARGET)%に悦んでもらえるよう、頑張りますね%HTML_PS_K39()%」")
+			CALL PRINT_ACT_17_0_K39
+		ELSE
+			PRINTFORMW 「さぁ、胸でしごいてあげます。存分に愉しんでくださいね？」
+			CALL FADE_TO_CLEARLINE(10, "「ふふ……」")
+			CALL PRINT_ACT_17_0_K39
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;///////////////////
+;ACT18, 足コキする//
+;///////////////////
+[SKIPSTART]
+	#足コキする
+	#調教対象にペニスがない場合は発生しない
+	#異常系から派生する場合もある
+	#TFLAG:お仕置きフラグがたっていると発生しない
+	#今日の方針が"イチャイチャ"だと発生しない
+	#TEQUIP(オナホール/三角木馬)装着中は発生しない
+	#性交中/性交奉仕中は発生しない
+	#調教者に足が無いと発生しない
+	#調教対象が女の子だと発生しない
+[SKIPEND]
+@KOJO_MALE_ACT_K39_18 ;ACT派生なし
+
+;派生0で決め打ちしておく
+IF !TFLAG:ACT派生
+	;初回 //特定のKFLAGが立っていたら弾く
+	;====
+	IF !GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) && FIRSTACT(0)
+		;靴下コキ
+		IF TEQUIP:靴下
+			;調教対象が童貞か否かで派生
+			IF TALENT:MASTER:童貞
+				PRINTFORML 「初めての足コキが靴下越しってどんな感じなんでしょうね」
+				PRINTFORMW 「人によっては、これが何よりのご褒美らしいです」
+				CALL HTMLPRINTW(@"「さて、%CNAME(MASTER, TARGET)%はどうでしょうかね…%HTML_PS_K39()%」")
+			ELSE
+				PRINTFORML 「靴下越しにしごかれるのは初めてでしょうか？」
+				PRINTFORMW 「気に入ってもらえると嬉しいのですが…」
+			ENDIF
+			RETURN 1
+		ENDIF
+
+		;生足
+		IF !TEQUIP:靴下
+			;調教対象が童貞か否かで派生
+			IF TALENT:MASTER:童貞
+				PRINTFORML 「足でこんな事されるのは初めてですか？」
+				PRINTFORMW 「これが大好きな人もいるらしいですが…」
+				CALL HTMLPRINTW(@"「さて、%CNAME(MASTER, TARGET)%はどうでしょうかね…%HTML_PS_K39()%」")
+			ELSE
+				PRINTFORML 「足で扱くのはこれが最初ですが…」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%には気に入ってもらえるでしょうか」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+
+	;調教対象がイキそうなのを我慢しているかつ焦らし中でない場合
+	;==========================================================
+	IF TCVAR:MASTER:イきそう && TCVAR:MASTER:我慢 && TCVAR:MASTER:焦らし度 < 2
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			IF RAND:2
+				PRINTFORMW 「ねぇ、ココ見て。もうぐっしょり濡れてるの…」
+				CALL HTMLPRINTW(@"「うふ、凄く硬くなった…%HTML_PS_K39()%」")
+			ELSE
+				CALL HTMLPRINTW(@"「あら%HTML_PS_K39()%　もう出そうなの？ ふふ、じゃぁ…」")
+			ENDIF
+			PRINTFORMW 「ほらほら、これでもまだ耐えられる…？」
+			PRINTFORMDW %CALLNAME:TARGET%は股間を見せ付けながら、より激しく足で扱き始めた…
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「必死に我慢してる姿が可愛いですね…」
+			CALL HTMLPRINTW(@"「なんだかちょっと、意地悪したくなってしまいます%HTML_PS_K39()%」")
+		ELSE
+			CALL HTMLPRINTL(@"「あらあら、随分と頑張るんですね%HTML_PS_K39()%」")
+			PRINTFORMW 「遠慮せず%RAND_SPLIT("に/")%、出してしまっていいんですよ…？」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;調教対象がイキそう
+	;==================
+	IF TCVAR:MASTER:イきそう
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「ねぇ、気持ちいいの？ イっちゃいそうなの？」
+			PRINTFORMW 「%TNAME_K39()%のおまんこ見ながら、足でシゴかれてイっちゃうの…？」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「腰が浮いてきてますよ？ イきそうなんですね…」
+			CALL HTMLPRINTW(@"「大人しく扱かれてる姿が可愛くて…なんだか変な気持ちになってしまいます%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORMW 「いいですよ、そのまま大人しくしててくださいね…」
+		ENDIF
+		{
+		CALL FADE_TO_CLEARLINE(
+		15, 
+		@"「\@ TENSION(TARGET, 8) == "高い" 
+		? %RAND_SPLIT("くすくす/ふふ")% 
+		# フフ 
+		\@……」")
+		}
+		RETURN 1
+	ENDIF
+
+	;押し倒し状態
+	;============
+	IF TEQUIP:押し倒し中
+		;連続実行
+		IF TFLAG:ACT == TFLAG:前ACT
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORML 「押し倒されて足でシゴかれても気持ちよくなっちゃうんだ？」
+				PRINTFORMW 「だらしない顔しちゃって。クスクス…」
+			ELSEIF AFFECTION("溺愛")
+				PRINTFORML 「無理矢理される方が興奮するみたいですね？」
+				CALL HTMLPRINTW(@"「まぁ…、私もこういうのは嫌いではありませんよ%HTML_PS_K39()%」")
+			ELSE
+				PRINTFORML 「押し倒されて足でしごかれるのはどんな感じですか…？」
+				PRINTFORMW 「うふっ、嫌じゃないように見えますけど」
+			ENDIF
+		;通常
+		ELSE
+			;好意、好感度で派生
+			IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+				PRINTFORMW 「押し倒されてシゴかれる方が、興奮しちゃうんでしょ？」
+				CALL HTMLPRINTW(@"「うふ、隠し事はだめ…%HTML_PS_K39()%」")
+				PRINTFORMW 「素直に言えたら、いっぱい気持ちよくしてあげるから」
+			ELSEIF AFFECTION("溺愛")
+				PRINTFORML 「これ、無理やりしてるみたいで興奮してしまいます」
+				CALL HTMLPRINTW(@"「私の足で、もっと愉しんでくださいね…%HTML_PS_K39()%」")
+			ELSE
+				PRINTFORML 「どうです？ 動けませんよね？」
+				CALL HTMLPRINTW(@"「さぁ、このまま足で扱いてあげますよ%HTML_PS_K39()%」")
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;連続実行
+	;========
+	IF TFLAG:ACT == TFLAG:前ACT
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「ねぇ、足でシゴかれるの大好きなんでしょ…？」
+			CALL HTMLPRINTW(@"「こんなに硬くして、誤魔化してもだ～め%HTML_PS_K39()%」")
+			PRINTFORMW 「ほら、ココもっと見ていいよ…」
+			PRINTFORMDW %CALLNAME:TARGET%は足を大きく広げ、股間を見せ付けながら足で扱き続けた…
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「これをしてる時は硬さが違うみたいです…」
+			CALL HTMLPRINTW(@"「うふっ、%CNAME(MASTER, TARGET)%…こういうのが好きなんですね%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORMW 「これは中々扱き応えがありますね…」
+			CALL HTMLPRINTW(@"「あら、何処を見てるんですか…？ いやらしいんですね%HTML_PS_K39()%」")
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;勃起 //条件にTCVAR:MASTER:射精後経過ターン != 1を加えて@PENIS_DESCRIPTIONから返ってくる文面を限定しておく
+	;====
+	IF 口上記入チェック(55) && TCVAR:MASTER:勃起度 >= 1000 && TCVAR:MASTER:射精後経過ターン != 1
+		PRINTFORMDW %CALLNAME%は%PENIS_DESCRIPTION(MASTER)%%CALLNAME:MASTER%の男性器を見咎めた…
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			SELECTCASE RANDACT(2, 40)
+				CASE 0
+					PRINTFORML 「どうしたの？ そんなにしちゃって…」
+					PRINTFORML 「ねぇ、私にどうして欲しいの…？」
+					PRINTFORMW 「覚り妖怪じゃないんだから、ちゃんと言わないとわからないんだけど？」
+					PRINTL
+					CALL FADEIN(15, "「さぁ、言ってみて……」")
+					{
+					CALL HTMLPRINTW(
+					@"「%HTMLFONT("<b>『僕の浅ましい変態ちんぽを足で虐めてください</b>", , COLOR2_K39("WHITE"))%" + 
+					@"%HTMLFONT("<b>雛</b>", , )%%HTMLFONT("<b>様お願いします』</b>", , COLOR2_K39("WHITE"))%って」")
+					}
+					PRINTFORMW 「クスクス…」
+				CASE 1
+					PRINTFORML 「うふっ、足でシて欲しいの…？」
+					CALL HTMLPRINTW(@"「いいよ、たまにはおねだり無しでしてあげる%HTML_PS_K39()%」")
+			ENDSELECT
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「言わなくても分かります、足でして欲しいんですね…？」
+			CALL HTMLPRINTW(@"「いいですよ、そんな目で見られたら私も断れませんし…%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORML 「もうそんなになってしまって…」
+			PRINTFORMW 「一体何を期待しているのでしょう%RAND_SPLIT("ね/")%…？」
+			CALL FADE_TO_CLEARLINE(12, "「ふふ…」")
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;靴下履いたまま足コキ //デフォルトで靴下履いていないキャラは表示されない
+	;====================
+	IF TEQUIP:靴下
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORML 「靴下でシゴくのってなんかすごくいやらしくて…」
+			PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%もそう思うでしょ？」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORML 「やはり生足とは感覚が違うものなのでしょうか？」
+			PRINTFORMW 「私としては、悦んでもらえるならどちらでも……」
+		ELSE
+			PRINTFORMW 「さ、靴下越しの私の足を愉しんでください」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;その他・条件なし //50%で表示。漏れたら汎用ACTへ
+	;================
+	IF 口上記入チェック(50)
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「さぁ、この『雛様』が足で…って、なんで笑ってるのよ！」 
+			PRINTFORMW 「あんまり笑うならシてあげないんだから……」
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「うふ、お待ちかねでしょうか。誤魔化しても駄目ですよ…？」
+			CALL HTMLPRINTW(@"「他の時と硬さが違いますから、バレバレです%HTML_PS_K39()%」")
+		ELSE
+			PRINTFORML 「さ、足で擦ってあげますよ…」
+			PRINTFORMW 「私の足を存分に愉しんでくださいね？」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;/////////////////
+;ACT19, 指挿入れ//
+;/////////////////
+[SKIPSTART]
+	#ACT19_0, 指挿入れ/ACT19_1, Ｇスポット刺激/ACT19_2, バイブ出し入れ
+	#調教対象がふたなり若しくはオンナの場合に発生
+	#調教対象が処女の場合Ｇスポット刺激等に派生しない＆快Ｖにマイナス補正
+	#バイブ装備中はバイブ出し入れに派生
+	#TFLAG:お仕置きフラグが立っていると発生しない
+	#ターン方針が"異常"だと発生しない
+	#TEQUIP(三角木馬/ペニスバンド)装着中には発生しない
+	#性交中/性交奉仕中には発生しない
+	#調教対象がオトコだと発生しない
+	#調教対象がふたなりの場合、焦らし中には発生しない
+
+
+	*Ｇスポット刺激への派生条件
+		調教対象が処女ではない
+		連続実行の場合
+		イきそうor快Ｃが5000以上の場合、調教者の愛撫スキルに応じて
+		勃起度が低い場合、調教者の愛撫スキルに応じて
+		要強制勃起の場合
+[SKIPEND]
+@KOJO_ACT_K39_19 ;TFLAG:ACT派生(0=指挿入れ/1=Ｇスポット刺激/2=バイブ出し入れ)
+;オトコ限定口上故に不要な箇所
+RETURN 0
+
+[SKIPSTART]
+一応枠組みだけ…
+SELECTCASE TFLAG:ACT派生
+	CASE 0         ;指插入れ
+	CASE 1         ;Ｇスポット刺激
+	CASE 2         ;バイブ出し入れ
+ENDSELECT
+RETURN 1
+[SKIPEND]
+
+
+;/////////////////
+;ACT27, 押し倒す//
+;/////////////////
+[SKIPSTART]
+	#押し倒す/押し倒し終了
+	#既に押し倒している場合、解放になる
+	#TFLAG:お仕置きフラグがたっていると発生しない
+	#今日の方針が"イチャイチャ"だと発生しない
+	#TEQUIP:ペニスバンド装着中には発生しない
+	#焦らし中には発生しない
+[SKIPEND]
+@KOJO_MALE_ACT_K39_27 ;TFLAG:ACT派生（=0,押し倒す/=1,押し倒し終了）
+
+;ACT27_0, 押し倒す
+;=================
+IF !TFLAG:ACT派生
+	;勃起中
+	;======
+	IF TCVAR:MASTER:勃起度 >= 1000
+		PRINTFORMDW %CALLNAME:TARGET%は%CALLNAME:MASTER%の屹立した一物を見咎めた…
+		CALL FADEIN(8, @"「随分元気がいい\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? のね # んですね \@…」")
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			PRINTFORMW 「もうっ、そんなの見せられたら……」
+			PRINTFORM 「我慢できる訳ないでしょ
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「いやらしい人ですね…私を誘ってるんですか…？
+			PRINTFORM 「ではお望み通りに、押し倒させてもらいますね
+		ELSE
+			PRINTFORML 「そんなもの見せつけられたら…」
+			PRINTFORM 「もう押し倒すしかありませんね…
+		ENDIF
+		CALL PRINT_SYMBOL_K39
+		RETURN 1
+	ENDIF
+
+	;調教者が情欲
+	;============
+	IF IS_CONDITION(TARGET, "情欲")
+		{
+		PRINTFORML 「私をその気にさせた責任…、とってもら\@ 
+		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
+		? う%RAND_SPLIT("わよ/から")% 
+		# いますよ \@…」
+		}
+		PRINTFORMW 「もう、我慢でき\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? ないの # ません \@…」
+		RETURN 1
+	ENDIF
+
+	;その他・条件なし //汎用ACTにはパスしない
+	;================
+	IF 口上記入チェック(100)
+		;好意、好感度で派生
+		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+			IF RAND:2
+				PRINTFORML 「まったく人を誘うのが上手いんだから…」
+				PRINTFORMW 「ねぇ、ホントは判ってやってるんでしょ？」
+			ELSE
+				PRINTFORMW 「ほら、大人しくして…」
+				CALL HTMLPRINTW(@"「悪いようにはしないから。ふふ%HTML_PS_K39()%」")
+			ENDIF
+		[SKIPSTART]
+		ELSEIF AFFECTION("溺愛")
+			PRINTFORMW 「ご免なさい、私もう我慢できません」
+			PRINTFORML 「人をその気にさせるのが上手いんですね…」
+		[SKIPEND]
+		ELSE
+			PRINTFORMW 「さぁ、どうしてあげましょうかね？ うふ…」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;押し倒し終了
+;============
+IF TFLAG:ACT派生 == 1
+	{
+	CALL HTMLPRINTW(
+	@"「%RAND_SPLIT("うふ/ふふ")%、お疲れさま\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? … # でした… \@" + 
+	@"%HTMLFONT(UNICODE(0x2665), "ＭＳ Ｐゴシック", COLOR2_K39("PINK"))%」")
+	}
+	RETURN 1
+ENDIF
+
+
+;関数置き場
+;**********
+;英語に於けるこの手の表現はなかなか面白い
+;一番噴いたのはMark Bowden著Black Hawk DownにあったCOMBAT JACK
+@HANDJOB_K39
+#LOCALSIZE 1
+
+;好意、好感度で分岐
+IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+	PRINTFORM 「%RAND_SPLIT("ほら、このまま/そのまま思いっきり/いいわよ？ 遠慮なく/いいわよ、このまま")%
+	;パンツ穿いてる
+	SIF PANTSCHECK(1) && !TEQUIP:オナホール
+		PRINT パンツの中に
+	;オナホ装着中
+	SIF TEQUIP:オナホール
+		PRINT オナホの中に
+	PRINTFORM %RAND_SPLIT("吐き出して/出させてあげるから/ぶちまけて/射精して")%
+	CALL PRINT_SYMBOL_K39
+ELSE
+	PRINTFORM 「さぁ、そのまま
+	SIF PANTSCHECK(1) && !TEQUIP:オナホール
+		PRINT パンツの中に
+	SIF TEQUIP:オナホール
+		PRINT オナホールの中に
+	PRINTW 吐き出してください」
+	CALL HTMLPRINTW(@"「全部搾り取ってあげますから%HTML_PS_K39()%」")
+ENDIF
+
+@PRINT_ACT_17_0_K39
+{
+PRINTFORMDL %CALLNAME:TARGET%は%RAND_SPLIT(
+"時折乳首を擦り付けながら/" + 
+@"%CALLNAME:MASTER%のペニスの先端を舐めながら/" + 
+"自らの唾液を塗しつつ/" + 
+@"%CALLNAME:MASTER%にねっとりとした視線を絡めながら")%、
+}
+{
+PRINTFORMDW その\@ TALENT:巨乳 
+? %RAND_SPLIT("豊かな胸/豊満な乳房/たわわな胸/はち切れんばかりの乳房")% 
+# 胸 
+\@で%CALLNAME:MASTER%のペニスを扱いている……
+}

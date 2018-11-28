@@ -1,0 +1,1223 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	橙口上 調教終了イベント口上ファイル
+;
+;	調教終了イベント口上をまとめたファイル
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;EV13, 調教終了口上
+;========================================================================
+;・@EVENTCOMENDから呼び出される
+;・口上主が調教終了する直前に表示
+;・ARG:1, ARG:2の場合は地の文表示後にPRINTLで空行。その後に口上を表示
+;・ARG:0の場合は固有の地の文なし。口上表示の前にPRINTLで空行が入る
+;・RESULT 0以上を返すと口上表示後にPRINTLで空行が入る
+;-------------------------------------------------
+;関連変数…
+;FLAG:日常制御	調教終了時状況(1=通常/2=精力0/3=一回休み/4=失神した)
+;-------------------------------------------------
+@KOJO_EVENT_K13_13(ARG)
+;-------------------------------------------------
+;引数内訳…
+;ARG=(0, 普通に終了、1, 調教対象が疲れている、2, 調教対象が失神した)
+;-------------------------------------------------
+
+;前回の調教が中止になったフラグを解除(正常に調教が行われた)
+VAR_K13:7 = 0
+
+;────────────────────────────────────
+;ARG:1, ARG:2, 疲労・失神による調教終了 FIRSTEVENT(0)～
+;────────────────────────────────────
+;・調教対象消耗度に応じて疲労/失神に分かれる
+;・呼び出しタイミングは地の文の表示→PRINTL→口上の表示
+;・EVENT201, 介抱(日常イベント)の箇所を書く場合は、上手く連携できるようにすると良いでしょう
+;------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教者が性奉系で処女喪失
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック() && ARG != 2 && VAR_K13:9
+	IF FAVOR(0, 100) || DAY <= 3
+		FORCEWAIT
+		PRINTFORMW 「ふぅ……今回はこんなところかしらね？」
+		PRINTFORMW %CALLNAME%の内股には、未だに破瓜の血の後が生々しく残っている……
+		PRINTFORMW 「あら？　どうかしたの？」
+		PRINTFORMW 「……ああ、ひょっとして私の処女のこと？」
+		PRINTFORMW 「別に大したことじゃないわ。何となくムラッときたから、%FUNC_K13_CALLNAME()%のちんぽを使ってやっただけの話よ」
+		PRINTFORMW 「言ってみれば、道具を使ってオナニーしたのと同じようなものね」
+		PRINTFORMW 「特別な感情なんて何もないから、%FUNC_K13_CALLNAME()%も、ペットの分際で変な勘違いはしないこと」
+		PRINTFORMW 「……いいわね？」
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+
+	ELSE
+		FORCEWAIT
+		PRINTFORMW 「ふぅ……今回はこんなところかしらね？」
+		PRINTFORMW %CALLNAME%の内股には、未だに破瓜の血の後が生々しく残っている……
+		PRINTFORMW 「あら？　どうかしたの？」
+		PRINTFORMW 「……ああ、ひょっとして私の処女のこと？」
+		PRINTFORMW 「別にどうでもいいわよ。そもそも、ここまで生きてきて誰ともシなかったのが間違いだったの」
+		PRINTL 
+		PRINTFORMW 「そもそも、%FUNC_K13_CALLNAME()%が中々懐かないのが悪いのよ」
+		PRINTFORMW 「ペットのくせに、私にあんまりストレスを貯めさせないでよね」
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教初回
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック() && CFLAG:調教回数 == 1
+	PRINTFORMW 「まあ、最初だしこんなものね」
+	PRINTL 
+	PRINTFORMW 「それじゃあ、これからの%FUNC_K13_CALLNAME()%の生活について教えておくわね」
+	PRINTFORMW 「ベッドはまあいいとして……トイレはそこに置いてある壺を使って頂戴」
+	PRINTFORMW 「狭い小屋だからちょっと臭うかもしれないけど、なるべく快適に過ごせるように、昼と夜の二回片付けるようにするからね？」
+	PRINTFORMW 「それと、ご飯は朝昼晩、私が直接持って来てあげる♪　味の方は……まあ、出来る限り頑張るわ」
+	PRINTFORMW 「他にも、不便なことがあったら、少しくらいは聞いてあげるわよ？」
+	PRINTFORMW 「もちろん、あまり贅沢なものだとか、娯楽の類はダメだけどね」
+	PRINTL 
+	PRINTFORMW 「……どう、ペットとしては、悪くない待遇でしょ？」
+	PRINTFORMW 「私は無責任な飼い主じゃないからね。しっかり面倒見てあげるし、可愛がってあげる♪」
+	PRINTFORMW 「だから%FUNC_K13_CALLNAME()%も、ちゃんと私のペットに相応しい子になるのよ？」
+	PRINTL 
+	PRINTFORMW 「ふふ……次からは、本格的に私のペットとして躾けてあげる」
+	PRINTFORMW 「楽しみにしておいてね」
+	CALL FUNC_K13_EVENT_AFTER()
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;夜の調教初回
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック() && VAR_K13:4 == 1 && TIME == 1
+	VAR_K13:4 = 2
+	PRINTFORMW 「とりあえず、今回はこのくらいにしておいてあげる」
+	PRINTL 
+	PRINTFORMW 「……ああ、そうそう」
+	PRINTFORMW 「洋灯はさすがに置いておけないから、持って行かせてもらうわね？」
+	PRINTFORMW 「何かの拍子で火事になったら困るし……それ以前に、一晩中付けておいたら油がもったいないからね」
+	PRINTFORMW 「そんなわけで、暗くなっちゃうけど我慢してちょうだいね？」
+	PRINTFORMW %CALLNAME%は洋灯を手にすると、その場で灯を吹き消した……
+	PRINTFORMW 「別にすることもないだろうから、早めに寝てちゃんと休んでおくのよ？」
+	PRINTFORMW 「おやすみ」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象が失神した
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック() && ARG == 2
+	PRINTFORMW 「全く……途中で倒れちゃうなんて、出来の悪いペットね」
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;眷属化イベント発生時
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック() && VAR_K13:14 == 1
+	VAR_K13:14 = 2
+	PRINTFORMW 気付けば%CALLNAME:MASTER%の頭に生えていた猫耳は引っ込んでしまい、跡形もなくなっていた…
+	PRINTFORMW 「う～ん……やっぱり今の妖力じゃ全然足りないみたいね」
+	PRINTL 
+	PRINTFORMW 「というわけでっ！」
+	PRINTFORMW 「眷属になりたかったら、さらに死ぬ気で私に精をよこしなさいっ！」
+	IF TALENT:MASTER:オトコ
+		PRINTFORMW 「さすがに今回はもう勘弁してあげるけど、次からはもっと気合い入れていくわよ♪」
+		PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の玉袋を指でツンツンとつつきながら、ニコニコと満面の笑みを浮かべた…
+	ELSE
+		PRINTFORMW 「さすがに今回はもう勘弁してあげるけど……次からはもっと気合い入れてイかないとね？」
+		PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の唇に指を当て、クスリと妖しく微笑んだ
+	ENDIF
+	CALL FUNC_K13_EVENT_AFTER()
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教対象が疲れている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック() && ARG == 1
+	PRINTFORMW 「ふふ、今日はこんなところで勘弁してあげる」
+	PRINTFORMW 「次の調教に備えて、ちゃんと休んでおくのよ」
+	CALL FUNC_K13_EVENT_AFTER()
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;ARG:0 普通に終了 FIRSTEVENT(10)～
+;────────────────────────────────────
+;・通常の調教終了時の口上
+;・地の文なし。PRINTLによる空行の後に口上表示
+;・枠毎にイベント番号を振ってありますが、任意に設定する事は可能です
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;イベント制御
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;関係構築イベントが開始可能で、橙が非処女
+IF VAR_K13:11 && !TALENT:処女
+	VAR_K13:11 ++
+	IF VAR_K13:11 % 5 == 2
+		IF VAR_K13:11 == 2
+			PRINTFORMW 「ふふ、今日は楽しかったわよ」
+			PRINTFORMW 「さすがは私のペットね。褒めてあげるっ♪」
+			PRINTFORMW %CALLNAME%は上機嫌な様子で、%CALLNAME:MASTER%の頭をわしゃわしゃと撫で回した
+			PRINTL 
+			PRINTFORMW 「そうだ。良い子だから、一つお願いでも聞いてあげようかな」
+			PRINTFORMW 「いつものと違って、躾の内容以外でもいいわよ。私に出来る範囲なら聞いてあげる」
+			PRINTFORMW 「普段不便に感じてることとか、私にしてほしいこととか、そういうのがあれば聞くから、自由に言ってみて」
+			PRINTFORMW 「……あ、『解放して』とか言ったらさすがに怒るわよ？　大丈夫だと思うけど、念のためね？」
+			PRINTFORMW 「それで、どう？　何かあるかしら？」
+			PRINTL 
+		ELSE
+			PRINTFORMW 「今日も楽しかったわよ、私の可愛いペットちゃん♪」
+			PRINTFORMW %CALLNAME%は上機嫌な様子で、%CALLNAME:MASTER%の頭をわしゃわしゃと撫で回した
+			PRINTL 
+			PRINTFORMW 「せっかくだから、また何かご褒美をあげようかしら？」
+			PRINTFORMW 「普段不便に感じてることとか、私にしてほしいこととか……」
+			PRINTFORMW 「もし何かあるなら聞いてあげるわよ？」
+			IF VAR_K13:15 == 1
+				PRINTFORMW 「ただし！」
+				PRINTFORMW 「この前みたいなふざけたことを言ったら、ただじゃおかないわよ？」
+			ELSEIF VAR_K13:15 == 2
+				PRINTFORMW 「……できれば、変態的なお願いは止めてちょうだいね？」
+			ENDIF
+		ENDIF
+
+		VARSET LOCALS, "", 0, 8
+		LOCAL:5 = 0
+
+		LOCALS:(LOCAL:5) = もっとなでなでされたい
+		LOCAL:5 ++
+		LOCALS:(LOCAL:5) = キスがしたい
+		LOCAL:5 ++
+		IF !VAR_K13:22
+			LOCALS:(LOCAL:5) = 窓が欲しい
+			LOCAL:5 ++
+		ENDIF
+		IF !VAR_K13:23
+			LOCALS:(LOCAL:5) = 良い布団が欲しい
+			LOCAL:5 ++
+		ENDIF
+		IF !VAR_K13:24
+			LOCALS:(LOCAL:5) = %CALLNAME%の恋人になりたい
+			LOCAL:5 ++
+		ENDIF
+		IF !VAR_K13:25
+			LOCALS:(LOCAL:5) = %CALLNAME%の眷属になりたい
+			LOCAL:5 ++
+		ENDIF
+		IF !VAR_K13:26
+			LOCALS:(LOCAL:5) = 解放して欲しい
+			LOCAL:5 ++
+		ELSE
+			LOCALS:(LOCAL:5) = 蹴られたい
+			LOCAL:5 ++
+		ENDIF
+		LOCALS:(LOCAL:5) = 特にない
+
+		CALL FUNC_K13_ASK(LOCALS:0, LOCALS:1, LOCALS:2, LOCALS:3, LOCALS:4, LOCALS:5, LOCALS:6, LOCALS:7)
+
+		SELECTCASE LOCALS:RESULT
+			CASE "もっとなでなでされたい"
+				PRINTFORMW 「あら？　可愛いお願いをするのね？」
+				PRINTFORMW 「それじゃあ、もっとこっちに寄りなさい……♪」
+				IF TALENT:貧乳
+					PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%を抱き寄せると、その小さな胸に%CALLNAME:MASTER%の顔を埋めさせた
+				ELSEIF TALENT:巨乳
+					PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%を抱き寄せると、その体に不釣り合いな大きな胸に%CALLNAME:MASTER%の顔を埋めさせた
+				ELSE
+					PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%を抱き寄せると、その柔らかな胸に%CALLNAME:MASTER%の顔を埋めさせた
+				ENDIF
+				PRINTFORMW 「うふふ～、いつも私に付き合ってくれてありがとうね、ペットちゃん♪　えらい、えらい♪」
+				PRINTFORMW %CALLNAME%はその小さな手で%CALLNAME:MASTER%の頭を優しく撫で回してくる
+				PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%の香りと温もりを感じながら、しばらくの間撫でられ続けた……
+				PRINTL 
+				PRINTFORMW 「ふふ、満足した？」
+				PRINTFORMW 「あんまり褒めすぎて調子に乗られても困るんだけど……」
+				PRINTFORMW 「こんな感じで、たまになら甘やかしてあげる♪」
+				PRINTFORMW 「それじゃあ、今回は帰るわね？　良い子にしてるのよ？」
+				PRINTFORMW %CALLNAME%は楽しそうに尻尾を揺らしながら、小屋を出て行った……
+			CASE "キスがしたい"
+				IF VAR_K13:16 == 1
+					PRINTFORMW 「んー……」
+					PRINTFORMW 「う～ん……」
+					PRINTFORMW 「……今回は、ダーメ」
+					PRINTFORMW %CALLNAME%は、%CALLNAME:MASTER%からフイッ、と顔を背けた
+					PRINTFORMW 「だって、生意気だもの。あんまり調子に乗るんじゃないのっ」
+					PRINTFORMW %CALLNAME%はそう言うと、%CALLNAME:MASTER%に顔を向けることもなく、さっさと小屋を出て行ってしまった……
+				ELSE
+					PRINTFORMW 「ふぅん、私とキスがしたいの？　生意気なこと言うのね？」
+					PRINTFORMW 「……ふふ、いいわよ。可愛いペットちゃんのお願いだもの、聞いてあげる♪」
+					PRINTFORMW 「ほら、顔をこっちに向けて？」
+					PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の頬に手を添えると、至近距離から%CALLNAME:MASTER%の顔を覗き込んだ
+					PRINTFORMW %CALLNAME%がゆっくりと顔を近付けてくる
+					PRINTFORMW 「…………」
+					PRINTFORMW 「…………ん」
+					PRINTFORMW %CALLNAME:MASTER%の唇に、%CALLNAME%の唇が押し当てられる
+					PRINTFORMW そのまま数秒間、%CALLNAME:MASTER%と%CALLNAME%は唇を触れさせ合った……
+					PRINTFORMW 「…………」
+					IF FUNC_K13_ISLOVER()
+						PRINTFORMW 「……うふふっ❤　やっぱりキスすると、恋人って感じがするわね」
+						PRINTFORMW 唇を離した%CALLNAME%は、うっとりとした目で%CALLNAME:MASTER%を見つめた
+						IF !VAR_K13:16
+							VAR_K13:16 = 1
+							PRINTFORMW 「…………」
+							PRINTFORMW 「ねえ、もう一回キスしていい？」
+							PRINTFORMW 「……舌を入れるキス。……たぶん、痛いと思うけど、一回だけだから、ね？」
+							PRINTFORMW %CALLNAME%は舌を出し、猫特有のザラザラとした舌を%CALLNAME:MASTER%に見せつけた
+							PRINTL 
+							PRINTFORMW %CALLNAME:MASTER%が反応を返さずにいると、それを肯定と取ったのか、
+							PRINTFORMW %CALLNAME%は再び唇を%CALLNAME:MASTER%に押し当て、%CALLNAME:MASTER%の唇をこじ開けるようにして舌を潜りこませた
+							PRINTFORMW 「……ん、ふっ……んじゅ、じゅるっ、じゅるり、れろ、んじゅ、じゅるるっ！」
+							PRINTFORMW 小さな舌で、熱に浮かされたように%CALLNAME:MASTER%の口内を貪る%CALLNAME%
+							PRINTFORMW 瞬く間に、%CALLNAME:MASTER%の口内の皮膚は削り取られ、痛みとともに血が滲み始めた
+							PRINTFORMW 「……んじゅるっ、んふっ……%FUNC_K13_CALLNAME()%の血の味がする……じゅる、んちゅ……」
+							PRINTFORMW 「……ずぞっ、ちゅる、じゅる、ちゅぷっ、じゅるるるっ」
+							PRINTFORMW 「……ぷはぁっ♪　興奮しちゃう……このまま%CALLNAME:MASTER%のことを全部食べちゃいたいくらい……❤」
+							PRINTFORMW 口を離した%CALLNAME%は、%CALLNAME:MASTER%の両頬に手を添えたまま、ギラついた瞳で%CALLNAME:MASTER%を見た
+							PRINTFORMW %CALLNAME:MASTER%と%CALLNAME%の口から零れ出た涎が、つつっ、とお互いの間に赤い糸を引いた……
+							PRINTL 
+							PRINTFORMW 「……私はそこらのニンゲンみたいに、無責任な飼い主でもなければ、無責任な恋人でもないからね」
+							PRINTFORMW 「しっかり面倒見てあげるし、可愛がってあげるし、愛してあげる」
+							PRINTFORMW 「……今の、『誓いのキス』だからね、私の」
+							PRINTFORMW %CALLNAME%は頬を上気させながら小さく微笑むと、%CALLNAME:MASTER%の頬から手を離した
+							PRINTFORMW そして、自身の口から零れ出た赤い液体を手の甲で拭き取り、舐め取った
+							PRINTL 
+							PRINTFORMW 「それじゃあ、今回はこれでおしまい！」
+							PRINTFORMW 「口の中、だいぶ傷付けちゃったけど……今日のご飯、食べられそう？」
+							PRINTFORMW 「一応私も、できるだけ刺激が少ないものを用意してみるわね」
+							PRINTFORMW 「私は一旦帰るけど、ちゃんと良い子にしてるのよ？」
+							PRINTFORMW %CALLNAME%は明るく笑うと、%CALLNAME:MASTER%に背を向け、小屋を出て行った……
+						ELSE
+							PRINTFORMW 「……ねえ」
+							PRINTFORMW 「%FUNC_K13_CALLNAME()%のお願いを聞いてあげたんだから、私のお願いも聞いてよ」
+							PRINTFORMW 「今度は、%FUNC_K13_CALLNAME()%から、私にキスしなさい」
+							PRINTFORMW 「……命令だからね❤」
+							PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の頬から手を離すと、ぺたんとその場に座り込んだ
+							PRINTFORMW %CALLNAME%は期待するような目で、じっと%CALLNAME:MASTER%を見つめている……
+							CALL FUNC_K13_ASK("キスする", "焦らしてみる")
+							IF RESULT == 0
+								PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%の頭の後ろに手を回し、抱きしめるようにしながら%CALLNAME%と唇を触れさせた
+								PRINTFORMW 「…………ん」
+								PRINTFORMW 「…………」
+								PRINTFORMW 「…………あはっ❤」
+								PRINTFORMW たっぷり数十秒の後、%CALLNAME:MASTER%が唇を離すと、%CALLNAME%は頬を染めて色っぽく笑った
+								PRINTFORMW 「うふふ、満足したわ、ありがとう♪」
+								PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の頭を軽く撫でると、伸びをするように勢い良く立ち上がった
+								PRINTFORMW 「それじゃあ、今回はこれで帰るわね？　良い子にしてるのよ？」
+								PRINTFORMW %CALLNAME%は機嫌良さそうに尻尾をゆらゆらと振れさせながら、小屋を出て行った……
+							ELSE
+								PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%に唇を近づけた状態で、しばらく静止した
+								PRINTFORMW 「……どうしたの？　ほら、早くして」
+								PRINTFORMW キスをせがむ%CALLNAME%に対して、%CALLNAME:MASTER%は、どうしようかなー、と意地悪く言ってみた
+								PRINTL 
+								PRINTFORML ドスッ
+								PRINTFORMW %CALLNAME:MASTER%の腹部に、%CALLNAME%の膝蹴りがめり込んだ
+								PRINTFORMW 「ご主人様がキスしろって言ったら、さっさと言われた通りにキスしなさいよ！　ホント使えないペットね！！」
+								PRINTFORMW 「もう怒ったわ！　そのまま、そこで一人で悶えてなさいっ！！」
+								PRINTFORML %CALLNAME:MASTER%は腹への容赦ない一撃に、吐き気を伴う激痛で苦しみながら、
+								PRINTFORMW 小屋の扉が壊れそうなほど大きな音を立てて閉まるのを聞いた……
+							ENDIF
+						ENDIF
+					ELSE
+						PRINTFORMW 「……んふっ♪　これで満足？」
+						PRINTFORMW %CALLNAME%はどこか悪戯っぽい笑みを%CALLNAME:MASTER%に向けた
+						PRINTFORMW 「それじゃあ、今回は帰るわね？　良い子にしてるのよ？」
+						PRINTFORMW %CALLNAME%は楽しそうに尻尾を揺らしながら、小屋を出て行った……
+					ENDIF
+				ENDIF
+			CASE "窓が欲しい"
+				PRINTFORMW 「そっか、この小屋、窓がなくて暗いものね」
+				PRINTFORMW 「さすがに通り抜けられるくらい大きいものはダメだけど、小さな覗き窓くらいならいいわよ」
+				PRINTFORMW 「それじゃあ頑張って作るから、期待しててね♪」
+				PRINTL 
+				PRINTFORMW …………
+				PRINTL 
+				PRINTFORMW 後日、小さな覗き窓が２つほど取り付けられた
+				PRINTFORMW 苦労の後が伺える不格好な窓だが、寒い時には塞ぐことが出来るように、簡素な蓋も取り付けられている
+				PRINTFORMW これからは多少なりとも外の景色が楽しめるようになりそうだ……
+				;選択済み
+				VAR_K13:22 = 1
+			CASE "良い布団が欲しい"
+				PRINTFORMW 「良い布団かぁ……いいわね、私が欲しいくらい」
+				PRINTFORMW 「問題は、どうやって手に入れるかだけど……」
+				PRINTFORMW 「うん、何とかするから、私に任せなさいっ！」
+				PRINTL 
+				PRINTFORMW …………
+				PRINTL 
+				PRINTFORMW 後日、%CALLNAME:MASTER%の小屋に良質な布団が届けられた
+				PRINTFORMW 「ふふ、感謝してよね！　頑張ってぬすみ……貰えるように交渉したんだからっ！」
+				PRINTFORMW ……入手ルートについては詮索しないでおこう
+				;選択済み
+				VAR_K13:23 = 1
+			CASE @"%CALLNAME%の恋人になりたい"
+				PRINTFORMW 「へ？」
+				IF TALENT:MASTER:オトコ
+					PRINTFORMW 一瞬きょとんとした表情を浮かべる%CALLNAME%
+					PRINTFORML ゴスッ！
+					PRINTFORMW 次の瞬間、%CALLNAME%の膝打ちが%CALLNAME:MASTER%の顔面を直撃した
+					PRINTL 
+					PRINTFORMW 「まったく……何を言ってるのよ」
+					PRINTFORMW 「本気なのか冗談なのか知らなけど、調子に乗るんじゃないの。ペットのクセに」
+					PRINTFORMW 「…………」
+					PRINTFORMW 「あ～……もう止め止め！　さっきの話は全部ナシっ！」
+					PRINTFORMW 「私はもう帰るから、小屋の中で反省してなさいっ！　いいわねっ！」
+					PRINTFORMW %CALLNAME%は顔を背けると、さっさと小屋を出て行ってしまった……
+				ELSE
+					PRINTFORMW %CALLNAME:MASTER%の答えが予想外だったらしく、きょとんとした表情を浮かべる%CALLNAME%
+					PRINTL 
+					PRINTFORMW 「いやいや、女同士で恋人も何もないでしょ！？」
+					PRINTFORMW 「そりゃエッチなことは色々してるけど、躾のためにそうしてるだけだし」
+					PRINTFORMW 「さすがの私も、そういうのは、なんというか……引くわ」
+					PRINTFORMW %CALLNAME%は呆れと困惑の混じったような溜息をついた
+					PRINTFORMW 「そもそも！」
+					PRINTFORMW 「女同士だとかそういう問題は別にしても、%FUNC_K13_CALLNAME()%は私の『ペット』なの！」
+					PRINTFORMW 「そうそう『恋人』なんかに格上げしてあげるわけないでしょ？」
+					PRINTFORMW 「大人しく、ペットとして可愛がられてるだけで満足しなさい！」
+					PRINTFORMW 「調子に乗った罰として、今回のご褒美はナシよ。しばらく小屋の中で反省してなさいっ！」
+					PRINTFORMW %CALLNAME%は機嫌悪そうに顔を背けると、さっさと小屋を出て行ってしまった……
+				ENDIF
+				;選択済み(恋人イベント進行)
+				VAR_K13:24 = 1
+			CASE @"%CALLNAME%の眷属になりたい"
+				PRINTFORMW 「え？　何？　……けんぞく？」
+				PRINTFORMW 一瞬きょとんとした表情を浮かべる%CALLNAME%
+				PRINTFORMW 「え～と……けんぞくって何だっけ？」
+				PRINTFORMW 「要するに、私とお揃いの化け猫になって、しかも私の家来になりたいってこと？」
+				PRINTFORMW 微妙に違う気もするが、大体そのようなものだと%CALLNAME:MASTER%は伝えた
+				PRINTFORMW 「別にいいけれど……それって結構すごい妖怪じゃないと出来ないんじゃなかったかしら？」
+				;主人公が藍または紫
+				IF GROUPMATCH(NO:MASTER, 21, 22)
+					PRINTFORMW 「ま、いいや。後でやり方教えてよね？」
+				ELSE
+					PRINTFORMW 「ま、いいや。後で藍様にやり方を聞いてみよっと」
+				ENDIF
+				PRINTFORMW 「もし出来そうなら、『けんぞく』って奴にしてあげる。期待しててね♪」
+				;選択済み(眷属化イベント進行)
+				VAR_K13:25 = 1
+			CASE "解放して欲しい"
+				PRINTFORML ゴッ！
+				PRINTFORMW 鋭い蹴りが%CALLNAME:MASTER%の顎を直撃した
+				PRINTFORMW 「ダメだって言ったでしょ。冗談でもダメ」
+				PRINTFORMW 「可愛いペットに今更そんなこと言われたら、たとえ冗談でも結構傷ついちゃうじゃないの！」
+				PRINTFORMW 「あ～……もう怒った！　さっきの話は全部ナシっ！」
+				PRINTFORMW 「私はもう帰るから、小屋の中で大人しくしてなさいっ！　いいわねっ！」
+				PRINTFORMW %CALLNAME%は、すっかり不機嫌になって出て行ってしまった……
+				;選択済み
+				VAR_K13:26 = 1
+				;前回選択判定
+				VAR_K13:15 = 1
+			CASE "蹴られたい"
+				IF VAR_K13:26 == 2
+					PRINTFORMW 「……%FUNC_K13_CALLNAME()%も懲りないわねえ」
+					PRINTFORMW 「そんなに言うなら、蹴ってあげるわ……よっ！」
+					SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML ドスッ！！
+						PRINTFORMW %CALLNAME%の鋭い蹴りが%CALLNAME:MASTER%の腹にめり込んだ
+						PRINTFORMW %CALLNAME:MASTER%はその場にうずくまり、胃液が逆流しそうな感覚に嗚咽を漏らした
+						PRINTFORMW 「ほら、お望み通り蹴ってあげたわよ。ご主人様へのお礼はどうしたの？」
+						PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の頭を足で踏みつけると、体重を掛けてグリグリと額を床に擦りつけさせた
+						PRINTFORMW ……%CALLNAME%も意外とノリノリな感じがするのは気のせいだろうか
+						PRINTFORMW 「まったく……変態なペットを持つと苦労するわね」
+						PRINTFORMW 「ほら、ちゃんと『ありがとうございます』って言えるまで続けるわよ？」
+						PRINTFORMW ようやく%CALLNAME:MASTER%の嗚咽が収まるころには、%CALLNAME:MASTER%の額は酷く擦り切れて血が滲んでいた…
+					CASE 1
+						PRINTFORML ドスッ！！
+						PRINTFORMW %CALLNAME%の鋭い蹴りが%CALLNAME:MASTER%の股間を直撃した
+						IF TALENT:MASTER:オトコ
+							PRINTFORMW ワンテンポ遅れて、この世のものとは思えない苦痛と不快感が%CALLNAME:MASTER%の全身を襲う
+							PRINTFORMW 瞬間、%CALLNAME:MASTER%の全身からブワッと汗が噴き出した
+							PRINTFORMW 「ほら、お望み通り、思いっきり蹴ってあげたわよ。これで満足？」
+							PRINTFORMW 「………………」
+							PRINTL 
+							PRINTFORMW 「ちょっと、いつまでも蹲ってないで、何とか言いなさいよ？」
+							PRINTFORMW 「………………」
+							PRINTL 
+							PRINTFORMW 「ねえ、起きてるわよね？」
+							PRINTFORMW 「………………」
+							PRINTFORMW 「…………あー、ダメね。泡吹いちゃってる」
+							PRINTFORMW 「まあ、さすがにここまでしたら、どんな変態でも懲りるでしょ……たぶん」
+							PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%をその場に放置したまま、そそくさと小屋を出て行った…
+						ELSE
+							PRINTFORMW 恥骨への強烈な一撃に、%CALLNAME:MASTER%はあまりの痛みに股間を押さえてのたうち回った
+							PRINTFORMW 「お望み通り蹴ってあげたわけだけど……随分と楽しそうね？」
+							PRINTFORMW 「………………」
+							PRINTFORML 何を思ったのか、%CALLNAME%は股間を押さえている%CALLNAME:MASTER%の手を力づくで剥がすと、
+							PRINTFORMW %CALLNAME:MASTER%の股間に足を乗せてグリグリと踏みにじった
+							PRINTFORMW %CALLNAME:MASTER%は痛む股間にさらに痛みを上乗せされ、悲鳴を上げて悶えた
+							PRINTFORMW 「変態な%FUNC_K13_CALLNAME()%のために、もっとイイことをしてあげる」
+							PRINTFORML %CALLNAME%は%CALLNAME:MASTER%の両足を掴むと、
+							PRINTFORMW 俗にいう電気按摩の体勢で%CALLNAME:MASTER%のクリトリスを足で踏み付けるように強い力で擦った
+							PRINTFORMW 「ほら、こういうのがいいんでしょ！　この変態っ！　変態女っ！！」
+							PRINTFORMW %CALLNAME:MASTER%はあまりの激痛に、苦痛と快感の区別も付けられないまま、涙を流し髪を振り乱して泣き喚いた
+							PRINTFORMW 不意に腰の感覚がなくなったと思うと、次の瞬間、雷に打たれたような強烈な衝撃が%CALLNAME:MASTER%の脳を焼いた
+							PRINTFORMW %CALLNAME:MASTER%は激痛と衝撃で頭がおかしくなりそうな恐怖を感じながら、意識を失った……
+							PRINTL 
+							PRINTFORMW 「あらら……泡吹いちゃってる。さすがにやり過ぎたかしら？」
+							PRINTFORMW 「まあ、これで懲りてくれるなら問題ないんだけど……」
+							PRINTFORMW 「ヘタすると、ますます変な方向に目覚めちゃいそうよね」
+							PRINTFORMW 「私もちょっと悪ノリしちゃったし……うぅ、失敗したわ」
+							PRINTFORMW %CALLNAME%は小さく溜息をつくと、困ったような表情を浮かべながら小屋を出て行った…
+						ENDIF
+					CASE 2
+						PRINTFORML ゴッ！！
+						PRINTFORMW %CALLNAME%の鋭い蹴りが%CALLNAME:MASTER%の顔面を直撃した
+						PRINTFORMW 衝撃で%CALLNAME:MASTER%の体が後ろに転がり、%CALLNAME:MASTER%に付けられた首輪の鎖がジャラジャラと音を立てる
+						PRINTFORMW 「これで満足？　ホント、世話の焼けるペットね」
+						PRINTFORMW 「……あら？　鼻血、出てるわよ？」
+						PRINTFORMW %CALLNAME%の言う通り、起き上がった%CALLNAME:MASTER%の鼻からはポタポタと血が流れ落ちていた
+						PRINTFORMW 「ま、そのくらいなら鼻の骨は折れてないんじゃない？」
+						PRINTFORMW 「いっそのこと、鼻どころか頭蓋骨にヒビが入る勢いで蹴った方が、お互いのためだったかもね？」
+						PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%を蔑むように小さく笑うと、鼻血を流す%CALLNAME:MASTER%を放置して小屋をから出て行った…
+					ENDSELECT
+				ELSE
+					PRINTFORMW 「…………え？」
+					PRINTFORMW %CALLNAME%はパチクリさせて、固まった
+					PRINTFORMW 「ええと……聞き間違いじゃないわよね？」
+					PRINTFORMW 「蹴られたいって……さすがにそれは私も引いちゃうわよ？」
+					PRINTFORMW %CALLNAME%は、まさに汚物を見るような嫌そうな目を%CALLNAME:MASTER%に向けている…
+					PRINTFORMW 「ひょっとして、この前ので変なものに目覚めちゃったのかしら？」
+					PRINTFORMW 「まあ、お願いを聞くって言った手前だし、別にいいけどさぁ…」
+					PRINTFORMW 「ほら、いくわよ？」
+					PRINTL 
+					PRINTFORML ドスッ！！
+					PRINTFORMW %CALLNAME%の鋭い蹴りが%CALLNAME:MASTER%の胸を直撃し、%CALLNAME:MASTER%は衝撃で床に打ち付けられた
+					PRINTFORMW %CALLNAME:MASTER%は肺への強烈なダメージで、息を吸い込むこともできず、あまりの苦しさに悶えた
+					PRINTFORMW 「今回はちょっと強めにしてあげたから、結構キクんじゃない？」
+					PRINTFORMW 「これに懲りたら、もうこういう要求は止めてよね」
+					PRINTFORMW 苦しむ%CALLNAME:MASTER%をその場に残して、%CALLNAME%はさっさと小屋の扉の方へ歩いて行った
+					PRINTFORMW 「はぁ……躾け方を間違ったかなぁ」
+					;選択済み
+					VAR_K13:26 = 2
+				ENDIF
+				;前回選択判定
+				VAR_K13:15 = 2
+
+			CASE "特にない"
+				PRINTFORMW 「あら？　そうなの？」
+				PRINTFORMW 「まあ、%FUNC_K13_CALLNAME()%がいいなら、それでもいいけど」
+				PRINTFORMW 「とりあえずは不満なしってことで、前向きに受け取っておくわね♪」
+		ENDSELECT
+
+		;キス要求時のイベント制御
+		IF VAR_K13:16 == 1
+			VAR_K13:16 = 2
+		ENDIF
+
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;大満足ボーナスを得ている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && TFLAG:今回で大満足
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(10)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;調教対象の精力0
+	;=================================================
+	IF 口上記入チェック(0) && FLAG:日常制御 == 2
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;*************************************************
+;以下、好感度による派生
+;*************************************************
+
+;EVENT11あたりで任意のKFLAGを立てて条件にしてやると話の辻褄は合わせやすいです
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;相思相愛（好意3000以上・好感度3000以上）
+;-------------------------------------------------
+;・互いに好き合っている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック() && AFFECTION("相思相愛")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(20)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;好感度の伸び的に溺愛の後になると思われます
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教完了（好意2000以上）
+;-------------------------------------------------
+;・調教対象が口上主にもうメロメロ
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("調教完了")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(30)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;溺愛（好感度2000以上）
+;-------------------------------------------------
+;・調教者の方が調教対象にはまってしまい、深かったり倒錯した愛を注いでいる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("溺愛")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(40)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教済み（好意1000以上）
+;-------------------------------------------------
+;・調教対象が口上主に調教されるのを幸せに感じている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("調教済み")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(50)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;嫌悪（好意-100未満）
+;-------------------------------------------------
+;・調教者に対し嫌悪感を抱いている
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("嫌悪")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(60)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;・心に傷を作られ、ご主人様の姿を見るだけで怯えてしまう
+;・トラウマの種は「%ACTSTR(CFLAG:MASTER:8)%」で表示できる
+;　例）PRINTFORMW 「もう%ACTSTR(CFLAG:MASTER:8)%は嫌ですって？」
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;恐怖（好意200未満・トラウマLv3以上）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("恐怖")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(70)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;反抗（好意0以下・反抗刻印Lv1以上）
+;-------------------------------------------------
+;・心を開かない奴隷に苛つくご主人様
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("反抗")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(80)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;目覚め（好意500以上）
+;-------------------------------------------------
+;・調教されるのもむしろ好きになってきたかも知れない…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("目覚め")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(90)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;順応（好意100以上・好感度100以上）
+;-------------------------------------------------
+;・丁寧に調教を進められて、思ったより嫌じゃないかも…
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(0) && AFFECTION("順応")
+	;=================================================
+	;初回
+	;=================================================
+	IF 口上記入チェック(0) && FIRSTEVENT(100)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック(0)
+		PRINTFORMW 
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;序盤（条件なし）
+;-------------------------------------------------
+;・ここまでの条件にヒットしなかった場合
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック()
+	;=================================================
+	;その他・条件なし
+	;=================================================
+	IF 口上記入チェック()
+		PRINTFORMW 「ふふ、今日はこんなところで勘弁してあげる」
+		PRINTFORMW 「次の調教に備えて、ちゃんと休んでおくのよ」
+		CALL FUNC_K13_EVENT_AFTER()
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;調教終了後の追加イベント
+;━━━━━━━━━━━━━━━━━━━━━━━━
+@FUNC_K13_EVENT_AFTER
+#DIM place_check
+#DIM event_check
+
+;体洗いイベント
+IF DAY >= 1 && TIME == 1 && (!TALENT:MASTER:オトコ || DAY % 3 == 0)
+	;強制ウェイト
+	MESSKIP
+	IF RESULT
+		FORCEWAIT
+	ENDIF
+
+	RESETCOLOR
+	DRAWLINE
+	CALL KOJO_COLOR_K13
+
+	;初回
+	IF !VAR_K13:5
+		VAR_K13:5 = 1
+		PRINTFORMW 調教が終わった後しばらくして、%CALLNAME%が戻ってきた
+		PRINTFORMW 「少し用があるから、外に出なさい。ほら、もたもたしないの！」
+		PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の首輪を外すと、%CALLNAME:MASTER%の腕を掴んで強引に小屋の外へと引っ張りだした
+		PRINTFORMW ………………
+		PRINTL 
+		PRINTFORMW 小屋の扉の前には、水が入った桶が用意されていた
+		PRINTFORMW 桶の縁には、一枚の布が掛かっている
+		PRINTFORMW 「さすがにいつまでも体を洗わないでいるのは気持ち悪いだろうからね」
+		PRINTFORMW 「とりあえず、体を拭けるように用意しておいてあげたわよ」
+		IF TALENT:MASTER:オトコ
+			PRINTFORMW 「まあ、私も雄の臭いは嫌いじゃないけど……限度ってものがあるもの」
+		ELSE
+			PRINTFORMW 「正直、私もペットにはなるべく綺麗な状態でいてほしいもの」
+		ENDIF
+		PRINTFORMW 「というわけで、さっさと服を脱いで、体を拭きなさい！」
+		PRINTFORMW %CALLNAME%に促されるまま、%CALLNAME:MASTER%は水で濡らした布で自分の体を拭いていった……
+		PRINTL 
+		PRINTFORMW ………………
+		PRINTL 
+		PRINTFORMW 「……もう体を拭くのは十分かしら？」
+		PRINTFORMW %CALLNAME:MASTER%がもう十分だと返答すると、%CALLNAME%は%CALLNAME:MASTER%の使っていた桶を手に取った
+		PRINTFORMW 「それじゃあ、最後に残った水を掛けてあげるから、目を閉じてなさい」
+		PRINTFORMW 「冷たいと思うけど、覚悟してね♪」
+		PRINTFORMW そう言うなり、%CALLNAME%は%CALLNAME:MASTER%の全身に水を浴びせ掛けてきた
+		PRINTFORMW あまりの冷たさに、%CALLNAME:MASTER%はブルリと震える
+		PRINTFORMW 「あははっ♪　さすがに夜の水の冷たさは厳しかったかしら？」
+		PRINTFORMW 「ほら、風邪を引かないうちに、これでさっさと拭きなさい」
+		PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%に、先ほどとは別の乾いた布を投げ渡した
+		PRINTL 
+		PRINTFORMW ………………
+		PRINTL 
+		PRINTFORMW 「服もちゃんと着たわね？　……少しはスッキリしたでしょ？」
+		IF TALENT:MASTER:オトコ
+			PRINTFORMW 「これからも、時々こうやって体を洗わせてあげる」
+		ELSE
+			PRINTFORMW 「これからも、なるべくこうやって体を洗わせてあげる」
+		ENDIF
+		PRINTFORMW 「とりあえず、今日のところはさっさと戻るわよ？」
+		PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%に腕を掴まれて、無理やり小屋の中へと引き戻された
+		PRINTFORMW %CALLNAME:MASTER%の首に、再び首輪が嵌められた……
+		PRINTL 
+		PRINTFORMW 「今日のところは、これで帰るわね？」
+		PRINTFORMW 「今夜は風邪を引かないように、ちゃんと暖かくして寝るのよ？」
+		PRINTFORMW %CALLNAME%はそう言い残して小屋を出ると、扉を閉めた……
+	;二回目以降
+	ELSE
+		PRINTFORML 調教が終わった後しばらくして、%CALLNAME%が戻ってきた
+		PRINTFORMW 「ほら、今日も体を洗わせてあげる。さっさと外に出なさい」
+		PRINTL 
+		PRINTFORMW ………………
+		IF TALENT:MASTER:オトコ
+			SELECTCASE RAND:7
+				CASE 0
+					PRINTFORML 「毎日体を洗いたいって？　それはダメよ」
+					PRINTFORMW 「少しは雄の臭いがしてた方が、私の好みだもん♪」
+					PRINTFORMW ………………
+				CASE 1
+					PRINTFORML 「こら！　お尻の穴を洗ってるだけで逃げないの！」
+					PRINTFORMW 「今は変なことはしないから、大人しくしなさいっ！」
+					PRINTFORMW ………………
+				CASE 2
+					PRINTFORMW 「言っとくけど、この隙に逃げようなんて考えないでね？　五体満足でいたければ、ね？」
+					PRINTFORMW ………………
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:7
+				CASE 0
+					PRINTFORMW 「女の子だもの、ちゃんと体は綺麗にしておかないとね？」
+					PRINTFORMW ………………
+				CASE 1
+					PRINTFORMW 「相変わらず、綺麗な肌してるのね？　ペットの癖に、ちょっと生意気……」
+					PRINTFORMW ………………
+				CASE 2
+					PRINTFORMW 「言っとくけど、この隙に逃げようなんて考えないでね？　五体満足でいたければ、ね？」
+					PRINTFORMW ………………
+			ENDSELECT
+		ENDIF
+		PRINTL 
+		PRINTFORML 「うん、こんなところね♪」
+		PRINTFORMW 「それじゃ、今日も風邪を引かないように暖かくして寝るのよ？」
+	ENDIF
+	RETURN
+ENDIF
+
+;連れ出しイベント
+IF DAY >= 1 && TIME == 0 && FUNC_K13_ISLOVER() && DAY % 3 == 2
+	;強制ウェイト
+	MESSKIP
+	IF RESULT
+		FORCEWAIT
+	ENDIF
+
+	RESETCOLOR
+	DRAWLINE
+	CALL KOJO_COLOR_K13
+
+	;初回
+	IF !VAR_K13:10
+		PRINTFORMW 調教が終わった後しばらくして、%CALLNAME%が戻ってきた
+		PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の首輪を外すと、%CALLNAME:MASTER%を引きずるようにして小屋の外へと連れ出した
+		PRINTFORMW 「今日は一緒に川に出掛けるわよ！　付き合いなさいっ！」
+		CALL FUNC_K13_ASK("快く承諾する", "疲れているので断る")
+		IF RESULT == 0
+			PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%の突然の命令にも嫌な顔ひとつせずに従った……
+			PRINTFORMW 「うんうん、良い子ね♪　さあ、行くわよ！」
+			PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の手を取り、小屋からあまり離れていない川辺へと連れて行った
+			PRINTFORMW ………………
+		ELSEIF RESULT == 1
+			PRINTFORMW %CALLNAME:MASTER%は、今日は疲れているから許して欲しいと言い出した……
+			PRINTL 
+			PRINTFORMW ドスッ
+			PRINTL 
+			PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の腹に躊躇なく拳をめり込ませる
+			PRINTFORMW %CALLNAME:MASTER%はその場に倒れ込むと、咳き込みながら悶えてのたうち回った
+			PRINTFORMW 「馬鹿なこと言わずに、大人しく従ってなさい。さあ、行くわよ」
+			PRINTFORMW %CALLNAME%は悶え苦しむ%CALLNAME:MASTER%をその小さな体で担ぎ上げると、
+			PRINTFORMW そのまま%CALLNAME:MASTER%を強引に外へと"持ち出し"た……
+			PRINTFORMW ………………
+		ENDIF
+		PRINTL 
+		PRINTFORMW 「ちょっと、まだ出来ないの？　さっさ作りなさいっ！」
+		PRINTFORMW 川辺に連れてこられた%CALLNAME:MASTER%は、%CALLNAME%に命じられて釣り竿を作らされていた……
+		PRINTFORMW 「ほらほら、このままじゃ日が暮れちゃうわよ？　あんまりご主人様を待たせるんじゃないのっ」
+		PRINTFORMW 魚を心待ちにしている%CALLNAME%は、さっきからずっとこの調子だ
+		PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%に何度となく急かされながらも、ありあわせの材料で最低限釣りが行える竿を作り上げた
+		PRINTFORMW ………………
+		PRINTL 
+		PRINTFORMW 「うふふ、思ったよりたくさん釣れたわね♪　お疲れ様♪」
+		PRINTFORMW 急ごしらえの竿とはいえ、それなりにまともな数の魚を釣ることができて、%CALLNAME%もご機嫌の様子だ
+		PRINTFORMW 「これなら夕飯にも困らないわね。帰ったら、この魚を焼いて%CALLNAME:MASTER%の小屋まで持って行ってあげる♪」
+		PRINTFORMW 「まあ、私は生で食べちゃうんだけどね……あむっ♪」
+		PRINTFORMW %CALLNAME%は早速、釣ったばかりの魚に齧り付いた
+		PRINTFORMW 「うーん、美味しい♪」
+		PRINTFORMW 「それじゃあ、日も暮れてきたしさっさと帰りましょうか」
+		PRINTFORMW ご機嫌状態で魚にむしゃぶりつく%CALLNAME%と共に、%CALLNAME:MASTER%は夕暮れの山道を歩いて小屋へと戻っていった……
+
+	;二回目以降
+	ELSE
+		PRINTFORML 調教が終わった後しばらくして、%CALLNAME%が戻ってきた
+		PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の首輪を外すと、%CALLNAME:MASTER%を小屋の外に連れ出した
+
+		place_check = RAND:3
+
+		IF place_check == 0
+			PRINTFORML 「今日は一緒に川に出掛けるわよ！　ついてきなさいっ！」
+			PRINTFORMW %CALLNAME:MASTER%は半ば%CALLNAME%に引きずられるようにしながら、近くの川へと連れて行かれた
+			PRINTFORMW ………………
+			PRINTL 
+
+			IF VAR_K13:18
+				event_check = RAND:2
+			ELSE
+				event_check = RAND:3
+			ENDIF
+
+			IF event_check == 0
+				PRINTFORMW 今日も%CALLNAME%に命じられ、%CALLNAME:MASTER%は釣りをすることになった……
+				PRINTFORMW 「うーん、中々掛からないわねえ……」
+				PRINTL 
+				PRINTFORMW 「あっ、今引いたわ！！　ほら、ボケッとしてないで釣り上げなさい！！　早くっ！」
+				PRINTFORMW 終始テンションの高い%CALLNAME%に応援され、時には邪魔されたりしながら、%CALLNAME:MASTER%は淡々と魚を釣り上げていった
+
+			ELSEIF event_check == 1
+				PRINTFORMW 今日も%CALLNAME%に命じられ、%CALLNAME:MASTER%は釣りをすることになった……
+				PRINTFORML 「ほら、また引いてるわ！　さっさと釣り上げなさいっ！」
+				PRINTFORMW 今日はすこぶる引きが良く、釣り始めて早々、かなりの数の魚が桶に入っていた
+				PRINTFORMW 「今日は大量ねえ♪　これだけ釣れてるなら、後で山の猫たちにも分けに行ってやろうかしら？」
+				PRINTFORMW 「でもその前にまずは一匹……」
+				PRINTL 
+				PRINTFORMW 「ん～、美味しい♪」
+				PRINTFORMW 生魚に齧り付き、口元を血で赤く染める%CALLNAME%を横目に見ながら、%CALLNAME:MASTER%は再び釣り糸を垂らした
+
+			ELSE
+				VAR_K13:18 = 1
+				PRINTFORMW 「あら、あんなところに河童がいるわね。この辺りに来るなんて珍しい」
+				PRINTFORMW %CALLNAME%が指差す先を見ると、たしかに二匹の女の河童が川辺で仲良く話し込んでいるようだった
+				PRINTFORMW 河童たちはこちらに気付くと、話を止めて%CALLNAME:MASTER%の方に興味深そうな視線を向けてくる
+				PRINTFORMW 「向こうも、こんなところで誰かに合うのは珍しいって思ってるのかもね？」
+				PRINTFORMW 「せっかくだし、ちょっと顔見せしてきましょ？」
+				PRINTFORMW ………………
+				PRINTL 
+				SETCOLOR 0xFFFF40
+				PRINTFORMW 『え！　君って、この子のペットやってるの！？　そりゃまた面白い話だね』
+				SETCOLOR 0xC0FF60
+				PRINTFORMW 『そういうプレイってわけじゃなくて？』
+				SETCOLOR 0xFFFF40
+				PRINTFORMW 『……へえ～、本当に飼われてるんだ。しかも首輪まで付けられて……』
+				SETCOLOR 0xC0FF60
+				PRINTFORMW 『うわー……ガチなんだ……。どんな経緯でそんなことになったの？』
+				CALL KOJO_COLOR_K13
+				PRINTFORMW %CALLNAME:MASTER%は好奇心旺盛な河童たちに、すっかり質問責めにされてしまっている……
+				PRINTFORMW 「あははっ、大人気ね。よかったじゃない♪」
+				PRINTFORMW %CALLNAME%は河童たちに詰め寄られる%CALLNAME:MASTER%の様子を見て、楽しそうに笑った
+				PRINTL 
+				SETCOLOR 0xFFFF40
+				PRINTFORMW 『それで……ええと、チェンちゃんでよかったっけ？』
+				PRINTFORMW 『飼うっていっても、普段はどんなことしてるの？』
+				CALL KOJO_COLOR_K13
+				PRINTFORMW 「そうねぇ、普通にご飯の世話とトイレの世話、たまに体を洗ってあげて……」
+				PRINTFORMW そこまで言うと、急に%CALLNAME%が%CALLNAME:MASTER%に体をすり寄せてきた
+				PRINTFORMW 「あとは一緒に遊んであげてるわね。……こんな感じに❤」
+				;調教対象にペニスがある
+				IF PENIS(MASTER)
+					PRINTFORMW %CALLNAME%は突然%CALLNAME:MASTER%の服の中からペニスを取り出すと、ゆっくりとシゴき始めた
+					PRINTFORMW 河童たちは唐突な%CALLNAME%の行為に、ひゃっ、と小さな悲鳴を上げる
+					PRINTFORMW 「抵抗しちゃ駄目だからね？　せっかく観客がいるんだから、ちゃんと楽しませるのよ？」
+					PRINTFORMW %CALLNAME%にペニスを弄ばれながら、さらにざらつく舌で首筋を舐め上げられると、%CALLNAME:MASTER%は堪らず快感の呻きを漏らした
+					PRINTL 
+					PRINTFORMW 気付けば、河童たちの顔も、驚愕のそれから徐々に熱を帯びたものに変わっていく
+					SETCOLOR 0xC0FF60
+					PRINTFORMW 『うわ……うわー……』
+					SETCOLOR 0xFFFF40
+					PRINTFORMW 『ビクビクしてる……というか、チェンちゃん、すっごいエロいシゴき方するね……』
+					CALL KOJO_COLOR_K13
+					PRINTFORMW 見ず知らずの河童たちにまじまじとペニスを見つめられ、%CALLNAME:MASTER%は羞恥に体が熱くなるのを感じた……
+					PRINTFORMW 「ねえ……特別にこの子の精、このまま掛けてあげよっか？」
+					PRINTFORMW 「この子の精気、とっても濃くって美味しいわよ？　私もお気に入りなんだから❤」
+					PRINTFORMW %CALLNAME%は、%CALLNAME:MASTER%のペニスの先端を河童たちに向ける
+					SETCOLOR 0xFFFF40
+					PRINTFORMW 『う……うん、お願い。私も収まり付かなくなっちゃった』
+					SETCOLOR 0xC0FF60
+					PRINTFORMW 『わ、私も……雄の臭いでクラクラしそう……❤』
+					CALL KOJO_COLOR_K13
+					PRINTFORMW 「うふふ……そういうことだから、濃い精液、いっぱい掛けてあげなさい？　ご主人様の命令よ」
+					PRINTFORMW %CALLNAME%の指の動きが、それまでの焦らすようなゆっくりとした動きから、射精させる素早いシゴき方へと変化した
+					PRINTFORMW 二匹の河童は、それぞれ%CALLNAME:MASTER%のペニスに息がかかるほどに顔を寄せ、口を開き、ペニスの臭いを嗅ぎながら待機している
+					PRINTL 
+					PRINTFORMW %CALLNAME:MASTER%はついに限界に達し、腰を震わせながら射精した……
+					PRINTL 
+					SETCOLOR 0xFFFF40
+					PRINTFORMW 『きゃんっ！？　すごい……いっぱい出てるぅっ！』
+					SETCOLOR 0xC0FF60
+					PRINTFORMW 『んぁぁ……！　本当に濃厚……感じちゃいそう❤』
+					CALL KOJO_COLOR_K13
+					PRINTFORMW 河童たちは%CALLNAME:MASTER%の精液を、歓喜の表情で受け止める
+					PRINTFORMW 「ほら、まだ残ってるでしょう？　ちゃんと最後まで出し切ってあげなさい？」
+					PRINTFORMW %CALLNAME%は射精の勢いが衰え始めたペニスをさらに擦り上げて、最後の一滴まで搾り出していった
+					PRINTL 
+					SETCOLOR 0xFFFF40
+					PRINTFORMW 『いやあ、すっかり興奮しちゃったよ。楽しませてくれてありがとうね♪』
+					CALL KOJO_COLOR_K13
+					PRINTFORMW 「ふふ、どういたしまして♪」
+					PRINTFORMW 二匹の河童は%CALLNAME%と%CALLNAME:MASTER%に感謝を述べると、泳いで上流の方へと向かっていった
+
+				;調教対象にペニスがない
+				ELSE
+					PRINTFORMW %CALLNAME%は突然%CALLNAME:MASTER%の服の中に手を突っ込むと、股間をなぞるように指でさすり始めた
+					PRINTFORMW 河童たちは唐突な%CALLNAME%の行為に、驚いたように固まっている
+					PRINTFORMW 「抵抗しちゃ駄目だからね？　せっかく観客がいるんだから、ちゃんと楽しませるのよ？」
+					PRINTFORMW %CALLNAME%に股間を弄ばれながら、さらにざらつく舌で首筋を舐め上げられると、%CALLNAME:MASTER%は堪らずビクリと体を震わせた
+					PRINTL 
+					PRINTFORMW 気付けば、河童たちの顔も、驚愕のそれから徐々に好奇心に満ちたものに変わっていく
+					SETCOLOR 0xC0FF60
+					PRINTFORMW 『うわぁ……。この子、すっごく気持ち良さそうな顔してるじゃない』
+					SETCOLOR 0xFFFF40
+					PRINTFORMW 『チェンちゃん、すっごいエロい触り方するね……。ステージでやったらお金取れるんじゃない？』
+					CALL KOJO_COLOR_K13
+					PRINTFORMW 見ず知らずの河童たちに感じている姿を見つめられ、%CALLNAME:MASTER%は羞恥に体が熱くなるのを感じた……
+					PRINTFORMW 「ふふ、気に入ってくれた？　でも、この子の乱れ方は、まだまだこんなものじゃないのよ♪」
+					PRINTFORMW %CALLNAME%は、気分を高めるようなゆっくりした愛撫から、本格的に感じさせる愛撫へと指の動きを変化させた
+					PRINTFORMW クリトリスを重点的に指で弄り回し、さらに空いている方の手で乱暴に%CALLNAME:MASTER%の乳房を揉みしだいていく
+					SETCOLOR 0xFFFF40
+					PRINTFORMW 『あ、今の声、ものすごい可愛かった』
+					SETCOLOR 0xC0FF60
+					PRINTFORMW 『すごいね……こっちまで変な気分になっちゃいそう……❤』
+					CALL KOJO_COLOR_K13
+					PRINTFORMW 「うふふ……このままイクところまで、ちゃんと見せてあげなさい？　ご主人様の命令よ」
+					PRINTFORMW 執拗に続けられる愛撫に、ついに%CALLNAME:MASTER%は限界まで高められた
+					PRINTL 
+					PRINTFORMW %CALLNAME:MASTER%は河童たちの見つめる前で、あられもない声を上げ、ビクビクと体を震わせた
+					PRINTL 
+					SETCOLOR 0xFFFF40
+					PRINTFORMW 『うわぁ……こ、こんなイキ顔するんだ……すっごいエッチ』
+					SETCOLOR 0xC0FF60
+					PRINTFORMW 『あ……なんか、私まで濡れてきちゃったかも……❤』
+					CALL KOJO_COLOR_K13
+					PRINTFORMW 河童たちは%CALLNAME:MASTER%が絶頂する様子を、興奮した様子で食い入る様に見つめている……
+					PRINTFORMW 「うふふ、評判いいみたいよ？　……アンコール、いってみようか？」
+					PRINTFORMW %CALLNAME%はイッた直後の敏感なクリトリスをきゅぅ、と摘み上げ、クリクリと容赦なく弄んできた
+					PRINTFORML %CALLNAME:MASTER%の羞恥で興奮しきった体は瞬く間に快楽の波に飲みこまれ、
+					PRINTFORML %CALLNAME:MASTER%は頭が真っ白になる感覚を味わいながら、
+					PRINTFORMW とても人に見せられないような、緩みきったアクメ顔を河童たちに晒した……
+					PRINTL 
+					SETCOLOR 0xFFFF40
+					PRINTFORMW 『いやあ、すっかり興奮しちゃったよ。楽しませてくれてありがとうね♪』
+					CALL KOJO_COLOR_K13
+					PRINTFORMW 「ふふ、どういたしまして♪」
+					PRINTFORMW 二匹の河童は%CALLNAME%と%CALLNAME:MASTER%に感謝を述べると、泳いで上流の方へと向かっていった
+				ENDIF
+
+				PRINTL 
+				PRINTFORMW 「さて……と」
+				PRINTFORMW 「どうだった？　見られながらするの、気持良かったかしら？」
+				CALL FUNC_K13_ASK("気持ち良かった", "恥ずかしかった", "二人きりの方がいい")
+				IF RESULT == 0
+					PRINTFORMW %CALLNAME:MASTER%はいつもより気持ち良かったと答えた……
+					PRINTL 
+					PRINTFORMW 「うんうん、見られて興奮しちゃうなんて、さすが私のペットだわ」
+					PRINTFORMW 「私も楽しかったし、たまにはこういうのもいいかもね。ふふっ♪」
+					PRINTFORMW %CALLNAME%はいかにも機嫌良さそうに笑った
+					PRINTFORMW 「それじゃあ、今日はこんなところにして帰りましょ？」
+				ELSEIF RESULT == 1
+					PRINTFORMW %CALLNAME:MASTER%は恥ずかしくてそれどころじゃなかったと答えた……
+					PRINTL 
+					PRINTFORMW 「あら？　それじゃあ、ちゃんと興奮できるように躾けないとね？」
+					PRINTFORMW 「……ふふ、また目標が一つできちゃったわ♪」
+					PRINTFORMW %CALLNAME%はニヤニヤと意地の悪い笑みを浮かべた
+					PRINTFORMW 「それじゃあ、今日はこんなところにして帰りましょ？」
+				ELSE
+					PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%と二人きりの方がいいと答えた
+					PRINTL 
+					PRINTFORML バキッ！
+					PRINTFORMW %CALLNAME%の強烈な右ストレートが%CALLNAME:MASTER%の頬にめり込み、%CALLNAME:MASTER%は半回転しながら派手に倒れた
+					PRINTL 
+					PRINTFORMW 「……おっと、生意気なことを言うから、つい手が出ちゃったわ」
+					PRINTFORMW 「まったく……せっかく野外調教してあげたんだから、もっと素直に楽しみなさいよねっ！」
+					PRINTFORMW 「ほら、今日はこれで帰るわよ！　いつまでも倒れてないで、さっさと起きなさいっ！」
+					PRINTFORML %CALLNAME%は%CALLNAME:MASTER%の腕を掴むと、%CALLNAME:MASTER%から顔を背けて、
+					PRINTFORMW 未だ起き上がれない%CALLNAME:MASTER%を強引に引きずりながら小屋へ向かって歩き始めた…
+				ENDIF
+			ENDIF
+
+		ELSEIF place_check == 1
+			IF !VAR_K13:19
+				VAR_K13:19 = 1
+				PRINTFORMW 「今日は行きたいところがあるのよ。さあ、付いてきなさいっ！」
+				PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%に引きずられるようにしながら、外へと連れ出された
+				PRINTL 
+				PRINTFORMW ………………
+				PRINTL 
+				PRINTFORMW 「とうちゃーくっ♪　ここに%CALLNAME:MASTER%を連れて来てみたかったの！」
+				PRINTFORMW 森を抜けた先にある、少し開けた広場に、%CALLNAME:MASTER%は連れてこられた
+				PRINTFORMW 「ここは猫の里。その名の通り、猫がたくさん集まっている場所よ」
+				PRINTFORMW 周りを見ると、なるほど猫の里というだけあって、あちらこちらに猫の姿が見える
+				PRINTFORMW 「私はいつもここで猫に餌をやってるの」
+				PRINTFORMW 「ゆくゆくは、この中から私のしもべを作る予定なのよ！」
+				PRINTL 
+				PRINTFORMW 「というわけで……餌の時間よ～！　私のしもべ候補たちっ！」
+				PRINTFORMW %CALLNAME%が呼び掛けると、周囲の猫達がぞろぞろと集まってきた
+				PRINTFORMW 「うふふ、いい子たちね♪　ほ～ら、餌をあげるから、いっぱい食べなさい♪」
+				PRINTFORMW 「私が将来のご主人様だからねー？　ちゃーんと私に感謝するのよ？」
+				PRINTFORML %CALLNAME%が手で直接餌をあげていると、待ちきれなくなった横の猫が、
+				PRINTFORMW %CALLNAME%の持つ餌袋に直接顔を突っ込んで中身を漁り始めた
+				PRINTFORMW 「あ、こら！　勝手に食べるんじゃないの！　私が順番にあげるんだから、待ってなさいっ！」
+				PRINTFORMW %CALLNAME%は餌袋に顔を入れた猫の首根っこを持ち、強引に引きずり出そうとしている
+				PRINTL 
+				PRINTFORMW ……そして引っかかれた
+				PRINTL 
+				PRINTFORMW 「痛ぁっ！　何するのよっ！！　ただの猫の分際で生意気ねっ！！」
+				PRINTFORMW 「こらっ！　また顔突っ込んで！　あ、ちょっと！？　餌袋引っ張るんじゃないわよ！」
+				PRINTFORMW 「ひゃっ！？　邪魔だから、乗っかってくるんじゃないの！　だから、袋引っ張るなぁあああっ！！」
+				PRINTFORMW 猫に噛みつかれ引っ張られた餌袋は、ついにビリビリと無残に破れてしまった
+				PRINTFORMW 破れて穴が空いた袋から餌がだだ漏れになり、見事に全て地面に散乱してしまった
+				PRINTFORMW 猫達は我先にと餌を食い合い、もはや収集がつきそうにない
+				PRINTL 
+				PRINTFORMW ………………
+				PRINTL 
+				PRINTFORMW ドスッ　ドスッ
+				PRINTFORMW %CALLNAME%はさっきからずっと、%CALLNAME:MASTER%の後ろに立って%CALLNAME:MASTER%のふくらはぎを蹴り続けている
+				PRINTFORMW 「ねえ」
+				PRINTFORMW ドスッ　ドスッ
+				PRINTFORMW 「さっき笑ってたでしょ」
+				PRINTFORMW ドスッ　ドスッ
+				CALL FUNC_K13_ASK("ごめんなさい", "笑ってないです", "笑ってないアルよ")
+				IF RESULT == 2
+					PRINTFORML ズゴッ！！
+					PRINTFORMW %CALLNAME:MASTER%は背中に強烈な回し蹴りを受けて吹き飛び、綺麗なヘッドスライディングを決めた
+					PRINTFORMW ……さすがに背骨は折れていないようだが、肺の裏側への強烈な一撃で呼吸ができず、割とシャレにならない
+				ENDIF
+				PRINTFORMW 「…………」
+				PRINTFORMW 「ふん！　まあいいわ、許してあげる」
+				PRINTFORMW 「そもそも、ただの猫風情が言うことを聞かなくったって、どうでもいい話よっ！」
+				PRINTFORMW 「私には他に、ちゃーんと言うことを聞いてくれる可愛いペットがいるんだからっ！」
+				PRINTFORMW 「……ね？」
+				IF RESULT == 2
+					PRINTFORMW %CALLNAME%は倒れ伏している%CALLNAME:MASTER%の横っ腹をゲシゲシと蹴りつけてきた
+					PRINTFORMW 「さ、言うことを聞かないノラ猫どもは放っておいて、さっさと帰りましょ？」
+					PRINTFORMW 「帰ったら、猫どものせいで溜まったストレス……」
+					PRINTFORMW 「%FUNC_K13_CALLNAME()%の体でたっぷりと発散させてもらうから、覚悟しなさいよ♪」
+					PRINTFORMW %CALLNAME:MASTER%は、せめてストレス発散が"性的な意味で"あることを祈らずにはいられなかった……
+				ELSE
+					PRINTFORMW %CALLNAME%は%CALLNAME:MASTER%の腕にぎゅっと抱きついてきた
+					PRINTFORMW そして%CALLNAME:MASTER%の顔を見て、ニコっと可愛らしく微笑んだ
+					PRINTFORMW 「さ、言うことを聞かないノラ猫どもは放っておいて、さっさと帰りましょ？」
+					PRINTFORMW 「帰ったら、猫どものせいで溜まったストレス……」
+					PRINTFORMW 「%FUNC_K13_CALLNAME()%の体で発散させてもらうから、覚悟しなさいよ？」
+				ENDIF
+			ELSE
+				PRINTFORMW 「今日は一緒に猫たちを見に行くわよ！　ついてきなさいっ！」
+				PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%に引きずられるようにしながら、猫の集まる広場へと連れて行かれた
+				PRINTFORMW ………………
+				PRINTL 
+				PRINTFORMW 「はぁ……相変わらず餌だけ取って、言うことは聞かないんだから！　イライラするわっ！」
+				PRINTFORMW %CALLNAME%は口では文句を言っているが、何だかんだで楽しそうだ……
+				PRINTFORMW 「あ！　今、絶対に笑ったでしょ！？　帰ったら覚えておきなさいよっ！」
+				PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%に頬をつねられながら、%CALLNAME%と並んで帰りの道を歩いていった
+			ENDIF
+
+		ELSE
+			PRINTFORMW 「特に行くあてはないんだけど、たまには適当に外をふらつきましょ？」
+			PRINTFORMW 「%CALLNAME:MASTER%も、小屋に押し込められてるよりは、気分がいいんじゃない？」
+			PRINTFORMW %CALLNAME:MASTER%は%CALLNAME%と共に、特に目的もなく山の中を散歩した……
+		ENDIF
+	ENDIF
+ENDIF

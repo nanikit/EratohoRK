@@ -1,0 +1,82 @@
+﻿;==================================================
+;
+;	描写関数置き場
+;		各表現は個人的趣味
+;
+;==================================================
+;本体側に移したものを削除
+;-------------------------------------------------
+
+;-------------------------------------------------
+;関数名:TITTIES_DESCRIPTION_K39
+;概　要:美乳であること、それが全て
+;引　数:ARG…キャラ登録番号。省略すればTARGET
+;戻り値:文字列
+;備　考:式中関数
+;使用例:%TITTIES_DESCRIPTION_K39(TARGET)%
+;-------------------------------------------------
+@TITTIES_DESCRIPTION_K39(ARG = -2)
+#FUNCTIONS
+#LOCALSSIZE 1
+LOCALS:0 = 
+ARG = ARG != -2 ? ARG # TARGET
+;巨乳時
+IF TALENT:ARG:巨乳
+	STRDATA LOCALS:0
+		DATA 形の整った、たわわな
+		DATA 張りのある、豊かな
+	ENDDATA
+;貧乳時
+ELSEIF TALENT:ARG:貧乳
+	STRDATA LOCALS:0
+		DATA 控えめながらも形の整った
+		DATA ささやかながらも気品のある
+	ENDDATA
+;その他
+ELSE
+	STRDATA LOCALS:0
+		DATA 見事に均整のとれた美しい
+		DATA たまらない感触の美しい
+	ENDDATA
+ENDIF
+RETURNF LOCALS:0
+
+;-------------------------------------------------
+;関数名:MOIST
+;概　要:ARGの潤滑具合に該当すれば真を返す
+;引　数:キャラ番号。省略すればMASTER
+;備　考:式中関数
+;現在のバリアントの仕様上、機能するのはMASTERの場合においてのみ
+;-------------------------------------------------
+@MOIST_K39(ARG = -2)
+#FUNCTIONS
+#LOCALSSIZE 1
+LOCALS:0 = 
+ARG = ARG != -2 ? ARG # MASTER
+SELECTCASE PALAM:ARG:潤滑
+	CASE IS < 250
+		LOCALS:0 = "低い"
+	CASE IS < 500
+		LOCALS:0 = "一般"
+	CASE IS > 499
+		LOCALS:0 = "高い"
+ENDSELECT
+RETURNF LOCALS:0
+
+;-------------------------------------------------
+;MASTER用と割り切る事にする
+;-------------------------------------------------
+@PENIS_DESCRIPTION2_K39(ARG)
+#FUNCTIONS
+#LOCALSSIZE 1
+LOCALS:0 = 
+SELECTCASE TCVAR:MASTER:勃起度
+	CASE IS > 1500
+		LOCALS:0 = %RAND_SPLIT("限界まで/はちきれんばかりに/危ういくらいに")%%RAND_SPLIT("そそり勃った/いきり立った/屹立した")%
+	CASE IS > 1000
+		LOCALS:0 = %RAND_SPLIT("そそり勃った/いきり立った/屹立した")%
+	CASEELSE
+		LOCALS:0 = %RAND_SPLIT("未だ柔らかい/硬さを増しつつある/ムクムクと頭をもたげつつある")%
+ENDSELECT
+RETURNF LOCALS:0
+

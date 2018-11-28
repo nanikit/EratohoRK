@@ -1,0 +1,902 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	雛口上 奉仕系反応、汎用リアクション口上ファイル
+;
+;Version		Reason
+;1.11			COMファイルを系統別に分割
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;=====================================================================
+;奉仕系反応 COM40番台
+;=====================================================================
+;・調教者への愛撫を含む行動で見られる
+;・ACT分類:奉仕+トリガーイベント制
+;-------------------------------------------------
+
+;────────────────────────────────────
+;COM40, 拒否する
+;────────────────────────────────────
+;・REACT分類:拒否
+;・REACT印象:悪印象大
+;・お仕置きポイント追加
+;・依存度変化(-2, -4)
+;-------------------------------------------------
+;トリガーする行動や状況…
+;ACT分類:0:会話
+;	ACT:衣装の変更を要求する/合意を求める
+;ACT分類:1:愛撫
+;	ACT:
+;ACT分類:2:道具
+;	ACT:
+;ACT分類:3:性交
+;	ACT:騎乗位
+;ACT分類:4:羞恥
+;	ACT:自慰/放尿
+;ACT分類:5:奉仕
+;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/胸愛撫強制
+;ACT分類:6:加虐
+;	ACT:
+;ACT分類:7:異常
+;	ACT:
+;ACT分類:9:休憩
+;	ACT:栄養剤を飲ませる
+;ACT分類:10:性交奉仕
+;	ACT:正常位させる/後背位させる/対面座位させる/背面座位させる/アナルセックスさせる
+;-------------------------------------------------
+;・REACT派生なし
+;-------------------------------------------------
+@KOJO_MALE_COM_K39_40
+;-------------------------------------------------
+IF 口上記入チェック(100)
+	;=================================================
+	;負荷2：無理をした行動
+	;=================================================
+	IF GET_COM_RANK() == "無理をした行動"
+		;実はまんざらでもない
+		IF COMCOR_POSI()
+			IF GET_KFLAG_K39("相思相愛")
+				PRINTFORMW 「今更そういう%RAND_SPLIT("の/態度")%ってあり得なくない！？」
+				PRINTFORMW 「それに、%CNAME(MASTER, TARGET)%自身も拒絶するのが辛そうだし」
+				PRINTFORMW 「ホント、よく判らないわね\@ TENSION(TARGET, 8) == "高い" ? っ # \@！」
+			ELSE
+				PRINTFORMW 「そうやって拒絶する割には、%CNAME(MASTER, TARGET)%…、とっても辛そうですけど」
+				PRINTFORMW 「一体どういう事なんでしょうかね？ ふふ…」
+			ENDIF
+		;実は嫌
+		ELSE
+			PRINTFORMW 「そう…、仕方ない\@ GET_KFLAG_K39("相思相愛") ? わね # ですね \@……」
+			PRINTFORMW 「とりあえず、%CNAME(MASTER, TARGET)%のその度胸だけは認めて\@ GET_KFLAG_K39("相思相愛") ? あげる # あげますよ \@…」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類：羞恥(自慰/放尿のみ)
+	;=================================================
+	IF MENUMATCH(TFLAG:ACT, "羞恥")
+		;相思相愛
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「今更見られるのが嫌って、ちょっと変じゃない？」
+		;それ以外
+		ELSE
+			PRINTFORMW 「やはり、人前でするのは嫌みたいですね…」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類：奉仕(奉仕全て)
+	;=================================================
+	;IF 口上記入チェック(0) && MENUMATCH(TFLAG:ACT, "奉仕")
+	;ENDIF
+	
+	;KFLAG立てて性交奉仕の回数判定とかCONDITION, TENSIONで派生とか考えてみるけど
+	;まぁとりあえず暫定的
+	;=================================================
+	;ACT分類：性奉(逆レイプ以外)
+	;=================================================
+	IF MENUMATCH(TFLAG:ACT, "性奉")
+		;相思相愛かつ性交奉仕発生済み
+		IF GET_KFLAG_K39("相思相愛") && GET_KFLAG_K39("性奉判定")
+			SELECTCASE RANDCOM(3, 950)
+				CASE 0
+					PRINTFORMW 「今更私とシたくないとか意味が判らないんだけど？」
+				CASE 1
+					PRINTFORMW 「冗談としては笑えないし、冗談じゃないならちょっと考えなくちゃいけないわね…」
+					PRINTFORMW 「ねぇ、一体何を考えてるの？」
+				CASE 2
+					PRINTFORMW 「あっ、そう！ %CNAME(MASTER, TARGET)%がそう言うなら無理強いはしないけど。でも…」
+					PRINTFORMW 「それってちょっと酷いと思うんだけど？」
+			ENDSELECT
+		;溺愛かつ性交奉仕発生済み
+		ELSEIF AFFECTION("溺愛") && GET_KFLAG_K39("性奉判定")
+			SELECTCASE RANDCOM(3, 951)
+				CASE 0
+					PRINTFORMW 「嫌、なんですか？」
+					PRINTFORMW 「あの…出来れば理由を聞かせて欲しいですね…」
+				CASE 1
+					PRINTFORMW 「今更そういうのってどうなんでしょう…」
+					PRINTFORMW 「何か気になる事でもあるんですか？」
+				CASE 2
+					PRINTFORMW 「私を焦らしてるつもりですか？」
+					PRINTFORMW 「これではちょっと切なくなってしまいます…」
+			ENDSELECT
+		;その他
+		ELSE
+			SELECTCASE RANDCOM(3, 952)
+				CASE 0
+					PRINTFORMW 「流石に、そうあからさまに拒絶されると傷付きます…」
+				CASE 1
+					PRINTFORMW 「そう、ですか……仕方無いですね、%CNAME(MASTER, TARGET)%がそう言うのなら」
+				CASE 2
+					PRINTFORML 「そんなに私が嫌なんでしょうか」
+					PRINTFORMW 「女としては傷付きます……」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	IF 0
+	ELSEIF GET_KFLAG_K39("相思相愛")
+		PRINTFORMW 「ねぇ、どうしたの…？」
+		PRINTFORMW 「一体何が気に入らないのよ…」
+	ELSEIF AFFECTION("溺愛")
+		PRINTFORMW 「どうしても駄目なんですか？」
+		PRINTFORMW 「あまり困らせないで欲しいのですけど…」
+	ELSEIF AFFECTION("眷愛")
+		PRINTFORMW 「これは困りましたね」
+		PRINTFORMW 「これも%CNAME(MASTER, TARGET)%の厄を取り除く為なんですよ…？」
+	ELSE
+		PRINTFORMW 「言うことを聞かないとお仕置きをしますよ…？」
+	ENDIF
+	RETURN 1
+ENDIF
+;COM40, 拒否する
+
+;──────────────────────────────────
+;COM41, 消極的やる
+;──────────────────────────────────
+;・REACT分類:消極的従う
+;・REACT派生1は"消極的なのが気に入らない"となりお仕置きポイント追加
+;・REACT印象:好印象小
+;-------------------------------------------------
+;トリガーする行動や状況…
+;ACT分類:0:会話
+;	ACT:衣装の変更を要求する
+;ACT分類:1:愛撫
+;	ACT:
+;ACT分類:2:道具
+;	ACT:
+;ACT分類:3:性交
+;	ACT:騎乗位
+;ACT分類:4:羞恥
+;	ACT:自慰/放尿
+;ACT分類:5:奉仕
+;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/イラマチオ/胸愛撫強制
+;ACT分類:6:加虐
+;	ACT:
+;ACT分類:7:異常
+;	ACT:
+;ACT分類:9:休憩
+;	ACT:
+;ACT分類:10:性交奉仕
+;	ACT:正常位させる/後背位させる/対面座位させる/後背位させる/アナルセックスさせる
+;-------------------------------------------------
+;・TFLAG:REACT派生(=0, 消極的だけどいいか：依存度変化(-3, +2)
+;                  =1, 消極的なのが気に入らない：依存度変化(-5, 0))
+;-------------------------------------------------
+@KOJO_MALE_COM_K39_41
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT派生1：消極的なのが気に入らない（お仕置きポイント加算）
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && TFLAG:REACT派生 == 1
+	IF GET_KFLAG_K39("相思相愛")
+		PRINTFORMW 「ねぇ、そんな消極的にされても困るんだけど…」
+		PRINTFORMW 「もしかして、ふざけてるの？」
+	ELSE
+		PRINTFORMW 「消極的なんですね…」
+		PRINTFORMW 「厄を祓うには、%CNAME(MASTER, TARGET)%の協力が必要なのですけど……」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;REACT派生０：消極的だけどいいか
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100) && !TFLAG:REACT派生
+	SELECTCASE GET_COM_RANK()
+		CASE "自然な行動"
+			IF GET_KFLAG_K39("相思相愛")
+				PRINTFORMW 「逆らえないから仕方なく、って感じよね。でも…」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%に何かを強いるのも悪くないわ。時には、ね」
+			ELSE
+				PRINTFORMW 「逆らえないから仕方なく、という感じですね」
+				PRINTFORMW 「少なくとも今は、それで満足するしかなさそうですね」
+			ENDIF
+		CASE "無理のない行動"
+			IF 0
+			ELSEIF GET_KFLAG_K39("相思相愛")
+				PRINTFORML 「やだ、やだこんなの…」
+				PRINTFORMW 「どうしてそんなに消極的なの……」
+			ELSEIF AFFECTION("溺愛")
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%には、もっと積極的にしてもらいたいのですが」
+				PRINTFORMW 「ちょっと残念ですね……」
+			ELSEIF AFFECTION("嫌悪")
+				PRINTFORMW 「あくまでもそういう態度ですか…」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%の厄、そのままでいいんですか？」
+			ELSE
+				PRINTFORML 「消極的なんですね……」
+				PRINTFORMW 「あの、もしかして…、どこか具合でも悪いのでしょうか…？」
+			ENDIF
+		CASE "無理をした行動"
+			IF COMCOR_POSI()
+				IF GET_KFLAG_K39("相思相愛")
+					PRINTFORMW 「そういうの、凄く焦れったい%RAND_SPLIT("んだけど…？/わ……")%」
+					IF RAND:2
+						PRINTFORMW 「%RAND_SPLIT("意気地がないのね/この意気地なし")%……」
+					ELSE
+						PRINTFORMW 「大体%CNAME(MASTER, TARGET)%自身、ホントはもっと積極的にしたいんじゃないの？」
+					ENDIF
+				ELSE
+					PRINTFORMW 「何を躊躇っているのですか？」
+					IF RAND:2
+						PRINTFORMW 「よく判りませんが、%CNAME(MASTER, TARGET)%なりに、何か考えがあるのでしょうか…」
+					ELSE
+						PRINTFORMW 「本当は、もっと積極的に振る舞いたいようにも見えますけど」
+					ENDIF
+				ENDIF
+			ELSE
+				PRINTFORMW 「『不本意だけど、とりあえず逆らうのはやめとこう』といったところ\@ GET_KFLAG_K39("相思相愛") ? かしら？ # でしょうか \@」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%のその態度見てれば判\@ GET_KFLAG_K39("相思相愛") ? るわ # ります \@……」
+			ENDIF
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;──────────────────────────────────
+;COM42, 積極的やる
+;──────────────────────────────────
+;・REACT分類:積極的従う
+;・REACT印象:好印象大
+;・我慢フラグ解消
+;・依存度変化(+4, +2)
+;-------------------------------------------------
+;トリガーする行動や状況…
+;ACT分類:0:会話
+;	ACT:衣装の変更を要求する
+;ACT分類:1:愛撫
+;	ACT:
+;ACT分類:2:道具
+;	ACT:
+;ACT分類:3:性交
+;	ACT:騎乗位
+;ACT分類:4:羞恥
+;	ACT:自慰/放尿
+;ACT分類:5:奉仕
+;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/イラマチオ/胸愛撫強制
+;ACT分類:6:加虐
+;	ACT:
+;ACT分類:7:異常
+;	ACT:
+;ACT分類:9:休憩
+;	ACT:
+;ACT分類:10:性交奉仕
+;	ACT:正常位させる/後背位させる/対面座位させる/後背位させる/アナルセックスさせる
+;-------------------------------------------------
+;・REACT派生なし
+;-------------------------------------------------
+@KOJO_MALE_COM_K39_42
+;-------------------------------------------------
+#LOCALSIZE 1
+VARSET LOCAL
+LOCAL:0 = GET_KFLAG_K39("相思相愛")
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COM42, 積極的やる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	;いずれかの部位でイきそうなら弾き、MENUMATCHで処理する
+	;=================================================
+	;負荷2：無理をした行動
+	;=================================================
+	IF GET_COM_RANK() == "無理をした行動" && !TCVAR:イきそう && ((PALAM:快Ｖ + PALAM:快Ａ + PALAM:快Ｂ) < 8500)
+		IF COMCOR_POSI()
+			SELECTCASE TENSION(TARGET, 8)
+				CASE "高い"
+					PRINTFORMW 「私に気を使ってくれてる\@ LOCAL:0 ? の # んですか \@？ ふふ、優しい\@ LOCAL:0 ? %RAND_SPLIT("のね/んだ")% # んですね \@」
+					PRINTFORM 「%CNAME(MASTER, TARGET)%がちょっと無理してる感じも、可愛\@ LOCAL:0 ? くって # らしくて \@…
+					;SIF LOCAL:0
+					;	CALL FADEIN(10, @"「%RAND_SPLIT("/")%」")
+				CASE "一般"
+					PRINTFORMW 「随分と私に気を使ってくれる\@ LOCAL:0 ? のね # んですね \@？」
+					PRINTFORM 「%CNAME(MASTER, TARGET)%の本心は別としても、嬉し\@ LOCAL:0 ? いわ # く思います \@
+				CASE "低い"
+					PRINTFORMW 「ちょっとわざとらしい気も\@ LOCAL:0 ? する # します \@けど…」
+					PRINTFORM 「これはこれで、悪くない\@ LOCAL:0 ? わ # です \@ね…
+			ENDSELECT
+			CALL PRINT_SYMBOL_K39
+		ELSE
+			IF LOCAL:0
+				SELECTCASE TENSION(TARGET, 8)
+					CASE "高い"
+						PRINTFORMW 「無理してるのが伝わって、普段ならあまりいい気はしないけど…」
+						PRINTFORMW 「一応、その頑張りは認めてもいいわよ？ ふふっ…」
+					CASE "一般"
+						PRINTFORMW 「まぁ…、%CNAME(MASTER, TARGET)%なりに頑張ってるんでしょうけど…」
+						PRINTFORMW 「ちょっとわざとらしいのよねぇ」
+					CASE "低い"
+						PRINTFORMW 「正直、%CNAME(MASTER, TARGET)%が無理してるのがみえみえで、あまりいい気はしないけどね」
+						PRINTFORMW 「それで私の機嫌を取ってるつもりなの？」
+				ENDSELECT
+			ELSE
+				SELECTCASE TENSION(TARGET, 8)
+					CASE "高い"
+						PRINTFORMW 「これでも、%CNAME(MASTER, TARGET)%が無理しているのは判っているつもりですよ」
+						PRINTFORM 「ただ、そうですね。これはこれで、いい傾向と言えるでしょうか\@ TENSION(TARGET, 8) == "高い" ? ね # \@
+						CALL PRINT_SYMBOL_K39
+					CASE "一般"
+						PRINTFORMW 「それ、ご機嫌取りのつもりですか？」
+						PRINTFORMW 「ちょっとあからさま過ぎて、むしろ興が醒めますね…」
+					CASE "低い"
+						PRINTFORMW 「そうですね…、本来ならそういう姿勢は嬉しく思いますけど…」
+						PRINTFORMW 「それが%CNAME(MASTER, TARGET)%の本心とも思えないんですよね」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類：羞恥
+	;=================================================
+	IF MENUMATCH(TFLAG:ACT, "羞恥")
+		PRINTFORMW 「恥ずかし\@ LOCAL:0 ? いけど、気持ちいい事は止められないって感じね # くても止められないって感じですね \@\@ TENSION(TARGET, 8) == "高い" ? ♪ # ？ \@」
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類：奉仕
+	;=================================================
+	IF MENUMATCH(TFLAG:ACT, "奉仕")
+		;-------------------------------------------------
+		;顔面騎乗アナル中
+		;-------------------------------------------------
+		IF TEQUIP:顔面騎乗アナル
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE RANDCOM(3, 500)
+					CASE 0
+						PRINTFORM 「あ…あっ
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　あぁんっ！ 気持ちいいよぉ…！」
+						PRINTFORM 「%TNAME_K39()%はっ！ おしりで感じる…、変態なのぉっ！ んぁっ
+						CALL PRINT_SYMBOL2_K39
+					CASE 1
+						PRINTFORM 「うぁっ！ や
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　ゾクゾクするっ…！」
+						PRINTFORMW 「おしり…、舐められて…っ！ おかしくなっちゃうっ…ッ…！」
+					CASE 2
+						PRINTFORMW 「やぁぁっ！ そ…、そんなに！ 舌で穿っちゃ、だめぇ…っ…！」
+						PRINTFORMW 「おしりの穴で、悦んじゃう……、駄目な神様になっちゃう…ッ…！」
+					ENDSELECT
+			ELSE
+				SELECTCASE RANDCOM(2, 501)
+					CASE 0
+						PRINTFORM 「ふぁっ
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　わ、わたしっ！ おしりの穴、舐められて…っ…！」
+						PRINTFORM 「こんなに……。きもちよくっ！ んぁっ
+						CALL PRINT_SYMBOL2_K39
+					CASE 1
+						PRINTFORM 「やっ
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　そんなに…っ！ ねっとり…、舐められると…」
+						PRINTFORMW 「おかしくっ！ おかしくなっちゃいます…ッ…！」
+				ENDSELECT
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		;これは圧縮できそう。でも面倒なので見なかったことに、とかいうアレ
+		;-------------------------------
+		;その他
+		;-------------------------------
+		IF GET_KFLAG_K39("相思相愛")
+			SELECTCASE RANDCOM(2, 502)
+				CASE 0
+					PRINTFORM 「ふぁぁっ
+					CALL AUTOHEARTCB_K39
+					PRINTFORMW 　や、やだっ！ ソコ、弱いのに……」
+					PRINTFORM 「んっ…あ…あっ
+					CALL AUTOHEARTCB_K39
+					PRINTFORMW 　こ、こんなにッ！ あぁっ…！」
+				CASE 1
+					PRINTFORMW 「んっ！ とっても上手…」
+					PRINTFORMW 「ねぇ、もっと……、もっとシていいよ…」
+			ENDSELECT
+		ELSE
+			SELECTCASE RANDCOM(2, 503)
+				CASE 0
+					PRINTFORM 「あんっ、あぁっ
+					CALL AUTOHEARTCB_K39
+					PRINTFORMW 　んんっ！」
+					PRINTFORMW 「私…、そこは弱いのに！ はぁっ…！」
+				CASE 1
+					PRINTFORM 「あ…んんっ……、あっ
+					CALL PRINT_SYMBOL2_K39
+					PRINTFORMW 「いい、ですよ……もっとシてください…」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;性交奉仕
+	;=================================================
+	IF MENUMATCH(TFLAG:ACT, "性奉")
+		SELECTCASE RANDCOM(2, 950)
+			CASE 0
+				PRINTFORM 「あぁぅっ…、あぁっ
+				CALL AUTOHEARTCB_K39
+				PRINTFORMW 　ん……はっ、はぁんっ！」
+				PRINTFORM 「ひっ、…あっ
+				CALL AUTOHEARTCB_K39
+				PRINTFORM 　あぁんっ
+				CALL AUTOHEARTCB_K39
+				PRINTFORMW 　んっ…、んくっ…！」
+			CASE 1
+				PRINTFORM 「あんっ
+				CALL AUTOHEARTCB_K39
+				PRINTFORMW 　んあっ！ はぁんっ！ んくっ…」
+				PRINTFORM 「もっと……、もっとっ！ あぁ…ッ
+				CALL PRINT_SYMBOL2_K39
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+;COM42, 積極的やる
+
+
+;──────────────────────────────────
+;COM43, 愛情を込めてやる
+;──────────────────────────────────
+;・一定以上の好感度、調教レベルが必要
+;・REACT分類:積極的従う
+;・REACT印象:好印象大
+;・我慢フラグ解消
+;・反発刻印があると弾かれる
+;・依存度変化(+6, +10)
+;-------------------------------------------------
+;トリガーする行動や状況…
+;ACT分類:0:会話
+;	ACT:
+;ACT分類:1:愛撫
+;	ACT:
+;ACT分類:2:道具
+;	ACT:
+;ACT分類:3:性交
+;	ACT:騎乗位
+;ACT分類:4:羞恥
+;	ACT:
+;ACT分類:5:奉仕
+;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/イラマチオ/胸愛撫強制
+;ACT分類:6:加虐
+;	ACT:
+;ACT分類:7:異常
+;	ACT:
+;ACT分類:9:休憩
+;	ACT:
+;ACT分類:10:性交奉仕
+;	ACT:正常位させる/後背位させる/対面座位させる/後背位させる/アナルセックスさせる
+;-------------------------------------------------
+;・REACT派生なし
+;-------------------------------------------------
+@KOJO_MALE_COM_K39_43
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;COM43, 愛情を込めてやる
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 口上記入チェック(100)
+	;=================================================
+	;負荷2：無理をした行動（特定のACT分類の場合は弾く）
+	;=================================================
+	IF GET_COM_RANK() == "無理をした行動" && !MENUMATCH(TFLAG:ACT, "奉仕") && !MENUMATCH(TFLAG:ACT, "性奉")
+		IF GET_KFLAG_K39("相思相愛")
+			PRINTFORMW 「ねぇ、そうしてくれるのは嬉しいんだけど…」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%…、本当は無理してるでしょう？ 判っちゃうのよね、そういうの…」
+		ELSE
+			PRINTFORMW 「これが%CNAME(MASTER, TARGET)%の本心からなら、どれだけ嬉しかったでしょう」
+			PRINTFORMW 「でも、そうではないんですよね？ 言わなくたって判ります…」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;この手の書くと物凄く消耗する。セイシンテキが云々…
+	;=================================================
+	;ACT分類：性奉
+	;=================================================
+	;//途中で力尽きたので負荷1と2は下層にパス。この位置で"性奉"の負荷0を拾いきってしまう
+	IF MENUMATCH(TFLAG:ACT, "性奉") && GET_COM_RANK() == "自然な行動"
+		PRINTFORM 「%RAND_SPLIT("あっ/んっ/あぁ/あん")%
+		CALL AUTOHEARTCB_K39
+		;//体位毎に書き分けた方が内容が限定されるので書きやすい。ただ手間が洒落にならない
+		;//汎用的に書くと手間は省けるけど、うまい具合にやらないとACTによってはおかしな事になる
+		;//どちらを取るからその時の気分と、心と身体のコンディション次第ｗ
+		IF GET_KFLAG_K39("相思相愛")
+			;調教者がイきそう
+			IF TCVAR:イきそう || ((PALAM:快Ｖ + PALAM:快Ａ + PALAM:快Ｂ) >= 8500)
+				PRINTFORM 　んっ…あ…あぁ……%RAND_SPLIT("ふ/は/あ/んッ/はぁ/あぁ/ふぁ")%……ぁ
+				CALL PRINT_SYMBOL2_K39
+				;OK, here we go ...
+				PRINT 「好き
+				CALL AUTOHEARTCB_K39
+				PRINT 　好き
+				CALL AUTOHEARTCB_K39
+				PRINT 　好き
+				CALL AUTOHEARTCB_K39
+				PRINT すきぃっ
+				CALL AUTOHEARTCB_K39
+				PRINT 　大好きぃっ
+				CALL AUTOHEARTCB_K39
+				PRINT 　ぁ……あ
+				CALL PRINT_SYMBOL2_K39
+				;sigh ...
+				PRINTL
+				PRINTFORMDL %CALLNAME%は一人の女として愛される歓びに%RAND_SPLIT("体を打ち震わせながら/涙を浮かべつつ")%、
+				PRINTFORMDW その全身で%CALLNAME:MASTER%の愛情を込めた行為に応えた……
+			;その他
+			ELSE
+				PRINTFORM 　ん……ふふ、優しいのね…
+				CALL PRINT_SYMBOL_K39
+				PRINTFORMW 「でも、そんなに優しくされるとわたし…%CNAME(MASTER, TARGET)%のこと、もっと好きになっちゃうかも…」
+				;EDを経過していない場合
+				SIF !KFLAG:150
+					PRINTFORMW 「それでも%CNAME(MASTER, TARGET)%は、私を…わたしの事、受け止めてくれる？」
+			ENDIF
+		ELSE
+			;調教者がイきそう
+			IF TCVAR:イきそう || ((PALAM:快Ｖ + PALAM:快Ａ + PALAM:快Ｂ) >= 8500)
+				PRINTFORMW 　あ…あぁ……だめっ！ だめですっ！ そんなに優しくされたら…わたし、もう……」
+				PRINTFORM 「好きっ
+				CALL AUTOHEARTCB_K39
+				IF AFFECTION("盲愛")
+					PRINTFORM 　\@ TENSION(TARGET, 8) == "高い" ? 大好き # すき \@ですっ！！ 私、%CNAME(MASTER, TARGET)%のこと…あいし、て…ッ！
+				ELSE
+					PRINTFORM 　好きなんです！ 今だけ…今だけでいいですから！ %RAND_SPLIT("わたし…を/もっと")%…っ！
+				ENDIF
+				PRINT  あぁ……
+				CALL PRINT_SYMBOL2_K39
+			;その他
+			ELSE
+				PRINTFORMW 　ん……恋人のように\@ IS_NOWACTNAME("正常位させる/対面座位させる/背面座位させる") ? 抱いて # して \@くれるんですね。嬉しい……」
+				PRINTFORM 「いいんですよ、もっと激しくしても。私、%CNAME(MASTER, TARGET)%になら…%CNAME(MASTER, TARGET)%となら……。あぁ…
+				CALL PRINT_SYMBOL_K39
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;=================================================
+	;ACT分類：奉仕・性奉
+	;=================================================
+	IF MENUMATCH(TFLAG:ACT, "奉仕") || MENUMATCH(TFLAG:ACT, "性奉")
+		IF TCVAR:イきそう || ((PALAM:快Ｖ + PALAM:快Ａ + PALAM:快Ｂ) >= 8500)
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE GET_COM_RANK()
+					CASE "自然な行動"
+						PRINTFORM 「ん……あ%RAND_SPLIT("ん/っ/ぁ/")%
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　ずるいわ…私、こうされるの弱いのに……」
+						PRINTFORM 「%CNAME(MASTER, TARGET)%が\@ KFLAG:150 ? 大 # \@好きって気持ち%RAND_SPLIT("でいっぱいになっちゃ/が溢れてきちゃ")%って…
+						CALL PRINT_SYMBOL2_K39
+						PRINTFORMW 「もう…、もうっ！ どうにか……なっちゃいそう！！」
+					CASE "無理のない行動"
+						PRINTFORMW 「ね、ねぇ……そんな風にされると、蕩けちゃいそうなんだけ、ど……」
+						PRINTFORM 「あっ
+						CALL AUTOHEARTCB_K39
+						PRINTFORM 　あ
+						CALL AUTOHEARTCB_K39
+						PRINTFORM 　だから、ホントに……とろけちゃうって！！ あぁ…
+						CALL PRINT_SYMBOL2_K39
+					CASE "無理をした行動"
+						PRINTFORM 「や！ %RAND_SPLIT("ダメ/だめ/駄目")%っ
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　今そんな、優しく…されたら……」
+						PRINTFORM 「いっちゃう
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　ホントに…イっちゃうからぁっ！！」
+				ENDSELECT
+			ELSE
+				SELECTCASE GET_COM_RANK()
+					CASE "自然な行動"
+						IF AFFECTION("盲愛")
+							PRINTFORMW 「や！ だ、ダメですっ！ そんな……まるで、恋人みたいに……」
+							PRINTFORM 「あ
+							CALL AUTOHEARTCB_K39
+							PRINTFORMW 　あぁ……もう、ホントに…駄目なのに。わたし……」
+						ELSE
+							PRINTFORM 「あ%RAND_SPLIT("ん/っ/")%
+							CALL AUTOHEARTCB_K39
+							PRINTFORMW 　あぁ……お願いです。そんなに優しくしないで……」
+							PRINTFORMW 「わたし……本気で%CNAME(MASTER, TARGET)%のこと…、好きになってしまいそう……」
+						ENDIF
+					CASE "無理のない行動"
+						PRINTFORM 「ぁ……あ
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　そんな風にされると、もう……」
+						PRINTFORM 「我慢できなくなりそうで、わ、私っ
+						CALL PRINT_SYMBOL_K39
+					CASE "無理をした行動"
+						PRINTFORM 「ん……ぁ
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　あぁ……ずるい、です……」
+						PRINTFORMW 「そんな風にされたら、私……勘違いしてしまいそう……」
+				ENDSELECT
+			ENDIF
+		ELSE
+			IF GET_KFLAG_K39("相思相愛")
+				SELECTCASE GET_COM_RANK()
+					CASE "自然な行動"
+						;ED経過済みの場合
+						IF KFLAG:150 == 1
+							PRINTFORM 「ん…好き……すき……大好き……だいすき…
+							CALL PRINT_SYMBOL2_K39
+							PRINTFORMW 「好きすぎて、もうどうにかなっちゃいそう……」
+						ELSE
+							PRINTFORMW 「ん…嬉しい。まるで本当の恋人のようにしてくれるのね」
+							PRINTFORMW 「お願い。%RAND_SPLIT("今だけ、今だけで/偽りの関係でも")%いいから……もう少し、このまま……」
+						ENDIF
+					CASE "無理のない行動"
+						PRINTFORMW 「んっ…ねぇ、わかる？ %CNAME(MASTER, TARGET)%に触れられる度、私の身体が悦んじゃってるの」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%が、そんなに優しくするから……」
+					CASE "無理をした行動"
+						PRINTFORMW 「くすっ、随分楽しそうね？ 隠したって判るわ」
+						PRINTFORM 「こうして身体を合わせていれば、%CNAME(MASTER, TARGET)%が何を考えているかなんて。ね…
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			ELSE
+				SELECTCASE GET_COM_RANK()
+					CASE "自然な行動"
+						PRINTFORMW 「ん…優しい。まるで恋人のようにしてくれるんですね」
+						PRINTFORMW 「でもそんな優しくされると、私…%CNAME(MASTER, TARGET)%の事……」
+					CASE "無理のない行動"
+						PRINTFORMW 「そ、そんなに優しくされると……わたし――。」
+						PRINTFORMW 「自分が、抑えられなくなりそうで……」
+					CASE "無理をした行動"
+						PRINTFORMW 「ふふ、随分嬉しそうですね。隠したって判ります」
+						PRINTFORMW 「でもこんなに優しくされると、私……」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	IF GET_KFLAG_K39("相思相愛")
+		PRINTFORMW 「ん…嬉しい……」
+		PRINTFORMW 「愛されてる感じがして、とっても幸せ…」
+	ELSE
+		PRINTFORMW 「こんな私にも愛情を込めてくださるんですね」
+		PRINTFORMW 「嬉しいです…」
+	ENDIF
+	RETURN 1
+ENDIF
+;COM43, 愛情を込めてやる
+
+;────────────────────────────────────
+;COM44, 平然とやる
+;────────────────────────────────────
+;・REACT分類:平然と従う
+;・REACT印象:好印象小
+;・依存度変化(+2, -2)
+;-------------------------------------------------
+;トリガーする行動や状況…
+;ACT分類:0:会話
+;	ACT:衣装の変更を要求する
+;ACT分類:1:愛撫
+;	ACT:
+;ACT分類:2:道具
+;	ACT:
+;ACT分類:3:性交
+;	ACT:騎乗位
+;ACT分類:4:羞恥
+;	ACT:自慰/放尿
+;ACT分類:5:奉仕
+;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/イラマチオ/胸愛撫強制
+;ACT分類:6:加虐
+;	ACT:
+;ACT分類:7:異常
+;	ACT:
+;ACT分類:9:休憩
+;	ACT:
+;ACT分類:10:性交奉仕
+;	ACT:正常位させる/後背位させる/対面座位させる/後背位させる/アナルセックスさせる
+;-------------------------------------------------
+;・REACT派生なし
+;-------------------------------------------------
+@KOJO_MALE_COM_K39_44
+;-------------------------------------------------
+#LOCALSSIZE 1
+VARSET LOCALS
+LOCALS:0 = %RAND_SPLIT("あ゛っ/あ゛ぁっ/やっ/ひぁっ")%
+
+IF 口上記入チェック(100) && !TFLAG:REACT派生
+	;=================================================
+	;ACT分類：性奉
+	;=================================================
+	IF MENUMATCH(TFLAG:ACT, "性奉")
+		IF GET_KFLAG_K39("相思相愛")
+			;調教者がイきそう
+			IF TCVAR:イきそう || ((PALAM:快Ｖ + PALAM:快Ａ + PALAM:快Ｂ) >= 8500)
+				;調教対象がイきそう
+				IF TCVAR:MASTER:イきそう
+					PRINTFORM 「%LOCALS:0%
+					CALL AUTOHEARTCB_K39
+					PRINTFORM 　は、はげしっ…
+					CALL PRINT_SYMBOL2_K39
+					;Ｖ性交奉仕中
+					IF V_SEX(MASTER)
+						PRINTFORM 　あ
+						CALL AUTOHEARTCB_K39
+						PRINTFORM 　%RAND_SPLIT("おく/奥に")%っ……当たって
+						CALL AUTOHEARTCB_K39
+					;Ａ性交奉仕中
+					ELSE
+						PRINTFORMW 　こ、こんなのっ%RAND_SPLIT("て/")%
+						CALL AUTOHEARTCB_K39
+						PRINTFORMW 　おしり…こわれちゃうぅっ…
+						CALL AUTOHEARTCB_K39
+					ENDIF
+					PRINTFORM 　あ%RAND_SPLIT("゛/")%ぁ……
+					CALL PRINT_SYMBOL2_K39
+				;その他
+				ELSE
+					;汎用処理
+					CALL PRINT_KOJO_COM_44_K39
+					PRINTFORM 　私のナカ…すごく熱くて……わたし、きもちよくって
+					CALL PRINT_SYMBOL2_K39
+					PRINTFORM 「私…%CNAME(MASTER, TARGET)%%RAND_SPLIT("に抱かれてしあわせ/とならしあわせ")%
+					CALL AUTOHEARTCB_K39
+					PRINT 　しあわせ
+					CALL AUTOHEARTCB_K39
+					PRINTFORM 　温かくって…わたしっ！ %CNAME(MASTER, TARGET)%となら…
+					CALL PRINT_SYMBOL2_K39
+				ENDIF
+			ELSE
+				;汎用処理
+				CALL PRINT_KOJO_COM_44_K39
+				;消費気力で派生
+				SELECTCASE GET_COM_RANK()
+					CASE "自然な行動"
+						PRINTFORMW 　余裕綽々ね……ちょっと%RAND_SPLIT("癪に障るかも/くやしいかも/ムカつく")%…」
+						PRINTFORM 「%RAND_SPLIT("あぁ/やっ/ふぁ/ひぁ")%%RAND_SPLIT("っ/")%
+						CALL PRINT_SYMBOL2_K39
+						PRINTFORMW 　もうっ！ そうやって…、わたしの弱いとこ……ばっかりっ！」
+					CASE "無理のない行動"
+						PRINTFORMW 　私を気持ちよくさせようと、頑張ってくれてるのね。嬉しい…」
+						PRINTFORMW 「でも…%CNAME(MASTER, TARGET)%%RAND_SPLIT("にも、私の身体で気持ちよくなって欲しい/も楽しんでくれないと、私も楽しくない")%の」
+						PRINTFORMW 「だから…ね？ %CNAME(MASTER, TARGET)%が望むなら、もっと激しくされたって。%RAND_SPLIT("わたしは/私は構わないから/私は大丈夫だから")%……」
+					CASE "無理をした行動"
+						PRINTFORMW 　余裕たっぷり、って訳でもなさそうね。%RAND_SPLIT("意地/見栄")%はっちゃって…」
+						PRINTFORM 「でも、ふふ……%CNAME(MASTER, TARGET)%のそういうとこ、私は\@ CFLAG:TARGET:依存度 > 4000 ? 大 # \@好き%RAND_SPLIT("よ/")%…
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			ENDIF
+		ELSE
+			;調教者がイきそう
+			IF TCVAR:イきそう || ((PALAM:快Ｖ + PALAM:快Ａ + PALAM:快Ｂ) >= 8500)
+				;調教対象がイきそう
+				IF TCVAR:MASTER:イきそう
+					PRINTFORM 「%LOCALS:0%
+					CALL AUTOHEARTCB_K39
+					PRINTFORM 　%RAND_SPLIT("は、激しッ！ はげしいですっ/壊れる！ こわれちゃいますっ")%
+					CALL PRINT_SYMBOL2_K39
+					PRINTFORMW 「そんなに%RAND_SPLIT("……/")%されたら、わたし…%RAND_SPLIT("、/")%もう……」
+				ELSE
+					;汎用処理
+					CALL PRINT_KOJO_COM_44_K39
+					PRINTFORMW 　%RAND_SPLIT("いいです！ いいですっ/キモチ、いい…気持ちいい…ですっ！")%！！ あ゛…あぁ…」
+					PRINTFORM 「どうか、止めないで！ このまま……もっと！ 私をっ！ わたしのナカを……もっと…
+					CALL PRINT_SYMBOL2_K39
+				ENDIF
+			ELSE
+				;汎用処理
+				CALL PRINT_KOJO_COM_44_K39
+				;消費気力で派生
+				SELECTCASE GET_COM_RANK()
+					CASE "自然な行動"
+						PRINTFORMW 　%RAND_SPLIT("余裕たっぷりって感じ/随分余裕があるん")%ですね…」
+						PRINTFORMW 「でも%RAND_SPLIT(@"%CNAME(MASTER, TARGET)%なら…/")%%CNAME(MASTER, TARGET)%になら、こんな風にされたって。わたしは……」
+					CASE "無理のない行動"
+						PRINTFORMW 　%RAND_SPLIT("気持ち/")%いいですよ、とっても…」
+						PRINTFORMW 「私は大丈夫ですから…%CNAME(MASTER, TARGET)%が望むなら、もっと激しくしたって……」
+					CASE "無理をした行動"
+						PRINTFORMW 　その\@ IS_NOWACTNAME("正常位させる/対面座位させる/逆レイプ") ? 見た目 # 腰使い \@程には余裕なさそうですね…」
+						PRINTFORM 「ふふ…
+						CALL AUTOHEARTCB2_K39
+						PRINTFORMW 　わかってしまうんですよね。こうして繋がっていれば、尚更…
+						CALL PRINT_SYMBOL_K39
+				ENDSELECT
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;その他
+	;-------------------------
+	IF GET_KFLAG_K39("相思相愛")
+		;消費気力で派生
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				IF MENUMATCH(TFLAG:ACT, "奉仕")
+					PRINTFORM 「%RAND_SPLIT("あ/ん/あぁ/ふぁ")%…
+					CALL AUTOHEARTCB_K39
+					PRINTFORMW 　私%RAND_SPLIT("が感じるトコ/の気持ちいいところ")%、全部知られちゃったみたい…」
+					PRINTFORMW 「でも…こうして%CNAME(MASTER, TARGET)%にいいようにされちゃうのも、%RAND_SPLIT("嫌じゃないのよね/悪くない、かも")%…」
+				ELSE
+					PRINTFORMW 「ふふ、%RAND_SPLIT("余裕たっぷりって感じね/こんなの平気って顔しちゃって")%」
+					PRINTFORMW 「むしろ、%CNAME(MASTER, TARGET)%……これじゃ物足りないとか思ってたりしない？」
+				ENDIF
+			CASE "無理のない行動"
+				IF MENUMATCH(TFLAG:ACT, "奉仕")
+					PRINTFORM 「私を%RAND_SPLIT("悦ばせるのに/気持ちよくさせようと")%一生懸命なのね。ふふ、可愛い……
+					CALL PRINT_SYMBOL_K39
+					;調教者のBASE:満足が50%以上
+					IF TENSION(TARGET, 8) == "高い"
+						PRINTFORM 「頭%RAND_SPLIT("なでなで/ナデナデ")%したくなちゃうわ…
+						CALL PRINT_SYMBOL_K39
+					ENDIF
+				ELSE
+					PRINTFORMW 「この程度のこと、今の%CNAME(MASTER, TARGET)%には何でもないみたいね」
+					PRINTFORMW 「むしろ…、ちょっと物足りないとか思ってない？ くすっ…」
+				ENDIF
+			CASE "無理をした行動"
+				PRINTFORMW 「平気な顔してるけど、ホントは余裕ないんでしょう？」
+				PRINTFORMW 「ふふ、無理しちゃって……」
+		ENDSELECT
+	ELSE
+		;消費気力で派生
+		SELECTCASE GET_COM_RANK()
+			CASE "自然な行動"
+				IF MENUMATCH(TFLAG:ACT, "奉仕")
+					PRINTFORMW 「ん……もうすっかり、%CNAME(MASTER, TARGET)%にいいようにされてしまって。わたし…」
+					PRINTFORMW 「でも、こういうのも悪くないですね……」
+				ELSE
+					PRINTFORMW 「あら？ 随分と余裕があるみたいですね」
+					PRINTFORMW 「もう、こんなものでは物足りませんか？ ふふ」
+				ENDIF
+			CASE "無理のない行動"
+				PRINTFORM 「%RAND_SPLIT("ふふ/くすっ")%、
+				IF MENUMATCH(TFLAG:ACT, "奉仕")
+					PRINTFORM そんなに一生懸命にしてくれると、私も嬉しくなってしまいます…
+					CALL PRINT_SYMBOL_K39
+				ELSE
+					PRINTFORMW 前向きでとってもいいですね？ もっとも…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%にとって、この程度のことは何でもないみたいですけど」
+				ENDIF
+			CASE "無理をした行動"
+				PRINTFORMW 「何でもないような顔してますけど、実はちょっと無理してませんか？」
+		ENDSELECT
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;汎用処理
+;━━━━━━━━━━━━━━━━━━━━━━━━
+@PRINT_KOJO_COM_44_K39
+#LOCALSSIZE 5
+VARSET LOCALS
+LOCALS:0 '= RAND_SPLIT("あっ/んっ/～っ/あぅっ/はぅっ/ふぁ/ん…/あ…/あんっ")
+LOCALS:1 '= RAND_SPLIT("んぁ/あぁ/はぁ、はぁ/あ…あ/") + "……ぁ"
+;LOCALS:2 = %RAND_SPLIT("あ゛っ/あ゛ぁっ/やっ/ひぁっ")%
+PRINTFORM 「%LOCALS:0%
+CALL AUTOHEARTCB_K39
+PRINTFORM 　%LOCALS:1%
+CALL AUTOHEARTCB_K39
