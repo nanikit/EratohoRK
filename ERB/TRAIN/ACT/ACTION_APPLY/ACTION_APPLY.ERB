@@ -20,8 +20,8 @@ TRYCALLFORM ACTION_APPLY_{TFLAG:ACT}
 @ACTION_APPLY2
 
 [SKIPSTART]
-;리액션이 하는 대로이면 처리 중단
-SIF IS_NOWCOMNAME("하는 대로")
+;리액션이 하는대로이면 처리 중단
+SIF IS_NOWCOMNAME("하는대로")
 	RETURN 0
 [SKIPEND]
 
@@ -30,38 +30,38 @@ VARSET LOCALS
 
 ;거절 처리 호출
 
-;ACT 분류가 성교계나 성교중에, REACT 분류가 날뛰는 계였던 경우
+;ACT분류가 성교계나 성교중에, REACT분류가 날뛰는 계였던 경우
 IF (TFLAG:ACT분류 == 3 || TEQUIP:성교중) && IS_COMGRONAME("날뛴다")
 	;성교의 캔슬 처리를 호출해
 	LOCALS = CANCEL_INSERT_TO_M
-;ACT 분류가 성교 봉사계나 성교 봉사중에, REACT 분류가 날뛰는 계였던 경우		역레의 경우는 저항 할 수 없게@/L
+;ACT분류가 성교 봉사계인가 성교봉사중에, REACT분류가 날뛰는 계였던 경우		역레의 경우는 저항 할 수 없게@/L
 ELSEIF (TFLAG:ACT분류 == 10 || TEQUIP:성교봉사중) && IS_COMGRONAME("날뛴다") && !IS_NOWACTNAME("역강간")
 	;성교 봉사의 캔슬 처리를 호출해
 	LOCALS = CANCEL_INSERT_TO_T
-;줄/아이마스크/볼개그 장착중에, REACT 분류가 허가를 청하는 계였던 경우
-ELSEIF (TEQUIP:줄 || TEQUIP:아이마스크 || TEQUIP:볼개그) && IS_COMGRONAME("허가를 청한다")
+;줄/아이마스크/볼개그 장착중에, REACT분류가 허가를청한다 계였던 경우
+ELSEIF (TEQUIP:줄 || TEQUIP:아이마스크 || TEQUIP:볼개그) && IS_COMGRONAME("허가를청한다")
 	;구속 캔슬 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_RESTRAINT
-;삼각 목마 사용중에, REACT 분류가 허가를 청하는 계였던 경우
-ELSEIF TEQUIP:삼각목마 && IS_COMGRONAME("허가를 청한다")
-	;삼각 목마 캔슬 처리를 호출해
+;삼각목마 사용중에, REACT분류가 허가를청한다 계였던 경우
+ELSEIF TEQUIP:삼각목마 && IS_COMGRONAME("허가를청한다")
+	;삼각목마 캔슬 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_W_HORSE
 ;--------------------------------------------------------------
 ;부자연스러운 동작을 하기 위해(때문), 캔슬 처리를 일부 말소
-;그 중 COM 「돌아가고 싶다」를 만들까하고 생각합니다. 만들면 공중 변소도 포함해도 좋네요
+;그 중 COM 「돌아가고 싶다」를 만들까하고 생각합니다. 만들면 공중변소도 포함해도 좋네요
 
 [SKIPSTART]
 
-;야외 플레이중에, REACT 분류가 허가를 청하는 계였던 경우
-ELSEIF TEQUIP:야외 플레이 && IS_COMGRONAME("허가를 청한다")
-	;야외 플레이 캔슬 처리를 호출해
+;야외플레이 안에, REACT분류가 허가를청한다 계였던 경우
+ELSEIF TEQUIP:야외플레이 && IS_COMGRONAME("허가를청한다")
+	;야외플레이 캔슬 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_OUTDOOR
-;대거울 사용중에, REACT 분류가 허가를 청하는 계였던 경우
-ELSEIF TEQUIP:대거울 && IS_COMGRONAME("허가를 청한다")
+;대거울 사용중에, REACT분류가 허가를청한다 계였던 경우
+ELSEIF TEQUIP:대거울 && IS_COMGRONAME("허가를청한다")
 	;대거울 캔슬 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_MIRROR
-;코스프레중에, REACT 분류가 허가를 청하는 계였던 경우
-ELSEIF TEQUIP:MASTER:코스프레 && IS_COMGRONAME("허가를 청한다")
+;코스프레중에, REACT분류가 허가를청한다 계였던 경우
+ELSEIF TEQUIP:MASTER:코스프레 && IS_COMGRONAME("허가를청한다")
 	;코스프레캐셀 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_COSPLAY
 
@@ -70,24 +70,24 @@ ELSEIF TEQUIP:MASTER:코스프레 && IS_COMGRONAME("허가를 청한다")
 ;말소 여기까지
 ;--------------------------------------------------------------
 ;특수 ACT 처리 호출
-;(특수 상태 변화 처리를 실시하지 않는다)
+;(특수 상태변화 처리를 실시하지 않는다)
 
-;ACT가 공중 육변기 플레이의 경우
-ELSEIF IS_NOWACTNAME("공중 육변기 플레이")
+;ACT가 공중육변기플레이의 경우
+ELSEIF IS_NOWACTNAME("공중육변기플레이")
 ;ACT가 옷을 벗어/옷을 입은 경우
-ELSEIF IS_NOWACTNAME("의상의 변경을 요구한다")
-;ACT가 쉬게 하는 것 경우
-ELSEIF IS_NOWACTNAME("쉬게 한다")
-;ACT가 영양제를 먹이는 것 경우
-ELSEIF IS_NOWACTNAME("영양제를 먹인다")
+ELSEIF IS_NOWACTNAME("의상의변경을요구한다")
+;ACT가 쉬게한다의 경우
+ELSEIF IS_NOWACTNAME("쉬게한다")
+;ACT가 영양제를먹인다의 경우
+ELSEIF IS_NOWACTNAME("영양제를먹인다")
 ;ACT가 치료하는 것 경우
 ELSEIF IS_NOWACTNAME("치료한다")
 
-;특수 상태 변화 처리의 호출
+;특수 상태변화 처리의 호출
 
-;조교 대상 자위중, 행그렇게 상태로 초조하게 해 종료/없음
+;조교 대상 자위중, 갈것같다상태로 초조하게함 종료/없음
 ELSEIF GETBIT(TEQUIP:자위중, 0) && TCVAR:MASTER:갈것같다 && TCVAR:MASTER:초조하게해번 < 2
-	;자위 절정 처리를 호출해
+	;자위절정 처리를 호출해
 	LOCALS = ONANIE_EX
 ENDIF
 
@@ -127,9 +127,9 @@ RETURN RESULT
 ;리액션전, 리액션 후의 보정을 1개소에 정리했다
 ;
 ;메모
-;	강제 탈의:조교자가 조교 대상을 벗긴다  자주 탈의:조교자가 자신의 의복을 벗는다
-;	요점 강제 발기:조교 대상의 정력이 다한 상태.
-;	　　　　　　이번 발기 플래그를 무시한다(통상의 조건에서는 발기하지 않는다)
+;	강제탈의:조교자가 조교 대상을 벗긴다  자주탈의:조교자가 자신의 의복을 벗는다
+;	요점강부디기:조교 대상의 정력이 다한 상태.
+;	　　　　　　이번발기 플래그를 무시한다(통상의 조건에서는 발기하지 않는다)
 ;	　　　　　　강제 발기 효과가 있는 경우, 발기도에 직접 가산한다
 ;─
-;ACT 분류마다 파일을 분리. 개별의 파일은 ACT_APPLY 폴더에 이전@/L
+;ACT분류 마다 파일을 분리. 개별의 파일은 ACT_APPLY 폴더에 이전@/L

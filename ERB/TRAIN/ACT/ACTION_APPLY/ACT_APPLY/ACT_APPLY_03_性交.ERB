@@ -1,20 +1,20 @@
 ﻿;─
 ;030, 정상위
 ;─
-;리액션전(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;리액션전(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY_30
-;착의플레이선호 소질 또한 조교 대상 하반신 윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
+;착의플레이선호 소질 또한 조교 대상 하반신윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
 IF TALENT:착의플레이선호 && TEQUIP:MASTER:하반신윗도리 < 2
-	;속옷만 강제, 자주 탈의
+	;속옷만 강제, 자주탈의
 	TFLAG:강제탈의 = 9
 	TFLAG:자주탈의 = 9
-;해방 소질, 또는 확률(조교 레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
+;해방 소질, 또는 확률(조교레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
 ELSEIF TALENT:해방 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "욕망") / 10 + TALENT:MASTER:매혹 * 3 > TALENT:억압 * 5 + TALENT:수줍음 * 3 + RAND:3)
-	;반반의 확률로 액세서리까지, 전라까지 강제, 자주 탈의(별개에 판정)
+	;반반의 확률로 액세서리까지, 전라까지 강제, 자주탈의(별개에 판정)
 	TFLAG:강제탈의 = 7 + RAND:2
 	TFLAG:자주탈의 = 7 + RAND:2
 ELSE
-	;최악이어도 하반신 전부 강제, 자주 탈의
+	;최악이어도 하반신 전부 강제, 자주탈의
 	TFLAG:강제탈의 = 5
 	TFLAG:자주탈의 = 5
 ENDIF
@@ -22,7 +22,7 @@ ENDIF
 SOURCE:MASTER:쾌V = 300 + ACT_FROM(TARGET, 5) * (TALENT:허리사용 * 2 + 3) / 2
 ;애무 보정치에 응해 쾌cSOURCE 증가
 SOURCE:쾌C = 200 + ACT_TO(TARGET, 5) * (TALENT:MASTER:허리사용*2 + 3) / 2
-;벽통과가 있는 경우 3/4로 강제 탈의를 캔슬한다
+;벽통과가 있는 경우 3/4로 강제탈의를 캔슬한다
 SIF PENIS(TARGET) && TALENT:벽통과 && RAND:4
 	TFLAG:강제탈의 = 0
 ;윤활 부족시, 쾌V, 쾌cSOURCE에 감소 보정, 아픔 SOURCE 증가
@@ -32,7 +32,7 @@ IF EXP:MASTER:V경험 < 1
 	TIMES SOURCE:MASTER:쾌V , 0.30
 	SOURCE:MASTER:아픔 += 1000
 	SOURCE:MASTER:일탈 += 1000
-	;합의 없음, 한편 조교 대상으로 충분한 성 지식이 있는 상태로
+	;합의 없음, 한편 조교 대상으로 충분한 성지식이 있는 상태로
 	;처녀를 빼앗으려고 하면 트라우마 SOURCE 증가
 	SIF !CFLAG:합의 && EXP:MASTER:성지식 > 4
 		SOURCE:MASTER:트라우마 += 2500
@@ -45,7 +45,7 @@ ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
 	SOURCE:MASTER:아픔 += 50
 	SOURCE:MASTER:일탈 += 50
 ENDIF
-;조교 레벨에 응해 접촉 SOURCE 증가
+;조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 250 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = 50 + SOURCE:MASTER:접촉 / 5
@@ -57,18 +57,18 @@ IF CFLAG:MASTER:트라우마 == 30
 ENDIF
 ;쾌VSOURCE에 응해 사랑 SOURCE 증가, 트라우마, 아픔 SOURCE에 응해 감소
 SOURCE:MASTER:사랑 += SOURCE:MASTER:쾌V / 5 - SOURCE:MASTER:트라우마 - SOURCE:MASTER:아픔
-;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
+;중독충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:중독충족 + SOURCE:MASTER:쾌V / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:바기나 |= STAIN:페니스
 STAIN:페니스 |= STAIN:MASTER:바기나
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -80,30 +80,30 @@ TFLAG:경과시간 += 3
 ;바이브 해제
 TEQUIP:바이브 = 0
 
-;리액션 후(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;리액션 후(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY2_30
-;MASTER가 처녀라면, 처녀 상실이 일어난다
+;MASTER가 처녀라면, 처녀상실이 일어난다
 TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
-;TARGET가 동정이라면, 동정 상실이 일어난다
+;TARGET가 동정이라면, 동정상실이 일어난다
 TCVAR:동정상실 = TALENT:동정
 
 ;─
 ;031, 후배위
 ;─
-;리액션전(N/H)[벌](쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;리액션전(N/H)[벌](쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY_31
-;착의플레이선호 소질 또한 조교 대상 하반신 윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
+;착의플레이선호 소질 또한 조교 대상 하반신윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
 IF TALENT:착의플레이선호 && TEQUIP:MASTER:하반신윗도리 < 2
-	;속옷만 강제, 자주 탈의
+	;속옷만 강제, 자주탈의
 	TFLAG:강제탈의 = 9
 	TFLAG:자주탈의 = 9
-;해방 소질, 또는 확률(조교 레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
+;해방 소질, 또는 확률(조교레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
 ELSEIF TALENT:해방 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "욕망") / 10 + TALENT:MASTER:매혹 * 3 > TALENT:억압 * 5 + TALENT:수줍음 * 3 + RAND:3)
-	;반반의 확률로 액세서리까지, 전라까지 강제, 자주 탈의(별개에 판정)
+	;반반의 확률로 액세서리까지, 전라까지 강제, 자주탈의(별개에 판정)
 	TFLAG:강제탈의 = 7 + RAND:2
 	TFLAG:자주탈의 = 7 + RAND:2
 ELSE
-	;최악이어도 하반신 전부 강제, 자주 탈의
+	;최악이어도 하반신 전부 강제, 자주탈의
 	TFLAG:강제탈의 = 5
 	TFLAG:자주탈의 = 5
 ENDIF
@@ -111,7 +111,7 @@ ENDIF
 SOURCE:MASTER:쾌V = 300 + ACT_FROM(TARGET, 5) * (TALENT:허리사용 * 2 + 3) / 2
 ;애무 보정치에 응해 쾌cSOURCE 증가
 SOURCE:쾌C = 300 + ACT_TO(TARGET, 5) * (TALENT:MASTER:허리사용 + 1)
-;벽통과가 있는 경우 3/4로 강제 탈의를 캔슬한다
+;벽통과가 있는 경우 3/4로 강제탈의를 캔슬한다
 SIF PENIS(TARGET) && TALENT:벽통과 && RAND:4
 	TFLAG:강제탈의 = 0
 ;윤활 부족시, 쾌V, 쾌cSOURCE에 감소 보정, 아픔 SOURCE 증가
@@ -121,7 +121,7 @@ IF EXP:MASTER:V경험 < 1
 	TIMES SOURCE:MASTER:쾌V , 0.30
 	SOURCE:MASTER:아픔 += 1200
 	SOURCE:MASTER:일탈 += 1500
-	;합의 없음, 한편 조교 대상으로 충분한 성 지식이 있는 상태로
+	;합의 없음, 한편 조교 대상으로 충분한 성지식이 있는 상태로
 	;처녀를 빼앗으려고 하면 트라우마 SOURCE 증가
 	SIF !CFLAG:합의 && EXP:MASTER:성지식 > 4
 		SOURCE:MASTER:트라우마 += 3500
@@ -134,7 +134,7 @@ ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
 	SOURCE:MASTER:아픔 += 90
 	SOURCE:MASTER:일탈 += 250
 ENDIF
-;조교 레벨에 응해 접촉 SOURCE 증가
+;조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = 50 + SOURCE:MASTER:접촉 / 5
@@ -146,18 +146,18 @@ IF CFLAG:MASTER:트라우마 == 31
 ENDIF
 ;쾌VSOURCE에 응해 사랑 SOURCE 증가, 트라우마 SOURCE에 응해 감소
 SOURCE:MASTER:사랑 += SOURCE:MASTER:쾌V / 7 - SOURCE:MASTER:트라우마
-;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
+;중독충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:중독충족 + SOURCE:MASTER:쾌V / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 7
 ;더러움이 서로 옮긴다
 STAIN:MASTER:바기나 |= STAIN:페니스
 STAIN:페니스 |= STAIN:MASTER:바기나
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -168,30 +168,30 @@ TFLAG:경과시간 += 3
 ;바이브 해제
 TEQUIP:바이브 = 0
 
-;리액션 후(N/H)[벌](쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;리액션 후(N/H)[벌](쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY2_31
-;MASTER가 처녀라면, 처녀 상실이 일어난다
+;MASTER가 처녀라면, 처녀상실이 일어난다
 TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
-;TARGET가 동정이라면, 동정 상실이 일어난다
+;TARGET가 동정이라면, 동정상실이 일어난다
 TCVAR:동정상실 = TALENT:동정
 
 ;─
 ;032, 승마위
 ;─
-;리액션전(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;리액션전(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY_32
-;착의플레이선호 소질 또한 조교 대상 하반신 윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
+;착의플레이선호 소질 또한 조교 대상 하반신윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
 IF TALENT:착의플레이선호 && TEQUIP:MASTER:하반신윗도리 < 2
-	;속옷만 강제, 자주 탈의
+	;속옷만 강제, 자주탈의
 	TFLAG:강제탈의 = 9
 	TFLAG:자주탈의 = 9
-;해방 소질, 또는 확률(조교 레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
+;해방 소질, 또는 확률(조교레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
 ELSEIF TALENT:해방 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "욕망") / 10 + TALENT:MASTER:매혹 * 3 > TALENT:억압 * 5 + TALENT:수줍음 * 3 + RAND:3)
-	;반반의 확률로 액세서리까지, 전라까지 강제, 자주 탈의(별개에 판정)
+	;반반의 확률로 액세서리까지, 전라까지 강제, 자주탈의(별개에 판정)
 	TFLAG:강제탈의 = 7 + RAND:2
 	TFLAG:자주탈의 = 7 + RAND:2
 ELSE
-	;최악이어도 하반신 전부 강제, 자주 탈의
+	;최악이어도 하반신 전부 강제, 자주탈의
 	TFLAG:강제탈의 = 5
 	TFLAG:자주탈의 = 5
 ENDIF
@@ -199,7 +199,7 @@ ENDIF
 SOURCE:MASTER:쾌V = 100 + ACT_FROM(TARGET, 5) * (TALENT:허리사용 * 4 + 2)
 ;애무 보정치에 응해 쾌cSOURCE 증가
 SOURCE:쾌C = 100 + ACT_TO(TARGET, 5) * (TALENT:MASTER:허리사용*2 + 3)
-;벽통과가 있는 경우 3/4로 강제 탈의를 캔슬한다
+;벽통과가 있는 경우 3/4로 강제탈의를 캔슬한다
 SIF PENIS(TARGET) && TALENT:벽통과 && RAND:4
 	TFLAG:강제탈의 = 0
 ;윤활 부족시, 쾌V, 쾌cSOURCE에 감소 보정, 아픔 SOURCE 증가
@@ -209,7 +209,7 @@ IF EXP:MASTER:V경험 < 1
 	TIMES SOURCE:MASTER:쾌V , 0.35
 	SOURCE:MASTER:아픔 += 700
 	SOURCE:MASTER:일탈 += 1200
-	;합의 없음, 한편 조교 대상으로 충분한 성 지식이 있는 상태로
+	;합의 없음, 한편 조교 대상으로 충분한 성지식이 있는 상태로
 	;처녀를 빼앗으려고 하면 트라우마 SOURCE 증가
 	SIF !CFLAG:합의 && EXP:MASTER:성지식 > 4
 		SOURCE:MASTER:트라우마 += 3200
@@ -222,7 +222,7 @@ ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
 	SOURCE:MASTER:아픔 += 30
 	SOURCE:MASTER:일탈 += 150
 ENDIF
-;조교 레벨에 응해 접촉 SOURCE 증가
+;조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + CFLAG:MASTER:조교레벨 * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = 50 + SOURCE:MASTER:접촉 / 5
@@ -234,18 +234,18 @@ IF CFLAG:MASTER:트라우마 == 32
 ENDIF
 ;쾌VSOURCE에 응해 사랑 SOURCE 증가, 트라우마, 아픔 SOURCE에 응해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌V / 5 - SOURCE:MASTER:트라우마 - SOURCE:MASTER:아픔
-;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
+;중독충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:중독충족 + SOURCE:MASTER:쾌V / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족, 성행동SOURCE에 응해 사랑 SOURCE 가산(피드백)
+;중독충족, 성행동SOURCE에 응해 사랑 SOURCE 가산(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 7 + SOURCE:MASTER:성행동 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:바기나 |= STAIN:페니스
 STAIN:페니스 |= STAIN:MASTER:바기나
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -257,12 +257,12 @@ TFLAG:경과시간 += 3
 ;바이브 해제
 TEQUIP:바이브 = 0
 
-;리액션 후(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;리액션 후(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY2_32
-;REACT 분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
+;REACT분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("날뛴다/거부")
 	;쾌V, 쾌c, 접촉, 사랑, 성행동, 상해, 일탈, 트라우마 SOURCE 감소
-	;중독 충족 SOURCE 소실
+	;중독충족 SOURCE 소실
 	SOURCE:MASTER:쾌V /= 3
 	SOURCE:쾌C /= 5
 	SOURCE:MASTER:접촉 /= 3
@@ -273,9 +273,9 @@ IF IS_COMGRONAME("날뛴다/거부")
 	SOURCE:MASTER:중독충족 = 0
 	SOURCE:MASTER:트라우마 /= 3
 	TCVAR:MASTER:전립선자극 -= 1
-	;REACT 분류가 날뛰는 것 경우
+	;REACT분류가 날뛰는 것 경우
 	IF IS_COMGRONAME("날뛴다")
-		;애널 섹스 이외의 성교중
+		;애널섹스 이외의 성교중
 		IF V_SEX()
 			;소실 처리 회피
 		;그 외
@@ -286,9 +286,9 @@ IF IS_COMGRONAME("날뛴다/거부")
 		ENDIF
 		;성교중 해제
 		TEQUIP:성교중 = 0
-	;REACT 분류가 요구에 응하지 않는 것 경우
+	;REACT분류가 요구에 응하지 않는 것 경우
 	ELSE
-		;애널 섹스 이외의 성교중
+		;애널섹스 이외의 성교중
 		IF V_SEX()
 			;소실 처리 회피
 		;그 외
@@ -306,36 +306,36 @@ ELSE
 	LOCAL = 100 + ACT_TO(TARGET, 5) * GET_ABL(MASTER, "순종") * (2 + TALENT:MASTER:음란) / 600
 	;쾌cSOURCE 증가
 	TIMES SOURCE:쾌C, 1.25
-	;조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10
 	;보정치에 응해 사랑, 쾌cSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
 	SOURCE:쾌C += LOCAL * 2
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
-	;MASTER가 처녀라면, 처녀 상실이 일어난다
+	;MASTER가 처녀라면, 처녀상실이 일어난다
 	TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
-	;TARGET가 동정이라면, 동정 상실이 일어난다
+	;TARGET가 동정이라면, 동정상실이 일어난다
 	TCVAR:동정상실 = TALENT:동정
 ENDIF
 
 ;─
 ;033, 대면좌위
 ;─
-;리액션전(S/N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;리액션전(S/N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY_33
-;착의플레이선호 소질 또한 조교 대상 하반신 윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
+;착의플레이선호 소질 또한 조교 대상 하반신윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
 IF TALENT:착의플레이선호 && TEQUIP:MASTER:하반신윗도리 < 2
-	;속옷만 강제, 자주 탈의
+	;속옷만 강제, 자주탈의
 	TFLAG:강제탈의 = 9
 	TFLAG:자주탈의 = 9
-;해방 소질, 또는 확률(조교 레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
+;해방 소질, 또는 확률(조교레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
 ELSEIF TALENT:해방 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "욕망") / 10 + TALENT:MASTER:매혹 * 3 > TALENT:억압 * 5 + TALENT:수줍음 * 3 + RAND:3)
-	;반반의 확률로 액세서리까지, 전라까지 강제, 자주 탈의(별개에 판정)
+	;반반의 확률로 액세서리까지, 전라까지 강제, 자주탈의(별개에 판정)
 	TFLAG:강제탈의 = 7 + RAND:2
 	TFLAG:자주탈의 = 7 + RAND:2
 ELSE
-	;최악이어도 하반신 전부 강제, 자주 탈의
+	;최악이어도 하반신 전부 강제, 자주탈의
 	TFLAG:강제탈의 = 5
 	TFLAG:자주탈의 = 5
 ENDIF
@@ -344,7 +344,7 @@ SOURCE:MASTER:쾌V = 100 + ACT_FROM(TARGET, 5) * (TALENT:허리사용 + 1)
 SOURCE:MASTER:쾌C = ACT_FROM(TARGET, 1) * (TALENT:허리사용 + 1) / 2
 ;애무 보정치에 응해 쾌cSOURCE 증가
 SOURCE:쾌C = 100 + ACT_TO(TARGET, 5) * (TALENT:MASTER:허리사용*2 + 3) / 3
-;벽통과가 있는 경우 3/4로 강제 탈의를 캔슬한다
+;벽통과가 있는 경우 3/4로 강제탈의를 캔슬한다
 SIF PENIS(TARGET) && TALENT:벽통과 && RAND:4
 	TFLAG:강제탈의 = 0
 ;윤활 부족시, 쾌V, 쾌cSOURCE에 감소 보정, 아픔 SOURCE 증가
@@ -354,7 +354,7 @@ IF EXP:MASTER:V경험 < 1
 	TIMES SOURCE:MASTER:쾌V , 0.30
 	SOURCE:MASTER:아픔 += 1200
 	SOURCE:MASTER:일탈 += 1200
-	;합의 없음, 한편 조교 대상으로 충분한 성 지식이 있는 상태로
+	;합의 없음, 한편 조교 대상으로 충분한 성지식이 있는 상태로
 	;처녀를 빼앗으려고 하면 트라우마 SOURCE 증가
 	SIF !CFLAG:합의 && EXP:MASTER:성지식 > 4
 		SOURCE:MASTER:트라우마 += 2750
@@ -367,7 +367,7 @@ ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
 	SOURCE:MASTER:아픔 += 50
 	SOURCE:MASTER:일탈 += 100
 ENDIF
-;조교 레벨에 응해 접촉 SOURCE 증가
+;조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 400 + GET_TRAINLV(TARGET) * 8 + CFLAG:MASTER:조교레벨 * 8
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = 50 + SOURCE:MASTER:접촉 / 5
@@ -379,18 +379,18 @@ IF CFLAG:MASTER:트라우마 == 33
 ENDIF
 ;쾌VSOURCE에 응해 사랑 SOURCE 증가, 트라우마, 아픔 SOURCE에 응해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌V / 4 - SOURCE:MASTER:트라우마 - SOURCE:MASTER:아픔 * 2
-;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
+;중독충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:중독충족 + SOURCE:MASTER:쾌V / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:바기나 |= STAIN:페니스
 STAIN:페니스 |= STAIN:MASTER:바기나
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -402,11 +402,11 @@ TFLAG:경과시간 += 3
 ;바이브 해제
 TEQUIP:바이브 = 0
 
-;리액션 후(S/N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;리액션 후(S/N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY2_33
-;MASTER가 처녀라면, 처녀 상실이 일어난다
+;MASTER가 처녀라면, 처녀상실이 일어난다
 TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
-;TARGET가 동정이라면, 동정 상실이 일어난다
+;TARGET가 동정이라면, 동정상실이 일어난다
 TCVAR:동정상실 = TALENT:동정
 ;여기까지 와 있으면, 키스의 처리
 CALL SET_KISS
@@ -414,20 +414,20 @@ CALL SET_KISS
 ;─
 ;034, 배면좌위
 ;─
-;리액션전(N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 노출, 중독 충족, 트라우마, 쾌c)
+;리액션전(N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 노출, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY_34
-;착의플레이선호 소질 또한 조교 대상 하반신 윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
+;착의플레이선호 소질 또한 조교 대상 하반신윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
 IF TALENT:착의플레이선호 && TEQUIP:MASTER:하반신윗도리 < 2
-	;속옷만 강제, 자주 탈의
+	;속옷만 강제, 자주탈의
 	TFLAG:강제탈의 = 9
 	TFLAG:자주탈의 = 9
-;해방 소질, 또는 확률(조교 레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
+;해방 소질, 또는 확률(조교레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
 ELSEIF TALENT:해방 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "욕망") / 10 + TALENT:MASTER:매혹 * 3 > TALENT:억압 * 5 + TALENT:수줍음 * 3 + RAND:3)
-	;반반의 확률로 액세서리까지, 전라까지 강제, 자주 탈의(별개에 판정)
+	;반반의 확률로 액세서리까지, 전라까지 강제, 자주탈의(별개에 판정)
 	TFLAG:강제탈의 = 7 + RAND:2
 	TFLAG:자주탈의 = 7 + RAND:2
 ELSE
-	;최악이어도 하반신 전부 강제, 자주 탈의
+	;최악이어도 하반신 전부 강제, 자주탈의
 	TFLAG:강제탈의 = 5
 	TFLAG:자주탈의 = 5
 ENDIF
@@ -437,7 +437,7 @@ SOURCE:MASTER:쾌C = ACT_FROM(TARGET, 1) * (TALENT:기묘한손가락 + 1) / 2
 SOURCE:MASTER:쾌B = ACT_FROM(TARGET, 4) * (TALENT:기묘한손가락 + 1) / 2
 ;애무 보정치에 응해 쾌cSOURCE 증가
 SOURCE:쾌C = 150 + ACT_TO(TARGET, 5) * (TALENT:MASTER:허리사용 + 1) / 2
-;벽통과가 있는 경우 3/4로 강제 탈의를 캔슬한다
+;벽통과가 있는 경우 3/4로 강제탈의를 캔슬한다
 SIF PENIS(TARGET) && TALENT:벽통과 && RAND:4
 	TFLAG:강제탈의 = 0
 ;윤활 부족시, 쾌V, 쾌cSOURCE에 감소 보정, 아픔 SOURCE 증가
@@ -447,7 +447,7 @@ IF EXP:MASTER:V경험 < 1
 	TIMES SOURCE:MASTER:쾌V , 0.30
 	SOURCE:MASTER:아픔 += 1250
 	SOURCE:MASTER:일탈 += 1600
-	;합의 없음, 한편 조교 대상으로 충분한 성 지식이 있는 상태로
+	;합의 없음, 한편 조교 대상으로 충분한 성지식이 있는 상태로
 	;처녀를 빼앗으려고 하면 트라우마 SOURCE 증가
 	SIF !CFLAG:합의 && EXP:MASTER:성지식 > 4
 		SOURCE:MASTER:트라우마 += 3500
@@ -460,7 +460,7 @@ ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
 	SOURCE:MASTER:아픔 += 100
 	SOURCE:MASTER:일탈 += 350
 ENDIF
-;조교 레벨에 응해 접촉 SOURCE 증가
+;조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 500 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = 50 + SOURCE:MASTER:접촉 / 5
@@ -476,18 +476,18 @@ IF CFLAG:MASTER:트라우마 == 34
 ENDIF
 ;쾌VSOURCE에 응해 사랑 SOURCE 증가, 트라우마 SOURCE에 응해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌V / 7 - SOURCE:MASTER:트라우마
-;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 조교 대상 V감각, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
+;중독충족 SOURCE가 정의 값이라면 쾌VSOURCE에 응해 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:중독충족 + SOURCE:MASTER:쾌V / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 7
 ;더러움이 서로 옮긴다
 STAIN:MASTER:바기나 |= STAIN:페니스
 STAIN:페니스 |= STAIN:MASTER:바기나
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -500,30 +500,30 @@ TFLAG:경과시간 += 4
 ;바이브 해제
 TEQUIP:바이브 = 0
 
-;리액션 후(N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 노출, 중독 충족, 트라우마, 쾌c)
+;리액션 후(N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 노출, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY2_34
-;MASTER가 처녀라면, 처녀 상실이 일어난다
+;MASTER가 처녀라면, 처녀상실이 일어난다
 TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
-;TARGET가 동정이라면, 동정 상실이 일어난다
+;TARGET가 동정이라면, 동정상실이 일어난다
 TCVAR:동정상실 = TALENT:동정
 
 ;─
-;035, 애널 섹스
+;035, 애널섹스
 ;─
-;리액션전(N/H/A)[벌](쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독 충족, 트라우마, 쾌c)
+;리액션전(N/H/A)[벌](쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY_35
-;착의플레이선호 소질 또한 조교 대상 하반신 윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
+;착의플레이선호 소질 또한 조교 대상 하반신윗도리가 스커트도 까는 원피스/일본식 옷/도사옷인 경우
 IF TALENT:착의플레이선호 && TEQUIP:MASTER:하반신윗도리 < 2
-	;속옷만 강제, 자주 탈의
+	;속옷만 강제, 자주탈의
 	TFLAG:강제탈의 = 9
 	TFLAG:자주탈의 = 9
-;해방 소질, 또는 확률(조교 레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
+;해방 소질, 또는 확률(조교레벨, 조교자 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
 ELSEIF TALENT:해방 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "욕망") / 10 + TALENT:MASTER:매혹 * 3 > TALENT:억압 * 5 + TALENT:수줍음 * 3 + RAND:3)
-	;반반의 확률로 액세서리까지, 전라까지 강제, 자주 탈의(별개에 판정)
+	;반반의 확률로 액세서리까지, 전라까지 강제, 자주탈의(별개에 판정)
 	TFLAG:강제탈의 = 7 + RAND:2
 	TFLAG:자주탈의 = 7 + RAND:2
 ELSE
-	;최악이어도 하반신 전부 강제, 자주 탈의
+	;최악이어도 하반신 전부 강제, 자주탈의
 	TFLAG:강제탈의 = 5
 	TFLAG:자주탈의 = 5
 ENDIF
@@ -531,7 +531,7 @@ ENDIF
 SOURCE:MASTER:쾌A = 300 + ACT_FROM(TARGET, 6) * (2 * TALENT:허리사용 + 2)
 ;애무 보정치에 응해 쾌cSOURCE 증가
 SOURCE:쾌C = 500 + ACT_TO(TARGET, 6) * (TALENT:MASTER:허리사용*2 + 2)
-;벽통과가 있는 경우 3/4로 강제 탈의를 캔슬한다
+;벽통과가 있는 경우 3/4로 강제탈의를 캔슬한다
 SIF TALENT:벽통과 && RAND:4
 	TFLAG:강제탈의 = 0
 ;윤활 부족시, 쾌A, 쾌cSOURCE에 감소 보정, 아픔 SOURCE 증가
@@ -557,7 +557,7 @@ ELSEIF EXP:MASTER:A경험 < 26 && EXP:MASTER:성교경험 < 31
 	SOURCE:MASTER:아픔 += 200
 	SOURCE:MASTER:일탈 += 150
 ENDIF
-;조교 레벨에 응해 접촉 SOURCE 증가
+;조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = SOURCE:MASTER:접촉 / 5
@@ -569,33 +569,33 @@ IF CFLAG:MASTER:트라우마 == 35
 ENDIF
 ;쾌ASOURCE에 응해 사랑 SOURCE 증가, 상해, 트라우마 SOURCE에 응해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌A / 5 - SOURCE:MASTER:아픔 / 5 - SOURCE:MASTER:트라우마 / 5
-;사랑 SOURCE가 정이라면 조교 대상 A감각, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 조교 대상 A감각, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? (GET_ABL(MASTER, "A감각") + 10) * (GET_ABL(MASTER, "A감각") - 30) * SOURCE:MASTER:사랑 / 100 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE가 정의 값이라면 쾌ASOURCE에 응해 증가
+;중독충족 SOURCE가 정의 값이라면 쾌ASOURCE에 응해 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:중독충족 + SOURCE:MASTER:쾌A / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:애널 |= STAIN:페니스
 STAIN:페니스 |= STAIN:MASTER:애널
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
 
-;남자는 A로 전립선 자극
+;남자는 A로 전립선자극
 SIF TALENT:MASTER:남자
 	TCVAR:MASTER:전립선자극 += 1
 ;A감각, 마조끼에 응해 발기도 상승
 TCVAR:MASTER:이번발기 += 100 + (GET_ABL(MASTER, "A감각") + GET_ABL(MASTER, "마조끼"))
 
 TFLAG:경과시간 += 4
-;애널 바이브, 애널 비즈 해제
+;애널바이브, 애널비즈 해제
 TEQUIP:애널바이브 = 0
 TEQUIP:애널비즈 = 0
 
-;리액션 후(N/H/A)[벌](쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독 충족, 트라우마, 쾌c)
+;리액션 후(N/H/A)[벌](쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY2_35
-;애널 섹스로 동정을 버린 취급에는 하지 않는다
+;애널섹스로 동정을 버린 취급에는 하지 않는다

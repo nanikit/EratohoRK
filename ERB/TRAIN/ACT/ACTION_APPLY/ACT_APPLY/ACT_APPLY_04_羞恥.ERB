@@ -1,20 +1,20 @@
 ﻿;─
 ;040, 자위
 ;─
-;리액션전(S/N/H)[벌](일탈, 중독 충족)
+;리액션전(S/N/H)[벌](일탈, 중독충족)
 @ACTION_APPLY_40
 ;거부될 가능성이 있으므로 여기는 명령을 내리는 곳까지 처리합니다
-;일탈 SOURCE 증가, 조교 대상 노출버릇, 자위 중독, 조교 레벨에 의해 감소
-SOURCE:MASTER:일탈 = 1200 - GET_ABL(MASTER, "노출버릇") * 8 - GET_ABL(MASTER, "자위 중독") * 20 - CFLAG:MASTER:조교레벨 * 20
+;일탈 SOURCE 증가, 조교 대상 노출버릇, 자위중독, 조교레벨에 의해 감소
+SOURCE:MASTER:일탈 = 1200 - GET_ABL(MASTER, "노출버릇") * 8 - GET_ABL(MASTER, "자위중독") * 20 - CFLAG:MASTER:조교레벨 * 20
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
-;조교 대상 자위 중독, 기교에 응해 중독 충족 SOURCE 증가
-SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "자위 중독") * (GET_ABL(MASTER, "자위 중독") + 10) * (GET_ABL(MASTER, "기교") + 10) / 1000
-;조교 대상 자위 중독에 응해 발기도 상승
-TCVAR:MASTER:발기도 += 100 + GET_ABL(MASTER, "자위 중독") * 5
+;조교 대상 자위중독, 기교에 응해 중독충족 SOURCE 증가
+SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "자위중독") * (GET_ABL(MASTER, "자위중독") + 10) * (GET_ABL(MASTER, "기교") + 10) / 1000
+;조교 대상 자위중독에 응해 발기도 상승
+TCVAR:MASTER:발기도 += 100 + GET_ABL(MASTER, "자위중독") * 5
 TFLAG:경과시간 += 3
 
-;리액션 후(쾌C, 쾌V, 쾌A, 쾌B, 성행동, 노출, 일탈, 중독 충족)
+;리액션 후(쾌C, 쾌V, 쾌A, 쾌B, 성행동, 노출, 일탈, 중독충족)
 @ACTION_APPLY2_40
 IF IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다")
 	;자위의 실행 함수 호출
@@ -23,7 +23,7 @@ IF IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다
 	TFLAG:손사용중++
 ;그 외의 경우(거절)
 ELSE
-	;REACT 분류에 요구에 응하지 않는 것을 세트
+	;REACT분류에 요구에 응하지 않는 것을 세트
 	CALL SET_COMGRO("거부")
 ENDIF
 
@@ -32,20 +32,20 @@ ENDIF
 ;─
 ;리액션전(S/N/H)(쾌C, 노출, 일탈)
 @ACTION_APPLY_41
-;하반신 전부 강제 탈의
+;하반신 전부 강제탈의
 TFLAG:강제탈의 = 5
 ;기묘한손가락소질, 조교 대상 기교에 응해 쾌CSOURCE 증가
 SOURCE:MASTER:쾌C = 30 + (TALENT:기묘한손가락 + 1) * GET_ABL(TARGET, "기교")
 ;쾌CSOURCE, 대거울 사용에 응해 노출 SOURCE 증가
 SOURCE:MASTER:노출 = SOURCE:MASTER:쾌C / 3 + (TEQUIP:대거울 + 1) * 250
-;노출 SOURCE에 응해 일탈 SOURCE 증가, 노출버릇, 조교 대상 조교 레벨에 의해 감소
+;노출 SOURCE에 응해 일탈 SOURCE 증가, 노출버릇, 조교 대상 조교레벨에 의해 감소
 SOURCE:MASTER:일탈 = SOURCE:MASTER:노출 - GET_ABL(MASTER, "노출버릇") * 2 - CFLAG:MASTER:조교레벨 * 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:바기나 |= STAIN:손
 STAIN:손 |= STAIN:MASTER:바기나
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -56,33 +56,33 @@ TFLAG:경과시간 += 1
 ;현재 처리 없음
 
 ;─
-;042, 자위 과시하고
+;042, 자위과시하고
 ;─
 ;리액션전(S/N/H/A)(일탈, 욕정 추가, 쾌c, 쾌v, 쾌b)
 @ACTION_APPLY_42
-;같은 확률로 상＋시모카미착, 상반신 전부, 하반신 전부의 어떤 것인지를 자주 탈의
+;같은 확률로 상＋시모카미착, 상반신 전부, 하반신 전부의 어떤 것인지를 자주탈의
 TFLAG:자주탈의 = 3 + RAND:3
-;조교자 해방 소질이 존재하면 액세서리까지, 전라까지 자주 탈의의 어딘가에 발전
+;조교자 해방 소질이 존재하면 액세서리까지, 전라까지 자주탈의의 어딘가에 발전
 SIF TALENT:해방
 	TFLAG:자주탈의 = 7 + RAND:2
-;조교자 억압/수줍음 소질이 존재하면 상반신 윗도리, 하반신 윗도리 자주 탈의 또는 탈의 없음까지 경감
+;조교자 억압/수줍음 소질이 존재하면 상반신윗도리, 하반신윗도리 자주탈의 또는 탈의 없음까지 경감
 SIF TALENT:억압 || TALENT:수줍음
 	TFLAG:자주탈의 = RAND:3
-;조교자 착의플레이선호 소질이 존재하면 속옷만 자주 탈의에 고정
+;조교자 착의플레이선호 소질이 존재하면 속옷만 자주탈의에 고정
 SIF TALENT:착의플레이선호
 	TFLAG:자주탈의 = 9
-;조교자 욕망, 기교, 조교 레벨, 조교자 기교, 기묘한손가락소질에 응해 쾌cSOURCE 증가
+;조교자 욕망, 기교, 조교레벨, 조교자 기교, 기묘한손가락소질에 응해 쾌cSOURCE 증가
 SOURCE:쾌C = 50 + GET_ABL(TARGET, "욕망") * GET_ABL(TARGET, "기교") * GET_TRAINLV(TARGET) * 2 / 100 + GET_ABL(TARGET, "기교") * 2 * (TALENT:TARGET:기묘한손가락 + 1)
-;조교자가 비남자라면, 조교자 욕망, 기교, 조교 레벨, 조교자 기교, 기묘한손가락소질에 응해 쾌bSOURCE 증가
+;조교자가 비남자라면, 조교자 욕망, 기교, 조교레벨, 조교자 기교, 기묘한손가락소질에 응해 쾌bSOURCE 증가
 SIF !TALENT:남자
 	SOURCE:쾌B = 50 + GET_ABL(TARGET, "욕망") * GET_ABL(TARGET, "기교") * GET_TRAINLV(TARGET) * 2 / 100 + GET_ABL(TARGET, "기교") * 2 * (TALENT:TARGET:기묘한손가락 + 1)
 
 
 ;조교자가 바이브를 소지하고 있어, 처녀도 남자도 아니면 바이브 사용
-;일시 생략. 부활시킬 때는 실행 판정을 다시 봐 ACT 파생의 (분)편으로 처치
+;일시 생략. 부활시킬 때는 실행 판정을 다시 봐 ACT파생의 (분)편으로 처치
 [SKIPSTART]
 IF ITEM:바이브 && ! TALENT:처녀 && ! TALENT:남자
-	;조교자 욕망, 조교 레벨, 도구사용 소질, 기교, 도구 강화에 응해 쾌vSOURCE 증가
+	;조교자 욕망, 조교레벨, 도구사용 소질, 기교, 도구 강화에 응해 쾌vSOURCE 증가
 	SOURCE:쾌V = 50 + GET_ABL(TARGET, "욕망") * (GET_TRAINLV(TARGET) + 1) * 5 / 10 + (TALENT:도구사용 + 1) * GET_ABL(TARGET, "기교") * (ITEM:9 + 1) * 3
 	;대신에 쾌cSOURCE 감소
 	TIMES SOURCE:쾌C , 0.80
@@ -91,7 +91,7 @@ ENDIF
 
 ;쾌x총계를 취득해 LOCAL에
 LOCAL = SOURCE:쾌C + SOURCE:쾌V + SOURCE:쾌B
-;조교 대상 조교 레벨과 욕망을 봐, 어느 쪽인지가 낮으면 LOCAL 경감
+;조교 대상 조교레벨과 욕망을 봐, 어느 쪽인지가 낮으면 LOCAL 경감
 IF CFLAG:MASTER:조교레벨 < 1 || ABL:MASTER:욕망 < 1
 	TIMES LOCAL, 0.10
 ELSEIF CFLAG:MASTER:조교레벨 < 3 || ABL:MASTER:욕망 < 2
@@ -105,11 +105,11 @@ ELSEIF CFLAG:MASTER:조교레벨 < 11 || ABL:MASTER:욕망 < 5
 ENDIF
 ;LOCAL의 것 1/5만 조교자 욕정이 증가
 CUP:MASTER:욕정 += LOCAL / 5
-;LOCAL에 응해 일탈 SOURCE 증가, 조교 대상 노출버릇, 조교 레벨에 의해 감소
+;LOCAL에 응해 일탈 SOURCE 증가, 조교 대상 노출버릇, 조교레벨에 의해 감소
 SOURCE:MASTER:일탈 = LOCAL - GET_ABL(MASTER, "노출버릇") * 2 - CFLAG:MASTER:조교레벨 * 5
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자 욕망에 응해 발기도 상승
 TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
@@ -121,7 +121,7 @@ TFLAG:경과시간 += 3
 TEQUIP:자위중 |= 2
 
 ;─
-;043, 수치 플레이(S/N/H)(노출)
+;043, 수치플레이(S/N/H)(노출)
 ;─
 @ACTION_APPLY_43
 ;개시시
@@ -135,25 +135,25 @@ ELSE
 	;대거울을 정리한다
 	TEQUIP:대거울 = 0
 ENDIF
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 TFLAG:경과시간 += 2
 
 ;─
-;044, 야외 플레이(H/A)[벌](구속<=목걸이의 일, 노출, 일탈, 트라우마)
+;044, 야외플레이(H/A)[벌](구속<=목걸이의 일, 노출, 일탈, 트라우마)
 ;─
 @ACTION_APPLY_44
 ;종료시
 IF TFLAG:ACT파생 == 1
-	;야외 플레이 종료
+	;야외플레이 종료
 	TEQUIP:야외플레이 = 0
 ;개시시
 ELSE
-	;반항 각인에 응해 구속 SOURCE 증가
+	;반항각인에 응해 구속 SOURCE 증가
 	SOURCE:MASTER:구속 = 50 + MARK:반항각인 * 15
 	;노출 SOURCE 증가
 	SOURCE:MASTER:노출 = 300
-	;구속 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 노출버릇, 조교 레벨에 의해 감소
+	;구속 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 노출버릇, 조교레벨에 의해 감소
 	SOURCE:MASTER:일탈 = 150 + SOURCE:MASTER:구속 - GET_ABL(MASTER, "노출버릇") * 3 - CFLAG:MASTER:조교레벨 * 10
 	;일탈 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
@@ -166,10 +166,10 @@ ELSE
 	;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
 	SIF CFLAG:MASTER:트라우마 == 44
 		TIMES SOURCE:MASTER:트라우마 , 1.50
-	;야외 플레이 개시
+	;야외플레이 개시
 	TEQUIP:야외플레이 = 1
 ENDIF
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -182,7 +182,7 @@ TFLAG:경과시간 += 5
 @ACTION_APPLY_45
 ;노출 SOURCE 증가
 SOURCE:MASTER:노출 = 350
-;일탈 SOURCE 증가, 조교 대상 노출버릇, 조교 레벨에 의해 감소
+;일탈 SOURCE 증가, 조교 대상 노출버릇, 조교레벨에 의해 감소
 SOURCE:MASTER:일탈 = 750 - GET_ABL(MASTER, "노출버릇") * 15 - CFLAG:MASTER:조교레벨 * 30
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
@@ -211,7 +211,7 @@ IF IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다
 	TFLAG:V사용중 = 2
 ;그 외의 경우(거절)
 ELSE
-	;REACT 분류에 요구에 응하지 않는 것을 세트
+	;REACT분류에 요구에 응하지 않는 것을 세트
 	CALL SET_COMGRO("거부")
 	;노출, 일탈, 트라우마, 굴종 SOURCE 감소
 	TIMES SOURCE:MASTER:노출 , 0.40

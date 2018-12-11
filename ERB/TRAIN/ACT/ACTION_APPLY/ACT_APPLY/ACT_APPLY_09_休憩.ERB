@@ -1,5 +1,5 @@
 ﻿;─
-;090, 쉬게 한다
+;090, 쉬게한다
 ;─
 ;리액션전(R)
 @ACTION_APPLY_90
@@ -8,7 +8,7 @@ TEQUIP:줄 = 0
 TEQUIP:아이마스크 = 0
 TEQUIP:볼개그 = 0
 TEQUIP:삼각목마 = 0
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -21,40 +21,40 @@ TFLAG:경과시간 += 7
 
 ;리액션 후(노출, 일탈, 달성, 체력, 기력, 사정, 분유, 소변욕)
 @ACTION_APPLY2_90
-;조교자 조교 레벨, 회복빠름, 회복느림 소질에 응해 조교자의 체력, 기력 회복량 증감
+;조교자 조교레벨, 회복빠름, 회복느림 소질에 응해 조교자의 체력, 기력 회복량 증감
 LOCAL:3 = 300 + (10 + GET_TRAINLV(TARGET) + TALENT:회복빠름 * 5 - TALENT:회복느림 * 5) * 10
 LOCAL:4 = 300 + (6 + GET_TRAINLV(TARGET) + TALENT:회복빠름 * 5 - TALENT:회복느림 * 5) * 20
 BASE:체력 += LOCAL:3
 BASE:기력 += LOCAL:4
-;조교자 소모도 감소
+;조교자소모도 감소
 TFLAG:조교자소모도 -= 2
-;리액션이 자위하기 시작하는이었던 경우
-IF IS_NOWCOMNAME("자위하기 시작한다")
-	;ACT 파생에 마음대로 자위를하기 시작했다를 세트
+;리액션이 자위하기시작한다였던 경우
+IF IS_NOWCOMNAME("자위하기시작한다")
+	;ACT파생에 마음대로 자위를하기 시작했다를 세트
 	TFLAG:ACT파생 = 2
-	;REACT 분류에 요구에 응하지 않는 것을 세트		@COM50. 자위하기 시작하는 것 개변에 수반해 comment out@/L
+	;REACT분류에 요구에 응하지 않는 것을 세트		@COM50. 자위하기시작한다의 개변에 수반해 comment out@/L
 	;CALL SET_COMGRO("거부")
 ;지속계 도구 장착중이었던 경우
 ELSEIF TEQUIP:바이브 || TEQUIP:애널바이브 || TEQUIP:애널비즈 || TEQUIP:관장기＋플러그 || TEQUIP:니플캡
 	;도구 각각의 사용중에 응해 보정치 준비
 	LOCAL = TEQUIP:바이브 * 3 + TEQUIP:애널바이브 * 3 + TEQUIP:애널비즈 + TEQUIP:관장기＋플러그 * 4 + TEQUIP:니플캡 * 2
-	;조교 대상 조교 레벨, 회복빠름, 회복느림 소질, 도구별 보정치에 응해 조교 대상의 체력, 기력 회복량 증감
+	;조교 대상 조교레벨, 회복빠름, 회복느림 소질, 도구별 보정치에 응해 조교 대상의 체력, 기력 회복량 증감
 	LOCAL:1 = 150 + (10 + CFLAG:MASTER:조교레벨 + TALENT:MASTER:회복빠름 * 5 - TALENT:MASTER:회복느림 * 5) * 10 - 20 * LOCAL
 	LOCAL:2 = 150 + (6 + CFLAG:MASTER:조교레벨 + TALENT:MASTER:회복빠름 * 5 - TALENT:MASTER:회복느림 * 5) * 20 - 5 * LOCAL
 	BASE:MASTER:체력 += LOCAL:1
 	BASE:MASTER:기력 += LOCAL:2
-	;ACT 파생에 도구의 탓으로 너무 쉬게 하지 않았다를 세트
+	;ACT파생에 도구의 탓으로 너무 쉬게 하지 않았다를 세트
 	TFLAG:ACT파생 = 1
 ;그 외의 경우
 ELSE
-	;조교 대상 조교 레벨, 회복빠름, 회복느림 소질에 응해 조교 대상의 체력, 기력 회복량 증감
+	;조교 대상 조교레벨, 회복빠름, 회복느림 소질에 응해 조교 대상의 체력, 기력 회복량 증감
 	LOCAL:1 = 300 + (10 + CFLAG:MASTER:조교레벨 + TALENT:MASTER:회복빠름 * 5 - TALENT:MASTER:회복느림 * 5) * 10
 	LOCAL:2 = 300 + (6 + CFLAG:MASTER:조교레벨 + TALENT:MASTER:회복빠름 * 5 - TALENT:MASTER:회복느림 * 5) * 20
 	BASE:MASTER:체력 += LOCAL:1
 	BASE:MASTER:기력 += LOCAL:2
 	;조교 대상 소모도 감소
 	TFLAG:소모도 -= 1
-	;ACT 파생에 보통으로 쉬었다를 세트
+	;ACT파생에 보통으로 쉬었다를 세트
 	TFLAG:ACT파생 = 0
 ENDIF
 ;변수 보유 처리
@@ -83,7 +83,7 @@ ENDIF
 RETURNF 0
 
 ;─
-;091, 영양제를 먹인다
+;091, 영양제를먹인다
 ;─
 ;리액션전(R)(일탈)
 @ACTION_APPLY_91
@@ -92,9 +92,9 @@ CALL LOVEPOTION_USE
 ;방해가 되는 것을 일괄 해제
 TEQUIP:볼개그 = 0
 TEQUIP:삼각목마 = 0
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
-;일탈 SOURCE 증가, 조교 대상 조교 레벨, 온순하게 따라 감소
+;일탈 SOURCE 증가, 조교 대상 조교레벨, 온순하게 따라 감소
 SOURCE:MASTER:일탈 = 200 - CFLAG:MASTER:조교레벨 * 10 - GET_ABL(MASTER, "순종") * 2
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
@@ -109,17 +109,17 @@ TFLAG:경과시간 += 2
 @ACTION_APPLY2_91
 ;리액션이 거부하는이었던 경우
 IF IS_NOWCOMNAME("거부한다")
-	;조교자 소모도 감소
+	;조교자소모도 감소
 	TFLAG:조교자소모도 -= 1
-	;ACT 파생에 영양제를 버렸다를 세트
+	;ACT파생에 영양제를 버렸다를 세트
 	TFLAG:ACT파생 = 1
-	;REACT 분류에 요구에 응하지 않는 것을 세트
+	;REACT분류에 요구에 응하지 않는 것을 세트
 	CALL SET_COMGRO("거부")
 ;그 외의 경우
 ELSE
 	;일탈 SOURCE 증가
 	SOURCE:MASTER:일탈 += 250
-	;조교자 약학지식, 금단의지식, 조교 대상 약물내성 소질, 조교자 조교 레벨에 응해 조교 대상의 체력, 기력 회복량 증감
+	;조교자 약학지식, 금단의지식, 조교 대상 약물내성 소질, 조교자 조교레벨에 응해 조교 대상의 체력, 기력 회복량 증감
 	LOCAL:1 = 20 * (2 + TALENT:약학지식 + TALENT:금단의지식 - TALENT:MASTER:약물내성) * (10 + GET_TRAINLV(TARGET))
 	LOCAL:2 = 10 * (2 + TALENT:약학지식 + TALENT:금단의지식 - TALENT:MASTER:약물내성) * (15 + GET_TRAINLV(TARGET))
 	BASE:MASTER:체력 += LOCAL:1
@@ -129,9 +129,9 @@ ELSE
 	;조교자, 조교 대상 소모도 감소
 	TFLAG:조교자소모도 -= 2
 	TFLAG:소모도 -= 2
-	;ACT 파생에 영양제를 마셨다를 세트
+	;ACT파생에 영양제를 마셨다를 세트
 	TFLAG:ACT파생 = 0
-	;영양제의 히트 가격인상승(히트치가 남아 있었을 경우 상승량 증가)
+	;영양제의히트 가격인상승(히트치가 남아 있었을 경우 상승량 증가)
 	FLAG:영양히트 += FLAG:영양히트 > 0 ? 8 # 5
 ENDIF
 ;변수 보유 처리
@@ -166,11 +166,11 @@ RETURNF 0
 @ACTION_APPLY_92
 ;필요하면 미약을 사용
 CALL LOVEPOTION_USE
-;삼각 목마 해제
+;삼각목마 해제
 TEQUIP:삼각목마 = 0
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
-;조교자 조교 레벨에 응해 접촉 SOURCE 증가
+;조교자 조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 100 + GET_TRAINLV(TARGET) * 10
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -179,29 +179,29 @@ TFLAG:조수에삽입중 = 0
 TFLAG:조수연속교합 = 0
 TFLAG:경과시간 += 5
 [SKIPSTART]
-이것들의 TEQUIP를 COM 도구를 제외하는 것으로 해제하면 날뛰는 취급이 되는 것은 부자연이라고 생각한다
+이것들의 TEQUIP를 COM 도구를제외한다로 해제하면 날뛰는 취급이 되는 것은 부자연이라고 생각한다
 
 ;그 외 TEQUIP를 해제
 TEQUIP:아이마스크 = 0
 TEQUIP:관장기＋플러그 = 0
-TEQUIP:애널 바이브 = 0
+TEQUIP:애널바이브 = 0
 TEQUIP:바이브 = 0
 TEQUIP:오나홀 = 0
 TEQUIP:클리캡 = 0
 TEQUIP:볼개그 = 0
-TEQUIP:페니스 밴드 = 0
-TEQUIP:애널 비즈 = 0
+TEQUIP:페니스밴드 = 0
+TEQUIP:애널비즈 = 0
 [SKIPEND]
 ;리액션 후(노출, 일탈, 달성, 체력, 기력, 사정, 분유, 소변욕)
 @ACTION_APPLY2_92
-;REACT 분류가 날뛰는이었던 경우 캔슬
+;REACT분류가 날뛰는이었던 경우 캔슬
 IF IS_COMGRONAME("날뛴다")
-	;ACT 파생에 날뛰었기 때문에 치료 할 수 없었다를 세트
+	;ACT파생에 날뛰었기 때문에 치료 할 수 없었다를 세트
 	TFLAG:ACT파생 = 1
 ELSE
-	;공포 각인 취득을 중단(?)
+	;공포각인취득을 중단(?)
 	TFLAG:공포각인취득 = 0
-	;조교 대상 기교, 조교자 조교 레벨에 의해 보정치를 준비
+	;조교 대상 기교, 조교자 조교레벨에 의해 보정치를 준비
 	LOCAL:1 = 25 * (5 + ABL:MASTER:기교) * (10 + GET_TRAINLV(TARGET))
 	LOCAL:2 = LOCAL:1 * 2 / 3
 	;보정치에 응해 노출, 달성 SOURCE 증가
@@ -213,9 +213,9 @@ ELSE
 	;조교자, 조교 대상 소모도 감소
 	TFLAG:조교자소모도 -= 1
 	TFLAG:소모도 -= 3
-	;ACT 파생에 몸의 구석구석까지 더듬어 치료했다를 세트
+	;ACT파생에 몸의 구석구석까지 더듬어 치료했다를 세트
 	TFLAG:ACT파생 = 0
-	;치료의 히트 가격인상승(히트치가 남아 있었을 경우 상승량 증가)
+	;치료의히트 가격인상승(히트치가 남아 있었을 경우 상승량 증가)
 	FLAG:치료히트 += FLAG:치료히트 > 0 ? 8 # 5
 ENDIF
 ;변수 보유 처리

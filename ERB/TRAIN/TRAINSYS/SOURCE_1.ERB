@@ -56,7 +56,7 @@ NEXT
 @CALC_SOURCE00_PLEASURE
 #DIM LCOUNT
 
-;욕정 PALAM가[0→4, 1000→7, 2000→9, 3000→10, 4000→11, 5000→12]를 LOCAL에(4~12)
+;욕정 PALAM가[0→4, 1000→7, 2000→9, 3000→10, 4000→11, 5000→12]를 LOCAL에(4～12)
 LOCAL = LIMIT(GET_REVISION_SQRT(PALAM:MASTER:욕정, 5000, 8) + 4, 4, 12)
 FOR LCOUNT, 0, 4
 	;연속 보너스(연속 회수배에 증가하는 보너스)
@@ -65,7 +65,7 @@ FOR LCOUNT, 0, 4
 	CUP:MASTER:LCOUNT = CUP:MASTER:LCOUNT * CFLAG:MASTER:(30 + LCOUNT) / 50
 NEXT
 ;쾌X총계의 것 1/100을 마력으로서 취득
-;TFLAG:취득 마력 += SUMARRAY(CUP:MASTER, 0, 4) / 100
+;TFLAG:취득마력 += SUMARRAY(CUP:MASTER, 0, 4) / 100
 TFLAG:취득마력 += (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B) / 100
 
 ;─
@@ -77,7 +77,7 @@ TFLAG:취득마력 += (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP
 ;ABL:욕망을 본다
 FOR LCOUNT, 0, 4
 	;ABL:MASTER:욕망이[0→5%, 5→30%]를 쾌XSOURCE에 곱셈
-	LOCAL = SOURCE:MASTER:LCOUNT * LINE_CALC(ABL:MASTER:욕망, "0→5,5→30,LIMIT/5～30") / 100
+	LOCAL = SOURCE:MASTER:LCOUNT * LINE_CALC(ABL:MASTER:욕망, "0→5, 5→30, LIMIT/5～30") / 100
 	;욕정 PALAM에 가산
 	CUP:MASTER:욕정 += LOCAL
 	;쾌A만 굴복 PALAM에 가산
@@ -99,7 +99,7 @@ IF TALENT:MASTER:억압 || TALENT:MASTER:수줍음 || TALENT:MASTER:쾌감을부
 	;LOCAL = SUMARRAY(SOURCE, 0, 4) / 10
 	LOCAL = SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B
 	;ABL:MASTER:욕망이[0→100%, 5→10%]를 한층 더 곱셈
-	LOCAL = LOCAL * LINE_CALC(ABL:MASTER:욕망, "0→100,5→10,LIMIT/100～10") / 100
+	LOCAL = LOCAL * LINE_CALC(ABL:MASTER:욕망, "0→100, 5→10, LIMIT/100～10") / 100
 ;존재하지 않으면 0
 ELSE
 	LOCAL = 0
@@ -135,7 +135,7 @@ ENDIF
 #DIM LCOUNT
 #DIM DYNAMIC 절정강도, 4
 #DIM DYNAMIC 인내강도
-#DIM DYNAMIC 초조하게해강도, 4
+#DIM DYNAMIC 초조하게함강도, 4
 #DIM DYNAMIC 쾌감부담
 #DIM DYNAMIC 사정부담
 #DIM DYNAMIC 분유부담
@@ -158,7 +158,7 @@ ENDIF
 ;변수의 리셋트
 VARSET 절정강도
 VARSET 인내강도
-VARSET 초조하게해강도
+VARSET 초조하게함강도
 VARSET 쾌감부담
 VARSET 사정부담
 VARSET 분유부담
@@ -175,22 +175,22 @@ LOCAL = CUP:MASTER:쾌C + PALAM:MASTER:쾌C
 
 ;페니스가 있다면 발기도가 높은, 페니스가 없으면 윤활이 높고 쾌C1000 이상 때
 ;각각 미약·로션으로 간단하게 보내지는 것도 또 좋다인가
-;갈 것 같아 쾌C존재시
+;갈것같다로 쾌C존재시
 IF ((TCVAR:MASTER:발기도 >= 1000 && PENIS(MASTER)) || (PALAM:MASTER:윤활 >= 250 && !PENIS(MASTER) && PALAM:MASTER:쾌C >= 1000)) && TCVAR:MASTER:갈것같다 && CUP:MASTER:쾌C > 0
-	;인내중, 갈 것 같게 견딜 수 있을 뿐(만큼)의 ABL가 존재해, 가게 해! COM는 아니고, 초조하게 해 상태는 아니다
+	;인내중, 갈것같다에 견딜 수 있을 뿐(만큼)의 ABL가 존재해, 가게해! COM는 아니고, 초조하게함 상태는 아니다
 	IF (TCVAR:MASTER:인내 && TCVAR:MASTER:갈것같다 < ABL:MASTER:C감각 * 3) && SELECTCOM != 70 && TCVAR:MASTER:초조하게해번 == 0
-		;자극이 강하면행그렇게 상태가 한계에 가까워진다
+		;자극이 강하면갈것같다상태가 한계에 가까워진다
 		TCVAR:MASTER:갈것같다 += LOCAL / 2000
 		;인내 강도치에 이번 자극의 강함을 대입
 		인내강도 = MAX(LOCAL / 10000, 1)
-	;초조하게 해 안
+	;초조하게함 안
 	ELSEIF TCVAR:MASTER:초조하게해번 > 1
-		;초조하게 해 번을 1씩 줄인다
+		;초조하게해번을 1씩 줄인다
 		TCVAR:MASTER:초조하게해번 -= 1
 		;1미만은 되지 않는다
 		TCVAR:MASTER:초조하게해번 = MAX(TCVAR:MASTER:초조하게해번, 1)
-		;초조하게 해 강도치에 이번 자극의 강함을 대입
-		초조하게해강도:0 = MAX(LOCAL / 10000, 1)
+		;초조하게함 강도치에 이번 자극의 강함을 대입
+		초조하게함강도:0 = MAX(LOCAL / 10000, 1)
 	;절정 강도 처리
 	ELSE
 		절정강도:0 = CALC_SOURCE00_EX_P(0, LOCAL)
@@ -209,7 +209,7 @@ ENDIF
 ;절정 강도 처리
 절정강도:3 = CALC_SOURCE00_EX_P(3, CUP:MASTER:쾌B + PALAM:MASTER:쾌B)
 
-;절정 하면 동일 행동 보너스를 반감한다
+;절정 하면 동일행동보너스를 반감한다
 SIF MAXARRAY(절정강도) > 0
 	TFLAG:동일행동보너스 = MAX(TFLAG:동일행동보너스 / 2, 1)
 
@@ -220,33 +220,33 @@ SIF MAXARRAY(절정강도) > 0
 ;쾌XSOURCE 합계가[0→0, 2000→44, 4000→63, 6000→77, 8000→89, 10000→100]을 쾌감 부담에
 쾌감부담 = GET_REVISION_SQRT(SUMARRAY(SOURCE, 0, 4), 10000, 100)
 ;조교의 정도에 의한 경감
-;조교 대상 조교 레벨+욕망 ABL가[0→100%, 2→91%, 4→83%, 6→75%, 8→67%, 10→59%, 12→51%]를 쾌감 부담에 곱셈(50~100%)
+;조교 대상 조교레벨+욕망 ABL가[0→100%, 2→91%, 4→83%, 6→75%, 8→67%, 10→59%, 12→51%]를 쾌감 부담에 곱셈(50～100%)
 LOCAL = GET_REVISION_SQRT_PROP(CFLAG:MASTER:조교레벨 + ABL:MASTER:욕망, 1, 5, 12, 50)
 쾌감부담 -= 쾌감부담 * LIMIT(LOCAL, 50, 100) / 100
 ;쾌감에 대한 반응
 ;소극적인 수용 혹은 인내 플래그 있는 경우
-SIF IS_COMGRONAME("소극적 따른다/허가를 청한다") || TCVAR:MASTER:인내
+SIF IS_COMGRONAME("소극적 따른다/허가를청한다") || TCVAR:MASTER:인내
 	TIMES 쾌감부담, 2.00
-;수용의 경우		서투르다고 매도하지만 파생:새겨 내리는 것으로 『태연하게 따른다』취급이 되는 경우는 연주한다
-SIF IS_COMGRONAME("적극적 따른다/태연하게 따른다/받아들인다") && !TCVAR:MASTER:인내 && !IS_NOWCOMNAME("서투르다고 매도한다")
+;수용의 경우		서투르다고매도한다가 파생:새겨 내리는 것으로 『태연하게 따른다』취급이 되는 경우는 연주한다
+SIF IS_COMGRONAME("적극적 따른다/태연하게 따른다/받아들인다") && !TCVAR:MASTER:인내 && !IS_NOWCOMNAME("서투르다고매도한다")
 	TIMES 쾌감부담, 0.50
 
 ;페니스 존재시
 IF PENIS(MASTER)
-	;절정 결정으로 발기도가 높게 갈 것 같다
+	;절정 결정으로 발기도가 높고갈것같다
 	IF 절정강도:0 > 0 && TCVAR:MASTER:발기도 >= 1000 && TCVAR:MASTER:갈것같다
 		;사정 게이지가 없다
 		IF BASE:MASTER:사정 == 0
-			STR:1034 = 하늘 사정
+			STR:1034 = 드라이사정
 			DOWNBASE:MASTER:체력      += 200
 			DOWNBASE:MASTER:기력      += 80
 			NOWEX:MASTER:사정          = 1
 			TCVAR:MASTER:사정          = 1
-			TCVAR:MASTER:하늘사정        = 1
+			TCVAR:MASTER:드라이사정        = 1
 			TCVAR:MASTER:드라이사정수     += 1
 		;강절정
 		ELSEIF 절정강도:0 == 2
-			STR:1034 = 대량 사정
+			STR:1034 = 대량사정
 			사정부담 = 500
 			NOWEX:MASTER:사정 = 3
 			TCVAR:MASTER:사정 = 3
@@ -267,7 +267,7 @@ IF PENIS(MASTER)
 		LOCAL += 절정강도:1 * 3 + 절정강도:2 * 3 + 절정강도:3 * 2 > 6 + RAND:3 - TALENT:MASTER:조루 + TALENT:MASTER:지루
 		;쾌C가 충분히 높았을 때
 		LOCAL += CUP:MASTER:쾌C > 1000 && RAND:4 > 1 - TALENT:MASTER:조루 + TALENT:MASTER:지루
-		;각각 확률로 조루 사정
+		;각각 확률로 조루사정
 		IF LOCAL
 			STR:1034 = 사정(조루)
 			사정부담 = 300
@@ -277,16 +277,16 @@ IF PENIS(MASTER)
 		ENDIF
 	;전립선 고문 사정
 	ELSEIF TCVAR:MASTER:전립선자극
-		;행그렇게 or쾌C8000 이상시, 대응 부위 절정 할까 전립선 자극이 강하면 강제 사정
+		;갈것같다or쾌C8000 이상시, 대응 부위 절정 할까 전립선자극이 강하면 강제 사정
 		IF (TCVAR:MASTER:갈것같다 ||PALAM:MASTER:쾌C >= 8000) && ((TALENT:MASTER:남자 && 절정강도:2 > 0) || (TALENT:MASTER:후타나리 && 절정강도:1 > 0) || TCVAR:MASTER:전립선자극 > 1)
 			;사정 게이지가 없다
 			IF BASE:MASTER:사정 == 0
-				STR:1034 = 하늘 사정(전립선)
+				STR:1034 = 드라이사정(전립선)
 				DOWNBASE:MASTER:체력  += 200
 				DOWNBASE:MASTER:기력  += 80
 				NOWEX:MASTER:사정      = 1
 				TCVAR:MASTER:사정      = 1
-				TCVAR:MASTER:하늘사정    = 2
+				TCVAR:MASTER:드라이사정    = 2
 				TCVAR:MASTER:드라이사정수 += 1
 			ELSE
 				STR:1034 = 사정(전립선)
@@ -305,37 +305,37 @@ IF PENIS(MASTER)
 		;바기나(성교 봉사시)
 		ELSEIF MC_PLAYER(1) == 4
 			CALL SET_STAIN("바기나", "정액", TARGET)           ;조교자의 바기나
-			;SOURCE_MESSAGE적으로도 성교 봉사시의 질내 사정은 TARGET가 되어 있으므로, 조수 관련은 우선(귀찮은 것으로) 전송
+			;SOURCE_MESSAGE적으로도 성교 봉사시의 질내사정은 TARGET가 되어 있으므로, 조수 관련은 우선(귀찮은 것으로) 전송
 			;콤비 네이션시의 것(ASSI:1)도 처리한다면 조건을 음미할 필요도 있을 것 같다
 		;애널(성교 봉사시)
 		ELSEIF MC_PLAYER(1) == 5
 			CALL SET_STAIN("애널", "정액", TARGET)             ;조교자의 애널
-		;손(손으로 애무)
-		ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "손으로 애무" && MC_PLAYER(1) == 2
+		;손(손으로애무)
+		ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "손으로애무" && MC_PLAYER(1) == 2
 			CALL SET_STAIN("손", "정액", TARGET)                 ;조교자의 손
 			;콤비 네이션 파생시
 			SIF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비 네이션")
 				CALL SET_STAIN("손", "정액", (ASSI:1))           ;조수 1의 손
-		;구(입으로 애무)/얼굴에 사정하기 자위 절정
-		ELSEIF (GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "구에서 애무" && MC_PLAYER(1) == 1) || ME_PLAYER(1) == 9
+		;구(입으로애무)/얼굴에 사정하기 자위절정
+		ELSEIF (GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "입으로애무" && MC_PLAYER(1) == 1) || ME_PLAYER(1) == 9
 			CALL SET_STAIN("구", "정액", TARGET)                 ;조교자의 입
 			;콤비 네이션 파생시
 			SIF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비 네이션")
 				CALL SET_STAIN("구", "정액", (ASSI:1))           ;조수 1의 입
-		;바기나(성기를 서로 켠다)
-		ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "성기를 서로 켠다" && MC_PLAYER(1) == 8
+		;바기나(성기를서로켠다)
+		ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "성기를서로켠다" && MC_PLAYER(1) == 8
 			CALL SET_STAIN("바기나", "정액", TARGET)           ;조교자의 바기나
 			;콤비 네이션 파생시
 			SIF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비 네이션")
 				CALL SET_STAIN("바기나", "정액", (ASSI:1))     ;조수 1의 바기나
-		;가슴(파이즈리 한다)
-		ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "파이즈리 한다" && MC_PLAYER(1) == 6
+		;가슴(파이즈리한다)
+		ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "파이즈리한다" && MC_PLAYER(1) == 6
 			CALL SET_STAIN("가슴", "정액", TARGET)                 ;조교자의 가슴
 			;콤비 네이션 파생시
 			SIF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비 네이션")
 				CALL SET_STAIN("가슴", "정액", (ASSI:1))           ;조수 1의 가슴
-		;다리(풋잡 한다)
-		ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "풋잡 한다" && MC_PLAYER(1) == 7
+		;다리(풋잡한다)
+		ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "풋잡한다" && MC_PLAYER(1) == 7
 			CALL SET_STAIN("다리", "정액", TARGET)                 ;조교자의 다리
 			;콤비 네이션 파생시
 			SIF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비 네이션")
@@ -392,7 +392,7 @@ IF 절정강도:3 && TALENT:MASTER:모유체질
 		SOURCE:MASTER:일탈 += 400 * (15 - GET_ABL(MASTER, "순종")/ 20 - CFLAG:MASTER:조교레벨 / 2) / 15
 ENDIF
 
-;V절정시, 전립선 자극강이 있어, 후타나리가 아니면
+;V절정시, 전립선자극 강이 있어, 후타나리가 아니면
 IF 절정강도:1 && !TALENT:MASTER:후타나리 && TCVAR:MASTER:전립선자극 > 1
 	;강절정
 	IF 절정강도:1 == 2
@@ -415,22 +415,22 @@ ENDIF
 STR:1036 = 
 ;절정종을 순서에 기입
 SIF 절정강도:0
-	STR:1036 += "＆Ｃ"
+	STR:1036 += "＆C"
 SIF 절정강도:1
-	STR:1036 += "＆Ｖ"
+	STR:1036 += "＆V"
 SIF 절정강도:2
-	STR:1036 += "＆Ａ"
+	STR:1036 += "＆A"
 SIF 절정강도:3
-	STR:1036 += "＆Ｂ"
-;다중 절정시
+	STR:1036 += "＆B"
+;다중절정 때
 IF STRLENSU(STR:1036) > 2
 	;서식을 정돈한다
 	STR:1036 = %SUBSTRINGU(STR:1036, 1)%절정
 	;문자수로 절정종을 판정
-	;사중 절정
+	;사중절정
 	IF STRLENSU(STR:1036) > 8
-		;사중 절정시에는 특별한 캐릭터 라인을 기입
-		STR:1036 = 사중 절정
+		;사중절정 때에는 특별한 캐릭터 라인을 기입
+		STR:1036 = 사중절정
 		TIMES 절정부담, 2.00
 		TIMES 사정부담, 1.40
 		TIMES 분유부담, 1.40
@@ -465,44 +465,44 @@ SOURCE:MASTER:노출 += 30 * (SUMARRAY(절정강도) + 2) + 사정부담 / 2 + �
 
 ;하늘이 아닌 사정시(사정 게이지의 감소를 보정)
 IF NOWEX:MASTER:사정 > 1
-	;조교자 욕망, 기교, 정액 중독 ABL에 의해 기준치 생성
-	조임강도 = GET_ABL(TARGET, "욕망") + GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "정액 중독")
-	;성기를 서로 켠다
-	IF IS_NOWACTNAME("성기를 서로 켠다")
+	;조교자 욕망, 기교, 정액중독 ABL에 의해 기준치 생성
+	조임강도 = GET_ABL(TARGET, "욕망") + GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "정액중독")
+	;성기를서로켠다
+	IF IS_NOWACTNAME("성기를서로켠다")
 		;애무 ABL를 가산
 		조임강도 += GET_ABL(TARGET, "애무") * 2
 	;조교자 V를 이용한 성교중
-	ELSEIF IS_NOWACTNAME("역강간/정상위 시킨다/후배위 시킨다/대면좌위 시킨다/배면좌위 시킨다")
+	ELSEIF IS_NOWACTNAME("역강간/정상위시킨다/후배위시킨다/대면좌위시킨다/배면좌위시킨다")
 		;V감각, 성교 ABL를 가산
 		조임강도 += GET_ABL(TARGET, "V감각") + GET_ABL(TARGET, "성교")
 		;음란 소질에 의해 보정
 		조임강도 = 조임강도 * (2 + TALENT:음란) / 2
 	;조교자 A를 이용한 성교중
-	ELSEIF IS_NOWACTNAME("애널 섹스 시킨다")
+	ELSEIF IS_NOWACTNAME("애널섹스시킨다")
 		;A감각, 성교 ABL를 가산
 		조임강도 += GET_ABL(TARGET, "A감각") + GET_ABL(TARGET, "성교")
 		;음고소질에 의해 보정
 		조임강도 = 조임강도 * (2 + TALENT:음고) / 2
-	;손으로 애무
-	ELSEIF IS_NOWACTNAME("손으로 애무")
+	;손으로애무
+	ELSEIF IS_NOWACTNAME("손으로애무")
 		;애무 ABL를 가산
 		조임강도 += GET_ABL(TARGET, "애무") * 2
 		;기묘한손가락소질에 의해 보정
 		조임강도 = 조임강도 * (2 + TALENT:기묘한손가락) / 2
-	;구에서 애무
-	ELSEIF IS_NOWACTNAME("구에서 애무")
+	;입으로애무
+	ELSEIF IS_NOWACTNAME("입으로애무")
 		;애무 ABL를 가산
 		조임강도 += GET_ABL(TARGET, "애무") * 2
 		;혀 사용해, 고양이혀 소질에 의해 보정
 		조임강도 = 조임강도 * (3 + TALENT:혀사용 + TALENT:고양이혀) / 3
-	;파이즈리 한다
-	ELSEIF IS_NOWACTNAME("파이즈리 한다")
+	;파이즈리한다
+	ELSEIF IS_NOWACTNAME("파이즈리한다")
 		;애무 ABL를 가산
 		조임강도 += GET_ABL(TARGET, "애무") * 2
 		;거유, 빈유, 음유소질에 의해 보정
 		조임강도 = 조임강도 * (3 + TALENT:거유 - TALENT:빈유 + TALENT:음유) / 3
-	;풋잡 한다
-	ELSEIF IS_NOWACTNAME("풋잡 한다")
+	;풋잡한다
+	ELSEIF IS_NOWACTNAME("풋잡한다")
 		;애무 ABL를 가산
 		조임강도 += GET_ABL(TARGET, "애무") * 2
 		;새디즘, 미각 소질에 의해 보정
@@ -511,7 +511,7 @@ IF NOWEX:MASTER:사정 > 1
 	;W계로 1. 5배
 	SIF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비 네이션")
 		TIMES 조임강도, 1.50
-	;초조하게 해 플레이로 보정
+	;초조하게해플레이로 보정
 	조임강도 = 조임강도 * (TCVAR:MASTER:갈것같다 + 10) / 10
 	;현재의 정력/최대 정력으로 보정
 	조임강도 = 조임강도 * (BASE:MASTER:사정 + 1000) / (MAXBASE:MASTER:사정 + 1000)
@@ -550,7 +550,7 @@ ENDIF
 
 ;이성 소모
 DOWNBASE:MASTER:이성 += 쾌감부담 / 2 + (SUMARRAY(절정강도) + DOWNBASE:MASTER:사정 / 300 + NOWEX:MASTER:분유 + NOWEX:MASTER:방뇨 + 5) * 10
-;쾌락에 의한 이성 저하
+;쾌락에의한이성저하
 SIF TFLAG:쾌락에의한이성저하 == 0 && 쾌감부담 > 20
 	TFLAG:쾌락에의한이성저하 = 3 + 쾌감부담 / 30 + RAND:3
 SIF TFLAG:쾌락에의한이성저하 > 0 && 쾌감부담 > 10
@@ -591,13 +591,13 @@ TCVAR:MASTER:B절정 = NOWEX:MASTER:B절정
 
 ;사정시, 관련 플래그를 설정
 IF NOWEX:MASTER:사정
-	;조교 대상 사정 후 경과 턴 참조계 플래그를 리셋트
+	;조교 대상 사정후경과턴참조 계 플래그를 리셋트
 	VARSET TCVAR:MASTER:0, 0, 90, 100
 	;성교 봉사시
 	IF V_SEX(MASTER) || A_SEX(MASTER)
 		;V섹스의 경우
 		IF V_SEX(MASTER)
-			;TFLAG:질내 사정 후 경과 턴은 403xx series 근처에서 말소 예정@/L
+			;TFLAG:질내사정후경과턴은 403xx series 근처에서 말소 예정@/L
 			TFLAG:질내사정후경과턴            = 1
 			TCVAR:MASTER:질내사정후경과턴참조 = 1
 		;A섹스의 경우
@@ -605,12 +605,12 @@ IF NOWEX:MASTER:사정
 			TCVAR:MASTER:장내사정후경과턴참조 = 1
 		ENDIF
 	;구에 의한 애무로 사정의 경우
-	ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "구에서 애무" || TEQUIP:조교대상C사용 == 2
+	ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "입으로애무" || TEQUIP:조교대상C사용 == 2
 		;조교자가 정욕 한편 구음경험이 일정 이상이라면 딥스로트 발생
 		SIF IS_CONDITION(TARGET, "정욕") && EXP:TARGET:구음경험 >= 50
 			DEEP_THROAT = 1
 	ENDIF
-	;TFLAG:사정 후 경과 턴은 403xx series 근처에서 말소 예정@/L
+	;TFLAG:사정후경과턴은 403xx series 근처에서 말소 예정@/L
 	TFLAG:사정후경과턴                  = 1
 	TCVAR:MASTER:사정후경과턴참조       = 1
 	CFLAG:MASTER:(250 + NOWEX:MASTER:사정) += 1
@@ -636,17 +636,17 @@ SIF !PENIS(MASTER)	;물총 추가@revkoishi(14/05/26)
 
 ;【굴복:43】【굴복:55】의 처리는 SOURCE_MARK.ERB의@MARK_CHECK_SOURCE_SURRENDER에 이전@/L
 
-SIF !TEQUIP:성교봉사중 || IS_NOWACTNAME("W역강간/골짜기를 건너감")	;이미 빠져 있으면 클리어. 너무 이끌고? @revkoishi(14/07/15)
+SIF !TEQUIP:성교봉사중 || IS_NOWACTNAME("W역강간/골짜기를건너감")	;이미 빠져 있으면 클리어. 너무 이끌고? @revkoishi(14/07/15)
 	CALLF _UNEXTRACTION(MASTER, 1, 0)
 
-;조교자에게 사정 처리라고 뽑지 못하고 판정. 미조정@revkoishi(14/06/07)
+;조교자에게 사정 처리와 뽑지않고 판정. 미조정@revkoishi(14/06/07)
 IF NOWEX:MASTER:사정	;조교자에게 사정
-	IF MC_PLAYER(1) == 4			;질내 사정
+	IF MC_PLAYER(1) == 4			;질내사정
 		CALLF CALC_SOURCE00_EX_R(0)	;조교자에게 사정 처리(V)
 	ELSEIF MC_PLAYER(1) == 5		;애널에 사정
 		CALLF CALC_SOURCE00_EX_R(1)	;조교자에게 사정 처리(A)
 	ENDIF
-ELSEIF TEQUIP:TARGET:페니스밴드 && (NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정)	;페니스 밴드 성교 봉사로 절정
+ELSEIF TEQUIP:TARGET:페니스밴드 && (NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정)	;페니스밴드 성교 봉사로 절정
 	IF TEQUIP:TARGET:성교봉사중 && TEQUIP:TARGET:성교봉사중 != 6	;질내 절정
 		CALLF CALC_SOURCE00_EX_R(0, 1)
 	ELSEIF TEQUIP:TARGET:성교봉사중 == 6							;애널로 절정
@@ -655,7 +655,7 @@ ELSEIF TEQUIP:TARGET:페니스밴드 && (NOWEX:MASTER:C절정 || NOWEX:MASTER:V�
 ENDIF
 
 ;삶그렇게(잠정)
-;가 그렇지 않고, 페니스가 있으면 발기도가 충분히 높은지, 페니스가 없으면 윤활이 충분히 높을 때, 쾌C가 존재하면
+;갈것같다가 아니고, 페니스가 있으면 발기도가 충분히 높은지, 페니스가 없으면 윤활이 충분히 높을 때, 쾌C가 존재하면
 IF TCVAR:MASTER:갈것같다 == 0 && ((TCVAR:MASTER:발기도 >= 1000 && PENIS(MASTER)) || (PALAM:MASTER:윤활 >= 250 && !PENIS(MASTER) && PALAM:MASTER:쾌C >= 1000)) && CUP:MASTER:쾌C > 0
 	;C감각이 낮으면보다 낮은 값으로 갈 것 같게, 또 이성 저하로 C치에 관계없이 살 것 같게 된다.
 	VARSET LOCAL
@@ -663,12 +663,12 @@ IF TCVAR:MASTER:갈것같다 == 0 && ((TCVAR:MASTER:발기도 >= 1000 && PENIS(M
 	LOCAL += (CUP:MASTER:쾌C + PALAM:MASTER:쾌C) >= MAX(GET_ABL(MASTER, "C감각") * 100, 1000)
 	;기능 > 이성 판정
 	LOCAL += GET_ABL(TARGET, "기교") - GET_ABL(MASTER, "기교") > RAND:(MAX(BASE:MASTER:이성 / 10, 1))
-	;이성이 전혀 없으면 무조건으로 갈 것 같게
+	;이성이 전혀 없으면 무조건으로갈것같다에
 	LOCAL += BASE:MASTER:이성 == 0
 	;어떤 것인가의 판정에 인소
 	IF LOCAL
 		TCVAR:MASTER:갈것같다 += 5
-		PRINTFORMW %CALLNAME:MASTER%는 갈 것 같게 되었다…
+		PRINTFORMW %CALLNAME:MASTER%는갈것같다가 되었다…
 	ENDIF
 ENDIF
 
@@ -686,27 +686,27 @@ IF IS_NOWACTNAME("자위") && (GETBIT(TEQUIP:자위중, 0) || (GETBITAND(TEQUIP:
 	TCVAR:MASTER:초조하게해번 = 0
 ENDIF
 
-;초조하게 해 안, 초조하게 함에 성공
-IF TCVAR:MASTER:초조하게해번 > 1 || SUMARRAY(초조하게해강도) > 0
+;초조하게함 안, 초조하게함에 성공
+IF TCVAR:MASTER:초조하게해번 > 1 || SUMARRAY(초조하게함강도) > 0
 	PRINTFORMW %CALLNAME:MASTER%는 절정 직전에 초조해 해지고 있다…
 ENDIF
 
-;초조하게 함
-;갈 것 같아 초조하게 해 안이 아니고 사정도 없고 벌 그 중에서 없다
+;초조하게함
+;갈것같다로 초조하게함 안이 아니고 사정도 없고 벌 그 중에서 없다
 IF TCVAR:MASTER:갈것같다 && !TCVAR:MASTER:초조하게해번 && !NOWEX:MASTER:사정 && !TFLAG:벌플래그
 	VARSET LOCAL
 	;보정치를 소질, ABL에 의해 증감
 	LOCAL += 5 + TALENT:새디즘 + TALENT:심술쟁이 - TALENT:상냥함 + (ABL:가학 >= ABL:애무 ? 1 # -1)
 	;보정치가 충분히 높면
 	IF RAND:LOCAL >= RAND:5
-		;기교 ABL에 의해 초조하게 해 번설정
+		;기교 ABL에 의해 초조하게해번 설정
 		TCVAR:MASTER:초조하게해번 += MIN(ABL:기교 / 5 + 2, 4)
 	ENDIF
-	;초조하게 함이 개시되면 지문 표시
+	;초조하게함이 개시되면 지문 표시
 	SIF TCVAR:MASTER:초조하게해번 > 1
 		{
 		PRINTFORMW %CALLNAME:TARGET%는\@ TALENT:심술쟁이 || TALENT:새디즘 || !ALI(0, TARGET) 
-                   ? 심술궂은# 못된 장난 같다\@미소를 띄우면%CALLNAME:MASTER%를 초조하게 하기 시작했다…
+                   ? 심술궂은# 못된 장난 같다\@미소를 띄우면%CALLNAME:MASTER%를 초조하게함 시작했다…
 		}
 ENDIF
 
@@ -731,7 +731,7 @@ FOR LCOUNT, 1, 3
 		BREAK
 	LOCAL++
 NEXT
-;행그렇게시, C절정이 반드시 일어난다
+;갈것같다시, C절정이 반드시 일어난다
 SIF (ARG == 0) && TCVAR:MASTER:갈것같다
 	LOCAL = MAX(LOCAL, 1)
 ;절정시
@@ -750,7 +750,7 @@ IF LOCAL >= 1
 	TFLAG:취득마력 += 50 * LOCAL
 	;CDOWN:MASTER:쾌X로 내려도 절정 이상이라면
 	;그 값-1이 되도록(듯이) 조정(10000으로 절정이라면 9999)
-	;※이것이 이 위치에 있는 것으로 초조하게 해, 인내의 가치가
+	;※이것이 이 위치에 있는 것으로 초조하게함, 인내의 가치가
 	;  상승하는 것은 아닐까 생각해 시험적으로 이동.
 	;  부당하게 가치가 상승해 버렸을 때는 IF 문장으로부터 보내는 것
 	SIF ARG:1 - CDOWN:MASTER:ARG >= 절정경계:1
@@ -762,75 +762,75 @@ RETURNF LOCAL
 
 ;-------------------------------------------------
 ;함수명:CALC_SOURCE00_EX_R
-;개  요점:조교자에게 사정 처리(＋뽑지 않고 판정)
+;개  요점:조교자에게 사정 처리(＋뽑지않고 판정)
 ;인  수:ARG:0… 삽입 개소(0. V/1. A)
-;　　　 ARG:1… 페니스 밴드의 사용 유무(0. 미사용/1. 사용)
-;반환값:뽑지 않고 판정 결과를 나타내는 진위치(0이나 1). 0은 뽑는, 1은 뽑지 않고(계속)
+;　　　 ARG:1… 페니스밴드의 사용 유무(0. 미사용/1. 사용)
+;반환값:뽑지않고 판정 결과를 나타내는 진위치(0이나 1). 0은 뽑는, 1은 뽑지않고(계속)
 ;비  고:식 나카노세키수
-;제변수 가산/세트 처리라고 뽑지 못하고의 판정을 실시한다
+;제변수 가산/세트 처리와 뽑지않고의 판정을 실시한다
 ;조금 개조@revkoishi(14/06/07)
 ;-------------------------------------------------
 @CALC_SOURCE00_EX_R(ARG:0, ARG:1)
 #FUNCTION
-CALLF _UNEXTRACTION(MASTER, 1, TFLAG:뽑지않고 ? TFLAG:뽑지않고 # 0)	;뽑지 않고 지연 판정용 보유. 이미 빠져 있으면 클리어@revkoishi(14/07/14)
+CALLF _UNEXTRACTION(MASTER, 1, TFLAG:뽑지않고 ? TFLAG:뽑지않고 # 0)	;뽑지않고 지연 판정용 보유. 이미 빠져 있으면 클리어@revkoishi(14/07/14)
 
 ;제변수 가산
-IF !ARG:1	;페니스 밴드미사용시
+IF !ARG:1	;페니스밴드 미사용시
 	SELECTCASE ARG:0
 		CASE 0	;V삽입시
 			IF NOWEX:MASTER:사정 != 1	;하늘이 아닌 사정시
 				CFLAG:TARGET:질정 += MIN(BASE:MASTER:사정, DOWNBASE:MASTER:사정)
 				STAIN:TARGET:바기나 |= 4
 				TFLAG:전회질내사정 = 2
-			ELSE						;하늘 사정시
+			ELSE						;드라이사정 때
 				TFLAG:전회질내사정 = 4
 			ENDIF
 		CASE 1	;A삽입시
 			IF NOWEX:MASTER:사정 != 1	;하늘이 아닌 사정시
 				STAIN:TARGET:애널 |= 4
 				TFLAG:전회질내사정 = 6
-			ELSE						;하늘 사정시
+			ELSE						;드라이사정 때
 				TFLAG:전회질내사정 = 8
 			ENDIF
 	ENDSELECT
 ENDIF
 
-;뽑지 않고 욕구 보정치 생성
+;뽑지않고 욕구 보정치 생성
 LOCAL:0 = 0
 LOCAL:0 += GET_ABL(TARGET, "욕망") * 3							;조교자 욕망
 LOCAL:0 += GET_ABL(TARGET, "기교")								;조교자 기교
 LOCAL:0 += GET_ABL(TARGET, \@ ARG:0 ? A감각 # V감각 \@) * 2	;조교자 V감각/A감각
 LOCAL:0 += GET_ABL(TARGET, "성교") * 2							;조교자 성교 ABL
-IF NOWEX:MASTER:사정 == 1	;하늘 사정시
+IF NOWEX:MASTER:사정 == 1	;드라이사정 때
 	LOCAL:0 -= 150											;보정치 감소
-ELSE						;비하늘 사정시
+ELSE						;비드라이사정때
 	LOCAL:0 += !TFLAG:전턴성교봉사           ? 150 # 0	;삽입할 수 있었던 바로 직후라면 한층 더 가산
-	LOCAL:0 += (TFLAG:오늘의방침 == 7 && !ARG:0) ? 300 # 0	;오늘의 방침이 아이 만들기로, V삽입중이라면 한층 더 가산
+	LOCAL:0 += (TFLAG:오늘의방침 == 7 && !ARG:0) ? 300 # 0	;오늘의방침가 아이 만들기로, V삽입중이라면 한층 더 가산
 ENDIF
-LOCAL:0 = (LOCAL:0 * 2) / (TFLAG:뽑지않고 + 2)	;뽑지 않고 회수(0=1, 1=2/3, 2=1/2, 3=2/5, 4=1/3,……)
-LOCAL:0 /= 10	;뽑지 않고 보정치에 의해 뽑지 않고 도전 판정
+LOCAL:0 = (LOCAL:0 * 2) / (TFLAG:뽑지않고 + 2)	;뽑지않고 회수(0=1, 1=2/3, 2=1/2, 3=2/5, 4=1/3,……)
+LOCAL:0 /= 10	;뽑지않고 보정치에 의해 뽑지않고 도전 판정
 
-;뽑지 않고 도전 판정
+;뽑지않고 도전 판정
 LOCAL:1 = 0	;도전 결과
 IF PERCENT(GET_ASYMPTOTE(LOCAL:0, 100, 500))	;도전 판정이 성립했을 경우
-	;도전하는 경우 한층 더 뽑지 않고 기술 판정하러 진행된다
+	;도전하는 경우 한층 더 뽑지않고 기술 판정하러 진행된다
 	;나머지 정력이 100%라면 50%의 성공 보너스를 받을 수 있다. 0%라면 0%
-	;페니스 밴드 사용중이라면 제산하지 않는다. 우선 0을 돌려주어 두지만 바람직하다고 생각하는 형태에 정돈해 받아도 상관없다@/L
+	;페니스밴드 사용중이라면 제산하지 않는다. 우선 0을 돌려주어 두지만 바람직하다고 생각하는 형태에 정돈해 받아도 상관없다@/L
 	LOCAL:0 = !ARG:1 ? BASE:MASTER:사정 * 50 / MAXBASE:MASTER:사정 # 0
 	;보너스의 나머지분은 기교 ABL로 보충한다.
 	;나머지 정력이 100%라면 50%분을 기교 ABL로 보충한다. 0%라면 100%
 	LOCAL:0 = GET_ABL(TARGET, "기교") * (100 - LOCAL:0) / 100 + LOCAL:0
 	;여기서 TEQUIP를 판정해도 과정의 정보를 모른다=도중에 V⇔A 꽂아 대체의 패턴을 주울 수 없기 때문에, 여기에서는 취급할 수 없습니다
-	;그리고 콤비 네이션 ACT에서의 사정은 결국 조교자에게 질내사정인 것으로 뽑지 않고 판정해도 지장 없습니다
+	;그리고 콤비 네이션 ACT에서의 사정은 결국 조교자에게 질내사정인 것으로 뽑지않고 판정해도 지장 없습니다
 	;필요한 것은 빠졌을 때=ACT시에 즉석에서 플래그를 꺾는 것이어, 그것은 이 함수로 하는 내용은 아니라고 생각되므로
 	;이 함수는 판정만 합니다. 그것을 좋다로 하지 않다면, 나머지는 모르기 때문에 노력해＞＜@revkoishi
 	LOCAL:1 = PERCENT(LOCAL:0)	;판정
 ENDIF
 
-;성공하면 뽑지 않고 개시·계속, 실패하면 뽑는다
+;성공하면 뽑지않고 개시·계속, 실패하면 뽑는다
 TFLAG:뽑지않고          = LOCAL:1 ? TFLAG:뽑지않고 + 1      # 0
 TCVAR:MASTER:초조하게해번 = LOCAL:1 ? TCVAR:MASTER:초조하게해번 # 0
 RETURNF LOCAL:1	;판정 결과를 돌려준다. 사용할지 어떨지는 어쨌든
-;TFLAG:뽑지 않고가 서지 않는 경우는 이 개소에서 확실히 리셋트 한다. 섰을 경우는 확실히 빠지게 한다@/L
+;TFLAG:뽑지않고가 서지 않는 경우는 이 개소에서 확실히 리셋트 한다. 섰을 경우는 확실히 빠지게 한다@/L
 
 ;IS_UNEXTRACTION와_UNEXTRACTION는 COMMON_GETTER_TRAIN.ERB에 이전

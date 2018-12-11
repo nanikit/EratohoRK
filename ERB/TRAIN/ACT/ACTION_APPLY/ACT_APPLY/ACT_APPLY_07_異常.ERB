@@ -1,8 +1,8 @@
 ﻿;─
-;070, 피스트 성교(H/A)[벌](쾌V, 접촉, 상해, 일탈, 중독 충족, 트라우마)
+;070, 피스트퍽(H/A)[벌](쾌V, 접촉, 상해, 일탈, 중독충족, 트라우마)
 ;─
 @ACTION_APPLY_70
-;하반신 전부 강제 탈의
+;하반신 전부 강제탈의
 TFLAG:강제탈의 = 5
 ;필요하면 로션을 사용
 CALL LOTION_USE
@@ -10,7 +10,7 @@ CALL LOTION_USE
 SOURCE:MASTER:쾌V = 200 + ACT_FROM(TARGET, 2) * (ABL:MASTER:마조끼 + 5) / 5
 ;접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 300
-;V경험/V확장 경험이 적을 정도 쾌VSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
+;V경험 /V확장경험가 적을 정도 쾌VSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
 ;아픔 SOURCE는 체격차이에 의해도 증감한다
 IF EXP:MASTER:V경험 < 20 || EXP:MASTER:V확장경험 < 1
 	TIMES SOURCE:MASTER:쾌V , 0.10
@@ -34,18 +34,18 @@ ELSE
 ENDIF
 ;윤활 부족시, 쾌VSOURCE에 감소 보정, 아픔 SOURCE 증가
 CALL SHORTAGE_LUBRICATION("2000/M쾌V, T, 40/M 상해, A, 1500")
-;쾌VSOURCE에 응해 중독 충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
+;쾌VSOURCE에 응해 중독충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:쾌V - SOURCE:MASTER:일탈
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;상해, 일탈 SOURCE에 응해 중독 충족 SOURCE 증가
+;상해, 일탈 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:아픔 + SOURCE:MASTER:일탈
-;중독 충족 SOURCE가 정이면 트라우마 SOURCE 말소
+;중독충족 SOURCE가 정이면 트라우마 SOURCE 말소
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:중독충족 > 0 ? 0 # SOURCE:MASTER:트라우마
 ;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
 SIF CFLAG:MASTER:트라우마 == 70
 	TIMES SOURCE:MASTER:트라우마 , 1.50
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -54,14 +54,14 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20) * 4
 TFLAG:경과시간 += 4
 
 @ACTION_APPLY2_70
-;MASTER가 처녀라면, 처녀 상실이 일어난다
+;MASTER가 처녀라면, 처녀상실이 일어난다
 TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
 
 ;─
-;071, 애널 피스트(H/A)[벌](쾌A, 접촉, 상해, 일탈, 중독 충족, 트라우마)
+;071, 애널피스트(H/A)[벌](쾌A, 접촉, 상해, 일탈, 중독충족, 트라우마)
 ;─
 @ACTION_APPLY_71
-;하반신 전부 강제 탈의
+;하반신 전부 강제탈의
 TFLAG:강제탈의 = 5
 ;필요하면 로션을 사용
 CALL LOTION_USE
@@ -69,7 +69,7 @@ CALL LOTION_USE
 SOURCE:MASTER:쾌A = 200 + ACT_FROM(TARGET, 3) * (ABL:MASTER:마조끼 + 5) / 5
 ;접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 300
-;A경험/A확장 경험이 적을 정도 쾌ASOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
+;A경험 /A확장경험가 적을 정도 쾌ASOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
 ;아픔 SOURCE는 체격차이에 의해도 증감한다
 IF EXP:MASTER:A경험 < 20 || EXP:MASTER:A확장경험 < 1
 	TIMES SOURCE:MASTER:쾌A , 0.10
@@ -93,18 +93,18 @@ ELSE
 ENDIF
 ;윤활 부족시, 쾌ASOURCE에 감소 보정, 아픔 SOURCE 증가
 CALL SHORTAGE_LUBRICATION("2000/M쾌A, T, 40/M 상해, A, 1500")
-;쾌ASOURCE에 응해 중독 충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
+;쾌ASOURCE에 응해 중독충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:쾌A - SOURCE:MASTER:일탈
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;상해, 일탈 SOURCE에 응해 중독 충족 SOURCE 증가
+;상해, 일탈 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:아픔 + SOURCE:MASTER:일탈
-;중독 충족 SOURCE가 정이면 트라우마 SOURCE 말소
+;중독충족 SOURCE가 정이면 트라우마 SOURCE 말소
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:중독충족 > 0 ? 0 # SOURCE:MASTER:트라우마
 ;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
 SIF CFLAG:MASTER:트라우마 == 71
 	TIMES SOURCE:MASTER:트라우마 , 1.50
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -113,10 +113,10 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20) * 4
 TFLAG:경과시간 += 4
 
 ;─
-;072, 양구멍 피스트(A)[벌](쾌V, 쾌A, 접촉, 상해, 일탈, 중독 충족, 트라우마)
+;072, 양구멍피스트(A)[벌](쾌V, 쾌A, 접촉, 상해, 일탈, 중독충족, 트라우마)
 ;─
 @ACTION_APPLY_72
-;하반신 전부 강제 탈의
+;하반신 전부 강제탈의
 TFLAG:강제탈의 = 5
 ;필요하면 로션을 사용
 CALL LOTION_USE
@@ -125,7 +125,7 @@ SOURCE:MASTER:쾌V = 200 + ACT_FROM(TARGET, 2) * (ABL:MASTER:마조끼 + 5) / 5
 SOURCE:MASTER:쾌A = 200 + ACT_FROM(TARGET, 3) * (ABL:MASTER:마조끼 + 5) / 5
 ;접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 500
-;V경험/V확장 경험이 적을 정도 쾌VSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
+;V경험 /V확장경험가 적을 정도 쾌VSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
 ;아픔 SOURCE는 체격차이에 의해도 증감한다
 IF EXP:MASTER:V경험 < 20 || EXP:MASTER:V확장경험 < 1
 	TIMES SOURCE:MASTER:쾌V , 0.10
@@ -147,7 +147,7 @@ ELSE
 	SOURCE:MASTER:아픔 = 500 + TALENT:MASTER:작은체형 * 100 - TALENT:MASTER:장신 * 100 - TALENT:작은체형 * 50 + TALENT:장신 * 50
 	SOURCE:MASTER:일탈 = 150
 ENDIF
-;A경험/A확장 경험이 적을 정도 쾌ASOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
+;A경험 /A확장경험가 적을 정도 쾌ASOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
 ;아픔 SOURCE는 체격차이에 의해도 증감한다
 IF EXP:MASTER:A경험 < 20 || EXP:MASTER:A확장경험 < 1
 	TIMES SOURCE:MASTER:쾌A , 0.10
@@ -171,18 +171,18 @@ ELSE
 ENDIF
 ;윤활 부족시, 쾌V, 쾌ASOURCE에 감소 보정, 아픔 SOURCE 증가
 CALL SHORTAGE_LUBRICATION("2000/M쾌V, T, 40/M쾌A, T, 40/M 상해, A, 3000")
-;쾌V, 쾌ASOURCE에 응해 중독 충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
+;쾌V, 쾌ASOURCE에 응해 중독충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A - SOURCE:MASTER:일탈
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;상해, 일탈 SOURCE에 응해 중독 충족 SOURCE 증가
+;상해, 일탈 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:아픔 + SOURCE:MASTER:일탈
-;중독 충족 SOURCE가 정이면 트라우마 SOURCE 말소
+;중독충족 SOURCE가 정이면 트라우마 SOURCE 말소
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:중독충족 > 0 ? 0 # SOURCE:MASTER:트라우마
 ;트라우마(각인)의 원이 피스트계였던 경우, 트라우마 SOURCE를 1.5배로 한다
 SIF CFLAG:MASTER:트라우마 == 70 || CFLAG:MASTER:트라우마 == 71 || CFLAG:MASTER:트라우마 == 72
 	TIMES SOURCE:MASTER:트라우마 , 1.50
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -191,44 +191,44 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 30) * 6
 TFLAG:경과시간 += 4
 
 @ACTION_APPLY2_72
-;MASTER가 처녀라면, 처녀 상실이 일어난다
+;MASTER가 처녀라면, 처녀상실이 일어난다
 TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
 
 ;─
-;073, 방치 플레이(H/A)[벌](노출, 일탈)
+;073, 방치플레이(H/A)[벌](노출, 일탈)
 ;─
 @ACTION_APPLY_73
 ;필요하면 미약을 사용
 CALL LOVEPOTION_USE
-;이상, 수치, 조교 레벨에 응해 노출 SOURCE 증가
+;이상, 수치, 조교레벨에 응해 노출 SOURCE 증가
 SOURCE:MASTER:노출 = 100 + (GET_ABL(TARGET, "이상") + 50) * (GET_ABL(TARGET, "수치") + 10) * GET_TRAINLV(TARGET) / 100
-;노출 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 조교 레벨, 노출버릇에 의해 감소
+;노출 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 조교레벨, 노출버릇에 의해 감소
 SOURCE:MASTER:일탈 = 500 + SOURCE:MASTER:노출 - CFLAG:MASTER:조교레벨 * 80 - GET_ABL(MASTER, "노출버릇") * 16
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 TFLAG:경과시간 += 2
 
 ;─
-;074, 공중 육변기 플레이
+;074, 공중육변기플레이
 ;─
 ;리액션전(A)[벌](사랑역, 구속, 노출, 일탈, 트라우마)
-;허가를 청하는 것으로 캔슬할 수 있기 때문에, 여기에서는 조교자가 돌아간 후의 처리를 실시하지 않습니다
+;허가를청한다 일로 캔슬할 수 있기 때문에, 여기에서는 조교자가 돌아간 후의 처리를 실시하지 않습니다
 @ACTION_APPLY_74
-;반반의 확률로 액세서리까지, 전라까지 강제 탈의
+;반반의 확률로 액세서리까지, 전라까지 강제탈의
 TFLAG:강제탈의 = 7 + RAND:2
 ;필요하면 미약을 사용
 CALL LOVEPOTION_USE
-;조교 대상 연모 소질에 응해 사랑 SOURCE 증가, 조교 대상 음란, 예속 소질, 조교 레벨에 의해 감소
+;조교 대상 연모 소질에 응해 사랑 SOURCE 증가, 조교 대상 음란, 예속 소질, 조교레벨에 의해 감소
 SOURCE:MASTER:사랑 -= 1500 + TALENT:MASTER:연모 * 500 - TALENT:MASTER:음란 * 750 - TALENT:MASTER:예속 * 250 - CFLAG:MASTER:조교레벨 * 100
 ;사랑 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:사랑 = SOURCE:MASTER:사랑 < 0 ? 0 # SOURCE:MASTER:사랑
-;반항 각인, 조교자 기교, 결박능숙 소질에 응해 구속 SOURCE 증가
+;반항각인, 조교자 기교, 결박능숙 소질에 응해 구속 SOURCE 증가
 SOURCE:MASTER:구속 = 150 + (MARK:반항각인 + 1) * (GET_ABL(TARGET, "기교") + 10) * (TALENT:결박능숙 + 1)
 ;이상, 수치, 구속 SOURCE에 응해 노출 SOURCE 증가
 SOURCE:MASTER:노출 = 500 + (GET_ABL(TARGET, "이상") + 50) * (GET_ABL(TARGET, "수치") + 10) * SOURCE:MASTER:구속 / 10000
-;노출 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 조교 레벨, 노출버릇, 욕망, 음란 소질에 의해 감소
+;노출 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 조교레벨, 노출버릇, 욕망, 음란 소질에 의해 감소
 SOURCE:MASTER:일탈 = 5000 + SOURCE:MASTER:노출 - CFLAG:MASTER:조교레벨 * 100 - GET_ABL(MASTER, "노출버릇") * 30 - GET_ABL(MASTER, "욕망") * 20 - TALENT:MASTER:음란 * 2000
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
@@ -249,16 +249,16 @@ TEQUIP:관장기＋플러그 = 0
 TEQUIP:클리캡 = 0
 TEQUIP:오나홀 = 0
 TEQUIP:니플캡 = 0
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
 TFLAG:경과시간 += 60
 
-;리액션 후(쾌C, 쾌V, 쾌A, 쾌B, 사랑역, 상해, 구속, 노출, 불결, 일탈, 중독 충족, 트라우마)
+;리액션 후(쾌C, 쾌V, 쾌A, 쾌B, 사랑역, 상해, 구속, 노출, 불결, 일탈, 중독충족, 트라우마)
 @ACTION_APPLY2_74
-;REACT 분류가 허가를 청하는이었던 경우 캔슬
-IF IS_COMGRONAME("허가를 청한다")
+;REACT분류가 허가를청한다였던 경우 캔슬
+IF IS_COMGRONAME("허가를청한다")
 	;사랑 SOURCE를 0이상까지 가산
 	;구속, 노출, 일탈, 트라우마 SOURCE는 감쇠
 	SOURCE:MASTER:사랑 = MAX(SOURCE:MASTER:사랑, 0)
@@ -266,7 +266,7 @@ IF IS_COMGRONAME("허가를 청한다")
 	SOURCE:MASTER:노출 /= 2
 	SOURCE:MASTER:일탈 /= 4
 	SOURCE:MASTER:트라우마 /= 4
-	;ACT 파생에 구속을 풀어 함께 조교 방으로 돌아갔다(애원)를 세트
+	;ACT파생에 구속을 풀어 함께 조교 방으로 돌아갔다(애원)를 세트
 	TFLAG:ACT파생 = 1
 ;그 외의 경우 실행
 ELSE
@@ -292,19 +292,19 @@ ELSE
 		STAIN:MASTER:다리 |= 4
 		;음란의 경우
 		IF TALENT:MASTER:음란
-			;중독 충족 SOURCE 증가
+			;중독충족 SOURCE 증가
 			SOURCE:MASTER:중독충족 += 500 + (RAND:20 + 1) * 25
-			;ACT 파생에 아직 어딘지 부족한 모습(흥분)을 세트
+			;ACT파생에 아직 어딘지 부족한 모습(흥분)을 세트
 			TFLAG:ACT파생 = 3
 		ELSE
 			;사랑 SOURCE 감소, 일탈, 트라우마 SOURCE 증가
 			SOURCE:MASTER:사랑 -= 1000 + (RAND:6 + 1) * 50
 			SOURCE:MASTER:일탈 += 2500 + (RAND:6 + 1) * 500
 			SOURCE:MASTER:트라우마 += 2000 + (RAND:6 + 1) * 500
-			;ACT 파생에 마음도 몸도 너덜너덜(능욕)을 세트
+			;ACT파생에 마음도 몸도 너덜너덜(능욕)을 세트
 			TFLAG:ACT파생 = 2
 		ENDIF
-		;MASTER가 처녀라면, 처녀 상실이 일어난다
+		;MASTER가 처녀라면, 처녀상실이 일어난다
 		TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
 		;동정은… 어떻게 할까 고민했지만, 상실 하게 한다
 		TCVAR:MASTER:동정상실 = TALENT:MASTER:동정
@@ -313,13 +313,13 @@ ELSE
 		;일탈, 트라우마 SOURCE 감쇠
 		SOURCE:MASTER:일탈 /= 2
 		SOURCE:MASTER:트라우마 /= 2
-		;ACT 파생에 끝까지 사람은 오지 않았다(무사)를 세트
+		;ACT파생에 끝까지 사람은 오지 않았다(무사)를 세트
 		TFLAG:ACT파생 = 0
 	ENDIF
 ENDIF
 
 ;─
-;075, 페니스 밴드 장착(N/H)[벌](트라우마)
+;075, 페니스밴드장착(N/H)[벌](트라우마)
 ;─
 @ACTION_APPLY_75
 ;트라우마(각인)에 응해 트라우마 SOURCE 증가
@@ -328,17 +328,17 @@ SOURCE:MASTER:트라우마 = 100 + MARK:MASTER:트라우마 * 50
 SIF CFLAG:MASTER:트라우마 == 7
 	TIMES SOURCE:MASTER:트라우마 , 1.50
 ;탈의의 처리
-;착의플레이선호 소질이 있어, 하반신 윗도리에 방해되지 않는 경우
-;조교 레벨, 해방 소질에 응해 성공율 상승해, 속옷만 강제 탈의
+;착의플레이선호 소질이 있어, 하반신윗도리에 방해되지 않는 경우
+;조교레벨, 해방 소질에 응해 성공율 상승해, 속옷만 강제탈의
 IF TALENT:착의플레이선호 && (GET_TRAINLV(TARGET) + TALENT:해방 * 3 > 2 + RAND:3) && CLOTHESTYPE(0, 1) == 1
 	TFLAG:자주탈의 = 9
 ELSE
-	;하반신 전부 자주 탈의
+	;하반신 전부 자주탈의
 	TFLAG:자주탈의 = 5
 ENDIF
-;조교자 욕망, 조교 레벨, 도구사용 소질, 기교, 도구 강화에 응해 쾌vSOURCE 증가
+;조교자 욕망, 조교레벨, 도구사용 소질, 기교, 도구 강화에 응해 쾌vSOURCE 증가
 SOURCE:쾌V = 150 + GET_ABL(TARGET, "욕망") * (GET_TRAINLV(TARGET) + 1) * 5 / 10 + (TALENT:도구사용 + 1) * GET_ABL(TARGET, "기교") * (ITEM:9 + 1) * 3
-;조교 대상 조교 레벨과 욕망을 봐, 어느 쪽인지가 낮으면 SOURCE:쾌V경감
+;조교 대상 조교레벨과 욕망을 봐, 어느 쪽인지가 낮으면 SOURCE:쾌V경감
 IF CFLAG:MASTER:조교레벨 < 1 || ABL:MASTER:욕망 < 1
 	TIMES SOURCE:쾌V, 0.10
 ELSEIF CFLAG:MASTER:조교레벨 < 3 || ABL:MASTER:욕망 < 2
@@ -352,16 +352,16 @@ ELSEIF CFLAG:MASTER:조교레벨 < 11 || ABL:MASTER:욕망 < 5
 ENDIF
 ;SOURCE:쾌V의 것 1/5만 조교자 욕정이 증가
 CUP:MASTER:욕정 += SOURCE:쾌V / 5
-;SOURCE:쾌V에 응해 일탈 SOURCE 증가, 조교 대상 노출버릇, 조교 레벨에 의해 감소
+;SOURCE:쾌V에 응해 일탈 SOURCE 증가, 조교 대상 노출버릇, 조교레벨에 의해 감소
 SOURCE:MASTER:일탈 = SOURCE:쾌V - GET_ABL(MASTER, "노출버릇") * 2 - CFLAG:MASTER:조교레벨 * 5
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자 욕망에 응해 발기도 상승
 TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
 
-;페니스 밴드를 장비
+;페니스밴드를 장비
 IF TFLAG:ACT파생 == 0
 	TEQUIP:조교자페니스밴드 = 1+ITEM:9
 ;해제
@@ -374,5 +374,5 @@ TEQUIP:자위중 &= ~2
 TFLAG:경과시간 += 2
 
 @ACTION_APPLY2_75
-;TARGET가 처녀라면, 처녀 상실이 일어난다
+;TARGET가 처녀라면, 처녀상실이 일어난다
 TCVAR:처녀상실 = TALENT:처녀

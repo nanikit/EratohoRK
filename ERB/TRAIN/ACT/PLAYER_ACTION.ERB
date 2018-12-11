@@ -9,15 +9,15 @@ TFLAG:ACT분류 = 0
 ;우선은 이번 방침을 결정
 ;(조교 강도에 대할 방침)
 CALL ACT_COURSE
-;조교 방침 예약의 처리
+;조교 방침예약의 처리
 IF TFLAG:방침예약
 	TFLAG:턴방침 = TFLAG:방침예약
 	TFLAG:방침예약 = 0
 	SIF FLAG:디버그
-		CALL PRINT_DIALOG(@"방침 예약에 의해 방침을%POLICY("지금")%로 변경했습니다", 2, 2, 2)
+		CALL PRINT_DIALOG(@"방침예약에 의해 방침을%POLICY("지금")%로 변경했습니다", 2, 2, 2)
 ENDIF
 
-;ACT 분류 미결정을 대입
+;ACT분류미결정을 대입
 TFLAG:ACT분류 = -1
 
 ;휴게가 아니면 계속되어 이번 조교 유별을 결정
@@ -53,28 +53,28 @@ ENDIF
 
 ;ACT 미결정이라면
 WHILE TFLAG:ACT == -1
-	;ACT 분류를 지정한다(지정이 끝난 상태라면 날린다)
+	;ACT분류를 지정한다(지정이 끝난 상태라면 날린다)
 	SIF TFLAG:ACT분류 == -1
 		CALL ACT_MENU_RESULT(1)
-	;그런데도 지정 할 수 없으면 『지금의 기분을 (듣)묻는다』ACT로 결정
+	;그런데도 지정 할 수 없으면 『지금의기분을얘기한다』ACT로 결정
 	IF TFLAG:ACT분류 == -1
 		TFLAG:ACT = 0
 		TFLAG:ACT분류 = 0
 		SIF FLAG:디버그
-			PRINTL (채용 가능 ACT, ACT 분류가 존재하지 않기 때문에, 『지금의 기분을 (듣)묻는다』ACT를 채용했습니다)
+			PRINTL (채용 가능 ACT, ACT분류가 존재하지 않기 때문에, 『지금의기분을얘기한다』ACT를 채용했습니다)
 	;실행 가부 판정
 	ELSE
 		CALLFORM ACT_M{TFLAG:ACT분류}
 	ENDIF
 WEND
 
-;행동 예약의 처리
+;행동예약의 처리
 IF TCVAR:행동예약 >= 0
 	TFLAG:ACT = TCVAR:행동예약
 	TCVAR:행동예약 = -1
 	SIF FLAG:디버그
-		CALL PRINT_DIALOG(@"행동 예약에 의해 행동을%STR:(TFLAG:ACT)%로 변경했습니다", 2, 2, 2)
-	;변경 후의 ACT와 ACT 분류가 다른 경우
+		CALL PRINT_DIALOG(@"행동예약에 의해 행동을%STR:(TFLAG:ACT)%로 변경했습니다", 2, 2, 2)
+	;변경 후의 ACT와 ACT분류가 다른 경우
 	IF TFLAG:ACT분류 != GET_ACTM(TFLAG:ACT)
 		TFLAG:ACT분류 = GET_ACTM(TFLAG:ACT)
 		SIF FLAG:디버그
@@ -181,7 +181,7 @@ ELSE
 	LOCAL = ARG
 ENDIF
 ;ACT 존재를 확인
-SIF GET_ACTNAME(LOCAL) == "" || GET_ACTNAME(LOCAL) == "ＮＯＮＥ"
+SIF GET_ACTNAME(LOCAL) == "" || GET_ACTNAME(LOCAL) == "NONE"
 	RETURN -999
 ;실행 불가시, 보정치를-999 고정
 CALLFORM ACT_ABLE{LOCAL}
@@ -235,7 +235,7 @@ ELSE
 			CFLAG:(600 + LCOUNT) += SIGN(LTEMP:LCOUNT) * MAX(ABS(LTEMP:LCOUNT) * 50 / MAX(ABS(CFLAG:(600 + LCOUNT)), 50), 1)
 		ENDIF
 	NEXT
-	;디버그시, 보정치 표시(다만 오토 모드의 간이표의시는 제외함)
+	;디버그시, 보정치 표시(다만 오토모드의 간이표의시는 제외함)
 	IF FLAG:디버그 && !(FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1)
 		;LOCAL 초기화
 		LOCAL = 0

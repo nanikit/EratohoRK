@@ -1,7 +1,7 @@
 ﻿;─
-;095, 정상위 시킨다
+;095, 정상위시킨다
 ;─
-;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v)
+;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v)
 @ACTION_APPLY_95
 ;애무 보정치에 응해 쾌CSOURCE 증가
 SOURCE:MASTER:쾌C = 100 + ACT_FROM(TARGET, 7) * (TALENT:허리사용*2 + 3) / 2
@@ -11,7 +11,7 @@ SOURCE:쾌V = 300 + ACT_TO(TARGET, 7) * (TALENT:MASTER:허리사용*2 + 3) / 2
 SOURCE:MASTER:달성 = SOURCE:쾌V / 2
 ;쾌CSOURCE에 응해 열락 SOURCE 증가
 SOURCE:MASTER:열락 = SOURCE:MASTER:쾌C / 2
-;성교 경험/조교 레벨 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
+;성교경험/조교레벨 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
 IF EXP:MASTER:성교경험 < 1 && CFLAG:MASTER:조교레벨 < 3
 	TIMES SOURCE:MASTER:쾌C , 0.80
 	TIMES SOURCE:쾌V , 0.70
@@ -30,30 +30,30 @@ ELSEIF EXP:MASTER:성교경험 < 26 && CFLAG:MASTER:조교레벨 < 11
 	SOURCE:MASTER:일탈 += 150
 	SOURCE:MASTER:트라우마 += 50
 ENDIF
-;조교자 조교 레벨에 응해 접촉 SOURCE 증가
+;조교자 조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = SOURCE:MASTER:접촉 / 5
-;조교자가 처녀로, 조교 대상 조교 레벨이 부족해 호의가 부족한 경우,
+;조교자가 처녀로, 조교 대상 조교레벨이 부족해 호의가 부족한 경우,
 ;일탈 SOURCE 증가(조교 대상 호의로 경감)
 SIF TALENT:처녀 && CFLAG:MASTER:조교레벨 < 5 && CFLAG:M호의 < 1000
 	SOURCE:MASTER:일탈 += 3000 - CFLAG:M호의 * 2
 ;쾌CSOURCE에 응해 사랑 SOURCE 증가, 일탈, 트라우마 SOURCE에 의해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌C / 5 - SOURCE:MASTER:일탈 / 5 - SOURCE:MASTER:트라우마 / 5
-;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? (ACT_FROM(TARGET, 7) - 200) * SOURCE:MASTER:사랑 / 100 # 0
-;중독 충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
+;중독충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
 SOURCE:MASTER:중독충족 += SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:쾌C / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:페니스 |= STAIN:바기나
 STAIN:바기나 |= STAIN:MASTER:페니스
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
-;밀어 넘어뜨리기 중단
+;밀어넘어뜨리기중 단
 TEQUIP:밀어넘어뜨리기중 = 0
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -61,16 +61,16 @@ TFLAG:경과시간 += 4
 TFLAG:뽑지않고 = PREV_A_SEX(MASTER) ? 0 # TFLAG:뽑지않고	;플래그를 꺾는 처리를 추가@revkoishi(14/06/07)
 
 [SKIPSTART]
-REACT 분류:날뛰는 것 경우는 범용의 거절 처리에 떨어지므로 개별의 APPLY2까지는 떨어져 오지 않을 것?
+REACT분류:날뛰는 것 경우는 범용의 거절 처리에 떨어지므로 개별의 APPLY2까지는 떨어져 오지 않을 것?
 우선 동작적으로는 문제 없지만 ACT계를 정리하는 때는 다시 보는 것이 좋은 보고 싶다@/L
 [SKIPEND]
 
 ;리액션 후
 @ACTION_APPLY2_95
-;REACT 분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
+;REACT분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("날뛴다/거부")
 	;쾌C, 쾌v, 접촉, 사랑, 성행동, 상해, 일탈, 트라우마 SOURCE 감소
-	;중독 충족 SOURCE 소실
+	;중독충족 SOURCE 소실
 	SOURCE:MASTER:쾌C /= 3
 	SOURCE:쾌V /= 5
 	SOURCE:MASTER:접촉 /= 3
@@ -81,9 +81,9 @@ IF IS_COMGRONAME("날뛴다/거부")
 	SOURCE:MASTER:중독충족 = 0
 	SOURCE:MASTER:트라우마 /= 3
 	TFLAG:뽑지않고 = 0
-	;REACT 분류가 날뛰는 것 경우
+	;REACT분류가 날뛰는 것 경우
 	IF IS_COMGRONAME("날뛴다")
-		;애널 섹스 이외의 성교 봉사중
+		;애널섹스 이외의 성교봉사중
 		IF V_SEX(MASTER)
 			;소실 처리 회피
 		;그 외
@@ -92,11 +92,11 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌V = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
-	;REACT 분류가 요구에 응하지 않는 것 경우
+	;REACT분류가 요구에 응하지 않는 것 경우
 	ELSE
-		;애널 섹스 이외의 성교 봉사중
+		;애널섹스 이외의 성교봉사중
 		IF V_SEX(MASTER)
 			;소실 처리 회피
 		;그 외
@@ -105,7 +105,7 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌V = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
 	ENDIF
 ;그 외의 경우(수용)
@@ -114,23 +114,23 @@ ELSE
 	LOCAL = 100 + ACT_TO(TARGET, 5) * GET_ABL(MASTER, "순종") * (2 + TALENT:MASTER:음핵／음경) / 600
 	;쾌vSOURCE 증가
 	TIMES SOURCE:쾌V, 1.25
-	;조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10
 	;보정치에 응해 사랑, 쾌vSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
 	SOURCE:쾌V += LOCAL * 2
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
-	;MASTER가 동정이라면, 동정 상실이 일어난다
+	;MASTER가 동정이라면, 동정상실이 일어난다
 	TCVAR:MASTER:동정상실 = TALENT:MASTER:동정
-	;TARGET가 처녀라면, 처녀 상실이 일어난다
+	;TARGET가 처녀라면, 처녀상실이 일어난다
 	TCVAR:처녀상실 = TALENT:처녀
 ENDIF
 
 ;─
-;096, 후배위 시킨다
+;096, 후배위시킨다
 ;─
-;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v)
+;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v)
 @ACTION_APPLY_96
 ;애무 보정치에 응해 쾌CSOURCE 증가
 SOURCE:MASTER:쾌C = 300 + ACT_FROM(TARGET, 7) * (TALENT:허리사용*2 + 1)
@@ -140,7 +140,7 @@ SOURCE:쾌V = 300 + ACT_TO(TARGET, 7) * (TALENT:MASTER:허리사용*2 + 3) / 2
 SOURCE:MASTER:달성 = SOURCE:쾌V / 2
 ;쾌CSOURCE에 응해 열락 SOURCE 증가
 SOURCE:MASTER:열락 = SOURCE:MASTER:쾌C / 2
-;성교 경험/조교 레벨 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
+;성교경험/조교레벨 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
 IF EXP:MASTER:성교경험 < 1 && CFLAG:MASTER:조교레벨 < 3
 	TIMES SOURCE:MASTER:쾌C , 0.80
 	TIMES SOURCE:쾌V , 0.70
@@ -159,30 +159,30 @@ ELSEIF EXP:MASTER:성교경험 < 26 && CFLAG:MASTER:조교레벨 < 11
 	SOURCE:MASTER:일탈 += 15
 	SOURCE:MASTER:트라우마 += 5
 ENDIF
-;조교자 조교 레벨에 응해 접촉 SOURCE 증가
+;조교자 조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = SOURCE:MASTER:접촉 / 5
-;조교자가 처녀로, 조교 대상 조교 레벨이 부족해 호의가 부족한 경우,
+;조교자가 처녀로, 조교 대상 조교레벨이 부족해 호의가 부족한 경우,
 ;일탈 SOURCE 증가(조교 대상 호의로 경감)
 SIF TALENT:처녀 && CFLAG:MASTER:조교레벨 < 5 && CFLAG:M호의 < 1000
 	SOURCE:MASTER:일탈 += 3000 - CFLAG:M호의 * 2
 ;쾌CSOURCE에 응해 사랑 SOURCE 증가, 일탈, 트라우마 SOURCE에 의해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌C / 5 - SOURCE:MASTER:일탈 / 5 - SOURCE:MASTER:트라우마 / 5
-;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? (ACT_FROM(TARGET, 7) - 200) * SOURCE:MASTER:사랑 / 100 # 0
-;중독 충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
+;중독충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
 SOURCE:MASTER:중독충족 += SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:쾌C / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:페니스 |= STAIN:바기나
 STAIN:바기나 |= STAIN:MASTER:페니스
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
-;밀어 넘어뜨리기 중단
+;밀어넘어뜨리기중 단
 TEQUIP:밀어넘어뜨리기중 = 0
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -191,10 +191,10 @@ TFLAG:뽑지않고 = PREV_A_SEX(MASTER) ? 0 # TFLAG:뽑지않고	;플래그를 �
 
 ;리액션 후
 @ACTION_APPLY2_96
-;REACT 분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
+;REACT분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("날뛴다/거부")
 	;쾌C, 쾌v, 접촉, 사랑, 성행동, 상해, 일탈, 트라우마 SOURCE 감소
-	;중독 충족 SOURCE 소실
+	;중독충족 SOURCE 소실
 	SOURCE:MASTER:쾌C /= 3
 	SOURCE:쾌V /= 5
 	SOURCE:MASTER:접촉 /= 3
@@ -205,9 +205,9 @@ IF IS_COMGRONAME("날뛴다/거부")
 	SOURCE:MASTER:중독충족 = 0
 	SOURCE:MASTER:트라우마 /= 3
 	TFLAG:뽑지않고 = 0
-	;REACT 분류가 날뛰는 것 경우
+	;REACT분류가 날뛰는 것 경우
 	IF IS_COMGRONAME("날뛴다")
-		;애널 섹스 이외의 성교 봉사중
+		;애널섹스 이외의 성교봉사중
 		IF V_SEX(MASTER)
 			;소실 처리 회피
 		;그 외
@@ -216,11 +216,11 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌V = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
-	;REACT 분류가 요구에 응하지 않는 것 경우
+	;REACT분류가 요구에 응하지 않는 것 경우
 	ELSE
-		;애널 섹스 이외의 성교 봉사중
+		;애널섹스 이외의 성교봉사중
 		IF V_SEX(MASTER)
 			;소실 처리 회피
 		;그 외
@@ -229,7 +229,7 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌V = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
 	ENDIF
 ;그 외의 경우(수용)
@@ -238,23 +238,23 @@ ELSE
 	LOCAL = 100 + ACT_TO(TARGET, 5) * GET_ABL(MASTER, "순종") * (2 + TALENT:MASTER:음핵／음경) / 600
 	;쾌vSOURCE 증가
 	TIMES SOURCE:쾌V, 1.25
-	;조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10
 	;보정치에 응해 사랑, 쾌vSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
 	SOURCE:쾌V += LOCAL * 2
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
-	;MASTER가 동정이라면, 동정 상실이 일어난다
+	;MASTER가 동정이라면, 동정상실이 일어난다
 	TCVAR:MASTER:동정상실 = TALENT:MASTER:동정
-	;TARGET가 처녀라면, 처녀 상실이 일어난다
+	;TARGET가 처녀라면, 처녀상실이 일어난다
 	TCVAR:처녀상실 = TALENT:처녀
 ENDIF
 
 ;─
-;097, 대면좌위 시킨다
+;097, 대면좌위시킨다
 ;─
-;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v, 쾌c)
+;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c)
 @ACTION_APPLY_97
 ;애무 보정치에 응해 쾌CSOURCE 증가
 SOURCE:MASTER:쾌C = 300 + ACT_FROM(TARGET, 7) * (TALENT:허리사용*2 + 1)
@@ -265,7 +265,7 @@ SOURCE:쾌V = 300 + ACT_TO(TARGET, 7) * (TALENT:MASTER:허리사용*2 + 1)
 SOURCE:MASTER:달성 = SOURCE:쾌V / 2
 ;쾌CSOURCE에 응해 열락 SOURCE 증가
 SOURCE:MASTER:열락 = SOURCE:MASTER:쾌C / 2
-;성교 경험/조교 레벨 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
+;성교경험/조교레벨 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
 IF EXP:MASTER:성교경험 < 1 && CFLAG:MASTER:조교레벨 < 3
 	TIMES SOURCE:MASTER:쾌C , 0.80
 	TIMES SOURCE:쾌V , 0.70
@@ -284,30 +284,30 @@ ELSEIF EXP:MASTER:성교경험 < 26 && CFLAG:MASTER:조교레벨 < 11
 	SOURCE:MASTER:일탈 += 15
 	SOURCE:MASTER:트라우마 += 5
 ENDIF
-;조교자 조교 레벨에 응해 접촉 SOURCE 증가
+;조교자 조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = SOURCE:MASTER:접촉 / 5
-;조교자가 처녀로, 조교 대상 조교 레벨이 부족해 호의가 부족한 경우,
+;조교자가 처녀로, 조교 대상 조교레벨이 부족해 호의가 부족한 경우,
 ;일탈 SOURCE 증가(조교 대상 호의로 경감)
 SIF TALENT:처녀 && CFLAG:MASTER:조교레벨 < 5 && CFLAG:M호의 < 1000
 	SOURCE:MASTER:일탈 += 3000 - CFLAG:M호의 * 2
 ;쾌CSOURCE에 응해 사랑 SOURCE 증가, 일탈, 트라우마 SOURCE에 의해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌C / 5 - SOURCE:MASTER:일탈 / 5 - SOURCE:MASTER:트라우마 / 5
-;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? (ACT_FROM(TARGET, 7) - 200) * SOURCE:MASTER:사랑 / 100 # 0
-;중독 충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
+;중독충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
 SOURCE:MASTER:중독충족 += SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:쾌C / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:페니스 |= STAIN:바기나
 STAIN:바기나 |= STAIN:MASTER:페니스
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
-;밀어 넘어뜨리기 중단
+;밀어넘어뜨리기중 단
 TEQUIP:밀어넘어뜨리기중 = 0
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -316,10 +316,10 @@ TFLAG:뽑지않고 = PREV_A_SEX(MASTER) ? 0 # TFLAG:뽑지않고	;플래그를 �
 
 ;리액션 후
 @ACTION_APPLY2_97
-;REACT 분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
+;REACT분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("날뛴다/거부")
 	;쾌C, 쾌v, 접촉, 사랑, 성행동, 상해, 일탈, 트라우마 SOURCE 감소
-	;중독 충족 SOURCE 소실
+	;중독충족 SOURCE 소실
 	SOURCE:MASTER:쾌C /= 3
 	SOURCE:쾌V /= 5
 	SOURCE:MASTER:접촉 /= 3
@@ -330,9 +330,9 @@ IF IS_COMGRONAME("날뛴다/거부")
 	SOURCE:MASTER:중독충족 = 0
 	SOURCE:MASTER:트라우마 /= 3
 	TFLAG:뽑지않고 = 0
-	;REACT 분류가 날뛰는 것 경우
+	;REACT분류가 날뛰는 것 경우
 	IF IS_COMGRONAME("날뛴다")
-		;애널 섹스 이외의 성교 봉사중
+		;애널섹스 이외의 성교봉사중
 		IF V_SEX(MASTER)
 			;소실 처리 회피
 		;그 외
@@ -341,11 +341,11 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌V = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
-	;REACT 분류가 요구에 응하지 않는 것 경우
+	;REACT분류가 요구에 응하지 않는 것 경우
 	ELSE
-		;애널 섹스 이외의 성교 봉사중
+		;애널섹스 이외의 성교봉사중
 		IF V_SEX(MASTER)
 			;소실 처리 회피
 		;그 외
@@ -354,7 +354,7 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌V = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
 	ENDIF
 ;그 외의 경우(수용)
@@ -363,23 +363,23 @@ ELSE
 	LOCAL = 100 + ACT_TO(TARGET, 5) * GET_ABL(MASTER, "순종") * (2 + TALENT:MASTER:음핵／음경) / 600
 	;쾌vSOURCE 증가
 	TIMES SOURCE:쾌V, 1.25
-	;조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10
 	;보정치에 응해 사랑, 쾌vSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
 	SOURCE:쾌V += LOCAL * 2
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
-	;MASTER가 동정이라면, 동정 상실이 일어난다
+	;MASTER가 동정이라면, 동정상실이 일어난다
 	TCVAR:MASTER:동정상실 = TALENT:MASTER:동정
-	;TARGET가 처녀라면, 처녀 상실이 일어난다
+	;TARGET가 처녀라면, 처녀상실이 일어난다
 	TCVAR:처녀상실 = TALENT:처녀
 ENDIF
 
 ;─
-;098, 배면좌위 시킨다
+;098, 배면좌위시킨다
 ;─
-;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
+;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
 @ACTION_APPLY_98
 ;애무 보정치에 응해 쾌CSOURCE 증가
 SOURCE:MASTER:쾌C = 100 + ACT_FROM(TARGET, 7) * (TALENT:허리사용*2 + 1)
@@ -391,7 +391,7 @@ SOURCE:쾌B = 50 + ACT_TO(TARGET, 4) * (TALENT:MASTER:기묘한손가락 + 1)
 SOURCE:MASTER:달성 = SOURCE:쾌V / 2
 ;쾌CSOURCE에 응해 열락 SOURCE 증가
 SOURCE:MASTER:열락 = SOURCE:MASTER:쾌C / 2
-;성교 경험/조교 레벨 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
+;성교경험/조교레벨 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
 IF EXP:MASTER:성교경험 < 1 && CFLAG:MASTER:조교레벨 < 3
 	TIMES SOURCE:MASTER:쾌C , 0.80
 	TIMES SOURCE:쾌V , 0.70
@@ -410,30 +410,30 @@ ELSEIF EXP:MASTER:성교경험 < 26 && CFLAG:MASTER:조교레벨 < 11
 	SOURCE:MASTER:일탈 += 15
 	SOURCE:MASTER:트라우마 += 5
 ENDIF
-;조교자 조교 레벨에 응해 접촉 SOURCE 증가
+;조교자 조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = SOURCE:MASTER:접촉 / 5
-;조교자가 처녀로, 조교 대상 조교 레벨이 부족해 호의가 부족한 경우,
+;조교자가 처녀로, 조교 대상 조교레벨이 부족해 호의가 부족한 경우,
 ;일탈 SOURCE 증가(조교 대상 호의로 경감)
 SIF TALENT:처녀 && CFLAG:MASTER:조교레벨 < 5 && CFLAG:M호의 < 1000
 	SOURCE:MASTER:일탈 += 3000 - CFLAG:M호의 * 2
 ;쾌CSOURCE에 응해 사랑 SOURCE 증가, 일탈, 트라우마 SOURCE에 의해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌C / 5 - SOURCE:MASTER:일탈 / 5 - SOURCE:MASTER:트라우마 / 5
-;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? (ACT_FROM(TARGET, 7) - 200) * SOURCE:MASTER:사랑 / 100 # 0
-;중독 충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
+;중독충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
 SOURCE:MASTER:중독충족 += SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:쾌C / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:페니스 |= STAIN:바기나
 STAIN:바기나 |= STAIN:MASTER:페니스
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
-;밀어 넘어뜨리기 중단
+;밀어넘어뜨리기중 단
 TEQUIP:밀어넘어뜨리기중 = 0
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -442,10 +442,10 @@ TFLAG:뽑지않고 = PREV_A_SEX(MASTER) ? 0 # TFLAG:뽑지않고	;플래그를 �
 
 ;리액션 후
 @ACTION_APPLY2_98
-;REACT 분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
+;REACT분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("날뛴다/거부")
 	;쾌C, 쾌v, 접촉, 사랑, 성행동, 상해, 일탈, 트라우마 SOURCE 감소
-	;중독 충족 SOURCE 소실
+	;중독충족 SOURCE 소실
 	SOURCE:MASTER:쾌C /= 3
 	SOURCE:쾌V /= 5
 	SOURCE:MASTER:접촉 /= 3
@@ -456,9 +456,9 @@ IF IS_COMGRONAME("날뛴다/거부")
 	SOURCE:MASTER:중독충족 = 0
 	SOURCE:MASTER:트라우마 /= 3
 	TFLAG:뽑지않고 = 0
-	;REACT 분류가 날뛰는 것 경우
+	;REACT분류가 날뛰는 것 경우
 	IF IS_COMGRONAME("날뛴다")
-		;애널 섹스 이외의 성교 봉사중
+		;애널섹스 이외의 성교봉사중
 		IF V_SEX(MASTER)
 			;소실 처리 회피
 		;그 외
@@ -467,11 +467,11 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌V = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
-	;REACT 분류가 요구에 응하지 않는 것 경우
+	;REACT분류가 요구에 응하지 않는 것 경우
 	ELSE
-		;애널 섹스 이외의 성교 봉사중
+		;애널섹스 이외의 성교봉사중
 		IF V_SEX(MASTER)
 			;소실 처리 회피
 		;그 외
@@ -480,7 +480,7 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌V = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
 	ENDIF
 ;그 외의 경우(수용)
@@ -489,24 +489,24 @@ ELSE
 	LOCAL = 100 + ACT_TO(TARGET, 5) * GET_ABL(MASTER, "순종") * (2 + TALENT:MASTER:음핵／음경) / 600
 	;쾌vSOURCE 증가
 	TIMES SOURCE:쾌V, 1.25
-	;조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10
 	;보정치에 응해 사랑, 쾌vSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
 	SOURCE:쾌V += LOCAL * 2
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
-	;MASTER가 동정이라면, 동정 상실이 일어난다
+	;MASTER가 동정이라면, 동정상실이 일어난다
 	TCVAR:MASTER:동정상실 = TALENT:MASTER:동정
-	;TARGET가 처녀라면, 처녀 상실이 일어난다
+	;TARGET가 처녀라면, 처녀상실이 일어난다
 	TCVAR:처녀상실 = TALENT:처녀
 ENDIF
 
 
 ;─
-;099, 애널 섹스 시킨다
+;099, 애널섹스시킨다
 ;─
-;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
+;리액션 전(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
 @ACTION_APPLY_99
 ;애무 보정치에 응해 쾌CSOURCE 증가
 SOURCE:MASTER:쾌C = 500 + ACT_FROM(TARGET, 8) * (TALENT:허리사용*2 + 2)
@@ -518,7 +518,7 @@ SOURCE:MASTER:달성 = SOURCE:쾌A / 2
 SOURCE:MASTER:열락 = SOURCE:MASTER:쾌C / 2
 ;난수(0-499)에 응해 일탈 SOURCE 증가
 SOURCE:MASTER:일탈 = RAND:500
-;성교 경험/조교 레벨 부족시, 쾌C, 쾌aSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
+;성교경험/조교레벨 부족시, 쾌C, 쾌aSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
 IF EXP:MASTER:성교경험 < 1 && CFLAG:MASTER:조교레벨 < 3
 	TIMES SOURCE:MASTER:쾌C , 0.80
 	TIMES SOURCE:쾌A , 0.70
@@ -537,26 +537,26 @@ ELSEIF EXP:MASTER:성교경험 < 26 && CFLAG:MASTER:조교레벨 < 11
 	SOURCE:MASTER:일탈 += 15
 	SOURCE:MASTER:트라우마 += 5
 ENDIF
-;조교자 조교 레벨에 응해 접촉 SOURCE 증가
+;조교자 조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = SOURCE:MASTER:접촉 / 5
 ;쾌CSOURCE에 응해 사랑 SOURCE 증가, 일탈, 트라우마 SOURCE에 의해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌C / 5 - SOURCE:MASTER:일탈 / 5 - SOURCE:MASTER:트라우마 / 5
-;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 애무 보정치, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? (ACT_FROM(TARGET, 7) - 200) * SOURCE:MASTER:사랑 / 100 # 0
-;중독 충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
+;중독충족 SOURCE가 정이라면 쾌CSOURCE에 응해 가산
 SOURCE:MASTER:중독충족 += SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:쾌C / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 증가(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:페니스 |= STAIN:애널
 STAIN:애널 |= STAIN:MASTER:페니스
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
-;밀어 넘어뜨리기 중단
+;밀어넘어뜨리기중 단
 TEQUIP:밀어넘어뜨리기중 = 0
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -569,12 +569,12 @@ TEQUIP:자위중 = 0
 TFLAG:경과시간 += 4
 TFLAG:뽑지않고 = PREV_V_SEX(MASTER) ? 0 # TFLAG:뽑지않고	;플래그를 꺾는 처리를 추가@revkoishi(14/06/07)
 
-;리액션 후(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;리액션 후(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 @ACTION_APPLY2_99
-;REACT 분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
+;REACT분류가 날뛴다/요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("날뛴다/거부")
 	;쾌C, 쾌a, 접촉, 사랑, 성행동, 상해, 일탈, 트라우마 SOURCE 감소
-	;중독 충족 SOURCE 소실
+	;중독충족 SOURCE 소실
 	SOURCE:MASTER:쾌C /= 3
 	SOURCE:쾌A /= 5
 	SOURCE:MASTER:접촉 /= 3
@@ -585,9 +585,9 @@ IF IS_COMGRONAME("날뛴다/거부")
 	SOURCE:MASTER:중독충족 = 0
 	SOURCE:MASTER:트라우마 /= 3
 	TFLAG:뽑지않고 = 0
-	;REACT 분류가 날뛰는 것 경우
+	;REACT분류가 날뛰는 것 경우
 	IF IS_COMGRONAME("날뛴다")
-		;애널 섹스 봉사중
+		;애널섹스 봉사중
 		IF TEQUIP:성교봉사중 == 6
 			;소실 처리 회피
 		;그 외
@@ -596,11 +596,11 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌A = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
-	;REACT 분류가 요구에 응하지 않는 것 경우
+	;REACT분류가 요구에 응하지 않는 것 경우
 	ELSE
-		;애널 섹스 봉사중
+		;애널섹스 봉사중
 		IF TEQUIP:성교봉사중 == 6
 			;소실 처리 회피
 		;그 외
@@ -609,7 +609,7 @@ IF IS_COMGRONAME("날뛴다/거부")
 			SOURCE:MASTER:쾌C = 0
 			SOURCE:쾌A = 0
 		ENDIF
-		;성교 봉사중 해제
+		;성교봉사중 해제
 		TEQUIP:성교봉사중 = 0
 	ENDIF
 ;그 외의 경우(수용)
@@ -618,7 +618,7 @@ ELSE
 	LOCAL = 100 + ACT_TO(TARGET, 5) * GET_ABL(MASTER, "순종") * (2 + TALENT:MASTER:음핵／음경) / 600
 	;쾌aSOURCE 증가
 	TIMES SOURCE:쾌A, 1.25
-	;조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10
 	;보정치에 응해 사랑, 쾌cSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
@@ -630,24 +630,24 @@ ENDIF
 ;─
 ;103, 역강간
 ;─
-;리액션전(N/H/A)[벌](쾌C, 접촉, 사랑, 성행동, 상해, 일탈, 중독 충족, 트라우마, 쾌v)
+;리액션전(N/H/A)[벌](쾌C, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌v)
 @ACTION_APPLY_103
-;착의플레이선호 소질 또한 조교 대상 하반신 윗도리가 스커트가 아닌 경우
+;착의플레이선호 소질 또한 조교 대상 하반신윗도리가 스커트가 아닌 경우
 IF TALENT:착의플레이선호 && TEQUIP:MASTER:하반신윗도리 < 1
-	;속옷만 강제, 자주 탈의
+	;속옷만 강제, 자주탈의
 	TFLAG:강제탈의 = 9
 	TFLAG:자주탈의 = 9
-;해방 소질, 또는 확률(조교자 조교 레벨, 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
+;해방 소질, 또는 확률(조교자 조교레벨, 욕망, 조교 대상 매혹으로 증대, 억압, 수줍음 소질로 감소)로
 ELSEIF TALENT:해방 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "욕망") / 10 + TALENT:MASTER:매혹 * 3 > TALENT:억압 * 5 + TALENT:수줍음 * 3 + RAND:3)
-	;반반의 확률로 액세서리까지, 전라까지 강제, 자주 탈의(별개에 판정)
+	;반반의 확률로 액세서리까지, 전라까지 강제, 자주탈의(별개에 판정)
 	TFLAG:강제탈의 = 7 + RAND:2
 	TFLAG:자주탈의 = 7 + RAND:2
 ELSE
-	;최악이어도 하반신 전부 강제, 자주 탈의
+	;최악이어도 하반신 전부 강제, 자주탈의
 	TFLAG:강제탈의 = 5
 	TFLAG:자주탈의 = 5
 ENDIF
-;벽통과가 있는 경우 3/4로 강제 탈의를 캔슬한다
+;벽통과가 있는 경우 3/4로 강제탈의를 캔슬한다
 SIF TALENT:벽통과 && RAND:4
 	TFLAG:강제탈의 = 0
 ;애무 보정치에 응해 쾌C, 쾌vSOURCE 증가
@@ -655,7 +655,7 @@ SOURCE:MASTER:쾌C = 300 + 2 * ACT_FROM(TARGET, 7) * (TALENT:허리사용*3 + 1)
 SOURCE:쾌V = 100 + ACT_TO(TARGET, 7) * (TALENT:MASTER:허리사용*2 + 1)
 ;윤활 부족시, 쾌C, 쾌vSOURCE에 감소 보정
 CALL SHORTAGE_LUBRICATION("500/M쾌C, T, 80/T쾌V, T, 70")
-;성교 경험 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
+;성교경험 부족시, 쾌C, 쾌vSOURCE에 감소 보정, 상해, 일탈, 트라우마 SOURCE 증가
 IF EXP:MASTER:성교경험 < 1 && CFLAG:MASTER:조교레벨 < 3
 	TIMES SOURCE:MASTER:쾌C , 0.80
 	TIMES SOURCE:쾌V , 0.70
@@ -674,15 +674,15 @@ ELSEIF EXP:MASTER:성교경험 < 26 && CFLAG:MASTER:조교레벨 < 11
 	SOURCE:MASTER:일탈 += 150
 	SOURCE:MASTER:트라우마 += 50
 ENDIF
-;조교 레벨에 응해 접촉 SOURCE 증가
+;조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + GET_TRAINLV(TARGET) * 10
 ;접촉 SOURCE에 응해 성행동SOURCE 증가
 SOURCE:MASTER:성행동 = SOURCE:MASTER:접촉 / 5
-;합의 없음, 한편 조교 대상으로 충분한 성 지식이 있는 상태로
+;합의 없음, 한편 조교 대상으로 충분한 성지식이 있는 상태로
 ;동정을 빼앗으려고 하면 트라우마 SOURCE 증가
 SIF !CFLAG:합의 && EXP:MASTER:성지식 > 4 && TALENT:MASTER:동정
 	SOURCE:MASTER:트라우마 += 3500
-;조교자 처녀 소질이 존재해, 조교 대상 조교 레벨이 미숙하다라고 일탈 SOURCE 증가
+;조교자 처녀 소질이 존재해, 조교 대상 조교레벨이 미숙하다라고 일탈 SOURCE 증가
 ;조교 대상 호의로 경감 가능
 SIF TALENT:처녀 && CFLAG:MASTER:조교레벨 < 5 && CFLAG:M호의 < 1000
 	SOURCE:MASTER:일탈 += 3000 - CFLAG:M호의 * 2
@@ -694,20 +694,20 @@ IF CFLAG:MASTER:트라우마 == 103
 ENDIF
 ;쾌CSOURCE에 응해 사랑 SOURCE 증가, 일탈, 트라우마 SOURCE에 응해 감소
 SOURCE:MASTER:사랑 = SOURCE:MASTER:쾌C / 5 - SOURCE:MASTER:일탈 / 5 - SOURCE:MASTER:트라우마 / 5
-;사랑 SOURCE가 정이라면 조교 대상 C감각, 사랑 SOURCE에 응해 중독 충족 SOURCE 증가
+;사랑 SOURCE가 정이라면 조교 대상 C감각, 사랑 SOURCE에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:사랑 > 0 ? GET_ABL(MASTER, "C감각") * (GET_ABL(MASTER, "C감각") - 10) * SOURCE:MASTER:사랑 / 100 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE가 정의 값이라면 쾌CSOURCE에 응해 증가
+;중독충족 SOURCE가 정의 값이라면 쾌CSOURCE에 응해 증가
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 > 0 ? SOURCE:MASTER:중독충족 + SOURCE:MASTER:쾌C / 5 # 0
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
+;중독충족 SOURCE에 응해 사랑 SOURCE 가산(피드백)
 SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 ;더러움이 서로 옮긴다
 STAIN:MASTER:페니스 |= STAIN:바기나
 STAIN:바기나 |= STAIN:MASTER:페니스
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
-;밀어 넘어뜨리기 중단
+;밀어넘어뜨리기중 단
 TEQUIP:밀어넘어뜨리기중 = 0
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -716,11 +716,11 @@ TFLAG:경과시간 += 4
 TEQUIP:오나홀 = 0
 TFLAG:뽑지않고 = PREV_A_SEX(MASTER) ? 0 # TFLAG:뽑지않고	;플래그를 꺾는 처리를 추가@revkoishi(14/06/07)
 
-;리액션 후(N/H/A)[벌](쾌C, 접촉, 사랑, 성행동, 상해, 일탈, 중독 충족, 트라우마, 쾌v)
+;리액션 후(N/H/A)[벌](쾌C, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌v)
 @ACTION_APPLY2_103
 ;이것은 저항 할 수 없어 좋다.
 
-;MASTER가 동정이라면, 동정 상실이 일어난다
+;MASTER가 동정이라면, 동정상실이 일어난다
 TCVAR:MASTER:동정상실 = TALENT:MASTER:동정
-;TARGET가 처녀라면, 처녀 상실이 일어난다
+;TARGET가 처녀라면, 처녀상실이 일어난다
 TCVAR:처녀상실 = TALENT:처녀

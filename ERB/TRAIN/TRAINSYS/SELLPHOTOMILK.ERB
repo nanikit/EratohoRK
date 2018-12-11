@@ -31,7 +31,7 @@ LOCAL += CUP:MASTER:공포 * (5 - TALENT:MASTER:감정결핍 + TALENT:MASTER:감
 ;최대로-2이지만, 전체 보정은+5
 LOCAL += CUP:MASTER:공순 * (5 + TALENT:MASTER:반항적 * 2 - TALENT:MASTER:순수 + TALENT:MASTER:거만함 * 3 - TALENT:MASTER:얌전함)
 ;반항
-;3 + 반항 각인 / 3
+;3 + 반항각인 / 3
 LOCAL += CUP:MASTER:반항 * (3 + MARK:반항각인 / 3)
 ;고통
 ;조교자가 새디즘 실 2배
@@ -47,7 +47,7 @@ LOCAL += CUP:MASTER:억울 * 2
 
 ;이후 보정 처리
 
-;(조수 기교+1) * (조수 성교 기능+조교 레벨+1) * (100+조교 대상피사경효험)를 걸쳐 10000으로 나눈다
+;(조수 기교+1) * (조수 성교 기능+조교레벨+1) * (100+조교 대상피사경효험)를 걸쳐 10000으로 나눈다
 LOCAL *= (ABL:ASSI:기교 + 1) * (ABL:ASSI:성교 + CFLAG:ASSI:조교레벨 + 1) * (100 + EXP:MASTER:피사경효험) / 10000
 
 ;조수가 사진을 신문의 기사로 했을 경우
@@ -67,7 +67,7 @@ ELSEIF LOCAL < CFLAG:MASTER:합의
 	PRINTL 이번 촬영은 전회정도의 성과라고는 말할 수 없는 것 같다
 ;촬영 기준치를 채우면
 ELSE
-	;400 + 기준치의 1/5 + 조교 레벨의 제곱(+α)*20을 기준치에 가산
+	;400 + 기준치의 1/5 + 조교레벨의 제곱(+α)*20을 기준치에 가산
 	CFLAG:MASTER:합의 += 400 + CFLAG:MASTER:합의 / 5 + (CFLAG:MASTER:조교레벨 + 1) * (CFLAG:MASTER:조교레벨 + 2) * 20
 	PRINTL 이번 촬영은 좋은 결과와 같다. 마력조차 배여 오고 있다…
 	;이번 득점의 것 1/4의 마력을 얻는다
@@ -80,12 +80,12 @@ ENDIF
 ;밀크의 가치를 계산
 ;─
 @SELL_MILK
-;조교 시간, B절정, 분유*3, 헌신적*2, 매혹*5, 조교 레벨의 총계를 마력으로서 얻는다
+;조교시간, B절정, 분유*3, 헌신적*2, 매혹*5, 조교레벨의 총계를 마력으로서 얻는다
 LOCAL = TFLAG:조교시간 + EX:MASTER:B절정 + EX:MASTER:분유 * 3 + TALENT:MASTER:헌신적 * 2 + TALENT:MASTER:매혹 * 5 + CFLAG:MASTER:조교레벨
 CFLAG:마력 += LOCAL
 PRINTFORML %CALLNAME:MASTER%로부터 짠 밀크는{LOCAL}의 마력으로서%CALLNAME%에 흡수되었다
 
-;조교 시간 리셋트
+;조교시간 리셋트
 TFLAG:조교시간 = 0
 
 ;─
@@ -102,16 +102,16 @@ LOCAL += LIMIT(LOCAL:1, 0, 5)
 LOCAL:1 = SQRT(EXP:MASTER:B경험 / 4)
 LOCAL += LIMIT(LOCAL:1, 0, 5)
 
-;(기준치+조교 시간)가(12+(0-4)-조교 대상 헌신적-유치*2)를 웃돌면
+;(기준치+조교시간)가(12+(0-4)-조교 대상 헌신적-유치*2)를 웃돌면
 IF LOCAL + TFLAG:조교시간 > 12 + RAND:5 - TALENT:MASTER:헌신적 - TALENT:유치 * 2
 	;모유체질 취득
 	TALENT:MASTER:모유체질 = 1
 	PRINTFORMW %CALLNAME:MASTER%는 모유가 나오게 되었다
 	;모유 게이지를 신설(MAX10000)
 	MAXBASE:MASTER:모유 = 10000
-	;조교 시간 리셋트
+	;조교시간 리셋트
 	TFLAG:조교시간 = 0
 ELSE
-	;조교 시간 경과
+	;조교시간 경과
 	TFLAG:조교시간 += 1
 ENDIF

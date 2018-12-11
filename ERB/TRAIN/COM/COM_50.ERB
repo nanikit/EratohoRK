@@ -1,5 +1,5 @@
 ﻿;─
-;050, 자위하기 시작한다(자위, 열락, 반항, 벌포인트)
+;050, 자위하기시작한다(자위, 열락, 반항, 벌포인트)
 ;─
 @COM50
 ;자위 처리
@@ -11,28 +11,28 @@ LOCAL = (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:M
 SIF LOCAL > 100
 	LOCAL = 100
 ;-------------------------------------------------
-;ACT가 쉬게 한다, 혹은 봉사계라면 REACT 분류는 거부 취급에. 벌포인트 가산으로 COMGRO 받아들이고는 위화감이라고 하는 일도 포함한 처치
-;한층 더 SET_COMGRO, SET_COMIMP를 REACT 파생 대입 개소와 통합@/L
+;ACT가 쉬게한다, 혹은 봉사계라면 REACT분류는 거부 취급에. 벌포인트 가산으로 COMGRO 받아들이고는 위화감이라고 하는 일도 포함한 처치
+;한층 더 SET_COMGRO, SET_COMIMP를 REACT파생대입 개소와 통합@/L
 ;-------------------------------------------------
 ;조교자가 만족하고 있다면 벌이 되지 않을지도 모릅니다
-IF BASE:만족 / 100 + CFLAG:MASTER:조교레벨 / 2 < BASE:초조 / 100 + RAND:5 || MENUMATCH(TFLAG:ACT, "봉사") || IS_NOWACTNAME("쉬게 한다")
+IF BASE:만족 / 100 + CFLAG:MASTER:조교레벨 / 2 < BASE:초조 / 100 + RAND:5 || MENUMATCH(TFLAG:ACT, "봉사") || IS_NOWACTNAME("쉬게한다")
 	;벌포인트 가산
 	TFLAG:벌포인트 += LOCAL
 	;파생:마음대로 자위 하지마
 	TFLAG:REACT파생 = 1
-	;REACT 분류:거부를 세트
+	;REACT분류:거부를 세트
 	CALL SET_COMGRO("거부")
-	;REACT 인상은 COM40, 거부하는 것에 준해 악인상대
-	CALL SET_COMIMP("악인상대")
+	;REACT인상는 COM40, 거부하는 것에 준해 약간나쁜인상
+	CALL SET_COMIMP("약간나쁜인상")
 	;의존도 변화
 	CALL ADD_DEPEND(-3, +2)
 ELSE
 	;파생:마음대로 자위 하고 있지만 좋은가
 	TFLAG:REACT파생 = 0
-	;REACT 분류:받아들이는 것을 세트
+	;REACT분류:받아들이는 것을 세트
 	CALL SET_COMGRO("받아들인다")
-	;REACT 인상은 악인상소
-	CALL SET_COMIMP("악인상소")
+	;REACT인상는 나쁜인상
+	CALL SET_COMIMP("나쁜인상")
 	;의존도 변화
 	CALL ADD_DEPEND(-1, 0)
 ENDIF
@@ -42,31 +42,31 @@ RETURN 1
 
 
 ;─
-;051, 도구를 제외한다(쾌C, 쾌A, 달성역, 반항, 벌포인트)
+;051, 도구를제외한다(쾌C, 쾌A, 달성역, 반항, 벌포인트)
 ;─
 @COM51
 ;달성 SOURCE 감소
 SOURCE:MASTER:달성 -= 100 + (CFLAG:M호의 - 500) * (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A) / 1000
 ;반항 SOURCE 증가
 SOURCE:MASTER:반항 += 250 + SOURCE:MASTER:쾌V / 2 + SOURCE:MASTER:쾌A / 2 + (CFLAG:MASTER:조교레벨 + 1) * (GET_ABL(MASTER, "기교") + 10) * CFLAG:M호의 / 100
-;도구를 제외하는 것 우선순서 판정. 한 번은 1개까지. 처음은 랜덤 1~ 3제외할 예정이었지만 왠지 귀찮아
-;제외한 도구의 TEQUIP 번호가 REACT 파생에 들어간다
+;도구를제외한다의 우선순서 판정. 한 번은 1개까지. 처음은 랜덤 1～3제외할 예정이었지만 왠지 귀찮아
+;제외한 도구의 TEQUIP 번호가 REACT파생에 들어간다
 IF TEQUIP:아이마스크
 	TEQUIP:아이마스크 = 0
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "아이마스크")
 ELSEIF TEQUIP:관장기＋플러그
 	SOURCE:MASTER:쾌A = 500 * TEQUIP:관장기＋플러그 * (100 + RAND:11 - RAND:11) / 100
 	TEQUIP:관장기＋플러그 = 0
-	;남자는 A로 전립선 자극
+	;남자는 A로 전립선자극
 	SIF TALENT:MASTER:남자
 		TCVAR:MASTER:전립선자극 += 1
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "관장기＋플러그")
 ELSEIF TEQUIP:애널바이브
 	TEQUIP:애널바이브 = 0
-	;남자는 A로 전립선 자극
+	;남자는 A로 전립선자극
 	SIF TALENT:MASTER:남자
 		TCVAR:MASTER:전립선자극 += 1
-	TFLAG:REACT파생 = GETNUM(TEQUIP, "애널 바이브")
+	TFLAG:REACT파생 = GETNUM(TEQUIP, "애널바이브")
 ELSEIF TEQUIP:바이브
 	TEQUIP:바이브 = 0
 	TCVAR:MASTER:전립선자극 += 1
@@ -88,14 +88,14 @@ ELSEIF TEQUIP:니플캡
 ELSEIF TEQUIP:페니스밴드
 	TEQUIP:페니스밴드 = 0
 	TCVAR:MASTER:전립선자극 += 1
-	TFLAG:REACT파생 = GETNUM(TEQUIP, "페니스 밴드")
+	TFLAG:REACT파생 = GETNUM(TEQUIP, "페니스밴드")
 ELSE
 	SOURCE:MASTER:쾌A = 50 * TEQUIP:애널비즈 + 50 * TEQUIP:애널비즈 + (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * CFLAG:MASTER:조교레벨 * (TEQUIP:애널비즈 - 1) / 10
 	TEQUIP:애널비즈 = 0
-	;남자는 A로 전립선 자극
+	;남자는 A로 전립선자극
 	SIF TALENT:MASTER:남자
 		TCVAR:MASTER:전립선자극 += 2
-	TFLAG:REACT파생 = GETNUM(TEQUIP, "애널 비즈")
+	TFLAG:REACT파생 = GETNUM(TEQUIP, "애널비즈")
 ENDIF
 ;조교 대상 자위를 중단
 TEQUIP:자위중 &= ~1
@@ -108,14 +108,14 @@ TFLAG:벌포인트 += LOCAL
 ;COM 분류
 CALL SET_COMGRO("날뛴다")
 ;COM 인상
-CALL SET_COMIMP("악인상대")
+CALL SET_COMIMP("약간나쁜인상")
 ;의존도 변화
 CALL ADD_DEPEND(-3, -10)
 RETURN 1
 
 
 ;─
-;052, 하는 대로(효과 없음. 실행할 수 있는 반응이 한 개도 없을 때의 구제, 필요한가 어떤가는 모릅니다만)
+;052, 하는대로(효과 없음. 실행할 수 있는 반응이 한 개도 없을 때의 구제, 필요한가 어떤가는 모릅니다만)
 ;필요하게 되어 버렸으므로 개명해, 다소 내용을 정비.
 ;─
 @COM52
@@ -132,15 +132,15 @@ ELSEIF MENUMATCH(TFLAG:ACT, "성교") && !IS_NOWACTNAME("승마위") || IS_NOWAC
 	;의존도 변화
 	CALL ADD_DEPEND(+4, +10)
 ;성교 봉사계 ACT·승마위
-ELSEIF MENUMATCH(TFLAG:ACT, "성 봉") && !IS_NOWACTNAME("역강간") || IS_NOWACTNAME("승마위")
-	;빠진 것처럼 허리를 흔든다
+ELSEIF MENUMATCH(TFLAG:ACT, "성적봉사") && !IS_NOWACTNAME("역강간") || IS_NOWACTNAME("승마위")
+	;빠진 것처럼허리를흔드는
 	TFLAG:REACT파생 = 2
 	;COM 분류
 	CALL SET_COMGRO("받아들인다")
 	;의존도 변화
 	CALL ADD_DEPEND(+10, +10)
 ;의상 변경·자위·방뇨·개장·이라마치오
-ELSEIF IS_NOWACTNAME("의상의 변경을 요구한다/자위/비패개장/방뇨/이라마치오")
+ELSEIF IS_NOWACTNAME("의상의변경을요구한다/자위/비패개장/방뇨/이라마치오")
 	;말해지는 대로 천천히 따른다
 	TFLAG:REACT파생 = 3
 	;COM 분류
@@ -155,9 +155,9 @@ ELSEIF MENUMATCH(TFLAG:ACT, "봉사")
 	CALL SET_COMGRO("받아들인다")
 	;의존도 변화
 	CALL ADD_DEPEND(+8, +10)
-;위협하는·기분 나쁘게 웃는·매도·고함치는·벌
-ELSEIF IS_NOWACTNAME("엄격하게 위협한다/벌이라고 선언한다/고함친다/기분 나쁘게 웃는다/매도")
-	;반항적인 소질이 있어, 굴복 각인 5 이하
+;위협하는·기분나쁘게웃는다·매도·고함치는·벌
+ELSEIF IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/고함친다/기분나쁘게웃는다/매도")
+	;반항적인 소질이 있어, 굴복각인 5 이하
 	IF MARK:굴복각인 <= 5 && (TALENT:MASTER:기장 || TALENT:MASTER:프라이드높음 || TALENT:MASTER:거만함 || TALENT:MASTER:반항적)
 		;분한 듯이 노려본다
 		TFLAG:REACT파생 = 5
@@ -188,7 +188,7 @@ ELSEIF SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MAS
 			;오나니─에 열중해 듣지 않았다
 			TFLAG:REACT파생 = 8
 			;COM 인상
-			CALL SET_COMIMP("악인상소")
+			CALL SET_COMIMP("나쁜인상")
 			;COM 분류
 			CALL SET_COMGRO("받아들인다")
 			;의존도 변화

@@ -1,16 +1,16 @@
 ﻿;─
-;060, 스팽킹(S/N/H/A)[벌](접촉, 상해, 중독 충족)
+;060, 스팽킹(S/N/H/A)[벌](접촉, 상해, 중독충족)
 ;─
 @ACTION_APPLY_60
-;조교자 새디즘 소질, 기교, 가학, 조교 레벨에 응해 아픔 SOURCE 증가
+;조교자 새디즘 소질, 기교, 가학, 조교레벨에 응해 아픔 SOURCE 증가
 SOURCE:MASTER:아픔 = 80 * (TALENT:새디즘 + 1) + GET_ABL(TARGET, "기교") * (GET_ABL(TARGET, "가학") + 10) * 15 / 100 + (GET_ABL(TARGET, "기교") / 10 + GET_TRAINLV(TARGET) + 1) * (TALENT:새디즘 * 3 + 1) * (10 + TALENT:새디즘)
 ;아픔 SOURCE에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 200 + SOURCE:MASTER:아픔 / 10
-;조교 대상 마조끼, 고통 중독, 아픔 SOURCE에 응해 중독 충족 SOURCE 증가
-SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통 중독") - 10) * (GET_ABL(MASTER, "고통 중독") + 10) * SOURCE:MASTER:아픔 / 100000
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;조교 대상 마조끼, 고통중독, 아픔 SOURCE에 응해 중독충족 SOURCE 증가
+SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통중독") - 10) * (GET_ABL(MASTER, "고통중독") + 10) * SOURCE:MASTER:아픔 / 100000
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자 자위를 중단
 TEQUIP:자위중 &= ~2
@@ -19,26 +19,26 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20) * 2
 TFLAG:경과시간 += 2
 
 ;─
-;061, 편(N/H/A)[벌](아픔, 중독 충족, 트라우마)
+;061, 채찍(N/H/A)[벌](아픔, 중독충족, 트라우마)
 ;─
 @ACTION_APPLY_61
-;조교자 새디즘 소질, 기교, 가학, 조교 레벨에 응해 아픔 SOURCE 증가
+;조교자 새디즘 소질, 기교, 가학, 조교레벨에 응해 아픔 SOURCE 증가
 SOURCE:MASTER:아픔 = 250 * (TALENT:새디즘 + 1) + GET_ABL(TARGET, "기교") * (GET_ABL(TARGET, "가학") + 20) / 10 + (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "기교") + GET_TRAINLV(TARGET) * 10) * (TALENT:새디즘 * 2 + 1) * (10 + TALENT:새디즘) / 10
 ;상냥함 소질이 존재하면 아픔 SOURCE0. 9배
 SIF TALENT:상냥함
 	TIMES SOURCE:MASTER:아픔 , 0.90
-;조교 대상 마조끼, 고통 중독, 아픔 SOURCE에 응해 중독 충족 SOURCE 증가
-SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통 중독") - 10) * (GET_ABL(MASTER, "고통 중독") + 10) * SOURCE:MASTER:아픔 / 100000
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;조교 대상 마조끼, 고통중독, 아픔 SOURCE에 응해 중독충족 SOURCE 증가
+SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통중독") - 10) * (GET_ABL(MASTER, "고통중독") + 10) * SOURCE:MASTER:아픔 / 100000
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;아픔 SOURCE에 응해 트라우마 SOURCE 증가, 중독 충족 SOURCE에 의해 감소
+;아픔 SOURCE에 응해 트라우마 SOURCE 증가, 중독충족 SOURCE에 의해 감소
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:아픔 / 2 - SOURCE:MASTER:중독충족
 ;트라우마 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
 ;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
 SIF CFLAG:MASTER:트라우마 == 61
 	TIMES SOURCE:MASTER:트라우마 , 1.50
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자 자위를 중단
 TEQUIP:자위중 &= ~2
@@ -47,23 +47,23 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20) * 3
 TFLAG:경과시간 += 2
 
 ;─
-;062, 침(H/A)[벌](아픔, 일탈, 중독 충족, 트라우마, 출혈)
+;062, 바늘(H/A)[벌](아픔, 일탈, 중독충족, 트라우마, 출혈)
 ;─
 @ACTION_APPLY_62
-;조교자 새디즘 소질, 기교, 가학, 바느질, 조교 레벨에 응해 아픔 SOURCE 증가
+;조교자 새디즘 소질, 기교, 가학, 바느질, 조교레벨에 응해 아픔 SOURCE 증가
 SOURCE:MASTER:아픔 = 450 * (TALENT:새디즘 + 1) + GET_ABL(TARGET, "기교") * (GET_ABL(TARGET, "가학") + 1) * (2 + TALENT:바느질 * 3) / 100 + (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "기교") + GET_TRAINLV(TARGET) * 10) * (TALENT:새디즘 + TALENT:바느질 * 2 + 1) * (10 + TALENT:새디즘) / 10
 ;상냥함 소질이 존재하면 아픔 SOURCE0. 8배
 SIF TALENT:상냥함
 	TIMES SOURCE:MASTER:아픔 , 0.80
-;아픔 SOURCE, 조교 대상 조교 레벨, 마조끼, 고통 중독에 응해 일탈 SOURCE 증가
-SOURCE:MASTER:일탈 = 200 + SOURCE:MASTER:아픔 / 2 - CFLAG:MASTER:조교레벨 * 30 - GET_ABL(MASTER, "마조끼") * 6 - GET_ABL(MASTER, "고통 중독") * 20
+;아픔 SOURCE, 조교 대상 조교레벨, 마조끼, 고통중독에 응해 일탈 SOURCE 증가
+SOURCE:MASTER:일탈 = 200 + SOURCE:MASTER:아픔 / 2 - CFLAG:MASTER:조교레벨 * 30 - GET_ABL(MASTER, "마조끼") * 6 - GET_ABL(MASTER, "고통중독") * 20
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
-;조교 대상 마조끼, 고통 중독, 아픔 SOURCE에 응해 중독 충족 SOURCE 증가
-SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통 중독") - 10) * (GET_ABL(MASTER, "고통 중독") + 10) * SOURCE:MASTER:아픔 / 100000
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;조교 대상 마조끼, 고통중독, 아픔 SOURCE에 응해 중독충족 SOURCE 증가
+SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통중독") - 10) * (GET_ABL(MASTER, "고통중독") + 10) * SOURCE:MASTER:아픔 / 100000
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;아픔 SOURCE에 응해 트라우마 SOURCE 증가, 중독 충족 SOURCE에 의해 감소
+;아픔 SOURCE에 응해 트라우마 SOURCE 증가, 중독충족 SOURCE에 의해 감소
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:아픔 / 2 - SOURCE:MASTER:중독충족
 ;트라우마 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
@@ -79,7 +79,7 @@ ELSE
 ENDIF
 ;가슴에 혈액 더러운 추가
 STAIN:MASTER:가슴 |= 32
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -88,17 +88,17 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20) * 4
 TFLAG:경과시간 += 2
 
 ;─
-;063, 줄(S/N/H/A)[벌](구속, 중독 충족)
+;063, 줄(S/N/H/A)[벌](구속, 중독충족)
 ;─
 @ACTION_APPLY_63
 ;사실은 여러가지 묶는 방법을 만들고 싶지만 너무 귀찮습니다… 잠정적으로 묶기의 강도만을 TEQUIP:줄에 기입합니다
 ;구속시
 IF TFLAG:ACT파생 == 0
-	;반항 각인, 조교자 조교 레벨, 기교, 결박능숙 소질에 응해 구속 SOURCE 증가
+	;반항각인, 조교자 조교레벨, 기교, 결박능숙 소질에 응해 구속 SOURCE 증가
 	SOURCE:MASTER:구속 = 200 + (MARK:반항각인 + GET_TRAINLV(TARGET)) * (GET_ABL(TARGET, "기교") + 10) * 5 * (TALENT:결박능숙 * 3 + 2) / 10
-	;마조끼, 구속 중독, 구속 SOURCE에 응해 중독 충족 SOURCE 증가
-	SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "구속 중독") - 10) * (GET_ABL(MASTER, "구속 중독") + 10) * SOURCE:MASTER:구속 / 100000
-	;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+	;마조끼, 구속중독, 구속 SOURCE에 응해 중독충족 SOURCE 증가
+	SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "구속중독") - 10) * (GET_ABL(MASTER, "구속중독") + 10) * SOURCE:MASTER:구속 / 100000
+	;중독충족 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
 	;줄로 구속(구속 SOURCE에 응해 강도 상승)
 	TEQUIP:줄 = 1 + SOURCE:MASTER:구속 / 500
@@ -107,7 +107,7 @@ ELSE
 	;줄로 구속 해제
 	TEQUIP:줄 = 0
 ENDIF
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -116,18 +116,18 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20)
 TFLAG:경과시간 += 2
 
 ;─
-;064, 아이마스크(S/N/H/A)[벌](구속, 중독 충족, 트라우마)
+;064, 아이마스크(S/N/H/A)[벌](구속, 중독충족, 트라우마)
 ;─
 @ACTION_APPLY_64
 ;장착시
 IF TFLAG:ACT파생 == 0
-	;가학, 조교자 조교 레벨, 기교, 결박능숙 소질에 응해 구속 SOURCE 증가
+	;가학, 조교자 조교레벨, 기교, 결박능숙 소질에 응해 구속 SOURCE 증가
 	SOURCE:MASTER:구속 = 100 + (GET_ABL(TARGET, "가학") + GET_TRAINLV(TARGET) * 10) * (GET_ABL(TARGET, "기교") + 10) * 5 * (TALENT:결박능숙 + 2) / 10
-	;마조끼, 구속 중독, 구속 SOURCE에 응해 중독 충족 SOURCE 증가
-	SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "구속 중독") - 10) * (GET_ABL(MASTER, "구속 중독") + 10) * SOURCE:MASTER:구속 / 100000
-	;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+	;마조끼, 구속중독, 구속 SOURCE에 응해 중독충족 SOURCE 증가
+	SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "구속중독") - 10) * (GET_ABL(MASTER, "구속중독") + 10) * SOURCE:MASTER:구속 / 100000
+	;중독충족 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-	;구속 SOURCE에 응해 트라우마 SOURCE 증가, 중독 충족 SOURCE에 의해 감소
+	;구속 SOURCE에 응해 트라우마 SOURCE 증가, 중독충족 SOURCE에 의해 감소
 	SOURCE:MASTER:트라우마 = SOURCE:MASTER:구속 / 2 - SOURCE:MASTER:중독충족
 	;트라우마 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
@@ -141,7 +141,7 @@ ELSE
 	;아이마스크 해제
 	TEQUIP:아이마스크 = 0
 ENDIF
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자 자위를 중단
 TEQUIP:자위중 &= ~2
@@ -150,18 +150,18 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20)
 TFLAG:경과시간 += 1
 
 ;─
-;065, 볼개그(N/H/A)[벌](구속, 중독 충족, 트라우마)
+;065, 볼개그(N/H/A)[벌](구속, 중독충족, 트라우마)
 ;─
 @ACTION_APPLY_65
 ;장착시
 IF TFLAG:ACT파생 == 0
-	;가학, 조교자 조교 레벨, 결박능숙 소질에 응해 구속 SOURCE 증가
+	;가학, 조교자 조교레벨, 결박능숙 소질에 응해 구속 SOURCE 증가
 	SOURCE:MASTER:구속 = 350 + (GET_ABL(TARGET, "가학") + GET_TRAINLV(TARGET) * 10) * (TALENT:결박능숙 + 1)
-	;마조끼, 구속 중독, 구속 SOURCE에 응해 중독 충족 SOURCE 증가
-	SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "구속 중독") - 10) * (GET_ABL(MASTER, "구속 중독") + 10) * SOURCE:MASTER:구속 / 100000
-	;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+	;마조끼, 구속중독, 구속 SOURCE에 응해 중독충족 SOURCE 증가
+	SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "구속중독") - 10) * (GET_ABL(MASTER, "구속중독") + 10) * SOURCE:MASTER:구속 / 100000
+	;중독충족 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-	;구속 SOURCE에 응해 트라우마 SOURCE 증가, 중독 충족 SOURCE에 의해 감소
+	;구속 SOURCE에 응해 트라우마 SOURCE 증가, 중독충족 SOURCE에 의해 감소
 	SOURCE:MASTER:트라우마 = SOURCE:MASTER:구속 / 2 - SOURCE:MASTER:중독충족
 	;트라우마 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
@@ -175,7 +175,7 @@ ELSE
 	;볼개그 해제
 	TEQUIP:볼개그 = 0
 ENDIF
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자 자위를 중단
 TEQUIP:자위중 &= ~2
@@ -184,16 +184,16 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 2)
 TFLAG:경과시간 += 1
 
 ;─
-;066, 매도(N/H/A)[벌](일탈, 중독 충족)
+;066, 매도(N/H/A)[벌](일탈, 중독충족)
 ;─
 @ACTION_APPLY_66
 ;조교자 회화, 가학, 랭크에 응해 일탈 SOURCE 증가
 SOURCE:MASTER:일탈 = 200 + (GET_ABL(TARGET, "회화") + 10) * (GET_ABL(TARGET, "가학") + 10) * CFLAG:랭크 * 5 / 100
-;마조끼, 구속 중독, 일탈 SOURCE에 응해 중독 충족 SOURCE 증가
-SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "구속 중독") - 10) * (GET_ABL(MASTER, "구속 중독") + 10) * SOURCE:MASTER:일탈 / 100000
-;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+;마조끼, 구속중독, 일탈 SOURCE에 응해 중독충족 SOURCE 증가
+SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "구속중독") - 10) * (GET_ABL(MASTER, "구속중독") + 10) * SOURCE:MASTER:일탈 / 100000
+;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-;중독 충족 SOURCE분 일탈 SOURCE 감소(피드백)
+;중독충족 SOURCE분 일탈 SOURCE 감소(피드백)
 SOURCE:MASTER:일탈 -= SOURCE:MASTER:중독충족
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
@@ -202,46 +202,46 @@ TFLAG:경과시간 += 1
 TFLAG:기출의화제 |= 64
 
 ;─
-;067, 삼각 목마(H/A)[벌](쾌V, 사랑역, 상해, 구속, 일탈, 중독 충족, 트라우마)
+;067, 삼각목마(H/A)[벌](쾌V, 사랑역, 상해, 구속, 일탈, 중독충족, 트라우마)
 ;─
 @ACTION_APPLY_67
 ;개시시
 IF TFLAG:ACT파생 == 0
-	;마조끼, 고통 중독, 드 M소질에 응해 쾌VSOURCE 증가
-	SOURCE:MASTER:쾌V = (GET_ABL(MASTER, "마조끼") - 30) * GET_ABL(MASTER, "고통 중독") * (TALENT:MASTER:드M + 2) / 2
+	;마조끼, 고통중독, 드 M소질에 응해 쾌VSOURCE 증가
+	SOURCE:MASTER:쾌V = (GET_ABL(MASTER, "마조끼") - 30) * GET_ABL(MASTER, "고통중독") * (TALENT:MASTER:드M + 2) / 2
 	;쾌VSOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:쾌V = SOURCE:MASTER:쾌V < 0 ? 0 # SOURCE:MASTER:쾌V
-	;조교자 가학, 기교, 조교 레벨, 새디즘 소질에 응해 아픔 SOURCE 증가
+	;조교자 가학, 기교, 조교레벨, 새디즘 소질에 응해 아픔 SOURCE 증가
 	SOURCE:MASTER:아픔 = 1000 + GET_ABL(TARGET, "가학") * GET_ABL(TARGET, "기교") * 50 / 100 + GET_TRAINLV(TARGET) * (TALENT:새디즘 * 3 + 2) * 20
-	;반항 각인, 기교에 응해 구속 SOURCE 증가
+	;반항각인, 기교에 응해 구속 SOURCE 증가
 	SOURCE:MASTER:구속 = 50 + (MARK:반항각인 + 1) * (GET_ABL(TARGET, "기교") + 10)
-	;아픔 SOURCE에 응해 일탈 SOURCE 증가, 조교 레벨, 마조끼, 고통 중독에 의해 감소
-	SOURCE:MASTER:일탈 = 1800 + SOURCE:MASTER:아픔 / 2 - CFLAG:MASTER:조교레벨 * 50 - GET_ABL(MASTER, "마조끼") * 20 - GET_ABL(MASTER, "고통 중독") * 60
+	;아픔 SOURCE에 응해 일탈 SOURCE 증가, 조교레벨, 마조끼, 고통중독에 의해 감소
+	SOURCE:MASTER:일탈 = 1800 + SOURCE:MASTER:아픔 / 2 - CFLAG:MASTER:조교레벨 * 50 - GET_ABL(MASTER, "마조끼") * 20 - GET_ABL(MASTER, "고통중독") * 60
 	;일탈 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
-	;마조끼, 고통 중독, 아픔 SOURCE에 응해 중독 충족 SOURCE 증가
-	SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통 중독") - 30) * (GET_ABL(MASTER, "고통 중독") + 10) * SOURCE:MASTER:아픔 / 80000
-	;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+	;마조끼, 고통중독, 아픔 SOURCE에 응해 중독충족 SOURCE 증가
+	SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통중독") - 30) * (GET_ABL(MASTER, "고통중독") + 10) * SOURCE:MASTER:아픔 / 80000
+	;중독충족 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
-	;상해, 구속 SOURCE에 응해 트라우마 SOURCE 증가, 중독 충족 SOURCE에 의해 감소
+	;상해, 구속 SOURCE에 응해 트라우마 SOURCE 증가, 중독충족 SOURCE에 의해 감소
 	SOURCE:MASTER:트라우마 = SOURCE:MASTER:아픔 / 2 + SOURCE:MASTER:구속 / 5 - SOURCE:MASTER:중독충족
 	;트라우마 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
 	;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
 	SIF CFLAG:MASTER:트라우마 == 67
 		TIMES SOURCE:MASTER:트라우마 , 1.50
-	;중독 충족 SOURCE에 응해 사랑 SOURCE 증가, 상해, 일탈, 트라우마 SOURCE에 의해 감소
+	;중독충족 SOURCE에 응해 사랑 SOURCE 증가, 상해, 일탈, 트라우마 SOURCE에 의해 감소
 	SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 - SOURCE:MASTER:아픔 - SOURCE:MASTER:일탈 - SOURCE:MASTER:트라우마
 	;사랑 SOURCE가 정의 값을 받지 않게 조정
 	SOURCE:MASTER:사랑 = SOURCE:MASTER:사랑 > 0 ? 0 # SOURCE:MASTER:사랑
-	;삼각 목마에 싣는다
+	;삼각목마에 싣는다
 	TEQUIP:삼각목마 = 1
 ;종료시
 ELSE
-	;삼각 목마로부터 내린다
+	;삼각목마로부터 내린다
 	TEQUIP:삼각목마 = 0
 ENDIF
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -250,11 +250,11 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 30) * 4
 TFLAG:경과시간 += 3
 
 @ACTION_APPLY2_67
-;MASTER가 처녀라면, 처녀 상실이 일어난다
+;MASTER가 처녀라면, 처녀상실이 일어난다
 TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
 
 ;─
-;068, 관장기＋플러그(N/H/A)[벌](쾌A, 상해, 구속<=플러그의 일, 일탈, 중독 충족, 트라우마)
+;068, 관장기＋플러그(N/H/A)[벌](쾌A, 상해, 구속<=플러그의 일, 일탈, 중독충족, 트라우마)
 ;─
 @ACTION_APPLY_68
 ;주입/추가
@@ -266,7 +266,7 @@ IF TFLAG:ACT파생 == 0 || TFLAG:ACT파생 == 2
 	ELSE
 		TEQUIP:관장기＋플러그 += 1 + RAND:3
 	ENDIF
-	;조교 대상 조교 레벨, 기교, 조교자 도구사용 소질, 조교 대상드 M소질, 액량에 응해 쾌ASOURCE 증가
+	;조교 대상 조교레벨, 기교, 조교자 도구사용 소질, 조교 대상드 M소질, 액량에 응해 쾌ASOURCE 증가
 	SOURCE:MASTER:쾌A = 20 * (CFLAG:MASTER:조교레벨 + 1) + (GET_ABL(MASTER, "기교") - 30) * GET_ABL(MASTER, "마조끼") * (TALENT:도구사용 + TALENT:MASTER:드M + TEQUIP:관장기＋플러그) * 30 / 100
 	;쾌ASOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:쾌A = SOURCE:MASTER:쾌A < 0 ? 0 # SOURCE:MASTER:쾌A
@@ -275,13 +275,13 @@ IF TFLAG:ACT파생 == 0 || TFLAG:ACT파생 == 2
 	SOURCE:MASTER:아픔 = 200 + TEQUIP:관장기＋플러그 * 100
 	;액량에 응해 구속 SOURCE 증가
 	SOURCE:MASTER:구속 = 50 + TEQUIP:관장기＋플러그 * 100
-	;쾌A, 아픔 SOURCE에 응해 일탈 SOURCE 증가, 조교 레벨, 마조끼에 의해 감소
+	;쾌A, 아픔 SOURCE에 응해 일탈 SOURCE 증가, 조교레벨, 마조끼에 의해 감소
 	SOURCE:MASTER:일탈 = SOURCE:MASTER:쾌A / 2 + SOURCE:MASTER:아픔 / 2 - CFLAG:MASTER:조교레벨 * 20 - GET_ABL(MASTER, "마조끼") * 10
 	;일탈 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
-	;마조끼, A감각, 쾌ASOURCE에 응해 중독 충족 SOURCE 증가
+	;마조끼, A감각, 쾌ASOURCE에 응해 중독충족 SOURCE 증가
 	SOURCE:MASTER:중독충족 = (GET_ABL(MASTER, "마조끼") - 30) * GET_ABL(MASTER, "A감각") * 25 * SOURCE:MASTER:쾌A / 10000
-	;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+	;중독충족 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
 	;경험 부족
 	;도관은 벌써 들어가지고 있기 때문에 추가의 주입은 경험 부족의 처리를 실시하지 않습니다
@@ -304,23 +304,23 @@ IF TFLAG:ACT파생 == 0 || TFLAG:ACT파생 == 2
 ELSE
 	;액량에 응해 쾌ASOURCE 증가
 	SOURCE:MASTER:쾌A = 500 * TEQUIP:관장기＋플러그 * (100 + RAND:11 - RAND:11) / 100
-	;쾌A에 응해 일탈 SOURCE 증가, 조교 대상 조교 레벨, 마조끼, 도착적, 드 M소질에 의해 감소
+	;쾌A에 응해 일탈 SOURCE 증가, 조교 대상 조교레벨, 마조끼, 도착적, 드 M소질에 의해 감소
 	SOURCE:MASTER:일탈 = SOURCE:MASTER:쾌A - CFLAG:MASTER:조교레벨 * 80 - GET_ABL(MASTER, "마조끼") * 40 - TALENT:MASTER:도착적 * 500 - TALENT:MASTER:드M * 1000
-	;조교 레벨, A감각, 쾌ASOURCE에 응해 중독 충족 SOURCE 증가
+	;조교레벨, A감각, 쾌ASOURCE에 응해 중독충족 SOURCE 증가
 	SOURCE:MASTER:중독충족 = (CFLAG:MASTER:조교레벨 - 5) * (GET_ABL(MASTER, "A감각") + 5) * 2 * SOURCE:MASTER:쾌A / 1000
-	;중독 충족 SOURCE가 부의 값을 받지 않게 조정
+	;중독충족 SOURCE가 부의 값을 받지 않게 조정
 	SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
 	;관장액배출
 	TEQUIP:관장기＋플러그 = 0
 ENDIF
 ;상해, 구속, 일탈 SOURCE에 응해 트라우마 SOURCE 증가
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:아픔 / 3 + SOURCE:MASTER:구속 / 3 + SOURCE:MASTER:일탈 / 3
-;중독 충족 SOURCE가 정이면 트라우마 SOURCE 말소
+;중독충족 SOURCE가 정이면 트라우마 SOURCE 말소
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:중독충족 > 0 ? 0 # SOURCE:MASTER:트라우마
 ;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
 SIF CFLAG:MASTER:트라우마 == 68
 	TIMES SOURCE:MASTER:트라우마 , 1.50
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0

@@ -137,7 +137,7 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 		TIMES SOURCE:MASTER:열락     , 2.50
 		TIMES SOURCE:MASTER:반항     , 0.75
 		TIMES SOURCE:MASTER:공포     , 0.75
-	CASE "허가를 청한다"
+	CASE "허가를청한다"
 		;쾌감 소스의 보정
 		;봉사계 ACT인가, 성교 주도권이 조교 대상 때 조교자 쾌감 감소
 		IF MENUMATCH(TFLAG:ACT, "봉사") || SEX_INITIATIVE(MASTER)
@@ -218,7 +218,7 @@ ENDSELECT
 ;의상의 소스 보정
 ;─
 @CLOTHES_CHECK
-;하반신 속옷
+;하반신속옷
 ;팬티·팬티스타킹
 IF TEQUIP:MASTER:하반신속옷 == 2 || TEQUIP:MASTER:하반신속옷 == 4
 	;로터나 조수의 행동에도 걸려 버리지만 지금은 어쩔 수 없다
@@ -239,7 +239,7 @@ ELSEIF TEQUIP:MASTER:하반신속옷 == 1 || TEQUIP:MASTER:하반신속옷 == 3
 	TIMES SOURCE:MASTER:노출 , 0.90
 ENDIF
 
-;상반신 속옷
+;상반신속옷
 ;브라·표백함
 IF TEQUIP:MASTER:상반신속옷 == 1 || TEQUIP:MASTER:상반신속옷 == 3
 	SIF !TALENT:벽통과
@@ -252,7 +252,7 @@ ELSEIF TEQUIP:MASTER:상반신속옷 == 2 || TEQUIP:MASTER:상반신속옷 == 2
 	TIMES SOURCE:MASTER:노출 , 0.80
 ENDIF
 
-;하반신 윗도리
+;하반신윗도리
 ;퀼로트·바지
 IF TEQUIP:MASTER:하반신윗도리 > 1
 	IF TALENT:착의플레이선호 == 0
@@ -284,7 +284,7 @@ ELSEIF TEQUIP:MASTER:하반신윗도리 == 1
 	ENDIF
 ENDIF
 
-;상반신 윗도리
+;상반신윗도리
 ;윗도리
 IF TEQUIP:MASTER:상반신윗도리 && TALENT:착의플레이선호 == 0
 	SIF !TALENT:벽통과
@@ -292,7 +292,7 @@ IF TEQUIP:MASTER:상반신윗도리 && TALENT:착의플레이선호 == 0
 	TIMES SOURCE:MASTER:노출 , 0.60
 ENDIF
 
-;전신 윗도리
+;전신윗도리
 IF TALENT:착의플레이선호 == 0
 	;일본식 옷, 도사옷
 	IF TEQUIP:MASTER:전신윗도리 && TEQUIP:MASTER:전신윗도리 != 3
@@ -323,7 +323,7 @@ IF TEQUIP:MASTER:코스프레 == 1
 	TIMES SOURCE:MASTER:노출 , 1.40
 	SOURCE:MASTER:일탈 += 100
 	TIMES SOURCE:MASTER:일탈 , 1.10
-	SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "마조끼") * GET_ABL(MASTER, "구속 중독") * (GET_ABL(MASTER, "구속 중독") + 10 + CFLAG:MASTER:조교레벨 * 5) / 1000
+	SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "마조끼") * GET_ABL(MASTER, "구속중독") * (GET_ABL(MASTER, "구속중독") + 10 + CFLAG:MASTER:조교레벨 * 5) / 1000
 	SIF ABL:MASTER:마조끼 + ABL:MASTER:구속중독 > 4
 		TIMES SOURCE:MASTER:중독충족 , 1.25
 	TIMES SOURCE:MASTER:트라우마 , 1.20
@@ -342,7 +342,7 @@ ENDIF
 #LOCALSIZE 1
 ;키스에 수반하는 일련의 처리 불결 SOURCE에 대해서는 할애
 SOURCE:MASTER:접촉 = 150 + GET_TRAINLV(TARGET) * 5
-SOURCE:MASTER:사랑 = 100 + CFLAG:M호의 / 50 + GET_ABL(TARGET, "애무") * (GET_ABL(TARGET, "기교") / 10 + TALENT:혀사용 * 2) + GET_ABL(TARGET, "봉사 정신") * 5
+SOURCE:MASTER:사랑 = 100 + CFLAG:M호의 / 50 + GET_ABL(TARGET, "애무") * (GET_ABL(TARGET, "기교") / 10 + TALENT:혀사용 * 2) + GET_ABL(TARGET, "봉사정신") * 5
 SOURCE:MASTER:성행동 = 50 + SOURCE:MASTER:사랑 / 15
 ;더러움이 서로 이동
 CALL MOVE_STAIN("구", TARGET, "구", MASTER)
@@ -362,14 +362,14 @@ ARG = ARG == MASTER ? MASTER # TARGET
 IF ARG == MASTER
 	SOURCE:MASTER:쾌B = 150 + ACT_FROM(TARGET, 4) * (3 + TALENT:혀사용) / 3
 	SOURCE:MASTER:접촉 = 75 + GET_TRAINLV(TARGET) * 10
-	SOURCE:MASTER:사랑 = SOURCE:MASTER:접촉 / 2 + GET_ABL(TARGET, "봉사 정신") * 5
+	SOURCE:MASTER:사랑 = SOURCE:MASTER:접촉 / 2 + GET_ABL(TARGET, "봉사정신") * 5
 	SOURCE:MASTER:성행동 = 50 + SOURCE:MASTER:쾌B / 10
 	;더러움이 서로 이동
 	CALL MOVE_STAIN("구", TARGET, "가슴", MASTER)
 	EXP:MASTER:B경험 += 1
 ELSE
 	SOURCE:MASTER:접촉 = 50 + GET_TRAINLV(TARGET) * 5 + CFLAG:MASTER:조교레벨 * 5
-	SOURCE:MASTER:사랑 = 50 + CFLAG:M호의 / 50 + GET_ABL(TARGET, "봉사 정신") * 5
+	SOURCE:MASTER:사랑 = 50 + CFLAG:M호의 / 50 + GET_ABL(TARGET, "봉사정신") * 5
 	LOCAL:1 = ACT_TO(TARGET, 4) * (3 + TALENT:MASTER:기묘한손가락) / 10
 	;더러움이 서로 이동
 	CALL MOVE_STAIN("가슴", TARGET, "구", MASTER)
@@ -387,7 +387,7 @@ ENDIF
 ;              (1. C애무/2. V애무/3. A애무/4. B애무/5. V성교/6. A성교/7. V성교 봉사/8. A성교 봉사/11. C도구/12. V도구/13. A도구/14. B도구)
 ;반환값:계산 결과
 ;비  고:식 나카노세키수
-;@ABL_REVISION에 있어서의, S:1~S:8·S:11~S:14·S:21~S:27·S:31~S:34의 대체
+;@ABL_REVISION에 있어서의, S:1～S:8·S:11～S:14·S:21～S:27·S:31～S:34의 대체
 ;
 ;기교-감각:  0   1   2   3   4   5   6   7   8   9  10
 ;   기본치:100 121 144 169 196 225 256 289 324 361 400
@@ -423,7 +423,7 @@ RETURNF POWER(LOCAL + 10, 2) * LIMIT(MAX(CFLAG:(ARG:0):조교레벨 * 10 / (CFLA
 ;              (1. C애무/2. V애무/3. A애무/4. B애무/5. V성교/6. A성교/7. V성교 봉사/8. A성교 봉사)
 ;반환값:계산 결과
 ;비  고:식 나카노세키수
-;@ABL_REVISION에 있어서의, S:41·S:43~S:48·S:51·S:53~S:58의 대체
+;@ABL_REVISION에 있어서의, S:41·S:43～S:48·S:51·S:53～S:58의 대체
 ;
 ;기교-감각:  0   1   2   3   4   5   6   7   8   9  10
 ;   기본치:100 121 144 169 196 225 256 289 324 361 400
@@ -455,7 +455,7 @@ RETURNF POWER(LOCAL + 10, 2) * LIMIT(MAX(CFLAG:MASTER:조교레벨 * 10 / (CFLAG
 ;       ARG:1…ABL 명칭
 ;반환값:보정 후의 ABL치
 ;비  고:식 나카노세키수
-;@ABL_REVISION에 있어서의, A:1~A:29·B:1~B:30·C:1~C:29의 대체
+;@ABL_REVISION에 있어서의, A:1～A:29·B:1～B:30·C:1～C:29의 대체
 ;-------------------------------------------------
 @GET_ABL(ARG, ARGS)
 #FUNCTION
@@ -468,9 +468,9 @@ RETURNF 100 - 500 / (5 + ABL:ARG:ARGS)
 
 ;-------------------------------------------------
 ;함수명:GET_TRAINLV
-;개  요점:보정 조교 레벨 취득 함수
+;개  요점:보정 조교레벨 취득 함수
 ;인  수:ARG… 캐릭터 등록 번호
-;반환값:보정 후의 조교 레벨
+;반환값:보정 후의 조교레벨
 ;비  고:식 나카노세키수
 ;@ABL_REVISION에 있어서의, A:30·C:30의 대체
 ;-------------------------------------------------
@@ -710,7 +710,7 @@ RETURN RESULT
 ;서  식:ARGS에 대입한다(정규 표현… 해설)
 ;        \d→\d        …ARG→그 때의 돌아가 값
 ;                        ※ARG는 작은 순서에 기술하는 것
-;        LIMIT/\d? ~\d? … 수치~수치의 범위에 돌아가 값을 낸다
+;        LIMIT/\d? ～\d? … 수치～수치의 범위에 돌아가 값을 낸다
 ;                        ※복수 존재시는 마지막 것을 채용
 ;        (NO) ADJUST    … 사사오입 조정 처리의 온 오프(디폴트는 온)
 ;                        ※사사오입 조정:참조하는 수치를+0. 5로서 취급한다
@@ -988,8 +988,8 @@ RETURNF LOCAL:0
 
 
 ;-------------------------------------------------
-;REACT 분류 설정 함수@SET_COMGRO
-;REACT 분류를 캐릭터 라인으로 설정할 뿐(만큼)의 함수@이것 보고
+;REACT분류설정 함수@SET_COMGRO
+;REACT분류를 캐릭터 라인으로 설정할 뿐(만큼)의 함수@이것 보고
 ;-------------------------------------------------
 @SET_COMGRO(ARGS)
 TFLAG:REACT분류 = COMGRONUM(ARGS)
@@ -1000,24 +1000,24 @@ ENDIF
 RETURN RESULT
 
 ;-------------------------------------------------
-;REACT 인상 설정 함수@SET_COMIMP
-;REACT 인상을 캐릭터 라인으로 설정할 뿐(만큼)의 함수@이것 보고
+;REACT인상설정 함수@SET_COMIMP
+;REACT인상를 캐릭터 라인으로 설정할 뿐(만큼)의 함수@이것 보고
 ;-------------------------------------------------
 @SET_COMIMP(ARGS)
 IF 0
-ELSEIF ARGS == "영향 없음" || ARGS == ""
+ELSEIF ARGS == "영향없음" || ARGS == ""
 	TFLAG:REACT인상 = 0
-ELSEIF ARGS == "좋은 인상대"
+ELSEIF ARGS == "좋은인상"
 	TFLAG:REACT인상 = 1
-ELSEIF ARGS == "좋은 인상소"
+ELSEIF ARGS == "약간좋은인상"
 	TFLAG:REACT인상 = 2
-ELSEIF ARGS == "악인상소"
+ELSEIF ARGS == "나쁜인상"
 	TFLAG:REACT인상 = 3
-ELSEIF ARGS == "악인상대"
+ELSEIF ARGS == "약간나쁜인상"
 	TFLAG:REACT인상 = 4
-ELSEIF ARGS == "0으로부터 멀어진다"
+ELSEIF ARGS == "0에서멀어짐"
 	TFLAG:REACT인상 = 5
-ELSEIF ARGS == "0에 가까워진다"
+ELSEIF ARGS == "0에가까워짐"
 	TFLAG:REACT인상 = 6
 ELSE
 	PRINTL 

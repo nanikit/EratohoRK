@@ -13,9 +13,9 @@ TCVAR:MASTER:위치전후 = 0
 TCVAR:MASTER:위치상하 = 0
 TCVAR:MASTER:REACT자세변화 = 0
 
-;강제 탈의가 발생하고 있으면 자세를 보정
+;강제탈의가 발생하고 있으면 자세를 보정
 IF TFLAG:강제탈의
-	;전회의 자세에 의해 보정
+	;전회의자세에 의해 보정
 	SELECTCASE TCVAR:MASTER:전회의자세
 		;네발로 엎드림은 자유롭게 되돌린다
 		CASE 3
@@ -27,14 +27,14 @@ IF TFLAG:강제탈의
 		;외는 계속한다
 ENDIF
 
-;자주 탈의가 발생하고 있으면 위치를 리셋트
+;자주탈의가 발생하고 있으면 위치를 리셋트
 IF TFLAG:자주탈의
 	TCVAR:MASTER:전회의위치전후 = 0
 	TCVAR:MASTER:전회의위치상하 = 0
 ENDIF
 
 VARSET TCVAR:MASTER, 0, 1, 5
-;체력 한계라면 위로 돌리고
+;체력 한계라면 위로돌리고
 SIF BASE:MASTER:체력 <= 0
 	TFLAG:위로돌리고 = 2
 ;자위중
@@ -42,10 +42,10 @@ IF GETBIT(TEQUIP:자위중, 0)
 	TFLAG:P사용중++
 	TFLAG:손사용중++
 ENDIF
-;안면 승마중
+;안면승마 안
 IF TEQUIP:안면승마 || TEQUIP:안면승마애널
 	TFLAG:구사용중 += 2
-	;위로 돌리고
+	;위로돌리고
 	TFLAG:위로돌리고 = 2
 ENDIF
 
@@ -61,25 +61,25 @@ TRYCALLFORM MASTER_POSE_ACT{TFLAG:ACT}
 ;라고는 말하지만 함수화하지 않는 편이 설정하기 쉽지요 여기…
 ;이하 자세의 설정  . 추가 부분
 
-;안면 승마, 밀어 넘어뜨리기에 의한 강제 위로 돌리고
+;안면승마, 밀어넘어뜨리기에 의한 강제 위로돌리고
 ;	//MASTER_POSE는 ACTION_APPLY보다 먼저 처리된다
-;	//그리고 성교, 성 봉시의 TEQUIP:안면 승마등의 리셋트는 ACTION_APPLY내에서 행해진다(즉, 이 개소가 처리되는 시점에서는 리셋트되어 있지 않다)
-;	//이번 메뉴가 성교, 성 봉이라면 연주하도록(듯이) 하지 않으면 다양하게 맛이 없게 된다(ACT32:승마위시에 조교자가 위가 되거나 한다)
+;	//그리고 성교, 성적봉사시의 TEQUIP:안면승마 등의 리셋트는 ACTION_APPLY내에서 행해진다(즉, 이 개소가 처리되는 시점에서는 리셋트되어 있지 않다)
+;	//이번 메뉴가 성교, 성적봉사라면 연주하도록(듯이) 하지 않으면 다양하게 맛이 없게 된다(ACT32:승마위시에 조교자가 위가 되거나 한다)
 ;	//자세 제어 함수 쇄신이 대기하고 있으므로, 우선 최소한의 수당만(2015/02/01)
-IF !MENUMATCH(TFLAG:ACT, "성교") && !MENUMATCH(TFLAG:ACT, "성 봉") && (TEQUIP:안면승마 || TEQUIP:안면승마애널 || TEQUIP:밀어넘어뜨리기중 || IS_NOWACTNAME("밀어 넘어뜨린다"))
+IF !MENUMATCH(TFLAG:ACT, "성교") && !MENUMATCH(TFLAG:ACT, "성적봉사") && (TEQUIP:안면승마 || TEQUIP:안면승마애널 || TEQUIP:밀어넘어뜨리기중 || IS_NOWACTNAME("밀어넘어뜨린다"))
 	TCVAR:MASTER:자세 = 1
-	;TCVAR:MASTER:위치 전후 = TEQUIP:밀어 넘어뜨리기중 || IS_NOWACTNAME("밀어 넘어뜨린다") ? 1 # 0
+	;TCVAR:MASTER:위치전후 = TEQUIP:밀어넘어뜨리기중 || IS_NOWACTNAME("밀어넘어뜨린다") ? 1 # 0
 	TCVAR:MASTER:위치전후 = 1
 	TCVAR:MASTER:위치상하 = 1
-;성교·성 봉계 ACT는 먼저 처리
-ELSEIF MENUMATCH(TFLAG:ACT, "성교") || MENUMATCH(TFLAG:ACT, "성 봉")
+;성교·성적봉사계 ACT는 먼저 처리
+ELSEIF MENUMATCH(TFLAG:ACT, "성교") || MENUMATCH(TFLAG:ACT, "성적봉사")
 	;ACT 마다의 체위에 의한 설정
 	SELECTCASE GET_ACTNAME(TFLAG:ACT)
 		CASE "정상위"
 			TCVAR:MASTER:자세 = 1
 			TCVAR:MASTER:위치전후 = 1
 			TCVAR:MASTER:위치상하 = 1
-		CASE "후배위", "애널 섹스"
+		CASE "후배위", "애널섹스"
 			TCVAR:MASTER:자세 = 3
 			TCVAR:MASTER:위치전후 = 2
 			TCVAR:MASTER:위치상하 = 0
@@ -95,11 +95,11 @@ ELSEIF MENUMATCH(TFLAG:ACT, "성교") || MENUMATCH(TFLAG:ACT, "성 봉")
 			TCVAR:MASTER:자세 = 2
 			TCVAR:MASTER:위치전후 = 2
 			TCVAR:MASTER:위치상하 = 0
-		CASE "정상위 시킨다"
+		CASE "정상위시킨다"
 			TCVAR:MASTER:자세 = 2
 			TCVAR:MASTER:위치전후 = 1
 			TCVAR:MASTER:위치상하 = 2
-		CASE "후배위 시킨다", "애널 섹스 시킨다"
+		CASE "후배위시킨다", "애널섹스시킨다"
 			TCVAR:MASTER:자세 = 10
 			TCVAR:MASTER:위치전후 = 3
 			TCVAR:MASTER:위치상하 = 0
@@ -107,11 +107,11 @@ ELSEIF MENUMATCH(TFLAG:ACT, "성교") || MENUMATCH(TFLAG:ACT, "성 봉")
 			TCVAR:MASTER:자세 = 1
 			TCVAR:MASTER:위치전후 = 0
 			TCVAR:MASTER:위치상하 = 1
-		CASE "대면좌위 시킨다"
+		CASE "대면좌위시킨다"
 			TCVAR:MASTER:자세 = 2
 			TCVAR:MASTER:위치전후 = 1
 			TCVAR:MASTER:위치상하 = 0
-		CASE "배면좌위 시킨다"
+		CASE "배면좌위시킨다"
 			TCVAR:MASTER:자세 = 2
 			TCVAR:MASTER:위치전후 = 3
 			TCVAR:MASTER:위치상하 = 0
@@ -125,7 +125,7 @@ ELSEIF TEQUIP:성교중
 			TCVAR:MASTER:자세 = 1
 			TCVAR:MASTER:위치전후 = 1
 			TCVAR:MASTER:위치상하 = 1
-		;후배위, 애널 섹스
+		;후배위, 애널섹스
 		CASE 2, 6
 			TCVAR:MASTER:자세 = 3
 			TCVAR:MASTER:위치전후 = 2
@@ -146,7 +146,7 @@ ELSEIF TEQUIP:성교중
 			TCVAR:MASTER:위치전후 = 2
 			TCVAR:MASTER:위치상하 = 0
 	ENDSELECT
-;성교 봉사중
+;성교봉사중
 ELSEIF TEQUIP:성교봉사중
 	;TEQUIP 마다의 체위에 의한 설정
 	SELECTCASE TEQUIP:성교봉사중
@@ -155,7 +155,7 @@ ELSEIF TEQUIP:성교봉사중
 			TCVAR:MASTER:자세 = 2
 			TCVAR:MASTER:위치전후 = 1
 			TCVAR:MASTER:위치상하 = 2
-		;후배위, 애널 섹스
+		;후배위, 애널섹스
 		CASE 2, 6
 			TCVAR:MASTER:자세 = 10
 			TCVAR:MASTER:위치전후 = 3
@@ -179,7 +179,7 @@ ELSEIF TEQUIP:성교봉사중
 ;ACT마다의 자세 정보를 대입
 ;다만 COM 나름으로는 변경이 된다(날뛴다 따위)
 ELSE
-	;ACT 분류에 의한 설정
+	;ACT분류에 의한 설정
 	SELECTCASE MENU(GET_ACTM(TFLAG:ACT))
 		CASE "애무", "도구"
 			;어디를 애무하고 있을까
@@ -188,7 +188,7 @@ ELSE
 				CASE 3
 					;구로 하고 있다
 					IF MA_PLAYER(1) == 1
-						;벌써 위로 돌리고의 경우(난이도 높은 생각이 들지만)
+						;벌써 위로돌리고의 경우(난이도 높은 생각이 들지만)
 						IF TFLAG:위로돌리고
 							TCVAR:MASTER:자세 = 1
 							TCVAR:MASTER:위치상하 = 0
@@ -201,13 +201,13 @@ ELSE
 						ENDIF
 					;손 따위
 					ELSE
-						;벌써 위로 돌리고의 경우
+						;벌써 위로돌리고의 경우
 						IF TFLAG:위로돌리고
 							TCVAR:MASTER:자세 = 1
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의 자세에 의해 보정
+							;전회의자세에 의해 보정
 							;구와 달라, 전후·상하의 지정은 없습니다
 							SELECTCASE TCVAR:MASTER:전회의자세
 								;기립·무릎서기
@@ -244,27 +244,27 @@ ELSE
 				CASE 1, 2
 					;성기끼리로 하고 있다
 					IF GROUPMATCH(MC_PLAYER(1), 3, 8) || GROUPMATCH(MV_PLAYER(1), 3, 8)
-						;벌써 위로 돌리고의 경우
+						;벌써 위로돌리고의 경우
 						IF TFLAG:위로돌리고
 							TCVAR:MASTER:자세 = 1
 							TCVAR:MASTER:위치상하 = 1
 							TCVAR:MASTER:위치전후 = 1
-						;가랑이의 경우, 위로 돌리고가 아니면 후배위 준거
+						;가랑이의 경우, 위로돌리고가 아니면 후배위 준거
 						ELSEIF PENIS(MASTER) && MC_PLAYER(1) == 8
 							TCVAR:MASTER:자세 = 10
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 3
 						ELSE
-							;전회의 자세에 의해 보정
+							;전회의자세에 의해 보정
 							SELECTCASE TCVAR:MASTER:전회의자세
-								;위로 돌리고는 계속
+								;위로돌리고는 계속
 								CASE 1
 									TCVAR:MASTER:자세 = 1
 									TCVAR:MASTER:위치상하 = 1
 									TCVAR:MASTER:위치전후 = 1
 								;그 이외
 								CASEELSE
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
 									IF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
@@ -279,22 +279,22 @@ ELSE
 						ENDIF
 					;가슴으로 하고 있다
 					ELSEIF MC_PLAYER(1) == 6 || MV_PLAYER(1) == 6
-						;벌써 위로 돌리고의 경우
+						;벌써 위로돌리고의 경우
 						IF TFLAG:위로돌리고
 							TCVAR:MASTER:자세 = 1
 							TCVAR:MASTER:위치상하 = 1
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의 자세에 의해 보정
+							;전회의자세에 의해 보정
 							SELECTCASE TCVAR:MASTER:전회의자세
-								;위로 돌리고는 계속
+								;위로돌리고는 계속
 								CASE 1
 									TCVAR:MASTER:자세 = 1
 									TCVAR:MASTER:위치상하 = 1
 									TCVAR:MASTER:위치전후 = 1
 								;그 이외
 								CASEELSE
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
 									IF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
@@ -309,22 +309,22 @@ ELSE
 						ENDIF
 					;다리로 하고 있다
 					ELSEIF MC_PLAYER(1) == 7 || MV_PLAYER(1) == 7
-						;벌써 위로 돌리고의 경우
+						;벌써 위로돌리고의 경우
 						IF TFLAG:위로돌리고
 							TCVAR:MASTER:자세 = 1
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의 자세에 의해 보정
+							;전회의자세에 의해 보정
 							SELECTCASE TCVAR:MASTER:전회의자세
-								;위로 돌리고는 계속
+								;위로돌리고는 계속
 								CASE 1
 									TCVAR:MASTER:자세 = 1
 									TCVAR:MASTER:위치상하 = 0
 									TCVAR:MASTER:위치전후 = 1
 								;그 이외
 								CASEELSE
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
 									IF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
@@ -339,18 +339,18 @@ ELSE
 						ENDIF
 					;구로 하고 있다
 					ELSEIF MC_PLAYER(1) == 1 || MV_PLAYER(1) == 1
-						;벌써 위로 돌리고의 경우
+						;벌써 위로돌리고의 경우
 						IF TFLAG:위로돌리고
 							TCVAR:MASTER:자세 = 1
-							;식스나인은 안면 승마에 흐르고 있을 것
+							;식스나인은 안면승마에 흐르고 있을 것
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의 자세에 의해 보정
+							;전회의자세에 의해 보정
 							SELECTCASE TCVAR:MASTER:전회의자세
-								;위로 돌리고
+								;위로돌리고
 								CASE 1
-									;갈 것 같으면 3/4으로 안정도에 변화한다
+									;갈것같다라면 3/4으로 안정도에 변화한다
 									IF TCVAR:MASTER:갈것같다 && RAND:4
 										TCVAR:MASTER:자세 = 2
 										TCVAR:MASTER:위치상하 = 0
@@ -368,12 +368,12 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;갈 것 같으면 3/4으로 무릎서기에 변화한다
+									;갈것같다라면 3/4으로 무릎서기에 변화한다
 									IF TCVAR:MASTER:갈것같다 && RAND:4
 										TCVAR:MASTER:자세 = 10
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
 									ELSEIF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
@@ -391,7 +391,7 @@ ELSE
 										TCVAR:MASTER:자세 = 2
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
-									;그렇지 않으면 위로 돌리고
+									;그렇지 않으면 위로돌리고
 									ELSE
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
@@ -427,18 +427,18 @@ ELSE
 						ENDIF
 					;손·도구류 따위
 					ELSE
-						;벌써 위로 돌리고의 경우
+						;벌써 위로돌리고의 경우
 						IF TFLAG:위로돌리고
 							TCVAR:MASTER:자세 = 1
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의 자세에 의해 보정
+							;전회의자세에 의해 보정
 							;구와 달라, 전후·상하의 지정은 없습니다
 							SELECTCASE TCVAR:MASTER:전회의자세
-								;위로 돌리고
+								;위로돌리고
 								CASE 1
-									;갈 것 같으면 3/4으로 안정도에 변화한다
+									;갈것같다라면 3/4으로 안정도에 변화한다
 									IF TCVAR:MASTER:갈것같다 && RAND:4
 										TCVAR:MASTER:자세 = 2
 									;1/4로 안정도에 변화한다
@@ -452,10 +452,10 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;갈 것 같으면 3/4으로 무릎서기에 변화한다
+									;갈것같다라면 3/4으로 무릎서기에 변화한다
 									IF TCVAR:MASTER:갈것같다 && RAND:4
 										TCVAR:MASTER:자세 = 10
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
 									ELSEIF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
@@ -500,15 +500,15 @@ ELSE
 				CASE 4
 					;구로 하고 있는, or 젖의 몸싸움
 					IF MB_PLAYER(1) == 1 || TB_PLAYER(0) == 1
-						;벌써 위로 돌리고의 경우
+						;벌써 위로돌리고의 경우
 						IF TFLAG:위로돌리고
 							TCVAR:MASTER:자세 = 1
 							TCVAR:MASTER:위치상하 = 1
 							TCVAR:MASTER:위치전후 = 0
 						ELSE
-							;전회의 자세에 의해 보정
+							;전회의자세에 의해 보정
 							SELECTCASE TCVAR:MASTER:전회의자세
-								;위로 돌리고
+								;위로돌리고
 								CASE 1
 									;1/4로 안정도에 변화한다
 									IF !RAND:4
@@ -523,7 +523,7 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;B로 간 직후는 1/2으로 위로 향해 변화한다
+									;B로 간 직후는 1/2으로 위로돌리고로 변화한다
 									IF NOWEX:MASTER:B절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
@@ -541,7 +541,7 @@ ELSE
 										TCVAR:MASTER:자세 = 2
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
-									;그렇지 않으면 위로 돌리고
+									;그렇지 않으면 위로돌리고
 									ELSE
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
@@ -577,16 +577,16 @@ ELSE
 						ENDIF
 					;손 따위
 					ELSE
-						;벌써 위로 돌리고의 경우
+						;벌써 위로돌리고의 경우
 						IF TFLAG:위로돌리고
 							TCVAR:MASTER:자세 = 1
 							TCVAR:MASTER:위치상하 = 1
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의 자세에 의해 보정
+							;전회의자세에 의해 보정
 							;구와 달라, 전후·상하의 지정은 없습니다
 							SELECTCASE TCVAR:MASTER:전회의자세
-								;위로 돌리고
+								;위로돌리고
 								CASE 1
 									;1/4로 안정도에 변화한다
 									IF !RAND:4
@@ -599,7 +599,7 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;B로 간 직후는 1/2으로 위로 향해 변화한다
+									;B로 간 직후는 1/2으로 위로돌리고로 변화한다
 									IF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
@@ -642,15 +642,15 @@ ELSE
 					ENDIF
 			ENDSELECT
 		CASE "봉사"
-			;벌써 위로 돌리고의 경우(하기 어렵다고 생각하지만…)
+			;벌써 위로돌리고의 경우(하기 어렵다고 생각하지만…)
 			IF TFLAG:위로돌리고
 				TCVAR:MASTER:자세 = 1
 				TCVAR:MASTER:위치전후 = 0
 				TCVAR:MASTER:위치상하 = 1
 			ELSE
-				;전회의 자세에 의해 보정
+				;전회의자세에 의해 보정
 				SELECTCASE TCVAR:MASTER:전회의자세
-					;위로 돌리고… 아래로부터 손댄다
+					;위로돌리고… 아래로부터 손댄다
 					CASE 1
 						TCVAR:MASTER:자세 = 1
 						TCVAR:MASTER:위치전후 = 0
@@ -665,7 +665,7 @@ ELSE
 			ENDIF
 		;그 외
 		CASEELSE
-			;벌써 위로 돌리고의 경우
+			;벌써 위로돌리고의 경우
 			IF TFLAG:위로돌리고
 				TCVAR:MASTER:자세 = 1
 			ELSE
@@ -687,17 +687,17 @@ ELSE
 						TCVAR:MASTER:자세 = 2
 						TCVAR:MASTER:위치전후 = 1
 						TCVAR:MASTER:위치상하 = 0
-					;자위 과시해, 페니스 밴드 장착
+					;자위과시하고, 페니스밴드장착
 					CASE 42, 75
 						;대면
 						TCVAR:MASTER:위치전후 = 1
-					;대거울, 야외 플레이, 코스프레, 휴게, 영양제
+					;대거울, 야외플레이, 코스프레, 휴게, 영양제
 					CASE 43, 44, 46, 90, 91
 						;리셋트
 						TCVAR:MASTER:자세 = 0
 						TCVAR:MASTER:위치전후 = 0
 						TCVAR:MASTER:위치상하 = 0
-					;방치 플레이, 공중 변소 플레이
+					;방치플레이, 공중변소 플레이
 					CASE 45, 74
 						;위치 리셋트, 자세 1/2로 자유,1/2그리고 계속
 						TCVAR:MASTER:자세 = RAND:2 ? TCVAR:MASTER:전회의자세 # 0
@@ -715,7 +715,7 @@ ELSE
 						TCVAR:MASTER:자세 = 2
 						TCVAR:MASTER:위치전후 = 2
 						TCVAR:MASTER:위치상하 = 0
-					;삼각 목마
+					;삼각목마
 					CASE 67
 						;무릎서기, 위치 리셋트
 						TCVAR:MASTER:자세 = 10
@@ -732,7 +732,7 @@ SIF TEQUIP:조교대상C사용 == 2
 
 ;여기까지로 자유 자세였던 경우
 IF !TCVAR:MASTER:자세
-	;성교중·P사용중·자위중이라면 전회의 자세·위치를 답습
+	;성교중·P사용중·자위중이라면 전회의자세·위치를 답습
 	IF TEQUIP:성교중 || TEQUIP:성교봉사중 || TEQUIP:조교대상C사용 || GETBIT(TEQUIP:자위중, 0)
 		TCVAR:MASTER:자세 = TCVAR:MASTER:전회의자세
 		SIF !TCVAR:MASTER:위치전후
@@ -791,29 +791,29 @@ ELSEIF TCVAR:ARG:조수ACT == 6
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
 	TFLAG:P삽입중 = 1
-;애널 애무
+;애널애무
 ELSEIF TCVAR:ARG:조수ACT == 10
 	TFLAG:A사용중 = 2
-;애널 빨고
+;애널빨고
 ELSEIF TCVAR:ARG:조수ACT == 11
 	TFLAG:A사용중 = 2
-;애널 로터
+;애널로터
 ELSEIF TCVAR:ARG:조수ACT == 12
 	TFLAG:A사용중 = 2
-;애널 바이브
+;애널바이브
 ELSEIF TCVAR:ARG:조수ACT == 13
 	TFLAG:A사용중 = 2
-;가슴 애무
+;가슴애무
 ELSEIF TCVAR:ARG:조수ACT == 20
 	TFLAG:가슴사용중 = 1
 
-;유두 빨고
+;유두빨고
 ELSEIF TCVAR:ARG:조수ACT == 21
 	TFLAG:가슴사용중 = 1
-;유두 로터
+;유두로터
 ELSEIF TCVAR:ARG:조수ACT == 22
 	TFLAG:가슴사용중 = 1
-;손가락 삽입
+;손가락삽입
 ELSEIF TCVAR:ARG:조수ACT == 30
 	TFLAG:V사용중 = 2
 ;바이브
@@ -829,12 +829,12 @@ ELSEIF TCVAR:ARG:조수ACT == 40
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
 	TFLAG:구사용중 += 1
-;안면 승마
+;안면승마
 ELSEIF TCVAR:ARG:조수ACT == 41
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
 	TFLAG:구사용중 = 2
-;다리를 빨게 한다
+;다리를빨게한다
 ELSEIF TCVAR:ARG:조수ACT == 42
 	TFLAG:구사용중 = 2
 ENDIF
@@ -849,19 +849,19 @@ ENDIF
 ;
 ;※요점 수정
 ;＠TCVAR:MASTER:1(자세)
-;	자세 정보를 격납하는 것 같다. TFLAG:위로 돌리고(위로 돌리고)는 그 중 이쪽에 이식되어야 할 것인가?
-;	일단, 현재는 TFLAG:위로 돌리고=2에서 1 턴에서는 일어날 수 없다고 하는 요소가 있으므로 남기면서 이쪽에도 기록하는 일에.
+;	자세 정보를 격납하는 것 같다. TFLAG:위로돌리고(위로돌리고)는 그 중 이쪽에 이식되어야 할 것인가?
+;	일단, 현재는 TFLAG:위로돌리고=2에서 1 턴에서는 일어날 수 없다고 하는 요소가 있으므로 남기면서 이쪽에도 기록하는 일에.
 ;	거의 이 TCVAR는 참조되고 있지 않습니다만, 여기서 데이터만은 넣어 두어도 괜찮지요.
-;	(0=자유 1=위로 돌리고 2=앉는 3=네발로 엎드림 4=기립 10=무릎서기)
+;	(0=자유 1=위로돌리고 2=앉는 3=네발로 엎드림 4=기립 10=무릎서기)
 ;
-;＠TCVAR:MASTER:2(위치 전후)
+;＠TCVAR:MASTER:2(위치전후)
 ;	MASTER와 TARGET의 전후 위치 정보만 격납. 현상 MASTER측만이 가지고 있습니다
 ;	=0은 자유
 ;	=1으로 대면(M→←T)
 ;	=2로 MASTER의 배후(T→M→)
 ;	=3으로 MASTER가 배후(M→T→)
 ;
-;＠TCVAR:MASTER:3(위치 상하)
+;＠TCVAR:MASTER:3(위치상하)
 ;	MASTER와 TARGET의 상하 위치 정보. 현상 MASTER측만이 가지고 있습니다
 ;	=1으로 정 정도(MASTER가 깔아눌러지고 있다)
 ;	=2로 역정도(MASTER가 TARGET를 깔아누르고 있다)
@@ -876,7 +876,7 @@ ENDIF
 	TFLAG:P사용중 += 1
 
 ;─
-;011, 가슴 애무/유두 들이마셔/젖의 몸싸움(S/N/H)(쾌B, 접촉, 사랑, 성행동, 상해, 불결)
+;011, 가슴애무/유두 들이마셔/젖의 몸싸움(S/N/H)(쾌B, 접촉, 사랑, 성행동, 상해, 불결)
 ;─
 @MASTER_POSE_ACT11
 	TFLAG:가슴사용중 = 1
@@ -896,12 +896,12 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;013, 애널 애무(N/H)[벌](쾌A, 접촉, 성행동, 상해, 불결, 일탈)
+;013, 애널애무(N/H)[벌](쾌A, 접촉, 성행동, 상해, 불결, 일탈)
 ;─
 @MASTER_POSE_ACT13
 	TFLAG:A사용중 += 1
 ;─
-;014, 애널 빨고(N/H)[벌](쾌A, 접촉, 성행동, 상해, 불결, 일탈)
+;014, 애널빨고(N/H)[벌](쾌A, 접촉, 성행동, 상해, 불결, 일탈)
 ;─
 @MASTER_POSE_ACT14
 	TFLAG:A사용중 += 1
@@ -925,7 +925,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;017, 파이즈리 하는(S/N)(쾌C, 접촉, 사랑, 상해, 성행동, 불결, 쾌b)
+;017, 파이즈리한다(S/N)(쾌C, 접촉, 사랑, 상해, 성행동, 불결, 쾌b)
 ;─
 @MASTER_POSE_ACT17
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
@@ -934,7 +934,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;018, 풋잡 하는(S/N/H)[벌](쾌C, 접촉, 사랑, 성행동, 불결, 일탈)
+;018, 풋잡한다(S/N/H)[벌](쾌C, 접촉, 사랑, 성행동, 불결, 일탈)
 ;─
 @MASTER_POSE_ACT18
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
@@ -943,32 +943,32 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;018, 손가락 삽입해라
+;018, 손가락삽입해라
 ;─
 @MASTER_POSE_ACT19
 	TFLAG:V사용중 += 1
 ;─
-;020, 로터(S/N)(쾌C, 중독 충족)
+;020, 로터(S/N)(쾌C, 중독충족)
 ;─
 @MASTER_POSE_ACT20
 	TFLAG:P사용중 = 6
 ;─
-;021, 바이브(S/N/H)[벌](쾌V, 상해, 일탈, 중독 충족, 트라우마)
+;021, 바이브(S/N/H)[벌](쾌V, 상해, 일탈, 중독충족, 트라우마)
 ;─
 @MASTER_POSE_ACT21
 	TFLAG:V사용중 = 2
 ;─
-;022, 애널 바이브(N/H)[벌](쾌A, 상해, 일탈, 중독 충족)
+;022, 애널바이브(N/H)[벌](쾌A, 상해, 일탈, 중독충족)
 ;─
 @MASTER_POSE_ACT22
 	TFLAG:A사용중 = 2
 ;─
-;023, 애널 비즈(S/N/H)(쾌A, 상해, 일탈, 중독 충족)
+;023, 애널비즈(S/N/H)(쾌A, 상해, 일탈, 중독충족)
 ;─
 @MASTER_POSE_ACT23
 	TFLAG:A사용중 = 2
 ;─
-;024, 클리캡/오나홀(S/N)(쾌C, 중독 충족)
+;024, 클리캡/오나홀(S/N)(쾌C, 중독충족)
 ;─
 @MASTER_POSE_ACT24
 	TFLAG:P사용중 = 5
@@ -978,7 +978,7 @@ ENDIF
 @MASTER_POSE_ACT25
 	TFLAG:가슴사용중 = 1
 ;─
-;026, 페니스 밴드
+;026, 페니스밴드
 ;─
 @MASTER_POSE_ACT26
 	TFLAG:P사용중 = 6
@@ -987,7 +987,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;030, 정상위(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;030, 정상위(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 ;─
 @MASTER_POSE_ACT30
 	TFLAG:위로돌리고 = 2
@@ -995,7 +995,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;031, 후배위(N/H)[벌](쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;031, 후배위(N/H)[벌](쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 ;─
 @MASTER_POSE_ACT31
 	TFLAG:위로돌리고 = 0
@@ -1003,7 +1003,7 @@ ENDIF
 	;배후
 	TCVAR:MASTER:위치전후 = 2
 ;─
-;032, 승마위(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;032, 승마위(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 ;─
 @MASTER_POSE_ACT32
 	TFLAG:위로돌리고 = 0
@@ -1011,7 +1011,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;033, 대면좌위(S/N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;033, 대면좌위(S/N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
 ;─
 @MASTER_POSE_ACT33
 	TFLAG:위로돌리고 = 0
@@ -1019,7 +1019,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;034, 배면좌위(N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 노출, 중독 충족, 트라우마, 쾌c)
+;034, 배면좌위(N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 노출, 중독충족, 트라우마, 쾌c)
 ;─
 @MASTER_POSE_ACT34
 	TFLAG:위로돌리고 = 0
@@ -1027,14 +1027,14 @@ ENDIF
 	;배후
 	TCVAR:MASTER:위치전후 = 2
 ;─
-;035, 애널 섹스(N/H/A)[벌](쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독 충족, 트라우마, 쾌c)
+;035, 애널섹스(N/H/A)[벌](쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌c)
 ;─
 @MASTER_POSE_ACT35
 	TFLAG:A사용중 = 2
 	;배후
 	TCVAR:MASTER:위치전후 = 2
 ;─
-;103, 역강간(N/H/A)[벌](쾌C, 접촉, 사랑, 성행동, 상해, 일탈, 중독 충족, 트라우마, 쾌v)
+;103, 역강간(N/H/A)[벌](쾌C, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌v)
 ;─
 @MASTER_POSE_ACT103
 	TFLAG:위로돌리고 = 2
@@ -1093,7 +1093,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;055, 다리 빨고 강제(N/H/A)[벌](불결, 일탈, 트라우마)
+;055, 다리빨고강제(N/H/A)[벌](불결, 일탈, 트라우마)
 ;─
 @MASTER_POSE_ACT55
 	TFLAG:구사용중 = 2
@@ -1108,21 +1108,21 @@ ENDIF
 	TCVAR:MASTER:위치전후 = 1
 
 ;─
-;070, 피스트 성교(H/A)[벌](쾌V, 접촉, 상해, 일탈, 중독 충족, 트라우마)
+;070, 피스트퍽(H/A)[벌](쾌V, 접촉, 상해, 일탈, 중독충족, 트라우마)
 ;─
 @MASTER_POSE_ACT70
 	TFLAG:V사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;071, 애널 피스트(H/A)[벌](쾌A, 접촉, 상해, 일탈, 중독 충족, 트라우마)
+;071, 애널피스트(H/A)[벌](쾌A, 접촉, 상해, 일탈, 중독충족, 트라우마)
 ;─
 @MASTER_POSE_ACT71
 	TFLAG:A사용중 = 2
 	;배후
 	TCVAR:MASTER:위치전후 = 2
 ;─
-;072, 양구멍 피스트(A)[벌](쾌V, 쾌A, 접촉, 상해, 일탈, 중독 충족, 트라우마)
+;072, 양구멍피스트(A)[벌](쾌V, 쾌A, 접촉, 상해, 일탈, 중독충족, 트라우마)
 ;─
 @MASTER_POSE_ACT72
 	TFLAG:A사용중 = 2
@@ -1130,7 +1130,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;095, 정상위 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v)
+;095, 정상위시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v)
 ;─
 @MASTER_POSE_ACT95
 	TFLAG:위로돌리고 = 0
@@ -1138,7 +1138,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;096, 후배위 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v)
+;096, 후배위시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v)
 ;─
 @MASTER_POSE_ACT96
 	TFLAG:위로돌리고 = 0
@@ -1146,7 +1146,7 @@ ENDIF
 	;배면
 	TCVAR:MASTER:위치전후 = 3
 ;─
-;097, 대면좌위 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v, 쾌c)
+;097, 대면좌위시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c)
 ;─
 @MASTER_POSE_ACT97
 	TFLAG:위로돌리고 = 0
@@ -1154,7 +1154,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;098, 배면좌위 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
+;098, 배면좌위시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
 ;─
 @MASTER_POSE_ACT98
 	TFLAG:위로돌리고 = 0
@@ -1162,7 +1162,7 @@ ENDIF
 	;배면
 	TCVAR:MASTER:위치전후 = 3
 ;─
-;099, 애널 섹스 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
+;099, 애널섹스시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
 ;─
 @MASTER_POSE_ACT99
 	IF	TFLAG:위로돌리고 == 0
@@ -1183,7 +1183,7 @@ ENDIF
 ;300, W자위
 ;─
 @MASTER_POSE_ACT300
-	;위로 돌리고 판정은 자위와 같음
+	;위로돌리고 판정은 자위와 같음
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
 	;W로 P사용중
@@ -1253,7 +1253,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;308, 변칙 혼란 모란
+;308, 변칙혼란모란
 ;─
 @MASTER_POSE_ACT308
 	TFLAG:위로돌리고 = 0
@@ -1278,7 +1278,7 @@ ENDIF
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
-;311, 골짜기를 건너감
+;311, 골짜기를건너감
 ;─
 @MASTER_POSE_ACT311
 	TFLAG:위로돌리고 = 0

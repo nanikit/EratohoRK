@@ -150,25 +150,25 @@ IF PERCENT(LOCAL)
 	EXP:MASTER:B경험 /= 2+(TALENT:MASTER:남자*4)
 ENDIF
 
-;절정 경험
+;절정경험
 @CM_SET_EXP_4
 ;남자
 IF TALENT:MASTER:남자
-	;부위 경험의 화를 70~100배로 해, 100으로 나누지만, C경험을 넘지 않는다
+	;부위 경험의 화를 70～100배로 해, 100으로 나누지만, C경험을 넘지 않는다
 	EXP:MASTER:절정경험 = MIN(SUMARRAY(EXP:MASTER:0, 0, 4)*(70+RAND:31)/100, EXP:MASTER:C경험)
 ;후타나리
 ELSEIF TALENT:MASTER:남자
-	;부위 경험의 화를 70~100배로 해, 100으로 나눈다
+	;부위 경험의 화를 70～100배로 해, 100으로 나눈다
 	EXP:MASTER:절정경험 = SUMARRAY(EXP:MASTER:0, 0, 4)*(70+RAND:31)/100
 ;여자 아이
 ELSE
-	;부위 경험의 화를 40~80배로 해, 100으로 나눈다
+	;부위 경험의 화를 40～80배로 해, 100으로 나눈다
 	EXP:MASTER:절정경험 = SUMARRAY(EXP:MASTER:0, 0, 4)*(40+RAND:41)/100
 ENDIF
 
-;사정 경험
+;사정경험
 @CM_SET_EXP_5
-;페니스가 없으면 0, 페니스가 있으면 절정 경험과 C경험의 쳐 적은 편과 같음
+;페니스가 없으면 0, 페니스가 있으면 절정경험과 C경험의 쳐 적은 편과 같음
 EXP:MASTER:사정경험 = PENIS(MASTER) ? MIN(EXP:MASTER:절정경험, EXP:MASTER:C경험) # 0
 ;다만 비처녀로 후타나리의 경우, 경험의 차이에 응해 절정수부터 사정수가 적게 되거나
 SIF TALENT:MASTER:후타나리 && !TALENT:MASTER:처녀
@@ -178,13 +178,13 @@ SIF TALENT:MASTER:후타나리 && !TALENT:MASTER:처녀
 @CM_SET_EXP_6
 ;생성되지 않는다
 
-;성교 경험
+;성교경험
 @CM_SET_EXP_7
 ;남자·후타나리 처녀
 IF TALENT:MASTER:남자 || (TALENT:MASTER:후타나리 && TALENT:MASTER:처녀)
 	;동정 거절이니까^^;
 	IF !TALENT:MASTER:동정
-		;C경험을 0~100배로 해, 200으로 나누지만, 사정 경험을 넘지 않는다
+		;C경험을 0～100배로 해, 200으로 나누지만, 사정경험을 넘지 않는다
 		EXP:MASTER:성교경험 = MIN(EXP:MASTER:C경험*(RAND:100)/200, EXP:MASTER:사정경험)
 		;만약 0 이하가 되어 있으면, 1+RAND:2로 갈아넣는다
 		SIF EXP:MASTER:성교경험 <= 0
@@ -194,7 +194,7 @@ IF TALENT:MASTER:남자 || (TALENT:MASTER:후타나리 && TALENT:MASTER:처녀)
 ELSEIF !TALENT:MASTER:남자 || (TALENT:MASTER:후타나리 && TALENT:MASTER:동정)
 	;처녀라든지 귀찮은 것뿐이겠지
 	IF !TALENT:MASTER:처녀
-		;V경험을 80~100배로 해, 100으로 나눈다
+		;V경험을 80～100배로 해, 100으로 나눈다
 		EXP:MASTER:성교경험 = EXP:MASTER:V경험*(80+RAND:21)/100
 		;만약 0 이하가 되어 있으면, 1+RAND:2로 갈아넣는다
 		SIF EXP:MASTER:성교경험 <= 0
@@ -202,7 +202,7 @@ ELSEIF !TALENT:MASTER:남자 || (TALENT:MASTER:후타나리 && TALENT:MASTER:동
 	ENDIF
 ;양쪽 모두 사용이 끝난 후타나리
 ELSE
-	;C경험을 10~100배, V경험을 80~100배로 해, 200으로 나눈다
+	;C경험을 10～100배, V경험을 80～100배로 해, 200으로 나눈다
 	EXP:MASTER:성교경험 = ((EXP:MASTER:C경험*(10+RAND:91))+(EXP:MASTER:V경험*(80+RAND:21)))/200
 	;만약 0 이하가 되어 있으면, 2+RAND:3으로 갈아넣는다
 	SIF EXP:MASTER:성교경험 <= 0
@@ -213,28 +213,28 @@ SIF TALENT:MASTER:자위쉬움
 	EXP:MASTER:성교경험 /= 3
 
 
-;성 지식
+;성지식
 @CM_SET_EXP_8
-;부위 경험의 화에 성교 경험의 3배를 더해, 10으로 나눈다
+;부위 경험의 화에 성교경험의 3배를 더해, 10으로 나눈다
 EXP:MASTER:성지식 = (SUMARRAY(EXP:MASTER:0, 0, 4)+(EXP:MASTER:성교경험*3))/10
 
-;자위 경험
+;자위경험
 @CM_SET_EXP_10
 ;남자·후타나리 처녀
 IF TALENT:MASTER:남자 || (TALENT:MASTER:후타나리 && TALENT:MASTER:처녀)
-	;부위 경험의 화와 사정 경험 가운데, 적은 (분)편으로부터 성교 경험을 당긴 것
+	;부위 경험의 화와 사정경험 가운데, 적은 (분)편으로부터 성교경험을 당긴 것
 	EXP:MASTER:자위경험 = MIN(SUMARRAY(EXP:MASTER:0, 0, 4), EXP:MASTER:사정경험)-EXP:MASTER:성교경험
 ELSE
-	;부위 경험의 화로부터 성교 경험을 당긴 것
+	;부위 경험의 화로부터 성교경험을 당긴 것
 	EXP:MASTER:자위경험 = SUMARRAY(EXP:MASTER:0, 0, 4)-EXP:MASTER:성교경험
 ENDIF
 
 
-;조교 자위 경험
+;조교자위경험
 @CM_SET_EXP_11
 ;조교 요소인 것으로 생성되지 않는다
 
-;방뇨 경험
+;방뇨경험
 @CM_SET_EXP_12
 ;조교 요소인 것으로 생성되지 않는다
 
@@ -242,11 +242,11 @@ ENDIF
 @CM_SET_EXP_13
 ;조교 요소인 것으로 생성되지 않는다
 
-;정액 경험
+;정액경험
 @CM_SET_EXP_20
 ;처녀도 남자도 아닌 경우
 IF !TALENT:MASTER:남자 && !TALENT:MASTER:처녀
-	;성교 경험을 100~200배로 해, 100으로 나눈다.
+	;성교경험을 100～200배로 해, 100으로 나눈다.
 	EXP:MASTER:정액경험 = EXP:MASTER:성교경험*(100+RAND:101)/100
 	;혀사용이라면 1.2배
 	SIF TALENT:MASTER:혀사용
@@ -296,13 +296,13 @@ ELSEIF !TALENT:MASTER:남자
 	ENDIF
 ENDIF
 
-;봉사 쾌락 경험
+;봉사쾌락경험
 @CM_SET_EXP_21
 ;조교 요소인 것으로 생성되지 않는다
 
 ;구음경험
 @CM_SET_EXP_22
-;정액 경험으로부터 성교 경험을 당긴 것을 0~200배로 해,150+기묘한손가락*50-혀사용*50으로 나눈다
+;정액경험으로부터 성교경험을 당긴 것을 0～200배로 해,150+기묘한손가락*50-혀사용*50으로 나눈다
 EXP:MASTER:구음경험 = (EXP:MASTER:정액경험 - EXP:MASTER:성교경험)*RAND:201/(150+(TALENT:MASTER:기묘한손가락*50)-(TALENT:MASTER:혀사용*50))
 ;만약 0 이하가 되어 있으면, 0으로 갈아넣는다
 SIF EXP:MASTER:구음경험 <= 0
@@ -310,61 +310,61 @@ SIF EXP:MASTER:구음경험 <= 0
 
 ;수음 경험
 @CM_SET_EXP_23
-;정액 경험으로부터 성교 경험과 구음경험의 8할을 당긴 것을 100~150배로 해, 100으로 나눈다
+;정액경험으로부터 성교경험과 구음경험의 8할을 당긴 것을 100～150배로 해, 100으로 나눈다
 EXP:MASTER:수음경험 = (EXP:MASTER:정액경험 - EXP:MASTER:성교경험 - (EXP:MASTER:구음경험*8/10))*(100+RAND:51)/100
 ;만약 0 이하가 되어 있으면, 0으로 갈아넣는다
 SIF EXP:MASTER:수음경험 <= 0
 	EXP:MASTER:수음경험 = 0
 
-;도구 사용 경험
+;도구사용경험
 @CM_SET_EXP_24
-;생성율은 일률 20%. 다만 도구사용을 가지고 있는 경우는 100%
+;생성율은 일률 20％. 다만 도구사용을 가지고 있는 경우는 100％
 IF !RAND:5 || TALENT:MASTER:도구사용
-	;생성량은 성교 경험+수음 경험+구음경험의 화를, 남자는 2배, 여자 아이는 반으로 해, 그 1/10(도구사용은 1/4)
+	;생성량은 성교경험+수음 경험+구음경험의 화를, 남자는 2배, 여자 아이는 반으로 해, 그 1/10(도구사용은 1/4)
 	EXP:MASTER:도구사용경험 = (EXP:MASTER:성교경험+EXP:MASTER:구음경험+EXP:MASTER:수음경험*(TALENT:MASTER:남자+1))/(!PENIS(MASTER)+1)/(10-(TALENT:MASTER:도구사용*6))
 ENDIF
 
-;키스 경험
+;키스경험
 @CM_SET_EXP_25
-;성교 경험이 있다
+;성교경험이 있다
 IF EXP:MASTER:성교경험
-	;성교 경험*2과 10의 쳐 큰 (분)편까지로 랜덤
+	;성교경험*2과 10의 쳐 큰 (분)편까지로 랜덤
 	EXP:MASTER:키스경험 = RAND:(MAX(EXP:MASTER:성교경험*2, 10))
-;성교 경험이 없다
+;성교경험이 없다
 ELSE
-	;기초 확률 50%, 작은체형이라면 20%
+	;기초 확률 50％, 작은체형이라면 20％
 	LOCAL = TALENT:MASTER:작은체형 ? 20 # 50
 	LOCAL += TALENT:MASTER:사교적-TALENT:MASTER:대인기피*30
 	SIF PERCENT(LOCAL)
 		EXP:MASTER:키스경험 = RAND:(3*(TALENT:MASTER:사교적-TALENT:MASTER:대인기피)+5)
 ENDIF
 
-;회화 경험
+;회화경험
 @CM_SET_EXP_26
 ;조교 요소인 것으로 생성되지 않는다
 
-;고통 쾌락 경험
+;고통쾌락경험
 @CM_SET_EXP_30
 ;조교 요소인 것으로 생성되지 않는다
 
-;치욕 쾌락 경험
+;치욕쾌락경험
 @CM_SET_EXP_31
 ;조교 요소인 것으로 생성되지 않는다
 ;이따금 생성되어도 재미있지만
 
-;애정 경험
+;애정경험
 @CM_SET_EXP_32
 ;조교 요소인 것으로 생성되지 않는다
 
-;백합 경험
+;백합경험
 @CM_SET_EXP_40
 ;후타나리의 경우
 IF TALENT:MASTER:후타나리
-	;성교 경험으로부터 정액 경험을 당긴 것인가, 사정 경험으로부터 자위 경험을 당긴 것 가운데, 많은 (분)편
+	;성교경험으로부터 정액경험을 당긴 것인가, 사정경험으로부터 자위경험을 당긴 것 가운데, 많은 (분)편
 	EXP:MASTER:백합경험 = MAX(EXP:MASTER:성교경험-EXP:MASTER:정액경험, EXP:MASTER:사정경험-EXP:MASTER:자위경험, 0)
 ;여자 아이로, 남성혐오가 있는 경우
 ELSEIF TALENT:MASTER:남성혐오 && !TALENT:MASTER:남자
-	;성교 경험과 정액 경험을 백합 경험으로 이동한다
+	;성교경험과 정액경험을 백합경험으로 이동한다
 	EXP:MASTER:백합경험 = (EXP:MASTER:성교경험+EXP:MASTER:정액경험)/2
 	;처녀라면 함께 0에. 처녀가 아니면 RAND:3으로 보충한다
 	EXP:MASTER:성교경험 = TALENT:MASTER:처녀 ? 0 # RAND:3
@@ -382,39 +382,39 @@ ENDIF
 @CM_SET_EXP_41
 ;조교 요소인 것으로 생성되지 않는다
 
-;이상 경험
+;이상경험
 @CM_SET_EXP_50
-;완전하게 랜덤(2%)으로 1개있어 온다
+;완전하게 랜덤(2％)으로 1개있어 온다
 SIF !RAND:50
 	EXP:MASTER:이상경험 = 1
 
-;긴박 경험
+;긴박경험
 @CM_SET_EXP_51
 ;조교 요소인 것으로 생성되지 않는다
 
-;V확장 경험
+;V확장경험
 @CM_SET_EXP_52
 ;조교 요소인 것으로 생성되지 않는다
 
-;A확장 경험
+;A확장경험
 @CM_SET_EXP_53
 ;조교 요소인 것으로 생성되지 않는다
 
-;촉수 경험
+;촉수경험
 @CM_SET_EXP_55
 ;조교 요소인 것으로 생성되지 않는다
 
-;굴복 경험
+;굴복경험
 @CM_SET_EXP_60
 ;조교 요소인 것으로 생성되지 않는다
 
-;공포 경험
+;공포경험
 @CM_SET_EXP_61
 ;조교 요소인 것으로 생성되지 않는다
 
-;노출 경험
+;노출경험
 @CM_SET_EXP_62
-;기본치는 자위 경험을 반으로 해 50을 뺀 것
+;기본치는 자위경험을 반으로 해 50을 뺀 것
 LOCAL = EXP:MASTER:자위경험/2-50
 ;소질 판정지는 반으로 해 사용한다
 LOCAL += CM_TALENT_MAKE("프라이드역", "피학", "수치", "수치", "도착", "도착", "결벽역", "충동", "호기심")/2
@@ -450,7 +450,7 @@ IF PERCENT(LOCAL)
 	EXP:MASTER:노출경험 /= 4+(TALENT:MASTER:남자*6)
 ENDIF
 
-;가게 한 경험
+;가게한경험
 @CM_SET_EXP_63
 ;설정이 너무 귀찮았으므로 조교 요소라고 생각해 생성하지 않는다
 

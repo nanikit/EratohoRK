@@ -1,6 +1,6 @@
 ﻿;------------------------------------------------------------------------
 ;EDIT	001		kap			2011/10/14		STR의 번호를 비켜 놓은 것에 대응
-;											행동 예약을 TCVAR로 변경
+;											행동예약을 TCVAR로 변경
 ;EDIT	002		KOremi		2011/11/09		탈의 실행 처리의 분리
 ;EDIT	003		KOremi		2014/05/20		조교 중지 판정을 애니메이션 처리로부터 낸다
 ;											또, 첫회만 판정하도록(듯이) 수정
@@ -121,10 +121,10 @@ IF TFLAG:조교자행동제++ == 0 && !TFLAG:한번휴식
 	IF STRLENS(TSTR:전조교지령) || (STRLENS(TSTR:조교지령) && FLAG:디버그)
 		IF FLAG:디버그
 			SIF STRLENS(TSTR:전조교지령)
-				PRINTFORML 전회의 조교 지령:(%MENU(TFLAG:전ACT분류)%계)＜%TSTR:전조교지령%＞
-			PRINTFORML 이번 조교 지령:(%MENU(TFLAG:ACT분류)%계)＜%TSTR:조교지령%＞
+				PRINTFORML 전회의 조교지령:(%MENU(TFLAG:전ACT분류)%계)＜%TSTR:전조교지령%＞
+			PRINTFORML 이번 조교지령:(%MENU(TFLAG:ACT분류)%계)＜%TSTR:조교지령%＞
 		ELSE
-			PRINTFORML 전회의 조교 지령:＜%TSTR:전조교지령%＞
+			PRINTFORML 전회의 조교지령:＜%TSTR:전조교지령%＞
 		ENDIF
 		DRAWLINE
 	ENDIF
@@ -168,7 +168,7 @@ IF TFLAG:조교자행동제++ == 0 && !TFLAG:한번휴식
 		ENDIF
 		LOCAL++
 	WEND
-	;강제 탈의의 성공 판정
+	;강제탈의의 성공 판정
 	SIF TFLAG:강제탈의 > 0
 		CALL KYOUSEI_DATUI_CHECK
 	;----------------------------------------------
@@ -177,7 +177,7 @@ IF TFLAG:조교자행동제++ == 0 && !TFLAG:한번휴식
 	;-----------EDIT 002 START--------------
 	;탈의 실행 처리와 지문, 구상 표시 처리를 분리
 	;---------------------------------------
-	;강제·자주 탈의의 실행, 또 지문 표시와 그 입상
+	;강제·자주탈의의 실행, 또 지문 표시와 그 입상
 	SIF TFLAG:자주탈의 || TFLAG:강제탈의
 		CALL DATUI_PROCESS
 	;-----------EDIT 002 END  --------------
@@ -214,8 +214,8 @@ IF TFLAG:조교자행동제++ == 0 && !TFLAG:한번휴식
 	TFLAG:REACT파생 = 0
 ELSE
 	SIF STRLENS(TSTR:전조교지령)
-		PRINTFORML 전회의 조교 지령＜%TSTR:2%＞
-	PRINTFORML 이번 조교 지령＜%TSTR:1%＞
+		PRINTFORML 전회의 조교지령＜%TSTR:2%＞
+	PRINTFORML 이번 조교지령＜%TSTR:1%＞
 	DRAWLINE
 ENDIF
 ;-----------EDIT 001 END  --------------
@@ -233,7 +233,7 @@ ENDIF
 ;ARG가 진정한 때, 혹은 AUTO가 텅텅때, AUTO를 갱신한다
 IF AUTO == "" || ARG
 	VARSET AUTO
-	SPLIT GLOBALS:@"오토 모드 등록{FLAG:선택세트}", "_", RESULTS
+	SPLIT GLOBALS:@"오토모드 등록{FLAG:선택세트}", "_", RESULTS
 	SPLIT RESULTS:1, "/", AUTO
 	SIF ARG
 		RETURN 0
@@ -247,7 +247,7 @@ FOR LOCAL, 0, 100
 	RETURN GETNUM(TRAINNAME,AUTO:LOCAL)
 	BREAK
 NEXT
-RETURN GETNUM(TRAINNAME, "하는 대로")
+RETURN GETNUM(TRAINNAME, "하는대로")
 ;─
 ;행동 전판정(EVETRAIN보다 이동)
 ;2011/10/14		휴게에 의한 종료를 떼어내 별함수로 한다
@@ -331,7 +331,7 @@ FOR LOCAL, 0, 7
 	;페니스가 없는 경우, P는 처리하지 않는다. 남자의 경우, V와 B는 처리하지 않는다
 	SIF (LOCAL == 2 && !PENIS(ARG)) || ((LOCAL == 3 || LOCAL == 5) && TALENT:ARG:남자)
 		CONTINUE
-	PRINTFORM %CALLNAME:ARG%의%LOCALS:LOCAL%：
+	PRINTFORM %CALLNAME:ARG%의%LOCALS:LOCAL%:
 	FOR LOCAL:1, 0, 7
 		PRINTFORM \@ GETBIT(STAIN:ARG:LOCAL, LOCAL:1) ? <%LOCALS:(7 + LOCAL:1)%> # \@
 	NEXT
@@ -348,21 +348,21 @@ SIF TFLAG:위로돌리고
 SIF TEQUIP:밀어넘어뜨리기중
 	PRINT  [압도]
 SIF TEQUIP:안면승마 || TEQUIP:안면승마애널
-	PRINT  [안면 승마]
+	PRINT  [안면승마]
 SIF TEQUIP:야외플레이
 	PRINT  [야외]
 SIF TEQUIP:대거울
 	PRINT  [대거울]
 SIF TCVAR:MASTER:초조하게해번 > 1
-	PRINT  [초조하게 해]
+	PRINT  [초조하게함]
 SIF TEQUIP:자위중 == 1
 	PRINTFORM  [%CALLNAME:MASTER%자위중]
 SIF TEQUIP:자위중 == 2
 	PRINTFORM  [%CALLNAME:TARGET%자위중]
 SIF TEQUIP:페니스밴드
-	PRINTFORM  [%CALLNAME:MASTER%페니스 밴드 장착]
+	PRINTFORM  [%CALLNAME:MASTER%페니스밴드장착]
 SIF TEQUIP:조교자페니스밴드
-	PRINTFORM  [%CALLNAME:TARGET%페니스 밴드 장착]
+	PRINTFORM  [%CALLNAME:TARGET%페니스밴드장착]
 SIF TEQUIP:자위중 == 3
 	PRINT  [두 명 자위중]
 SIF TEQUIP:성교중
@@ -384,9 +384,9 @@ SIF TEQUIP:안면승마애널
 	PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의 안면에 걸쳐 아누스에의 봉사를 강요하고 있다…
 IF TEQUIP:야외플레이
 	PRINTDATAL
-		DATA 근처에사람의기색은없는것같다…
-		DATA 근처에서누군가의발소리가들렸다…
-		DATA 등으로부터사람의시선을느낀다…
+		DATA 근처에 사람의 기색은 없는 것 같다…
+		DATA 근처에서 누군가의 발소리가 들렸다…
+		DATA 등으로부터 사람의 시선을 느낀다…
 	ENDDATA
 ENDIF
 SIF TEQUIP:대거울
@@ -424,9 +424,9 @@ SELECTCASE TEQUIP:조교대상C사용
 		PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의\@ PENIS(MASTER) ? 귀두# 비순\@에 혀를 기게 하고 있다…
 ENDSELECT
 SIF TCVAR:MASTER:갈것같다
-	PRINTFORML %CALLNAME:MASTER%는 갈 것 같다…
+	PRINTFORML %CALLNAME:MASTER%는갈것같다다…
 SIF TCVAR:TARGET:갈것같다
-	PRINTFORML %CALLNAME:TARGET%는 갈 것 같다…
+	PRINTFORML %CALLNAME:TARGET%는갈것같다다…
 SIF TEQUIP:밀어넘어뜨리기중 || TEQUIP:안면승마 || TEQUIP:안면승마애널 || TEQUIP:야외플레이 || TEQUIP:대거울 || TCVAR:MASTER:초조하게해번 > 1 || TEQUIP:자위중 || TEQUIP:성교중 || TEQUIP:성교봉사중 || TEQUIP:촉수조교중 || TCVAR:MASTER:갈것같다 || TCVAR:TARGET:갈것같다
 	DRAWLINE
 
@@ -437,34 +437,34 @@ LOCALS = 현재의 자세:
 ;조교 대상
 SELECTCASE TCVAR:MASTER:자세
 	CASE 1
-		LOCALS += @"[%CALLNAME:MASTER%：仰向け]"
+		LOCALS += @"[%CALLNAME:MASTER%:위로돌리고]"
 	CASE 2
-		LOCALS += @"[%CALLNAME:MASTER%：座っている]"
+		LOCALS += @"[%CALLNAME:MASTER%:앉아 있다]"
 	CASE 3
-		LOCALS += @"[%CALLNAME:MASTER%：四つん這い]"
+		LOCALS += @"[%CALLNAME:MASTER%:네발로 엎드림]"
 	CASE 4
-		LOCALS += @"[%CALLNAME:MASTER%：直立]"
+		LOCALS += @"[%CALLNAME:MASTER%:직립]"
 	CASE 10
-		LOCALS += @"[%CALLNAME:MASTER%：膝立ち]"
+		LOCALS += @"[%CALLNAME:MASTER%:무릎서기]"
 	CASEELSE
-		LOCALS += @"[%CALLNAME:MASTER%：楽にしている]"
+		LOCALS += @"[%CALLNAME:MASTER%:편하게 하고 있다]"
 ENDSELECT
 ;주인
 SELECTCASE TCVAR:MASTER:위치상하
 	CASE 1
-		LOCALS += @"[%CALLNAME%：%CALLNAME:MASTER%の上]"
+		LOCALS += @"[%CALLNAME%:%CALLNAME:MASTER%위]"
 	CASE 2
-		LOCALS += @"[%CALLNAME%：%CALLNAME:MASTER%の下]"
+		LOCALS += @"[%CALLNAME%:%CALLNAME:MASTER%아래]"
 	CASEELSE
 		SELECTCASE TCVAR:MASTER:위치전후
 			CASE 1
-				LOCALS += @"[%CALLNAME%：%CALLNAME:MASTER%の正面]"
+				LOCALS += @"[%CALLNAME%:%CALLNAME:MASTER%의 정면]"
 			CASE 2
-				LOCALS += @"[%CALLNAME%：%CALLNAME:MASTER%の背後]"
+				LOCALS += @"[%CALLNAME%:%CALLNAME:MASTER%의 배후]"
 			CASE 3
-				LOCALS += @"[%CALLNAME%：%CALLNAME:MASTER%に背を向けている]"
+				LOCALS += @"[%CALLNAME%:%CALLNAME:MASTER%에 등을 돌리고 있다]"
 			CASEELSE
-				LOCALS += @"[%CALLNAME%：%CALLNAME:MASTER%を観察]"
+				LOCALS += @"[%CALLNAME%:%CALLNAME:MASTER%를 보고 찰]"
 		ENDSELECT
 ENDSELECT
 IF ARG
@@ -486,13 +486,13 @@ IF TEQUIP:로션 || TEQUIP:미약 || TEQUIP:이뇨제 || TEQUIP:스즈란의독 
 	SIF TEQUIP:이뇨제
 		PRINTFORM [이뇨제(%EFFECT(TEQUIP:이뇨제)%)]
 	SIF TEQUIP:스즈란의독
-		PRINTFORM [스즈란의 독(%EFFECT(TEQUIP:스즈란의독)%)]
+		PRINTFORM [스즈란의독(%EFFECT(TEQUIP:스즈란의독)%)]
 	SIF TEQUIP:바이브
 		PRINTFORM [\@ TEQUIP:바이브 > 1 ? 특주# \@바이브]
 	SIF TEQUIP:애널바이브
-		PRINTFORM [\@ TEQUIP:애널바이브 > 1 ? 특주# \@애널 바이브]
+		PRINTFORM [\@ TEQUIP:애널바이브 > 1 ? 특주# \@애널바이브]
 	SIF TEQUIP:애널비즈
-		PRINT [애널 비즈]
+		PRINT [애널비즈]
 	SIF TEQUIP:관장기＋플러그
 		PRINT [관장＋애널 플러그]
 	SIF TEQUIP:클리캡
@@ -508,7 +508,7 @@ IF TEQUIP:로션 || TEQUIP:미약 || TEQUIP:이뇨제 || TEQUIP:스즈란의독 
 	SIF TEQUIP:볼개그
 		PRINT [볼개그]
 	SIF TEQUIP:삼각목마
-		PRINT [삼각 목마 승마중]
+		PRINT [삼각목마 승마중]
 	;코코보다↑에 TEQUIP에 등록한 것을 기입한다
 	PRINTL 
 ENDIF

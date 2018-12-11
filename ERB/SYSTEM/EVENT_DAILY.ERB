@@ -25,7 +25,7 @@ FOR LCOUNT, 1, CHARANUM
 	ENDIF
 NEXT
 
-;ASSIGNEE:0~3에 캐릭터 등록 번호를 대입, 후보가 없으면-1
+;ASSIGNEE:0～3에 캐릭터 등록 번호를 대입, 후보가 없으면-1
 VARSET ASSIGNEE, -1
 LCOUNT = 0
 WHILE LCOUNT < MIN(CAPACITY() - 1, VARSIZE("ASSIGNEE"))
@@ -42,10 +42,10 @@ SIF CONCILIATOR < 0 && ASSIGNEE:0 < 0
 ;일상(조교 대상 교류)
 
 ;대범한 이벤트 종별(이벤트가 많아지면 선별 방법을 바꿀 필요가 있다)
-;현재, 스킨십 67%, 일상 33%.
-;아라이먼트 변동은 미실장.
+;현재, 스킨십 67％, 일상 33％.
+;아라이먼트변동은 미실장.
 PROBABILITY = RAND:50
-;아라이먼트 변동 이벤트(선택식으로 해, 아라이먼트 제어의 도움으로 하고 싶다)
+;아라이먼트변동 이벤트(선택식으로 해, 아라이먼트 제어의 도움으로 하고 싶다)
 ;일상(조교 도구 보충 따위도 넣고 싶다)
 ;스킨십(되고 싶다)
 ;간호
@@ -57,7 +57,7 @@ IF FLAG:일상제어 == 4
 	;간호
 	CALL DAILY_LIFE_NURSING
 ELSE
-	;굴복 각인*5%로 실행(Reverse의 굴복 각인은 조교 대상은 아니고 조교자 마다 관리됩니다)
+	;굴복각인*5％로 실행(Reverse의 굴복각인은 조교 대상은 아니고 조교자 마다 관리됩니다)
 	IF PERCENT(MARK:TARGET:굴복각인 * 5)
 		;반항 제거
 		IF CONCILIATOR >= 0
@@ -68,7 +68,7 @@ ELSE
 		;일상계
 		ELSEIF PROBABILITY < 66 && FLAG:일상
 			TRYCALL DAILY_LIFE_2(ASSIGNEE:0, ASSIGNEE:1, ASSIGNEE:2, ASSIGNEE:3)
-		;아라이먼트 변동
+		;아라이먼트변동
 		ELSE
 			TRYCALL DAILY_LIFE_3(ASSIGNEE:0, ASSIGNEE:1, ASSIGNEE:2, ASSIGNEE:3)
 		ENDIF
@@ -111,7 +111,7 @@ RETURN 1
 ;─
 ;스킨십(각종의 성 경험이 들어갑니다)
 ;─
-;@DAILY_LIFE_1_0~로부터 랜덤으로 선택한다  RETURN 0되면 재추첨, RETURN 1( 0이외)으로 추첨으로부터 빠진다
+;@DAILY_LIFE_1_0～로부터 랜덤으로 선택한다  RETURN 0되면 재추첨, RETURN 1( 0이외)으로 추첨으로부터 빠진다
 @DAILY_LIFE_1(ARG, ARG:1, ARG:2, ARG:3)
 #DIM LCOUNT
 ;구상용으로 대상 캐릭터의 번호를 넣는다
@@ -131,7 +131,7 @@ RETURN 0
 ;─
 ;스킨십 0
 ;─
-;ARG~ARG:4는 대상이 되는 캐릭터의 번호
+;ARG～ARG:4는 대상이 되는 캐릭터의 번호
 @DAILY_LIFE_1_0(ARG, ARG:1, ARG:2, ARG:3)
 PRINTFORML 부엌에 선다%CALLNAME:MASTER%는 배후로부터의 달콤한 한숨을 깨달아 되돌아 본다
 PRINTFORMW …%CALLNAME:ARG%다
@@ -147,7 +147,7 @@ ELSE
 	PRINTFORMW %CALLNAME:ARG%는 배후로부터%CALLNAME:MASTER%를 껴안아 가슴도 할 수 있었다…
 	LOCAL = 2
 ENDIF
-;ARG의 굴복 각인 4이상 또한 관련하는 각인을 취득제인 경우
+;ARG의 굴복각인 4이상 또한 관련하는 각인을 취득제인 경우
 {
 IF MARK:ARG:굴복각인 > 4 && 
 	((PENIS(MASTER) && GETBITAND(CFLAG:ARG:각인, 2, 3, 12, 19)) || 
@@ -173,7 +173,7 @@ SELECTCASE RESULT
 			PRINTL C경험 +1
 			;ARG의 경험 증가와 내용의 표시
 			EXP:ARG:수음경험 += 1 
-			PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+			PRINTFORML (%CALLNAME:ARG%) 수음 경험 +1
 		;그 외
 		ELSE
 			;MASTER의 경험 증가와 내용의 표시
@@ -181,7 +181,7 @@ SELECTCASE RESULT
 			PRINTL B경험 +1
 			;ARG의 경험 증가와 내용의 표시
 			EXP:ARG:수음경험 += 1 
-			PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+			PRINTFORML (%CALLNAME:ARG%) 수음 경험 +1
 		ENDIF
 		;평시 아라이먼트의 감소. "평시아"가 "평시 아라이먼트"이다고 본 것 뿐으로 아는 사람이 얼마나 있겠지? 있을 이유 없어요 그런 것w
 		CFLAG:ARG:평시아 -= 100
@@ -190,7 +190,7 @@ SELECTCASE RESULT
 			CFLAG:ARG:평시아 = -999
 		;불끈불끈 증가
 		CFLAG:ARG:불끈불끈 += 1
-		PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+		PRINTFORML (%CALLNAME:ARG%) 불끈불끈 +1
 	;몸을 맡긴다
 	CASE 1
 		;2020-3(몸을 맡겨"사타구니/젖가슴"로 가게 되고)
@@ -200,7 +200,7 @@ SELECTCASE RESULT
 		IF LOCAL == 1
 			;조교 대상으로 페니스 있어
 			IF PENIS(MASTER)
-				;조교 대상으로 하반신 속옷 있어
+				;조교 대상으로 하반신속옷 있어
 				IF TEQUIP:MASTER:하반신속옷
 					PRINTL 
 					;202, 0-5(팬티갈아입게 해 주었습니다)
@@ -212,23 +212,23 @@ SELECTCASE RESULT
 				EXP:MASTER:C경험 += 5
 				PRINTL C경험 +5
 				EXP:MASTER:절정경험 += 1
-				PRINTL 절정 경험 +1
+				PRINTL 절정경험 +1
 				EXP:MASTER:사정경험 += 1
-				PRINTL 사정 경험 +1
+				PRINTL 사정경험 +1
 				;ARG의 경험 증가와 내용의 표시
 				EXP:ARG:정액경험 += 1 
-				PRINTFORML （%CALLNAME:ARG%) 정액 경험 +1
+				PRINTFORML (%CALLNAME:ARG%) 정액경험 +1
 				EXP:ARG:수음경험 += 1 
-				PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+				PRINTFORML (%CALLNAME:ARG%) 수음 경험 +1
 				EXP:ARG:가게한경험 += 1
-				PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+				PRINTFORML (%CALLNAME:ARG%)가게한경험 +1
 				BASE:MASTER:사정 -= 300
 				;MASTER의 정력 0의 경우
 				SIF FLAG:일상제어 == 2
 					TCVAR:MASTER:드라이사정수 += 1
 			;조교 대상으로 페니스 없음
 			ELSE
-				;조교 대상으로 하반신 속옷 있어
+				;조교 대상으로 하반신속옷 있어
 				IF TEQUIP:MASTER:하반신속옷
 					PRINTL 
 					;202, 0-5(팬티갈아입게 해 주었습니다)
@@ -240,12 +240,12 @@ SELECTCASE RESULT
 				EXP:MASTER:C경험 += 5
 				PRINTL C경험 +5
 				EXP:MASTER:절정경험 += 1
-				PRINTL 절정 경험 +1
+				PRINTL 절정경험 +1
 				;ARG의 경험 증가와 내용의 표시
 				EXP:ARG:수음경험 += 1 
-				PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+				PRINTFORML (%CALLNAME:ARG%) 수음 경험 +1
 				EXP:ARG:가게한경험 += 1
-				PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+				PRINTFORML (%CALLNAME:ARG%)가게한경험 +1
 			ENDIF
 		;그 외
 		ELSE
@@ -253,12 +253,12 @@ SELECTCASE RESULT
 			EXP:MASTER:B경험 += 5
 			PRINTL B경험 +5
 			EXP:MASTER:절정경험 += 1
-			PRINTL 절정 경험 +1
+			PRINTL 절정경험 +1
 			;ARG의 경험 증가와 내용의 표시
 			EXP:ARG:수음경험 += 1 
-			PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+			PRINTFORML (%CALLNAME:ARG%) 수음 경험 +1
 			EXP:ARG:가게한경험 += 1
-			PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+			PRINTFORML (%CALLNAME:ARG%)가게한경험 +1
 		ENDIF
 		;불끈불끈 해소
 		CFLAG:ARG:불끈불끈 = 0
@@ -289,7 +289,7 @@ ELSE
 	PRINTFORMW 무방비에도 옷의 틈새로부터 힐끔힐끔 보이는 유두에 눈이 빼앗긴다
 ENDIF
 
-;굴복 각인 4이상 또한 관련하는 각인을 취득이 끝난 상태인 경우
+;굴복각인 4이상 또한 관련하는 각인을 취득이 끝난 상태인 경우
 {
 IF MARK:ARG:굴복각인 > 4 && 
 	((PENIS(MASTER) && GETBITAND(CFLAG:ARG:각인, 2, 3, 12, 19)) || 
@@ -315,7 +315,7 @@ IF MARK:ARG:굴복각인 > 4 &&
 				CFLAG:ARG:평시아 = -999
 			;불끈불끈 증가
 			CFLAG:ARG:불끈불끈 += 1
-			PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+			PRINTFORML (%CALLNAME:ARG%) 불끈불끈 +1
 			;WAIT와 RETURN는 종단으로
 		;받습니다
 		CASE 1
@@ -329,20 +329,20 @@ IF MARK:ARG:굴복각인 > 4 &&
 				EXP:MASTER:C경험 += 5
 				PRINTL C경험 +5
 				EXP:MASTER:절정경험 += 1
-				PRINTL 절정 경험 +1
+				PRINTL 절정경험 +1
 				EXP:MASTER:사정경험 += 1
-				PRINTL 사정 경험 +1
+				PRINTL 사정경험 +1
 				EXP:MASTER:구음경험 += 1
 				PRINTL 구음경험 +1
 				;ARG의 경험 증가와 내용의 표시
 				EXP:ARG:B경험 += 5
-				PRINTFORML （%CALLNAME:ARG%) B경험 +5
+				PRINTFORML (%CALLNAME:ARG%) B경험 +5
 				EXP:ARG:정액경험 += 1
-				PRINTFORML （%CALLNAME:ARG%) 정액 경험 +1
+				PRINTFORML (%CALLNAME:ARG%) 정액경험 +1
 				EXP:ARG:구음경험 += 1
-				PRINTFORML （%CALLNAME:ARG%) 구음경험 +1
+				PRINTFORML (%CALLNAME:ARG%) 구음경험 +1
 				EXP:ARG:가게한경험 += 1
-				PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+				PRINTFORML (%CALLNAME:ARG%)가게한경험 +1
 				;BASE:사정이 감소
 				BASE:MASTER:사정 -= 300
 				;정력 보너스
@@ -355,18 +355,18 @@ IF MARK:ARG:굴복각인 > 4 &&
 				EXP:MASTER:C경험 += 5
 				PRINTL C경험 +5
 				EXP:MASTER:절정경험 += 1
-				PRINTL 절정 경험 +1
+				PRINTL 절정경험 +1
 				EXP:MASTER:구음경험 += 1
 				PRINTL 구음경험 +1
 				EXP:MASTER:봉사쾌락경험 += 1
-				PRINTL 봉사 쾌락 경험 +1
+				PRINTL 봉사쾌락경험 +1
 				;ARG의 경험 증가와 내용의 표시
 				EXP:ARG:B경험 += 5
-				PRINTFORML （%CALLNAME:ARG%) B경험 +5
+				PRINTFORML (%CALLNAME:ARG%) B경험 +5
 				EXP:ARG:구음경험 += 1 
-				PRINTFORML （%CALLNAME:ARG%) 구음경험 +1
+				PRINTFORML (%CALLNAME:ARG%) 구음경험 +1
 				EXP:ARG:가게한경험 += 1
-				PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+				PRINTFORML (%CALLNAME:ARG%)가게한경험 +1
 			ENDIF
 			[SKIPSTART]
 			//이것까지는 스킨십에 의해 각인을 취득하거나 하지 않았다거나 하고 있었다
@@ -396,7 +396,7 @@ ELSE
 	PRINTFORMW 휴식일을 깨달았다%CALLNAME:MASTER%는 회화를 서둘러 절상 식당으로부터 나갔습니다
 	;불끈불끈 증가
 	CFLAG:ARG:불끈불끈 += 1
-	PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+	PRINTFORML (%CALLNAME:ARG%) 불끈불끈 +1
 	;WAIT와 RETURN는 종단으로 정리해 실행하도록(듯이)
 ENDIF
 WAIT
@@ -427,7 +427,7 @@ PRINTFORMW 방심한다%CALLNAME:MASTER%를 남겨 떠나 갔다…
 ;MASTER와 ARG의 경험 증가와 내용의 표시
 EXP:MASTER:키스경험 += 1
 EXP:ARG:키스경험 += 1 
-PRINTFORML (두 명) 키스 경험 +1
+PRINTFORML (두 명) 키스경험 +1
 ;불끈불끈 해소
 CFLAG:ARG:불끈불끈 = 0
 WAIT
@@ -462,7 +462,7 @@ PRINTFORMW 방심한다%CALLNAME:MASTER%를 남겨 떠나 갔다…
 EXP:MASTER:B경험 += 3
 PRINTL B경험 +3
 EXP:ARG:수음경험 += 1 
-PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+PRINTFORML (%CALLNAME:ARG%) 수음 경험 +1
 CFLAG:ARG:불끈불끈 = 0
 WAIT
 RETURN 1
@@ -474,8 +474,8 @@ RETURN 1
 ;조교 대상으로 페니스 없음이라면 캔슬
 SIF !PENIS(MASTER)
 	RETURN 0
-;굴복 각인 5 이하 혹은 관련하는 각인미취득의 경우는 캔슬
-;굴복 각인 > 4로 GETBITAND로 기술을 통일하고 싶은 곳이었지만(귀찮게 되어) 그만두고
+;굴복각인 5 이하 혹은 관련하는 각인미취득의 경우는 캔슬
+;굴복각인 > 4로 GETBITAND로 기술을 통일하고 싶은 곳이었지만(귀찮게 되어) 그만두고
 SIF MARK:ARG:굴복각인 < 5 || !GETBITOR(CFLAG:ARG:각인, 2, 3, 12, 19, 28)
 	RETURN 0
 ;206, 4-0(식사 함께 좋을까?)
@@ -495,7 +495,7 @@ SELECTCASE RESULT
 			CFLAG:ARG:평시아 = -999
 		;불끈불끈 증가
 		CFLAG:ARG:불끈불끈 += 1
-		PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+		PRINTFORML (%CALLNAME:ARG%) 불끈불끈 +1
 	;함께 먹는다
 	CASE 1
 		;206, 4-2(테이블아래에서 빨아지고 있습니다)
@@ -513,16 +513,16 @@ SELECTCASE RESULT
 		EXP:MASTER:C경험   += 10
 		PRINTL C경험 +10
 		EXP:MASTER:절정경험 += 3
-		PRINTL 절정 경험 +3
+		PRINTL 절정경험 +3
 		EXP:MASTER:사정경험 += 3
-		PRINTL 사정 경험 +3
+		PRINTL 사정경험 +3
 		;ARG의 경험 증가와 내용의 표시
 		EXP:ARG:정액경험   += 3
-		PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
+		PRINTFORML (%CALLNAME:ARG%) 정액경험 +3
 		EXP:ARG:구음경험   += 3
-		PRINTFORML （%CALLNAME:ARG%) 구음경험 +3
+		PRINTFORML (%CALLNAME:ARG%) 구음경험 +3
 		EXP:ARG:가게한경험 += 3
-		PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +3
+		PRINTFORML (%CALLNAME:ARG%)가게한경험 +3
 		;MASTER의 BASE:사정이 감소
 		BASE:MASTER:사정 -= 600
 		;정력 보너스
@@ -552,7 +552,7 @@ SIF TALENT:ARG:새디즘
 ;  쿤닐링구스나 리밍을 강요받거나 TALENT나 ITEM를 참조해(페니반등으로) 당하는 전개도 좋다
 ;    아무튼 다음에 시간이 있을 때에 생각한다고 하는 일로(2014/11/24)
 ;-------------------------------------------------
-;굴복 각인이 5 이하라면 캔슬
+;굴복각인이 5 이하라면 캔슬
 SIF MARK:ARG:굴복각인 < 5
 	RETURN 0
 ;이것들의 각인을 취득하고 있지 않는 경우는 캔슬
@@ -572,7 +572,7 @@ SELECTCASE RESULT
 		CALL KOJO_EVENT(207, 1, ARG)
 		PRINTFORMW %CALLNAME:MASTER%는%CALLNAME:ARG%의 의사표현을 정중하게 거절해 혼자서 빨랫감을 정리했다
 		CFLAG:ARG:불끈불끈 += 1
-		PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+		PRINTFORML (%CALLNAME:ARG%) 불끈불끈 +1
 		;WAIT와 RETURN는 종단으로 행한다
 	;부탁한다
 	CASE 1
@@ -595,18 +595,18 @@ SELECTCASE RESULT
 			EXP:MASTER:C경험 += 5
 			PRINTL C경험 +5
 			EXP:MASTER:절정경험 += 1
-			PRINTL 절정 경험 +1
+			PRINTL 절정경험 +1
 			EXP:MASTER:사정경험 += 1
-			PRINTL 사정 경험 +1
+			PRINTL 사정경험 +1
 			;ARG의 경험 증가와 내용의 표시
 			EXP:ARG:정액경험 += 1 
-			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +1
+			PRINTFORML (%CALLNAME:ARG%) 정액경험 +1
 			EXP:ARG:구음경험 += 1 
-			PRINTFORML （%CALLNAME:ARG%) 구음경험 +1
+			PRINTFORML (%CALLNAME:ARG%) 구음경험 +1
 			EXP:ARG:가게한경험 += 1
-			PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+			PRINTFORML (%CALLNAME:ARG%)가게한경험 +1
 			BASE:MASTER:사정 -= 300
-			;입안 사정
+			;입안사정
 			;SIF ! GETBIT(CFLAG:ARG:각인, 28)
 		;A섹스에 파생
 		ELSEIF ABL:ARG:A감각 > 3 && RAND:(LIMIT(10 - ABL:ARG:A감각, 3, 10)) == 0
@@ -624,29 +624,29 @@ SELECTCASE RESULT
 			;***************************
 			EXP:MASTER:C경험 += 5                          ;조교 대상 C경험
 			PRINTL C경험 +5
-			EXP:MASTER:성교경험 += 1                        ;조교 대상 성교 경험
-			PRINTL 성교 경험 +1
-			EXP:MASTER:절정경험 += 1                        ;조교 대상 절정 경험
-			PRINTL 절정 경험 +1
-			EXP:MASTER:사정경험 += 3                        ;조교 대상 사정 경험
-			PRINTL 사정 경험 +3
+			EXP:MASTER:성교경험 += 1                        ;조교 대상 성교경험
+			PRINTL 성교경험 +1
+			EXP:MASTER:절정경험 += 1                        ;조교 대상 절정경험
+			PRINTL 절정경험 +1
+			EXP:MASTER:사정경험 += 3                        ;조교 대상 사정경험
+			PRINTL 사정경험 +3
 			;ARG의 경험 증가와 내용의 표시
 			;***************************
 			EXP:ARG:A경험 += 1                             ;ARGA 경험
-			PRINTFORML （%CALLNAME:ARG%) A경험 +1
-			EXP:ARG:성교경험 += 1                           ;ARG 성교 경험
-			PRINTFORML （%CALLNAME:ARG%) 성교 경험 +1
-			EXP:ARG:정액경험 += 3                           ;ARG 정액 경험
-			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
-			EXP:ARG:가게한경험 += 1                         ;ARG 가게 한 경험
-			PRINTFORML (%CALLNAME:ARG%) 가게 한 경험 +1
+			PRINTFORML (%CALLNAME:ARG%) A경험 +1
+			EXP:ARG:성교경험 += 1                           ;ARG 성교경험
+			PRINTFORML (%CALLNAME:ARG%) 성교경험 +1
+			EXP:ARG:정액경험 += 3                           ;ARG 정액경험
+			PRINTFORML (%CALLNAME:ARG%) 정액경험 +3
+			EXP:ARG:가게한경험 += 1                         ;ARG가게한경험
+			PRINTFORML (%CALLNAME:ARG%)가게한경험 +1
 			BASE:MASTER:사정 -= 500
 			[SKIPSTART]
 			;성교
 			SIF ! GETBIT(CFLAG:ARG:각인, 30)
-			;허리를 흔든다
+			;허리를흔든다
 			SIF ! GETBIT(CFLAG:ARG:각인, 31)
-			;애널 섹스(공격)
+			;애널섹스(공격)
 			SIF ! GETBIT(CFLAG:ARG:각인, 47)
 			;애널에 사정
 			SIF ! GETBIT(CFLAG:ARG:각인, 41)
@@ -667,29 +667,29 @@ SELECTCASE RESULT
 			;***************************
 			EXP:MASTER:C경험 += 5                          ;조교 대상 C경험
 			PRINTL C경험 +5
-			EXP:MASTER:성교경험 += 1                        ;조교 대상 성교 경험
-			PRINTL 성교 경험 +1
-			EXP:MASTER:절정경험 += 1                        ;조교 대상 절정 경험
-			PRINTL 절정 경험 +1
-			EXP:MASTER:사정경험 += 3                        ;조교 대상 사정 경험
-			PRINTL 사정 경험 +3
+			EXP:MASTER:성교경험 += 1                        ;조교 대상 성교경험
+			PRINTL 성교경험 +1
+			EXP:MASTER:절정경험 += 1                        ;조교 대상 절정경험
+			PRINTL 절정경험 +1
+			EXP:MASTER:사정경험 += 3                        ;조교 대상 사정경험
+			PRINTL 사정경험 +3
 			;ARG의 경험 증가와 내용의 표시
 			;***************************
 			EXP:ARG:V경험 += 1                             ;ARGV 경험
-			PRINTFORML （%CALLNAME:ARG%) V경험 +1
-			EXP:ARG:성교경험 += 1                           ;ARG 성교 경험
-			PRINTFORML （%CALLNAME:ARG%) 성교 경험 +1
-			EXP:ARG:정액경험 += 3                           ;ARG 정액 경험
-			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
-			EXP:ARG:가게한경험 += 1                         ;ARG 가게 한 경험
-			PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+			PRINTFORML (%CALLNAME:ARG%) V경험 +1
+			EXP:ARG:성교경험 += 1                           ;ARG 성교경험
+			PRINTFORML (%CALLNAME:ARG%) 성교경험 +1
+			EXP:ARG:정액경험 += 3                           ;ARG 정액경험
+			PRINTFORML (%CALLNAME:ARG%) 정액경험 +3
+			EXP:ARG:가게한경험 += 1                         ;ARG가게한경험
+			PRINTFORML (%CALLNAME:ARG%)가게한경험 +1
 			BASE:MASTER:사정 -= 500
 			[SKIPSTART]
 			;성교
 			SIF ! GETBIT(CFLAG:ARG:각인, 30)
-			;허리를 흔든다
+			;허리를흔든다
 			SIF ! GETBIT(CFLAG:ARG:각인, 31)
-			;질내 사정
+			;질내사정
 			SIF ! GETBIT(CFLAG:ARG:각인, 25)
 			[SKIPEND]
 		ENDIF
@@ -707,7 +707,7 @@ RETURN 1
 ;낮이라면 캔슬
 SIF !TIME
 	RETURN 0
-;굴복 각인 5 이하라면 캔슬
+;굴복각인 5 이하라면 캔슬
 SIF MARK:ARG:굴복각인 < 5
 	RETURN 0
 ;관련하는 각인미취득시는 캔슬
@@ -744,39 +744,39 @@ IF PENIS(MASTER)
 			PRINTFORML %CALLNAME:MASTER%보다 먼저 한계가 왔는지,%CALLNAME:ARG%는 등에 껴안은 채로
 		;부탁한다
 		CASE 1
-			;208, 6-3(가게 해!)
+			;208, 6-3(가게해!)
 			CALL KOJO_EVENT(208, 3, ARG)
 			PRINTFORML %CALLNAME:MASTER%가 울 것 같은 소리로 간원 하면%CALLNAME:ARG%는 등에 껴안은 채로
 	ENDSELECT
 	PRINTFORMW 페니스를 잡아 단번에 훑어 내 세웠다…
 	;208, 6-5(두근두근)
 	CALL KOJO_EVENT(208, 5, ARG)
-	PRINTFORML 초조하게 함에 초조해 해졌다%CALLNAME:MASTER%의 페니스는 눈 깜짝할 순간에 승천 해
+	PRINTFORML 초조하게함에 초조해 해졌다%CALLNAME:MASTER%의 페니스는 눈 깜짝할 순간에 승천 해
 	PRINTFORMW 망가진 수도꼭지와 같이 정액을 흩뿌리고 있다…
 	;MASTER의 경험 증가와 내용의 표시
 	EXP:MASTER:C경험 += 3
 	PRINTL C경험 +3
 	EXP:MASTER:절정경험 += 1
-	PRINTL 절정 경험 +1
+	PRINTL 절정경험 +1
 	EXP:MASTER:사정경험 += 3
-	PRINTL 사정 경험 +3
+	PRINTL 사정경험 +3
 	;ARG의 경험 증가와 내용의 표시
 	EXP:ARG:정액경험 += 3
-	PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
+	PRINTFORML (%CALLNAME:ARG%) 정액경험 +3
 	EXP:ARG:수음경험 += 1 
-	PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+	PRINTFORML (%CALLNAME:ARG%) 수음 경험 +1
 	EXP:ARG:가게한경험 += 2
-	PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +2
+	PRINTFORML (%CALLNAME:ARG%)가게한경험 +2
 	BASE:MASTER:사정 -= 500
 	;정력 보너스
 	SIF FLAG:일상제어 == 2
 		TCVAR:MASTER:드라이사정수 += 1
 	[SKIPSTART]
-	;초조하게 해 플레이
+	;초조하게해플레이
 	SIF ! GETBIT(CFLAG:ARG:각인, 33)
-	;가게 해!
+	;가게해!
 	SIF RESULT == 1 && ! GETBIT(CFLAG:ARG:각인, 49)
-	;대량 사정
+	;대량사정
 	SIF ! GETBIT(CFLAG:ARG:각인, 20)
 	[SKIPEND]
 ;조교 대상으로 페니스 없음
@@ -796,13 +796,13 @@ ELSE
 	EXP:MASTER:B경험 += 1
 	PRINTL B경험 +1
 	EXP:MASTER:절정경험 += 3
-	PRINTL 절정 경험 +3
+	PRINTL 절정경험 +3
 	;ARG의 경험 증가와 내용의 표시
 	EXP:ARG:수음경험 += 3 
-	PRINTFORML （%CALLNAME:ARG%) 수음 경험 +3
+	PRINTFORML (%CALLNAME:ARG%) 수음 경험 +3
 	EXP:ARG:가게한경험 += 3
-	PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +3
-	;다중 절정
+	PRINTFORML (%CALLNAME:ARG%)가게한경험 +3
+	;다중절정
 	;SIF ! GETBIT(CFLAG:ARG:300, 37)
 ENDIF
 ;불끈불끈 해소
@@ -839,7 +839,7 @@ ELSE
 ENDIF
 ;ARG의 경험 증가와 내용의 표시
 EXP:ARG:구음경험 += 3 
-PRINTFORML （%CALLNAME:ARG%) 구음경험 +3
+PRINTFORML (%CALLNAME:ARG%) 구음경험 +3
 WAIT
 RETURN 1
 
@@ -896,34 +896,34 @@ SELECTCASE RESULT
 		PRINTFORMW %CALLNAME:MASTER%는 욕조로부터 나오는 것에 나올 수 있지 못하고 올려 버렸다
 		;ARG의 경험 증가와 내용의 표시
 		EXP:ARG:C경험 += 3
-		PRINTFORML （%CALLNAME:ARG%) C경험 +3
+		PRINTFORML (%CALLNAME:ARG%) C경험 +3
 		EXP:ARG:B경험 += 3
-		PRINTFORML （%CALLNAME:ARG%) B경험 +3
+		PRINTFORML (%CALLNAME:ARG%) B경험 +3
 		EXP:ARG:절정경험 += 3
-		PRINTFORML （%CALLNAME:ARG%) 절정 경험 +3
+		PRINTFORML (%CALLNAME:ARG%) 절정경험 +3
 		IF TALENT:ARG:후타나리
 			EXP:ARG:사정경험 += 3
-			PRINTFORML （%CALLNAME:ARG%) 사정 경험 +3
+			PRINTFORML (%CALLNAME:ARG%) 사정경험 +3
 		ENDIF
 		IF TALENT:(ARG:1):후타나리 || TALENT:ARG:후타나리
 			EXP:ARG:정액경험 += 3
-			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
+			PRINTFORML (%CALLNAME:ARG%) 정액경험 +3
 		ENDIF
 		PRINTL
 		;ARG:1의 경험 증가와 내용의 표시
 		EXP:(ARG:1):C경험 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%) C경험 +3
+		PRINTFORML (%CALLNAME:(ARG:1)%) C경험 +3
 		EXP:(ARG:1):B경험 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%) B경험 +3
+		PRINTFORML (%CALLNAME:(ARG:1)%) B경험 +3
 		EXP:(ARG:1):절정경험 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%) 절정 경험 +3
+		PRINTFORML (%CALLNAME:(ARG:1)%) 절정경험 +3
 		IF TALENT:(ARG:1):후타나리
 			EXP:(ARG:1):사정경험 += 3
-			PRINTFORML （%CALLNAME:(ARG:1)%) 사정 경험 +3
+			PRINTFORML (%CALLNAME:(ARG:1)%) 사정경험 +3
 		ENDIF
 		IF TALENT:ARG:후타나리 || TALENT:(ARG:1):후타나리
 			EXP:(ARG:1):정액경험 += 3
-			PRINTFORML （%CALLNAME:(ARG:1)%) 정액 경험 +3
+			PRINTFORML (%CALLNAME:(ARG:1)%) 정액경험 +3
 		ENDIF
 		;우선 둘이서 즐겼으므로 불끈불끈 해소
 		CFLAG:ARG:불끈불끈 = 0
@@ -935,7 +935,7 @@ SELECTCASE RESULT
 		;210, 8-4(혼합해 받아 와)
 		CALL KOJO_EVENT(210, 4, ARG)
 		PRINTFORML %CALLNAME:ARG%는 매료되고 숨을 거칠게 하고 있다%CALLNAME:MASTER%의 손을 잡으면
-		PRINTFORMW 매트 위에 위로 향해 재워, 그 위에%CALLNAME:(ARG:1)%가 대량의 소프를 발라 간다
+		PRINTFORMW 매트 위에 위로돌리고로 재워, 그 위에%CALLNAME:(ARG:1)%가 대량의 소프를 발라 간다
 		;210, 8-5(둘이서 -있고)
 		CALL KOJO_EVENT(210, 5, ARG)
 		IF PENIS(MASTER)
@@ -953,46 +953,46 @@ SELECTCASE RESULT
 		EXP:MASTER:B경험 += 3
 		PRINTL B경험 +3
 		EXP:MASTER:절정경험 += 3
-		PRINTL 절정 경험 +3
+		PRINTL 절정경험 +3
 		IF PENIS(MASTER)
 			EXP:MASTER:사정경험 += 3
-			PRINTL 사정 경험 +3
+			PRINTL 사정경험 +3
 		ENDIF
 		IF PENIS(ARG) || PENIS(ARG:1) || PENIS(MASTER)
 			EXP:MASTER:정액경험 += 3
-			PRINTL 정액 경험 +3
+			PRINTL 정액경험 +3
 		ENDIF
 		PRINTL
 		;ARG의 경험 증가와 내용의 표시
 		EXP:ARG:C경험 += 3
-		PRINTFORML （%CALLNAME:ARG%) C경험 +3
+		PRINTFORML (%CALLNAME:ARG%) C경험 +3
 		EXP:ARG:B경험 += 3
-		PRINTFORML （%CALLNAME:ARG%) B경험 +3
+		PRINTFORML (%CALLNAME:ARG%) B경험 +3
 		EXP:ARG:절정경험 += 3
-		PRINTFORML （%CALLNAME:ARG%) 절정 경험 +3
+		PRINTFORML (%CALLNAME:ARG%) 절정경험 +3
 		IF TALENT:ARG:후타나리
 			EXP:ARG:사정경험 += 3
-			PRINTFORML （%CALLNAME:ARG%) 사정 경험 +3
+			PRINTFORML (%CALLNAME:ARG%) 사정경험 +3
 		ENDIF
 		IF PENIS(ARG) || PENIS(ARG:1) || PENIS(MASTER)
 			EXP:ARG:정액경험 += 3
-			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
+			PRINTFORML (%CALLNAME:ARG%) 정액경험 +3
 		ENDIF
 		PRINTL
 		;ARG:1의 경험 증가와 내용의 표시
 		EXP:(ARG:1):C경험 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%) C경험 +3
+		PRINTFORML (%CALLNAME:(ARG:1)%) C경험 +3
 		EXP:(ARG:1):B경험 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%) B경험 +3
+		PRINTFORML (%CALLNAME:(ARG:1)%) B경험 +3
 		EXP:(ARG:1):절정경험 += 3
-		PRINTFORML 절정 경험 +3(%CALLNAME:(ARG:1)%)
+		PRINTFORML 절정경험 +3(%CALLNAME:(ARG:1)%)
 		IF TALENT:(ARG:1):후타나리
 			EXP:(ARG:1):사정경험 += 3
-			PRINTFORML （%CALLNAME:(ARG:1)%) 사정 경험 +3
+			PRINTFORML (%CALLNAME:(ARG:1)%) 사정경험 +3
 		ENDIF
 		IF PENIS(ARG) || PENIS(ARG:1) || PENIS(MASTER)
 			EXP:(ARG:1):정액경험 += 3
-			PRINTFORML （%CALLNAME:(ARG:1)%) 정액 경험 +3
+			PRINTFORML (%CALLNAME:(ARG:1)%) 정액경험 +3
 		ENDIF
 		BASE:MASTER:사정 -= 900
 		CFLAG:ARG:불끈불끈     = 0
@@ -1033,7 +1033,7 @@ CALL KOJO_EVENT(211, 2, ARG)
 ;알몸에 적합해졌다
 IF ! GETBIT(CFLAG:ARG:300, 1)
 	PRINTFORML 굴복 포인트+1
-	CFLAG:ARG:굴복 P1 += 1
+	CFLAG:ARG:굴복P1 += 1
 	SETBIT CFLAG:ARG:각인, 1
 ENDIF
 [SKIPEND]
@@ -1071,7 +1071,7 @@ PRINTFORML %CALLNAME:MASTER%는%CALLNAME:ARG%와 홍차를 마시면서 담소�
 ;MASTER와 ARG의 경험 증가와 내용의 표시
 EXP:MASTER:회화경험 += 5
 EXP:ARG:회화경험    += 5
-PRINTL (두 명) 회화 경험 +5
+PRINTL (두 명) 회화경험 +5
 CFLAG:ARG:M호의 += 100
 CFLAG:ARG:호의  += 100
 PRINTL (두 명) 호감도 상승
@@ -1100,7 +1100,7 @@ WAIT
 RETURN 1
 
 ;─
-;아라이먼트 변동
+;아라이먼트변동
 ;─
 @DAILY_LIFE_3_0(ARG)
 $SELECTER
@@ -1111,7 +1111,7 @@ SIF !RESULT
 RETURN RESULT
 
 ;─
-;반항 제거(반항 각인을 가진 조교자의 아라이먼트가 높아지면 발생)
+;반항 제거(반항각인을 가진 조교자의 아라이먼트가 높아지면 발생)
 ;─
 @DAILY_LIFE_4(ARG)
 ;봉인되고 있으면 돌아오지만… 이것을 봉인해?
@@ -1126,7 +1126,7 @@ CFLAG:ARG:반발제거 = 0
 CALL KOJO_EVENT(214, 0, ARG)
 PRINTL
 PRINTFORML %CALLNAME:ARG%에 회유 되었기 때문에%CALLNAME:MASTER%의 반항심이 희미해졌습니다
-PRINTFORML 반항 각인이{LOCAL}가 되었습니다
+PRINTFORML 반항각인이{LOCAL}가 되었습니다
 WAIT
 RETURN 1
 
@@ -1189,14 +1189,14 @@ SELECTCASE ARG:1
 	;아무것도 하지 않았다……
 	CASE -1
 		RETURN 0
-	;성 지식 향상
+	;성지식 향상
 	CASE 0
 		SIF TALENT:MASTER:독심술 == 2
-			PRINTFORML %CALLNAME:ARG%는 책을 읽어 성 지식의 향상에 노력한 것 같다……
+			PRINTFORML %CALLNAME:ARG%는 책을 읽어 성지식의 향상에 노력한 것 같다……
 		LOCAL = RAND:MAX(3 + TALENT:ARG:습득빠름 - TALENT:ARG:습득느림, 2)
 		EXP:ARG:성지식 += LOCAL
 		SIF TALENT:MASTER:독심술 == 2
-			PRINTFORML （%CALLNAME:ARG%) 성 지식+{LOCAL}
+			PRINTFORML (%CALLNAME:ARG%) 성지식+{LOCAL}
 ENDSELECT
 IF TALENT:MASTER:독심술 == 1
 	PRINTFORML %CALLNAME:ARG%는 보지 않은 동안에 뭔가를 한 것 같다……

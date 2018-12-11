@@ -5,16 +5,16 @@
 @ACTION_APPLY_50
 ;봉사계의 행동은 거부할 수 있으므로, 반응이 나올 때까지 신체의 접촉이 없도록 해 둡니다
 ;탈의의 처리
-;조교 대상이 악세사리 장착중,1/3의 확률이나 조교자 C둔감시 액세서리 강제 탈의
+;조교 대상이 악세사리 장착중,1/3의 확률이나 조교자 C둔감시 액세서리 강제탈의
 SIF TEQUIP:MASTER:악세사리 && (!RAND:3 || TALENT:C둔감)
 	TFLAG:강제탈의 = 6
 ;조교자 착의플레이선호 소질이 있는 경우
 IF TALENT:착의플레이선호
-	;속옷만 자주 탈의
+	;속옷만 자주탈의
 	TFLAG:자주탈의 = 9
-;해방 소질, 또는 확률(조교자 조교 레벨, 욕망, 조교 대상 매혹으로 증대)로
+;해방 소질, 또는 확률(조교자 조교레벨, 욕망, 조교 대상 매혹으로 증대)로
 ELSEIF TALENT:해방 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "욕망") / 10 + TALENT:MASTER:매혹 * 5 > 4 + RAND:5)
-	;반반의 확률로 액세서리까지, 또는 전라까지 자주 탈의
+	;반반의 확률로 액세서리까지, 또는 전라까지 자주탈의
 	TFLAG:자주탈의 = 7 + RAND:2
 ENDIF
 ;자위 파생시
@@ -27,7 +27,7 @@ IF TFLAG:ACT파생 == 1
 	;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
 	SIF STAIN:페니스 & (32 + 64)
 		SOURCE:MASTER:불결 += 400
-	;자주 탈의를 실시하지 않는 판정이면, 하반신 전부 자주 탈의로 변경
+	;자주탈의를 실시하지 않는 판정이면, 하반신 전부 자주탈의로 변경
 	SIF TFLAG:자주탈의 == 0
 		TFLAG:자주탈의 = 5
 ;보통 애무시
@@ -40,11 +40,11 @@ ELSE
 	;조교자의 바기나에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
 	SIF STAIN:바기나 & (32 + 64)
 		SOURCE:MASTER:불결 += 400
-	;자주 탈의를 실시하지 않는 판정이면, 상＋시모카미착자주 탈의로 변경
+	;자주탈의를 실시하지 않는 판정이면, 상＋시모카미착 자주탈의로 변경
 	SIF TFLAG:자주탈의 == 0
 		TFLAG:자주탈의 = 3
 ENDIF
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교 대상 자위를 중단
 TEQUIP:자위중 &= ~1
@@ -54,10 +54,10 @@ TFLAG:경과시간 += 2
 
 ;리액션 후(S/N)(불결)
 @ACTION_APPLY2_50
-;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+;REACT분류가 요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("거부/날뛴다/도망친다")
-	;리액션이 자위하기 시작하는 것 경우
-	IF IS_NOWCOMNAME("자위하기 시작한다")
+	;리액션이 자위하기시작한다의 경우
+	IF IS_NOWCOMNAME("자위하기시작한다")
 		;트라우마, 굴종 SOURCE 감소
 		TIMES SOURCE:MASTER:트라우마, 0.01
 		TIMES SOURCE:MASTER:굴종, 0.10
@@ -74,14 +74,14 @@ IF IS_COMGRONAME("거부/날뛴다/도망친다")
 	ENDIF
 ;그 외의 경우(수용)
 ELSE
-	;쾌x용 보정치(LOCAL:1~4):애무 보정, 조교 대상 순종, 기묘한손가락소질에 응해 상승(쾌v는 계산하지만 사용하지 않는다)
+	;쾌x용 보정치(LOCAL:1～4):애무 보정, 조교 대상 순종, 기묘한손가락소질에 응해 상승(쾌v는 계산하지만 사용하지 않는다)
 	FOR LOCAL, 1, 5
 		LOCAL:LOCAL = 100 + ACT_TO(TARGET, LOCAL) * GET_ABL(MASTER, "순종") * (2 + TALENT:MASTER:기묘한손가락) / 600
 	NEXT
 	;더러움이 서로 옮긴다
 	STAIN:MASTER:손 |= STAIN:(PENIS(TARGET) ? 2 # 3)
 	STAIN:(PENIS(TARGET) ? 2 # 3) |= STAIN:MASTER:손
-	;조교 대상 조교 레벨, 쾌c용 보정치에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨, 쾌c용 보정치에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL:1 / 10
 	;쾌c용 보정치에 응해 사랑, 쾌cSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL:1 / 5
@@ -105,7 +105,7 @@ ELSE
 			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
 			TCVAR:MASTER:자세 = 10
 		ENDIF
-		;위로 돌리고가 아니면,1/2그리고 뒤로부터 애무하도록(듯이)
+		;위로돌리고가 아니면,1/2그리고 뒤로부터 애무하도록(듯이)
 		IF TCVAR:MASTER:자세 != 1 && RAND:2 && TCVAR:MASTER:위치전후 != 3
 			TCVAR:MASTER:REACT자세변화 = 1
 			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
@@ -122,15 +122,15 @@ ENDIF
 ;탈의의 처리
 ;조교자 착의플레이선호 소질이 있는 경우
 IF TALENT:착의플레이선호
-	;속옷만 자주 탈의
+	;속옷만 자주탈의
 	TFLAG:자주탈의 = 9
 ;억압/수줍음 소질이 있는 경우
 ELSEIF TALENT:억압 || TALENT:수줍음
-	;하반신 윗도리 자주 탈의
+	;하반신윗도리 자주탈의
 	TFLAG:자주탈의 = 2
 ;그 외의 경우
 ELSE
-	;하반신 전부 자주 탈의
+	;하반신 전부 자주탈의
 	TFLAG:자주탈의 = 5
 ENDIF
 ;펠라치오계 강제시
@@ -143,7 +143,7 @@ IF TFLAG:ACT파생 == 1 || TFLAG:ACT파생 == 4
 	;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
 	SIF STAIN:페니스 & (32 + 64)
 		SOURCE:MASTER:불결 += 650
-;안면 승마 애널 강제시
+;안면승마애널 강제시
 ELSEIF TFLAG:ACT파생 == 3
 	;불결 SOURCE 증가
 	SOURCE:MASTER:불결 = 1000
@@ -158,17 +158,17 @@ ELSE
 	SIF STAIN:바기나 & (32 + 64)
 		SOURCE:MASTER:불결 += 620
 ENDIF
-;안면 승마 강제시
+;안면승마 강제시
 IF TFLAG:ACT파생 == 2
-	;안면 승마 상태를 세트
+	;안면승마 상태를 세트
 	CALL FACESITTING_SET(1)
-;안면 승마 애널 강제시
+;안면승마애널 강제시
 ELSEIF TFLAG:ACT파생 == 3
-	;안면 승마 상태를 세트
+	;안면승마 상태를 세트
 	CALL FACESITTING_SET(2)
 ;그 외의 경우
 ELSE
-	;안면 승마계 해제
+	;안면승마 계 해제
 	CALL FACESITTING_SET(0)
 ENDIF
 ;조교자 자위를 중단
@@ -179,7 +179,7 @@ TFLAG:경과시간 += 2
 
 ;리액션 후(S/N/H)(불결)
 @ACTION_APPLY2_51
-;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+;REACT분류가 요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("거부/날뛴다/도망친다")
 	;치정선행
 	IF PALAM:MASTER:치정 > PALAM:MASTER:반항
@@ -205,7 +205,7 @@ ELSE
 			STAIN:페니스 |= STAIN:MASTER:구
 			;보정치에 응해 쾌cSOURCE 증가
 			SOURCE:쾌C = LOCAL * 2
-		;안면 승마 애널
+		;안면승마애널
 		CASE 3
 			;애무 보정, 조교 대상 순종, 혀 사용해, 고양이혀 소질에 의해 보정 가격인상승
 			LOCAL = 250 + ACT_TO(TARGET, 3) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 900
@@ -214,7 +214,7 @@ ELSE
 			STAIN:애널 |= STAIN:MASTER:구
 			;보정치에 응해 쾌aSOURCE 증가
 			SOURCE:쾌A = LOCAL * 2
-		;상기 이외(쿤닐링구스 강제/안면 승마)
+		;상기 이외(쿤닐링구스 강제/안면승마)
 		CASEELSE
 			;애무 보정, 조교 대상 순종, 혀 사용해, 고양이혀 소질에 의해 보정 가격인상승
 			LOCAL = 250 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 900
@@ -224,7 +224,7 @@ ELSE
 			;보정치에 응해 쾌cSOURCE 증가
 			SOURCE:쾌C = LOCAL * 2
 	ENDSELECT
-	;조교 대상 조교 레벨, 보정치에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨, 보정치에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
 	;보정치에 응해 사랑 SOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
@@ -247,19 +247,19 @@ ENDIF
 ;리액션전(S/N/H)(불결)
 @ACTION_APPLY_52
 ;탈의의 처리
-;반반의 확률로 상반신 윗도리, 상반신 전부 강제 탈의
+;반반의 확률로 상반신윗도리, 상반신 전부 강제탈의
 TFLAG:강제탈의 = 1 + RAND:2 * 3
 ;조교자 착의플레이선호 소질이 있는 경우
 IF TALENT:착의플레이선호
-	;하반신 윗도리 자주 탈의
+	;하반신윗도리 자주탈의
 	TFLAG:자주탈의 = 2
 ;억압/수줍음 소질이 있는 경우
 ELSEIF TALENT:억압 || TALENT:수줍음
-	;하반신 전부 자주 탈의
+	;하반신 전부 자주탈의
 	TFLAG:자주탈의 = 5
 ;그 외의 경우
 ELSE
-	;액세서리까지 자주 탈의
+	;액세서리까지 자주탈의
 	TFLAG:자주탈의 = 7
 ENDIF
 ;불결 SOURCE 증가
@@ -270,7 +270,7 @@ SIF STAIN:페니스 & (4 + 8)
 ;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
 SIF STAIN:페니스 & (32 + 64)
 	SOURCE:MASTER:불결 += 500
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -280,10 +280,10 @@ TFLAG:경과시간 += 3
 
 ;리액션 후(S/N/H)(불결)
 @ACTION_APPLY2_52
-;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+;REACT분류가 요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("거부/날뛴다/도망친다")
-	;리액션이 자위하기 시작하는 것 경우
-	IF IS_NOWCOMNAME("자위하기 시작한다")
+	;리액션이 자위하기시작한다의 경우
+	IF IS_NOWCOMNAME("자위하기시작한다")
 		;트라우마, 굴종 SOURCE 감소
 		TIMES SOURCE:MASTER:트라우마, 0.01
 		TIMES SOURCE:MASTER:굴종, 0.10
@@ -307,7 +307,7 @@ ELSE
 	;더러움이 서로 옮긴다
 	STAIN:MASTER:가슴 |= STAIN:페니스
 	STAIN:페니스 |= STAIN:MASTER:가슴
-	;조교 대상 조교 레벨, 보정치에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨, 보정치에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
 	;보정치에 응해 사랑, 쾌cSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
@@ -323,20 +323,20 @@ ENDIF
 @ACTION_APPLY_53
 ;탈의의 처리
 ;벽통과가 있으면 3/4로 무시한다
-;반반의 확률로 하반신 윗도리, 하반신 전부 강제 탈의
+;반반의 확률로 하반신윗도리, 하반신 전부 강제탈의
 SIF !TALENT:벽통과 || !RAND:4
 	TFLAG:강제탈의 = 2 + RAND:2 * 3
 ;조교자 착의플레이선호 소질이 있는 경우
 IF TALENT:착의플레이선호
-	;속옷만 자주 탈의
+	;속옷만 자주탈의
 	TFLAG:자주탈의 = 9
 ;억압/수줍음 소질이 있는 경우
 ELSEIF TALENT:억압 || TALENT:수줍음
-	;하반신 윗도리 자주 탈의
+	;하반신윗도리 자주탈의
 	TFLAG:자주탈의 = 2
 ;그 외의 경우
 ELSE
-	;하반신 전부 자주 탈의
+	;하반신 전부 자주탈의
 	TFLAG:자주탈의 = 5
 ENDIF
 SOURCE:MASTER:불결 = 60
@@ -346,7 +346,7 @@ SIF STAIN:페니스 & (4 + 8)
 ;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
 SIF STAIN:페니스 & (32 + 64)
 	SOURCE:MASTER:불결 += 450
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -356,10 +356,10 @@ TFLAG:경과시간 += 3
 
 ;리액션 후
 @ACTION_APPLY2_53
-;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+;REACT분류가 요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("거부/날뛴다/도망친다")
-	;리액션이 자위하기 시작하는 것 경우
-	IF IS_NOWCOMNAME("자위하기 시작한다")
+	;리액션이 자위하기시작한다의 경우
+	IF IS_NOWCOMNAME("자위하기시작한다")
 		;트라우마, 굴종 SOURCE 감소
 		TIMES SOURCE:MASTER:트라우마, 0.01
 		TIMES SOURCE:MASTER:굴종, 0.10
@@ -383,7 +383,7 @@ ELSE
 	;더러움이 서로 옮긴다
 	STAIN:MASTER:바기나 |= STAIN:페니스
 	STAIN:페니스 |= STAIN:MASTER:바기나
-	;조교 대상 조교 레벨, 보정치에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨, 보정치에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
 	;보정치에 응해 사랑, 쾌cSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
@@ -393,13 +393,13 @@ ELSE
 ENDIF
 
 ;─
-;055, 다리 빨고 강제
+;055, 다리빨고강제
 ;─
 ;리액션전(N/H/A)[벌](불결, 일탈, 트라우마)
 @ACTION_APPLY_55
 ;조교 대상이 양말을 신고 있을 때
 SIF TEQUIP:양말
-	;반반의 확률로 액세서리, 액세서리까지 자주 탈의
+	;반반의 확률로 액세서리, 액세서리까지 자주탈의
 	TFLAG:자주탈의 = 6 * RAND:2
 SOURCE:MASTER:불결 = 180
 ;조교자의 다리에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
@@ -408,11 +408,11 @@ SIF STAIN:다리 & (4 + 8)
 ;조교자의 다리에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
 SIF STAIN:다리 & (32 + 64)
 	SOURCE:MASTER:불결 += 800
-;조교 대상 순종, 마조끼, 프라이드낮음, 프라이드높음 소질, 반항 강도, 반항 각인, 불결 SOURCE, 조교 레벨에 응해 일탈 SOURCE 증감
+;조교 대상 순종, 마조끼, 프라이드낮음, 프라이드높음 소질, 반항강도, 반항각인, 불결 SOURCE, 조교레벨에 응해 일탈 SOURCE 증감
 SOURCE:MASTER:일탈 = (35 - GET_ABL(MASTER, "순종") * 4 / 10 - GET_ABL(MASTER, "마조끼") / 5 - TALENT:MASTER:프라이드낮음 * 5 + TALENT:MASTER:프라이드높음 * 5) * (50 + CFLAG:MASTER:반항강도 * 3 + MARK:반항각인 * 2 + SOURCE:MASTER:불결 / 50) / (5 + CFLAG:MASTER:조교레벨)
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
-;조교 대상 프라이드높음, 프라이드낮음, 감수성, 감정결핍 소질, 일탈 SOURCE, 조교 레벨, 온순하게 응해 트라우마 SOURCE 증감
+;조교 대상 프라이드높음, 프라이드낮음, 감수성, 감정결핍 소질, 일탈 SOURCE, 조교레벨, 온순하게 응해 트라우마 SOURCE 증감
 SOURCE:MASTER:트라우마 = TALENT:MASTER:프라이드높음 * 150 - TALENT:MASTER:프라이드낮음 * 50 + TALENT:MASTER:감수성 * 150 - TALENT:MASTER:감정결핍 * 50 + SOURCE:MASTER:일탈 - CFLAG:MASTER:조교레벨 * ABL:MASTER:순종 * 20
 ;일탈 SOURCE가 0이라면 트라우마 SOURCE도 0이 된다
 SOURCE:MASTER:트라우마 = SOURCE:MASTER:일탈 == 0 ? 0 # SOURCE:MASTER:트라우마
@@ -421,7 +421,7 @@ SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:
 ;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
 SIF CFLAG:MASTER:트라우마 == 55
 	TIMES SOURCE:MASTER:트라우마 , 1.50
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자 마조끼에 응해 발기도 상승
 TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20)
@@ -429,10 +429,10 @@ TFLAG:경과시간 += 2
 
 ;리액션 후
 @ACTION_APPLY2_55
-;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+;REACT분류가 요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("거부/날뛴다/도망친다")
-	;리액션이 자위하기 시작하는 것 경우
-	IF IS_NOWCOMNAME("자위하기 시작한다")
+	;리액션이 자위하기시작한다의 경우
+	IF IS_NOWCOMNAME("자위하기시작한다")
 		;트라우마, 굴종 SOURCE 감소
 		TIMES SOURCE:MASTER:트라우마, 0.01
 		TIMES SOURCE:MASTER:굴종, 0.10
@@ -454,12 +454,12 @@ ELSE
 	;더러움이 서로 옮긴다
 	STAIN:MASTER:다리 |= STAIN:페니스
 	STAIN:페니스 |= STAIN:MASTER:다리
-	;조교 대상 조교 레벨, 보정치에 응해 접촉 SOURCE 증가
+	;조교 대상 조교레벨, 보정치에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
 	;보정치에 응해 사랑, 굴종 SOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
 	SOURCE:MASTER:굴종 += 200 + LOCAL * 50
-	;보정치, 조교 대상 조교 레벨에 응해 달성 SOURCE 증가
+	;보정치, 조교 대상 조교레벨에 응해 달성 SOURCE 증가
 	SOURCE:MASTER:달성 += 100 + LOCAL * CFLAG:MASTER:조교레벨 * 2
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
@@ -478,12 +478,12 @@ ENDIF
 ;056, 이라마치오(H/A)[벌](접촉, 사랑역, 성행동, 상해, 구속<=머리를 잡는 일, 불결, 일탈, 트라우마, 쾌c)
 ;─
 @ACTION_APPLY_56
-;반반의 확률로 하반신 윗도리, 하반신 전부 자주 탈의
+;반반의 확률로 하반신윗도리, 하반신 전부 자주탈의
 TFLAG:자주탈의 = 2 + RAND:2 * 3
-;조교자 착의플레이선호 소질이 있는 경우 속옷만 자주 탈의에 경감
+;조교자 착의플레이선호 소질이 있는 경우 속옷만 자주탈의에 경감
 SIF TALENT:착의플레이선호
 	TFLAG:자주탈의 = 9
-;조교 레벨에 응해 접촉 SOURCE 증가
+;조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 100 + GET_TRAINLV(TARGET) * 10
 ;성행동SOURCE 증가
 SOURCE:MASTER:성행동 = 50
@@ -498,8 +498,8 @@ SIF STAIN:페니스 & (4 + 8)
 ;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
 SIF STAIN:페니스 & (32 + 64)
 	SOURCE:MASTER:불결 += 700
-;조교 대상 순종, 봉사 정신, 조교 레벨, 도착적 소질, 상해, 구속 SOURCE에 응해 일탈 SOURCE 증감
-SOURCE:MASTER:일탈 = 800 - GET_ABL(MASTER, "순종") * 8 - GET_ABL(MASTER, "봉사 정신") * 8 - CFLAG:MASTER:조교레벨 * 30 - TALENT:MASTER:도착적 * 150 + SOURCE:MASTER:아픔 + SOURCE:MASTER:구속
+;조교 대상 순종, 봉사정신, 조교레벨, 도착적 소질, 상해, 구속 SOURCE에 응해 일탈 SOURCE 증감
+SOURCE:MASTER:일탈 = 800 - GET_ABL(MASTER, "순종") * 8 - GET_ABL(MASTER, "봉사정신") * 8 - CFLAG:MASTER:조교레벨 * 30 - TALENT:MASTER:도착적 * 150 + SOURCE:MASTER:아픔 + SOURCE:MASTER:구속
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
 ;조교 대상 겁쟁이, 기장, 반항적, 순수, 프라이드높음, 프라이드낮음, 감수성, 감정결핍 소질, 일탈 SOURCE에 응해 트라우마 SOURCE 증감
@@ -518,7 +518,7 @@ SOURCE:쾌C += 300 + ACT_TO(TARGET, 1)
 ;더러움이 서로 옮긴다
 STAIN:MASTER:구 |= STAIN:페니스
 STAIN:페니스 |= STAIN:MASTER:구
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
 TEQUIP:자위중 = 0
@@ -527,16 +527,16 @@ TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20)
 TFLAG:경과시간 += 3
 
 ;─
-;057, 가슴 애무 강제
+;057, 가슴애무강제
 ;─
 ;리액션전(S/N/H)
 @ACTION_APPLY_57
-;상반신 전부 자주 탈의
+;상반신 전부 자주탈의
 TFLAG:자주탈의 = 4
-;조교자, 조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+;조교자, 조교 대상 조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 50 + GET_TRAINLV(TARGET) * 5 + CFLAG:MASTER:조교레벨 * 5
-;조교 대상 호의, 봉사 정신에 응해 사랑 SOURCE 증가
-SOURCE:MASTER:사랑 = 50 + CFLAG:M호의 / 50 + GET_ABL(TARGET, "봉사 정신") * 5
+;조교 대상 호의, 봉사정신에 응해 사랑 SOURCE 증가
+SOURCE:MASTER:사랑 = 50 + CFLAG:M호의 / 50 + GET_ABL(TARGET, "봉사정신") * 5
 ;조교자의 가슴에 애액/페니스/모유 더러움이 존재하면 불결 SOURCE소증가
 SIF STAIN:가슴 & (1 + 2 + 16)
 	SOURCE:MASTER:불결 += 85
@@ -546,7 +546,7 @@ SIF STAIN:가슴 & (4 + 8)
 ;조교자의 가슴에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
 SIF STAIN:가슴 & (32 + 64)
 	SOURCE:MASTER:불결 += 550
-;안면 승마계 해제
+;안면승마 계 해제
 CALL FACESITTING_SET(0)
 ;조교자 기교, 애무, 기묘한손가락소질에 응해 발기도 상승
 TCVAR:MASTER:이번발기 += 80 + (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 3
@@ -554,7 +554,7 @@ TFLAG:경과시간 += 2
 
 ;리액션 후(S/N/H)
 @ACTION_APPLY2_57
-;REACT 분류에 의해 분기
+;REACT분류에 의해 분기
 SELECTCASE COMGRONAME(TFLAG:REACT분류)
 	CASE "소극적 따른다", "적극적 따른다", "받아들인다", "태연하게 따른다"
 		;2/3로 앉아 자세가 무릎서기에 변화
@@ -563,25 +563,25 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
 			TCVAR:MASTER:자세 = 10
 		ENDIF
-		;위로 돌리고가 아니고, ACT 파생이 입으로 애무가 아닌 경우,1/2그리고 뒤로부터 애무하도록(듯이)
+		;위로돌리고가 아니고, ACT파생가 입으로애무가 아닌 경우,1/2그리고 뒤로부터 애무하도록(듯이)
 		IF TCVAR:MASTER:자세 != 1 && RAND:2 && TCVAR:MASTER:위치전후 != 3 && TFLAG:ACT파생 != 2
 			TCVAR:MASTER:REACT자세변화 = 1
 			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
 			TCVAR:MASTER:위치전후 = 3
 		ENDIF
-	;REACT 분류가 날뛴다/도망치는 것 경우
+	;REACT분류가 날뛴다/도망치는 것 경우
 	CASE "거부", "날뛴다", "도망친다"
-		;COM가 자위하기 시작하는 것 경우
-		IF IS_NOWCOMNAME("자위하기 시작한다")
+		;COM가 자위하기시작한다의 경우
+		IF IS_NOWCOMNAME("자위하기시작한다")
 			;우선 더러움의 처리로부터 놓쳐 두는 일에
 		;그 외
 		ELSE
-			;구에서 애무 강제의 경우		ACT 파생을 보지 않았기 때문에 분리한다@/L
+			;입으로애무 강제의 경우		ACT파생를 보지 않았기 때문에 분리한다@/L
 			IF TFLAG:ACT파생 == 2
 				;더러움이 서로 옮긴다
 				STAIN:MASTER:구 |= STAIN:가슴
 				STAIN:가슴 |= STAIN:MASTER:구
-			;손으로 애무 강제의 경우		손을 잡아 이끈, 말하는 취급이니까 더러운 이동해도 좋은 것이 아닐까
+			;손으로애무 강제의 경우		손을 잡아 이끈, 말하는 취급이니까 더러운 이동해도 좋은 것이 아닐까
 			ELSE
 				;더러움이 서로 옮긴다
 				STAIN:MASTER:손 |= STAIN:가슴
@@ -589,10 +589,10 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 			ENDIF
 		ENDIF
 ENDSELECT
-;조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+;조교 대상 조교레벨에 응해 접촉 SOURCE 증가
 SOURCE:MASTER:접촉 += 75 + CFLAG:MASTER:조교레벨 * 3
-;조교 대상 호의, 봉사 정신에 응해 사랑 SOURCE 증가
-SOURCE:MASTER:사랑 += 35 + CFLAG:M호의 / 40 + GET_ABL(MASTER, "봉사 정신") * 3
+;조교 대상 호의, 봉사정신에 응해 사랑 SOURCE 증가
+SOURCE:MASTER:사랑 += 35 + CFLAG:M호의 / 40 + GET_ABL(MASTER, "봉사정신") * 3
 ;애무 보정, 조교 대상기묘한손가락소질에 응해 보정 가격인상승
 LOCAL = 30 + ACT_TO(TARGET, 4) * (3 + TALENT:MASTER:기묘한손가락) / 4
 

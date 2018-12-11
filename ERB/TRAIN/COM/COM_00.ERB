@@ -3,7 +3,7 @@
 ;─
 @COM0
 ;질문받아 대답하지 않는 경우는 벌포인트에 가산
-IF IS_NOWACTNAME("지금의 기분을 (듣)묻는다/자신에게로의 기분을 (듣)묻는다")
+IF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을얘기한다")
 	TFLAG:벌포인트 += 1 + RAND:3 + MARK:반항각인 / 2 + BASE:초조 / 100
 	;파생:질문에 답하지 않는다
 	TFLAG:REACT파생 = 1
@@ -12,7 +12,7 @@ ELSE
 	TFLAG:REACT파생 = 0
 ENDIF
 ;COM 인상
-CALL SET_COMIMP("악인상소")
+CALL SET_COMIMP("나쁜인상")
 ;의존도 변화
 CALL ADD_DEPEND(-1, -1)
 RETURN 1
@@ -27,15 +27,15 @@ TIMES SOURCE:MASTER:트라우마 , 1.20
 ;굴종 SOURCE 증가
 SOURCE:MASTER:굴종 += 100 + MARK:굴복각인 * 20
 ;ACT 조건에 의해 공포 SOURCE 증가
-SIF IS_NOWACTNAME("엄격하게 위협한다/벌이라고 선언한다/고함친다/기분 나쁘게 웃는다/매도")
+SIF IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/고함친다/기분나쁘게웃는다/매도")
 	SOURCE:MASTER:공포 += 200 + MARK:MASTER:트라우마 * 50
 ;대개의 상황은 소극적 따르는이 되지만, 특정의 상황으로 애원이 됩니다
 LOCAL = PALAM:MASTER:굴복 / 1000 + PALAM:MASTER:공순 / 1000 + PALAM:MASTER:공포 / 1000 + PALAM:MASTER:고통 / 1500 + PALAM:MASTER:불쾌 / 2000
 LOCAL -= PALAM:MASTER:반항 / 200 - MARK:반항각인 * 2
 PRINTL 
-IF (IS_NOWACTNAME("엄격하게 위협한다/벌이라고 선언한다/고함친다/밀어 넘어뜨린다/매도")) && LOCAL > 0
+IF (IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/고함친다/밀어넘어뜨린다/매도")) && LOCAL > 0
 	;COM 분류
-	CALL SET_COMGRO("허가를 청한다")
+	CALL SET_COMGRO("허가를청한다")
 	;파생:애원 한다
 	TFLAG:REACT파생 = 1
 ELSE
@@ -46,14 +46,14 @@ ELSE
 ENDIF
 PRINTL 
 ;COM 인상
-CALL SET_COMIMP("좋은 인상소")
+CALL SET_COMIMP("약간좋은인상")
 ;의존도 변화
 CALL ADD_DEPEND(0, +1)
 RETURN 1
 
 
 ;─
-;002, 무뚝뚝하게 응답한다(반항, 벌포인트)
+;002, 무뚝뚝하게응답한다(반항, 벌포인트)
 ;─
 @COM2
 ;반항 SOURCE 증가
@@ -61,14 +61,14 @@ SOURCE:MASTER:반항 += 200
 ;벌포인트 가산
 TFLAG:벌포인트 += RAND:5 + MARK:반항각인 / 2 + BASE:초조 / 100 - BASE:이성 / 100
 ;COM 인상
-CALL SET_COMIMP("악인상소")
+CALL SET_COMIMP("나쁜인상")
 ;의존도 변화
 CALL ADD_DEPEND(-2, -2)
 RETURN 1
 
 
 ;─
-;003, 붙임성 좋게 응답한다(달성, 열락, 적극적 따른다)
+;003, 붙임성좋게응답한다(달성, 열락, 적극적 따른다)
 ;─
 @COM3
 ;달성, 열락 SOURCE 증가
@@ -77,14 +77,14 @@ SOURCE:MASTER:열락 += 50 + MARK:MASTER:쾌락각인 * 20 + SOURCE:MASTER:쾌C 
 ;COM 분류
 CALL SET_COMGRO("적극적 따른다")
 ;COM 인상
-CALL SET_COMIMP("좋은 인상대")
+CALL SET_COMIMP("좋은인상")
 ;의존도 변화
 CALL ADD_DEPEND(+3, +1)
 RETURN 1
 
 
 ;─
-;004, 강하게 응답한다(반항, 벌포인트)
+;004, 강하게응답한다(반항, 벌포인트)
 ;─
 @COM4
 ;반항 SOURCE 증가
@@ -92,15 +92,15 @@ SOURCE:MASTER:반항 += 500 + MARK:반항각인 * 10
 ;벌포인트 가산
 TFLAG:벌포인트 += 5 + MARK:반항각인 / 2 + BASE:초조 / 100 - BASE:흥미 / 100
 ;ACT 조건에 의해 파생
-IF IS_NOWACTNAME("밀어 넘어뜨린다")
-	;파생:밀어 넘어뜨리기에 굽히지 않는다
+IF IS_NOWACTNAME("밀어넘어뜨린다")
+	;파생:밀어넘어뜨리기에 굽히지 않는다
 	TFLAG:REACT파생 = 1
 ELSE
 	;파생:강하게 응답
 	TFLAG:REACT파생 = 0
 ENDIF
 ;COM 인상
-CALL SET_COMIMP("악인상소")
+CALL SET_COMIMP("나쁜인상")
 ;의존도 변화
 CALL ADD_DEPEND(-1, -3)
 RETURN 1
@@ -116,17 +116,17 @@ SOURCE:MASTER:반항 += 250 - MARK:굴복각인 * 20
 ;벌포인트 가산
 TFLAG:벌포인트 += 3 + RAND:5 + MARK:반항각인 / 5
 ;질문이 아니면 태연하게 따르는 분류
-SIF !IS_NOWACTNAME("지금의 기분을 (듣)묻는다/자신에게로의 기분을 (듣)묻는다")
+SIF !IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을얘기한다")
 	CALL SET_COMGRO("태연하게 따른다")
 ;COM 인상
-CALL SET_COMIMP("악인상소")
+CALL SET_COMIMP("나쁜인상")
 ;의존도 변화
 CALL ADD_DEPEND(-3, -1)
 RETURN 1
 
 
 ;─
-;006, 좀 더 하드하게 해(굴종, 벌포인트)
+;006, 좀더하드하게해(굴종, 벌포인트)
 ;─
 @COM6
 ;굴종 SOURCE 증가
@@ -144,15 +144,15 @@ ELSE
 ENDIF
 CALL SET_COMGRO("받아들인다")
 ;COM 인상
-CALL SET_COMIMP("0으로부터 멀어진다")
+CALL SET_COMIMP("0에서멀어짐")
 ;의존도 변화
 CALL ADD_DEPEND(0, +3)
 RETURN 1
-;쾌SOURCE에 응해 REACTION_MESSAGE로 분기 시킨다면, REACT 파생에도 반영시켜야 할 생각이 든다
+;쾌SOURCE에 응해 REACTION_MESSAGE로 분기 시킨다면, REACT파생에도 반영시켜야 할 생각이 든다
 ;조건 그대로 쓰면 참조 가능하지만, 그러한 문제는 아니라고 생각합니다@/L
 
 ;─
-;007, 허가를 청한다(굴종, 공포, 애원, 벌포인트)
+;007, 허가를청한다(굴종, 공포, 애원, 벌포인트)
 ;─
 @COM7
 ;굴종, 공포 SOURCE 증가
@@ -163,20 +163,20 @@ LOCAL = BASE:초조 / 80 - BASE:이성 / 100 - CFLAG:아라이먼트 / 10 + PALA
 SIF IS_POLICY("지금", "이상")
 	LOCAL += RAND:7
 ;COM 인상이 공통된 것은 납득 가지 않았기 때문에를 파생마다별 찬다@/L
-IF LOCAL > 0 && !IS_NOWACTNAME("공중 육변기 플레이")
+IF LOCAL > 0 && !IS_NOWACTNAME("공중육변기플레이")
 	;벌포인트 가산
 	TFLAG:벌포인트 += LOCAL
 	;파생:「의견을 내다니 좋은 담력이구나!」
 	TFLAG:REACT파생 = 1
 	;COM 인상
-	CALL SET_COMIMP("0으로부터 멀어진다")
+	CALL SET_COMIMP("0에서멀어짐")
 ELSE
 	;파생:「흐음」
 	TFLAG:REACT파생 = 0
 	;COM 분류
-	CALL SET_COMGRO("허가를 청한다")
+	CALL SET_COMGRO("허가를청한다")
 	;COM 인상
-	CALL SET_COMIMP("0에 가까워진다")
+	CALL SET_COMIMP("0에가까워짐")
 ENDIF
 ;의존도 변화
 CALL ADD_DEPEND(0, +2)
@@ -184,7 +184,7 @@ RETURN 1
 
 
 ;─
-;008, 기분 좋게 해(열락, 받아들이는, 벌포인트)
+;008, 기분좋게해(열락, 받아들이는, 벌포인트)
 ;─
 @COM8
 ;열락 SOURCE 증가
@@ -203,7 +203,7 @@ ENDIF
 ;COM 분류
 CALL SET_COMGRO("받아들인다")
 ;COM 인상
-CALL SET_COMIMP("0으로부터 멀어진다")
+CALL SET_COMIMP("0에서멀어짐")
 ;의존도 변화
 CALL ADD_DEPEND(+2, +1)
 RETURN 1

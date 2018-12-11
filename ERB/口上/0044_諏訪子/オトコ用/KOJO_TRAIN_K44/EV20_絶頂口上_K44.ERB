@@ -15,9 +15,9 @@
 ;=================================================
 ;관련 변수…
 ;
-;TFLAG:전회 질내사정, (1=V성교/2=V성교 봉사/3=V성교(하늘 쏘아 맞히고)/4=V성교 봉사(하늘 쏘아 맞히고)/5=A성교/6=A성교 봉사/7=A성교(하늘 쏘아 맞히고)/8=A성교 봉사(하늘 쏘아 맞히고))
-;TFLAG:REACT 분류, (0=없음/1=소극적 따른다/2=적극적 따른다/3=허가를 청한다/4=날뛴다/5=요구에 응하지 않는, 거부/6=도망치는, 발버둥 친다)
-;NOWEX:사정, (1=하늘 사정/2=사정/3=대량 사정/4=사정(조루)/5=A책사정)
+;TFLAG:전회질내사정, (1=V성교/2=V성교 봉사/3=V성교(하늘 쏘아 맞히고)/4=V성교 봉사(하늘 쏘아 맞히고)/5=A성교/6=A성교 봉사/7=A성교(하늘 쏘아 맞히고)/8=A성교 봉사(하늘 쏘아 맞히고))
+;TFLAG:REACT분류, (0=없음/1=소극적 따른다/2=적극적 따른다/3=허가를청한다/4=날뛴다/5=요구에 응하지 않는, 거부/6=도망치는, 발버둥 친다)
+;NOWEX:사정, (1=드라이사정/2=사정/3=대량사정/4=사정(조루)/5=A책사정)
 ;TEQUIP:자위중, (bit0=조교 대상/bit1=조교자)
 ;
 ;=================================================
@@ -40,24 +40,24 @@
 ;-------------------------------------------------
 @KOJO_MALE_EVENT_K44_20(ARG)
 ;-------------------------------------------------
-;TFLAG:전회 질내사정;(1=V성교/2=V성교 봉사/3=V성교(하늘 쏘아 맞히고)/4=V성교 봉사(하늘 쏘아 맞히고)/5=A성교/6=A성교 봉사/7=A성교(하늘 쏘아 맞히고)/8=A성교 봉사(하늘 쏘아 맞히고))
+;TFLAG:전회질내사정;(1=V성교/2=V성교 봉사/3=V성교(하늘 쏘아 맞히고)/4=V성교 봉사(하늘 쏘아 맞히고)/5=A성교/6=A성교 봉사/7=A성교(하늘 쏘아 맞히고)/8=A성교 봉사(하늘 쏘아 맞히고))
 ;-------------------------------------------------
 ;─
-;질내 사정(MASTER→TARGET)
+;질내사정(MASTER→TARGET)
 ;─
-;·V성교 봉사계로 질내 사정하는 경우에 표시
-;·TFLAG:뽑지 않고는 뽑지 않는 판정 마다+1된다
+;·V성교 봉사계로 질내사정 하는 경우에 표시
+;·TFLAG:뽑지않고는 뽑지 않는 판정 마다+1된다
 ;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
 ;-------------------------------------------------
 IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4) > 0
 	;=================================================
-	;뽑지 않고 속행
+	;뽑지않고에 속행
 	;=================================================
 	IF TFLAG:뽑지않고
-		;동시 절정(조교자가 동시에 v절정)
+		;동시절정(조교자가 동시에 v절정)
 		IF TCVAR:TARGET:V절정 && TCVAR:MASTER:사정
 			SELECTCASE GET_SHOOTING(MASTER)
-				CASE "하늘 사정"
+				CASE "드라이사정"
 					CALL HTMLPRINTW(@"「간다앗%HTML_HEARTB()%  자지로 간닷!」")
 					PRINTFORMW 「하… 핫… 이제(벌써) 나오지 않는다니이…」
 					CALL HTMLPRINTW(@"「그렇지만 나카로 아직 움찔움찔 커지고 있지 않아…%HTML_HEARTB()%  계속해 버려?」")
@@ -70,7 +70,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4) > 0
 		;통상
 		ELSE
 			SELECTCASE GET_SHOOTING(MASTER)
-				CASE "하늘 사정"
+				CASE "드라이사정"
 					PRINTFORMW 「아랴, 이제(벌써) 최후야…?」
 					CALL HTMLPRINTW(@"「여기는 아직 가지 않았는데 달콤해%HTML_HEARTB()%  이대로 속행%HTML_HEARTB()%」")
 				CASE "조루"
@@ -86,11 +86,11 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4) > 0
 	ENDIF
 
 	;=================================================
-	;동시 절정(조교자가 동시에 V절정)
+	;동시절정(조교자가 동시에 V절정)
 	;=================================================
 	IF TCVAR:TARGET:V절정 && TCVAR:MASTER:사정
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				CALL HTMLPRINTW(@"「함께%HTML_HEARTB()%  함께 와앗%HTML_HEARTB()%  후~아%HTML_HEARTB()%」")
 				PRINTFORMW 「하아… 하아… 뭐야, 이제 다 써버려 버리고 있는 것이 아니야…」
 			;그 외
@@ -102,13 +102,13 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4) > 0
 	ENDIF
 
 	;=================================================
-	;초조하게 함으로부터
+	;초조하게함으로부터
 	;=================================================
 	IF TCVAR:MASTER:초조하게해번 && TCVAR:MASTER:사정
-		;초조하게 해 안
+		;초조하게함 안
 		IF TCVAR:MASTER:초조하게해번 > 1
 			SELECTCASE GET_SHOOTING(MASTER)
-				CASE "전립선 사정"
+				CASE "전립선사정"
 					CALL HTMLPRINTW(@"「이제(벌써) 아직이라고 말하고 있는데%HTML_HEARTB()%」")
 					PRINTFORMW 「엉덩이로 너무 느껴 버렸어?   완전히…♪」
 				CASEELSE
@@ -118,7 +118,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4) > 0
 		;결정타
 		ELSE
 			SELECTCASE GET_SHOOTING(MASTER)
-				CASE "하늘 사정"
+				CASE "드라이사정"
 					PRINTFORMW 「뭐야 이제(벌써) 나오지 않잖아…」
 					PRINTFORMW 「빨리 불알로 정자 만드세요…♪」
 				;그 외
@@ -136,16 +136,16 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4) > 0
 	IF 구상기입체크(100)
 		;사정종의 파생을 본다
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				PRINTFORMW 「이제(벌써) 정액 다 써버려 버렸어…?」
 				PRINTFORMW 「평상시부터 정력 붙여 두세요… 나참…」
-			CASE "대량 사정"
+			CASE "대량사정"
 				CALL HTMLPRINTW(@"「도… 도…, 너무 사정해요 바보…%HTML_HEARTB()%」")
 				CALL HTMLPRINTW(@"「아직 나오고 있다아…%HTML_HEARTB()%  드로는…%HTML_HEARTB()%」")
 			CASE "조루"
 				PRINTFORMW 「이제(벌써) 바보!   아직 사정하지 말라고 말하고 있는데…」
 				PRINTFORMW 「이 조루…♪」
-			CASE "전립선 사정"
+			CASE "전립선사정"
 				CALL HTMLPRINTW(@"「애널로 느껴 사정해 버린 것이다아…%HTML_HEARTB()%」")
 				CALL HTMLPRINTW(@"「어쩔 수 없네요…%HTML_HEARTB()%」")
 			CASE "사정"
@@ -160,16 +160,16 @@ ENDIF
 ;애널내 사정(MASTER→TARGET)
 ;─
 ;·A성교 봉사계로 장내 사정하는 경우에 표시
-;·TFLAG:106, 뽑지 않고는 뽑지 않는 판정 마다+1된다
+;·TFLAG:106, 뽑지않고는 뽑지 않는 판정 마다+1된다
 ;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
 ;-------------------------------------------------
 IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8) > 0
 	;=================================================
-	;동시 절정(조교자가 동시에 A절정)
+	;동시절정(조교자가 동시에 A절정)
 	;=================================================
 	IF TCVAR:TARGET:A절정 && TCVAR:MASTER:사정
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				CALL HTMLPRINTW(@"「햐아아아%HTML_HEARTB()%  이제 안돼엣%HTML_HEARTB()%」")
 				CALL HTMLPRINTW(@"「… 엉덩이로 움찔움찔 움직이고 있다아…%HTML_HEARTB()%  이제 낼 수 없는거야…?」")
 			;그 외
@@ -186,16 +186,16 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8) > 0
 	IF 구상기입체크(100)
 		;사정종의 파생을 본다
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				CALL HTMLPRINTW(@"「이미 맥 치고 있을 뿐이지 않아…%HTML_HEARTB()%」")
 				PRINTFORMW 「기분 좋았다아…?」
-			CASE "대량 사정"
+			CASE "대량사정"
 				CALL HTMLPRINTW(@"「애널로 이렇게 줄줄 사정하다니이…%HTML_HEARTB()%」")
 				PRINTFORMW 「엉덩이로 임신시킬 생각…?」
 			CASE "조루"
 				PRINTFORMW 「아이참─사정해 버렸어?」
 				CALL HTMLPRINTW(@"「조금 과잉긴축 일까…%HTML_HEARTB()%」")
-			CASE "전립선 사정"
+			CASE "전립선사정"
 				CALL HTMLPRINTW(@"「애널 꾸짖어지면서 엉덩이에 사정하다니…%HTML_HEARTB()%」")
 				PRINTFORMW 「이 엉덩이 매니아♪」
 			CASE "사정"
@@ -207,13 +207,13 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8) > 0
 ENDIF
 
 ;─
-;질내 사정(TARGET→MASTER)
+;질내사정(TARGET→MASTER)
 ;─
-;·V성교계로 질내 사정하는 경우에 표시
+;·V성교계로 질내사정 하는 경우에 표시
 ;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
-;·현재의 사양에서는 조교자가 하늘 사정하는 것은 매우 희(거의 없어?)
+;·현재의 사양에서는 조교자가 드라이사정 하는 것은 매우 희(거의 없어?)
 ;-------------------------------------------------
-;IF 구상 기입 체크(0) && GROUPMATCH(TFLAG:전회 질내사정, 1, 3) > 0
+;IF 구상 기입 체크(0) && GROUPMATCH(TFLAG:전회질내사정, 1, 3) > 0
 ;ENDIF
 
 ;─
@@ -221,9 +221,9 @@ ENDIF
 ;─
 ;·A성교계로 장내 사정하는 경우에 표시
 ;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
-;·현재의 사양에서는 조교자가 하늘 사정하는 것은 매우 희(거의 없어?)
+;·현재의 사양에서는 조교자가 드라이사정 하는 것은 매우 희(거의 없어?)
 ;-------------------------------------------------
-;IF 구상 기입 체크(0) && GROUPMATCH(TFLAG:전회 질내사정, 5, 7) > 0
+;IF 구상 기입 체크(0) && GROUPMATCH(TFLAG:전회질내사정, 5, 7) > 0
 ;ENDIF
 
 ;─
@@ -234,11 +234,11 @@ ENDIF
 ;-------------------------------------------------
 IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방뇨를 수반하는 경우는 연주한다
 	;=================================================
-	;전립선 사정(A절정시에 쾌C에 관련되지 않고 사정)
+	;전립선사정(A절정시에 쾌C에 관련되지 않고 사정)
 	;=================================================
-	IF SHOOTING(MASTER, "전립선 사정")
+	IF SHOOTING(MASTER, "전립선사정")
 		SELECTCASE MA_PLAYER(1)
-			;구에서(애널 빨고)           //현재의 사양에서는 발생 할 수 없다
+			;구에서(애널빨고)           //현재의 사양에서는 발생 할 수 없다
 			;                           //혀가 전립선까지 닿을 이유 없다! 그렇다고 하는 시스템측의 의향입니다만
 			;                           //스와자님이라면 가능할 것 같은 감은 아무튼 있습니다 w 다만 사양인 것으로, 라는 것으로@/L
 			;CASE 1
@@ -257,18 +257,18 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방
 	ENDIF
 
 	;=================================================
-	;가랑이로 동시 절정
+	;가랑이로 동시절정
 	;=================================================
-	IF TCVAR:TARGET:C절정 && IS_NOWACTNAME("성기를 서로 켠다") && MC_PLAYER(1) == 8
+	IF TCVAR:TARGET:C절정 && IS_NOWACTNAME("성기를서로켠다") && MC_PLAYER(1) == 8
 		CALL HTMLPRINTW(@"「사정해 버리는 거야…?   는 이대로… 보지에 걸쳐엇%HTML_HEARTB()%」")
 		CALL HTMLPRINTW(@"「아하앗♪  뜨거운 정액 가득…%HTML_HEARTB()%  이제 보지 굿체그체가 아닌 것…%HTML_HEARTB()%」")
 		RETURN 2
 	ENDIF
 
 	;=================================================
-	;파이즈리로 동시 절정
+	;파이즈리로 동시절정
 	;=================================================
-	IF IS_NOWACTNAME("파이즈리 한다") && TCVAR:TARGET:B절정 && !TCVAR:TARGET:분유
+	IF IS_NOWACTNAME("파이즈리한다") && TCVAR:TARGET:B절정 && !TCVAR:TARGET:분유
 		CALL HTMLPRINTW(@"「좋아…%HTML_HEARTB()%  그대로%HTML_HEARTB()%  그대로 젖가슴에 사정햇%HTML_HEARTB()%」")
 		CALL HTMLPRINTW(@"「응하아…%HTML_HEARTB()%  뜨겁고 질척질척이 아니다…%HTML_HEARTB()%」")
 		RETURN 2
@@ -282,7 +282,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방
 		;구 쏘아 맞히고
 		IF ME_PLAYER(1) == 9
 			SELECTCASE GET_SHOOTING(MASTER)
-				CASE "하늘 사정"
+				CASE "드라이사정"
 					CALL HTMLPRINTW(@"「이봐요, 구에들 해…%HTML_HEARTB()%」")
 					CALL HTMLPRINTW(@"「아─, 이제(벌써) 나오지 않지 않은 것…%HTML_HEARTB()%」")
 				CASE "조루"
@@ -296,7 +296,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방
 							CALL HTMLPRINTW(@"「그렇지만 어차피라면… 네, 날름%HTML_HEARTB()%」")
 							CALL HTMLPRINTW(@"「두는 히에 전부등 해…%HTML_HEARTB()%  왔다앗…%HTML_HEARTB()%」")
 						CASE 1
-							PRINTFORMW 「나와? 이제(벌써) 갈 것 같다?   자제 할 수 없는거야?」
+							PRINTFORMW 「나와? 이제(벌써)갈것같다?   자제 할 수 없는거야?」
 							CALL HTMLPRINTW(@"「어쩔 수 없구나…%HTML_HEARTB()%  이봐요, 구하세요%HTML_HEARTB()%」")
 							CALL HTMLPRINTW(@"「%HTMLFONT("… 뷰룻", , 0xFFFFFF)%%HTML_HEARTB()%　%HTMLFONT("", , 0xFFFFFF)%%HTML_HEARTB()%  응응…%HTML_HEARTB()%  뜨겁고 진하다아…%HTML_HEARTB()%」")
 						CASE 2
@@ -308,7 +308,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방
 		;통상
 		ELSE
 			SELECTCASE GET_SHOOTING(MASTER)
-				CASE "하늘 사정"
+				CASE "드라이사정"
 					PRINTFORMW 「이제 나와 있지 않잖아…」
 					CALL HTMLPRINTW(@"「어쩔 수 없는 아이… 츗%HTML_HEARTB()%」")
 				;그 외
@@ -323,9 +323,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방
 	;=================================================
 	;가랑이로 사정
 	;=================================================
-	IF IS_NOWACTNAME("성기를 서로 켠다") && MC_PLAYER(1) == 8
+	IF IS_NOWACTNAME("성기를서로켠다") && MC_PLAYER(1) == 8
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				CALL HTMLPRINTW(@"「아하핫♪  움찔움찔 하는 것만으로 이제 낼 수 없다아%HTML_HEARTB()%」")
 				CALL HTMLPRINTW(@"「끝 비비어 놀면♪  응%HTML_HEARTB()%」")
 			;그 외
@@ -339,9 +339,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방
 	;=================================================
 	;구에 의한 애무로 사정(페라 따위)
 	;=================================================
-	IF (IS_NOWACTNAME("구에서 애무") && TFLAG:ACT파생 == 1) || TEQUIP:조교대상C사용 == 2 || MC_PLAYER(1) == 1
+	IF (IS_NOWACTNAME("입으로애무") && TFLAG:ACT파생 == 1) || TEQUIP:조교대상C사용 == 2 || MC_PLAYER(1) == 1
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				PRINTFORMW 「정말 이제(벌써) 나오지 않는 것일까…?」
 				CALL HTMLPRINTW(@"「츄웃%HTML_HEARTB()%  응%HTML_HEARTB()%  쿠퍼액 밖에 없네요」")
 			;그 외
@@ -364,9 +364,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방
 	;=================================================
 	;손에 의한 애무로 사정
 	;=================================================
-	IF IS_NOWACTNAME("손으로 애무") || TEQUIP:조교대상C사용 == 1 || MC_PLAYER(1) == 2
+	IF IS_NOWACTNAME("손으로애무") || TEQUIP:조교대상C사용 == 1 || MC_PLAYER(1) == 2
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				CALL HTMLPRINTW(@"「이제(벌써) 텅 비어?   재미없잖아…%HTML_HEARTB()%」")
 				CALL HTMLPRINTW(@"「흐물흐물 자지도 사랑스럽지만 말야♪  うりうり%HTML_HEARTB()%」")
 			;그 외
@@ -389,9 +389,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방
 	;=================================================
 	;가슴에 의한 애무로 사정(파이즈리)
 	;=================================================
-	IF IS_NOWACTNAME("파이즈리 한다") && MC_PLAYER(1) == 6
+	IF IS_NOWACTNAME("파이즈리한다") && MC_PLAYER(1) == 6
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				PRINTFORMW 「흠칫흠칫 시키는 것만으로 이제(벌써) 나오지 않잖아…」
 				CALL HTMLPRINTW(@"「연약해요 않은 너의 자지는…%HTML_HEARTB()%」")
 			;그 외
@@ -405,9 +405,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨 ;//방
 	;=================================================
 	;다리에 의한 애무로 사정(풋잡)
 	;=================================================
-	IF IS_NOWACTNAME("풋잡 한다") || MC_PLAYER(1) == 7
+	IF IS_NOWACTNAME("풋잡한다") || MC_PLAYER(1) == 7
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				PRINTFORMW 「자지 발길질로 되어 텅 비게 할 때까지 사정해 버리다니…♪」
 				PRINTFORMW 「어떻게든 하고 있는 것이 아닌거야…? 이봐요, 이봐요 이봐요♪」
 			;그 외
@@ -424,7 +424,7 @@ ENDIF
 ;─
 ;·조교자가 사정하는 경우에 표시
 ;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
-;·현재의 사양에서는 조교자가 하늘 사정하는 것은 매우 희(거의 없어?)
+;·현재의 사양에서는 조교자가 드라이사정 하는 것은 매우 희(거의 없어?)
 ;-------------------------------------------------
 ;IF 구상 기입 체크(0) && TCVAR:TARGET:사정
 ;ENDIF
@@ -514,7 +514,7 @@ ENDIF
 ;조교 대상 물총
 ;─
 ;·조교 대상이 물총의 경우에 표시
-;·현상, ACT손가락 삽입할 수 있는 때에 G스팟 고문에 파생했을 경우에게만 일어난다
+;·현상, ACT손가락삽입해라시에 G스팟 고문에 파생했을 경우에게만 일어난다
 ;·주인님의 물총은 없다
 ;-------------------------------------------------
 ;IF 구상 기입 체크(0) && TCVAR:MASTER:물총

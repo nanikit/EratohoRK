@@ -22,14 +22,14 @@
 ;-------------------------------------------------
 ;=================================================
 ;관련 변수…
-;TFLAG:전회 질내사정
+;TFLAG:전회질내사정
 ;	1=V성교/2=V성교 봉사/3=V성교(하늘 쏘아 맞히고)/4=V성교 봉사(하늘 쏘아 맞히고)
 ;	5=A성교/6=A성교 봉사/7=A성교(하늘 쏘아 맞히고)/8=A성교 봉사(하늘 쏘아 맞히고)
-;TFLAG:REACT 분류
-;	0=없음/1=소극적 따른다/2=적극적 따른다/3=허가를 청한다/4=날뛴다
+;TFLAG:REACT분류
+;	0=없음/1=소극적 따른다/2=적극적 따른다/3=허가를청한다/4=날뛴다
 ;	5=요구에 응하지 않는, 거부/6=도망치는, 발버둥 친다
 ;NOWEX:사정
-;	1=하늘 사정/2=사정/3=대량 사정/4=사정(조루)/5=전립선 사정
+;	1=드라이사정/2=사정/3=대량사정/4=사정(조루)/5=전립선사정
 ;TEQUIP:자위중
 ;	(bit0=조교 대상/bit1=조교자)
 ;
@@ -41,11 +41,11 @@
 ;TCVAR:분유
 ;	(1=공분유/2=분유/3=대량분유)
 ;TCVAR:사정
-;	(1=하늘 사정/2=사정/3=대량 사정/4=사정(조루)/5=전립선 사정)
+;	(1=드라이사정/2=사정/3=대량사정/4=사정(조루)/5=전립선사정)
 ;TCVAR:물총
 ;	(1=물총/2=대량 물총)
-;TCVAR:하늘 사정
-;	(1=통상의 하늘 사정/2=전립선 자극에 의한 하늘 사정)
+;TCVAR:드라이사정
+;	(1=통상의 드라이사정/2=전립선자극에 의한 드라이사정)
 ;=================================================
 ;함수류…
 ;
@@ -66,7 +66,7 @@
 ;-------------------------------------------------
 ;첫회 판정 함수등…
 ;FIRSTEVENT
-;	첫회 EVENT 판정 함수  TFLAG:이벤트 번호(TFLAG:10)를 자동으로 참조해,
+;	첫회 EVENT 판정 함수  TFLAG:이벤트번호(TFLAG:10)를 자동으로 참조해,
 ;	현재 발생하고 있는 EVENT 마다 번호가 독립해 보존된다
 ;ONCEEVENT
 ;	조교내 첫회 EVENT 판정 함수  조교마다 리셋트 된다
@@ -81,7 +81,7 @@
 ;IS_PREVACTNAME
 ;	전회의 ACT 명칭과 합치하면 진을 돌려준다
 ;IS_COMGRONAME
-;	현재의 REACT 분류 명칭과 합치하면 진을 돌려준다
+;	현재의 REACT분류명칭과 합치하면 진을 돌려준다
 ;IS_NOWCOMNAME
 ;	현재의 COM 명칭과 합치하면 진을 돌려준다
 ;GET_ACTNAME
@@ -97,7 +97,7 @@
 ;GET_SQUIRTING/SQUIRTING
 ;	TCVAR:물총에 대응. 캐릭터 라인으로 물총종을 참조
 ;GET_DRY_CUM/DRY_CUM
-;	TCVAR:하늘 사정에 대응. 캐릭터 라인으로 하늘 사정종을 참조
+;	TCVAR:드라이사정에 대응. 캐릭터 라인으로 드라이사정 종을 참조
 ;-------------------------------------------------
 @KOJO_MALE_EVENT_K39_20(ARG)
 ;-------------------------------------------------
@@ -119,38 +119,38 @@ VARSET LOCALS
 RESULT = 0
 
 ;─
-;질내 사정(조교 대상→조교자)
+;질내사정(조교 대상→조교자)
 ;─
-;·V성교 봉사계로 질내 사정하는 경우에 표시
-;·TFLAG:뽑지 않고는 뽑지 않는 판정 마다+1된다
+;·V성교 봉사계로 질내사정 하는 경우에 표시
+;·TFLAG:뽑지않고는 뽑지 않는 판정 마다+1된다
 ;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
 ;-------------------------------------------------
 IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 	LOCALS:0 '= RAND_SPLIT("질내/안/나카/(안)중")
 	LOCALS:1 '= RAND_SPLIT("사정/출/(이)다")
-	LOCALS:2 '= RAND_SPLIT("응/아//아아") + "읏"
+	LOCALS:2 '= RAND_SPLIT("응/아//아아") + ""
 	;=================================================
-	;뽑지 않고 속행(질내사정 후, 성교 봉사계 ACT에 계속되는 경우)
+	;뽑지않고에 속행(질내사정 후, 성교 봉사계 ACT에 계속되는 경우)
 	;=================================================
 	IF TFLAG:뽑지않고
 		;-------------------------------------------------
-		;동시 절정(조교자가 동시에 V절정)
+		;동시절정(조교자가 동시에 V절정)
 		;-------------------------------------------------
 		IF TCVAR:TARGET:V절정 && TCVAR:MASTER:사정
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			;초조하게 해 안에 절정
+			;초조하게함 안에 절정
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 			IF TCVAR:MASTER:초조하게해번 > 1
 				SELECTCASE COMGRONAME(TFLAG:REACT분류)
 					;소극적 따른다
 					CASE "소극적 따른다"
-						PRINTFORMW (싫다…… 초조하게 하고 있는데 안타까워져 버려……)
+						PRINTFORMW (싫다…… 초조하게함이라고 있는데 안타까워져 버려……)
 					;적극적 따른다
 					CASE "적극적 따른다"
-						PRINTFORMW 「야, 안됏! 초조하게 하고 있는데… 그렇게 되면, 내가!」
+						PRINTFORMW 「야, 안됏! 초조하게함이라고 있는데… 그렇게 되면, 내가!」
 					;그 외
 					CASEELSE
-						PRINTFORMW (싫다… 초조하게 하고 있는데 가 버리는, 가게 되어 버린다……)
+						PRINTFORMW (싫다… 초조하게함이라고 있는데 가 버리는, 가게 되어 버린다……)
 				ENDSELECT
 				;범용 절정 구상을 부른다
 				CALL TV_EX_K39
@@ -162,9 +162,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 			ENDIF
 			
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			;동시 절정:하늘 사정
+			;동시절정:드라이사정
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			IF SHOOTING(MASTER, "하늘 사정")
+			IF SHOOTING(MASTER, "드라이사정")
 				;상사상애
 				IF GET_KFLAG_K39("상사상애")
 					SELECTCASE RANDEVENT(2, 0)
@@ -215,10 +215,10 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 			ENDIF
 			
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			;동시 절정:하늘 사정 이외의 경우
+			;동시절정:드라이사정 이외의 경우
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량 사정", "조루", "전립선 사정") > 0
-				;질내 사정과 동시에 v절정 구상 함수(실소)
+			IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량사정", "조루", "전립선사정") > 0
+				;질내사정과 동시에 v절정 구상 함수(실소)
 				CALL TV_EX2_K39
 				;TWAIT로 중간을 취한다
 				TWAIT 500, 0
@@ -228,11 +228,11 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 			ENDIF
 		ENDIF
 		
-		;이하, 뽑지 않고＆사정만의 경우
+		;이하, 뽑지않고＆사정만의 경우
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정")
+		IF SHOOTING(MASTER, "드라이사정")
 			CALL SHOOT_VARIATION_K39
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -261,9 +261,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		ENDIF
 		
 		;-------------------------------------------------
-		;대량 사정
+		;대량사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "대량 사정")
+		IF SHOOTING(MASTER, "대량사정")
 			CALL SHOOT_VARIATION_K39
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -328,21 +328,21 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		;-------------------------------------------------
 		;그 외의 사정(사정=2, A책사정=5)
 		;-------------------------------------------------
-		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "전립선 사정")
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "전립선사정")
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
 				PRINTFORML 「조, 좋아…… 내,%LOCALS:0%에 내!」
 				CALL FLASH(1)
-				;정액 중독 LV분기
+				;정액중독 LV분기
 				SELECTCASE ABL:TARGET:정액중독
-					;정액 중독 LV6 이상
+					;정액중독 LV6 이상
 					CASE IS >= 6
 						PRINTFORMW 「아앗! 좋앗!%LOCALS:0%에 나오는 것이 견딜 수 없는거야!」
 						PRINTFORMW 「%TNAME_K39()%는,%TNAME_K39()%는! 정액 정말 좋아하는, 몹쓸 신님인 것……!」
-					;정액 중독 LV3 이상
+					;정액중독 LV3 이상
 					CASE IS >= 3
 						PRINTFORMW 「아앗! 나오고 있닷,%LOCALS:0%에 나오는 것 너무 좋아……」
-					;정액 중독 LV3 미만
+					;정액중독 LV3 미만
 					CASEELSE
 						PRINTFORMW 「아앗! 나오고 있닷, 뱃속, 따뜻하다……」
 				ENDSELECT
@@ -350,12 +350,12 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 			ELSE
 				PRINTFORML 「조, 좋아요…… 내, 나의%LOCALS:0%에%LOCALS:1%해 주세욧!」
 				CALL FLASH(1)
-				;정액 중독 LV분기
+				;정액중독 LV분기
 				SELECTCASE ABL:TARGET:정액중독
-					;정액 중독 LV3 이상
+					;정액중독 LV3 이상
 					CASE IS >= 3
 						PRINTFORMW 「아앗! 나오고 있닷,%LOCALS:0%에%LOCALS:1%되는 것, 버릇이 되어 버립니다……」
-					;정액 중독 LV3 미만
+					;정액중독 LV3 미만
 					CASEELSE
 						PRINTFORMW 「아앗! 나오고 있닷, 나의%LOCALS:0%에…… 액이 가득……」
 				ENDSELECT
@@ -364,24 +364,24 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		ENDIF
 	ENDIF
 	
-	;뽑지 않고 이외를 처리
+	;뽑지않고 이외를 처리
 	;=================================================
 	;조교자가 동시에 v절정
 	;=================================================
-	IF TCVAR:TARGET:V절정 && TCVAR:MASTER:사정 ;&& ! TFLAG:뽑지 않고
+	IF TCVAR:TARGET:V절정 && TCVAR:MASTER:사정 ;&& ! TFLAG:뽑지않고
 		;-------------------------------------------------
-		;초조하게 해 안에
+		;초조하게함 안에
 		;-------------------------------------------------
 		IF TCVAR:MASTER:초조하게해번 > 1
 			SELECTCASE COMGRONAME(TFLAG:REACT분류)
-				CASE "소극적 따른다", "허가를 청한다"
-					PRINTFORMW (싫다…… 초조하게 하고 있는데 안타까워져 버려……)
+				CASE "소극적 따른다", "허가를청한다"
+					PRINTFORMW (싫다…… 초조하게함이라고 있는데 안타까워져 버려……)
 				;적극적 따른다
 				CASE "적극적 따른다", "태연하게 따른다"
-					PRINTFORMW 「야, 안됏! 초조하게 하고 있는데… 그렇게 되면, 내가!」
+					PRINTFORMW 「야, 안됏! 초조하게함이라고 있는데… 그렇게 되면, 내가!」
 				;그 외
 				CASEELSE
-					PRINTFORMW (싫다… 초조하게 하고 있는데 가 버리는, 가게 되어 버린다……)
+					PRINTFORMW (싫다… 초조하게함이라고 있는데 가 버리는, 가게 되어 버린다……)
 			ENDSELECT
 			CALL TV_EX_K39
 			;TWAIT로 중간을 취한다
@@ -392,9 +392,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		ENDIF
 		
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정")
+		IF SHOOTING(MASTER, "드라이사정")
 			;2/3의 확률로 표시
 			IF RAND:3
 				;상사상애
@@ -460,9 +460,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		;어딘지 모르게 범용화하려고 생각했지만 중지에
 		;대신에 확률로 범용 처리를 부른다
 		;-------------------------------------------------
-		;대량 사정
+		;대량사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "대량 사정")
+		IF SHOOTING(MASTER, "대량사정")
 			;2/3의 확률로 표시
 			IF RAND:3
 				;상사상애
@@ -475,9 +475,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 							CALL AUTOHEARTCB_K39
 							PRINTFORML   , 안쪽, 찔러서는 안돼엣!!」
 						CASE 1
-							PRINTFORM 「가게 햇
+							PRINTFORM 「가게해
 							CALL AUTOHEARTCB_K39
-							PRINTFORML   가게 해엣!! 좀 더 범햇! 자궁의 안까지 범해……!」
+							PRINTFORML   가게해!! 좀 더 범햇! 자궁의 안까지 범해……!」
 					ENDSELECT
 					CALL SHOOT_VARIATION_K39
 					TWAIT 500, 0
@@ -497,7 +497,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 						CASE 1
 							PRINTFORM 「앗, 하앗…… 아앗
 							CALL AUTOHEARTCB_K39
-							PRINTFORML   가게 햇, 가게 해 주세욧!」
+							PRINTFORML   가게해, 가게해 주세욧!」
 					ENDSELECT
 					CALL SHOOT_VARIATION_K39
 					TWAIT 500, 0
@@ -521,9 +521,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		ENDIF
 		
 		;-------------------------------------------------
-		;그 외의 사정(2=사정, 4=조루, 5=전립선 사정)
+		;그 외의 사정(2=사정, 4=조루, 5=전립선사정)
 		;-------------------------------------------------
-		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "조루", "전립선 사정")
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "조루", "전립선사정")
 			;2/3의 확률로 표시
 			IF RAND:3
 				;상사상애
@@ -588,14 +588,14 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		ENDIF
 	ENDIF
 	
-	;//뽑지 않고 없음. 조교자의 V절정 없음
+	;//뽑지않고 없음. 조교자의 V절정 없음
 	;=================================================
-	;초조하게 함으로부터
+	;초조하게함으로부터
 	;=================================================
-	IF TCVAR:MASTER:초조하게해번 && TCVAR:MASTER:사정 ;&& ALLSAMES(0, TFLAG:뽑지 않고, TCVAR:TARGET:V절정)
+	IF TCVAR:MASTER:초조하게해번 && TCVAR:MASTER:사정 ;&& ALLSAMES(0, TFLAG:뽑지않고, TCVAR:TARGET:V절정)
 		;//ALLSAMES는 모두 0이라면 실로, 라고 하는 의도. ALLTRUE라든지 ALLFALSE라든지(분)편이 직감적으로 취급할 수 있고, 사용하는 사람에게 상냥한 생각이 든다
 		;-------------------------------------------------
-		;초조하게 해 안에
+		;초조하게함 안에
 		;-------------------------------------------------
 		IF TCVAR:MASTER:초조하게해번 > 1
 			CALL SHOOT_VARIATION_K39
@@ -606,15 +606,15 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 			;그 이외
 			ELSE
 				PRINTFORMW 「앗,%LOCALS:0%에 나와……」
-				PRINTFORMW 「%RAND_SPLIT("후후, 인내 할 수 없었던 것 같네요♪/가게 해 줄 생각은 없었던 것이지만. 어쩔 수 없네요…")%」
+				PRINTFORMW 「%RAND_SPLIT("후후, 인내 할 수 없었던 것 같네요♪/가게해 줄 생각은 없었던 것이지만. 어쩔 수 없네요…")%」
 			ENDIF
 			RETURN 1
 		ENDIF
 		
 		;-------------------------------------------------
-		;결정타(하늘 사정)
+		;결정타(드라이사정)
 		;-------------------------------------------------
-		IF TCVAR:MASTER:초조하게해번 == 1 && SHOOTING(MASTER, "하늘 사정")
+		IF TCVAR:MASTER:초조하게해번 == 1 && SHOOTING(MASTER, "드라이사정")
 			CALL SHOOT_VARIATION_K39
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -640,7 +640,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		;-------------------------------------------------
 		;결정타(사정)
 		;-------------------------------------------------
-		IF TCVAR:MASTER:초조하게해번 == 1 && GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량 사정", "조루", "전립선 사정")
+		IF TCVAR:MASTER:초조하게해번 == 1 && GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량사정", "조루", "전립선사정")
 			CALL SHOOT_VARIATION_K39
 			SELECTCASE RANDEVENT(2, 22)
 				CASE 0
@@ -654,12 +654,12 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		ENDIF
 	ENDIF
 	
-	;//뽑지 않고 없음. 조교자의 V절정 없음. 초조하게 함 없음
+	;//뽑지않고 없음. 조교자의 V절정 없음. 초조하게함 없음
 	;=================================================
-	;그 외 사정(하늘 사정)
+	;그 외 사정(드라이사정)
 	;=================================================
-	IF SHOOTING(MASTER, "하늘 사정") ;&& ALLSAMES(0, TFLAG:뽑지 않고, TCVAR:TARGET:V절정, TCVAR:MASTER:초조하게 해 번)
-		LOCALS:2 '= RAND_SPLIT("응/아//아아") + "읏"
+	IF SHOOTING(MASTER, "드라이사정") ;&& ALLSAMES(0, TFLAG:뽑지않고, TCVAR:TARGET:V절정, TCVAR:MASTER:초조하게해번)
+		LOCALS:2 '= RAND_SPLIT("응/아//아아") + ""
 		CALL SHOOT_VARIATION_K39
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
@@ -688,9 +688,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 	ENDIF
 	
 	;=================================================
-	;그 외 사정(대량 사정)
+	;그 외 사정(대량사정)
 	;=================================================
-	IF SHOOTING(MASTER, "대량 사정")
+	IF SHOOTING(MASTER, "대량사정")
 		CALL SHOOT_VARIATION_K39
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
@@ -764,7 +764,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 	;=================================================
 	;그 외 사정(A책사정)
 	;=================================================
-	IF SHOOTING(MASTER, "전립선 사정")
+	IF SHOOTING(MASTER, "전립선사정")
 		PRINTFORM 「%RAND_SPLIT("응/응응/아/아웃")%! 에,
 		IF GET_KFLAG_K39("상사상애")
 			PRINTFORMW 에…? 엉덩이가 기분 좋아서%LOCALS:1%해 버린 (뜻)이유?」
@@ -784,16 +784,16 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		IF GET_KFLAG_K39("상사상애")
 			PRINTFORML 「조, 좋아…… 내,%LOCALS:0%에 내!」
 			CALL SHOOT_VARIATION_K39
-			;정액 중독 LV분기
+			;정액중독 LV분기
 			SELECTCASE ABL:TARGET:정액중독
-				;정액 중독 LV6 이상
+				;정액중독 LV6 이상
 				CASE IS > 6
 					PRINTFORMW 「아앗! 좋앗!%LOCALS:0%에 나오는 것이 견딜 수 없는거야!」
 					PRINTFORMW 「%TNAME_K39()%는! 정액 정말 좋아하는, 몹쓸 신님인 것……!」
-				;정액 중독 LV3 이상
+				;정액중독 LV3 이상
 				CASE IS > 3
 					PRINTFORMW 「아앗! 나오고 있닷, 안에 나오는 것 너무 좋아……」
-				;정액 중독 LV3 미만
+				;정액중독 LV3 미만
 				CASEELSE
 					PRINTFORMW 「아앗! 나오고 있닷, 뱃속, 따뜻하다……」
 			ENDSELECT
@@ -801,12 +801,12 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 		ELSE
 			PRINTFORML 「조, 좋아요…… 내, 나의%LOCALS:0%에%LOCALS:1%해 주세욧!」
 			CALL SHOOT_VARIATION_K39
-			;정액 중독 LV분기
+			;정액중독 LV분기
 			SELECTCASE ABL:TARGET:정액중독
-				;정액 중독 LV3 이상
+				;정액중독 LV3 이상
 				CASE IS > 3
 					PRINTFORMW 「아앗! 나오고 있닷, 안에 나오는 것, 버릇이 되어 버립니다……」
-				;정액 중독 LV3 미만
+				;정액중독 LV3 미만
 				CASEELSE
 					PRINTFORMW 「아앗! 나오고 있닷, 나의 안에…… 액이 가득……」
 			ENDSELECT
@@ -816,41 +816,41 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4)
 ENDIF
 
 ;─
-;애널내 사정(MASTER→TARGET) RANDEVENT(34) ~
+;애널내 사정(MASTER→TARGET) RANDEVENT(34) ～
 ;─
 ;·A성교 봉사계로 장내 사정하는 경우에 표시
-;·TFLAG:뽑지 않고는 뽑지 않는 판정 마다+1된다
+;·TFLAG:뽑지않고는 뽑지 않는 판정 마다+1된다
 ;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
 ;-------------------------------------------------
 IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 	LOCALS:0 '= TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || (GET_KFLAG_K39("상사상애") && PERCENT(75)) ? HTML_HEART(, COLOR2_K39("PINK")) # "!" 
 	LOCALS:1 '= TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || (GET_KFLAG_K39("상사상애") && PERCENT(75)) ? HTML_HEARTB(, COLOR2_K39("PINK")) # "!" 
-	;LOCALS:2 = \@ TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！？ \@
+	;LOCALS:2 = \@ TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # !?\@
 	LOCALS:3 '= RAND:2 ? LOCALS:0 # LOCALS:1
 	LOCALS:4 '= TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || (GET_KFLAG_K39("상사상애") && PERCENT(75)) ? LOCALS:3 # "!?" 
 	LOCALS:5 '= TENSION(TARGET, 8) == "높다" ?"……" + HTML_HEARTB(, COLOR2_K39("PINK")) # "" 
 	;=================================================
-	;뽑지 않고 속행
+	;뽑지않고에 속행
 	;=================================================
 	IF TFLAG:뽑지않고
 		;-------------------------------------------------
-		;동시 절정(조교자가 동시에 A절정)
+		;동시절정(조교자가 동시에 A절정)
 		;-------------------------------------------------
 		IF TCVAR:TARGET:A절정 && TCVAR:MASTER:사정
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			;초조하게 해 안에
+			;초조하게함 안에
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 			IF TCVAR:MASTER:초조하게해번 > 1
 				SELECTCASE COMGRONAME(TFLAG:REACT분류)
 					;소극적 따른다
-					CASE "소극적 따른다", "허가를 청한다"
-						PRINTFORMW (싫다…… 초조하게 하고 있는데 안타까워져 버려……)
+					CASE "소극적 따른다", "허가를청한다"
+						PRINTFORMW (싫다…… 초조하게함이라고 있는데 안타까워져 버려……)
 					;적극적 따른다
 					CASE "적극적 따른다", "태연하게 따른다"
-						PRINTFORMW 「야, 안됏! 초조하게 하고 있는데… 그렇게 되면, 내가!」
+						PRINTFORMW 「야, 안됏! 초조하게함이라고 있는데… 그렇게 되면, 내가!」
 					;그 외
 					CASEELSE
-						PRINTFORMW (싫다… 초조하게 하고 있는데 가 버리는, 가게 되어 버린다……)
+						PRINTFORMW (싫다… 초조하게함이라고 있는데 가 버리는, 가게 되어 버린다……)
 				ENDSELECT
 				CALL TA_EX_K39
 				;TWAIT로 중간을 취한다
@@ -861,9 +861,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 			ENDIF
 			
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			;동시 절정:하늘 사정
+			;동시절정:드라이사정
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			IF SHOOTING(MASTER, "하늘 사정")
+			IF SHOOTING(MASTER, "드라이사정")
 				;상사상애
 				IF GET_KFLAG_K39("상사상애")
 					SELECTCASE RANDEVENT(2, 34)
@@ -899,7 +899,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 							;가독성이 너무 나쁘므로 HTML_AUTOHEART라든지 만들 필요가 있을 것 같다
 							{
 							CALL HTMLPRINTW(@"「%RAND_SPLIT("응/아아")%\@ RAND:2 
-								? %HTML_HEART(, COLOR2_K39("PINK"))% # ！？ \@  인, 안에서, 움찔움찔 해엣…… 간다앗……!」")
+								? %HTML_HEART(, COLOR2_K39("PINK"))% # !?\@  인, 안에서, 움찔움찔 해엣…… 간다앗……!」")
 							}
 					ENDSELECT
 				ENDIF
@@ -911,9 +911,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 			ENDIF
 			
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			;동시 절정:그 외 사정(2=사정/3=대량 사정/4=사정(조루)/5=전립선 사정)
+			;동시절정:그 외 사정(2=사정/3=대량사정/4=사정(조루)/5=전립선사정)
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량 사정", "조루", "전립선 사정") > 0
+			IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량사정", "조루", "전립선사정") > 0
 				;범용 처리
 				CALL TA_EX2_K39
 				TWAIT 500, 0
@@ -923,12 +923,12 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 			ENDIF
 		ENDIF
 		
-		;//뽑지 않고＆조교 대상 사정. 조교자의 A절정 없음
+		;//뽑지않고＆조교 대상 사정. 조교자의 A절정 없음
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정") ;&& ! TCVAR:TARGET:A절정
-			;LOCALS:0 = \@ TENSION(TARGET, 8) == "높다" ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！ \@
+		IF SHOOTING(MASTER, "드라이사정") ;&& ! TCVAR:TARGET:A절정
+			;LOCALS:0 = \@ TENSION(TARGET, 8) == "높다" ? %HTML_HEART(, COLOR2_K39("PINK"))% # !\@
 			CALL SHOOT_VARIATION_K39
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -952,9 +952,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		ENDIF
 		
 		;-------------------------------------------------
-		;대량 사정
+		;대량사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "대량 사정")
+		IF SHOOTING(MASTER, "대량사정")
 			LOCALS:0 '= TENSION(TARGET, 8) == "높다" ? HTML_HEART(, COLOR2_K39("PINK")) # "!?" 
 			CALL SHOOT_VARIATION_K39
 			;상사상애
@@ -1014,35 +1014,35 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		;-------------------------------------------------
 		;그 외의 사정
 		;-------------------------------------------------
-		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "전립선 사정")
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "전립선사정")
 			;//함수화가 타당하지만, 어떻게할까 생각이 결정되지 않기 때문에 우선 LOCALS로
-			;LOCALS:0 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！ \@
-			;LOCALS:1 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEARTB(, COLOR2_K39("PINK"))% # ！ \@
+			;LOCALS:0 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # !\@
+			;LOCALS:1 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEARTB(, COLOR2_K39("PINK"))% # !\@
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
 				CALL SHOOT_VARIATION_K39
-				;정액 중독 LV분기
+				;정액중독 LV분기
 				SELECTCASE ABL:TARGET:정액중독
-					;정액 중독 LV6 이상
+					;정액중독 LV6 이상
 					CASE IS >= 6
 						CALL HTMLPRINTW(@"「아앗! 좋앗%LOCALS:3% 중에 나오는 것이 견딜 수 없는 것%LOCALS:3%」")
 						PRINTFORMW 「병아리는,%TNAME_K39()%는! 정액 정말 좋아하는, 몹쓸 신님인 것……!」
-					;정액 중독 LV3 이상
+					;정액중독 LV3 이상
 					CASE IS >= 3
 						CALL HTMLPRINTW(@"「아앗%LOCALS:3% 나오고 있닷, 안에 나오는 것 너무 좋아……%LOCALS:3%」")
-					;정액 중독 LV3 미만
+					;정액중독 LV3 미만
 					CASEELSE
 						CALL HTMLPRINTW(@"「아앗%LOCALS:3% 나오고 있닷, 뱃속, 따뜻하다……」")
 				ENDSELECT
 			;상사상애 이외
 			ELSE
 				CALL SHOOT_VARIATION_K39
-				;정액 중독 LV분기
+				;정액중독 LV분기
 				SELECTCASE ABL:TARGET:정액중독
-					;정액 중독 LV3 이상
+					;정액중독 LV3 이상
 					CASE IS >= 3
 						CALL HTMLPRINTW(@"「아앗%LOCALS:3% 나오고 있닷, 안에 나오는 것, 버릇이 되어 버립니다……%LOCALS:3%」")
-					;정액 중독 LV3 미만
+					;정액중독 LV3 미만
 					CASEELSE
 						CALL HTMLPRINTW(@"「아앗%LOCALS:3% 나오고 있닷, 나의 안에…… 액이 가득……%LOCALS:3%」")
 				ENDSELECT
@@ -1051,25 +1051,25 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		ENDIF
 	ENDIF
 	
-	;//뽑지 않고 없음시에 조교자가 A절정
+	;//뽑지않고 없음시에 조교자가 A절정
 	;=================================================
 	;조교자가 동시에 A절정
 	;=================================================
-	IF TCVAR:TARGET:A절정 && TCVAR:MASTER:사정 ;&& ! TFLAG:뽑지 않고
+	IF TCVAR:TARGET:A절정 && TCVAR:MASTER:사정 ;&& ! TFLAG:뽑지않고
 		;-------------------------------------------------
-		;초조하게 해 안에
+		;초조하게함 안에
 		;-------------------------------------------------
 		IF TCVAR:MASTER:초조하게해번 > 1
 			SELECTCASE COMGRONAME(TFLAG:REACT분류)
 				;소극적 따른다
-				CASE "소극적 따른다", "허가를 청한다"
-					PRINTFORMW (싫다…… 초조하게 하고 있는데 안타까워져 버려……)
+				CASE "소극적 따른다", "허가를청한다"
+					PRINTFORMW (싫다…… 초조하게함이라고 있는데 안타까워져 버려……)
 				;적극적 따른다
 				CASE "적극적 따른다", "태연하게 따른다"
-					PRINTFORMW 「야, 안됏! 초조하게 하고 있는데… 그렇게 되면, 내가!」
+					PRINTFORMW 「야, 안됏! 초조하게함이라고 있는데… 그렇게 되면, 내가!」
 				;그 외
 				CASEELSE
-					PRINTFORMW (싫다… 초조하게 하고 있는데 가 버리는, 가게 되어 버린다……)
+					PRINTFORMW (싫다… 초조하게함이라고 있는데 가 버리는, 가게 되어 버린다……)
 			ENDSELECT
 			CALL TA_EX_K39
 			;TWAIT로 중간을 취한다
@@ -1080,12 +1080,12 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		ENDIF
 		
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정")
-			;LOCALS:0 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！ \@
-			;LOCALS:1 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEARTB(, COLOR2_K39("PINK"))% # ！ \@
-			;LOCALS:2 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！？ \@
+		IF SHOOTING(MASTER, "드라이사정")
+			;LOCALS:0 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # !\@
+			;LOCALS:1 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEARTB(, COLOR2_K39("PINK"))% # !\@
+			;LOCALS:2 = \@ TENSION(TARGET, 8) == "높다" || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # !?\@
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
 				SELECTCASE RANDEVENT(2, 42)
@@ -1117,7 +1117,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		;-------------------------------------------------
 		;그 외 사정
 		;-------------------------------------------------
-		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량 사정", "조루", "전립선 사정")
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량사정", "조루", "전립선사정")
 			CALL TA_EX2_K39
 			TWAIT 500, 0
 			;지문을 부른다
@@ -1126,19 +1126,19 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		ENDIF
 	ENDIF
 	
-	;//뽑지 않고, 조교자의 A절정 없음
+	;//뽑지않고, 조교자의 A절정 없음
 	;=================================================
-	;초조하게 함으로부터
+	;초조하게함으로부터
 	;=================================================
-	IF TCVAR:MASTER:초조하게해번 && TCVAR:MASTER:사정 ;&& ALLSAMES(0, TFLAG:뽑지 않고, TCVAR:TARGET:A절정)
-		;LOCALS:0 = \@ TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！ \@
-		;LOCALS:1 = \@ TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEARTB(, COLOR2_K39("PINK"))% # ！ \@
-		;LOCALS:2 = \@ TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # ！？ \@
+	IF TCVAR:MASTER:초조하게해번 && TCVAR:MASTER:사정 ;&& ALLSAMES(0, TFLAG:뽑지않고, TCVAR:TARGET:A절정)
+		;LOCALS:0 = \@ TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # !\@
+		;LOCALS:1 = \@ TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEARTB(, COLOR2_K39("PINK"))% # !\@
+		;LOCALS:2 = \@ TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || GET_KFLAG_K39("상사상애") && PERCENT(75) ? %HTML_HEART(, COLOR2_K39("PINK"))% # !?\@
 		;LOCALS:3 = \@ RAND:2 ? LOCALS:0 # LOCALS:1 \@
 		;-------------------------------------------------
-		;초조하게 해 안에(하늘 사정은 연주한다)
+		;초조하게함 안에(드라이사정은 연주한다)
 		;-------------------------------------------------
-		IF TCVAR:MASTER:초조하게해번 > 1 && !SHOOTING(MASTER, "하늘 사정")
+		IF TCVAR:MASTER:초조하게해번 > 1 && !SHOOTING(MASTER, "드라이사정")
 			CALL SHOOT_VARIATION_K39
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -1153,9 +1153,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		ENDIF
 		
 		;-------------------------------------------------
-		;결정타(하늘 사정)
+		;결정타(드라이사정)
 		;-------------------------------------------------
-		IF TCVAR:MASTER:초조하게해번 == 1 && SHOOTING(MASTER, "하늘 사정")
+		IF TCVAR:MASTER:초조하게해번 == 1 && SHOOTING(MASTER, "드라이사정")
 			CALL SHOOT_VARIATION_K39
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -1180,7 +1180,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		;-------------------------------------------------
 		;결정타(사정)
 		;-------------------------------------------------
-		IF TCVAR:MASTER:초조하게해번 == 1 && GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량 사정", "조루", "전립선 사정")
+		IF TCVAR:MASTER:초조하게해번 == 1 && GROUPMATCH(GET_SHOOTING(MASTER), "사정", "대량사정", "조루", "전립선사정")
 			CALL SHOOT_VARIATION_K39
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -1203,11 +1203,11 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		ENDIF
 	ENDIF
 	
-	;//뽑지 않고, 조교자의 A절정, 초조하게 해 없음
+	;//뽑지않고, 조교자의 A절정, 초조하게함 없음
 	;=================================================
-	;그 외 사정(하늘 사정)
+	;그 외 사정(드라이사정)
 	;=================================================
-	IF SHOOTING(MASTER, "하늘 사정") ;&& ALLSAMES(0, TCVAR:MASTER:초조하게 해 번, TFLAG:뽑지 않고, TCVAR:TARGET:A절정)
+	IF SHOOTING(MASTER, "드라이사정") ;&& ALLSAMES(0, TCVAR:MASTER:초조하게해번, TFLAG:뽑지않고, TCVAR:TARGET:A절정)
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
 			SELECTCASE RANDEVENT(2, 48)
@@ -1229,9 +1229,9 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 	ENDIF
 	
 	;=================================================
-	;그 외 사정(대량 사정)
+	;그 외 사정(대량사정)
 	;=================================================
-	IF SHOOTING(MASTER, "대량 사정")
+	IF SHOOTING(MASTER, "대량사정")
 		CALL SHOOT_VARIATION_K39
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
@@ -1309,7 +1309,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 	;=================================================
 	;그 외 사정(A책사정)
 	;=================================================
-	IF SHOOTING(MASTER, "전립선 사정")
+	IF SHOOTING(MASTER, "전립선사정")
 		PRINTFORM 「%RAND_SPLIT("응/응응/아/아웃")%! 에,
 		IF GET_KFLAG_K39("상사상애")
 			PRINTFORMW 에…? 나의 것… 이 아니고, 자신의 엉덩이가 기분 좋아서 내 버린 (뜻)이유?」
@@ -1328,27 +1328,27 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 		CALL SHOOT_VARIATION_K39
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
-			;정액 중독 LV분기
+			;정액중독 LV분기
 			SELECTCASE ABL:TARGET:정액중독
-				;정액 중독 LV6 이상
+				;정액중독 LV6 이상
 				CASE IS >= 6
 					CALL HTMLPRINTW(@"「아앗%LOCALS:3% 를 좋아하는 사람%LOCALS:3% 중에 나오는 것 너무 좋앗%LOCALS:3%」")
 					PRINTFORMW 「%TNAME_K39()%는,%TNAME_K39()%는! 정액 정말 좋아하는, 몹쓸 신님인 것……!」
-				;정액 중독 LV3 이상
+				;정액중독 LV3 이상
 				CASE IS >= 3
 					CALL HTMLPRINTW(@"「아앗%LOCALS:3% 나오고 있닷, 안에 나오는 것 너무 좋아……」")
-				;정액 중독 LV3 미만
+				;정액중독 LV3 미만
 				CASEELSE
 					CALL HTMLPRINTW(@"「아앗%LOCALS:3% 나오고 있닷, 뱃속, 따뜻하다……」")
 			ENDSELECT
 		;상사상애 이외
 		ELSE
-			;정액 중독 LV분기
+			;정액중독 LV분기
 			SELECTCASE ABL:TARGET:정액중독
-				;정액 중독 LV3 이상
+				;정액중독 LV3 이상
 				CASE IS >= 3
 					CALL HTMLPRINTW(@"「아앗%LOCALS:3% 나오고 있닷, 안에 나오는 것, 버릇이 되어 버립니다……」")
-				;정액 중독 LV3 미만
+				;정액중독 LV3 미만
 				CASEELSE
 					CALL HTMLPRINTW(@"「아앗%LOCALS:3% 나오고 있닷, 나의 안에…… 액이 가득……」")
 			ENDSELECT
@@ -1358,7 +1358,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 ENDIF
 
 ;─
-;조교 대상 사정 RANDEVENT(59) ~
+;조교 대상 사정 RANDEVENT(59) ～
 ;─
 ;·조교 대상이 사정하는 경우에 표시
 ;·사정량에 의한 분기는 필요하게 응하고 가감(상태)해 사용하는 것이 바람직함
@@ -1371,9 +1371,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	LOCALS:4 '= TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") ?"……" + LOCALS:3 # "" 
 	[SKIPSTART]
 	;=================================================
-	;전립선 사정(A절정시에 쾌C에 관련되지 않고 사정)
+	;전립선사정(A절정시에 쾌C에 관련되지 않고 사정)
 	;=================================================
-	IF SHOOTING(MASTER, "전립선 사정")
+	IF SHOOTING(MASTER, "전립선사정")
 		;-------------------------------------------------
 		;구에서
 		;-------------------------------------------------
@@ -1395,14 +1395,14 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		//IF MA_CHECK_K39("로터")
 		//ENDIF
 		;-------------------------------------------------
-		;애널 비즈로
+		;애널비즈로
 		;-------------------------------------------------
-		IF MA_CHECK_K39("애널 비즈")
+		IF MA_CHECK_K39("애널비즈")
 		ENDIF
 		;-------------------------------------------------
-		;애널 바이브로
+		;애널바이브로
 		;-------------------------------------------------
-		IF MA_CHECK_K39("애널 바이브")
+		IF MA_CHECK_K39("애널바이브")
 		ENDIF
 		;-------------------------------------------------
 		;관장기＋플러그로
@@ -1415,9 +1415,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	;GET_NORMALACTNUM(TFLAG:ACT)로 콤비 네이션에도 배려 해야 한다고 생각하면서
 	;수고에 주저 해 그대로였거나. 성실하게 하면 비교적 심한 일이 되기 때문에
 	;=================================================
-	;가랑이로 동시 절정
+	;가랑이로 동시절정
 	;=================================================
-	IF TCVAR:TARGET:C절정 && IS_NOWACTNAME("성기를 서로 켠다")
+	IF TCVAR:TARGET:C절정 && IS_NOWACTNAME("성기를서로켠다")
 		IF RAND:3
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -1469,9 +1469,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	
 	;이것도 콤비 네이션에 파생할 가능성을 생각하지 않으면, 라고 생각하면서 그대로였거나
 	;=================================================
-	;파이즈리로 동시 절정
+	;파이즈리로 동시절정
 	;=================================================
-	IF TCVAR:TARGET:B절정 && IS_NOWACTNAME("파이즈리 한다") && !TCVAR:TARGET:분유
+	IF TCVAR:TARGET:B절정 && IS_NOWACTNAME("파이즈리한다") && !TCVAR:TARGET:분유
 		IF RAND:3
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -1527,7 +1527,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	;=================================================
 	IF GETBIT(TEQUIP:자위중, 0)
 		;-------------------------------------------------
-		;얼굴에 사정하기 자위 절정
+		;얼굴에 사정하기 자위절정
 		;-------------------------------------------------
 		IF ME_PLAYER(1) == 9
 			;상사상애
@@ -1554,9 +1554,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 			;RETURN 하지 않고 사정종 분기에 내던진다. 각 분기에 들어가면 거기서 RETURN
 			;라고 하는 것으로, 여기서 RETURN 하고 있지 않는 것은 미스가 아니다. 라고 미래의 자신에게 말해 둔다
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			;하늘 사정
+			;드라이사정
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			IF SHOOTING(MASTER, "하늘 사정")
+			IF SHOOTING(MASTER, "드라이사정")
 				;효과를 처리
 				CALL SHOOT_VARIATION_K39
 				;범용 처리
@@ -1587,9 +1587,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 			ENDIF
 			
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			;대량 사정
+			;대량사정
 			;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-			IF SHOOTING(MASTER, "대량 사정")
+			IF SHOOTING(MASTER, "대량사정")
 				CALL SHOOT_VARIATION_K39
 				CALL HTMLPRINTW(@"「아앗!?%RAND_SPLIT("구, 코쿠/응읏, 응")%…… 응쿠, 응쿳…… 응쿳%LOCALS:2%」")
 				;상사상애
@@ -1708,9 +1708,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 			;RETURN 하지 않고 하위에 흘린다.
 			;사정종 분기에 떨어진다, 혹은 분기를 다 없어진 시점에서 RETURN
 			;-------------------------------------------------
-			;하늘 사정
+			;드라이사정
 			;-------------------------------------------------
-			IF SHOOTING(MASTER, "하늘 사정")
+			IF SHOOTING(MASTER, "드라이사정")
 				;상사상애
 				IF GET_KFLAG_K39("상사상애")
 					SELECTCASE RANDEVENT(3, 83)
@@ -1737,9 +1737,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 			ENDIF
 			
 			;-------------------------------------------------
-			;대량 사정
+			;대량사정
 			;-------------------------------------------------
-			IF SHOOTING(MASTER, "대량 사정")
+			IF SHOOTING(MASTER, "대량사정")
 				;상사상애
 				IF GET_KFLAG_K39("상사상애")
 					SELECTCASE RANDEVENT(3, 87)
@@ -1799,17 +1799,17 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		ENDIF
 	ENDIF
 	
-	;분기의 통폐합을 한 여파로 RANDEVENT의 이벤트 번호가 날아 나는 일에
+	;분기의 통폐합을 한 여파로 RANDEVENT의 이벤트번호가 날아 나는 일에
 	;머지않아 정리하지 않으면
 	;=================================================
 	;가랑이로 사정
 	;=================================================
-	IF IS_NOWACTNAME("성기를 서로 켠다") && MC_CHECK_K39("질구")
+	IF IS_NOWACTNAME("성기를서로켠다") && MC_CHECK_K39("질구")
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
 			SELECTCASE RANDEVENT(3, 96)
 				CASE 0
-					CALL HTMLPRINTW(@"「좋아, 이대로 가랑이로 가게 해 준다%LOCALS:4%」")
+					CALL HTMLPRINTW(@"「좋아, 이대로 가랑이로가게해 준다%LOCALS:4%」")
 				CASE 1
 					PRINTFORMW 「이대로 사정해도 좋아…… 이봐요, 좀 더 비비어……」
 				CASE 2
@@ -1818,7 +1818,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		ELSE
 			SELECTCASE RANDEVENT(3, 98)
 				CASE 0
-					CALL HTMLPRINTW(@"「좋아요, 이대로 가랑이로 가게 해 줍니다%LOCALS:4%」")
+					CALL HTMLPRINTW(@"「좋아요, 이대로 가랑이로가게해 줍니다%LOCALS:4%」")
 				CASE 1
 					PRINTFORMW 「이대로 내도 좋아요. 자, 좀 더 문질러……」
 				CASE 2
@@ -1828,9 +1828,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		CALL SHOOT_VARIATION_K39
 		;//RETURN 하지 않고 하위에 흘린다. 조건에 히트 하지 않았던 시점에서 RETURN
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정")
+		IF SHOOTING(MASTER, "드라이사정")
 			;범용 처리
 			CALL PRINT_KOJO_EV20_1_K39
 			;상사상애
@@ -1859,9 +1859,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		ENDIF
 		
 		;-------------------------------------------------
-		;대량 사정
+		;대량사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "대량 사정")
+		IF SHOOTING(MASTER, "대량사정")
 			;범용 처리
 			CALL PRINT_KOJO_EV20_1_K39
 			;상사상애
@@ -1922,14 +1922,14 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	;=================================================
 	;구에 의한 애무로 사정(페라 따위)
 	;=================================================
-	IF (IS_NOWACTNAME("구에서 애무") && TFLAG:ACT파생 == 1) || MC_CHECK_K39("구") || TEQUIP:조교대상C사용 == 2
+	IF (IS_NOWACTNAME("입으로애무") && TFLAG:ACT파생 == 1) || MC_CHECK_K39("구") || TEQUIP:조교대상C사용 == 2
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
 			SELECTCASE RANDEVENT(3, 110)
 				CASE 0
 					CALL HTMLPRINTL(@"「좋아, 입에 내…… 전부 마셔 준다%LOCALS:4%」")
 				CASE 1
-					PRINTFORML 「입에 내도 좋아…… 지금 가게 해 주기 때문에……」
+					PRINTFORML 「입에 내도 좋아…… 지금가게해 주기 때문에……」
 				CASE 2
 					PRINTFORML 「전부 받아 들여 주는…… 그대로 입의 안에 내……」
 			ENDSELECT
@@ -1938,7 +1938,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 				CASE 0
 					CALL HTMLPRINTL(@"「좋아요, 그대로 나의 입에 내 주세요%LOCALS:4%」")
 				CASE 1
-					PRINTFORML 「입에 내도 좋아요. 지금 가게 해 줍니다……」
+					PRINTFORML 「입에 내도 좋아요. 지금가게해 줍니다……」
 				CASE 2
 					PRINTFORML 「%CNAME(MASTER, TARGET)%의 액, 전부 받아 들여 줍니다. 나의 입에 내 주세요……」
 			ENDSELECT
@@ -1950,9 +1950,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		;//RETURN 하지 않고 사정종 분기에. 분기에 떨어지면 RETURN. 새면 범용 처리에.
 		
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정")
+		IF SHOOTING(MASTER, "드라이사정")
 			;범용 처리
 			CALL PRINT_KOJO_EV20_1_K39
 			;상사상애
@@ -1981,9 +1981,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		ENDIF
 		
 		;-------------------------------------------------
-		;대량 사정
+		;대량사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "대량 사정")
+		IF SHOOTING(MASTER, "대량사정")
 			PRINTFORMW 「아앗!? 읏쿠, 코쿠…… 응쿠, 응쿳…… 응쿳!」
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -2042,7 +2042,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		;-------------------------------------------------
 		;그 외의 사정
 		;-------------------------------------------------
-		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "전립선 사정")
+		IF GROUPMATCH(GET_SHOOTING(MASTER), "사정", "전립선사정")
 			PRINTFORM 「읏!?%RAND_SPLIT("구, 코쿠/응푸… 응/츄쿠, 응")%……
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
@@ -2068,22 +2068,22 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	;=================================================
 	;손에 의한 애무로 사정
 	;=================================================
-	IF IS_NOWACTNAME("손으로 애무") || MC_CHECK_K39("손") || TEQUIP:조교대상C사용 == 1
+	IF IS_NOWACTNAME("손으로애무") || MC_CHECK_K39("손") || TEQUIP:조교대상C사용 == 1
 		;대사, 지문, 효과를 표시하면 사정종 분기에
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
 			SELECTCASE RANDEVENT(3, 127)
 				CASE 0
-					PRINTFORML 「좋아, 좋아하는 때에 내…… 이대로 손으로 가게 해 준다」
+					PRINTFORML 「좋아, 좋아하는 때에 내…… 이대로 손으로가게해 준다」
 				CASE 1
 					CALL HTMLPRINTL(@"「우후, 빅쿤빅쿤 시켜 버려. 이 가는 직전의 반응이 최고군요%LOCALS:4%」")
 				CASE 2
-					PRINTFORML 「이봐요, 분명하게 눈을 봐. 응시하면서 가게 해 준다…」
+					PRINTFORML 「이봐요, 분명하게 눈을 봐. 응시하면서가게해 준다…」
 			ENDSELECT
 		ELSE
 			SELECTCASE RANDEVENT(3, 130)
 				CASE 0
-					CALL HTMLPRINTL(@"「갈 것 같네요? 좋아요, 이대로 손으로 가게 해 줍니다%LOCALS:4%」")
+					CALL HTMLPRINTL(@"「갈것같다이군요? 좋아요, 이대로 손으로가게해 줍니다%LOCALS:4%」")
 				CASE 1
 					PRINTFORML 「손안으로 움찔움찔 하는 감촉이 견딜 수 없네요♪이봐요, 언제라도 가도 좋아요」
 				CASE 2
@@ -2095,9 +2095,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		CALL SHOOT_VARIATION_K39
 		;RETURN 하지 않고 하위에 흘린다. 각 분기내에서 RETURN. 새면 범용 처리에
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정")
+		IF SHOOTING(MASTER, "드라이사정")
 			;범용 처리
 			CALL PRINT_KOJO_EV20_1_K39
 			;상사상애
@@ -2126,9 +2126,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		ENDIF
 		
 		;-------------------------------------------------
-		;대량 사정
+		;대량사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "대량 사정")
+		IF SHOOTING(MASTER, "대량사정")
 			;범용 처리
 			CALL PRINT_KOJO_EV20_1_K39
 			;상사상애
@@ -2175,7 +2175,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 						PRINTFORMW   벌써 가 버렸어?%TNAME_K39()%에 훑어지지만 그렇게 좋았어?」
 					CASE 2
 						PRINTFORMW   나닷, 아직 준비하고 있지 않는데. 갈 때는 그렇게 말해요!」
-						CALL FADEIN(15, "「」")
+						CALL FADEIN(15, "「～응이라고」")
 						CALL FADEOUT(15, @"「%RAND_SPLIT("후후/키득")%…」")
 						CALL FADE_CLINE(1)
 						WAIT
@@ -2201,22 +2201,22 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	;=================================================
 	;파이즈리로 사정:조교자가 거유의 경우
 	;=================================================
-	IF (IS_NOWACTNAME("파이즈리 한다") || MC_CHECK_K39("가슴")) && TALENT:TARGET:거유
+	IF (IS_NOWACTNAME("파이즈리한다") || MC_CHECK_K39("가슴")) && TALENT:TARGET:거유
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
 			SELECTCASE RANDEVENT(3, 149)
 				CASE 0
-					CALL HTMLPRINTW(@"「큰 젖가슴으로 비비어지면 기분이 좋지요? 이대로 가게 해 준다%LOCALS:4%」")
+					CALL HTMLPRINTW(@"「큰 젖가슴으로 비비어지면 기분이 좋지요? 이대로가게해 준다%LOCALS:4%」")
 				CASE 1
 					PRINTFORMW 「이대로 가슴으로 사정해도 좋아…… 이봐요, 좀 더 비비어 준다……」
 				CASE 2
-					PRINTFORMW 「이봐요, 젖가슴으로 가게 해 주는…… 그대로 사정해도 좋아……」
+					PRINTFORMW 「이봐요, 젖가슴으로가게해 주는…… 그대로 사정해도 좋아……」
 			ENDSELECT
 		;그 외
 		ELSE
 			SELECTCASE RANDEVENT(3, 152)
 				CASE 0
-					CALL HTMLPRINTW(@"「자, 이대로%CNAME(MASTER, TARGET)%의 정말 좋아하는 가슴으로 가게 해 줍니다%LOCALS:4%」")
+					CALL HTMLPRINTW(@"「자, 이대로%CNAME(MASTER, TARGET)%의 정말 좋아하는 가슴으로가게해 줍니다%LOCALS:4%」")
 				CASE 1
 					PRINTFORMW 「이대로 가슴에 내도 좋아요. 자, 좀 더 비비어 줍니다……」
 				CASE 2
@@ -2238,13 +2238,13 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		CALL SHOOT_VARIATION_K39
 		;//사정 2, 5의 테두리는 마련하지 않고, 조건으로부터 빠진 시점에서 RETURN 시킨다
 		
-		;하늘 사정/대량 사정/조루이다면 범용 처리를 부른다
-		SIF GROUPMATCH(GET_SHOOTING(MASTER), "하늘 사정", "대량 사정", "조루")
+		;드라이사정/대량사정/조루이다면 범용 처리를 부른다
+		SIF GROUPMATCH(GET_SHOOTING(MASTER), "드라이사정", "대량사정", "조루")
 			CALL PRINT_KOJO_EV20_1_K39
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정")
+		IF SHOOTING(MASTER, "드라이사정")
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
 				PRINT 는,
@@ -2271,9 +2271,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		ENDIF
 		
 		;-------------------------------------------------
-		;대량 사정
+		;대량사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "대량 사정")
+		IF SHOOTING(MASTER, "대량사정")
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
 				SELECTCASE RANDEVENT(3, 157)
@@ -2334,29 +2334,29 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	;=================================================
 	;파이즈리로 사정:조교자가 빈유
 	;=================================================
-	;IF 구상 기입 체크(100) && (IS_NOWACTNAME("파이즈리 한다") || MC_CHECK_K39("가슴")) && TALENT:TARGET:빈유
+	;IF 구상 기입 체크(100) && (IS_NOWACTNAME("파이즈리한다") || MC_CHECK_K39("가슴")) && TALENT:TARGET:빈유
 	;ENDIF
 	
 	;대사, 지문, 효과를 경유해 사정종 분기에
 	;=================================================
 	;파이즈리로 사정:조교자가 거유, 빈유 이외 경우
 	;=================================================
-	IF IS_NOWACTNAME("파이즈리 한다") || MC_CHECK_K39("가슴")
+	IF IS_NOWACTNAME("파이즈리한다") || MC_CHECK_K39("가슴")
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
 			SELECTCASE RANDEVENT(3, 171)
 				CASE 0
-					CALL HTMLPRINTW(@"「젖가슴으로 비비어지는 것 기분이 좋지요? 이대로 가게 해 준다%LOCALS:4%」")
+					CALL HTMLPRINTW(@"「젖가슴으로 비비어지는 것 기분이 좋지요? 이대로가게해 준다%LOCALS:4%」")
 				CASE 1
 					PRINTFORMW 「이대로 가슴으로 사정해도 좋아…… 이봐요, 좀 더 비비어 준다……」
 				CASE 2
-					PRINTFORMW 「이봐요, 젖가슴으로 가게 해 주는…… 그대로 사정해도 좋아……」
+					PRINTFORMW 「이봐요, 젖가슴으로가게해 주는…… 그대로 사정해도 좋아……」
 			ENDSELECT
 		;그 외
 		ELSE
 			SELECTCASE RANDEVENT(3, 174)
 				CASE 0
-					CALL HTMLPRINTW(@"「자, 이대로%CNAME(MASTER, TARGET)%의 정말 좋아하는 가슴으로 가게 해 줍니다%LOCALS:4%」")
+					CALL HTMLPRINTW(@"「자, 이대로%CNAME(MASTER, TARGET)%의 정말 좋아하는 가슴으로가게해 줍니다%LOCALS:4%」")
 				CASE 1
 					PRINTFORMW 「이대로 가슴에 내도 좋아요. 자, 좀 더 비비어 줍니다……」
 				CASE 2
@@ -2377,14 +2377,14 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		CALL SHOOT_VARIATION_K39
 		;//사정 2, 5의 테두리는 마련하지 않고, 조건으로부터 빠지면 RETURN 시켜 종료
 		
-		;하늘 사정/대량 사정/조루이다면 범용 처리를 부른다
-		SIF GROUPMATCH(GET_SHOOTING(MASTER), "하늘 사정", "대량 사정", "조루")
+		;드라이사정/대량사정/조루이다면 범용 처리를 부른다
+		SIF GROUPMATCH(GET_SHOOTING(MASTER), "드라이사정", "대량사정", "조루")
 			CALL PRINT_KOJO_EV20_1_K39
 		
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정")
+		IF SHOOTING(MASTER, "드라이사정")
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
 				PRINT   는,
@@ -2411,9 +2411,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		ENDIF
 		
 		;-------------------------------------------------
-		;대량 사정
+		;대량사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "대량 사정")
+		IF SHOOTING(MASTER, "대량사정")
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
 				SELECTCASE RANDEVENT(3, 179)
@@ -2476,23 +2476,23 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	;=================================================
 	;다리에 의한 애무로 사정(풋잡)
 	;=================================================
-	IF IS_NOWACTNAME("풋잡 한다") || MC_CHECK_K39("다리")
+	IF IS_NOWACTNAME("풋잡한다") || MC_CHECK_K39("다리")
 		;상사상애
 		IF GET_KFLAG_K39("상사상애")
 			;RANDEVENT(198)
 			SELECTCASE RANDEVENT(3, 198)
 				CASE 0
-					CALL HTMLPRINTW(@"「다리로 비비어지는 것 기분이 좋아? 좋아…… 이대로 가게 해 준다%LOCALS:4%」")
+					CALL HTMLPRINTW(@"「다리로 비비어지는 것 기분이 좋아? 좋아…… 이대로가게해 준다%LOCALS:4%」")
 				CASE 1
 					PRINTFORMW 「이대로 사정해도 좋아…… 이봐요, 좀 더 다리로 비비어 준다……」
 				CASE 2
-					PRINTFORMW 「이봐요,%TNAME_K39()%의 사타구니를 자주(잘) 봐…… 이대로 다리로 가게 해 준다……」
+					PRINTFORMW 「이봐요,%TNAME_K39()%의 사타구니를 자주(잘) 봐…… 이대로 다리로가게해 준다……」
 			ENDSELECT
 		ELSE
 			;RANDEVENT(201)
 			SELECTCASE RANDEVENT(3, 201)
 				CASE 0
-					CALL HTMLPRINTW(@"「자, 이대로 다리로 가게 해 줍니다%LOCALS:4%」")
+					CALL HTMLPRINTW(@"「자, 이대로 다리로가게해 줍니다%LOCALS:4%」")
 				CASE 1
 					PRINTFORMW 「이대로 내도 좋아요. 이봐요, 좀 더 다리로 비비어 줍니다……」
 				CASE 2
@@ -2512,13 +2512,13 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		CALL SHOOT_VARIATION_K39
 		;//RETURN 하지 않고 하위에. 새면 종단으로 RETURN
 		
-		;하늘 사정/대량 사정/조루이다면 범용 처리를 부른다
-		SIF GROUPMATCH(GET_SHOOTING(MASTER), "하늘 사정", "대량 사정", "조루")
+		;드라이사정/대량사정/조루이다면 범용 처리를 부른다
+		SIF GROUPMATCH(GET_SHOOTING(MASTER), "드라이사정", "대량사정", "조루")
 			CALL PRINT_KOJO_EV20_1_K39
 		;-------------------------------------------------
-		;하늘 사정
+		;드라이사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "하늘 사정")
+		IF SHOOTING(MASTER, "드라이사정")
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
 				PRINT   는,
@@ -2545,9 +2545,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 		ENDIF
 		
 		;-------------------------------------------------
-		;대량 사정
+		;대량사정
 		;-------------------------------------------------
-		IF SHOOTING(MASTER, "대량 사정")
+		IF SHOOTING(MASTER, "대량사정")
 			;상사상애
 			IF GET_KFLAG_K39("상사상애")
 				SELECTCASE RANDEVENT(3, 206)
@@ -2611,7 +2611,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	IF MC_CHECK_K39("오나홀") || TEQUIP:오나홀
 		CALL SHOOT_VARIATION_K39
 		SELECTCASE GET_SHOOTING(MASTER)
-			CASE "하늘 사정"
+			CASE "드라이사정"
 				IF GET_KFLAG_K39("상사상애")
 					PRINTFORMW 「… 만족할 것 같은 얼굴 해 버려」
 					PRINTFORMW 「완전히 짜내져 만열이라는 일이야?」
@@ -2619,7 +2619,7 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 					PRINTFORMW 「아라, 이제(벌써) 나오지 않는 것 같네요?」
 					PRINTFORMW 「과연 너무 하는 것입니까…」
 				ENDIF
-			CASE "대량 사정"
+			CASE "대량사정"
 				IF GET_KFLAG_K39("상사상애")
 					PRINTFORMW 「… 정말 기가 막힐 정도로 냈군요」
 					PRINTFORMW 「안으로부터 흘러넘쳐 오고 있고… 이제 쭉 이것만으로 좋은 것이 아니야?」
@@ -2649,9 +2649,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:사정 && !TCVAR:MASTER:방뇨
 	;-----------------------------------
 	CALL SHOOT_VARIATION_K39
 	SELECTCASE GET_SHOOTING(MASTER)
-		CASE "하늘 사정"
+		CASE "드라이사정"
 			PRINTFORMW 「\@ GET_KFLAG_K39("상사상애") ? 뭔가 어딘지 부족한 느낌……# 아무것도 나오지 않네요?\@」
-		CASE "대량 사정"
+		CASE "대량사정"
 			PRINTFORMW 「\@ GET_KFLAG_K39("상사상애") ? …… 완전히. 기가 막히는만큼 냈군요?# 후후, 자주(잘) 이렇게 나오는 것이군요\@」
 		CASE "조루"
 			PRINTFORMW 「\@ GET_KFLAG_K39("상사상애") ? …… 이 조루. 라든지 말해지면, 다치거나 한다# 이런, 조금 빠르지 않습니까\@? 후후…」
@@ -2667,13 +2667,13 @@ ENDIF
 ;─
 ;·조교자가 사정하는 경우에 표시
 ;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
-;·현재의 사양에서는 조교자가 하늘 사정하는 것은 매우 희(거의 없어?)
+;·현재의 사양에서는 조교자가 드라이사정 하는 것은 매우 희(거의 없어?)
 ;-------------------------------------------------
 ;IF 구상 기입 체크(0) && TCVAR:TARGET:사정
 ;ENDIF
 
 ;─
-;조교 대상 C절정 RANDEVENT(161) ~(180)
+;조교 대상 C절정 RANDEVENT(161) ～(180)
 ;─
 ;·조교 대상이 C절정 하는 경우에 표시
 ;·여기에서는 「여자 아이의 C절정」을 상정하고 있다
@@ -2684,7 +2684,7 @@ ENDIF
 ;ENDIF
 
 ;─
-;조교 대상 V절정 RANDEVENT(181) ~ (200)
+;조교 대상 V절정 RANDEVENT(181) ～ (200)
 ;─
 ;·조교 대상이 V절정 하는 경우에 표시
 ;-------------------------------------------------
@@ -2768,7 +2768,7 @@ IF 구상기입체크(100) && TCVAR:TARGET:C절정
 	;=================================================
 	;구에 의한 애무로 절정(쿤닐링구스 따위)
 	;=================================================
-	IF (IS_NOWACTNAME("구에서 애무를 강제") && GROUPMATCH(TFLAG:ACT파생, 0, 2)) || TC_CHECK_K39("구")
+	IF (IS_NOWACTNAME("입으로애무를강제") && GROUPMATCH(TFLAG:ACT파생, 0, 2)) || TC_CHECK_K39("구")
 		SELECTCASE RANDEVENT(2, 225)
 			CASE 1
 				CALL TC_EX_K39
@@ -2812,7 +2812,7 @@ IF 구상기입체크(100) && TCVAR:TARGET:C절정
 	;=================================================
 	;페니스에 의한 애무로 절정(가랑이)
 	;=================================================
-	IF IS_NOWACTNAME("성기를 서로 켠다") || TC_CHECK_K39("페니스")
+	IF IS_NOWACTNAME("성기를서로켠다") || TC_CHECK_K39("페니스")
 		SELECTCASE RANDEVENT(2, 230)
 			CASE 0
 				CALL TC_EX_K39
@@ -2861,7 +2861,7 @@ IF 구상기입체크(100) && TCVAR:TARGET:C절정
 ENDIF
 
 ;─
-;조교자 V절정 RANDEVENT(261) ~ (280)
+;조교자 V절정 RANDEVENT(261) ～ (280)
 ;─
 ;·조교자가 V절정 하는 경우에 표시
 ;-------------------------------------------------
@@ -2871,7 +2871,7 @@ IF 구상기입체크(100) && TCVAR:TARGET:V절정
 	LOCALS:2 '= RAND:2 ? LOCALS:0 # LOCALS:1
 	[SKIPSTART]
 	;=================================================
-	;동시에 A절정/B절정(다중 절정)
+	;동시에 A절정/B절정(다중절정)
 	;=================================================
 	IF TCVAR:TARGET:A절정 || TCVAR:TARGET:B절정
 		;V+AB절정
@@ -2930,16 +2930,16 @@ IF 구상기입체크(100) && TCVAR:TARGET:V절정
 	;=================================================
 	;페니스에 의한 애무로 절정(섹스)
 	;=================================================
-	IF IS_NOWACTNAME("정상위 시킨다/후배위 시킨다/역강간/대면좌위 시킨다/배면좌위 시킨다") || V_SEX(MASTER)
+	IF IS_NOWACTNAME("정상위시킨다/후배위시킨다/역강간/대면좌위시킨다/배면좌위시킨다") || V_SEX(MASTER)
 		;-------------------------------------------------
-		;초조하게 해 안에 절정
+		;초조하게함 안에 절정
 		;-------------------------------------------------
 		IF TCVAR:MASTER:초조하게해번 > 1
 			SELECTCASE RANDEVENT(2, 245)
 				CASE 0
-					CALL HTMLPRINTW(@"「아앗%LOCALS:2% 거짓말! 초조하게 하고 있는데, 내가 가 버린다앗!」")
+					CALL HTMLPRINTW(@"「아앗%LOCALS:2% 거짓말! 초조하게함이라고 있는데, 내가 가 버린다앗!」")
 				CASE 1
-					CALL HTMLPRINTW(@"「응앗%LOCALS:2% 초조하게 하고 있는데… 가 버린다! 가게 되어 버린다앗!」")
+					CALL HTMLPRINTW(@"「응앗%LOCALS:2% 초조하게함이라고 있는데… 가 버린다! 가게 되어 버린다앗!」")
 			ENDSELECT
 			SELECTCASE RANDEVENT(2, 246)
 				CASE 0
@@ -2980,7 +2980,7 @@ IF 구상기입체크(100) && TCVAR:TARGET:V절정
 						CASE 0
 							CALL HTMLPRINTW(@"「하앗! 아앗%LOCALS:2% 아, 이, 이런 건%LOCALS:2% 응…」")
 						CASE 1
-							CALL HTMLPRINTW(@"「앗%LOCALS:2% 는! 아아앗%LOCALS:2% 가게 햇! 가게 해 주세욧……!」")
+							CALL HTMLPRINTW(@"「앗%LOCALS:2% 는! 아아앗%LOCALS:2% 가게해! 가게해 주세욧……!」")
 					ENDSELECT
 					SELECTCASE  RANDEVENT(2, 251)
 						CASE 0
@@ -3014,16 +3014,16 @@ IF 구상기입체크(100) && TCVAR:TARGET:A절정
 	LOCALS:1 '= TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕") || (GET_KFLAG_K39("상사상애") && PERCENT(75)) ? HTML_HEARTB(, COLOR2_K39("PINK")) # "!" 
 	LOCALS:2 '= RAND:2 ? LOCALS:0 # LOCALS:1 
 	;=================================================
-	;동시에 B절정(다중 절정)
+	;동시에 B절정(다중절정)
 	;=================================================
 	;IF TCVAR:TARGET:B절정
 	;ENDIF
 	
-	;A에 대한 입으로 애무 강제는 안면 승마의 경우만 발생
+	;A에 대한 입으로애무 강제는 안면승마의 경우만 발생
 	;=================================================
-	;안면 승마 애널로 절정
+	;안면승마애널로 절정
 	;=================================================
-	IF (IS_NOWACTNAME("구에서 애무를 강제") && TFLAG:ACT파생 == 3) || TEQUIP:안면승마애널 || TA_CHECK_K39("구")
+	IF (IS_NOWACTNAME("입으로애무를강제") && TFLAG:ACT파생 == 3) || TEQUIP:안면승마애널 || TA_CHECK_K39("구")
 		SELECTCASE RANDEVENT(2, 260)
 			CASE 0
 				CALL TA_EX_K39
@@ -3066,16 +3066,16 @@ IF 구상기입체크(100) && TCVAR:TARGET:A절정
 	;=================================================
 	;페니스에 의한 애무로 절정(A성교 봉사)
 	;=================================================
-	IF IS_NOWACTNAME("애널 섹스 시킨다") || A_SEX(MASTER)
+	IF IS_NOWACTNAME("애널섹스시킨다") || A_SEX(MASTER)
 		;-------------------------------------------------
-		;초조하게 해 안에 절정
+		;초조하게함 안에 절정
 		;-------------------------------------------------
 		IF TCVAR:MASTER:초조하게해번 > 1
 			SELECTCASE RANDEVENT(2, 265)
 				CASE 0
-					CALL HTMLPRINTW(@"「아앗!? 거짓말! 초조하게 하고 있는데, 내가 가 버린다앗%LOCALS:2%」")
+					CALL HTMLPRINTW(@"「아앗!? 거짓말! 초조하게함이라고 있는데, 내가 가 버린다앗%LOCALS:2%」")
 				CASE 1
-					CALL HTMLPRINTW(@"「응앗%LOCALS:2% 초조하게 하고 있는데… 가 버린다! 가게 되어 버린다앗%LOCALS:2%」")
+					CALL HTMLPRINTW(@"「응앗%LOCALS:2% 초조하게함이라고 있는데… 가 버린다! 가게 되어 버린다앗%LOCALS:2%」")
 			ENDSELECT
 			SELECTCASE RANDEVENT(2, 266)
 				CASE 0
@@ -3115,7 +3115,7 @@ IF 구상기입체크(100) && TCVAR:TARGET:A절정
 						CASE 0
 							CALL HTMLPRINTW(@"「하앗! 아앗%LOCALS:2% 아, 이, 이런 건! 응앗…%LOCALS:2%」")
 						CASE 1
-							CALL HTMLPRINTW(@"「앗%LOCALS:2% 는! 아아앗%LOCALS:2% 가게 햇! 가게 해 주세욧……!」")
+							CALL HTMLPRINTW(@"「앗%LOCALS:2% 는! 아아앗%LOCALS:2% 가게해! 가게해 주세욧……!」")
 					ENDSELECT
 					SELECTCASE RANDEVENT(2, 271)
 						CASE 0
@@ -3213,9 +3213,9 @@ IF 구상기입체크(100) && TCVAR:TARGET:B절정
 	ENDIF
 	
 	;=================================================
-	;구에 의한 애무로 절정(입으로 가슴 애무를 강제등)
+	;구에 의한 애무로 절정(입으로 가슴애무를 강제등)
 	;=================================================
-	IF (IS_NOWACTNAME("가슴 애무 강제") && TFLAG:ACT파생 == 2) || TB_CHECK_K39("구")
+	IF (IS_NOWACTNAME("가슴애무강제") && TFLAG:ACT파생 == 2) || TB_CHECK_K39("구")
 		SELECTCASE RANDEVENT(2, 285)
 			CASE 0
 				CALL TB_EX_K39
@@ -3224,7 +3224,7 @@ IF 구상기입체크(100) && TCVAR:TARGET:B절정
 				IF GET_KFLAG_K39("상사상애")
 					SELECTCASE RANDEVENT(2, 286)
 						CASE 0
-							CALL HTMLPRINTW(@"「히앗%LOCALS:2% 안됏, 그렇게 유두 빨아서는 안돼엣!!」")
+							CALL HTMLPRINTW(@"「히앗%LOCALS:2% 안됏, 그렇게 유두빨고라고는 안돼엣!!」")
 						CASE 1
 							CALL HTMLPRINTW(@"「%RAND_SPLIT("아/읏")%! 응쿳…… 안돼엣%LOCALS:2% 이제(벌써), 이제(벌써)!」")
 					ENDSELECT
@@ -3258,7 +3258,7 @@ IF 구상기입체크(100) && TCVAR:TARGET:B절정
 	;=================================================
 	;페니스에 의한 애무로 절정(파이즈리 따위)
 	;=================================================
-	IF (IS_NOWACTNAME("파이즈리 한다") || TB_CHECK_K39("페니스"))
+	IF (IS_NOWACTNAME("파이즈리한다") || TB_CHECK_K39("페니스"))
 		SELECTCASE RANDEVENT(2, 290)
 			CASE 0
 				CALL TB_EX_K39
@@ -3309,7 +3309,7 @@ ENDIF
 ;조교 대상 물총
 ;─
 ;·조교 대상이 물총의 경우에 표시
-;·현상, ACT손가락 삽입할 수 있는 때에 G스팟 고문에 파생했을 경우에게만 일어난다
+;·현상, ACT손가락삽입해라시에 G스팟 고문에 파생했을 경우에게만 일어난다
 ;·주인님의 물총은 없다
 ;-------------------------------------------------
 ;IF 구상 기입 체크(0) && TCVAR:MASTER:물총
@@ -3327,9 +3327,9 @@ IF 구상기입체크(100) && TCVAR:MASTER:방뇨
 	;자신의 구상으로 여러가지 재사용하고 있으면 다른 구상으로 다른 이름이 나오거나 하는 것이 저것이니까
 	;향후는 가능한 한 %CALLNAME:TARGET%표기로 가는 것이 바람직한 것인지, 라고
 	;=================================================
-	;성교 봉사중
+	;성교봉사중
 	;=================================================
-	IF IS_NOWACTNAME("역강간/정상위 시킨다/후배위 시킨다/대면좌위 시킨다/배면좌위 시킨다/애널 섹스 시킨다") || TEQUIP:성교봉사중
+	IF IS_NOWACTNAME("역강간/정상위시킨다/후배위시킨다/대면좌위시킨다/배면좌위시킨다/애널섹스시킨다") || TEQUIP:성교봉사중
 		PRINTFORMDL %CALLNAME:MASTER%는 복받치는 소변욕을 견디지 않고,
 		PRINTFORMDL %CALLNAME:TARGET%의\@ TEQUIP:성교봉사중 != 6 ? 질# 항\@내에 방뇨해 버렸다…
 		PRINTL
@@ -3360,7 +3360,7 @@ PRINTFORM 「%RAND_SPLIT("응/응응/아/아/아읏")%\@ TENSION(TARGET, 8) == "
 IF TENSION(TARGET, 8) == "높다" || IS_CONDITION(TARGET, "정욕")
 	CALL AUTOHEARTCB_K39
 ELSE
-	PRINT ！？
+	PRINT !?
 ENDIF
 
 ;-------------------------------------------------절취선-------------------------------------------------

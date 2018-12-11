@@ -19,8 +19,8 @@ CALLFORM %LOCALS%_EX
 ;─
 @CALC_SOURCE40_TALENT
 #DIM LCOUNT
-;페니스 밴드 장비중은 쾌c가 쾌v에 변환
-;변환율… 쾌c를 20%로 해, 나머지의 값에 v감각+1/c감각+1을 걸어 2로 나누어 쾌V에 가산한다
+;페니스밴드 장비중은 쾌c가 쾌v에 변환
+;변환율… 쾌c를 20％로 해, 나머지의 값에 v감각+1/c감각+1을 걸어 2로 나누어 쾌V에 가산한다
 IF TEQUIP:조교자페니스밴드
 	SOURCE:쾌V += (SOURCE:쾌C*8*(((ABL:V감각+1)*100)/(ABL:C감각+1)))/2000
 	TIMES SOURCE:쾌C, 0.20
@@ -54,7 +54,7 @@ NEXT
 @CALC_SOURCE40_PLEASURE
 #DIM LCOUNT
 
-;욕정 PALAM가[0→4, 1000→7, 2000→9, 3000→10, 4000→11, 5000→12]를 LOCAL에(4~12)
+;욕정 PALAM가[0→4, 1000→7, 2000→9, 3000→10, 4000→11, 5000→12]를 LOCAL에(4～12)
 LOCAL = LIMIT(GET_REVISION_SQRT(PALAM:MASTER:욕정, 5000, 8) + 4, 4, 12)
 FOR LCOUNT, 0, 4
 	;연속 보너스(연속 회수배에 증가하는 보너스)
@@ -95,7 +95,7 @@ SIF (!PENIS(TARGET) || TCVAR:발기 > 1)
 쾌감부담 = GET_REVISION_SQRT(SUMARRAY(SOURCE, 40, 44), 10000, 100)
 
 ;조교의 정도에 의한 경감
-;조교자 조교 레벨+욕망 ABL가[0→100%, 2→91%, 4→83%, 6→75%, 8→67%, 10→59%, 12→51%]를 쾌감 부담에 곱셈(50~100%)
+;조교자 조교레벨+욕망 ABL가[0→100%, 2→91%, 4→83%, 6→75%, 8→67%, 10→59%, 12→51%]를 쾌감 부담에 곱셈(50～100%)
 LOCAL = GET_REVISION_SQRT_PROP(CFLAG:조교레벨 + ABL:욕망, 1, 5, 12, 50)
 쾌감부담 -= 쾌감부담 * LIMIT(LOCAL, 50, 100) / 100
 
@@ -105,16 +105,16 @@ IF PENIS(TARGET)
 	IF 절정강도:0 > 0
 		;사정 게이지가 없다
 		IF BASE:사정 == 0
-			STR:1044 = 하늘 사정(조교자)
+			STR:1044 = 드라이사정(조교자)
 			DOWNBASE:체력  += 100
 			DOWNBASE:기력  += 80
 			NOWEX:사정      = 1
 			TCVAR:사정      = 1
-			TCVAR:하늘사정    = 1
+			TCVAR:드라이사정    = 1
 			TCVAR:드라이사정수 += 1
 		;강절정
 		ELSEIF 절정강도:0 == 2
-			STR:1044 = 대량 사정(조교자)
+			STR:1044 = 대량사정(조교자)
 			사정부담 = 500
 			NOWEX:사정 = 3
 			TCVAR:사정 = 3
@@ -131,7 +131,7 @@ IF PENIS(TARGET)
 		;정액 더러움의 추가
 		;─
 		;ACT가 파생하면 애무물이 바뀌는 경우가 있으므로@IS_NOWACTNAME는 아니고@TC_PLAYER로
-		;하나 하나 ACT 파생도 참조하는 것은 귀찮고!
+		;하나 하나 ACT파생도 참조하는 것은 귀찮고!
 		;─
 		;조교자의 페니스
 		CALL SET_STAIN("페니스", "정액", TARGET)
@@ -167,14 +167,14 @@ ENDIF
 IF TEQUIP:성교중 && NOWEX:사정
 	;질내사정 판정
 	LOCAL = 0
-	;중에 내지 마! 한편 허가를 청하는 실패
-	IF IS_NOWCOMNAME("중에 내지 마!") && !IS_COMGRONAME("허가를 청한다")
+	;안에내지마！한편 허가를청한다 실패
+	IF IS_NOWCOMNAME("안에내지마！") && !IS_COMGRONAME("허가를청한다")
 		;트라우마 가산
 		SOURCE:MASTER:트라우마 += (BASE:사정 == 1 ? 200 # 500) - CFLAG:MASTER:조교레벨 * 10
 		;질내사정 확인
 		LOCAL = 1
-	;중에 내! 또는 호의(M→T)가 충분히 존재
-	ELSEIF IS_NOWCOMNAME("중에 내!") || CFLAG:M호의 > RAND:8000
+	;안에내！또는 호의(M→T)가 충분히 존재
+	ELSEIF IS_NOWCOMNAME("안에내！") || CFLAG:M호의 > RAND:8000
 		;질내사정 확인
 		LOCAL = 1
 	ENDIF
@@ -182,19 +182,19 @@ IF TEQUIP:성교중 && NOWEX:사정
 	IF LOCAL
 		;V성교
 		IF TEQUIP:성교중 < 6
-			;더러운 추가(하늘 사정시 제외함)
+			;더러운 추가(드라이사정 때 제외함)
 			STAIN:MASTER:바기나 |= (BASE:사정 == 1 ? 0 # 4)
-			;질내사정 기록(하늘 사정 정보도 기입)
+			;질내사정 기록(드라이사정 정보도 기입)
 			TFLAG:전회질내사정 = (BASE:사정 == 1 ? 3 # 1)
-			;조교 대상(주인님)의 질내 사정량을 늘린다
+			;조교 대상(주인님)의 질내사정 양을 늘린다
 			CFLAG:M질정 += DOWNBASE:사정
 			;조교 대상의 바기나에 정액 더러움을 추가
 			CALL SET_STAIN("바기나", "정액", MASTER)
 		;A성교
 		ELSE
-			;더러운 추가(하늘 사정시 제외함)
+			;더러운 추가(드라이사정 때 제외함)
 			STAIN:MASTER:애널 |= (BASE:사정 == 1 ? 0 # 4)
-			;질내사정 기록(하늘 사정 정보도 기입)
+			;질내사정 기록(드라이사정 정보도 기입)
 			TFLAG:전회질내사정 = (BASE:사정 == 1 ? 7 # 5)
 			;조교 대상의 애널에 정액 더러움을 추가
 			CALL SET_STAIN("애널", "정액", MASTER)
@@ -244,20 +244,20 @@ ENDIF
 ;STR:1046(절정 표시용 캐릭터 라인) 초기화
 STR:1046 = 
 ;절정종을 순서에 기입
-SPLIT "＆Ｃ/＆Ｖ/＆Ａ/＆Ｂ", "/", LOCALS
+SPLIT "＆C/＆V/＆A/＆B", "/", LOCALS
 FOR LCOUNT, 0, 4
 	SIF 절정강도:LCOUNT
 		STR:1046 += LOCALS:LCOUNT
 NEXT
-;다중 절정시
+;다중절정 때
 IF STRLENSU(STR:1046) > 2
 	;서식을 정돈한다
 	STR:1046 = %SUBSTRINGU(STR:1046, 1)%절정(조교자)
 	;문자수로 절정종을 판정
-	;사중 절정
+	;사중절정
 	IF STRLENSU(STR:1046) > 13
-		;사중 절정시에는 특별한 캐릭터 라인을 기입
-		STR:1046 = 사중 절정(조교자)
+		;사중절정 때에는 특별한 캐릭터 라인을 기입
+		STR:1046 = 사중절정(조교자)
 		TIMES 절정부담, 2.00
 		TIMES 사정부담, 1.40
 		TIMES 분유부담, 1.40
@@ -319,7 +319,7 @@ TCVAR:B절정 = NOWEX:B절정
 
 ;사정시, 관련 플래그를 설정
 IF NOWEX:사정
-	;조교자 사정 후 경과 턴 참조계 플래그를 리셋트
+	;조교자 사정후경과턴참조 계 플래그를 리셋트
 	VARSET TCVAR:0, 0, 90, 100
 	;V성교시
 	SIF V_SEX()
@@ -333,8 +333,8 @@ ENDIF
 
 ;조교자의 발기
 
-;쾌감계 소스를 받는지, 키스인가, 다리 빨고 강제시.
-SIF (SOURCE:쾌C || SOURCE:쾌V || SOURCE:쾌A || SOURCE:쾌B || IS_NOWACTNAME("키스/다리 빨고 강제/W키스")) && PENIS(TARGET)
+;쾌감계 소스를 받는지, 키스인가, 다리빨고강제 때.
+SIF (SOURCE:쾌C || SOURCE:쾌V || SOURCE:쾌A || SOURCE:쾌B || IS_NOWACTNAME("키스/다리빨고강제/W키스")) && PENIS(TARGET)
 	TCVAR:발기++
 ;팬티·성기 보이고 탈의시.
 SIF P_DATUICHECK(1) > 1 && PENIS(TARGET)
@@ -385,7 +385,7 @@ SIF PENIS(TARGET)
 EX:분유 += NOWEX:분유
 
 ;삶그렇게(잠정)
-;가 그렇지 않고, 페니스가 있으면 발기하고 있는지, 페니스가 없을 때, 쾌c가 존재하면
+;갈것같다가 아니고, 페니스가 있으면 발기하고 있는지, 페니스가 없을 때, 쾌c가 존재하면
 IF TCVAR:TARGET:갈것같다 == 0 && (!PENIS(TARGET) || TCVAR:발기 > 1) && CUP:쾌C > 0
 	;C감각이 낮으면보다 낮은 값으로 갈 것 같게, 또 이성 저하로 C치에 관계없이 살 것 같게 된다.
 	VARSET LOCAL
@@ -393,12 +393,12 @@ IF TCVAR:TARGET:갈것같다 == 0 && (!PENIS(TARGET) || TCVAR:발기 > 1) && CUP
 	LOCAL += (CUP:쾌C + PALAM:쾌C) >= MAX(GET_ABL(TARGET, "C감각") * 100, 1000)
 	;기능 > 이성 판정
 	LOCAL += GET_ABL(MASTER, "기교") - GET_ABL(TARGET, "기교") > RAND:(MAX(BASE:TARGET:이성 / 10, 1))
-	;이성이 전혀 없으면 무조건으로 갈 것 같게
+	;이성이 전혀 없으면 무조건으로갈것같다에
 	LOCAL += BASE:TARGET:이성 == 0
 	;어떤 것인가의 판정에 인소
 	IF LOCAL
 		TCVAR:TARGET:갈것같다 += 5
-		PRINTFORMW %CALLNAME:TARGET%는 갈 것 같게 되었다…
+		PRINTFORMW %CALLNAME:TARGET%는갈것같다가 되었다…
 	ENDIF
 ENDIF
 
@@ -423,7 +423,7 @@ FOR LCOUNT, 1, 3
 		BREAK
 	LOCAL++
 NEXT
-;행그렇게시, 쾌c가 있으면 C절정이 반드시 일어난다
+;갈것같다시, 쾌c가 있으면 C절정이 반드시 일어난다
 SIF (ARG == 0) && TCVAR:TARGET:갈것같다 && CUP:쾌C > 0
 	LOCAL = MAX(LOCAL, 1)
 ;절정시

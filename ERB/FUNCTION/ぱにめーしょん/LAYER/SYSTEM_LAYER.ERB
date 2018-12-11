@@ -104,7 +104,7 @@ RETURN RESULT
 #DIMS LFTSTR,2			; 분할 삽입할 때의 좌측의 캐릭터 라인
 #DIMS NOWSTR,1			; 현재의 캐릭터 라인
 #DIMS RGTSTR,2			; 분할 삽입할 때의 우측의 캐릭터 라인
-#DIMS NOWBLKPROP,1		; 분할시의 블록 속성의 일시 퇴피 장소
+#DIMS NOWBLKPROP,1		; 분할시의 블록 속성의 일시퇴피 장소
 
 #DIM CUTLFT,1			; LFTSTR의 분할까지 무슨 문자?
 #DIM CUTRGT,1			; RGTSTR의 분할까지 무슨 문자?
@@ -204,14 +204,14 @@ ELSE
 								IF STRFIND(LOCALS , ",") > -1
 									;LOCALS를 더욱 나눈다
 									SPLIT LOCALS , "," , L_RESULTS
-									;나눈 후의 폭을 결정해, LOCALS:1~2로 LOCAL:1~2에 넣는다
+									;나눈 후의 폭을 결정해, LOCALS:1～2로 LOCAL:1～2에 넣는다
 									LOCALS:1 '= TOSTR(CUTRGT * 50) , TOSTR((NOWSTRLEN - CUTLFT) * 50)
 									LOCAL:1 = TOINT(LOCALS:1) , TOINT(LOCALS:2)
 									;다른 요소(X, Y, width)와 합류
 									LOCALS:1 = %L_RESULTS%,%L_RESULTS:1%,%LOCALS:1%,%L_RESULTS:3%
 									LOCALS:2 = %L_RESULTS%,%L_RESULTS:1%,%LOCALS:2%,%L_RESULTS:3%
 								ELSE
-									;나눈 후의 폭을 결정해, LOCALS:1~2로 LOCAL:1~2에 넣는다
+									;나눈 후의 폭을 결정해, LOCALS:1～2로 LOCAL:1～2에 넣는다
 									LOCALS:1 '= TOSTR(CUTRGT * 50) , TOSTR((NOWSTRLEN - CUTLFT) * 50)
 									LOCAL:1 = TOINT(LOCALS:1) , TOINT(LOCALS:2)
 								ENDIF
@@ -233,7 +233,7 @@ ELSE
 								NOWBLKPROP = %HTML_TOTAGTEXT(NOWBLK)%
 								
 								;통상의 태그문의 삽입 처리
-								; 좌측은 0~CUTRGT까지
+								; 좌측은 0～CUTRGT까지
 								LFTSTR:1 = %SUBSTRING(NOWSTR , 0 , CUTRGT)%
 								; 전각 문자의 도중부터 깎으려고 했을 때, 엇갈림 방지를 위해서(때문에) 좌측의 마지막 1문자를 반스페로 변환한다
 								SIF STRLENS(LFTSTR:1) > CUTRGT
@@ -242,7 +242,7 @@ ELSE
 								SIF LFTSTR:1 != "" && NOWBLKPROP != ""
 									LFTSTR:1 = %HTML_SETTAGTEXT(LFTSTR:1 , NOWBLKPROP)%
 
-								; 우측은 CUTLFT~캐릭터 라인의 끝까지
+								; 우측은 CUTLFT～캐릭터 라인의 끝까지
 								RGTSTR:1 = %SUBSTRING(NOWSTR , CUTLFT)%
 								; 전각 문자의 도중까지를 깎으려고 했을 때, 엇갈림 방지를 위해서(때문에) 우측의 최초의 1문자를 반스페로 변환한다
 								SIF NOWSTRLEN > CUTLFT + STRLENS(RGTSTR:1)
@@ -330,12 +330,12 @@ ELSE
 						IF STRFIND(LOCALS , ",") > -1
 							;LOCALS를 더욱 나눈다
 							SPLIT LOCALS , "," , L_RESULTS
-							;나눈 후의 폭을 결정해, LOCALS:1~2로 LOCAL:1~2에 넣는다
+							;나눈 후의 폭을 결정해, LOCALS:1～2로 LOCAL:1～2에 넣는다
 							LOCALS:2 '= TOSTR((NOWSTRLEN - CUTLFT) * 50)
 							;다른 요소(X, Y, width)와 합류
 							LOCALS:2 = %L_RESULTS%,%L_RESULTS:1%,%LOCALS:2%,%L_RESULTS:3%
 						ELSE
-							;나눈 후의 폭을 결정해, LOCALS:1~2로 LOCAL:1~2에 넣는다
+							;나눈 후의 폭을 결정해, LOCALS:1～2로 LOCAL:1～2에 넣는다
 							LOCALS:2 '= TOSTR((NOWSTRLEN - CUTLFT) * 50)
 						ENDIF
 						RGTSTR '= REPLACE(NOWBLK , "(param=').+?(')" , "$1" + " " + LOCALS:2 + "$2") + NEST_SEPARATOR

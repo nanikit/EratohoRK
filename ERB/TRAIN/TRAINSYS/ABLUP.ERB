@@ -22,7 +22,7 @@
 굴복난이도 = POWER(2, ABL:MASTER:순종) * (100 - TALENT:MASTER:프라이드낮음 * 20 + TALENT:MASTER:프라이드높음 * 20)
 ;굴복 EXP 취득
 굴복EXP = EXP:MASTER:굴복경험
-;굴복 각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;굴복각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (MARK:굴복각인 >= 10) ? 0 # (ABL:MASTER:순종 * 2 - 1 - MARK:굴복각인)
 굴복보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 ;굴복 달성 판정
@@ -66,11 +66,11 @@ CALL ABLUP_1(TARGET)
 욕망EXP += EXP:ARG:자위경험 * 3 + EXP:ARG:분유경험 * 4 + EXP:ARG:이상경험 * 4 + EXP:ARG:V확장경험 * 5 + EXP:ARG:A확장경험 * 5
 ;조교 대상
 IF ARG == MASTER
-	;쾌락 각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+	;쾌락각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 	LOCAL = (MARK:쾌락각인 >= 10) ? 0 # (ABL:ARG:욕망 * 2 - 1 - MARK:쾌락각인)
 ;조교자(타협)
 ELSE
-	;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+	;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 	LOCAL = (CFLAG:MASTER:조교레벨 >= 10) ? 0 # (ABL:ARG:욕망 * 2 - 1 - CFLAG:MASTER:조교레벨)
 ENDIF
 욕망보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
@@ -112,7 +112,7 @@ ENDIF
 기교난이도 = POWER(2, ABL:ARG:기교) * (100 - TALENT:ARG:습득빠름 * 20 + TALENT:ARG:습득느림 * 20)
 ;기교 EXP 취득
 기교EXP = EXP:ARG:성지식 + EXP:ARG:구음경험 * 2 + EXP:ARG:수음경험 * 2 + EXP:ARG:성교경험 * 2 + EXP:ARG:가게한경험 * 4
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:ARG:조교레벨 >= 10) ? 0 # (ABL:ARG:기교 * 2 - 1 - CFLAG:ARG:조교레벨)
 기교보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
@@ -150,23 +150,23 @@ CALL ABLUP_SENSITIVITY(TARGET, 6)
 #DIM 대상
 
 부위 = ARG - 3
-SPLIT "Ｃ/Ｖ/Ａ/Ｂ", "/", LOCALS
+SPLIT "C/V/A/B", "/", LOCALS
 
 ;감각 난이도 설정
 감각난이도 = POWER(2, ABL:대상:@"%LOCALS:부위%감각") * (100 - TALENT:대상:@"%LOCALS:부위%민감" * 20 + TALENT:대상:@"%LOCALS:부위%둔감" * 20)
 ;감각 EXP 취득
 감각EXP = EXP:대상:@"%LOCALS:부위%경험" * 2 + EXP:대상:절정경험
-SIF LOCALS:부위 == "Ｃ"
+SIF LOCALS:부위 == "C"
 	감각EXP += EXP:대상:절정경험
-SIF LOCALS:부위 == "Ｖ"
+SIF LOCALS:부위 == "V"
 	감각EXP += EXP:대상:V확장경험 * 4 + EXP:대상:성교경험 * 2
-SIF LOCALS:부위 == "Ａ"
+SIF LOCALS:부위 == "A"
 	감각EXP += EXP:대상:A확장경험 * 4 + EXP:대상:성교경험 + EXP:대상:이상경험
-SIF LOCALS:부위 == "Ｂ"
+SIF LOCALS:부위 == "B"
 	감각EXP += EXP:대상:분유경험 * 3
 ;조교 대상
 IF ARG == MASTER
-	;쾌락 각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+	;쾌락각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 	LOCAL = (MARK:쾌락각인 >= 10) ? 0 # (ABL:대상:@"%LOCALS:부위%감각" * 2 - 1 - MARK:쾌락각인)
 ;조교자(타협)
 ELSE
@@ -181,7 +181,7 @@ SIF (CUP:대상:@"쾌%LOCALS:부위%" + 감각EXP * 10 / 감각보정) > (감각
 
 
 ;-------------------------------------------------
-;봉사 정신 ABL
+;봉사정신 ABL
 ;-------------------------------------------------
 @ABLUP_7M
 CALL ABLUP_7(MASTER)
@@ -193,15 +193,15 @@ CALL ABLUP_7(TARGET)
 #DIM 봉사정신EXP
 #DIM 봉사정신보정
 
-;봉사 정신 난이도 설정
+;봉사정신 난이도 설정
 봉사정신난이도 = POWER(2, ABL:ARG:봉사정신) * (100 - TALENT:ARG:헌신적 * 20 + TALENT:ARG:수동 * 20)
-;봉사 정신 EXP 취득
+;봉사정신 EXP 취득
 봉사정신EXP = EXP:ARG:구음경험 + EXP:ARG:수음경험 + EXP:ARG:봉사쾌락경험 * 4
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:ARG:조교레벨 >= 10) ? 0 # (ABL:ARG:봉사정신 * 2 - 1 - CFLAG:ARG:조교레벨)
 봉사정신보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;봉사 정신 달성 판정
+;봉사정신 달성 판정
 ;조교 대상
 IF ARG == MASTER
 	SIF (CUP:ARG:공순 + 봉사정신EXP * 10 / 봉사정신보정) > (봉사정신난이도 * ABLUP_DIFFICULTY(7))
@@ -297,28 +297,28 @@ SIF (CUP:MASTER:고통 + CUP:MASTER:불쾌 - CUP:MASTER:억울 + 마조끼EXP * 
 
 
 ;-------------------------------------------------
-;자위 중독 ABL
+;자위중독 ABL
 ;-------------------------------------------------
 @ABLUP_12M
 #DIM 자위중독난이도
 #DIM 자위중독EXP
 #DIM 자위중독보정
 
-;자위 중독 난이도 설정
+;자위중독 난이도 설정
 자위중독난이도 = POWER(2, ABL:MASTER:자위중독) * (100 - TALENT:MASTER:자위쉬움 * 20)
-;자위 중독 EXP 취득
+;자위중독 EXP 취득
 자위중독EXP = EXP:MASTER:자위경험 + EXP:MASTER:조교자위경험
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = ((ABL:MASTER:욕망 + ABL:MASTER:노출버릇) >= 20) ? 0 # (ABL:MASTER:자위중독 * 2 - 1 - (ABL:MASTER:욕망 + ABL:MASTER:노출버릇))
 자위중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;자위 중독 달성 판정
+;자위중독 달성 판정
 SIF (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B + 자위중독EXP * 10 / 자위중독보정) > (자위중독난이도 * ABLUP_DIFFICULTY(12))
 	CALL ABLUP_RISE(MASTER, 12)
 
 
 ;-------------------------------------------------
-;정액 중독 ABL
+;정액중독 ABL
 ;-------------------------------------------------
 @ABLUP_13M
 CALL ABLUP_13(MASTER)
@@ -330,15 +330,15 @@ CALL ABLUP_13(TARGET)
 #DIM 정액중독EXP
 #DIM 정액중독보정
 
-;정액 중독 난이도 설정
+;정액중독 난이도 설정
 정액중독난이도 = POWER(2, ABL:ARG:정액중독) * 100
-;정액 중독 EXP 취득
+;정액중독 EXP 취득
 정액중독EXP = EXP:ARG:정액경험
 ;욕망 ABL가 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (ABL:ARG:욕망 >= 10) ? 0 # (ABL:ARG:정액중독 - 1 - ABL:ARG:욕망)
 정액중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;정액 중독 달성 판정
+;정액중독 달성 판정
 SIF (정액중독EXP * 40 / 정액중독보정) > (정액중독난이도 * ABLUP_DIFFICULTY(13))
 	CALL ABLUP_RISE(ARG, 13)
 
@@ -360,7 +360,7 @@ CALL ABLUP_14(TARGET)
 레즈중독난이도 = POWER(2, ABL:ARG:레즈중독) * (100 - TALENT:ARG:양도 * 20)
 ;레즈중독 EXP 취득
 레즈중독EXP = EXP:ARG:백합경험
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (ABL:ARG:레즈끼 >= 10) ? 0 # (ABL:ARG:레즈중독 - 1 - ABL:ARG:레즈끼)
 레즈중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
@@ -377,43 +377,43 @@ ENDIF
 
 
 ;-------------------------------------------------
-;고통 중독 ABL
+;고통중독 ABL
 ;-------------------------------------------------
 @ABLUP_15M
 #DIM 고통중독난이도
 #DIM 고통중독EXP
 #DIM 고통중독보정
 
-;고통 중독 난이도 설정
+;고통중독 난이도 설정
 고통중독난이도 = POWER(2, ABL:MASTER:고통중독) * (100 - TALENT:MASTER:드M * 20)
-;고통 중독 EXP 취득
+;고통중독 EXP 취득
 고통중독EXP = EXP:MASTER:고통쾌락경험 * 2 + EXP:MASTER:이상경험
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = ((ABL:MASTER:욕망 + ABL:MASTER:마조끼) >= 20) ? 0 # (ABL:MASTER:고통중독 * 2 - 1 - (ABL:MASTER:욕망 + ABL:MASTER:마조끼))
 고통중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;고통 중독 달성 판정
+;고통중독 달성 판정
 SIF (CUP:MASTER:고통 + 고통중독EXP * 10 / 고통중독보정) > (고통중독난이도 * ABLUP_DIFFICULTY(15))
 	CALL ABLUP_RISE(MASTER, 15)
 
 
 ;-------------------------------------------------
-;구속 중독 ABL
+;구속중독 ABL
 ;-------------------------------------------------
 @ABLUP_16M
 #DIM 구속중독난이도
 #DIM 구속중독EXP
 #DIM 구속중독보정
 
-;구속 중독 난이도 설정
+;구속중독 난이도 설정
 구속중독난이도 = POWER(2, ABL:MASTER:구속중독) * (100 - TALENT:MASTER:드M * 20)
-;구속 중독 EXP 취득
+;구속중독 EXP 취득
 구속중독EXP = EXP:MASTER:긴박경험 * 2 + EXP:MASTER:이상경험
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = ((ABL:MASTER:순종 + ABL:MASTER:마조끼) >= 20) ? 0 # (ABL:MASTER:구속중독 * 2 - 1 - (ABL:MASTER:순종 + ABL:MASTER:마조끼))
 구속중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;구속 중독 달성 판정
+;구속중독 달성 판정
 SIF (CUP:MASTER:불쾌 + 구속중독EXP * 10 / 구속중독보정) > (구속중독난이도 * ABLUP_DIFFICULTY(16))
 	CALL ABLUP_RISE(MASTER, 16)
 
@@ -433,7 +433,7 @@ SIF (CUP:MASTER:불쾌 + 구속중독EXP * 10 / 구속중독보정) > (구속중
 회화난이도 = POWER(2, ABL:회화) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
 ;회화 EXP 취득
 회화EXP = EXP:회화경험
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:회화 * 2 - 1 - CFLAG:조교레벨)
 회화보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
@@ -455,7 +455,7 @@ SIF (LOCAL / 2 + 회화EXP * 20 / 회화보정) > (회화난이도 * ABLUP_DIFFI
 애무난이도 = POWER(2, ABL:애무) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
 ;애무 EXP 취득
 애무EXP = EXP:수음경험
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:애무 * 2 - 1 - CFLAG:조교레벨)
 애무보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
@@ -477,7 +477,7 @@ SIF (LOCAL / 3 + 애무EXP * 20 / 애무보정) > (애무난이도 * ABLUP_DIFFI
 도구난이도 = POWER(2, ABL:도구) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
 ;도구 EXP 취득
 도구EXP = EXP:도구사용경험
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:도구 * 2 - 1 - CFLAG:조교레벨)
 도구보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
@@ -498,7 +498,7 @@ SIF (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B - CUP
 성교난이도 = POWER(2, ABL:성교) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
 ;성교 EXP 취득
 성교EXP = EXP:성교경험
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:성교 * 2 - 1 - CFLAG:조교레벨)
 성교보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
@@ -521,7 +521,7 @@ SIF (LOCAL / 3 + 성교EXP * 20 / 성교보정) > (성교난이도 * ABLUP_DIFFI
 수치난이도 = POWER(2, ABL:수치) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
 ;수치 EXP 취득
 수치EXP = EXP:MASTER:노출경험 + EXP:MASTER:치욕쾌락경험 * 2
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:수치 * 2 - 1 - CFLAG:조교레벨)
 수치보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
@@ -543,7 +543,7 @@ SIF (CUP:MASTER:욕정 + CUP:MASTER:치정 - CUP:MASTER:억울 + 수치EXP * 20 
 봉사난이도 = POWER(2, ABL:봉사) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
 ;봉사 EXP 취득
 봉사EXP = EXP:MASTER:구음경험 + EXP:MASTER:수음경험 + EXP:MASTER:봉사쾌락경험 * 2 + EXP:MASTER:가게한경험 * 3 + EXP:MASTER:애정경험 * 4
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:봉사 * 2 - 1 - CFLAG:조교레벨)
 봉사보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
@@ -564,7 +564,7 @@ SIF (CUP:MASTER:굴복 + CUP:MASTER:공순 - CUP:MASTER:반항 + 봉사EXP * 10 
 가학난이도 = POWER(2, ABL:가학) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
 ;가학 EXP 취득
 가학EXP = EXP:MASTER:긴박경험 + EXP:MASTER:고통쾌락경험 * 2 + EXP:MASTER:V확장경험 * 4 + EXP:MASTER:A확장경험 * 4
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:가학 * 2 - 1 - CFLAG:조교레벨)
 가학보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
@@ -585,7 +585,7 @@ SIF (CUP:MASTER:고통 + CUP:MASTER:불쾌 - CUP:MASTER:반항 + 가학EXP * 10 
 이상난이도 = POWER(2, ABL:이상) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
 ;이상 EXP 취득
 이상EXP = EXP:MASTER:이상경험
-;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:이상 * 2 - 1 - CFLAG:조교레벨)
 이상보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 

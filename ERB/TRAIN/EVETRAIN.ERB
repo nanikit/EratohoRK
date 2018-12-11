@@ -5,7 +5,7 @@
 #DIM LCOUNT
 #DIM 가능만족보수
 
-;(조교자별) 조교 회수 가산
+;(조교자별) 조교회수 가산
 CFLAG:조교회수++
 
 ;조교 개시 직전에 마력 소비 처리를 끼운다(샌드 박스만, 지정시)
@@ -38,7 +38,7 @@ TEQUIP:코스프레   = CFLAG:TARGET:의상 == 3 ? EQUIP:TARGET:코스프레 # 0
 TFLAG:전ACT = -1
 TFLAG:전REACT분류 = -1
 TFLAG:ACT분류예약 = -1
-CVARSET TCVAR, GETNUM(TCVAR, "행동 예약"), -1
+CVARSET TCVAR, GETNUM(TCVAR, "행동예약"), -1
 TCVAR:오늘의만족보너스 = -1
 
 ;조교중에 이용하는 CFLAG를 리셋트
@@ -58,16 +58,16 @@ NEXT
 
 ;자세 관련
 CVARSET TCVAR, GETNUM(TCVAR,           "자세")
-CVARSET TCVAR, GETNUM(TCVAR,     "전회의 자세")
-CVARSET TCVAR, GETNUM(TCVAR,       "위치 전후")
-CVARSET TCVAR, GETNUM(TCVAR, "전회의 위치 전후")
-CVARSET TCVAR, GETNUM(TCVAR,       "위치 상하")
-CVARSET TCVAR, GETNUM(TCVAR, "전회의 위치 상하")
+CVARSET TCVAR, GETNUM(TCVAR,     "전회의자세")
+CVARSET TCVAR, GETNUM(TCVAR,       "위치전후")
+CVARSET TCVAR, GETNUM(TCVAR, "전회의위치전후")
+CVARSET TCVAR, GETNUM(TCVAR,       "위치상하")
+CVARSET TCVAR, GETNUM(TCVAR, "전회의위치상하")
 
 ;현재의 아라이먼트=평시 아라이먼트
 CFLAG:평시아 = LIMIT(CFLAG:평시아, -999, 999)
 CFLAG:아라이먼트 = CFLAG:평시아 / 10
-;노예의 목걸이 장비중
+;노예의목걸이 장비중
 SIF TEQUIP:MASTER:노예의목걸이 == 1
 	CFLAG:아라이먼트 = -99
 
@@ -85,7 +85,7 @@ TCVAR:MASTER:발기도 = 1000 * (BASE:MASTER:사정 + 5000) * (MAXBASE:MASTER:�
 ;장기 보정치용 초기화 처리
 CALL ACT_M_RESEARCH_L(0)
 
-CALLF _UNEXTRACTION(MASTER, 1, 0)	;뽑지 않고 상태 지연 판정 플래그 초기화@revkoishi(14/07/15)
+CALLF _UNEXTRACTION(MASTER, 1, 0)	;뽑지않고 상태 지연 판정 플래그 초기화@revkoishi(14/07/15)
 
 ;─
 ;이번 방침
@@ -125,10 +125,10 @@ IF (!CFLAG:만족보 && CFLAG:소모 <= 5 && CFLAG:MASTER:소모 <= 5 && CFLAG:�
 		ELSEIF ITEM:목걸이  && LOCAL == 2
 			TFLAG:오늘의방침 = 6
 		;ELSEIF GETBIT(FLAG:60, 0)  && LOCAL == 3
-		;	TFLAG:오늘의 방침 = 9
+		;	TFLAG:오늘의방침 = 9
 		;벌은 반발 의존으로 하고 싶지만 사양이 정해지지 않기 때문에 뒷전
-		;ELSEIF RAND:((2 + MARK:반항 각인) * (TALENT:새디즘 + 1)) > RAND:30
-		;	TFLAG:오늘의 방침 = 2
+		;ELSEIF RAND:((2 + MARK:반항각인) * (TALENT:새디즘 + 1)) > RAND:30
+		;	TFLAG:오늘의방침 = 2
 		ENDIF
 	ENDIF
 ENDIF
@@ -150,7 +150,7 @@ IF 가능만족보수 && CFLAG:만족보 && CFLAG:호의 > 1000 && !TFLAG:오늘
 	PRINTL
 	CALL PRINT_RAINBOW2W(@"★★%CALLNAME:TARGET%님대만족 보너스★★", 30)
 	PRINTL
-	;오토 모드때의 처리
+	;오토모드때의 처리
 	IF FLAG:오토모드 > 0
 		LOCAL = FLAG:우선대만족보너스 % 100
 		SIF LOCAL == 12
@@ -190,23 +190,23 @@ IF 가능만족보수 && CFLAG:만족보 && CFLAG:호의 > 1000 && !TFLAG:오늘
 			{
 			CALL HTMLPRINTL(@"%HTMLBUTTON("[ 4] - 甘えさせて", "4", @"\@ 
 			CFLAG:M호의 + CFLAG:호의 >= 10000 && ITEM:페니스밴드 && !PENIS(MASTER) 
-			? 성봉++ # 애무+ 봉사++ \@")%")
+			? 성적봉사++ # 애무+ 봉사++ \@")%")
 			}
 		SIF SATISBONUS_ABLE(5)
 			CALL HTMLPRINTL(@"%HTMLBUTTON("[ 5] - 망가질 때까지 해", "5", "가학++ 이상++")%")
 		SIF SATISBONUS_ABLE(6)
-			CALL HTMLPRINTL(@"%HTMLBUTTON("[ 6] - 외에 나가고 싶다", "6", "야외 플레이")%")
+			CALL HTMLPRINTL(@"%HTMLBUTTON("[ 6] - 외에 나가고 싶다", "6", "야외플레이")%")
 		;호의+호감도 10000이상, 조교자가 임신할 수 있다
 		SIF SATISBONUS_ABLE(7)
-			CALL HTMLPRINTL(@"%HTMLBUTTON(@"[ 7] - %CALLNAME%님을임신하게하고싶다", "7", "성봉++")%")
+			CALL HTMLPRINTL(@"%HTMLBUTTON(@"[ 7] - %CALLNAME%님을 임신하게 하고 싶다", "7", "성적봉사++")%")
 		SIF SATISBONUS_ABLE(8)
 			CALL HTMLPRINTL(@"%HTMLBUTTON("[ 8] - 쉬게 해", "8", "휴게에 의한 조교의 스킵")%")
 		;호의+호감도 10000이상
 		SIF SATISBONUS_ABLE(9)
-			CALL HTMLPRINTL(@"%HTMLBUTTON(@"[ 9] - %CALLNAME%님에게안기고싶다", "9", "성교++")%")
-		;반항 각인 없음 또한 M호의 1000이상
+			CALL HTMLPRINTL(@"%HTMLBUTTON(@"[ 9] - %CALLNAME%님에게 안기고 싶다", "9", "성교++")%")
+		;반항각인 없음 또한 M호의 1000이상
 		SIF SATISBONUS_ABLE(10)
-			CALL HTMLPRINTL(@"%HTMLBUTTON(@"[10] - %CALLNAME%님에게봉사하고싶다", "10", "봉사++")%")
+			CALL HTMLPRINTL(@"%HTMLBUTTON(@"[10] - %CALLNAME%님에게 봉사하고 싶다", "10", "봉사++")%")
 		;호의 2000, M호의 1000이 필요
 		SIF SATISBONUS_ABLE(11)
 			{
@@ -252,8 +252,8 @@ IF 가능만족보수 && CFLAG:만족보 && CFLAG:호의 > 1000 && !TFLAG:오늘
 	ENDSELECT
 	TFLAG:오늘의방침 = RESULT
 	TCVAR:오늘의만족보너스 = RESULT
-	;여기서 리셋트 되면 오늘의 방침 개소에서의 참조에 사용할 수 없기 때문에 comment out
-	;CFLAG:만족 보 = 0
+	;여기서 리셋트 되면오늘의방침개소에서의 참조에 사용할 수 없기 때문에 comment out
+	;CFLAG:만족보 = 0
 	PRINTL
 	CALL KOJO_EVENT(16, 1)
 	CALL VOIDLINE_IF(RESULT)
@@ -310,7 +310,7 @@ SELECTCASE POLICY("오늘")
 		PRINTFORMW %CALLNAME:TARGET%는 미소지으면서%CALLNAME:MASTER%에 가까워져, 이마에 살그머니 입맞춤했다…
 ENDSELECT
 
-;오늘의 방침 지문을 빠지고 나서 리셋트
+;오늘의방침지문을 빠지고 나서 리셋트
 CFLAG:만족보 = 0
 
 IF FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1

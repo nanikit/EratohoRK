@@ -21,7 +21,7 @@ FOR LOCAL, 0, 9
 	ENDIF
 NEXT
 
-;누적 마력
+;누적마력
 SIF TARGET > 0
 	CFLAG:누적마력 += TFLAG:취득마력
 
@@ -32,7 +32,7 @@ PRINTW 조교는 끝났습니다.
 EXP:MASTER:성지식 += TFLAG:경과시간 / 10
 EXP:성지식 += TFLAG:경과시간 / 10
 
-;조교 시간을 체크해 기록(최장·최단)
+;조교시간을 체크해 기록(최장·최단)
 SIF TFLAG:경과시간 > FLAG:최장조교시간기록
 	FLAG:최장조교시간기록 = TFLAG:경과시간
 SIF TFLAG:경과시간 > 0 && (TFLAG:경과시간 < FLAG:최단조교시간기록 || FLAG:최단조교시간기록 == 0)
@@ -58,11 +58,11 @@ IF TFLAG:한번휴식 == 0
 		CFLAG:MASTER:조교레벨 += 1
 		CFLAG:MASTER:조교경험 -= CFLAG:MASTER:필요경험치
 		CFLAG:MASTER:필요경험치 += 100 + CFLAG:MASTER:조교레벨 * CFLAG:MASTER:조교레벨 * 10
-		;레벨 10이후 필요 경험치는 갑자기 오릅니다만, 이상 경험으로 경감할 수 있습니다
+		;레벨 10이후 필요경험치는 갑자기 오릅니다만, 이상경험으로 경감할 수 있습니다
 		LOCAL = 250 + (CFLAG:MASTER:조교레벨 - 5) * CFLAG:MASTER:필요경험치 / 3 - EXP:MASTER:이상경험 * 20
 		SIF LOCAL > 0 && CFLAG:MASTER:조교레벨 > 10
 			CFLAG:MASTER:필요경험치 += LOCAL
-		PRINTFORMW %CALLNAME:MASTER%의 조교 레벨은[{CFLAG:MASTER:조교레벨}]가 되었습니다
+		PRINTFORMW %CALLNAME:MASTER%의 조교레벨은[{CFLAG:MASTER:조교레벨}]가 되었습니다
 		MAXBASE:MASTER:체력 += 100 + 10 * RAND:6
 		MAXBASE:MASTER:기력 += 50 + 10 * RAND:6
 	ENDIF
@@ -74,7 +74,7 @@ IF TFLAG:한번휴식 == 0
 		LOCAL = 250 + (CFLAG:조교레벨 - 5) * CFLAG:필요경험치 / 3 - EXP:MASTER:이상경험 * 20
 		SIF LOCAL > 0 && CFLAG:조교레벨 > 10
 			CFLAG:필요경험치 += LOCAL
-		PRINTFORMW %CALLNAME:TARGET%의 조교 레벨은[{CFLAG:조교레벨}]가 되었습니다
+		PRINTFORMW %CALLNAME:TARGET%의 조교레벨은[{CFLAG:조교레벨}]가 되었습니다
 		MAXBASE:체력 += 100 + 10 * RAND:6
 		MAXBASE:기력 += 50 + 10 * RAND:6
 	ENDIF
@@ -88,12 +88,12 @@ IF TFLAG:한번휴식 == 0
 		CFLAG:M연모 = 1
 		PRINTFORML %CALLNAME:TARGET%의 %CALLNAME:MASTER%를 보는 눈이 이상하다…
 		PRINTFORMW %CALLNAME:TARGET%는 %CALLNAME:MASTER%에 호의를 대기 시작한 것 같다
-		IF CFLAG:호의 / 250 >= CFLAG:조교 레벨 - CFLAG:MASTER:조교 레벨
+		IF CFLAG:호의 / 250 >= CFLAG:조교레벨 - CFLAG:MASTER:조교레벨
 			CFLAG:M연모 = 2
 			PRINTFORMW 그 뿐만 아니라, %CALLNAME:TARGET%에 %CALLNAME:MASTER%에의 친애의 정이 싹튼 것 같다
 		ENDIF
 	ENDIF
-	IF CFLAG:호의 / 250 >= CFLAG:조교 레벨 - CFLAG:MASTER:조교 레벨 && CFLAG:M연모 == 1
+	IF CFLAG:호의 / 250 >= CFLAG:조교레벨 - CFLAG:MASTER:조교레벨 && CFLAG:M연모 == 1
 		CFLAG:M연모 = 2
 		PRINTFORML %CALLNAME:TARGET%의 %CALLNAME:MASTER%를 보는 눈이 이상하다…
 		PRINTFORMW %CALLNAME:TARGET%에 %CALLNAME:MASTER%에의 친애의 정이 싹튼 것 같다
@@ -141,7 +141,7 @@ ELSEIF CFLAG:평시아 > 950 && MARK:5 == 9
 	CFLAG:반발제거 = 1
 ENDIF
 ;─
-;하늘 사정 보너스
+;드라이사정 보너스
 ;─
 IF TCVAR:MASTER:드라이사정수 > 0 
 	IF MAXBASE:MASTER:사정 < 7500 + CFLAG:MASTER:정력한계 * 500

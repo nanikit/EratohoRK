@@ -9,7 +9,7 @@ PRINTFORML {FLAG:연수+1}년{FLAG:일수+1}일째(%GET_TIME()%) %GET_SEASON()% 
 SIF TARGET >= 0
 	PRINTFORML %CALLNAME:MASTER%를%CALLNAME:TARGET%가 조교중
 SIF ASSI:1 >= 0
-	PRINTFORML (조수 1:%CALLNAME:(ASSI:1)%）\@ ASSI:2 >= 0 ? (조수 2:%CALLNAME:(ASSI:2)%） # \@
+	PRINTFORML (조수 1:%CALLNAME:(ASSI:1)%)\@ ASSI:2 >= 0 ? (조수 2:%CALLNAME:(ASSI:2)%) # \@
 HTML_PRINT HTML_BASE("체력", MASTER, 0, 16) + HTML_BASE("기력", MASTER, 1, 16)
 SIF TARGET >= 0
 	PRINTFORML (%CALLNAME%의 마력  {CFLAG:마력})
@@ -62,8 +62,8 @@ CALL HTMLPRINTL(HTMLBUTTON("[300] - 로드", "300", "보존한 데이터를 읽�
 		CALL HTMLPRINTL(HTMLBUTTON("[779] - 전생의 의식", "779", "플레이어 캐릭터의 재설정 화면으로 나아갑니다"))
 		;플래그 체크
 		CALL HTMLPRINTL(HTMLBUTTON("[780] - 플래그 체크", "780", "CFLAG와 FLAG의 상황을 확인합니다"))
-		;오토 모드
-		CALL HTMLPRINTL(HTMLBUTTON("[781] - 오토 모드", "781", "조교 대상의 행동을 자동으로 실시하는 모드의 설정 화면을 호출합니다"))
+		;오토모드
+		CALL HTMLPRINTL(HTMLBUTTON("[781] - 오토모드", "781", "조교 대상의 행동을 자동으로 실시하는 모드의 설정 화면을 호출합니다"))
 		;소질 보정 확인
 		CALL HTMLPRINTL(HTMLBUTTON("[782] - 소질 보정 확인", "782", "각 캐릭터의 커맨드 선택 경향을 확인합니다"))
 	ENDIF
@@ -417,18 +417,18 @@ SELECTCASE RESULT
 	CASE 1
 		VARSIZE FLAG
 		LOCAL = RESULT
-		PRINTFORML FLAG 번호(0~{LOCAL-1})를 입력해 주세요.
+		PRINTFORML FLAG 번호(0～{LOCAL-1})를 입력해 주세요.
 		$INPUT_LOOP2
 		INPUT
 		IF RESULT < 0 || LOCAL <= RESULT
 			CLEARLINE 1
-			REUSELASTLINE FLAG의 범위는(0~{LOCAL-1})입니다.
+			REUSELASTLINE FLAG의 범위는(0～{LOCAL-1})입니다.
 			GOTO INPUT_LOOP2
 		ENDIF
 		PRINTFORMW FLAG:{RESULT} = {FLAG:RESULT}
 		RESTART
 	CASE 2
-		PRINTFORML 대상 캐릭터의 등록 번호(0~{CHARANUM-1})를 입력해 주세요.
+		PRINTFORML 대상 캐릭터의 등록 번호(0～{CHARANUM-1})를 입력해 주세요.
 		$INPUT_LOOP3
 		INPUT
 		IF RESULT < 0 || CHARANUM <= RESULT
@@ -440,12 +440,12 @@ SELECTCASE RESULT
 		VARSIZE CFLAG
 		LOCAL:1 = RESULT
 		PRINTFORML %CALLNAME:LOCAL%가 선택되었습니다.
-		PRINTFORML CFLAG 번호(0~{LOCAL:1-1})를 입력해 주세요.
+		PRINTFORML CFLAG 번호(0～{LOCAL:1-1})를 입력해 주세요.
 		$INPUT_LOOP4
 		INPUT
 		IF RESULT < 0 || LOCAL:1 <= RESULT
 			CLEARLINE 1
-			REUSELASTLINE CFLAG의 범위는(0~{LOCAL:1-1})입니다
+			REUSELASTLINE CFLAG의 범위는(0～{LOCAL:1-1})입니다
 			GOTO INPUT_LOOP4
 		ENDIF
 		PRINTFORMW %CALLNAME:LOCAL%의 CFLAG:{RESULT} = {CFLAG:LOCAL:RESULT}
@@ -459,7 +459,7 @@ SELECTCASE RESULT
 		WAIT
 		RESTART
 	CASE 4
-		PRINTFORML 대상 캐릭터의 등록 번호(0~{CHARANUM-1})를 입력해 주세요.
+		PRINTFORML 대상 캐릭터의 등록 번호(0～{CHARANUM-1})를 입력해 주세요.
 		$INPUT_LOOP5
 		INPUT
 		IF RESULT < 0 || CHARANUM <= RESULT
@@ -489,19 +489,19 @@ SELECT = -1
 VARSET LOCALS
 LINE = LINECOUNT
 FOR LOCAL, 0, 5
-	SIF !STRCOUNT(GLOBALS:@"오토 모드 등록{LOCAL}", "_")
-		GLOBALS:@"오토 모드 등록{LOCAL}" = 등록{LOCAL}_%GLOBALS:@"오토 모드 등록{LOCAL}"%
-	SPLIT GLOBALS:@"오토 모드 등록{LOCAL}", "_", RESULTS
+	SIF !STRCOUNT(GLOBALS:@"오토모드 등록{LOCAL}", "_")
+		GLOBALS:@"오토모드 등록{LOCAL}" = 등록{LOCAL}_%GLOBALS:@"오토모드 등록{LOCAL}"%
+	SPLIT GLOBALS:@"오토모드 등록{LOCAL}", "_", RESULTS
 	세트명:LOCAL = %RESULTS%
 NEXT
-SPLIT GLOBALS:@"오토 모드 등록{FLAG:선택세트}", "_", RESULTS
+SPLIT GLOBALS:@"오토모드 등록{FLAG:선택세트}", "_", RESULTS
 SPLIT RESULTS:1, "/", LOCALS
 $START
 ;삭제 커맨드 및 이상치의 체크
 FOR LOCAL, 0, 100
 	SIF LOCALS:LOCAL == ""
 		CONTINUE
-	SIF GETNUM(TRAINNAME, LOCALS:LOCAL) >= 0 || LOCALS:LOCAL == "하는 대로"
+	SIF GETNUM(TRAINNAME, LOCALS:LOCAL) >= 0 || LOCALS:LOCAL == "하는대로"
 		CONTINUE
 	ARRAYREMOVE LOCALS, LOCAL, 1
 	LOCAL--
@@ -518,7 +518,7 @@ FOR LOCAL, 0, 100
 	SIF TRAINNAME:LOCAL == ""
 		CONTINUE
 	;사양 상통상선택할 수 있으면 문제가 있으므로 컷 해 둔다
-	SIF TRAINNAME:LOCAL == "하는 대로"
+	SIF TRAINNAME:LOCAL == "하는대로"
 		CONTINUE
 	SIF FINDELEMENT(LOCALS, TRAINNAME:LOCAL) >= 0
 		CONTINUE
@@ -526,7 +526,7 @@ FOR LOCAL, 0, 100
 NEXT
 CLEARLINE LINECOUNT - LINE
 DRAWLINE
-PRINTBUTTON @"오토 모드<%\@FLAG:오토모드 > 0?ＯＮ#ＯＦＦ\@%>", 1000
+PRINTBUTTON @"오토모드<%\@FLAG:오토모드 > 0?ON#OFF\@%>", 1000
 IF FLAG:오토모드 > 0
 	PRINT 　
 	PRINTBUTTON @"경과 턴수<{FLAG:오토모드}>", 1001
@@ -591,7 +591,7 @@ SIF FLAG:오토모드표시설정 == 2
 RESETCOLOR
 PRINTL 
 DRAWLINE
-PRINTL <우선 대만족 보너스>
+PRINTL <우선대만족보너스>
 PRINTBUTTON "["+AUTO_SPLIT("언제나 대로/애널을 괴롭혀/벌 해/격렬하게 해/응석부리게 해/망가질 때까지 해/밖에 나가고 싶다/임신하게 하고 싶다/쉬게 해/안기고 싶다/봉사하고 싶다/귀여워해/랜덤", "/", FLAG:우선대만족보너스 % 100)+"]", 3000
 PRINTL 
 PRINTBUTTON "["+AUTO_SPLIT("언제나 대로/애널을 괴롭혀/벌 해/격렬하게 해/응석부리게 해/망가질 때까지 해/밖에 나가고 싶다/임신하게 하고 싶다/쉬게 해/안기고 싶다/봉사하고 싶다/귀여워해/랜덤", "/", FLAG:우선대만족보너스 / 100)+"]", 3001
@@ -603,7 +603,7 @@ SELECTCASE RESULT
 	CASE 2000 TO 2004
 		IF FLAG:선택세트 != RESULT - 2000
 			FLAG:선택세트 = RESULT - 2000
-			SPLIT GLOBALS:@"오토 모드 등록{FLAG:선택세트}", "_", RESULTS
+			SPLIT GLOBALS:@"오토모드 등록{FLAG:선택세트}", "_", RESULTS
 			SPLIT RESULTS:1, "/", LOCALS
 		ENDIF
 	CASE 2010
@@ -614,15 +614,15 @@ SELECTCASE RESULT
 		세트명:(FLAG:선택세트) = %RESULTS%
 	CASE 2011, 999
 		PRINTW 현재세트를 등록합니다
-		GLOBALS:@"오토 모드 등록{FLAG:선택세트}" = %세트명:(FLAG:선택세트)%_
+		GLOBALS:@"오토모드 등록{FLAG:선택세트}" = %세트명:(FLAG:선택세트)%_
 		FOR LOCAL, 0, 100 - MATCH(LOCALS, "")
 			SIF LOCALS:LOCAL == ""
 				BREAK
-			GLOBALS:@"오토 모드 등록{FLAG:선택세트}" += LOCALS:LOCAL
-			GLOBALS:@"오토 모드 등록{FLAG:선택세트}" += "/"
+			GLOBALS:@"오토모드 등록{FLAG:선택세트}" += LOCALS:LOCAL
+			GLOBALS:@"오토모드 등록{FLAG:선택세트}" += "/"
 		NEXT
 		;말미의 단락 기호를 깎는다
-		GLOBALS:@"오토 모드 등록{FLAG:선택세트}" = %SUBSTRING(GLOBALS:@"오토 모드 등록{FLAG:선택세트}", 0, STRLENS(GLOBALS:@"오토 모드 등록{FLAG:선택세트}") - 1)%
+		GLOBALS:@"오토모드 등록{FLAG:선택세트}" = %SUBSTRING(GLOBALS:@"오토모드 등록{FLAG:선택세트}", 0, STRLENS(GLOBALS:@"오토모드 등록{FLAG:선택세트}") - 1)%
 		SAVEGLOBAL
 		IF RESULT == 999
 			CALL AUTO_MODE, 1
@@ -630,23 +630,23 @@ SELECTCASE RESULT
 			RETURN 0
 		ENDIF
 	CASE 2012
-		SPLIT GLOBALS:@"오토 모드 등록{FLAG:선택세트}", "_", RESULTS
+		SPLIT GLOBALS:@"오토모드 등록{FLAG:선택세트}", "_", RESULTS
 		SPLIT RESULTS:1, "/", LOCALS
 	CASE 2020
 		VARSET LOCALS
 	CASE 2021
 		VARSET LOCALS
-		LOCALS += "애정을 담아 준다/허리를 흔든다/가게 해! /안에 내! /적극적 한다/쾌감을 받아들인다/기분 좋게 해/붙임성 좋게 응답한다/좀 더 하드하게 해/"
-		LOCALS += "소극적 한다/허가를 청한다/부끄러워한다/심약구응답한다/침묵한다/무뚝뚝하게 응답한다/강하게 응답한다/빈정거린다/쾌감을 참는다/"
-		LOCALS += "비명을 올린다/아픔을 참는다/자위하기 시작한다/싫어한다/서투르다고 매도한다/겁없게 웃는다/무서워한다/"
-		LOCALS += "중에 내지 마! /거부한다/날뛴다/도구를 제외한다"
+		LOCALS += "애정을담아준다/허리를흔드는/가게해! /안에내！/적극적한다/쾌감을받아들인다/기분좋게해/붙임성좋게응답한다/좀더하드하게해/"
+		LOCALS += "소극적한다/허가를청한다/부끄러워한다/심약구응답한다/침묵한다/무뚝뚝하게응답한다/강하게응답한다/빈정거린다/쾌감을참는다/"
+		LOCALS += "비명을올린다/아픔을참는다/자위하기시작한다/싫어한다/서투르다고매도한다/겁없게웃는다/무서워한다/"
+		LOCALS += "안에내지마！/거부한다/날뛴다/도구를제외한다"
 		SPLIT LOCALS, "/", LOCALS
 	CASE 2022
 		VARSET LOCALS
-		LOCALS += "날뛴다/도구를 제외한다/거부한다/안에 내지 마! /"
-		LOCALS += "서투르다고 매도한다/싫어한다/겁없게 웃는다/비명을 올린다/아픔을 참는다/자위하기 시작한다/무서워한다/"
-		LOCALS += "소극적 한다/허가를 청한다/부끄러워한다/심약구응답한다/침묵한다/무뚝뚝하게 응답한다/강하게 응답한다/빈정거린다/쾌감을 참는다/"
-		LOCALS += "중에 내! /적극적 한다/쾌감을 받아들인다/기분 좋게 해/붙임성 좋게 응답한다/좀 더 하드하게 해/애정을 담아 준다/허리를 흔든다/가게 해!"
+		LOCALS += "날뛴다/도구를제외한다/거부하는/안에내지마！/"
+		LOCALS += "서투르다고매도한다/싫어한다/겁없게웃는다/비명을올린다/아픔을참는다/자위하기시작한다/무서워한다/"
+		LOCALS += "소극적한다/허가를청한다/부끄러워한다/심약구응답한다/침묵한다/무뚝뚝하게응답한다/강하게응답한다/빈정거린다/쾌감을참는다/"
+		LOCALS += "안에내！/적극적한다/쾌감을받아들인다/기분좋게해/붙임성좋게응답한다/좀더하드하게해/애정을담아준다/허리를흔드는/가게해!"
 		SPLIT LOCALS, "/", LOCALS
 	CASE 2030, 2031, 2032
 		FLAG:오토모드표시설정 = RESULT - 2030

@@ -1,6 +1,6 @@
 ﻿;------------------------------------------------------------------------
 ;EDIT	001		kap			2011/10/14		콤비 네이션 액션의 결정 처리를 변경
-;EDIT	002		revkoishi	2014/06/07		뽑지 않고 플래그를 꺾는 처리를 추가
+;EDIT	002		revkoishi	2014/06/07		뽑지않고 플래그를 꺾는 처리를 추가
 ;------------------------------------------------------------------------
 ;-----------EDIT 001 START--------------
 ;기본적으로 표기를 변경해,
@@ -23,7 +23,7 @@ SIF GET_SP_ASSIACTNUM(ARG) >= 0
 	TCVAR:ARG:조수ACT = GET_SP_ASSIACTNUM(ARG)
 
 ;테스트용 기술. 언제라도 지워도 좋아
-;TCVAR:ARG:조수 ACT = GET_ASSIACTNUM("사진 촬영")
+;TCVAR:ARG:조수ACT = GET_ASSIACTNUM("사진촬영")
 
 ;─
 ;014, 대기한다(소스 없음)
@@ -40,11 +40,11 @@ SIF NOWASSIACTNAME(ARG) == "대기"
 #DIM M애무
 ;-----------EDIT 001 START--------------
 ;행동 결정중 우선도가 가장 높기 때문에 변경
-;또, 행동 예약을 통하지 않고 이 장소에서 직접 반환값을 만지작거린다
+;또, 행동예약을 통하지 않고 이 장소에서 직접 반환값을 만지작거린다
 ;---------------------------------------
 ;우선되는 것을 먼저 처리
 ;---------------------------------------
-;약품 사용과 강제 탈의가 돕고는 우선
+;약품 사용과 강제탈의가 돕고는 우선
 ;탈의
 IF TFLAG:강제탈의 > 0 && ARG == ASSI:1
 	TCVAR:ARG:조수방침 = GET_ASSIMENUNUM("그 외")
@@ -57,8 +57,8 @@ IF TFLAG:미약등사용 > 0 && ARG == ASSI:1
 	TCVAR:ARG:조수ACT = GET_ASSIACTNUM("약품")
 	RETURN 1
 ENDIF
-;공중 플레이·방치 플레이는 강제 대기
-IF IS_NOWACTNAME("공중 육변기 플레이/방치 플레이")
+;공중 플레이·방치플레이는 강제 대기
+IF IS_NOWACTNAME("공중육변기플레이/방치플레이")
 	TCVAR:ARG:조수방침 = GET_ASSIMENUNUM("그 외")
 	TCVAR:ARG:조수ACT = GET_ASSIACTNUM("대기")
 	RETURN 1
@@ -84,14 +84,14 @@ ENDIF
 ;콤비 네이션은 잠정으로 발동율 50%
 IF (RAND:2 == 0 || TFLAG:콤비네이션예약) && ARG == ASSI:1
 	IF GET_COMBIACTNUM(TFLAG:ACT) >= 0
-		;조수가 처녀라면 골짜기를 건너감은 할 수 없다
+		;조수가 처녀라면 골짜기를건너감은 할 수 없다
 		IF GET_COMBIACTNUM(TFLAG:ACT) != 311 || !TALENT:ASSI:처녀
 			;주인의 행동을 덧쓰기
 			TFLAG:ACT = GET_COMBIACTNUM(TFLAG:ACT)
 			;-----------EDIT 002 START-----------------
-			;뽑지 않고 플래그를 꺾는 처리를 추가@revkoishi(14/06/07)
+			;뽑지않고 플래그를 꺾는 처리를 추가@revkoishi(14/06/07)
 			;------------------------------------------
-			TFLAG:뽑지않고 = IS_NOWACTNAME("W역강간/골짜기를 건너감") ? 0 # TFLAG:뽑지않고
+			TFLAG:뽑지않고 = IS_NOWACTNAME("W역강간/골짜기를건너감") ? 0 # TFLAG:뽑지않고
 			;-----------EDIT 002 END  -----------------
 			;조수에게는-1을 넣어 둔다
 			TCVAR:ARG:조수ACT = -1
@@ -124,7 +124,7 @@ ENDIF
 
 ;가끔 씩은 말 꾸짖고 하도록(듯이)
 IF RAND:10 == 0
-	IF GROUPMATCH(MENU(TFLAG:ACT분류), "애무", "도구", "성교", "봉사", "성 봉")
+	IF GROUPMATCH(MENU(TFLAG:ACT분류), "애무", "도구", "성교", "봉사", "성적봉사")
 		TCVAR:ARG:조수방침 = GET_ASSIMENUNUM("수치")
 		CALL ASSI_ACTM7, ARG
 	ENDIF
@@ -217,15 +217,15 @@ C도구 = (10 + ABL:ARG:애무 + TALENT:ARG:도구사용 * 5) * (RAND:100 + 1)
 역강간 = (10 + ABL:ARG:성교 + TALENT:ARG:음란 * 5) * (RAND:100 + 1)
 
 ;실행 판정
-SIF !ASSI_ACTABLE("손으로 애무", ARG)
+SIF !ASSI_ACTABLE("손으로애무", ARG)
 	손으로 = 0
-SIF !ASSI_ACTABLE("구에서 애무", ARG)
+SIF !ASSI_ACTABLE("입으로애무", ARG)
 	혀로 = 0
 SIF !ASSI_ACTABLE("가랑이", ARG)
 	가랑이 = 0
-SIF !ASSI_ACTABLE("파이즈리 한다", ARG)
+SIF !ASSI_ACTABLE("파이즈리한다", ARG)
 	파이즈리 = 0
-SIF !ASSI_ACTABLE("풋잡 한다", ARG)
+SIF !ASSI_ACTABLE("풋잡한다", ARG)
 	풋잡 = 0
 SIF !ASSI_ACTABLE("C도구", ARG)
 	C도구 = 0
@@ -236,15 +236,15 @@ SELECTCASE MAX(손으로, 혀로, 가랑이, 파이즈리, 풋잡, C도구, 역�
 	CASE 0
 		CALL ASSI_ACTM7, ARG
 	CASE 손으로
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("손으로 애무")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("손으로애무")
 	CASE 혀로
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("구에서 애무")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("입으로애무")
 	CASE 가랑이
 		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("가랑이")
 	CASE 파이즈리
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("파이즈리 한다")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("파이즈리한다")
 	CASE 풋잡
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("풋잡 한다")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("풋잡한다")
 	CASE C도구
 		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("C도구")
 	CASE 역강간
@@ -257,19 +257,19 @@ ENDSELECT
 #DIM 애널빨고
 #DIM 애널로터
 #DIM 애널바이브
-;A 손으로 B 혀로 C 로터 D 애널 바이브
+;A 손으로 B 혀로 C 로터 D 애널바이브
 애널애무 = (10 + ABL:ARG:애무 + TALENT:ARG:기묘한손가락 * 5) * (RAND:100 + 1)
 애널빨고 = (10 + ABL:ARG:애무 + (TALENT:ARG:혀사용 - TALENT:ARG:고양이혀 - TALENT:ARG:악취민감) * 5) * (RAND:100 + 1)
 애널로터 = (10 + ABL:ARG:도구 + TALENT:ARG:도구사용 * 5) * (RAND:100 + 1)
 애널바이브 = (10 + ABL:ARG:도구 + TALENT:ARG:도구사용 * 5) * (RAND:100 + 1)
 ;실행 판정
-SIF !ASSI_ACTABLE("애널 애무", ARG)
+SIF !ASSI_ACTABLE("애널애무", ARG)
 	애널애무 = 0
-SIF !ASSI_ACTABLE("애널 빨고", ARG)
+SIF !ASSI_ACTABLE("애널빨고", ARG)
 	애널빨고 = 0
-SIF !ASSI_ACTABLE("애널 로터", ARG)
+SIF !ASSI_ACTABLE("애널로터", ARG)
 	애널로터 = 0
-SIF !ASSI_ACTABLE("애널 바이브", ARG)
+SIF !ASSI_ACTABLE("애널바이브", ARG)
 	애널바이브 = 0
 	
 SELECTCASE MAX(애널애무, 애널빨고, 애널로터, 애널바이브)
@@ -277,13 +277,13 @@ SELECTCASE MAX(애널애무, 애널빨고, 애널로터, 애널바이브)
 	CASE 0
 		CALL ASSI_ACTM7, ARG
 	CASE 애널애무
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("애널 애무")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("애널애무")
 	CASE 애널빨고
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("애널 빨고")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("애널빨고")
 	CASE 애널로터
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("애널 로터")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("애널로터")
 	CASE 애널바이브
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("애널 바이브")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("애널바이브")
 ENDSELECT
 
 @ASSI_ACTM4, ARG
@@ -295,11 +295,11 @@ ENDSELECT
 유두빨고 = (10 + ABL:ARG:애무 + (TALENT:ARG:혀사용 - TALENT:ARG:고양이혀 ) * 5) * (RAND:100 + 1)
 유두로터 = (10 + ABL:ARG:도구 + TALENT:ARG:도구사용 * 5) * (RAND:100 + 1)
 
-SIF !ASSI_ACTABLE("가슴 애무", ARG)
+SIF !ASSI_ACTABLE("가슴애무", ARG)
 	가슴애무 = 0
-SIF !ASSI_ACTABLE("유두 빨고", ARG)
+SIF !ASSI_ACTABLE("유두빨고", ARG)
 	유두빨고 = 0
-SIF !ASSI_ACTABLE("유두 로터", ARG)
+SIF !ASSI_ACTABLE("유두로터", ARG)
 	유두로터 = 0
 	
 SELECTCASE MAX(가슴애무, 유두빨고, 유두로터)
@@ -307,11 +307,11 @@ SELECTCASE MAX(가슴애무, 유두빨고, 유두로터)
 	CASE 0
 		CALL ASSI_ACTM7, ARG
 	CASE 가슴애무
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("가슴 애무")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("가슴애무")
 	CASE 유두빨고
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("유두 빨고")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("유두빨고")
 	CASE 유두로터
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("유두 로터")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("유두로터")
 ENDSELECT
 
 @ASSI_ACTM5, ARG
@@ -322,7 +322,7 @@ ENDSELECT
 손가락삽입 = (10 + ABL:ARG:애무 + TALENT:ARG:기묘한손가락 * 5) * (RAND:100 + 1)
 바이브 = (10 + ABL:ARG:도구 + TALENT:ARG:도구사용 * 5) * (RAND:100 + 1)
 성교 = (10 + ABL:ARG:"성교" + TALENT:ARG:음란 * 5) * (RAND:100 + 1)
-SIF !ASSI_ACTABLE("손가락 삽입", ARG)
+SIF !ASSI_ACTABLE("손가락삽입", ARG)
 	손가락삽입 = 0
 SIF !ASSI_ACTABLE("바이브", ARG)
 	바이브 = 0
@@ -334,7 +334,7 @@ SELECTCASE MAX(손가락삽입, 바이브, 성교)
 	CASE 0
 		CALL ASSI_ACTM7, ARG
 	CASE 손가락삽입
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("손가락 삽입")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("손가락삽입")
 	CASE 바이브
 		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("바이브")
 	CASE 성교
@@ -342,7 +342,7 @@ SELECTCASE MAX(손가락삽입, 바이브, 성교)
 ENDSELECT
 
 @ASSI_ACTM6, ARG
-;A 키스 B 안면 승마 C 다리를 빨게 한다
+;A 키스 B 안면승마 C 다리를빨게한다
 #DIM 키스
 #DIM 안면승마
 #DIM 다리를빨게한다
@@ -353,9 +353,9 @@ ENDSELECT
 
 SIF !ASSI_ACTABLE("키스", ARG)
 	키스 = 0
-SIF !ASSI_ACTABLE("안면 승마", ARG)
+SIF !ASSI_ACTABLE("안면승마", ARG)
 	안면승마 = 0
-SIF !ASSI_ACTABLE("다리를 빨게 한다", ARG)
+SIF !ASSI_ACTABLE("다리를빨게한다", ARG)
 	다리를빨게한다 = 0
 	
 SELECTCASE MAX(키스, 안면승마, 다리를빨게한다)
@@ -365,9 +365,9 @@ SELECTCASE MAX(키스, 안면승마, 다리를빨게한다)
 	CASE 키스
 		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("키스")
 	CASE 안면승마
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("안면 승마")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("안면승마")
 	CASE 다리를빨게한다
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("다리를 빨게 한다")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("다리를빨게한다")
 ENDSELECT
 
 @ASSI_ACTM7, ARG
@@ -376,7 +376,7 @@ ENDSELECT
 #DIM 사진촬영
 #DIM 조교자와키스
 #DIM 치태를응시한다
-;A 자위 과시하고 B 매도 C 사진을 찍는 D 조교자와 키스 E 치태를 응시한다
+;A 자위과시하고 B 매도 C 사진을 찍는 D 조교자와키스 E 치태를응시한다
 자위과시하고 = (10 + ABL:ARG:자위중독 + TALENT:ARG:튀고싶어함 * 5) * (RAND:100 + 1)
 매도 = (10 + ABL:ARG:회화 + TALENT:ARG:새디즘 * 5) * (RAND:100 + 1)
 사진촬영 = (10 + ABL:ARG:수치 ) * (RAND:100 + 1)
@@ -385,53 +385,53 @@ ENDSELECT
 
 
 ;실행 판정
-SIF !ASSI_ACTABLE("자위 과시하고", ARG)
+SIF !ASSI_ACTABLE("자위과시하고", ARG)
 	자위과시하고 = 0
 SIF !ASSI_ACTABLE("매도", ARG)
 	매도 = 0
-SIF !ASSI_ACTABLE("사진 촬영", ARG)
+SIF !ASSI_ACTABLE("사진촬영", ARG)
 	사진촬영 = 0
-SIF !ASSI_ACTABLE("조교자와 키스", ARG)
+SIF !ASSI_ACTABLE("조교자와키스", ARG)
 	조교자와키스 = 0
-SIF !ASSI_ACTABLE("치태를 응시한다", ARG)
+SIF !ASSI_ACTABLE("치태를응시한다", ARG)
 	치태를응시한다 = 0
 SELECTCASE MAX(자위과시하고, 매도, 사진촬영, 조교자와키스, 치태를응시한다)
 	;실행 가능한 것이 없는 경우는 수치에 날린다
 	CASE 자위과시하고
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("자위 과시하고")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("자위과시하고")
 	CASE 매도
 		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("매도")
 	CASE 사진촬영
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("사진 촬영")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("사진촬영")
 	CASE 조교자와키스
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("조교자와 키스")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("조교자와키스")
 	CASE 치태를응시한다
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("치태를 응시한다")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("치태를응시한다")
 ENDSELECT
 
 @ASSI_ACTM8, ARG
-#DIM 두를짓밟는다
+#DIM 머리를짓밟는다
 #DIM 다리를빨게한다
 #DIM 매도
-;A 두를 짓밟는 B 다리를 빨게 하는 C 매도
-두를짓밟는다 = (10 + ABL:ARG:가학 ) * (RAND:100 + 1)
+;A 머리를짓밟는다 B 다리를빨게한다 C 매도
+머리를짓밟는다 = (10 + ABL:ARG:가학 ) * (RAND:100 + 1)
 다리를빨게한다 = (10 + ABL:ARG:봉사 ) * (RAND:100 + 1)
 매도 = (10 + ABL:ARG:회화) * (RAND:100 + 1)
-SIF !ASSI_ACTABLE("두를 짓밟는다", ARG)
-	두를짓밟는다 = 0
-SIF !ASSI_ACTABLE("다리를 빨게 한다", ARG)
+SIF !ASSI_ACTABLE("머리를짓밟는다", ARG)
+	머리를짓밟는다 = 0
+SIF !ASSI_ACTABLE("다리를빨게한다", ARG)
 	다리를빨게한다 = 0
 SIF !ASSI_ACTABLE("매도", ARG)
 	매도 = 0
 
-SELECTCASE MAX(두를짓밟는다, 다리를빨게한다, 매도)
+SELECTCASE MAX(머리를짓밟는다, 다리를빨게한다, 매도)
 	;실행 가능한 것이 없는 경우는 수치에 날린다
 	CASE 0
 		CALL ASSI_ACTM7, ARG
-	CASE 두를짓밟는다
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("두를 짓밟는다")
+	CASE 머리를짓밟는다
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("머리를짓밟는다")
 	CASE 다리를빨게한다
-		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("다리를 빨게 한다")
+		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("다리를빨게한다")
 	CASE 매도
 		TCVAR:ARG:조수ACT = GET_ASSIACTNUM("매도")
 ENDSELECT

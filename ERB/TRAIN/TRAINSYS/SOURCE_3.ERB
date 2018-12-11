@@ -9,7 +9,7 @@ SIF TALENT:MASTER:수줍음
 SIF TALENT:MASTER:수치심옅음
 	TIMES SOURCE:MASTER:노출 , 0.75
 
-;성 지식 부족, 혹은 유치하면 알몸이 되는 의미라든지 잘 모르기 때문에
+;성지식 부족, 혹은 유치하면 알몸이 되는 의미라든지 잘 모르기 때문에
 SIF EXP:성지식 < 10 || TALENT:MASTER:유치
 	TIMES SOURCE:MASTER:노출 , 0.80
 
@@ -23,20 +23,20 @@ CUP:MASTER:치정 += SOURCE:MASTER:노출 * LINE_CALC(PALAM:MASTER:치정, "0→
 LOCAL = TALENT:MASTER:기장 * 2 - TALENT:MASTER:겁쟁이 * 2 + TALENT:MASTER:거만함 - TALENT:MASTER:얌전함 + TALENT:MASTER:프라이드높음 * 2 - TALENT:MASTER:프라이드낮음 * 2 + TALENT:MASTER:광기 * 3 - TALENT:MASTER:드M * 3
 
 ;리액션에 의해 보정
-;기분 좋게 해
-SIF IS_NOWCOMNAME("기분 좋게 해")
+;기분좋게해
+SIF IS_NOWCOMNAME("기분좋게해")
 	TIMES LOCAL , 0.20
-;쾌감을 참는다
-SIF IS_NOWCOMNAME("쾌감을 참는다")
+;쾌감을참는다
+SIF IS_NOWCOMNAME("쾌감을참는다")
 	TIMES LOCAL , 0.30
-;적극적 한다
-SIF IS_NOWCOMNAME("적극적 한다")
+;적극적한다
+SIF IS_NOWCOMNAME("적극적한다")
 	TIMES LOCAL , 0.40
-;애정을 담아 준다
-SIF IS_NOWCOMNAME("애정을 담아 준다")
+;애정을담아준다
+SIF IS_NOWCOMNAME("애정을담아준다")
 	TIMES LOCAL , 0.10
-;자위하기 시작한다
-SIF IS_NOWCOMNAME("자위하기 시작한다")
+;자위하기시작한다
+SIF IS_NOWCOMNAME("자위하기시작한다")
 	TIMES LOCAL , 0.25
 
 ;순종과 노출버릇을 본다
@@ -47,7 +47,7 @@ ELSE
 ENDIF
 
 ;노출 SOURCE로부터 보정치를 만든다
-LOCAL = LINE_CALC(SOURCE:MASTER:노출, "0→0,2500→50,LIMIT/0～50")
+LOCAL = LINE_CALC(SOURCE:MASTER:노출, "0→0, 2500→50, LIMIT/0～50")
 
 ;기력
 DOWNBASE:MASTER:기력 += LOCAL * 2
@@ -103,7 +103,7 @@ SIF TFLAG:REACT분류 < 6
 SIF LOCAL > 0
 	SOURCE:MASTER:반항 += LOCAL
 
-;조교 대상 조교 레벨이 낮은 경우, 공포 SOURCE 증가
+;조교 대상 조교레벨이 낮은 경우, 공포 SOURCE 증가
 SIF CFLAG:MASTER:조교레벨 < 30
 	SOURCE:MASTER:공포 += SOURCE:MASTER:일탈 * (400 - GET_ABL(MASTER, "욕망") * 4) * (30 - CFLAG:MASTER:조교레벨) / 10000 + EXP:MASTER:이상경험 * 10
 
@@ -114,7 +114,7 @@ DOWNBASE:MASTER:기력 += SOURCE:MASTER:일탈 / 30
 BASE:흥미 += SOURCE:MASTER:일탈 / 50 + 1
 
 ;─
-;중독 충족의 소스(욕정, 공순, 이성, 호감도)
+;중독충족의 소스(욕정, 공순, 이성, 호감도)
 ;─
 @CALC_SOURCE23
 
@@ -126,7 +126,7 @@ CUP:MASTER:공순 += SOURCE:MASTER:중독충족 * (10 + GET_ABL(MASTER, "욕망"
 DOWNBASE:MASTER:이성 += SOURCE:MASTER:중독충족 / 50 + 1
 
 ;호감도 변동
-TFLAG:호감도업 += LINE_CALC(SOURCE:MASTER:중독충족, "0→0,5000→25,LIMIT/0～25")
+TFLAG:호감도업 += LINE_CALC(SOURCE:MASTER:중독충족, "0→0, 5000→25, LIMIT/0～25")
 
 ;─
 ;트라우마의 소스(반항 소스, 공포 소스, 굴복, 불쾌, 억울, 기력, 호감도)
@@ -137,7 +137,7 @@ TFLAG:호감도업 += LINE_CALC(SOURCE:MASTER:중독충족, "0→0,5000→25,LIM
 SIF MARK:MASTER:트라우마 < 10
 	SOURCE:MASTER:반항 += SOURCE:MASTER:트라우마 * (400 - GET_ABL(MASTER, "순종") * 4) * (10 - MARK:MASTER:고통각인) / 10000
 
-;조교 대상 조교 레벨이 낮은 경우, 공포 SOURCE 증가
+;조교 대상 조교레벨이 낮은 경우, 공포 SOURCE 증가
 SIF CFLAG:MASTER:조교레벨 < 30
 	SOURCE:MASTER:공포 += SOURCE:MASTER:트라우마 * (400 - GET_ABL(MASTER, "순종") * 4) * (30 - CFLAG:MASTER:조교레벨) / 10000
 
@@ -154,6 +154,6 @@ ELSE
 ENDIF
 
 ;기력, 호감도 변동
-DOWNBASE:MASTER:기력 += LINE_CALC(SOURCE:MASTER:트라우마, "0→0,5000→150,LIMIT/0～300")
-TFLAG:호감도업 -= LINE_CALC(SOURCE:MASTER:트라우마, "0→0,5000→25,LIMIT/0～25")
+DOWNBASE:MASTER:기력 += LINE_CALC(SOURCE:MASTER:트라우마, "0→0, 5000→150, LIMIT/0～300")
+TFLAG:호감도업 -= LINE_CALC(SOURCE:MASTER:트라우마, "0→0, 5000→25, LIMIT/0～25")
 

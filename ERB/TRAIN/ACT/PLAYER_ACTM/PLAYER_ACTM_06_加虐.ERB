@@ -60,7 +60,7 @@ CALLFORM %LOCALS%_IRRITATION_T
 CALL CHA_CRI_VAR, @"조교자 상태(%CONDITION(TCVAR:상태변화)%)"
 CALLFORM %LOCALS%_CONDITION_T
 
-CALL CHA_CRI_VAR, "기출의 화제"
+CALL CHA_CRI_VAR, "기출의화제"
 CALLFORM %LOCALS%_ALREADY_TALKED
 
 CALL CHA_CRI_VAR, "날뛴다"
@@ -87,7 +87,7 @@ CALLFORM %LOCALS%_OSHIOKI
 CALL CHA_CRI_VAR, "조교 대상의 의복"
 CALLFORM %LOCALS%_CLOTH_M
 
-CALL CHA_CRI_VAR, "연속 행동 보정"
+CALL CHA_CRI_VAR, "연속행동 보정"
 CALLFORM %LOCALS%_PREV
 
 CALL CHA_CRI_VAR, "구상 보정치"
@@ -110,7 +110,7 @@ CALL DEF_CRI_VAR("최대 전자")
 LOCAL = GET_CRI_VAR("결정")
 IF LOCAL == -1
 	SIF FLAG:디버그
-		PRINTL (가학 ACT 분류에 실행 가능한 ACT가 존재하지 않습니다)
+		PRINTL (가학 ACT분류에 실행 가능한 ACT가 존재하지 않습니다)
 	TFLAG:ACT = -1
 	CALL ACT_MENU_RESULT(2, "가학")
 ELSE
@@ -132,8 +132,8 @@ CALL ADD_CRI_VAR("줄", 8)
 CALL ADD_CRI_VAR("아이마스크", 8)
 CALL ADD_CRI_VAR("볼개그", 8)
 CALL ADD_CRI_VAR("매도", 5)
-CALL ADD_CRI_VAR("삼각 목마", 5)
-CALL ADD_CRI_VAR("관장 세트", 5)
+CALL ADD_CRI_VAR("삼각목마", 5)
+CALL ADD_CRI_VAR("관장세트", 5)
 CALL ADD_CRI_VAR("이라마치오", 5)
 [SKIPEND]
 
@@ -146,7 +146,7 @@ CALL ADD_CRI_VAR("이라마치오", 5)
 
 ;조교 방침이 하드
 IF IS_POLICY("지금", "하드")
-	CALL ADD_CRI_VAR("관장 세트", 5)
+	CALL ADD_CRI_VAR("관장세트", 5)
 	SIF TEQUIP:줄 == 0
 		CALL ADD_CRI_VAR("줄", 7)
 	SIF TEQUIP:아이마스크 == 0
@@ -157,7 +157,7 @@ ENDIF
 
 ;조교 방침이 이상
 SIF IS_POLICY("지금", "이상")
-	CALL ADD_CRI_VAR("삼각 목마", 5)
+	CALL ADD_CRI_VAR("삼각목마", 5)
 
 ;-------------------------------------------------------------------------
 ;조교자의 소질을 참조
@@ -169,8 +169,8 @@ IF TALENT:겁쟁이
 	CALL ADD_CRI_VAR("아이마스크", , TEQUIP:아이마스크 ? 0 # 4)
 ELSEIF TALENT:기장
 	CALL ADD_CRI_VAR("매도", , 4)
-	CALL ADD_CRI_VAR("삼각 목마", , TEQUIP:삼각목마 ? 0 # 5)
-	CALL ADD_CRI_VAR("관장 세트", , 5)
+	CALL ADD_CRI_VAR("삼각목마", , TEQUIP:삼각목마 ? 0 # 5)
+	CALL ADD_CRI_VAR("관장세트", , 5)
 ENDIF
 
 ;조교자가 프라이드높음/낮다
@@ -180,9 +180,9 @@ ELSEIF TALENT:프라이드낮음
 	CALL ADD_CRI_VAR("매도", -2, -2)
 ENDIF
 
-;조교자가 선을그음으로 삼각 목마미장착
+;조교자가 선을그음으로 삼각목마 미장착
 SIF TALENT:선을그음 && !TEQUIP:삼각목마
-	CALL ADD_CRI_VAR("삼각 목마", -5)
+	CALL ADD_CRI_VAR("삼각목마", -5)
 
 ;조교자가튀고싶어함
 SIF TALENT:튀고싶어함
@@ -191,10 +191,10 @@ SIF TALENT:튀고싶어함
 ;조교자가 억압/해방
 IF TALENT:억압
 	CALL ADD_CRI_VAR("아이마스크", TEQUIP:아이마스크 ? 0 # 3)
-	CALL ADD_CRI_VAR("관장 세트", -5)
+	CALL ADD_CRI_VAR("관장세트", -5)
 ELSEIF TALENT:해방
 	CALL ADD_CRI_VAR("아이마스크", TEQUIP:아이마스크 ? 0 # -3)
-	CALL ADD_CRI_VAR("관장 세트", , 7)
+	CALL ADD_CRI_VAR("관장세트", , 7)
 ENDIF
 
 ;조교자가 수줍음으로 아이마스크미장착
@@ -215,11 +215,11 @@ SIF TALENT:결박능숙 && !TEQUIP:줄
 
 ;조교자가 도구사용
 SIF TALENT:도구사용
-	CALL ADD_CRI_VAR("관장 세트", 5)
+	CALL ADD_CRI_VAR("관장세트", 5)
 
 ;조교자가 악취민감
 SIF TALENT:악취민감
-	CALL ADD_CRI_VAR("관장 세트", -8)
+	CALL ADD_CRI_VAR("관장세트", -8)
 
 ;조교자가 새디즘
 IF TALENT:새디즘
@@ -229,17 +229,17 @@ IF TALENT:새디즘
 	CALL ADD_CRI_VAR("아이마스크", , TEQUIP:아이마스크 ? 0 # 2)
 	CALL ADD_CRI_VAR("볼개그", , TEQUIP:볼개그 ? 0 # 4)
 	CALL ADD_CRI_VAR("매도", , 6)
-	CALL ADD_CRI_VAR("삼각 목마", , TEQUIP:삼각목마 ? 0 # 6)
-	CALL ADD_CRI_VAR("관장 세트", , 4)
+	CALL ADD_CRI_VAR("삼각목마", , TEQUIP:삼각목마 ? 0 # 6)
+	CALL ADD_CRI_VAR("관장세트", , 4)
 ENDIF
 
 ;조교자가 신중/조급함
 IF TALENT:신중
 	CALL ADD_CRI_VAR("줄", , TEQUIP:줄 ? 0 # 4)
-	CALL ADD_CRI_VAR("삼각 목마", TEQUIP:삼각목마 ? 0 # -1, TEQUIP:삼각목마 ? 0 # -4)
+	CALL ADD_CRI_VAR("삼각목마", TEQUIP:삼각목마 ? 0 # -1, TEQUIP:삼각목마 ? 0 # -4)
 ELSEIF TALENT:조급함
 	CALL ADD_CRI_VAR("줄", , TEQUIP:줄 ? 0 # -4)
-	CALL ADD_CRI_VAR("삼각 목마", TEQUIP:삼각목마 ? 0 # 1, TEQUIP:삼각목마 ? 0 # 4)
+	CALL ADD_CRI_VAR("삼각목마", TEQUIP:삼각목마 ? 0 # 1, TEQUIP:삼각목마 ? 0 # 4)
 ENDIF
 
 ;조교자가 심술쟁이/상냥함
@@ -251,7 +251,7 @@ ELSEIF TALENT:상냥함
 	CALL ADD_CRI_VAR("아이마스크", , TEQUIP:아이마스크 ? 0 # -4)
 	CALL ADD_CRI_VAR("볼개그", , TEQUIP:볼개그 ? 0 # -4)
 	CALL ADD_CRI_VAR("매도", , -4)
-	CALL ADD_CRI_VAR("삼각 목마", TEQUIP:삼각목마 ? 10 # 0)
+	CALL ADD_CRI_VAR("삼각목마", TEQUIP:삼각목마 ? 10 # 0)
 ENDIF
 
 ;조교자가 유치
@@ -260,8 +260,8 @@ SIF TALENT:유치
 
 ;조교자가 광기
 IF TALENT:광기
-	CALL ADD_CRI_VAR("삼각 목마", , TEQUIP:삼각목마 ? 0 # 12)
-	CALL ADD_CRI_VAR("관장 세트", , 10)
+	CALL ADD_CRI_VAR("삼각목마", , TEQUIP:삼각목마 ? 0 # 12)
+	CALL ADD_CRI_VAR("관장세트", , 10)
 	CALL ADD_CRI_VAR("이라마치오", , 10)
 ENDIF
 
@@ -329,95 +329,95 @@ ENDIF
 ;-------------------------------------------------------------------------
 @ACT_ACTM6_ABL_T
 
-;조교자의 기교가[0→0, 3→3~5, 6→0]을 가산(0~5)
-CALL ADD_CRI_VAR("채찍", LINE_CALC(ABL:기교, "0→0,3→3,6→0,LIMIT/0～3"), LINE_CALC(ABL:기교, "0→0,3→2,6→0,LIMIT/0～2"))
-;조교자의 기교가[0→0, 5→3~5]를 가산(0~5)
-CALL ADD_CRI_VAR("바늘", LINE_CALC(ABL:기교, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:기교, "0→0,5→2,LIMIT/0～2"))
+;조교자의 기교가[0→0, 3→3～5, 6→0]을 가산(0～5)
+CALL ADD_CRI_VAR("채찍", LINE_CALC(ABL:기교, "0→0, 3→3, 6→0, LIMIT/0～3"), LINE_CALC(ABL:기교, "0→0, 3→2, 6→0, LIMIT/0～2"))
+;조교자의 기교가[0→0, 5→3～5]를 가산(0～5)
+CALL ADD_CRI_VAR("바늘", LINE_CALC(ABL:기교, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:기교, "0→0, 5→2, LIMIT/0～2"))
 
-;조교자의 C감각이[0→0, 5→3~5]를 가산(0~5)
-CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:C감각, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:C감각, "0→0,5→2,LIMIT/0～2"))
+;조교자의 C감각이[0→0, 5→3～5]를 가산(0～5)
+CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:C감각, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:C감각, "0→0, 5→2, LIMIT/0～2"))
 
-;조교자의 회화가[0→0, 5→3~5]를 가산(0~5)
-CALL ADD_CRI_VAR("매도", LINE_CALC(ABL:회화, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:회화, "0→0,5→2,LIMIT/0～2"))
+;조교자의 회화가[0→0, 5→3～5]를 가산(0～5)
+CALL ADD_CRI_VAR("매도", LINE_CALC(ABL:회화, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:회화, "0→0, 5→2, LIMIT/0～2"))
 
-;조교자의 도구가[0→0, 5→3~5]를 가산(0~5)
-CALL ADD_CRI_VAR("관장 세트", LINE_CALC(ABL:도구, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:도구, "0→0,5→2,LIMIT/0～2"))
+;조교자의 도구가[0→0, 5→3～5]를 가산(0～5)
+CALL ADD_CRI_VAR("관장세트", LINE_CALC(ABL:도구, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:도구, "0→0, 5→2, LIMIT/0～2"))
 
-;조교자의 봉사가[0→0, 5→3~5]를 가산(0~5)
-CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:봉사, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:봉사, "0→0,5→2,LIMIT/0～2"))
+;조교자의 봉사가[0→0, 5→3～5]를 가산(0～5)
+CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:봉사, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:봉사, "0→0, 5→2, LIMIT/0～2"))
 
 ;-------------------------------------------------------------------------
 ;조교 대상의 능력을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM6_ABL_M
 
-;조교 대상의 봉사 정신이[0→0, 5→3~7]을 가산(0~7)
-CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:MASTER:봉사정신, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:MASTER:봉사정신, "0→0,5→4,LIMIT/0～4"))
+;조교 대상의 봉사정신이[0→0, 5→3～7]을 가산(0～7)
+CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:MASTER:봉사정신, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:봉사정신, "0→0, 5→4, LIMIT/0～4"))
 
-;조교 대상의 고통 중독이[0→0, 3→2~6, 6→0]을 가산(0~6)
-CALL ADD_CRI_VAR("스팽킹", LINE_CALC(ABL:MASTER:고통중독, "0→0,3→2,6→0,LIMIT/0～2"), LINE_CALC(ABL:MASTER:고통중독, "0→0,3→4,6→0,LIMIT/0～4"))
-;조교 대상의 고통 중독이[0→0, 4→2~7, 5→1~5]를 가산(0~7)
-CALL ADD_CRI_VAR("채찍", LINE_CALC(ABL:MASTER:고통중독, "0→0,4→2,5→1,LIMIT/0～2"), LINE_CALC(ABL:MASTER:고통중독, "0→0,4→5,5→4,LIMIT/0～5"))
-;조교 대상의 고통 중독이[0→0, 5→3~8]을 가산(0~8)
-CALL ADD_CRI_VAR("바늘", LINE_CALC(ABL:MASTER:고통중독, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:MASTER:고통중독, "0→0,5→5,LIMIT/0～5"))
+;조교 대상의 고통중독이[0→0, 3→2～6, 6→0]을 가산(0～6)
+CALL ADD_CRI_VAR("스팽킹", LINE_CALC(ABL:MASTER:고통중독, "0→0, 3→2, 6→0, LIMIT/0～2"), LINE_CALC(ABL:MASTER:고통중독, "0→0, 3→4, 6→0, LIMIT/0～4"))
+;조교 대상의 고통중독이[0→0, 4→2～7, 5→1～5]를 가산(0～7)
+CALL ADD_CRI_VAR("채찍", LINE_CALC(ABL:MASTER:고통중독, "0→0, 4→2, 5→1, LIMIT/0～2"), LINE_CALC(ABL:MASTER:고통중독, "0→0, 4→5, 5→4, LIMIT/0～5"))
+;조교 대상의 고통중독이[0→0, 5→3～8]을 가산(0～8)
+CALL ADD_CRI_VAR("바늘", LINE_CALC(ABL:MASTER:고통중독, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:고통중독, "0→0, 5→5, LIMIT/0～5"))
 ;※캔슬에 보정은 붙지 않는다
-;조교 대상의 고통 중독이[0→0, 5→2~10]을 가산(0~10)
+;조교 대상의 고통중독이[0→0, 5→2～10]을 가산(0～10)
 SIF !TEQUIP:삼각목마
-	CALL ADD_CRI_VAR("삼각 목마", LINE_CALC(ABL:MASTER:고통중독, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:고통중독, "0→0,5→8,LIMIT/0～8"))
+	CALL ADD_CRI_VAR("삼각목마", LINE_CALC(ABL:MASTER:고통중독, "0→0, 5→2, LIMIT/0～2"), LINE_CALC(ABL:MASTER:고통중독, "0→0, 5→8, LIMIT/0～8"))
 
 ;※캔슬에 보정은 붙지 않는다
-;조교 대상의 구속 중독이[0→0, 5→5~9]를 가산(0~9)
+;조교 대상의 구속중독이[0→0, 5→5～9]를 가산(0～9)
 SIF !TEQUIP:줄
-	CALL ADD_CRI_VAR("줄", LINE_CALC(ABL:MASTER:구속중독, "0→0,5→5,LIMIT/0～5"), LINE_CALC(ABL:MASTER:구속중독, "0→0,5→4,LIMIT/0～4"))
-;조교 대상의 구속 중독이[0→0, 5→3~7]을 가산(0~7)
+	CALL ADD_CRI_VAR("줄", LINE_CALC(ABL:MASTER:구속중독, "0→0, 5→5, LIMIT/0～5"), LINE_CALC(ABL:MASTER:구속중독, "0→0, 5→4, LIMIT/0～4"))
+;조교 대상의 구속중독이[0→0, 5→3～7]을 가산(0～7)
 SIF !TEQUIP:아이마스크
-	CALL ADD_CRI_VAR("아이마스크", LINE_CALC(ABL:MASTER:구속중독, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:MASTER:구속중독, "0→0,5→4,LIMIT/0～4"))
-;조교 대상의 구속 중독이[0→0, 5→2~10]을 가산(0~10)
+	CALL ADD_CRI_VAR("아이마스크", LINE_CALC(ABL:MASTER:구속중독, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:구속중독, "0→0, 5→4, LIMIT/0～4"))
+;조교 대상의 구속중독이[0→0, 5→2～10]을 가산(0～10)
 SIF !TEQUIP:볼개그
-	CALL ADD_CRI_VAR("볼개그", LINE_CALC(ABL:MASTER:구속중독, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:구속중독, "0→0,5→8,LIMIT/0～8"))
+	CALL ADD_CRI_VAR("볼개그", LINE_CALC(ABL:MASTER:구속중독, "0→0, 5→2, LIMIT/0～2"), LINE_CALC(ABL:MASTER:구속중독, "0→0, 5→8, LIMIT/0～8"))
 
 ;-------------------------------------
 ;조교 대상의 반항
 ;-------------------------------------
 @ACT_ACTM6_RESISTANCE_M
 
-;조교 대상의 반항이[0→0, 7500→5~7]을 가산(0~7)
+;조교 대상의 반항이[0→0, 7500→5～7]을 가산(0～7)
 SIF !TEQUIP:줄
-	CALL ADD_CRI_VAR("줄", LINE_CALC(PALAM:MASTER:반항, "0→0,5→5,LIMIT/0～5"), LINE_CALC(PALAM:MASTER:반항, "0→0,5→2,LIMIT/0～2"))
-;조교 대상의 반항이[0→0, 7500→4~7]을 가산(0~7)
+	CALL ADD_CRI_VAR("줄", LINE_CALC(PALAM:MASTER:반항, "0→0, 5→5, LIMIT/0～5"), LINE_CALC(PALAM:MASTER:반항, "0→0, 5→2, LIMIT/0～2"))
+;조교 대상의 반항이[0→0, 7500→4～7]을 가산(0～7)
 SIF !TEQUIP:아이마스크
-	CALL ADD_CRI_VAR("아이마스크", LINE_CALC(PALAM:MASTER:반항, "0→0,5→4,LIMIT/0～4"), LINE_CALC(PALAM:MASTER:반항, "0→0,5→3,LIMIT/0～3"))
-;조교 대상의 반항이[0→0, 7500→3~4]를 가산(0~4)
+	CALL ADD_CRI_VAR("아이마스크", LINE_CALC(PALAM:MASTER:반항, "0→0, 5→4, LIMIT/0～4"), LINE_CALC(PALAM:MASTER:반항, "0→0, 5→3, LIMIT/0～3"))
+;조교 대상의 반항이[0→0, 7500→3～4]를 가산(0～4)
 SIF !TEQUIP:볼개그
-	CALL ADD_CRI_VAR("볼개그", LINE_CALC(PALAM:MASTER:반항, "0→0,5→3,LIMIT/0～3"), LINE_CALC(PALAM:MASTER:반항, "0→0,5→1,LIMIT/0～1"))
+	CALL ADD_CRI_VAR("볼개그", LINE_CALC(PALAM:MASTER:반항, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(PALAM:MASTER:반항, "0→0, 5→1, LIMIT/0～1"))
 
 ;-------------------------------------
 ;조교자의 죄악감
 ;-------------------------------------
 @ACT_ACTM6_SIN_T
 
-;조교자의 죄악감이[80→0, 100→-1]을 가산(-1~0)
-CALL ADD_CRI_VAR("바늘", LINE_CALC(CFLAG:죄악감, "80→0,100→-1,LIMIT/-1～0"))
-;조교자의 죄악감이[60→0, 100→-2]를 가산(-2~0)
-CALL ADD_CRI_VAR("볼개그", LINE_CALC(CFLAG:죄악감, "60→0,100→-2,LIMIT/-2～0"))
-;조교자의 죄악감이[40→0, 100→-3]을 가산(-3~0)
-CALL ADD_CRI_VAR("관장 세트", LINE_CALC(CFLAG:죄악감, "40→0,100→-3,LIMIT/-3～0"))
-;조교자의 죄악감이[0→0, 100→-5]를 가산(-5~0)
-CALL ADD_CRI_VAR("삼각 목마", LINE_CALC(CFLAG:죄악감, "0→0,100→-5,LIMIT/-5～0"))
+;조교자의 죄악감이[80→0, 100→-1]을 가산(-1～0)
+CALL ADD_CRI_VAR("바늘", LINE_CALC(CFLAG:죄악감, "80→0, 100→-1, LIMIT/-1～0"))
+;조교자의 죄악감이[60→0, 100→-2]를 가산(-2～0)
+CALL ADD_CRI_VAR("볼개그", LINE_CALC(CFLAG:죄악감, "60→0, 100→-2, LIMIT/-2～0"))
+;조교자의 죄악감이[40→0, 100→-3]을 가산(-3～0)
+CALL ADD_CRI_VAR("관장세트", LINE_CALC(CFLAG:죄악감, "40→0, 100→-3, LIMIT/-3～0"))
+;조교자의 죄악감이[0→0, 100→-5]를 가산(-5～0)
+CALL ADD_CRI_VAR("삼각목마", LINE_CALC(CFLAG:죄악감, "0→0, 100→-5, LIMIT/-5～0"))
 
 ;-------------------------------------
 ;조교자의 ALI
 ;-------------------------------------
 @ACT_ACTM6_ALI_T
 
-;아라이먼트가[-50→-3, 50→3]을 가산(-3~3)
-CALL ADD_CRI_VAR("스팽킹", LINE_CALC(CFLAG:아라이먼트, "-50→-3,50→3,LIMIT/-3～3"))
-;아라이먼트가[-50→3, 50→-3]을 가산(-3~3)
-CALL ADD_CRI_VAR("삼각 목마", LINE_CALC(CFLAG:아라이먼트, "-50→3,50→-3,LIMIT/-3～3"))
-;아라이먼트가[0→0, 50→2]를 가산(0~2)
-CALL ADD_CRI_VAR("매도", LINE_CALC(CFLAG:아라이먼트, "0→0,50→2,LIMIT/0～2"))
-;아라이먼트가[-50→3, 0→0]을 가산(0~3)
-CALL ADD_CRI_VAR("관장 세트", LINE_CALC(CFLAG:아라이먼트, "-50→3,0→0,LIMIT/0～3"))
+;아라이먼트가[-50→-3, 50→3]을 가산(-3～3)
+CALL ADD_CRI_VAR("스팽킹", LINE_CALC(CFLAG:아라이먼트, "-50→-3, 50→3, LIMIT/-3～3"))
+;아라이먼트가[-50→3, 50→-3]을 가산(-3～3)
+CALL ADD_CRI_VAR("삼각목마", LINE_CALC(CFLAG:아라이먼트, "-50→3, 50→-3, LIMIT/-3～3"))
+;아라이먼트가[0→0, 50→2]를 가산(0～2)
+CALL ADD_CRI_VAR("매도", LINE_CALC(CFLAG:아라이먼트, "0→0, 50→2, LIMIT/0～2"))
+;아라이먼트가[-50→3, 0→0]을 가산(0～3)
+CALL ADD_CRI_VAR("관장세트", LINE_CALC(CFLAG:아라이먼트, "-50→3, 0→0, LIMIT/0～3"))
 
 ;─
 ;게이지나 상태에 의한 변동
@@ -427,23 +427,23 @@ CALL ADD_CRI_VAR("관장 세트", LINE_CALC(CFLAG:아라이먼트, "-50→3,0→
 ;-------------------------------------
 @ACT_ACTM6_PHYSICAL_M
 
-;조교 대상의 체력이[0→-1, 300→0]을 가산(-1~0)
-CALL ADD_CRI_VAR("스팽킹", LINE_CALC(BASE:MASTER:체력, "0→-1,300→0,LIMIT/-1～0"))
-;조교 대상의 체력이[0→-3, 600→0]을 가산(-3~0)
-CALL ADD_CRI_VAR("채찍", LINE_CALC(BASE:MASTER:체력, "0→-3,600→0,LIMIT/-3～0"))
-;조교 대상의 체력이[0→-3, 900→0]을 가산(-3~0)
-CALL ADD_CRI_VAR("이라마치오", LINE_CALC(BASE:MASTER:체력, "0→-3,900→0,LIMIT/-3～0"))
-;조교 대상의 체력이[0→-4, 900→0]을 가산(-4~0)
-CALL ADD_CRI_VAR("바늘", LINE_CALC(BASE:MASTER:체력, "0→-4,900→0,LIMIT/-4～0"))
+;조교 대상의 체력이[0→-1, 300→0]을 가산(-1～0)
+CALL ADD_CRI_VAR("스팽킹", LINE_CALC(BASE:MASTER:체력, "0→-1, 300→0, LIMIT/-1～0"))
+;조교 대상의 체력이[0→-3, 600→0]을 가산(-3～0)
+CALL ADD_CRI_VAR("채찍", LINE_CALC(BASE:MASTER:체력, "0→-3, 600→0, LIMIT/-3～0"))
+;조교 대상의 체력이[0→-3, 900→0]을 가산(-3～0)
+CALL ADD_CRI_VAR("이라마치오", LINE_CALC(BASE:MASTER:체력, "0→-3, 900→0, LIMIT/-3～0"))
+;조교 대상의 체력이[0→-4, 900→0]을 가산(-4～0)
+CALL ADD_CRI_VAR("바늘", LINE_CALC(BASE:MASTER:체력, "0→-4, 900→0, LIMIT/-4～0"))
 ;※캔슬시는 정의 보정
-;조교 대상의 체력이[0→4/-4, 900→0]을 가산(-4~4)
+;조교 대상의 체력이[0→4/-4, 900→0]을 가산(-4～4)
 LOCAL = TEQUIP:삼각목마 ? 1 # -1
-CALL ADD_CRI_VAR("삼각 목마", LOCAL * LINE_CALC(BASE:MASTER:체력, "0→4,900→0,LIMIT/0～4"))
-;조교 대상의 체력이[0→0~8/-4, 900→0]을 가산(-4~8)
+CALL ADD_CRI_VAR("삼각목마", LOCAL * LINE_CALC(BASE:MASTER:체력, "0→4, 900→0, LIMIT/0～4"))
+;조교 대상의 체력이[0→0～8/-4, 900→0]을 가산(-4～8)
 IF TEQUIP:관장기＋플러그
-	CALL ADD_CRI_VAR("관장 세트", , LINE_CALC(BASE:MASTER:체력, "0→8,900→0,LIMIT/0～8"))
+	CALL ADD_CRI_VAR("관장세트", , LINE_CALC(BASE:MASTER:체력, "0→8, 900→0, LIMIT/0～8"))
 ELSE
-	CALL ADD_CRI_VAR("관장 세트", LINE_CALC(BASE:MASTER:체력, "0→-4,900→0,LIMIT/-4～0"))
+	CALL ADD_CRI_VAR("관장세트", LINE_CALC(BASE:MASTER:체력, "0→-4, 900→0, LIMIT/-4～0"))
 ENDIF
 
 ;-------------------------------------
@@ -452,21 +452,21 @@ ENDIF
 @ACT_ACTM6_MENTAL_M
 
 ;※캔슬시는 부의 보정
-;조교 대상의 기력이[0→0, 800→0~4/-8]을 가산(-8~4)
+;조교 대상의 기력이[0→0, 800→0～4/-8]을 가산(-8～4)
 IF TEQUIP:줄
-	CALL ADD_CRI_VAR("줄", LINE_CALC(BASE:MASTER:기력, "0→0,800→-8,LIMIT/-8～0"))
+	CALL ADD_CRI_VAR("줄", LINE_CALC(BASE:MASTER:기력, "0→0, 800→-8, LIMIT/-8～0"))
 ELSE
-	CALL ADD_CRI_VAR("줄", , LINE_CALC(BASE:MASTER:기력, "0→0,800→4,LIMIT/0～4"))
+	CALL ADD_CRI_VAR("줄", , LINE_CALC(BASE:MASTER:기력, "0→0, 800→4, LIMIT/0～4"))
 ENDIF
 IF TEQUIP:아이마스크
-	CALL ADD_CRI_VAR("아이마스크", LINE_CALC(BASE:MASTER:기력, "0→0,800→-8,LIMIT/-8～0"))
+	CALL ADD_CRI_VAR("아이마스크", LINE_CALC(BASE:MASTER:기력, "0→0, 800→-8, LIMIT/-8～0"))
 ELSE
-	CALL ADD_CRI_VAR("아이마스크", , LINE_CALC(BASE:MASTER:기력, "0→0,800→4,LIMIT/0～4"))
+	CALL ADD_CRI_VAR("아이마스크", , LINE_CALC(BASE:MASTER:기력, "0→0, 800→4, LIMIT/0～4"))
 ENDIF
 IF TEQUIP:볼개그
-	CALL ADD_CRI_VAR("볼개그", LINE_CALC(BASE:MASTER:기력, "0→0,800→-8,LIMIT/-8～0"))
+	CALL ADD_CRI_VAR("볼개그", LINE_CALC(BASE:MASTER:기력, "0→0, 800→-8, LIMIT/-8～0"))
 ELSE
-	CALL ADD_CRI_VAR("볼개그", , LINE_CALC(BASE:MASTER:기력, "0→0,800→4,LIMIT/0～4"))
+	CALL ADD_CRI_VAR("볼개그", , LINE_CALC(BASE:MASTER:기력, "0→0, 800→4, LIMIT/0～4"))
 ENDIF
 
 ;-------------------------------------
@@ -479,7 +479,7 @@ IF TFLAG:소모도
 	CALL ADD_CRI_VAR("줄", TEQUIP:줄 ? 4 + TFLAG:소모도 / 2 # -3 - TFLAG:소모도 / 4)
 	CALL ADD_CRI_VAR("아이마스크", TEQUIP:아이마스크 ? 2 + TFLAG:소모도 / 3 # -1 - TFLAG:소모도 / 6)
 	CALL ADD_CRI_VAR("볼개그", TEQUIP:볼개그 ? 3 + TFLAG:소모도 / 3 # -2 - TFLAG:소모도 / 5)
-	CALL ADD_CRI_VAR("삼각 목마", TEQUIP:삼각목마 ? 9 + TFLAG:소모도 # -9 - TFLAG:소모도)
+	CALL ADD_CRI_VAR("삼각목마", TEQUIP:삼각목마 ? 9 + TFLAG:소모도 # -9 - TFLAG:소모도)
 ENDIF
 
 ;-------------------------------------
@@ -487,38 +487,38 @@ ENDIF
 ;-------------------------------------
 @ACT_ACTM6_PHYSICAL_T
 
-;조교자의 체력이[0→-3, 1500→0]을 가산(-3~0)
-CALL ADD_CRI_VAR("스팽킹", LINE_CALC(BASE:체력, "0→-3,1500→0,LIMIT/-3～0"))
-CALL ADD_CRI_VAR("채찍", LINE_CALC(BASE:체력, "0→-3,1500→0,LIMIT/-3～0"))
+;조교자의 체력이[0→-3, 1500→0]을 가산(-3～0)
+CALL ADD_CRI_VAR("스팽킹", LINE_CALC(BASE:체력, "0→-3, 1500→0, LIMIT/-3～0"))
+CALL ADD_CRI_VAR("채찍", LINE_CALC(BASE:체력, "0→-3, 1500→0, LIMIT/-3～0"))
 
 ;-------------------------------------
 ;조교자의 기력
 ;-------------------------------------
 @ACT_ACTM6_MENTAL_T
 
-;조교자의 기력이[0→-1, 250→0]을 가산(-1~0)
-CALL ADD_CRI_VAR("스팽킹", LINE_CALC(BASE:기력, "0→-1,250→0,LIMIT/-1～0"))
-CALL ADD_CRI_VAR("채찍", LINE_CALC(BASE:기력, "0→-1,250→0,LIMIT/-1～0"))
-CALL ADD_CRI_VAR("바늘", LINE_CALC(BASE:기력, "0→-1,250→0,LIMIT/-1～0"))
-CALL ADD_CRI_VAR("관장 세트", LINE_CALC(BASE:기력, "0→-1,250→0,LIMIT/-1～0"))
-;조교자의 기력이[0→-2, 500→0]을 가산(-2~0)
-CALL ADD_CRI_VAR("이라마치오", LINE_CALC(BASE:기력, "0→-2,500→0,LIMIT/-2～0"))
-;조교자의 기력이[0→-3, 750→0]을 가산(-3~0)
-CALL ADD_CRI_VAR("매도", LINE_CALC(BASE:기력, "0→-3,750→0,LIMIT/-3～0"))
+;조교자의 기력이[0→-1, 250→0]을 가산(-1～0)
+CALL ADD_CRI_VAR("스팽킹", LINE_CALC(BASE:기력, "0→-1, 250→0, LIMIT/-1～0"))
+CALL ADD_CRI_VAR("채찍", LINE_CALC(BASE:기력, "0→-1, 250→0, LIMIT/-1～0"))
+CALL ADD_CRI_VAR("바늘", LINE_CALC(BASE:기력, "0→-1, 250→0, LIMIT/-1～0"))
+CALL ADD_CRI_VAR("관장세트", LINE_CALC(BASE:기력, "0→-1, 250→0, LIMIT/-1～0"))
+;조교자의 기력이[0→-2, 500→0]을 가산(-2～0)
+CALL ADD_CRI_VAR("이라마치오", LINE_CALC(BASE:기력, "0→-2, 500→0, LIMIT/-2～0"))
+;조교자의 기력이[0→-3, 750→0]을 가산(-3～0)
+CALL ADD_CRI_VAR("매도", LINE_CALC(BASE:기력, "0→-3, 750→0, LIMIT/-3～0"))
 
 ;-------------------------------------
 ;조교자의 초조
 ;-------------------------------------
 @ACT_ACTM6_IRRITATION_T
 
-;조교자의 초조가[0→0, 800→6]을 가산(0~6)
-CALL ADD_CRI_VAR("스팽킹", LINE_CALC(BASE:초조, "0→0,800→6,LIMIT/0～6"))
-;조교자의 초조가[0→0, 800→10]을 가산(0~10)
-CALL ADD_CRI_VAR("채찍", LINE_CALC(BASE:초조, "0→0,800→10,LIMIT/0～10"))
-;조교자의 초조가[0→0, 800→8]을 가산(0~8)
-CALL ADD_CRI_VAR("바늘", LINE_CALC(BASE:초조, "0→0,800→8,LIMIT/0～8"))
-;조교자의 초조가[0→0, 800→-6]을 가산(-6~0)
-CALL ADD_CRI_VAR("매도", LINE_CALC(BASE:초조, "0→0,800→-6,LIMIT/-6～0"))
+;조교자의 초조가[0→0, 800→6]을 가산(0～6)
+CALL ADD_CRI_VAR("스팽킹", LINE_CALC(BASE:초조, "0→0, 800→6, LIMIT/0～6"))
+;조교자의 초조가[0→0, 800→10]을 가산(0～10)
+CALL ADD_CRI_VAR("채찍", LINE_CALC(BASE:초조, "0→0, 800→10, LIMIT/0～10"))
+;조교자의 초조가[0→0, 800→8]을 가산(0～8)
+CALL ADD_CRI_VAR("바늘", LINE_CALC(BASE:초조, "0→0, 800→8, LIMIT/0～8"))
+;조교자의 초조가[0→0, 800→-6]을 가산(-6～0)
+CALL ADD_CRI_VAR("매도", LINE_CALC(BASE:초조, "0→0, 800→-6, LIMIT/-6～0"))
 
 ;-------------------------------------
 ;조교자 상태
@@ -532,7 +532,7 @@ SELECTCASE GET_CONDITION(TARGET)
 	CASE "분노"
 		CALL ADD_CRI_VAR("매도", , 4)
 	CASE "울적"
-		CALL ADD_CRI_VAR("삼각 목마", 2, 8)
+		CALL ADD_CRI_VAR("삼각목마", 2, 8)
 ENDSELECT
 
 
@@ -557,7 +557,7 @@ IF IS_NOWCOMNAME("날뛴다")
 	CALL ADD_CRI_VAR("바늘", -2)
 	CALL ADD_CRI_VAR("줄", TEQUIP:줄 ? 0 # 10)
 	CALL ADD_CRI_VAR("아이마스크", TEQUIP:아이마스크 ? 0 # 6)
-	CALL ADD_CRI_VAR("삼각 목마", TEQUIP:볼개그 ? 0 # 3)
+	CALL ADD_CRI_VAR("삼각목마", TEQUIP:볼개그 ? 0 # 3)
 ENDIF
 
 ;-------------------------------------
@@ -566,7 +566,7 @@ ENDIF
 @ACT_ACTM6_BE_TAKEN_OFF_TOOLS
 
 ;마음대로 도구를 떼어진＆줄미장착
-SIF IS_NOWCOMNAME("도구를 제외한다") && !TEQUIP:줄
+SIF IS_NOWCOMNAME("도구를제외한다") && !TEQUIP:줄
 	CALL ADD_CRI_VAR("줄", 5)
 
 ;-------------------------------------
@@ -582,7 +582,7 @@ SIF !TEQUIP:아이마스크
 SIF !TEQUIP:볼개그
 	CALL ADD_CRI_VAR("볼개그", -CANCEL_TEQUIP_COUNT("구속") / 20)
 SIF !TEQUIP:삼각목마
-	CALL ADD_CRI_VAR("삼각 목마", -CANCEL_TEQUIP_COUNT("삼각 목마") / 20)
+	CALL ADD_CRI_VAR("삼각목마", -CANCEL_TEQUIP_COUNT("삼각목마") / 20)
 
 ;※두 명 자위중이라면 양쪽 모두의 보정이 유효가 된다
 ;-------------------------------------
@@ -607,14 +607,14 @@ SIF GETBIT(TEQUIP:자위중, 1)
 @ACT_ACTM6_INSERT
 
 IF TEQUIP:성교중 || TEQUIP:성교봉사중
-	;승마위/배면좌위/역강간/후배위 시킨다
+	;승마위/배면좌위/역강간/후배위시킨다
 	SIF TEQUIP:성교중 == 3 || TEQUIP:성교중 == 5 || TEQUIP:성교봉사중 == 3 || TEQUIP:성교봉사중 == 2
 		CALL ADD_CRI_VAR("스팽킹", -5)
 	;후배위중은 두드렸으면 좋겠다
 	SIF TEQUIP:성교중 == 2
 		CALL ADD_CRI_VAR("스팽킹", 5)
 	CALL ADD_CRI_VAR("바늘", -5)
-	CALL ADD_CRI_VAR("관장 세트", -5)
+	CALL ADD_CRI_VAR("관장세트", -5)
 	CALL ADD_CRI_VAR("이라마치오", -5)
 ENDIF
 
@@ -624,8 +624,8 @@ ENDIF
 @ACT_ACTM6_OSHIOKI
 
 IF TFLAG:벌플래그
-	CALL ADD_CRI_VAR("삼각 목마", , 9)
-	CALL ADD_CRI_VAR("관장 세트", 1, 6)
+	CALL ADD_CRI_VAR("삼각목마", , 9)
+	CALL ADD_CRI_VAR("관장세트", 1, 6)
 	CALL ADD_CRI_VAR("이라마치오", 3, 3)
 ENDIF
 
@@ -634,17 +634,17 @@ ENDIF
 ;-------------------------------------
 @ACT_ACTM6_CLOTH_M
 
-;조교 대상의 하반신 윗도리에 방해될 때
+;조교 대상의 하반신윗도리에 방해될 때
 IF CLOTHESTYPE(1, 1) ==2
-	CALL ADD_CRI_VAR("삼각 목마", -5)
-	CALL ADD_CRI_VAR("관장 세트", -2)
+	CALL ADD_CRI_VAR("삼각목마", -5)
+	CALL ADD_CRI_VAR("관장세트", -2)
 ENDIF
 
-;조교 대상의 하반신 속옷이 있을 때
+;조교 대상의 하반신속옷이 있을 때
 SIF CLOTHESTYPE(1, 0)
-	CALL ADD_CRI_VAR("삼각 목마", -2)
+	CALL ADD_CRI_VAR("삼각목마", -2)
 
-;조교 대상의 상반신 윗도리가 있을 때
+;조교 대상의 상반신윗도리가 있을 때
 IF CLOTHESTYPE(1, 3)
 	CALL ADD_CRI_VAR("채찍", -5)
 	CALL ADD_CRI_VAR("바늘", -5)

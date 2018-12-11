@@ -27,7 +27,7 @@ CALLFORM %LOCALS%_MENTAL_T
 CALL CHA_CRI_VAR, @"조교자 상태(%CONDITION(TCVAR:상태변화)%)"
 CALLFORM %LOCALS%_CONDITION_T
 
-CALL CHA_CRI_VAR, "연속 행동 보정"
+CALL CHA_CRI_VAR, "연속행동 보정"
 CALLFORM %LOCALS%_PREV
 
 CALL CHA_CRI_VAR, "히트치"
@@ -67,8 +67,8 @@ CALL ANA_CRI_VAR()
 CALL ADD_CRI_VAR("치료한다", -5)
 ;필요하지 않을지도라고 생각했으므로 시험삼아 무효화@이것 보고
 [SKIPSTART]
-CALL DIM_CRI_VAR("쉬게 한다", 5)
-CALL DIM_CRI_VAR("영양제를 먹인다", 8)
+CALL DIM_CRI_VAR("쉬게한다", 5)
+CALL DIM_CRI_VAR("영양제를먹인다", 8)
 CALL DIM_CRI_VAR("치료한다", 10)
 [SKIPEND]
 
@@ -89,16 +89,16 @@ SIF TALENT:약학지식
 ;-------------------------------------
 @ACT_ACTM9_PHYSICAL_T
 
-;조교자의 체력이[0→3, 900→0]을 가산(0~3)
-CALL ADD_CRI_VAR("쉬게 한다", LINE_CALC(BASE:체력, "0→3,900→0,LIMIT/0～3"))
+;조교자의 체력이[0→3, 900→0]을 가산(0～3)
+CALL ADD_CRI_VAR("쉬게한다", LINE_CALC(BASE:체력, "0→3, 900→0, LIMIT/0～3"))
 
 ;-------------------------------------
 ;조교자의 기력
 ;-------------------------------------
 @ACT_ACTM9_MENTAL_T
 
-;조교자의 기력이[0→-9~0, 450→0]을 가산(-9~0)
-CALL ADD_CRI_VAR("치료한다", , LINE_CALC(BASE:기력, "0→-9,450→0,LIMIT/-9～0"))
+;조교자의 기력이[0→-9～0, 450→0]을 가산(-9～0)
+CALL ADD_CRI_VAR("치료한다", , LINE_CALC(BASE:기력, "0→-9, 450→0, LIMIT/-9～0"))
 
 ;-------------------------------------
 ;조교자 상태
@@ -125,10 +125,10 @@ SIF INRANGE(TFLAG:전ACT, 90, 92)
 ;─
 @ACT_ACTM9_HEAT
 
-;영양제의 히트치
+;영양제의히트치
 SIF FLAG:영양히트 > 0
-	CALL ADD_CRI_VAR("영양제를 먹인다", -FLAG:영양히트)
-;치료의 히트치
+	CALL ADD_CRI_VAR("영양제를먹인다", -FLAG:영양히트)
+;치료의히트치
 SIF FLAG:치료히트 > 0
 	CALL ADD_CRI_VAR("치료한다", -FLAG:치료히트)
 

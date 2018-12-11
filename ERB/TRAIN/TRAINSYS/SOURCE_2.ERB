@@ -19,9 +19,9 @@ TFLAG:호감도업 += MIN(SOURCE:MASTER:접촉 / 100, 10)
 ;순종과 조교 정도를 본다
 LOCAL = ABL:MASTER:욕망 * 2 + CFLAG:MASTER:조교레벨
 ;치정, 공순, 호감도(M→T) 증감
-치정증감 = 치정증감 * LINE_CALC(LOCAL, "0→150,18→0,LIMIT/1～150") / 100
-공순증감 = 공순증감 * LINE_CALC(LOCAL, "0→0,18→100,LIMIT/5～100") / 100
-TFLAG:호감도업 += LINE_CALC(LOCAL, "0→-200,18→200,LIMIT/-200～200") / 100
+치정증감 = 치정증감 * LINE_CALC(LOCAL, "0→150, 18→0, LIMIT/1～150") / 100
+공순증감 = 공순증감 * LINE_CALC(LOCAL, "0→0, 18→100, LIMIT/5～100") / 100
+TFLAG:호감도업 += LINE_CALC(LOCAL, "0→-200, 18→200, LIMIT/-200～200") / 100
 
 ;욕망을 본다
 LOCAL = 0
@@ -31,20 +31,20 @@ SIF TCVAR:MASTER:상태변화 == 5
 	LOCAL += 2
 LOCAL += ABL:MASTER:욕망 * 2 + CFLAG:M호의 / 500
 ;욕정, 불쾌, 호감도(M→T) 증감
-욕정증감 = 욕정증감 * LINE_CALC(LOCAL, "0→10,15→125,LIMIT/10～125") / 100
-불쾌증감 = 불쾌증감 * LINE_CALC(LOCAL, "0→120,15→0,LIMIT/1～120") / 100
-TFLAG:호감도업 += LINE_CALC(LOCAL, "0→-2,15→2,LIMIT/-2～2")
+욕정증감 = 욕정증감 * LINE_CALC(LOCAL, "0→10, 15→125, LIMIT/10～125") / 100
+불쾌증감 = 불쾌증감 * LINE_CALC(LOCAL, "0→120, 15→0, LIMIT/1～120") / 100
+TFLAG:호감도업 += LINE_CALC(LOCAL, "0→-2, 15→2, LIMIT/-2～2")
 
 ;동성의 경우
 IF TALENT:MASTER:남자 && TALENT:남자
 	;ＢＬ끼/레즈끼를 취득
 	LOCAL = TALENT:남자 ? ABL:MASTER:ＢＬ끼 # ABL:MASTER:레즈끼
 	;치정, 욕정, 공순, 불쾌, 호감도(M→T) 증감
-	치정증감 = 치정증감 * LINE_CALC(LOCAL, "0→100,5→15,LIMIT/15～100")
-	욕정증감 = 욕정증감 * LINE_CALC(LOCAL, "0→0,5→120,LIMIT/0～120")
-	공순증감 = 공순증감 * LINE_CALC(LOCAL, "0→10,5→100,LIMIT/10～100")
-	불쾌증감 = 불쾌증감 * LINE_CALC(LOCAL, "0→200,5→0,LIMIT/1～200")
-	TFLAG:호감도업 += LINE_CALC(LOCAL, "0→-3,5→5,LIMIT/-3～5")
+	치정증감 = 치정증감 * LINE_CALC(LOCAL, "0→100, 5→15, LIMIT/15～100")
+	욕정증감 = 욕정증감 * LINE_CALC(LOCAL, "0→0, 5→120, LIMIT/0～120")
+	공순증감 = 공순증감 * LINE_CALC(LOCAL, "0→10, 5→100, LIMIT/10～100")
+	불쾌증감 = 불쾌증감 * LINE_CALC(LOCAL, "0→200, 5→0, LIMIT/1～200")
+	TFLAG:호감도업 += LINE_CALC(LOCAL, "0→-3, 5→5, LIMIT/-3～5")
 	;레즈의 경우
 	IF !TALENT:남자
 		욕정증감 = 욕정증감 * (5 + ABL:MASTER:레즈중독) / 5
@@ -84,7 +84,7 @@ CUP:MASTER:공순 += SOURCE:MASTER:사랑 * (ABL:MASTER:순종 + 5) / 5
 SOURCE:MASTER:열락 += SOURCE:MASTER:사랑 * (ABL:MASTER:욕망 + 5) / 10
 
 ;호감도(M→T) 증감
-TFLAG:호감도업 += LINE_CALC(SOURCE:MASTER:사랑, "0→0,2500→10,LIMIT/0～10")
+TFLAG:호감도업 += LINE_CALC(SOURCE:MASTER:사랑, "0→0, 2500→10, LIMIT/0～10")
 
 ;─
 ;성행동의 소스(불쾌, 억울, 체력, 기력, 호감도, 경험치 추가)
@@ -93,12 +93,12 @@ TFLAG:호감도업 += LINE_CALC(SOURCE:MASTER:사랑, "0→0,2500→10,LIMIT/0�
 
 ;욕망이 낮은 경우는 PALAM:MASTER:불쾌가 오른다
 SIF PALAM:MASTER:욕정 < 5000
-	CUP:MASTER:불쾌 += SOURCE:MASTER:성행동 / LINE_CALC(PALAM:MASTER:욕정, "0→1,5000→6,LIMIT/1～6")
+	CUP:MASTER:불쾌 += SOURCE:MASTER:성행동 / LINE_CALC(PALAM:MASTER:욕정, "0→1, 5000→6, LIMIT/1～6")
 
 ;억압이나 저항이 있는 경우는 PALAM:MASTER:억울이 오른다
-;ABL:봉사 정신을 본다
+;ABL:봉사정신을 본다
 SIF TALENT:MASTER:억압 || TALENT:MASTER:반항적
-	CUP:MASTER:억울 += SOURCE:MASTER:성행동 * LINE_CALC(ABL:MASTER:봉사정신, "0→180,5→30,LIMIT/30～180") / 500
+	CUP:MASTER:억울 += SOURCE:MASTER:성행동 * LINE_CALC(ABL:MASTER:봉사정신, "0→180, 5→30, LIMIT/30～180") / 500
 
 ;성행동SOURCE로부터 보정치를 만든다
 LOCAL = SOURCE:MASTER:성행동 * (100 - CFLAG:MASTER:조교레벨) * (100 - CFLAG:조교레벨) / 20000
@@ -127,10 +127,10 @@ CUP:MASTER:고통 += SOURCE:MASTER:아픔 * (5 + TALENT:MASTER:작은체형 - TA
 SIF TFLAG:벌플래그 > 0
 	SOURCE:MASTER:달성 += CUP:MASTER:고통 * (10 - ABL:MASTER:고통중독) / 50
 
-;공포의 소스, 아픔에강함/약한 것 영향을 받아, 마조끼와 고통 중독이 오르면 거의 사라집니다
+;공포의 소스, 아픔에강함/약한 것 영향을 받아, 마조끼와 고통중독이 오르면 거의 사라집니다
 SOURCE:MASTER:공포 += SOURCE:MASTER:아픔 * (20 - ABL:MASTER:마조끼 - ABL:MASTER:고통중독 * 2 + TALENT:MASTER:아픔에약함 * 5 - TALENT:MASTER:아픔에강함 * 3) / 20
 
-;욕정, 마조끼와 고통 중독, 드 M, 그리고 조교자의 새디즘을 본다
+;욕정, 마조끼와 고통중독, 드 M, 그리고 조교자의 새디즘을 본다
 CUP:MASTER:욕정 += SOURCE:MASTER:아픔 * (ABL:MASTER:마조끼 + ABL:MASTER:고통중독 * 2 + TALENT:MASTER:드M * 5) * (3 + TALENT:새디즘) / 60
 
 ;아픔 SOURCE로부터 보정치를 만든다
@@ -146,7 +146,7 @@ DOWNBASE:MASTER:체력 += LOCAL
 DOWNBASE:MASTER:기력 += LOCAL / 2
 DOWNBASE:MASTER:이성 += LOCAL * (5 + TALENT:MASTER:아픔에약함 - TALENT:MASTER:아픔에강함 + TALENT:MASTER:감수성 - TALENT:MASTER:감정결핍) * (900 + RAND:100 + 1) / 7000
 
-;고통에 의한 이성 저하의 플래그
+;고통에의한이성저하의 플래그
 TFLAG:고통에의한이성저하 = 1
 
 ;출혈
@@ -168,7 +168,7 @@ SIF LOCAL > 750 && RAND:4 > 0
 ;─
 @CALC_SOURCE14
 
-;욕정, 마조끼와 구속 중독, 드 M, 그리고 조교자의 새디즘을 본다
+;욕정, 마조끼와 구속중독, 드 M, 그리고 조교자의 새디즘을 본다
 CUP:MASTER:욕정 += SOURCE:MASTER:구속 * (ABL:MASTER:마조끼 + ABL:MASTER:구속중독 * 2 + TALENT:MASTER:드M * 5) * (3 + TALENT:새디즘) / 60
 
 ;굴복, 순종을 본다
