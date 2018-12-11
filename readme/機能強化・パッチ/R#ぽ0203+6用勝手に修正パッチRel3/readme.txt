@@ -1,94 +1,94 @@
 ﻿_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
-・名称			R#ぽ0203+6用勝手に修正パッチRel3
-・動作環境		eratohoReverse# ぽ0203test版+6
-・作者			/L
-・配布元		http://ux.getuploader.com/aba98725/
+·명칭			R#0203+6용 마음대로 수정 패치 Rel3
+·동작환경		eratohoReverse# 0203 test판+6
+·작자			/L
+·배포원		http://ux.getuploader.com/aba98725/
 _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-[修正内容]
+[수정 내용]
 EVENT_K.ERB
-　　1.@KOJO_REACTにコンビネーションREACT及び派生元を呼び出す処理を追加
+　　1@KOJO_REACT에 콤비 네이션 REACT 및 파생원을 호출하는 처리를 추가
 ACT_APLLY.ERB
-　　1.@ACTION_APPLY2_5に於いてREACT分類の誤りと思われるものを修正
+　　1@ACTION_APPLY2_5에 있어서 REACT 분류의 잘못이라고 생각되는 것을 수정
 ACT_MESSAGE.ERB
-　　1.@TRAIN_MESSAGE_12に於いてRAND:2をT_COND("情欲")に変更
-　　2.@TRAIN_MESSAGE_14において不要な空行と思われるものを削除
-　　3.@TRAIN_MESSAGE_34に於いて、意味不明な空のPRINTFORMLを正しいと思われる形に修正
-　　4.性交奉仕系@TRAIN_MESSAGEにおいて@V_SEXがTARGETを参照していたのをMASTERに修正
-　　5.@TRAIN_MESSAGE_99に於いて代入されていないACT派生を参照しているのを修正
-　　6.@TRAIN_MESSAGE_303に於いて脱字を修正
-　　7.@TRAIN_MESSAGE2_5に於いて、下位の分岐の妨げになると思われるELSEIF ACTION_APPLY2_5V(-1) == 2をコメントアウト
-　　8.修正の際に一緒に置換されてしまったと思しき空行用のPRINTFORMLをPRINTLに
-　　9.コピペの際にずれたと思しきインデントを修正
+　　1@TRAIN_MESSAGE_12에 있어서 RAND:2를 T_COND("정욕")로 변경
+　　2@TRAIN_MESSAGE_14에 대해 불필요한 공행이라고 생각되는 것을 삭제
+　　3@TRAIN_MESSAGE_34에 있어서, 의미 불명한 하늘의 PRINTFORML를 올바르다고 생각되는 형태에 수정
+　　4. 성교 봉사계@TRAIN_MESSAGE에 대해@V_SEX가 TARGET를 참조하고 있던 것을 MASTER에 수정
+　　5@TRAIN_MESSAGE_99에 있어서 대입되어 있지 않은 ACT 파생을 참조하고 있는 것을 수정
+　　6@TRAIN_MESSAGE_303에 있어서 탈자를 수정
+　　7@TRAIN_MESSAGE2_5에 있어서, 하위의 분기의 방해가 된다고 생각되는 ELSEIF ACTION_APPLY2_5 V(-1) == 2를 comment out
+　　8. 수정 시에 함께 치환되어 버렸다고 생각되는 공행용의 PRINTFORML를 PRINTL에
+　　9. 코피페 시에 어긋났다고 생각되는 인덴트를 수정
 SOURCE_MESSAGE.ERB
-　　1.コンビネーションに派生し得る箇所のIS_NOWACTNAMEをGET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT))に
-　　2.助手協力時のCFLAG:ASSI:助調方針 == 1をTCVAR:(ASSI:1):助手方針 == GET_ASSIMENUNUM("コンビネーション")に
+　　1. 콤비 네이션에 파생 할 수 있는 개소의 IS_NOWACTNAME를 GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT))에
+　　2. 조수 협력시의 CFLAG:ASSI:조조방침 == 1을 TCVAR:(ASSI:1):조수 방침 == GET_ASSIMENUNUM("콤비 네이션")에
 
-[Rel2. 修正内容]
+[Rel2. 수정 내용]
 COMMON_GETTER_TRAIN.ERB
-　　1.REACT印象関連関数群
+　　1. REACT 인상 관련 함수군
 　　　@COMIMPLIST/@GET_COMIMPNAME/@COMIMPNAME/@GET_COMIMPNUM/@COMIMPNUM/@NOWCOMIMPNAME/@IS_NOWCOMIMPNAME/@IS_COMIMPNAME
-　　　以上のものを追加
+　　　이상의 것을 추가
 ACT_MESSAGE.ERB
-　　1.@TRAIN_MESSAGE2_40に於いて受容となる箇所にREACT分類:受け入れを追加の上、積極的従うと並列処理
-　　2.@TRAIN_MESSAGE2_45に於いて受容となる箇所にREACT分類:受け入れるを追加
+　　1@TRAIN_MESSAGE2_40에 있어서 수용이 되는 개소에 REACT 분류:받아들임을 추가 후, 적극적 따르면 병렬처리
+　　2@TRAIN_MESSAGE2_45에 있어서 수용이 되는 개소에 REACT 분류:받아들이는 것을 추가
 ACT_APPLY.ERB
-　　1.@ACTION_APPLY2_57に於いて受容となる箇所にREACT分類:消極的従うを追加
-　　　拒絶となる分岐にREACT分類:拒否を追加
-　　2.@ACTION_APPLY2_90に於いてIS_NOWCOMNAME("自慰し始める")の箇所のSET_COMGRO("拒否")をコメントアウト
-　　3.@ACTION_APPLY_92に於いてCOM道具を外すで暴れる扱いになり得るTEQUIP解除処理を追加の上コメントアウト
-　　　(本体側の判断に委ねたい意向)
+　　1@ACTION_APPLY2_57에 있어서 수용이 되는 개소에 REACT 분류:소극적 따르는 것을 추가
+　　　거절이 되는 분기에 REACT 분류:거부를 추가
+　　2@ACTION_APPLY2_90에 있어서 IS_NOWCOMNAME("자위하기 시작한다")의 개소의 SET_COMGRO("거부")를 comment out
+　　3@ACTION_APPLY_92에 있어서 COM 도구를 제외하는 것으로 날뛰는 취급이 될 수 있는 TEQUIP 해제 처리를 추가 후 comment out
+　　　(본체측의 판단에 맡기고 싶은 의향)
 COM_00.ERB
-　　1.@COM1に於いて哀願となる分岐条件にIS_NOWACTNAME("罵倒")を追加
-　　2.@COM7に於いてREACT派生 = 0の処理をELSE以降で行うように
+　　1@COM1에 있어서 애원이 되는 분기 조건에 IS_NOWACTNAME("매도")를 추가
+　　2@COM7에 있어서 REACT 파생 = 0의 처리를 ELSE 이후에 실시하도록(듯이)
 COM_10.ERB
-　　1.@COM11に於いてACT:逆レイプの際REACT分類:暴れるにならないように修正
+　　1@COM11에 있어서 ACT:역강간때 REACT 분류:날뛰는이 되지 않게 수정
 COM_30.ERB
-　　1.@COM32に於いてACT:逆レイプの際REACT分類:暴れるにならないように修正
-　　2.@COMM33に於いてREACT派生 = 0の処理をELSE以降で行うように
+　　1@COM32에 있어서 ACT:역강간때 REACT 분류:날뛰는이 되지 않게 수정
+　　2@COMM33에 있어서 REACT 파생 = 0의 처리를 ELSE 이후에 실시하도록(듯이)
 COM_50.ERB
-　　1.@COM50 派生:勝手にオナニーするなとなる箇所の条件にMENUMATCH(TFLAG:ACT, "奉仕")とIS_NOWACTNAME("休ませる")を追加
-　　　SET_COMGRO/SET_COMIMPの処理を派生毎に切り分け。派生1はSET_COMGRO("拒否")/SET_COMIMP("悪印象大")に
-　　　依存度変化処理も別途追加
+　　1@COM50 파생:마음대로 자위 하지마 라고 되는 개소의 조건에 MENUMATCH(TFLAG:ACT, "봉사")와 IS_NOWACTNAME("쉬게 한다")를 추가
+　　　SET_COMGRO/SET_COMIMP의 처리를 파생마다 분리. 파생 1은 SET_COMGRO("거부")/SET_COMIMP("악인상대")에
+　　　의존도 변화 처리도 별도 추가
 REACTION_MESSAGE.ERB
-　　1.CA%TSTR:2%SE 4,強気に応答するのREACT派生代入処理をコメントアウト(@COM4で代入が行われている為)
-　　2.CASE 7,許しを乞うの負荷2が納得いかなかったので修正
-　　3.CASE 12,下手だと罵るに於いてTFLAG:REACT印象をIS_COMIMPNAMEに
-　　4.CASE 14,快感を我慢するに於いて負荷2/COMCOR_POSI()の箇所が納得いかなかったので修正
-　　5.CASE 30,痛みを我慢するに於いてACT:イラマチオかつ負荷0の場合「歯を食い縛る」となるのを回避するよう修正
-　　6.CASE 70,イかせてに於いてREACT派生0相当の分岐がなかったので追加
+　　1. CA%TSTR:2%SE 4, 강하게 응답하는 것 REACT 파생 대입 처리를 comment out(@COM4로 대입을 하고 있기 때문에(위해))
+　　2. CASE 7, 허가를 청하는 것 부하 2가 납득 가지 않았기 때문에 수정
+　　3. CASE 12, 서투르다고 매도하는 것에 있어서 TFLAG:REACT 인상을 IS_COMIMPNAME에
+　　4. CASE 14, 쾌감을 참는 것에 있어서 부하 2/COMCOR_POSI()의 개소가 납득 가지 않았기 때문에 수정
+　　5. CASE 30, 아픔을 참는 것에 있어서 ACT:이라마치오 또한 부하 0의 경우 「이빨을 이를 악문다」라고 되는 것을 회피하도록(듯이) 수정
+　　6. CASE 70, 가게 해에 있어서 REACT 파생 0 상당한 분기가 없었기 때문에 추가
 
-[Rel3. 修正内容]
+[Rel3. 수정 내용]
 COMMON_GETTER_CHARA.ERB
-　　1.@AFFECTIONに定義"恐怖", "反抗"を追加、及び未定義でエラー落ちする際(%ARGS%)で内容を拾えるように
+　　1@AFFECTION에 정의 "공포", "반항"을 추가, 및 미정도리로 에러 초월할 때(%ARGS%)로 내용을 주울 수 있도록(듯이)
 EVENT_DAYLY.ERB
-　　1.DAILY_LIFE_NURSINGにARG:1(疲労で調教中止になった場合)を追加
-　　　口上側は日常イベント@KOJO_EVENT_KX_201(ARG)に於いてIF LOCAL && ARG == 1で記述する事が可能
+　　1. DAILY_LIFE_NURSING에 ARG:1(피로로 조교 중지가 되었을 경우)을 추가
+　　　구상측은 일상 이벤트@KOJO_EVENT_KX_201(ARG)에 있어서 IF LOCAL && ARG == 1으로 기술하는 것이 가능
 ROUTINE.ERB
-　　1.FLAG:END達成への代入をRESULT値0以上で行うように
+　　1. FLAG:END 달성에의 대입을 RESULT치 0이상으로 실시하도록(듯이)
 EVENTCOMEND.ERB
-　　1.調教終了の判定の際にFLAG:日常制御をリセットするように
+　　1. 조교 종료의 판정 시에 FLAG:일상 제어를 리셋트 하도록(듯이)
 EVENTRAIN.ERB
-　　1.大満足ボーナス関連を手入れ
-　　　"%CALLNAME:TARGET%さま大満足ボーナス"の表示が目立つように変更
-　　　KOJO_EVENT(16)後にPRINTLで空行が入るように
-　　　CFLAG:満足ボーのリセットを今日の方針地の文の処理を抜けてから行うように
-　　　上記の変更に伴い、今日の方針(アナル/お仕置き/ハード)の箇所は満足ボーの有無で地の文が変化するように
-　　　今日の方針派生をTFLAG:今日の方針からPOLICY("今日")に変更
+　　1. 대만족 보너스 관련을 손질
+　　　"%CALLNAME:TARGET%님대만족 보너스"의 표시가 눈에 띄도록(듯이) 변경
+　　　KOJO_EVENT(16) 뒤로 PRINTL로 공행이 들어가도록(듯이)
+　　　CFLAG:만족 보의 리셋트를 오늘의 방침 지문의 처리를 빠지고 나서 실시하도록(듯이)
+　　　상기의 변경에 수반해, 오늘의 방침(애널/벌/하드)의 개소는 만족 보의 유무로 지문이 변화하도록(듯이)
+　　　오늘의 방침 파생을 TFLAG:오늘의 방침으로부터 POLICY("오늘")로 변경
 TRAIN_PROCESS.ERB
-　　1.前回の行動を表示して今回の行動を決定の箇所で%TSTR:2%を%TSTR:前調教指令%
-　　　%TSTR:1%を%TSTR:調教指令%にそれぞれ変更
+　　1. 전회의 행동을 표시해 이번 행동을 결정의 개소에서 %TSTR:2%를 %TSTR:전조교 지령%
+　　　%TSTR:1%를 %TSTR:조교 지령%에 각각 변경
 ACT_ABLE.ERB
-　　1.性奉系ACT(ACT_ABLE95~103)に於いてTEQUIP:三角木馬を規制
+　　1. 성 봉계 ACT(ACT_ABLE95~103)에 있어서 TEQUIP:삼각 목마를 규제
 COMABLE.ERB
-　　1.@COMABLE40に於いて逆レイプを拒否できないように
-その他
-　　本体付属のイベント口上番号.txtから存在していない(14,コマンド前口上)部分を削除
+　　1@COMABLE40에 있어서 역강간을 거부 할 수 없도록
+그 외
+　　본체 부속의 이벤트 구상 번호. txt로부터 존재하고 있지 않는(14, 커맨드 서두) 부분을 삭제
 
-※これまでリリースした分はRel3に統合してあります。
-　付属の各フォルダを本体のERBフォルダに上書きして使用して下さい
+※이것까지 릴리스 한 만큼은 Rel3에 통합되어 있습니다.
+  부속의 각 폴더를 본체의 ERB 폴더에 덧쓰기해 사용해 주세요
 
-●連絡先
+●연락처
 Twitter:@L7switch
 mail:layer7.inc@gmail.com
 

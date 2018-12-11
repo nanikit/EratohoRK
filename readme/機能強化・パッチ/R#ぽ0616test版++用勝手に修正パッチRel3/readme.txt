@@ -1,86 +1,86 @@
 ﻿_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
-・名称		R#ぽ0616test版++用勝手に修正パッチRel3
-・動作環境	eratohoReverse# ぽ0616test版++
-・作者		/L
-・配布元	http://ux.getuploader.com/aba98725/
+·명칭		R#0616 test판++용 마음대로 수정 패치 Rel3
+·동작환경	eratohoReverse# 0616 test판++
+·작자		/L
+·배포원	http://ux.getuploader.com/aba98725/
 _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-[修正内容]
-　□CSV
-　　1.CFLAG:1230,奴隷の首輪封印を追加
-　　2.Str.csv, 0~103までをACT分類毎に区切るように
-　　3.Train.csv, 0~70までを分類毎に区切るように
-　　4.Tequip.csv, 88,着衣露出 100,調教対象Ｃ使用にコメントを追加
-　　5.Tcvar.csv, 40,状態変化のコメントを現行仕様に合うように
-　□ACT_ABLE.ERB
-　　1.@ACT_ABLE11胸愛撫に於いてTEQUIP:性交奉仕中, 2, 5, 6の際は規制するように
-　□ACT_APPLY.ERB
-　　1.@ACTION_APPLY2_57に於いてREACT分類"拒否", "暴れる", "逃げる"の箇所を修正
-　　　COM自慰し始めるとACT派生で切り分け、汚れ処理も切り分けるように
-　□ACT_MESSAGE.ERB
-　　1.@TRAIN_MESSAGE2_11に於いてTFLAG:ACT派生 == 3のみで受容扱いの箇所に!IS_COMGRONAME("暴れる")を追加
-　　2.@TRAIN_MESSAGE2_27に押し倒し終了の分岐を追加
-　　3.@TRAIN_MESSAGE2_42のIS_COMGRONAME("積極的従う")をIS_COMGRONAME("受け入れる/積極的従う")に
-　　4.@TRAIN_MESSAGE2 奉仕系の拒絶となる箇所にIS_NOWCOMNAME("自慰し始める")を追加
-　　5.@TRAIN_MESSAGE_51にACT派生1,フェラ強制を追加
-　□SOURCE_MESSAGE.ERB
-　　1.調教対象絶頂及び調教対象射精の際、NOWEX:MASTER:放尿を弾くように
-　　2.下層にNOWEX:MASTER:放尿を処理する箇所を追加
-　□COM_XX.ERB
-　　1.@COM7に於いてREACT1をCOM印象"0から遠ざかる"に
-　　2.@COM21に於いてREACT派生を定義し、Ｖ/Ａ性交をそれぞれREACT派生で参照できるように
-　　3.@COM30でREACT派生を定義。REACTION_MESSAGEに倣い、快SOURCEで派生0と1に分ける
-　　4.@COM33を@COM7と同様に修正。派生1の「意見を出すなんていい度胸だね！」は納得できる形に
-　　5.@COM52内のTFLAG:ACTをIS_NOWACTNAMEに。自慰系はGETBITで見るようにそれぞれ変更
-　□COMABLE.ERB
-　　1.@COMABLE21及び@COMABLE22に於いてTALENT:MASTER:オトコである場合の規制を解除
-　　2.@COMABLE50に於いてACT15,キス時に発生するのは違和感があったので規制
-　□REACTION_MESSAGE.ERB
-　　1.COM0にアイマスク装着時の分岐を追加
-　　2.COM7に「意見を出すなんていい度胸だね！」の場合の処理を追加
-　　3.COM22,負荷2の箇所をV_SEX(TARGET)で分けるように
-　　4.COM32に負荷2の処理を追加
-　　5.COM33に「怯えに対し苛立つ」の処理を追加
-　　6.COM41に「消極的なのが気に入らない」の処理を追加
-　□EVENT_S.ERB
-　　1.@EVENTTURNEND, 奴隷の首輪イベントを口上側で封印可能なように
-　　　任意の箇所でCFLAG:奴隷の首輪封印 = 1することで封印が可能
-　□COMMON_GETTER_TRAIN.ERB
-　　1.@ACTSTRに於いてその他の処理になる際、ACT名称を返すように
+[수정 내용]
+  □CSV
+　　1. CFLAG:1230, 노예의 목걸이 봉인을 추가
+　　2. Str.csv, 0~103까지를 ACT 분류마다 단락짓도록(듯이)
+　　3. Train.csv, 0~70까지를 분류마다 단락짓도록(듯이)
+　　4. Tequip.csv, 88, 착의 노출 100, 조교 대상 C사용에 코멘트를 추가
+　　5. Tcvar.csv, 40, 상태 변화의 코멘트를 현행 사양에 맞도록(듯이)
+  □ACT_ABLE.ERB
+　　1@ACT_ABLE11가슴 애무에 있어서 TEQUIP:성교 봉사중, 2, 5, 6때는 규제하도록(듯이)
+  □ACT_APPLY.ERB
+　　1@ACTION_APPLY2_57에 있어서 REACT 분류 "거부", "날뛴다", "도망친다"의 개소를 수정
+　　　COM 자위하기 시작하면 ACT 파생으로 분리해, 더러운 처리도 분리하도록(듯이)
+  □ACT_MESSAGE.ERB
+　　1@TRAIN_MESSAGE2_11에 있어서 TFLAG:ACT 파생 == 3만으로 수용 취급의 개소에! IS_COMGRONAME("날뛴다")를 추가
+　　2@TRAIN_MESSAGE2_27에 밀어 넘어뜨려 종료의 분기를 추가
+　　3@TRAIN_MESSAGE2_42의 IS_COMGRONAME("적극적 따른다")를 IS_COMGRONAME("받아들인다/적극적 따른다")에
+　　4@TRAIN_MESSAGE2 봉사계의 거절이 되는 개소에 IS_NOWCOMNAME("자위하기 시작한다")를 추가
+　　5@TRAIN_MESSAGE_51에 ACT 파생 1, 페라 강제를 추가
+  □SOURCE_MESSAGE.ERB
+　　1. 조교 대상 절정 및 조교 대상 사정때, NOWEX:MASTER:방뇨를 연주하도록(듯이)
+　　2. 하층에 NOWEX:MASTER:방뇨를 처리하는 개소를 추가
+  □COM_XX.ERB
+　　1@COM7에 있어서 REACT1를 COM 인상"0으로부터 멀어진다"에
+　　2@COM21에 있어서 REACT 파생을 정의해, V/A성교를 각각 REACT 파생으로 참조할 수 있도록(듯이)
+　　3@COM30로 REACT 파생을 정의. REACTION_MESSAGE에 모방해, 쾌SOURCE로 파생 0으로 1으로 나눈다
+　　4@COM33를@COM7와 같게 수정. 파생 1의 「의견을 내다니 좋은 담력이구나!」는 납득할 수 있는 형태에
+　　5@COM52내의 TFLAG:ACT를 IS_NOWACTNAME에. 자위계는 GETBIT로 보도록(듯이) 각각 변경
+  □COMABLE.ERB
+　　1@COMABLE21 및@COMABLE22에 있어서 TALENT:MASTER:남자인 경우의 규제를 해제
+　　2@COMABLE50에 있어서 ACT15, 키스시에 발생하는 것은 위화감이 있었으므로 규제
+  □REACTION_MESSAGE.ERB
+　　1. COM0에 아이마스크 장착시의 분기를 추가
+　　2. COM7에 「의견을 내다니 좋은 담력이구나!」의 경우의 처리를 추가
+　　3. COM22, 부하 2의 개소를 V_SEX(TARGET)로 나누도록(듯이)
+　　4. COM32에 부하 2의 처리를 추가
+　　5. COM33에 「두려움에 대해 초조한다」의 처리를 추가
+　　6. COM41에 「소극적인의가 마음에 들지 않는다」의 처리를 추가
+  □EVENT_S.ERB
+　　1@EVENTTURNEND, 노예의 목걸이 이벤트를 구상측에서 봉인 가능한 것 같게
+　　　임의의 개소에서 CFLAG:노예의 목걸이 봉인 = 1하는 것으로 봉인이 가능
+  □COMMON_GETTER_TRAIN.ERB
+　　1@ACTSTR에 있어서 그 외의 처리가 될 때, ACT 명칭을 돌려주도록(듯이)
 
-[Rel2, 修正内容]
-　□SOURCE.ERB
-　　1.KOJO_EVENT(20)呼び出し箇所のMASTER_EX及びTARGET_EXのビット和での指定を廃し省略するように
-　　2.上記箇所の前にFLAG:地の文制御をリセットするように
+[Rel2, 수정 내용]
+  □SOURCE.ERB
+　　1. KOJO_EVENT(20) 호출 개소의 MASTER_EX 및 TARGET_EX의 비트화에서의 지정을 중지해 생략 하도록(듯이)
+　　2. 상기 개소의 앞에 FLAG:지문 제어를 리셋트 하도록(듯이)
 
-[Rel3, 修正内容]
-　□CSV
-　　1.Tcvar.csv 60,満足ボーナス/61,今回で大満足/62,今日の満足ボーナスを追加
-　□EVETRAIN.ERB
-　　1.満足ボーナスのRESULT参照箇所を拡張の上、TCVAR:今日の満足ボーナスへの代入処理を追加し調教中に参照可能なように
-　　　当該フラグは39行目で-1にリセット
-　□EVENTCOMEND.ERB
-　　1.大満足ボーナスの箇所、723行目にTCVAR:今回で大満足への代入処理を追加。現状、他の箇所での参照には用いていない
-　□ACT_ABLE.ERB
-　　1.@ACT_ABLE35に於いてTEQUIP:ペニスバンド、TEQUIP:バイブによる規制を解除
-　　　TEQUIP:アナルバイブ、TEQUIP:アナルビーズ、TEQUIP:浣腸器＋プラグの際は規制するように
-　□ACT_MESSAGE.ERB
-　　1.@TRAIN_MESSAGE_25, "クリップローターを貼り付けようとした"→"クリップローターを取り付けようとした"に変更
-　　2.@TRAIN_MESSAGE2_35, IS_COMGRONAME("消極的従う")の箇所に於いて、"嫌がった", "悲鳴をあげる"をCOMで切り分け
-　　　より納得のできる形に変更
-　　3.@TRAIN_MESSAGE2_41, IS_COMGRONAME("許しを乞う")の箇所を書き直し
-　□REACTION_MESSAGE.ERB
-　　1.派生をTRAINNAME:SELECTCOMで記述するように変更
-　　2.COM7,許しを乞うに於いて、負荷2の箇所を一部修正
-　　3.COM8,気持ち良くしてにTFLAG:REACT派生 == 1の処理を追加
+[Rel3, 수정 내용]
+  □CSV
+　　1. Tcvar.csv 60, 만족 보너스/61, 이번에 대만족/62, 오늘의 만족 보너스를 추가
+  □EVETRAIN.ERB
+　　1. 만족 보너스의 RESULT 참조 개소를 확장 후, TCVAR:오늘의 만족 보너스에의 대입 처리를 추가해 조교중에 참조 가능한 것 같게
+　　　해당 플래그는 39행째에-1에 리셋트
+  □EVENTCOMEND.ERB
+　　1. 대만족 보너스의 개소, 723행째에 TCVAR:이번에 대만족에의 대입 처리를 추가. 현상, 다른 개소에서의 참조에는 이용하지 않았다
+  □ACT_ABLE.ERB
+　　1@ACT_ABLE35에 있어서 TEQUIP:페니스 밴드, TEQUIP:바이브에 의한 규제를 해제
+　　　TEQUIP:애널 바이브, TEQUIP:애널 비즈, TEQUIP:관장기＋플러그때는 규제하도록(듯이)
+  □ACT_MESSAGE.ERB
+　　1@TRAIN_MESSAGE_25, "클립 로터를 붙이려고 했다"→"클립 로터를 설치하려고 했다"로 변경
+　　2@TRAIN_MESSAGE2_35, IS_COMGRONAME("소극적 따른다")의 개소에 있어서, "싫어했다", "비명을 지른다"를 COM로 분리
+　　　보다 납득을 할 수 있는 형태로 변경
+　　3@TRAIN_MESSAGE2_41, IS_COMGRONAME("허가를 청한다")의 개소를 고쳐 써
+  □REACTION_MESSAGE.ERB
+　　1. 파생을 TRAINNAME:SELECTCOM로 기술하도록(듯이) 변경
+　　2. COM7, 허가를 청하는 것에 있어서, 부하 2의 개소를 일부 수정
+　　3. COM8, 기분 좋게 해 TFLAG:REACT 파생 == 1의 처리를 추가
 
-※Emuera1818+v7も付けてあります。今回は必須という訳ではありませんが、なるべく新しいものが望ましいです
+※Emuera1818+v7도 붙여 있습니다. 이번은 필수라고 할 것이 아닙니다만, 가능한 한 새로운 것이 바람직합니다
 
-※付属の各フォルダを本体のERB、CSVフォルダに上書きして使用して下さい
-　現状あくまでも非公式であることをご理解の上、導入してください
-　また、当パッチを導入した事による不具合のサポートを、システム側に求めないようお願いします
+※부속의 각 폴더를 본체의 ERB, CSV 폴더에 덧쓰기해 사용해 주세요
+  현상 어디까지나 비공식인 것을 이해하신 후에, 도입해 주세요
+  또, 당패치를 도입한 일에 의한 불편의 서포트를, 시스템 측에 요구하지 않게 부탁합니다
 
-●連絡先
+●연락처
 Twitter:@L7switch
 mail:layer7.inc@gmail.com
 (2014/03/26) /L
