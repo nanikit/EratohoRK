@@ -1,4 +1,4 @@
-﻿;状況に関わらず読心能力が変更可能だったのを修正。他、微調整と修正@revkoishi(14/05/26)
+﻿;상황에 관련되지 않고 독심술이 변경 가능했어를 수정. 외, 미조정과 수정@revkoishi(14/05/26)
 @CONFIGURE
 #DIMS CONST CONF_FUNC = "ANIMATION_EFFECT", "AI_FREEDOM", "PAD"
 #DIM LINE
@@ -6,66 +6,66 @@
 LOCAL:1 = RESULT
 LOCAL:2 = CURRENTREDRAW()
 LINE = LINECOUNT
-;口上のコンフィグ設定を参照
+;구상의 콘피그 설정을 참조
 VARSET RESULT, -1
 TRYCALLFORM KOJO_SETUP_K{NO:TARGET}
 ARRAYCOPY "RESULT", "KOJO_CONF"
 REDRAW 0
 DO
 	CLEARLINE LINECOUNT - LINE
-	PRINTL [ 0] 設定終了
-	SIF KOJO_CONF:0 > 0					;推奨設定がある
-		PRINTL [ 1] 現在の調教者口上が推奨するコンフィグ設定にする
-	IF FLAG:デバッグ || KOJO_CONF:1 > 0	;口上側が読心能力オンにしているか、デバッグモードである
-		PRINTFORM %"[ 2] 空気を読む程度の能力(DEBUG・口上限定機能)", 50, LEFT%
-		PRINTFORML %SIGNS(TALENT:MASTER:読心能力 - 1, "相手の気持ちは分からない", "多少空気が読める", "心が見通せる"), 30, RIGHT%
+	PRINTL [ 0] 설정 종료
+	SIF KOJO_CONF:0 > 0					;추천 설정이 있다
+		PRINTL [ 1] 현재의 조교자 구상이 추천 하는 콘피그 설정으로 한다
+	IF FLAG:디버그 || KOJO_CONF:1 > 0	;구상측이 독심술 온으로 하고 있는지, 디버그 모드이다
+		PRINTFORM %"[ 2] 공기를 읽는 정도의 능력(DEBUG·구상 한정 기능)", 50, LEFT%
+		PRINTFORML %SIGNS(TALENT:MASTER:독심술 - 1, "상대의 기분은 모른다", "다소 공기를 읽을 수 있다", "심을 간파할 수 있다"), 30, RIGHT%
 	ENDIF
-	PRINTFORML %"[ 3] 素質を性格や体質などで分類する", 50, LEFT%%\@ FLAG:素質表示方法 ? 分類する # 登録番号順 \@, 30, RIGHT%
-	PRINTFORML %"[ 4] 日常生活の描写", 50, LEFT%%\@ FLAG:日常 ?ON # OFF \@, 30, RIGHT%
-	PRINTFORML %"[ 5] 調教者の妊娠機能", 50, LEFT%%\@ FLAG:妊娠 ? ON # OFF \@, 30, RIGHT%
-	PRINTFORM %"[ 6] 調教対象の妊娠機能", 50, LEFT%
-	PRINTFORML %SIGNS(FLAG:奴隷妊娠 - 1, "妊娠しない", "愛があるほど妊娠しやすい", "愛に関係なく妊娠する"), 30, RIGHT%
-	PRINTL [ 7] 視覚アニメ効果の表示設定
-	IF FLAG:モード == 1
-		PRINTFORM %"[ 8] AI自由度設定(SANDBOXのみ)", 50, LEFT%
-		PRINTFORML %SIGNS(FLAG:AI自由度 ? FLAG:AI自由度 / 15 # -1, "OFF", "一部ON", "ON"), 30, RIGHT%
+	PRINTFORML %"[ 3] 소질을 성격이나 체질 따위로 분류한다", 50, LEFT%%\@ FLAG:소질표시방법 ? 분류한다 # 등록번호순서 \@, 30, RIGHT%
+	PRINTFORML %"[ 4] 일상생활의 묘사", 50, LEFT%%\@ FLAG:일상 ?ON # OFF \@, 30, RIGHT%
+	PRINTFORML %"[ 5] 조교자의 임신 기능", 50, LEFT%%\@ FLAG:임신 ? ON # OFF \@, 30, RIGHT%
+	PRINTFORM %"[ 6] 조교 대상의 임신 기능", 50, LEFT%
+	PRINTFORML %SIGNS(FLAG:노예임신 - 1, "임신하지 않는다", "사랑이 있는 만큼 임신하기 쉽다", "사랑에 관계없이 임신한다"), 30, RIGHT%
+	PRINTL [ 7] 시각 애니메이션 효과의 표시 설정
+	IF FLAG:모드 == 1
+		PRINTFORM %"[ 8] AI자유도 설정(SANDBOX만)", 50, LEFT%
+		PRINTFORML %SIGNS(FLAG:AI자유도 ? FLAG:AI자유도 / 15 # -1, "OFF", "일부 ON", "ON"), 30, RIGHT%
 	ENDIF
-	PRINTFORML %"[ 9] 調教中のインターフェース", 50, LEFT%%\@ FLAG:調教UIパッド化 ? パッド # ノーマル \@, 30, RIGHT%
+	PRINTFORML %"[ 9] 조교중의 인터페이스", 50, LEFT%%\@ FLAG:조교UI패드화 ? 패드 # 노멀 \@, 30, RIGHT%
 	DO
 		INPUT
-		LOCAL:0 = !INRANGE(RESULT, 0, 9)								;範囲チェック
-		LOCAL:0 |= (RESULT == 1 && KOJO_CONF:0 <= 0)					;推奨設定が無い
-		LOCAL:0 |= (RESULT == 2 && (FLAG:デバッグ !| KOJO_CONF:1 > 0))	;デバッグモードでも読心能力オンでもない
-		LOCAL:0 |= (RESULT == 8 && FLAG:モード != 1)					;SANDBOXモードでない
+		LOCAL:0 = !INRANGE(RESULT, 0, 9)								;범위 체크
+		LOCAL:0 |= (RESULT == 1 && KOJO_CONF:0 <= 0)					;추천 설정이 없다
+		LOCAL:0 |= (RESULT == 2 && (FLAG:디버그 !| KOJO_CONF:1 > 0))	;디버그 모드에서도 독심술 온도 아니다
+		LOCAL:0 |= (RESULT == 8 && FLAG:모드 != 1)					;SANDBOX 모드가 아니다
 		IF LOCAL:0
 			CLEARLINE 1
-			REUSELASTLINE 入力値が範囲外です
+			REUSELASTLINE 입력치가 범위외입니다
 		ENDIF
 	LOOP LOCAL:0
 	LOCAL:0 = RESULT
 	SELECTCASE LOCAL:0
 		CASE 1
 			CALL KOJO_CONFIG_SET(TARGET)
-			IF ANIME_CONFIG("USER2")	;昼夜のエフェクトをリロード
+			IF ANIME_CONFIG("USER2")	;밤낮의 효과를 리로드
 				SETBGCOLOR TIME ? 0x00001E # 0x140A00
 			ELSE
 				RESETBGCOLOR
 			ENDIF
 		CASE 2
-			PRINTFORML 空気を読む程度の能力の設定を行います\n[ 0] 相手の気持ちは分からない\n[ 1] 空気や欲が読める程度に\n[ 2] 心が読めるように
+			PRINTFORML 공기를 읽는 정도의 능력의 설정을 실시합니다 \n[ 0] 상대의 기분은 모르는 \n[ 1] 공기나 욕구를 읽을 수 있는 정도로 \n[ 2] 심을 읽을 수 있도록(듯이)
 			CALL INPUT_RANGE(0, 2)
-			TALENT:MASTER:読心能力 = RESULT
+			TALENT:MASTER:독심술 = RESULT
 		CASE 3
-			PRINTFORMW 素質を\@ FLAG:素質表示方法 ? 登録番号表示に戻し # 性格や体質など、種類ごとに整頓して表示させ \@ます
-			FLAG:素質表示方法 ^= 1
+			PRINTFORMW 소질을\@ FLAG:소질표시방법 ? 등록 번호 표시에 되돌려# 성격이나 체질 따위, 종류 마다 정돈해 표시시키고\@
+			FLAG:소질표시방법 ^= 1
 		CASE 4
-			FLAG:日常 ^= 1
+			FLAG:일상 ^= 1
 		CASE 5
-			FLAG:妊娠 ^= 1
+			FLAG:임신 ^= 1
 		CASE 6
-			PRINTFORML 調教対象が妊娠するかの設定を行います\n[ 0] 妊娠しない\n[ 1] 愛があるほど妊娠しやすい\n[ 2] 奴隷に愛など必要ない！愛に関係なく妊娠する
+			PRINTFORML 조교 대상이 임신할까의 설정을 실시합니다 \n[ 0] 임신하지 않는 \n[ 1] 사랑이 있는 만큼 임신하기 쉬운 \n[ 2] 노예에게 사랑 따위 필요없다! 사랑에 관계없이 임신한다
 			CALL INPUT_RANGE(0, 2)
-			FLAG:奴隷妊娠 = RESULT
+			FLAG:노예임신 = RESULT
 		CASE 7 TO 9
 			CALLFORM CONFIG_%CONF_FUNC:(LOCAL:0 - 7)%
 	ENDSELECT
@@ -74,48 +74,48 @@ REDRAW LOCAL:2
 RETURN LOCAL:1
 
 
-;@CONFIG_MASTER_PREGNACY	調教対象の妊娠設定	@CONFIGUREに統合@revkoishi(14/05/26)
-;@CONFIG_MINDREADING		@CONFIGUREに統合@revkoishi(14/05/26)
-;@CONFIG_SHOW_TALENT		@CONFIGUREに統合@revkoishi(14/05/22)
+;@CONFIG_MASTER_PREGNACY	조교 대상의 임신 설정	@CONFIGURE에 통합@revkoishi(14/05/26)
+;@CONFIG_MINDREADING		@CONFIGURE에 통합@revkoishi(14/05/26)
+;@CONFIG_SHOW_TALENT		@CONFIGURE에 통합@revkoishi(14/05/22)
 
 
-;微調整@revkoishi(14/05/22)
+;미조정@revkoishi(14/05/22)
 @CONFIG_RENAME_MASTER
 LOCAL:0 = RESULT
-PRINTFORML 現在の名前：%CALLNAME:MASTER%\n名前の変更を行いますか？\n[ 0] はい\n[ 1] いいえ
+PRINTFORML 현재의 이름:%CALLNAME:MASTER%\n이름의 변경을 실시합니까? \n[ 0] 네\n[ 1] 아니오
 CALL INPUT_RANGE
 IF !RESULT
-	PRINTL 新しい名前を入力してください
+	PRINTL 새로운 이름을 입력해 주세요
 	INPUTS
 	CALLNAME:MASTER '= RESULTS
-	PRINTFORMW 名前を%CALLNAME:MASTER%に変更しました
+	PRINTFORMW 이름을%CALLNAME:MASTER%로 변경했습니다
 ENDIF
 RETURN LOCAL:0
 
 
-;アニメ効果の設定
-;REDRAWが変わったまま戻らないのを修正@revkoishi(14/05/19)
+;애니메이션 효과의 설정
+;REDRAW가 바뀐 채로 돌아오지 않는 것을 수정@revkoishi(14/05/19)
 @CONFIG_ANIMATION_EFFECT
 {
 #DIMS CONST CONF = "", "CHARA_CUTIN", "BGM_CUTIN", "USER1", "USER3", "USER2", "FULLCUTIN", "FLASH",
                    "QUAKE", "SCROLLTEXT", "FADE"
 }
 {
-#DIMS CONST TEXT = "", "キャラ登場カットイン", "ＢＧＭカットイン", "BASE・PALAMバーのアニメーション",
-                   "脱衣・着衣時、姿勢変更時のアニメーション", "昼・夜での背景色変化", "全画面カットイン",
-                   "射精時等の画面フラッシュ効果", "画面振動効果", "文字のスライドアニメ効果",
-                   "文字のフェードイン・アウト効果"
+#DIMS CONST TEXT = "", "캐릭터 등장 컷 인", "BGM 컷 인", "BASE·PALAM 바의 애니메이션",
+                   "탈의·착의시, 자세 변경시의 애니메이션", "낮·밤에서의 키 경치 변화", "전화면 컷 인",
+                   "사정 때 등의 화면 플래시 효과", "화면 진동 효과", "문자의 슬라이드 애니메이션 효과",
+                   "문자의 페이드 인·아웃 효과"
 }
 LOCAL:1 = RESULT
 LOCAL:2 = CURRENTREDRAW()
 REDRAW 2
 DO
 	CALL SAVELINE
-	LOADGLOBAL	;念のため設定をリロード
+	LOADGLOBAL	;만약을 위해 설정을 리로드
 	CALLF ANIME_CONFIG("SET", GLOBAL)
-	PRINTL 各種視覚エフェクトの表示設定を行います。チェックボックスをOFFにすると非表示、もしくは省略表示にします
-	PRINTL ※この項目の設定はセーブデータ間で共有されます
-	PRINTFORML \n   [ 0] 戻る
+	PRINTL 각종 시각 효과의 표시 설정을 실시합니다. 체크 박스를 OFF로 하면 비표시, 혹은 생략 표시로 합니다
+	PRINTL ※이 항목의 설정은 세이브 데이터간에 공유됩니다
+	PRINTFORML \n   [ 0] 돌아온다
 	FOR LOCAL:0, 1, VARSIZE("CONF")
 		PRINTFORML %UNICODE(ANIME_CONFIG(CONF:(LOCAL:0)) ? 0x2611 # 0x2610)% [{LOCAL:0, 2}] %TEXT:(LOCAL:0)%
 	NEXT
@@ -125,7 +125,7 @@ DO
 		CALLF ANIME_CONFIG(CONF:(LOCAL:0), 2)
 		GLOBAL = ANIME_CONFIG("SAVE")
 		SAVEGLOBAL
-		IF ANIME_CONFIG("USER2")	;昼夜のエフェクトをリロード
+		IF ANIME_CONFIG("USER2")	;밤낮의 효과를 리로드
 			SETBGCOLOR TIME ? 0x00001E # 0x140A00
 		ELSE
 			RESETBGCOLOR
@@ -137,63 +137,63 @@ REDRAW LOCAL:2
 RETURN LOCAL:1
 
 
-;微調整@revkoishi(14/05/22)
+;미조정@revkoishi(14/05/22)
 @CONFIG_AI_FREEDOM
-#DIMS CONST TEXT = "調教者追加(未実装)", "技巧上昇", "知識・技能取得", "道具錬成"
+#DIMS CONST TEXT = "조교자 추가(미실장)", "기교 상승", "지식·기능 취득", "도구 연성"
 #DIM LINE
 LINE = LINECOUNT
 LOCAL:1 = RESULT
 DO
 	CLEARLINE LINECOUNT - LINE
-	PRINTFORML AI自由度の設定を行います\n   [ 0] 戻る
+	PRINTFORML AI자유도의 설정을 실시합니다 \n   [ 0] 돌아온다
 	FOR LOCAL:0, 0, VARSIZE("TEXT")
 	{
-		CALL FPRINTL(@"%UNICODE(GETBIT(FLAG:AI自由度, LOCAL:0) ? 0x2611 # 0x2610)% [{LOCAL:0 + 1, 2}] %TEXT:(LOCAL:0)%", 
-                     GETBIT(FLAG:AI自由度, LOCAL:0) ? 0x70C070 # 0x969696)
+		CALL FPRINTL(@"%UNICODE(GETBIT(FLAG:AI자유도, LOCAL:0) ? 0x2611 # 0x2610)% [{LOCAL:0 + 1, 2}] %TEXT:(LOCAL:0)%", 
+                     GETBIT(FLAG:AI자유도, LOCAL:0) ? 0x70C070 # 0x969696)
 	}
 	NEXT
-	PRINTFORML    [ 8] 全てON\n   [ 9] 全てOFF
+	PRINTFORML    [ 8] 모두 ON\n   [ 9] 모두 OFF
 	DO
 		INPUT
 		LOCAL:0 = !GROUPMATCH(RESULT, 0, 1, 2, 3, 4, 8, 9)
 		IF LOCAL:0
 			CLEARLINE 1
-			REUSELASTLINE 範囲外の入力値です
+			REUSELASTLINE 범위외의 입력치입니다
 		ENDIF
 	LOOP LOCAL:0
 	LOCAL:0 = RESULT
 	SELECTCASE LOCAL:0
 		CASE 1 TO 7
-			INVERTBIT FLAG:AI自由度, LOCAL:0 - 1
+			INVERTBIT FLAG:AI자유도, LOCAL:0 - 1
 		CASE 8, 9
-			FLAG:AI自由度 = LOCAL:0 == 8 ? 15 # 0
+			FLAG:AI자유도 = LOCAL:0 == 8 ? 15 # 0
 	ENDSELECT
 LOOP LOCAL:0
 RETURN LOCAL:1
 
 
-;関数名変更、微調整@revkoishi(14/05/26)
+;함수명 변경, 미조정@revkoishi(14/05/26)
 @KOJO_CONFIG_SET(ARG:0)
 #DIMS CONST CONF = "CHARA_CUTIN", "BGM_CUTIN", "USER1", "USER3", "USER2", "FULLCUTIN", "FLASH", "QUAKE", "SCROLLTEXT", "FADE"
 LOCAL:1 = RESULT
-;口上のコンフィグ設定を参照
+;구상의 콘피그 설정을 참조
 VARSET RESULT, -1
 TRYCALLFORM KOJO_SETUP_K{NO:ARG}
 IF RESULT:0 > 0
-	CALL PRINT_DIALOG(@"口上推奨のコンフィグ設定を適用しますか？", 1, 1, 0)
-	CALL PRINT_DIALOG(@"（適用後もショップメニューから変更することができます）", 0, 1, 1)
-	CALL PRINT_CHOICE(, "はい", 1, "いいえ", 2, )
+	CALL PRINT_DIALOG(@"구상 추천의 콘피그 설정을 적용합니까?", 1, 1, 0)
+	CALL PRINT_DIALOG(@"(적용 후도 숍 메뉴로부터 변경할 수가 있습니다)", 0, 1, 1)
+	CALL PRINT_CHOICE(, "네", 1, "아니오", 2, )
 	IF RESULT == 1
-		TALENT:MASTER:読心能力 = RESULT:1  >= 0 ? RESULT:1  # TALENT:MASTER:読心能力	;主人公の読心能力(0=読めない、1=空気が、2=心が)
-		FLAG:素質表示方法      = RESULT:2  >= 0 ? RESULT:2  # FLAG:素質表示方法			;素質の表示分類(0=番号順、1=系統別)
-		FLAG:日常              = RESULT:3  >= 0 ? RESULT:3  # FLAG:日常					;日常イベント(0=オフ、1=オン)
-		FLAG:妊娠              = RESULT:4  >= 0 ? RESULT:4  # FLAG:妊娠					;調教者の妊娠判定(0=オフ、1=オン)
-		FLAG:奴隷妊娠          = RESULT:5  >= 0 ? RESULT:5  # FLAG:奴隷妊娠				;調教対象の妊娠判定(0=オフ、1=愛()があるほど妊娠しやすい、2=普通にオン)
-		FLAG:AI自由度          = RESULT:6  >= 0 ? RESULT:6  # FLAG:AI自由度				;AI自由度（SANDBOX用）(0=余計なことしない、1=人員追加、2=技巧上昇、4=技能取得、8=道具錬成、15=全てを自動で行う)
-		FLAG:口上              = RESULT:10 >= 0 ? RESULT:10 # FLAG:口上					;口上表示設定(0=表示しない、1=表示する)
-		;アニメ設定(0=オフ、1=オン)
-		;11.キャラ登場カットイン/12.ＢＧＭカットイン/13.PALAM獲得アニメ/14.脱衣アニメ/15.昼夜の背景色変化/
-		;16.全画面カットイン/17.フラッシュ効果/18.振動効果/19.文字のスライド/20.文字のフェードイン・アウト
+		TALENT:MASTER:독심술 = RESULT:1  >= 0 ? RESULT:1  # TALENT:MASTER:독심술	;주인공의 독심술(0=읽을 수 없는, 1=공기가, 2=마음이)
+		FLAG:소질표시방법      = RESULT:2  >= 0 ? RESULT:2  # FLAG:소질표시방법			;소질의 표시 분류(0=번호순서, 1=계통별)
+		FLAG:일상              = RESULT:3  >= 0 ? RESULT:3  # FLAG:일상					;일상 이벤트(0=오프, 1=온)
+		FLAG:임신              = RESULT:4  >= 0 ? RESULT:4  # FLAG:임신					;조교자의 임신 판정(0=오프, 1=온)
+		FLAG:노예임신          = RESULT:5  >= 0 ? RESULT:5  # FLAG:노예임신				;조교 대상의 임신 판정(0=오프, 1=사랑()이 있는 만큼 임신하기 쉬운, 2=보통으로 온)
+		FLAG:AI자유도          = RESULT:6  >= 0 ? RESULT:6  # FLAG:AI자유도				;AI자유도(SANDBOX용)(0=불필요한 일 하지 않는, 1=인원 추가, 2=기교 상승, 4=기능 취득, 8=도구 연성, 15=모두를 자동으로 실시한다)
+		FLAG:구상              = RESULT:10 >= 0 ? RESULT:10 # FLAG:구상					;구상 표시 설정(0=표시하지 않는, 1=표시한다)
+		;애니메이션 설정(0=오프, 1=온)
+		;11. 캐릭터 등장 컷 인/12. BGM 컷 인/13. PALAM 획득 애니메이션/14. 탈의 애니메이션/15. 밤낮의 키 경치 변화/
+		;16. 전화면 컷 인/17. 플래시 효과/18. 진동 효과/19. 문자의 슬라이드/20. 문자의 페이드 인·아웃
 		FOR LOCAL:0, 11, 21
 			SIF RESULT:(LOCAL:0) >= 0
 				CALLF ANIME_CONFIG(CONF:(LOCAL:0 - 11), RESULT:(LOCAL:0))
@@ -201,14 +201,14 @@ IF RESULT:0 > 0
 		GLOBAL = ANIME_CONFIG("SAVE")
 		SAVEGLOBAL
 	ENDIF
-	PRINTFORMW コンフィグ設定を変更しま\@ RESULT == 1 ? した # せん \@
+	PRINTFORMW 콘피그 설정을 변경 섬\@ RESULT == 1 ? 했다# 하지 않는다\@
 ELSE
-	PRINTW 口上の推奨するコンフィグ設定はありません
+	PRINTW 구상의 추천 하는 콘피그 설정은 없습니다
 ENDIF
 RETURN LOCAL:1
 
 
-;Enterを新たに割り当てることが出来なかったので修正。他、微調整@revkoishi(14/05/26)
+;Enter를 새롭게 할당하는 것이 할 수 없었기 때문에 수정. 외, 미조정@revkoishi(14/05/26)
 @CONFIG_PAD
 #DIM LINE
 LOCAL:1 = RESULT
@@ -219,14 +219,14 @@ DO
 	SIF GROUPMATCH("", KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT) == 4
 		CALL SET_KEY_DEFAULT
 	DRAWLINE
-	PRINTL パッドモード設定
+	PRINTL 패드 모드 설정
 	DRAWLINE
-	PRINTFORML   [ 0] \@FLAG:調教UIパッド化 ? ＯＮ # ＯＦＦ \@
+	PRINTFORML   [ 0] \@FLAG:조교UI패드화 ? ＯＮ # ＯＦＦ \@
 	DRAWLINE
-	PRINTL ボタン設定
-	PRINTL <>内の文字が実際のキーです。ゲームパッドを使用する際は表示の<>内の文字を各ボタンに割り当ててください
-	PRINTL キーボードで操作する場合でも、自由にキーを割り当てて使用することができます
-	PRINTL ※<>内が空になっている場合(<>とだけ表示されている場合)はEnterキーが割り当てられています
+	PRINTL 버튼 설정
+	PRINTL <>내의 문자가 실제의 키입니다. 게임패드를 사용할 때는 표시<>중의 문자를 각 버튼에 할당해 주세요
+	PRINTL 키보드로 조작하는 경우에서도, 자유롭게 키를 할당해 사용할 수가 있습니다
+	PRINTL ※<>내가 비우고 있는 경우(<>와만 표시되고 있는 경우)는 Enter 키를 할당되어지고 있습니다
 	PRINTL 
 	CALL HTMLPRINTL("  " + HTMLBUTTON(@"[ 1] L&lt;%KEY_L%&gt;", "1") + " " * 35 + HTMLBUTTON(@"[ 2] R&lt;%KEY_R%&gt;", "2") + "<BR><BR>")
 	CALL HTMLPRINTL(" " * 12 + HTMLBUTTON(@"[ 3] ↑&lt;%KEY_UP%&gt;", "3") + " " * 33 + HTMLBUTTON(@"[ 7] &lt;%KEY_X%&gt;", "7"))
@@ -236,29 +236,29 @@ DO
 }
 	CALL HTMLPRINTL(" " * 12 + HTMLBUTTON(@"[ 6] ↓&lt;%KEY_DOWN%&gt;", "6") + " " * 33 + HTMLBUTTON(@"[10] &lt;%KEY_B%&gt;", "10"))
 	DRAWLINE
-	PRINTL 表示モード(画面にボタンとして表示される際のモードです)
+	PRINTL 표시 모드(화면에 버튼으로서 표시될 때의 모드입니다)
 	FOR LOCAL:0, 0, 3
-		SETCOLOR FLAG:調教UIパッド表示モード == LOCAL:0 ? 0x7070C0 # LOCAL:2
-		PRINTBUTTON @"[{LOCAL:0 + 11}] %AUTO_SPLIT("直接表示_ＳＦＣ風_ＰＳ風　", "_", LOCAL:0)%", LOCAL:0 + 11
+		SETCOLOR FLAG:조교UI패드표시모드 == LOCAL:0 ? 0x7070C0 # LOCAL:2
+		PRINTBUTTON @"[{LOCAL:0 + 11}] %AUTO_SPLIT("직접 표시_SFC풍_PS풍  ", "_", LOCAL:0)%", LOCAL:0 + 11
 		SETCOLOR LOCAL:2
-		PRINTFORML (%AUTO_SPLIT("実際に動作するボタンと同一のものです_ＡＢＸＹを使用します_◯×□△を使用します", "_", LOCAL:0)%)
+		PRINTFORML (%AUTO_SPLIT("실제로 동작하는 버튼과 동일한 것입니다_ABXY를 사용합니다 _ⓒ×□△를 사용합니다", "_", LOCAL:0)%)
 	NEXT
 	DRAWLINE
-	PRINTL [99] 戻る
+	PRINTL [99] 돌아온다
 	DO
 		INPUT
 		LOCAL:0 = INRANGE(RESULT, 0, 13) !| RESULT == 99
 		IF LOCAL:0
 			CLEARLINE 1
-			REUSELASTLINE 入力値が範囲外です
+			REUSELASTLINE 입력치가 범위외입니다
 		ENDIF
 	LOOP LOCAL:0
 	LOCAL:0 = RESULT
 	SELECTCASE LOCAL:0
 		CASE 0
-			INVERTBIT FLAG:調教UIパッド化, 0
+			INVERTBIT FLAG:조교UI패드화, 0
 		CASE 1 TO 10
-			PRINTL 設定するキーを押してください
+			PRINTL 설정하는 키를 눌러 주세요
 			ONEINPUTS
 			SELECTCASE RESULT
 				CASE 1
@@ -282,7 +282,7 @@ DO
 				CASE 10
 					KEY_B = %RESULTS%
 			ENDSELECT
-			IF FLAG:調教UIパッド表示モード == 0
+			IF FLAG:조교UI패드표시모드 == 0
 				KEYMARK_UP    = %KEY_UP%
 				KEYMARK_DOWN  = %KEY_DOWN%
 				KEYMARK_LEFT  = %KEY_LEFT%
@@ -295,7 +295,7 @@ DO
 				KEYMARK_R = %KEY_R%
 			ENDIF
 		CASE 11
-			FLAG:調教UIパッド表示モード = 0
+			FLAG:조교UI패드표시모드 = 0
 			KEYMARK_UP    = %KEY_UP%
 			KEYMARK_DOWN  = %KEY_DOWN%
 			KEYMARK_LEFT  = %KEY_LEFT%
@@ -307,7 +307,7 @@ DO
 			KEYMARK_L = %KEY_L%
 			KEYMARK_R = %KEY_R%
 		CASE 12
-			FLAG:調教UIパッド表示モード = 1
+			FLAG:조교UI패드표시모드 = 1
 			KEYMARK_A = A
 			KEYMARK_B = B
 			KEYMARK_X = X
@@ -315,7 +315,7 @@ DO
 			KEYMARK_L = L
 			KEYMARK_R = R
 		CASE 13
-			FLAG:調教UIパッド表示モード = 2
+			FLAG:조교UI패드표시모드 = 2
 			KEYMARK_A = ◯
 			KEYMARK_B = ×
 			KEYMARK_X = △
@@ -327,7 +327,7 @@ LOOP LOCAL:0 != 99
 RETURN LOCAL:1
 
 
-;微調整@revkoishi(14/05/22)
+;미조정@revkoishi(14/05/22)
 @SET_KEY_DEFAULT
 KEY_UP = 8
 KEY_DOWN = 2

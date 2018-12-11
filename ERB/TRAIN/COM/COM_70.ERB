@@ -1,64 +1,64 @@
-﻿;愛撫系リアクションコマンド群
-;────────────────────────────────────
-;070,イかせて！
-;────────────────────────────────────
+﻿;애무계 리액션 커맨드군
+;─
+;070, 가게 해!
+;─
 @COM70
-;逸脱SOURCE減少
-TIMES SOURCE:MASTER:逸脱 , 0.70
-;トラウマ化減速
-TIMES SOURCE:MASTER:トラウマ , 0.80
-;屈従、達成、悦楽SOURCE増加
-SOURCE:MASTER:屈従 += 50 + (MARK:MASTER:快楽刻印 + 1) * (SOURCE:MASTER:快Ｃ + SOURCE:MASTER:快Ｖ + SOURCE:MASTER:快Ａ + SOURCE:MASTER:快Ｂ) * CFLAG:MASTER:調教レベル / 200
-SOURCE:MASTER:達成 += 100 + (CFLAG:MASTER:調教レベル + 5) * (SOURCE:MASTER:快Ｃ + SOURCE:MASTER:快Ｖ + SOURCE:MASTER:快Ａ + SOURCE:MASTER:快Ｂ) / 100
-SOURCE:MASTER:悦楽 += 100 + SOURCE:MASTER:快Ｃ / 25 + SOURCE:MASTER:快Ｖ / 25 + SOURCE:MASTER:快Ａ / 25 + SOURCE:MASTER:快Ｂ / 25
-;補正値初期化
+;일탈 SOURCE 감소
+TIMES SOURCE:MASTER:일탈 , 0.70
+;트라우마화 감속
+TIMES SOURCE:MASTER:트라우마 , 0.80
+;굴종, 달성, 열락 SOURCE 증가
+SOURCE:MASTER:굴종 += 50 + (MARK:MASTER:쾌락각인 + 1) * (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B) * CFLAG:MASTER:조교레벨 / 200
+SOURCE:MASTER:달성 += 100 + (CFLAG:MASTER:조교레벨 + 5) * (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B) / 100
+SOURCE:MASTER:열락 += 100 + SOURCE:MASTER:쾌C / 25 + SOURCE:MASTER:쾌V / 25 + SOURCE:MASTER:쾌A / 25 + SOURCE:MASTER:쾌B / 25
+;보정치 초기화
 VARSET LOCAL
-;素質補正値設定
-LOCAL = (CFLAG:好意 / 500) + TALENT:好色 - TALENT:清楚 + TALENT:献身的 - TALENT:受け身
+;소질 보정치 설정
+LOCAL = (CFLAG:호의 / 500) + TALENT:호색 - TALENT:청초 + TALENT:헌신적 - TALENT:수동
 LOCAL = LIMIT(LOCAL, 1, 5)
-;加虐補正値設定
+;가학 보정치 설정
 ;3<=(LOCAL:1)<=8
-SIF TALENT:サド
+SIF TALENT:새디즘
 	LOCAL:1 += 1
-SIF TALENT:意地悪
+SIF TALENT:심술쟁이
 	LOCAL:1 += 1
-IF ABL:加虐 >= ABL:愛撫
+IF ABL:가학 >= ABL:애무
 	LOCAL:1 += 1
 ELSE
 	LOCAL:1 -= 1
 ENDIF
-SIF TALENT:心根優しい
+SIF TALENT:상냥함
 	LOCAL:1 -= 1
 LOCAL:1 += 5
-;素質によって焦らし終了
+;소질에 의해 초조하게 해 종료
 IF RAND:LOCAL > 0
-	TCVAR:MASTER:焦らし度 = 1
-	;加虐補正によって焦らし延長
+	TCVAR:MASTER:초조하게해번 = 1
+	;가학 보정에 의해 초조하게 해 연장
 	IF RAND:(LOCAL:1) >= RAND:5
-		;技巧によって期間決定
-		LOCAL:2 = ABL:技巧 / 5 + 2
+		;기교에 의해 기간 결정
+		LOCAL:2 = ABL:기교 / 5 + 2
 		SIF LOCAL:2 > 4
 			LOCAL:2 = 4
-		TCVAR:MASTER:焦らし度 += LOCAL:2
+		TCVAR:MASTER:초조하게해번 += LOCAL:2
 	ENDIF
 ENDIF
-IF TCVAR:MASTER:焦らし度 == 1
-	;派生：イかせてあげる
-	TFLAG:REACT派生 = 1
-ELSEIF TCVAR:MASTER:焦らし度 > 1
-	;派生：イかせてあげない
-	TFLAG:REACT派生 = 2
+IF TCVAR:MASTER:초조하게해번 == 1
+	;파생:가게 해 준다
+	TFLAG:REACT파생 = 1
+ELSEIF TCVAR:MASTER:초조하게해번 > 1
+	;파생:가게 해 주지 않는다
+	TFLAG:REACT파생 = 2
 ELSE
-	;派生：「ふーん」
-	TFLAG:REACT派生 = 0
+	;파생:「흐음」
+	TFLAG:REACT파생 = 0
 ENDIF
-;イかせて状態へ移行
-TCVAR:MASTER:イかせて挙動制御用 = 1
-;COM分類
-CALL SET_COMGRO("受け入れる")
-;COM印象
-CALL SET_COMIMP("好印象大")
-;依存度変化
+;가게 해 상태에 이행
+TCVAR:MASTER:가게해거동제어용 = 1
+;COM 분류
+CALL SET_COMGRO("받아들인다")
+;COM 인상
+CALL SET_COMIMP("좋은 인상대")
+;의존도 변화
 CALL ADD_DEPEND(+10, +6)
 RETURN 1
 

@@ -1,491 +1,491 @@
 ﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-;口上呼び出し用ターミナルファイル
+;구상 호출용 터미널 파일
 ;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
 ;-------------------------------------------------
-;口上表示前後処理@KOJO_BAA
-;口上表示前後に呼ぶことで口上呼び出し前の表示設定に戻ります@これみ
-;引数0が-1だと前処理、-2だと全ての後処理です
-;また、引数0に正の数値を入れることでリセットを行う設定を選択・除外できます
-;※0を入れた場合は何もしないことになります
+;구상 표시 전후 처리@KOJO_BAA
+;구상 표시 전후에 부르는 것으로 구상 호출전의 표시 설정하러 돌아옵니다@이것 보고
+;인수 0이-1이라면 사전 처리, -2라면 모든 후 처리입니다
+;또, 인수 0에 정의 수치를 넣는 것으로 리셋트를 실시하는 설정을 선택·제외할 수 있습니다
+;※0을 넣었을 경우는 아무것도 하지 않게 됩니다
 ;-------------------------------------------------
 @KOJO_BAA(ARG)
-;前処理
+;사전 처리
 IF ARG == -1
-	;背景色保存
+	;키 경치 보존
 	LOCAL:0 = GETBGCOLOR()
-	;文字属性保存
+	;문자 속성 보존
 	LOCAL:1 = GETSTYLE()
 	
-	;抹消予定フラグのセット
+	;말소 예정 플래그세트
 	
-;後処理
+;후 처리
 ELSE
-	;ARGが負なら全ての後処理を行う
+	;ARG가 부라면 모든 후 처리를 실시한다
 	SIF ARG < 0
 		ARG = 7
-	;背景色リセット
+	;키 경치 리셋트
 	SIF (ARG & 1) && LOCAL:0 != GETBGCOLOR()
 		SETBGCOLOR LOCAL:0
-	;文字属性リセット
+	;문자 속성 리셋트
 	SIF (ARG & 2) && LOCAL:1 != GETSTYLE()
 		FONTSTYLE LOCAL:1
-	;文字色リセット
+	;문자색리셋트
 	SIF (ARG & 4)
 		RESETCOLOR
 	
-	;抹消予定フラグのリセット
+	;말소 예정 플래그의 리셋트
 	
 ENDIF
-;RESULT保持
+;RESULT 보유
 RETURN RESULT
 
 ;-------------------------------------------------
-;口上あらすじ@KOJO_DIGEST
-;ご主人様選択時に表示されます。一次的にTARGETとして手元に呼ばれ、口上表示後にまた消えます。
-;対象限定つきで記述した場合、その対象になるMASTERの場合はそちらが表示されます。
-;引数はキャラ番号。省略不可です。登録番号でないことに要注意！
-;RESULT値が0だと口上を表示しなかったことを表します
+;구상 개요@KOJO_DIGEST
+;주인님 선택시에 표시됩니다. 일차적으로 TARGET로서 수중에 불려 구상 표시 후에 또 사라집니다.
+;대상 한정 돌출하고 기술했을 경우, 그 대상이 되는 MASTER의 경우는 그 쪽이 표시됩니다.
+;인수는 캐릭터 번호. 생략 불가입니다. 등록 번호가 아닌 것에 요주의!
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
 ;-------------------------------------------------
 @KOJO_DIGEST(ARG:0 = -1)
-;引数省略時、RESULT0で戻る
+;인수 생략시, RESULT0로 돌아온다
 SIF ARG < 0
 	RETURN 0
-;TARGETを捏造
+;TARGET를 날조
 ADDCHARA ARG
 TARGET = CHARANUM-1
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(TARGET)
 CALL KOJO_CALL(@"DIGEST_K{ARG}", TARGET)
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
 DELCHARA TARGET
 TARGET = -1
 RETURN RESULT
 
 ;-------------------------------------------------
-;口上注意事項@KOJO_ATTENTION
-;ご主人様選択時に表示されます。一次的にTARGETとして手元に呼ばれ、口上表示後にまた消えます。
-;対象限定つきで記述した場合、その対象になるMASTERの場合はそちらが表示されます。
-;引数はキャラ番号。省略不可です。登録番号でないことに要注意！
-;RESULT値が0だと口上を表示しなかったことを表します
+;구상 주의 사항@KOJO_ATTENTION
+;주인님 선택시에 표시됩니다. 일차적으로 TARGET로서 수중에 불려 구상 표시 후에 또 사라집니다.
+;대상 한정 돌출하고 기술했을 경우, 그 대상이 되는 MASTER의 경우는 그 쪽이 표시됩니다.
+;인수는 캐릭터 번호. 생략 불가입니다. 등록 번호가 아닌 것에 요주의!
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
 ;-------------------------------------------------
 @KOJO_ATTENTION(ARG:0 = -1)
-;引数省略時、RESULT0で戻る
+;인수 생략시, RESULT0로 돌아온다
 SIF ARG < 0
 	RETURN 0
-;TARGETを捏造
+;TARGET를 날조
 ADDCHARA ARG
 TARGET = CHARANUM-1
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(TARGET)
 CALL KOJO_CALL(@"ATTENTION_K{ARG}", TARGET)
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
 DELCHARA TARGET
 TARGET = -1
 RETURN RESULT
 
 ;-------------------------------------------------
-;イベント口上@KOJO_EVENT
-;イベント時の口上、イベント開始時に出力します
-;引数0はイベント番号、引数1はイベントの派生番号（派生がないものは省略してよい）
-;引数2はキャラの登録番号（省略するとTARGET）
-;RESULT値が0だと口上を表示しなかったことを表します
+;이벤트 구상@KOJO_EVENT
+;이벤트시의 구상, 이벤트 개시시에 출력합니다
+;인수 0은 이벤트 번호, 인수 1은 이벤트의 파생 번호(파생이 없는 것은 생략 해도 좋다)
+;인수 2는 캐릭터의 등록 번호(생략 하면 TARGET)
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
 ;-------------------------------------------------
 @KOJO_EVENT(ARG:0, ARG:1, ARG:2 = -2)
-;引数2省略時、TARGETに変換
+;인수 2 생략시, TARGET에 변환
 ARG:2 = ARG:2 != -2 ? ARG:2 # TARGET
-;口上で参照するためにイベント番号をフラグへ落とす
-TFLAG:イベント番号 = ARG
-;引数2が-1であれば呼び出さない
+;구상으로 참조하기 위해서 이벤트 번호를 플래그에 떨어뜨린다
+TFLAG:이벤트번호 = ARG
+;인수 2가-1이면 호출하지 않는다
 SIF ARG:2 < 0
 	RETURN 0
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(ARG:2)
-;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-SIF FLAG:口上 || RESULT
+;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+SIF FLAG:구상 || RESULT
 	CALL KOJO_CALL(@"EVENT_K{NO:(ARG:2)}_{ARG}", ARG:2, 1, ARG:1)
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;助手イベント口上@KOJO_EVENT_ASSI
-;助手関連イベント時の口上、イベント開始時に出力します。常に右揃えになる
-;引数0はイベント番号、引数1はイベントの派生番号（派生がないものは省略してよい）
-;RESULT値が0だと口上を表示しなかったことを表します
-;また、RESULT値が1だとDRAWLINE、2だと一行改行、3だと両方します
+;조수 이벤트 구상@KOJO_EVENT_ASSI
+;조수 관련 이벤트시의 구상, 이벤트 개시시에 출력합니다. 항상 오른쪽맞춤이 된다
+;인수 0은 이벤트 번호, 인수 1은 이벤트의 파생 번호(파생이 없는 것은 생략 해도 좋다)
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
+;또, RESULT치가 1이라면 DRAWLINE, 2라면 일행 개행, 3이라고 양쪽 모두 합니다
 ;-------------------------------------------------
 @KOJO_EVENT_ASSI(ARG:0, ARG:1)
-;助手が居なければ呼び出さない
+;조수가 없으면 호출하지 않는다
 SIF ASSI < 0
 	RETURN 0
-TFLAG:助手イベント番号 = ARG
-;前処理
+TFLAG:조수이벤트번호 = ARG
+;사전 처리
 CALL KOJO_BAA(-1)
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(ASSI)
-;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-IF FLAG:口上 || RESULT
-	;右揃え
+;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+IF FLAG:구상 || RESULT
+	;오른쪽맞춤
 	ALIGNMENT RIGHT
 	CALL KOJO_CALL(@"EVENT_ASSI_K{NO:ASSI}_{ARG}", ASSI, 1, ARG:1)
-	;左揃えに戻す
+	;왼쪽 가지런히 해에 되돌린다
 	ALIGNMENT LEFT
 ENDIF
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;刻印取得口上@KOJO_MARK
-;刻印取得時に出力します
-;引数はそれぞれが刻印番号に対応、そのコマンドで取得した刻印の数値が入ります
-;RESULT値が0だと口上を表示しなかったことを表します
+;각인 취득 구상@KOJO_MARK
+;각인 취득시에 출력합니다
+;인수는 각각이 각인 번호에 대응, 그 커맨드로 취득한 각인의 수치가 들어갑니다
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
 ;-------------------------------------------------
 @KOJO_MARK(ARG:0, ARG:1, ARG:2, ARG:3, ARG:4)
-;TARGET不在時には呼び出さない
+;TARGET 부재시에는 호출하지 않는다
 SIF TARGET < 0
 	RETURN 0
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(TARGET)
-;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-SIF FLAG:口上 || RESULT
+;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+SIF FLAG:구상 || RESULT
 	CALL KOJO_CALL(@"MARK_K{NO:TARGET}", TARGET, 5, ARG, ARG:1, ARG:2, ARG:3, ARG:4)
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
-;口上表示オンなら口上が表示された時一行あける
-SIF FLAG:口上 && RESULT
+;구상 표시 온이라면 구상이 표시되었을 때 일행 연다
+SIF FLAG:구상 && RESULT
 	PRINTL 
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;脱衣アクション口上@KOJO_DATUI
-;調教者アクションの前、強制脱衣か自主脱衣が発生したときに出力します
-;RESULT値が0だと口上を表示しなかったことを表します
-;※同じ物を二回呼ぶことになるので、
-;　調教者が脱がせた場合は調教者が脱いだを処理しません
+;탈의 액션 구상@KOJO_DATUI
+;조교자 액션의 앞, 강제 탈의나 자주 탈의가 발생했을 때에 출력합니다
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
+;※같은 물건을 2회부르는 일이 되므로,
+;  조교자가 벗게 했을 경우는 조교자가 벗었다를 처리하지 않습니다
 ;-------------------------------------------------
 @KOJO_DATUI
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;調教者が脱がせた
-IF TFLAG:強制脱衣 && TFLAG:助手ACT != 70
-	;例外：ご主人様が助手（TARGETのサポート脱衣口上を呼ぶ）
-	IF ASSI >= 0 && TALENT:ASSI:ご主人様
-		;助手を一時的に調教者と交代する
+;조교자가 벗게 했다
+IF TFLAG:강제탈의 && TFLAG:조수ACT != 70
+	;예외:주인님이 조수(TARGET의 서포트 탈의 구상을 부른다)
+	IF ASSI >= 0 && TALENT:ASSI:주인님
+		;조수를 일시적으로 조교자와 교대한다
 		CALL ASSISWAP
-		;口上色設定
+		;구상색설정
 		CALL KOJO_COLOR(ASSI)
-		;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-		SIF FLAG:口上 || RESULT
+		;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+		SIF FLAG:구상 || RESULT
 			CALL KOJO_CALL(@"DATUI_ASSI_K{NO:ASSI}")
-		;後処理
+		;후 처리
 		CALL KOJO_BAA(-2)
-		;助手を助手に戻す
+		;조수를 조수로 되돌린다
 		CALL ASSISWAP
-	;通常
+	;통상
 	ELSE
-		;口上色設定
+		;구상색설정
 		CALL KOJO_COLOR(TARGET)
-		;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-		SIF FLAG:口上 || RESULT
+		;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+		SIF FLAG:구상 || RESULT
 			CALL KOJO_CALL(@"DATUI_K{NO:TARGET}")
-		;後処理
+		;후 처리
 		CALL KOJO_BAA(-2)
 	ENDIF
-	;口上表示オンなら口上が表示されたかを返す
-	;※上記注釈参照
-	RETURN FLAG:口上 ? RESULT # 0
-;助手が脱がせた
-ELSEIF TFLAG:強制脱衣 && TFLAG:助手ACT == 70
-	;右揃え
+	;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+	;※상기 주석 참조
+	RETURN FLAG:구상 ? RESULT # 0
+;조수가 벗게 했다
+ELSEIF TFLAG:강제탈의 && TFLAG:조수ACT == 70
+	;오른쪽맞춤
 	ALIGNMENT RIGHT
-	;例外：ご主人様が助手（ASSIの脱衣口上を呼ぶ）
-	IF ASSI >= 0 && TALENT:ASSI:ご主人様
-		;助手を一時的に調教者と交代する
+	;예외:주인님이 조수(ASSI의 탈의 구상을 부른다)
+	IF ASSI >= 0 && TALENT:ASSI:주인님
+		;조수를 일시적으로 조교자와 교대한다
 		CALL ASSISWAP
-		;口上色設定
+		;구상색설정
 		CALL KOJO_COLOR(TARGET)
-		;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-		SIF FLAG:口上 || RESULT
+		;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+		SIF FLAG:구상 || RESULT
 			CALL KOJO_CALL(@"DATUI_K{NO:TARGET}")
-		;後処理
+		;후 처리
 		CALL KOJO_BAA(-2)
-		;助手を助手に戻す
+		;조수를 조수로 되돌린다
 		CALL ASSISWAP
-	;通常
+	;통상
 	ELSE
-		;口上色設定
+		;구상색설정
 		CALL KOJO_COLOR(ASSI)
-		;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-		SIF FLAG:口上 || RESULT
+		;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+		SIF FLAG:구상 || RESULT
 			CALL KOJO_CALL(@"DATUI_ASSI_K{NO:ASSI}")
-		;後処理
+		;후 처리
 		CALL KOJO_BAA(-2)
 	ENDIF
-	;左揃えに戻す
+	;왼쪽 가지런히 해에 되돌린다
 	ALIGNMENT LEFT
 ENDIF
 
-;調教者が脱いだ
-IF TFLAG:自主脱衣
-	;口上色設定
+;조교자가 벗었다
+IF TFLAG:자주탈의
+	;구상색설정
 	CALL KOJO_COLOR(TARGET)
-	;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-	SIF FLAG:口上 || RESULT
+	;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+	SIF FLAG:구상 || RESULT
 		CALL KOJO_CALL(@"DATUI_K{NO:TARGET}")
-	;後処理
+	;후 처리
 	CALL KOJO_BAA(-2)
 ENDIF
 
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;姿勢変化口上@KOJO_POSE
-;姿勢の変更指示があったときに呼ばれる口上です
-;ACTは既に決まっているので中で参照することもできます。
-;ARGは調教対象の姿勢、ARG:1は位置前後、ARG:2は位置上下の変化です。変わらなかったときは-1が入ります
-;すべて-1のときは地の文が表示されずこの口上も呼ばれません。
+;자세 변화 구상@KOJO_POSE
+;자세의 변경 지시가 있었을 때에 불리는 구상입니다
+;ACT는 이미 정해져 있으므로 안에서 참조할 수도 있습니다.
+;ARG는 조교 대상의 자세, ARG:1은 위치 전후, ARG:2는 위치 상하의 변화입니다. 변함없었을 때는-1이 들어갑니다
+;모두-1 때는 지문이 표시되지 않고 이 구상도 불리지 않습니다.
 ;-------------------------------------------------
 @KOJO_POSE(ARG = -1, ARG:1 = -1, ARG:2 = -1)
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;返り値初期化
+;돌아가 값초기화
 RESULT = 0
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(TARGET)
-;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-SIF FLAG:口上 || RESULT
+;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+SIF FLAG:구상 || RESULT
 	CALL KOJO_CALL(@"POSE_K{NO:TARGET}", TARGET, 3, ARG, ARG:1, ARG:2)
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;地の文口上@KOJO_MESSAGE
-;地の文を置換する口上です
-;この口上が呼ばれ、真の値をRETURNした場合、通常の地の文が呼び出されません
-;また、RETURNにいれた値はFLAG:地の文制御に格納されます
-;ACT口上と連携する際に利用してください
-;なお、SP口上はSP_TRAIN_MESSAGE_KX_SPACT番号　となります
+;지문 구상@KOJO_MESSAGE
+;지문을 치환하는 구상입니다
+;이 구상이 불려 진정한 값을 RETURN 했을 경우, 통상의 지문이 불려 가지 않습니다
+;또, RETURN에 넣은 값은 FLAG:지문 제어에 격납됩니다
+;ACT 구상과 제휴할 때에 이용해 주세요
+;덧붙여 SP구상은 SP_TRAIN_MESSAGE_KX_SPACT 번호  가 됩니다
 ;-------------------------------------------------
 @KOJO_TRAIN_MESSAGE
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;返り値初期化
+;돌아가 값초기화
 RESULT = 0
-;口上呼び出し(SP行動時は呼び出し位置を変更)
-IF TFLAG:ＳＰ行動 >= 200
+;구상 호출(SP행동시는 호출해 위치를 변경)
+IF TFLAG:SP행동 >= 200
 	CALL KOJO_CALL(@"SP_TRAIN_MESSAGE_K{NO:TARGET}_{TFLAG:ACT}")
 ELSE
 	CALL KOJO_CALL(@"TRAIN_MESSAGE_K{NO:TARGET}_{TFLAG:ACT}")
 ENDIF
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
-;地の文制御にRESULTが負なら0、正ならそのままを返す
-FLAG:地の文制御 = MAX(RESULT, 0)
-;返り値に地の文制御を返す
-RETURN FLAG:地の文制御
+;지문 제어에 RESULT가 부라면 0, 정이라면 그대로를 돌려준다
+FLAG:지문제어 = MAX(RESULT, 0)
+;돌아가 값에 지문 제어를 돌려준다
+RETURN FLAG:지문제어
 
 ;-------------------------------------------------
-;地の文口上@KOJO_MESSAGE2
-;上記とほぼ同じですが、こちらはリアクションの地の文を置き換えます
-;リアクション口上と連携する場合は口上内でFLAG:地の文制御に数値を代入してください
+;지문 구상@KOJO_MESSAGE2
+;상기와 거의 같습니다만, 이쪽은 리액션의 지문을 옮겨놓습니다
+;리액션 구상과 제휴하는 경우는 구상내에서 FLAG:지문 제어에 수치를 대입해 주세요
 ;-------------------------------------------------
 @KOJO_TRAIN_MESSAGE2
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;返り値初期化
+;돌아가 값초기화
 RESULT = 0
-;口上呼び出し(SP行動時は呼び出し位置を変更)
-IF TFLAG:ＳＰ行動 >= 200
+;구상 호출(SP행동시는 호출해 위치를 변경)
+IF TFLAG:SP행동 >= 200
 	CALL KOJO_CALL(@"SP_TRAIN_MESSAGE2_K{NO:TARGET}_{TFLAG:ACT}")
 ELSE
 	CALL KOJO_CALL(@"TRAIN_MESSAGE2_K{NO:TARGET}_{TFLAG:ACT}")
 ENDIF
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
-;地の文制御にRESULTが負なら0、正ならそのままを返す
-FLAG:地の文制御 = MAX(RESULT, 0)
-;返り値に地の文制御を返す
-RETURN FLAG:地の文制御
+;지문 제어에 RESULT가 부라면 0, 정이라면 그대로를 돌려준다
+FLAG:지문제어 = MAX(RESULT, 0)
+;돌아가 값에 지문 제어를 돌려준다
+RETURN FLAG:지문제어
 
 ;-------------------------------------------------
-;アクション口上@KOJO_ACT
-;調教者アクションが発生したときに出力します
-;RESULT値が0だと口上を表示しなかったことを表します
-;RESULT値が2だと次の「媚薬等使用口上@KOJO_USE」を呼びません
-;アクション口上内で媚薬等使用口上を兼ねて書いた場合に指定してください
+;액션 구상@KOJO_ACT
+;조교자 액션이 발생했을 때에 출력합니다
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
+;RESULT치가 2라면 다음의 「미약등 사용 구상@KOJO_USE」를 부르지 않습니다
+;액션 구상내에서 미약등 사용 구상을 겸하고 썼을 경우로 지정해 주세요
 ;-------------------------------------------------
 @KOJO_ACT
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;助手が媚薬等使用している場合、使用フラグを逃がす
-;こうしないと主人が媚薬を使った口上を表示してしまうため
-LOCAL = TFLAG:媚薬等使用
-;薬品を使用した助手が居れば、
-;媚薬使用は調教者ではないため媚薬等使用フラグを0に
-SIF GET_ASSIACTMATCH("薬品")
-	TFLAG:媚薬等使用 = 0
-;口上色設定
+;조수가 미약등 사용하고 있는 경우, 사용 플래그를 놓친다
+;이렇게 하지 않으면 주인이 미약을 사용한 구상을 표시해 버리기 (위해)때문에
+LOCAL = TFLAG:미약등사용
+;약품을 사용한 조수가 있으면,
+;미약사용은 조교자는 아니기 때문에 미약등 사용 플래그를 0에
+SIF GET_ASSIACTMATCH("약품")
+	TFLAG:미약등사용 = 0
+;구상색설정
 CALL KOJO_COLOR(TARGET)
-;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-IF FLAG:口上 || RESULT
-	;まずアクションごとの口上
+;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+IF FLAG:구상 || RESULT
+	;우선 액션마다의 구상
 	CALL KOJO_CALL(@"ACT_K{NO:TARGET}_{TFLAG:ACT}")
-	;表示しなかった場合、コンビネーションが発生していれば派生前を呼んでみる
-	IF !RESULT && ASSI:1 >= 0 && TCVAR:(ASSI:1):助手方針 == GET_ASSIMENUNUM("コンビネーション")
-		;助手の方針（旧仕様）を立てて偽装
-		TFLAG:助手の方針 = 1
+	;표시하지 않았던 경우, 콤비 네이션이 발생하고 있으면 파생전을 불러 본다
+	IF !RESULT && ASSI:1 >= 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비 네이션")
+		;조수의 방침(구사양)을 세워 위장
+		TFLAG:조수의방침 = 1
 		CALL KOJO_CALL(@"ACT_K{NO:TARGET}_{GET_COMBIACTNUM(TFLAG:ACT)}")
 	ENDIF
-	;表示しなかった場合汎用アクション口上（EASYテンプレート用の機能だけど他でも使えるかも）
+	;표시하지 않았던 경우 범용 액션 구상(EASY 템플릿용의 기능이지만 외에서도 사용할 수 있을지도)
 	SIF !RESULT
 		CALL KOJO_CALL(@"ACT_K{NO:TARGET}")
 ENDIF
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
-;逃がしたフラグを復帰
-TFLAG:媚薬等使用 = LOCAL
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;놓친 플래그를 복귀
+TFLAG:미약등사용 = LOCAL
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;追加アクション口上@KOJO_ACT_EXTRA
-;追加アクションが発生したときに出力します
-;RESULT値が0だと口上を表示しなかったことを表します
-;引数0は追加アクションの分類（0,手で愛撫、以下未実装）
-;関連変数 TFLAG:229
+;추가 액션 구상@KOJO_ACT_EXTRA
+;추가 액션이 발생했을 때에 출력합니다
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
+;인수 0은 추가 액션의 분류(0, 손으로 애무, 이하미실장)
+;관련 변수 TFLAG:229
 ;-------------------------------------------------
 @KOJO_ACT_EXTRA(ARG)
-;番号は追加アクション分類と変数から生成する
-TFLAG:追加ACT = ARG * 10 + TFLAG:(229 + ARG)
-;追加行動口上フラグが立っている時だけ処理する
-SIF !GETBIT(TFLAG:追加行動口上, ARG)
+;번호는 추가 액션 분류와 변수로부터 생성한다
+TFLAG:추가ACT = ARG * 10 + TFLAG:(229 + ARG)
+;추가 행동 구상 플래그가 서 있는 때만 처리한다
+SIF !GETBIT(TFLAG:추가행동구상, ARG)
 	RETURN 0
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(TARGET)
-;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-SIF FLAG:口上 || RESULT
-	CALL KOJO_CALL(@"ACT_EXTRA_K{NO:TARGET}_{TFLAG:追加ACT}")
-;後処理
+;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+SIF FLAG:구상 || RESULT
+	CALL KOJO_CALL(@"ACT_EXTRA_K{NO:TARGET}_{TFLAG:추가ACT}")
+;후 처리
 CALL KOJO_BAA(-2)
-;追加アクション発生フラグを落とす
-CLEARBIT TFLAG:追加行動口上, ARG
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;추가 액션 발생 플래그를 떨어뜨린다
+CLEARBIT TFLAG:추가행동구상, ARG
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;助手アクション口上@KOJO_ACT_ASSI
-;助手アクションが発生したときに出力します
-;RESULT値が0だと口上を表示しなかったことを表します
+;조수 액션 구상@KOJO_ACT_ASSI
+;조수 액션이 발생했을 때에 출력합니다
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
 ;-------------------------------------------------
 @KOJO_ACT_ASSI
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(ASSI)
-;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-SIF FLAG:口上 || RESULT
-	CALL KOJO_CALL(@"ACT_ASSI_K{NO:ASSI}_{TFLAG:助手ACT}")
-;後処理
+;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+SIF FLAG:구상 || RESULT
+	CALL KOJO_CALL(@"ACT_ASSI_K{NO:ASSI}_{TFLAG:조수ACT}")
+;후 처리
 CALL KOJO_BAA(-2)
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;媚薬等使用口上@KOJO_USE
-;媚薬かローションが使われたときに出力します
-;RESULT値が0だと口上を表示しなかったことを表します
-;助手が行った場合や「アクション口上@KOJO_ACT」のRESULT値が2だと呼ばれません
-;アクション口上内で媚薬使用口上を兼ねて書いた場合に指定してください
+;미약등 사용 구상@KOJO_USE
+;미약이나 로션이 사용되었을 때에 출력합니다
+;RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타냅니다
+;조수가 갔을 경우나 「액션 구상@KOJO_ACT」의 RESULT치가 2라고 불리지 않습니다
+;액션 구상내에서 미약사용 구상을 겸하고 썼을 경우로 지정해 주세요
 ;-------------------------------------------------
 @KOJO_USE
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(TARGET)
-;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-SIF FLAG:口上 || RESULT
+;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+SIF FLAG:구상 || RESULT
 	CALL KOJO_CALL(@"USE_K{NO:TARGET}")
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
-;RESULTが0以外なら媚薬等使用口上フラグ継続
-TFLAG:媚薬等使用口上 = RESULT ? 0 # TFLAG:媚薬等使用口上
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;RESULT가 0이외라면 미약등 사용 구상 플래그 계속
+TFLAG:미약등사용구상 = RESULT ? 0 # TFLAG:미약등사용구상
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;リアクション口上@KOJO_REACT
-;調教対象がコマンドを実行した後に出力します
-;最初に調教指示ごとに個別の口上を参照し、そのRESULT値が0だと口上を表示しなかったことを表し、
-;表示しなかった（RESULT=0）の場合のみコマンドごとに汎用の口上を参照します
-;RESULT値が0だといずれの口上も表示しなかったことを表します
+;리액션 구상@KOJO_REACT
+;조교 대상이 커맨드를 실행한 뒤로 출력합니다
+;최초로 조교 지시 마다 개별의 구상을 참조해, 그 RESULT치가 0이라면 구상을 표시하지 않았던 것을 나타내,
+;표시하지 않았다(RESULT=0)의 경우만 커맨드 마다 범용의 구상을 참조합니다
+;RESULT치가 0이라면 어느 구상도 표시하지 않았던 것을 나타냅니다
 ;-------------------------------------------------
 @KOJO_REACT
-;前処理
+;사전 처리
 CALL KOJO_BAA(-1)
-;口上色設定
+;구상색설정
 CALL KOJO_COLOR(TARGET)
-;口上表示オンまたは口上強制呼び出し時、口上呼び出し
-IF FLAG:口上 || RESULT
-	;まずリアクション毎の口上
+;구상 표시 온 또는 구상 강제 호출시, 구상 호출
+IF FLAG:구상 || RESULT
+	;우선 리액션 마다의 구상
 	CALL KOJO_CALL(@"REACT_K{NO:TARGET}_{TFLAG:ACT}")
-	;表示されなかった場合コンビネーションを見に行く。それでも表示されなければ派生元を呼ぶ
-	SIF !RESULT && ASSI:1 >= 0 && TCVAR:(ASSI:1):助手方針 == GET_ASSIMENUNUM("コンビネーション")
+	;표시되지 않았던 경우 콤비 네이션을 보러 간다. 그런데도 표시되지 않으면 파생원을 부른다
+	SIF !RESULT && ASSI:1 >= 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비 네이션")
 		CALL KOJO_CALL(@"REACT_K{NO:TARGET}_{GET_COMBIACTNUM(TFLAG:ACT)}")
-	;ここまで表示されなかった場合、順に汎用口上へ落とす
+	;여기까지 표시되지 않았던 경우, 순서에 범용 구상에 떨어뜨린다
 	SIF !RESULT
 		CALL KOJO_CALL(@"COM_K{NO:TARGET}_{SELECTCOM}")
 	SIF !RESULT
 		CALL KOJO_CALL(@"REACT_K{NO:TARGET}")
 ENDIF
-;後処理
+;후 처리
 CALL KOJO_BAA(-2)
-;口上表示オンなら口上が表示されたかを返す
-RETURN FLAG:口上 ? RESULT # 0
+;구상 표시 온이라면 구상이 표시되었는지를 돌려준다
+RETURN FLAG:구상 ? RESULT # 0
 
 ;-------------------------------------------------
-;口上色設定@KOJO_COLOR
-;口上の色設定を行います。色設定関数が無い場合はやや灰色になります
-;ついでに、フラグ管理のため口上表示の設定を無視する口上をここで判断します
+;구상색설정@KOJO_COLOR
+;구상의 색설정을 실시합니다. 색설정 함수가 없는 경우는 약간 회색이 됩니다
+;하는 김에, 플래그 관리를 위해 구상 표시의 설정을 무시하는 구상을 여기서 판단합니다
 ;-------------------------------------------------
 @KOJO_COLOR(ARG)
-;引数が負なら処理しない
+;인수가 부라면 처리하지 않는다
 SIF ARG < 0
 	RETURN 0
-;返り値初期化
+;돌아가 값초기화
 RESULT = 0
-;TARGET待避
+;TARGET 대피
 LOCAL = TARGET
-;TARGETに引数を代入
+;TARGET에 인수를 대입
 TARGET = ARG
-;口上から色指定を引き出し、設定する
-;指定がなければデフォルトカラー
+;구상으로부터 색지정을 꺼내, 설정한다
+;지정이 없으면 디폴트 칼라
 TRYCCALLFORM KOJO_COLOR_K{NO:ARG}
 CATCH
 	SETCOLOR 160, 160, 160
 ENDCATCH
-;TARGET指定を戻す
+;TARGET 지정을 되돌린다
 TARGET = LOCAL
-;口上強制呼び出しの指定を返す
+;구상 강제 호출의 지정을 돌려준다
 TRYCCALLFORM KOJO_ON_K{NO:(ARG)}
 	RETURN RESULT
 CATCH
@@ -493,308 +493,308 @@ CATCH
 ENDCATCH
 
 ;-------------------------------------------------
-;立場限定口上呼び出し@KOJO_CALL
-;調教者の立場（ご主人様か追加調教者か）限定の口上を設定できます
-;この下に対象限定口上の呼び出しが存在し、関数名で共存できます。また、限定口上にカラーの設定はできません（汎用部分と食い違うため）
-;引数0は関数名の後半部分、引数1には口上主の登録番号、引数2には元の引数の数を入れる（現状0、1、3、5）、引数3以降はもとの引数を入れる
-;こちらも排他の設定ができますが、対象限定より上層で処理されます。
+;입장 한정 구상 호출@KOJO_CALL
+;조교자의 입장(주인님이나 추가 조교자인가) 한정의 구상을 설정할 수 있습니다
+;이 아래에 대상 한정 구상의 호출이 존재해, 함수명으로 공존할 수 있습니다. 또, 한정 구상에 칼라의 설정은 할 수 없습니다(범용 부분과 어긋나기 (위해)때문에)
+;인수 0은 함수명의 후반 부분, 인수 1에는 구상주의 등록 번호, 인수 2에는 원래의 인수의 수를 넣는(현상 0, 1, 3, 5), 인수 3이후는 원래의 인수를 넣는다
+;이쪽도 배타의 설정을 할 수 있습니다만, 대상 한정보다 상층에서 처리됩니다.
 ;-------------------------------------------------
 @KOJO_CALL(ARGS, ARG = -2, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 #DIM LCOUNT, 1
-#DIM 優先による排他, 1
+#DIM 우선에의한배타, 1
 ARG = ARG != -2 ? ARG # TARGET
 
-;優先口上３、２、１、通常の順で回す
+;우선 구상 3, 2, 1, 통상의 순서로 돌린다
 FOR LCOUNT, 0, 4
 	RESULT = 0
-	優先による排他 = 0
+	우선에의한배타 = 0
 	IF LCOUNT < 3
-		;優先口上の処理
+		;우선 구상의 처리
 		TRYCALLFORM KOJO_PRIORITY{3-LCOUNT}_K{NO:(ARG)}
 		IF !RESULT
 			CONTINUE
 		ELSEIF RESULT > 1
-			優先による排他 = 1
+			우선에의한배타 = 1
 		ENDIF
 		LOCALS = PRI{3-LCOUNT}_%ARGS%
 	ELSE
 		LOCALS = %ARGS%
 	ENDIF
-	;ご主人様限定口上をみる
-	IF TALENT:ご主人様
+	;주인님 한정 구상을 본다
+	IF TALENT:주인님
 		CALL KOJO_CALL2(@"MS_%LOCALS%", ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
-	;非ご主人様限定口上をみる
+	;비남편님 한정 구상을 본다
 	ELSE
 		CALL KOJO_CALL2(@"AS_%LOCALS%", ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 	ENDIF
-	;表示した場合戻る
+	;표시했을 경우 돌아온다
 	SIF RESULT
 		RETURN RESULT
 
-	;排他のチェック（条件を満たす立場の場合、未記入でも一般口上を表示しない設定）
-	;ご主人様限定口上にヒットするかをみる
-	IF TALENT:ご主人様
+	;배타의 체크(조건을 채우는 입장의 경우, 미기입에서도 일반 구상을 표시하지 않는 설정)
+	;주인님 한정 구상에 히트 할까를 본다
+	IF TALENT:주인님
 		TRYCALLFORM KOJO_MS_EXCLUSION_K{NO:(ARG)}
-	;非ご主人様限定口上にヒットするかをみる
+	;비남편님 한정 구상에 히트 할까를 본다
 	ELSE
 		TRYCALLFORM KOJO_AS_EXCLUSION_K{NO:(ARG)}
 	ENDIF
-	;排他
+	;배타
 	SIF RESULT
 		CONTINUE
 
-	;対象限定口上へパスする
+	;대상 한정 구상에 패스한다
 	CALL KOJO_CALL2(LOCALS, ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
-	;表示した場合、あるいは優先による排他が働く場合戻る
-	SIF RESULT || 優先による排他
+	;표시했을 경우, 혹은 우선에 의한 배타가 일하는 경우 돌아온다
+	SIF RESULT || 우선에의한배타
 		RETURN RESULT
 NEXT
 RETURN 0
 
 ;-------------------------------------------------
-;対象限定口上呼び出し@KOJO_CALL2
-;特定の調教対象でプレイしたとき限定の口上を設定できます
-;条件が厳しいものほど優先されます。また、限定口上にカラーの設定はできません（汎用部分と食い違うため）
-;記述がかなりアレになってますがまあ今のところしょうがない
-;引数0は関数名の後半部分、引数1には口上主の登録番号、引数2には元の引数の数を入れる（現状0、1、3、5）、引数3以降はもとの引数を入れる
+;대상 한정 구상 호출@KOJO_CALL2
+;특정의 조교 대상으로 플레이 했을 때 한정의 구상을 설정할 수 있습니다
+;조건이 어려운 정도 우선됩니다. 또, 한정 구상에 칼라의 설정은 할 수 없습니다(범용 부분과 어긋나기 (위해)때문에)
+;기술이 꽤 저것이 되어 있습니다만 뭐현재 어쩔 수 없다
+;인수 0은 함수명의 후반 부분, 인수 1에는 구상주의 등록 번호, 인수 2에는 원래의 인수의 수를 넣는(현상 0, 1, 3, 5), 인수 3이후는 원래의 인수를 넣는다
 ;-------------------------------------------------
 @KOJO_CALL2(ARGS, ARG = -2, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 ARG = ARG != -2 ? ARG # TARGET
 RESULT = 0
-;MASTER指定口上をみる
-;引数0
+;MASTER 지정 구상을 본다
+;인수 0
 IF !ARG:1
-	;主人公があなたなら性別を見る
+	;주인공이 당신이라면 성별을 본다
 	IF !NO:MASTER
-		;ちんこはえてる
-		IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
-			;オトコあなた口上にヒットするかを見る
-			IF TALENT:MASTER:オトコ
+		;고추는 비친다
+		IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+			;남자 당신 구상에 히트 할까를 본다
+			IF TALENT:MASTER:남자
 				TRYCALLFORM KOJO_MALEYOU_%ARGS%
-			;ふたなりあなた口上にヒットするかを見る
-			ELSEIF TALENT:MASTER:ふたなり
+			;후타나리 당신 구상에 히트 할까를 본다
+			ELSEIF TALENT:MASTER:후타나리
 				TRYCALLFORM KOJO_TWINYOU_%ARGS%
 			ENDIF
-			;ヒットしてないなら、ちんこつきあなた口上にヒットするかを見る
+			;히트 하고 있지 않으면, 고추 붙어 있는 당신 구상에 히트 할까를 본다
 			SIF !RESULT
 				TRYCALLFORM KOJO_PENISYOU_%ARGS%
 		ENDIF
-		;女口上にヒットするかを見る
-		SIF !TALENT:MASTER:オトコ
+		;녀 구상에 히트 할까를 본다
+		SIF !TALENT:MASTER:남자
 			TRYCALLFORM KOJO_FEMALEYOU_%ARGS%
 	ENDIF
 
-	;ヒットしてないなら、対象指定（0～99）の口上にヒットするかを見る
+	;히트 하고 있지 않으면, 대상 지정(0~99)의 구상에 히트 할까를 본다
 	SIF !RESULT
 		TRYCALLFORM KOJO_NO{NO:MASTER}_%ARGS%
-;引数1
+;인수 1
 ELSEIF ARG:1 == 1
-	;主人公があなたなら性別を見る
+	;주인공이 당신이라면 성별을 본다
 	IF !NO:MASTER
-		;ちんこはえてる
-		IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
-			;オトコあなた口上にヒットするかを見る
-			IF TALENT:MASTER:オトコ
+		;고추는 비친다
+		IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+			;남자 당신 구상에 히트 할까를 본다
+			IF TALENT:MASTER:남자
 				TRYCALLFORM KOJO_MALEYOU_%ARGS%(ARG:2)
-			;ふたなりあなた口上にヒットするかを見る
-			ELSEIF TALENT:MASTER:ふたなり
+			;후타나리 당신 구상에 히트 할까를 본다
+			ELSEIF TALENT:MASTER:후타나리
 				TRYCALLFORM KOJO_TWINYOU_%ARGS%(ARG:2)
 			ENDIF
-			;ヒットしてないなら、ちんこつきあなた口上にヒットするかを見る
+			;히트 하고 있지 않으면, 고추 붙어 있는 당신 구상에 히트 할까를 본다
 			SIF !RESULT
 				TRYCALLFORM KOJO_PENISYOU_%ARGS%(ARG:2)
 		ENDIF
-		;女口上にヒットするかを見る
-		SIF !TALENT:MASTER:オトコ
+		;녀 구상에 히트 할까를 본다
+		SIF !TALENT:MASTER:남자
 			TRYCALLFORM KOJO_FEMALEYOU_%ARGS%(ARG:2)
 	ENDIF
 
-	;ヒットしてないなら、対象指定（0～99）の口上にヒットするかを見る
+	;히트 하고 있지 않으면, 대상 지정(0~99)의 구상에 히트 할까를 본다
 	SIF !RESULT
 		TRYCALLFORM KOJO_NO{NO:MASTER}_%ARGS%(ARG:2)
-;引数3
+;인수 3
 ELSEIF ARG:1 == 3
-	;主人公があなたなら性別を見る
+	;주인공이 당신이라면 성별을 본다
 	IF !NO:MASTER
-		;ちんこはえてる
-		IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
-			;オトコあなた口上にヒットするかを見る
-			IF TALENT:MASTER:オトコ
+		;고추는 비친다
+		IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+			;남자 당신 구상에 히트 할까를 본다
+			IF TALENT:MASTER:남자
 				TRYCALLFORM KOJO_MALEYOU_%ARGS%(ARG:2, ARG:3, ARG:4)
-			;ふたなりあなた口上にヒットするかを見る
-			ELSEIF TALENT:MASTER:ふたなり
+			;후타나리 당신 구상에 히트 할까를 본다
+			ELSEIF TALENT:MASTER:후타나리
 				TRYCALLFORM KOJO_TWINYOU_%ARGS%(ARG:2, ARG:3, ARG:4)
 			ENDIF
-		;ヒットしてないなら、ちんこつきあなた口上にヒットするかを見る
+		;히트 하고 있지 않으면, 고추 붙어 있는 당신 구상에 히트 할까를 본다
 		SIF !RESULT
 			TRYCALLFORM KOJO_PENISYOU_%ARGS%(ARG:2, ARG:3, ARG:4)
 		ENDIF
-		;女口上にヒットするかを見る
-		SIF !TALENT:MASTER:オトコ
+		;녀 구상에 히트 할까를 본다
+		SIF !TALENT:MASTER:남자
 			TRYCALLFORM KOJO_FEMALEYOU_%ARGS%(ARG:2, ARG:3, ARG:4)
 	ENDIF
 
-	;ヒットしてないなら、対象指定（0～99）の口上にヒットするかを見る
+	;히트 하고 있지 않으면, 대상 지정(0~99)의 구상에 히트 할까를 본다
 	SIF !RESULT
 		TRYCALLFORM KOJO_NO{NO:MASTER}_%ARGS%(ARG:2, ARG:3, ARG:4)
-;引数5
+;인수 5
 ELSEIF ARG:1 == 5
-	;主人公があなたなら性別を見る
+	;주인공이 당신이라면 성별을 본다
 	IF !NO:MASTER
-		;ちんこはえてる
-		IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
-			;オトコあなた口上にヒットするかを見る
-			IF TALENT:MASTER:オトコ
+		;고추는 비친다
+		IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+			;남자 당신 구상에 히트 할까를 본다
+			IF TALENT:MASTER:남자
 				TRYCALLFORM KOJO_MALEYOU_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
-			;ふたなりあなた口上にヒットするかを見る
-			ELSEIF TALENT:MASTER:ふたなり
+			;후타나리 당신 구상에 히트 할까를 본다
+			ELSEIF TALENT:MASTER:후타나리
 				TRYCALLFORM KOJO_TWINYOU_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 			ENDIF
-		;ヒットしてないなら、ちんこつきあなた口上にヒットするかを見る
+		;히트 하고 있지 않으면, 고추 붙어 있는 당신 구상에 히트 할까를 본다
 		SIF !RESULT
 			TRYCALLFORM KOJO_PENISYOU_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 		ENDIF
-		;女口上にヒットするかを見る
-		SIF !TALENT:MASTER:オトコ
+		;녀 구상에 히트 할까를 본다
+		SIF !TALENT:MASTER:남자
 			TRYCALLFORM KOJO_FEMALEYOU_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 	ENDIF
 
-	;ヒットしてないなら、対象指定（0～99）の口上にヒットするかを見る
+	;히트 하고 있지 않으면, 대상 지정(0~99)의 구상에 히트 할까를 본다
 	SIF !RESULT
 		TRYCALLFORM KOJO_NO{NO:MASTER}_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 ENDIF
 
-;表示した場合戻る
+;표시했을 경우 돌아온다
 IF RESULT
 	RETURN RESULT
 ENDIF
 
-;排他のチェック（条件を満たす調教対象の場合、未記入でも一般口上を表示しない設定）
-;指定口上同士の排他設定はできない
-;主人公があなたなら性別を見る
+;배타의 체크(조건을 채우는 조교 대상의 경우, 미기입에서도 일반 구상을 표시하지 않는 설정)
+;지정 구상끼리의 배타 설정은 할 수 없다
+;주인공이 당신이라면 성별을 본다
 IF !NO:MASTER
-	;ちんこはえてる
-	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
-		;オトコあなた口上にヒットするかを見る
-		IF TALENT:MASTER:オトコ
+	;고추는 비친다
+	IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+		;남자 당신 구상에 히트 할까를 본다
+		IF TALENT:MASTER:남자
 			TRYCALLFORM KOJO_MALEYOU_EXCLUSION_K{NO:(ARG)}
-		;ふたなりあなた口上にヒットするかを見る
-		ELSEIF TALENT:MASTER:ふたなり
+		;후타나리 당신 구상에 히트 할까를 본다
+		ELSEIF TALENT:MASTER:후타나리
 			TRYCALLFORM KOJO_TWINYOU_EXCLUSION_K{NO:(ARG)}
 		ENDIF
-		;ヒットしてないなら、ちんこつきあなた口上にヒットするかを見る
+		;히트 하고 있지 않으면, 고추 붙어 있는 당신 구상에 히트 할까를 본다
 		SIF !RESULT
 			TRYCALLFORM KOJO_PENISYOU_EXCLUSION_K{NO:(ARG)}
 	ENDIF
-	;女口上にヒットするかを見る
-	SIF !TALENT:MASTER:オトコ
+	;녀 구상에 히트 할까를 본다
+	SIF !TALENT:MASTER:남자
 		TRYCALLFORM KOJO_FEMALEYOU_EXCLUSION_K{NO:(ARG)}
 ENDIF
 
-;ヒットしてないなら、対象指定（0～99）の口上にヒットするかを見る
+;히트 하고 있지 않으면, 대상 지정(0~99)의 구상에 히트 할까를 본다
 SIF !RESULT
 	TRYCALLFORM KOJO_NO{NO:MASTER}_EXCLUSION_K{NO:(ARG)}
 
-;排他の場合RESULTに0を返し、戻る
+;배타의 경우 RESULT에 0을 돌려주어, 돌아온다
 IF RESULT
 	RETURN 0
 ENDIF
 
-;性別指定口上をみる
-;引数0
+;성별 지정 구상을 본다
+;인수 0
 IF !ARG:1
-	;ちんこはえてる
-	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
-		;オトコ口上にヒットするかを見る
-		IF TALENT:MASTER:オトコ
+	;고추는 비친다
+	IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+		;남자 구상에 히트 할까를 본다
+		IF TALENT:MASTER:남자
 			TRYCALLFORM KOJO_MALE_%ARGS%
-		;ふたなり口上にヒットするかを見る
-		ELSEIF TALENT:MASTER:ふたなり
+		;후타나리 구상에 히트 할까를 본다
+		ELSEIF TALENT:MASTER:후타나리
 			TRYCALLFORM KOJO_TWIN_%ARGS%
 		ENDIF
-		;ヒットしてないなら、ちんこつき口上にヒットするかを見る
+		;히트 하고 있지 않으면, 고추 다하고 구상에 히트 할까를 본다
 		SIF !RESULT
 			TRYCALLFORM KOJO_PENIS_%ARGS%
 	ENDIF
-	;女口上にヒットするかを見る
-	SIF !TALENT:MASTER:オトコ
+	;녀 구상에 히트 할까를 본다
+	SIF !TALENT:MASTER:남자
 		TRYCALLFORM KOJO_FEMALE_%ARGS%
-;引数1
+;인수 1
 ELSEIF ARG:1 == 1
-	;ちんこはえてる
-	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
-		;オトコ口上にヒットするかを見る
-		IF TALENT:MASTER:オトコ
+	;고추는 비친다
+	IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+		;남자 구상에 히트 할까를 본다
+		IF TALENT:MASTER:남자
 			TRYCALLFORM KOJO_MALE_%ARGS%(ARG:2)
-		;ふたなり口上にヒットするかを見る
-		ELSEIF TALENT:MASTER:ふたなり
+		;후타나리 구상에 히트 할까를 본다
+		ELSEIF TALENT:MASTER:후타나리
 			TRYCALLFORM KOJO_TWIN_%ARGS%(ARG:2)
 		ENDIF
-		;ヒットしてないなら、ちんこつき口上にヒットするかを見る
+		;히트 하고 있지 않으면, 고추 다하고 구상에 히트 할까를 본다
 		SIF !RESULT
 			TRYCALLFORM KOJO_PENIS_%ARGS%(ARG:2)
 	ENDIF
-	;女口上にヒットするかを見る
-	SIF !TALENT:MASTER:オトコ
+	;녀 구상에 히트 할까를 본다
+	SIF !TALENT:MASTER:남자
 		TRYCALLFORM KOJO_FEMALE_%ARGS%(ARG:2)
-;引数5
+;인수 5
 ELSEIF ARG:1 == 5
-	;ちんこはえてる
-	IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
-		;オトコ口上にヒットするかを見る
-		IF TALENT:MASTER:オトコ
+	;고추는 비친다
+	IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+		;남자 구상에 히트 할까를 본다
+		IF TALENT:MASTER:남자
 			TRYCALLFORM KOJO_MALE_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
-		;ふたなり口上にヒットするかを見る
-		ELSEIF TALENT:MASTER:ふたなり
+		;후타나리 구상에 히트 할까를 본다
+		ELSEIF TALENT:MASTER:후타나리
 			TRYCALLFORM KOJO_TWIN_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 		ENDIF
-		;ヒットしてないなら、ちんこつき口上にヒットするかを見る
+		;히트 하고 있지 않으면, 고추 다하고 구상에 히트 할까를 본다
 		SIF !RESULT
 			TRYCALLFORM KOJO_PENIS_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 	ENDIF
-	;女口上にヒットするかを見る
-	SIF !TALENT:MASTER:オトコ
+	;녀 구상에 히트 할까를 본다
+	SIF !TALENT:MASTER:남자
 		TRYCALLFORM KOJO_FEMALE_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 ENDIF
 
-;表示した場合戻る
+;표시했을 경우 돌아온다
 IF RESULT
 	RETURN RESULT
 ENDIF
 
-;排他のチェック
-;MASTAR指定口上が上位にあたり、排他ではじくことはできない
-;ちんこはえてる
-IF TALENT:MASTER:オトコ || TALENT:MASTER:ふたなり
-	;オトコ口上にヒットするかを見る
-	IF TALENT:MASTER:オトコ
+;배타의 체크
+;MASTAR 지정 구상이 상위에 해당해, 배타에서는 축 (일)것은 할 수 없다
+;고추는 비친다
+IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+	;남자 구상에 히트 할까를 본다
+	IF TALENT:MASTER:남자
 		TRYCALLFORM KOJO_MALE_EXCLUSION_K{NO:(ARG)}
-	;ふたなり口上にヒットするかを見る
-	ELSEIF TALENT:MASTER:ふたなり
+	;후타나리 구상에 히트 할까를 본다
+	ELSEIF TALENT:MASTER:후타나리
 		TRYCALLFORM KOJO_TWIN_EXCLUSION_K{NO:(ARG)}
 	ENDIF
-	;ヒットしてないなら、ちんこつき口上にヒットするかを見る
+	;히트 하고 있지 않으면, 고추 다하고 구상에 히트 할까를 본다
 	SIF !RESULT
 		TRYCALLFORM KOJO_PENIS_EXCLUSION_K{NO:(ARG)}
 	ENDIF
-;女口上にヒットするかを見る
-SIF !TALENT:MASTER:オトコ
+;녀 구상에 히트 할까를 본다
+SIF !TALENT:MASTER:남자
 	TRYCALLFORM KOJO_FEMALE_EXCLUSION_K{NO:(ARG)}
 
 
-;排他の場合RESULTに0を返し、戻る
+;배타의 경우 RESULT에 0을 돌려주어, 돌아온다
 IF RESULT
 	RETURN 0
 ENDIF
 
-;通常の口上
-;引数0
+;통상의 구상
+;인수 0
 IF !ARG:1
 	TRYCALLFORM KOJO_%ARGS%
-;引数1
+;인수 1
 ELSEIF ARG:1 == 1
 	TRYCALLFORM KOJO_%ARGS%(ARG:2)
-;引数5
+;인수 5
 ELSEIF ARG:1 == 5
 	TRYCALLFORM KOJO_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
 ENDIF
@@ -803,41 +803,41 @@ ENDIF
 RETURN RESULT
 
 ;-------------------------------------------------
-;口上存在判定@KOJO_CHECK
-;引数0のキャラに対して、NO=引数1のキャラは表示できる口上を持っているか返す
-;口上なしは0、一般口上有は1、専用口上の対象なら2を返す
+;구상 존재 판정@KOJO_CHECK
+;인수 0의 캐릭터에 대해서, NO=인수 1의 캐릭터는 표시할 수 있는 구상을 가지고 있을까 돌려준다
+;구상 없음은 0, 일반 구상유는 1, 전용 구상의 대상이라면 2를 돌려준다
 ;-------------------------------------------------
 @KOJO_CHECK(ARG, ARG:1)
 VARSET RESULT
 VARSET RESULTS
 TRYCALLFORM KOJO_K{ARG:1}
-;男あなた判定
-SIF NO:ARG == 0 && TALENT:ARG:オトコ && STRFIND(RESULTS, @"/MALEYOU/") >= 0
+;남 당신 판정
+SIF NO:ARG == 0 && TALENT:ARG:남자 && STRFIND(RESULTS, @"/MALEYOU/") >= 0
 	RETURN 2
-;女あなた判定
-SIF NO:ARG == 0 && !TALENT:ARG:オトコ && STRFIND(RESULTS, @"/FEMALEYOU/") >= 0
+;녀 당신 판정
+SIF NO:ARG == 0 && !TALENT:ARG:남자 && STRFIND(RESULTS, @"/FEMALEYOU/") >= 0
 	RETURN 2
-;ふたなりあなた判定
-SIF NO:ARG == 0 && TALENT:ARG:ふたなり && STRFIND(RESULTS, @"/TWINYOU/") >= 0
+;후타나리 당신 판정
+SIF NO:ARG == 0 && TALENT:ARG:후타나리 && STRFIND(RESULTS, @"/TWINYOU/") >= 0
 	RETURN 2
-;ちんこ付きあなた判定
+;고추 첨부 당신 판정
 SIF NO:ARG == 0 && PENIS(ARG) && STRFIND(RESULTS, @"/PENISYOU/") >= 0
 	RETURN 2
-;キャラ一致判定
+;캐릭터 일치 판정
 SIF STRFIND(RESULTS, @"/K{NO:ARG}/") >= 0
 	RETURN 2
-;男判定
-SIF TALENT:ARG:オトコ && STRFIND(RESULTS, @"/MALE/") >= 0
+;남 판정
+SIF TALENT:ARG:남자 && STRFIND(RESULTS, @"/MALE/") >= 0
 	RETURN 2
-;女判定
-SIF !TALENT:ARG:オトコ && STRFIND(RESULTS, @"/FEMALE/") >= 0
+;녀 판정
+SIF !TALENT:ARG:남자 && STRFIND(RESULTS, @"/FEMALE/") >= 0
 	RETURN 2
-;ふたなり判定
-SIF TALENT:ARG:ふたなり && STRFIND(RESULTS, @"/TWIN/") >= 0
+;후타나리 판정
+SIF TALENT:ARG:후타나리 && STRFIND(RESULTS, @"/TWIN/") >= 0
 	RETURN 2
-;ちんこ付き判定
+;고추 첨부 판정
 SIF PENIS(ARG) && STRFIND(RESULTS, @"/PENIS/") >= 0
 	RETURN 2
-;汎用の判定をして戻る
+;범용의 판정을 해 돌아온다
 RETURN RESULT
 

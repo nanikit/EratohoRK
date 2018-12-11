@@ -1,199 +1,199 @@
 ﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;雛口上　羞恥系アクション口上ファイル
+;병아리 구상  수치계 액션 구상 파일
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;################
-;羞恥系 ACT40～45
-;################
+;        
+;수치계 ACT40~45
+;        
 [SKIPSTART]
 	#TFLAG:ACT
-		40=自慰
-		41=秘貝開帳
-		42=自慰みせつけ
-		43=羞恥プレイ
-		44=野外プレイ
-		45=放尿
-		46=コスプレ(未実装))
-	#TFLAG:ACT分類 == 4に該当
-	#汎用リアクションにおいてはMENUMATCH(TFLAG:ACT, "羞恥")で拾う事が可能
-	#ACTによっては拒否が可能であったりなかったり
+		40=자위
+		41=비패개장
+		42=자위 과시하고
+		43=수치 플레이
+		44=야외 플레이
+		45=방뇨
+		46=코스프레(미실장))
+	#TFLAG:ACT 분류 == 4에 해당
+	#범용 리액션에 대해서는 MENUMATCH(TFLAG:ACT, "수치")로 줍는 것이 가능
+	#ACT에 따라서는 거부가 가능하고 있거나 않기도 하고
 [SKIPEND]
 
 
 ;/////////////
-;ACT40, 自慰//
+;ACT40, 자위//
 ;/////////////
 [SKIPSTART]
-	#オナニーしてみせろと命令する
-	#この段階で命令に従うか否かは未定
-	#REACT分類が消極的従う/平然と従う/積極的従う/受け入れる以外の場合は、全てREACT分類"拒否"扱い
-	#ターン方針が"異常"だと発生しない
-	#押し倒し中である場合は発生しない
-	#すでに自慰中である場合は発生しない
-	#TEQUIP(縄/三角木馬)装着中には発生しない
-	#性交中/性交奉仕中には発生しない
-	#このACTに派生はない
+	#자위 해 보여라라고 명령한다
+	#이 단계에서 명령에 따르는지 아닌지는 미정
+	#REACT 분류가 소극적 따른다/태연하게 따른다/적극적 따른다/받아들이는 이외의 경우는, 모두 REACT 분류 "거부"취급
+	#턴 방침이 "이상"이라면 발생하지 않는다
+	#밀어 넘어뜨리기중인 경우는 발생하지 않는다
+	#벌써 자위중인 경우는 발생하지 않는다
+	#TEQUIP(줄/삼각 목마) 장착중에는 발생하지 않는다
+	#성교중/성교 봉사중에는 발생하지 않는다
+	#이 ACT에 파생은 없다
 
-	*地の文に分岐はなし
-	*@TARGET_DESCRIPTIONで状況描写が入る場合あり
-	*調教対象のペニスの有無、ペニス無しの場合はペニスバンドの有無による書き分けが考えられる
-	*調教対象がオトコであれば快Ｂは発生しない
+	*지문에 분기는 없음
+	*@TARGET_DESCRIPTION로 상황 묘사가 들어가는 경우 있어
+	*조교 대상의 페니스의 유무, 페니스 없음의 경우는 페니스 밴드의 유무에 의한 나누어 쓰고가 생각된다
+	*조교 대상이 남자이면 쾌B는 발생하지 않는다
 [SKIPEND]
 @KOJO_MALE_ACT_K39_40
 
-;調教対象がオトコである場合 //オトコ用口上なので本来は必要ない条件。でも保険はかけておきたい的なアレ
+;조교 대상이 남자인 경우 //남자용 구상인 것으로 본래는 필요없는 조건. 그렇지만 보험은 들어 두고 싶은적인 저것
 ;==========================
-IF TALENT:MASTER:オトコ && PENIS(MASTER)
-	;初回 //オナホ装着中なら弾く
+IF TALENT:MASTER:남자 && PENIS(MASTER)
+	;첫회 //오나홀 장착중이라면 연주한다
 	;====
-	IF !TEQUIP:オナホール && FIRSTACT(0)
-		;調教対象に自慰経験アリ
-		IF EXP:MASTER:自慰経験 > 0 || EXP:MASTER:調教自慰経験 > 0
+	IF !TEQUIP:오나홀 && FIRSTACT(0)
+		;조교 대상으로 자위 경험 있음
+		IF EXP:MASTER:자위경험 > 0 || EXP:MASTER:조교자위경험 > 0
 			{
-			PRINTFORMW 「さて、自分でするところを見せて\@ 
-			GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
-			? もらおうかしら # もらいましょうか \@」
+			PRINTFORMW 「그런데, 스스로 하는 곳을 보여 줘\@ 
+			GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+			? 받을까# 받을까요\@」
 			}
 			{
-			PRINTFORMW 「別に初めてって訳じゃない\@ 
-			GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
-			? ないでしょう # ないですよね \@？」
+			PRINTFORMW 「별로 처음이라는 것이 아니다\@ 
+			GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+			? 없을 것입니다# 없지요\@？」
 			}
 			{
-			PRINTFORMW 「人前でした経験があるかどうかは知\@ 
-			GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
-			? らないけど # りませんけど\@」
+			PRINTFORMW 「남의 앞이었습니다 경험이 있을지 어떨지는 지\@ 
+			GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+			? 등 없지만# 선이지만\@」
 			}
-		;調教対象に自慰経験無し
+		;조교 대상으로 자위 경험 없음
 		ELSE
 			{
 			CALL HTMLPRINTW(
-			@"「え？ もしかして…%HTMLFONT("<b>『初めて』</b>", , COLOR2_K39("WHITE"))%" + 
-			@"\@ GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? なの # なんですか \@？」")
+			@"「에? 혹시…%HTMLFONT("<b>『처음』</b>", , COLOR2_K39("WHITE"))%" + 
+			@"\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 야# 입니까\@？」")
 			}
 			{
-			PRINTFORMW 「男の\@ 
-			TALENT:MASTER:小柄 
-			? 子 
-			# 人 
-			\@は皆、早い段階からこういう事してるものと思っていた\@ 
-			GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
-			? んだけど 
-			# のですけど \@…」
+			PRINTFORMW 「남자의\@ 
+			TALENT:MASTER:작은체형 
+			? 자
+			# 인
+			\@는 모두, 빠른 단계로부터 이런 일 하고 있는 것이라고 생각하고 있었다\@ 
+			GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+			? 응이지만
+			# 의 것이지만\@…」
 			}
 			{
-			PRINTFORMW 「あ、でも……これってある意味、酷い偏見\@ 
-			GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) ? よね # ですよね \@」
+			PRINTFORMW 「아, 그렇지만…… 이것은 어느 의미, 심한 편견\@ 
+			GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 군요# 군요\@」
 			}
 		ENDIF
-		CALL FADE_TO_CLEARLINE(10, "「ふふ……」")
+		CALL FADE_TO_CLEARLINE(10, "「후후……」")
 		RETURN 1
 	ENDIF
 
-	;オナホで初回 //調教対象に自慰経験がある場合に限定
+	;오나홀로 첫회 //조교 대상으로 자위 경험이 있는 경우에 한정
 	;============
-	IF TEQUIP:オナホール && GROUPMATCH(1, EXP:MASTER:自慰経験, EXP:MASTER:調教自慰経験) > 1 && FIRSTACT(1)
+	IF TEQUIP:오나홀 && GROUPMATCH(1, EXP:MASTER:자위경험, EXP:MASTER:조교자위경험) > 1 && FIRSTACT(1)
 		{
-		PRINTFORMW 「いい機会\@ 
-		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
-		? だ 
-		# です 
-		\@から、その、えっと……オナホール\@ 
-		!GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
-		? ですか 
+		PRINTFORMW 「좋을 기회\@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 다
+		# 입니다
+		\@로부터, 그, 엣또…… 오나홀\@ 
+		!GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 입니까
 		# 
 		\@？」
 		}
 		{
-		PRINTFORMW 「それを使って、自分てシてみせてもら\@ 
-		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
-		? おうかしら # いましょうか \@」
+		PRINTFORMW 「그것을 사용해, 자신이라고 시라고 등\@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 왕인가# 있을까요\@」
 		}
 		{
-		PRINTFORMW 「それが、その道具本来の使い方なん\@ 
-		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
-		? だろうし。ね？ 
-		# でしょうし \@」
+		PRINTFORMW 「그것이, 그 도구 본래의 사용법\@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 일 것이고. 저기?
+		# 일 것이고\@」
 		}
 		RETURN 1
 	ENDIF
 
-	;お仕置きモード //ONCEで調教内に一度のみ表示
+	;벌모드 //ONCE로 조교내에 한 번만 표시
 	;==============
-	IF TFLAG:お仕置きフラグ && ONCEACT(0)
-		;好意、好感度で派生
-		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-			PRINTFORMW 「ほら、自分でシてみせて」
-			PRINTFORMW 「これはお仕置きなんだから、ちゃんとしないと駄目よ？」
+	IF TFLAG:벌플래그 && ONCEACT(0)
+		;호의, 호감도로 파생
+		IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+			PRINTFORMW 「이봐요, 스스로 시라고 보여」
+			PRINTFORMW 「이것은 벌이니까, 제대로 하지 않으면 안 돼요?」
 		ELSE
-			PRINTFORMW 「さぁ、自慰をしてください」
-			PRINTFORMW 「恥ずかしがっても許してあげませんよ…？」
+			PRINTFORMW 「자, 자위를 해 주세요」
+			PRINTFORMW 「부끄러워해도 허락해 주지 않아요…?」
 		ENDIF
-		CALL FADE_TO_CLEARLINE(10, "「ふふふ……」")
+		CALL FADE_TO_CLEARLINE(10, "「후후후……」")
 		RETURN 1
 	ENDIF
 
 	[SKIPSTART]
-	//現在の仕様だとすでに自慰中の場合は実行判定で規制される。即ち、発生し得ない！
-	//ただこれについては、調教対象がイきそうな場合にのみ等、一部条件下に於いてはACT_ABLEを通しても良いような気がしてる
+	//현재의 사양이라면 벌써 자위중의 경우는 실행 판정으로 규제된다. 즉, 발생 할 수 없다!
+	//다만 이것에 대해서는, 조교 대상이 갈 것 같은 경우에게만 등, 일부 조건하에 있어서는 ACT_ABLE를 통해도 좋은 것 같은 생각이 들고 있다
 
-	;すでに自慰中かつ調教対象がイキそうかつ我慢フラグ無しの場合
+	;벌써 자위중 또한 조교 대상이 갈 것 같고 인내 플래그 없음의 경우
 	;==========================================================
-	IF TCVAR:MASTER:イきそう && !TCVAR:MASTER:我慢 && GETBIT(TEQUIP:自慰中, 0)
-		;好意、好感度で派生
-		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-			PRINTFORMW 「……そんなに激しくシゴいちゃって」
-			CALL HTMLPRINTW(@「いいよ……最期まで見ててあげる…%HTML_PS_K39()%」")
+	IF TCVAR:MASTER:행그렇게 && ! TCVAR:MASTER:인내 && GETBIT(TEQUIP:자위중, 0)
+		;호의, 호감도로 파생
+		IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+			PRINTFORMW 「…… 그렇게 격렬하게 훑어 버려」
+			CALL HTMLPRINTW(@「좋아…… 최후까지 보고 있어 주는…%HTML_PS_K39()%」")
 		ELSE
-			PRINTFORMW 「そんなに激しく扱くものなんですね？」
-			PRINTFORMW 「私もなんだか変な気持ちになってしまいます…」
+			PRINTFORMW 「그렇게 격렬하게 잡아당기는 것이군요?」
+			PRINTFORMW 「나도 왠지 이상한 기분이 되어 버립니다…」
 		ENDIF
 		RETURN 1
 	ENDIF
 	[SKIPEND]
 
-	;調教者も自慰中
+	;조교자도 자위중
 	;==============
-	IF GETBIT(TEQUIP:自慰中, 1)
-		;好意、好感度で派生
-		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-			PRINTFORMW 「ねぇどうせなら…、%CNAME(MASTER, TARGET)%も自分でシてみせてよ」
-			PRINTFORMW 「私一人でよくなっちゃうのも、なんかアレだし…」
+	IF GETBIT(TEQUIP:자위중, 1)
+		;호의, 호감도로 파생
+		IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+			PRINTFORMW 「응 어차피라면…,%CNAME(MASTER, TARGET)%도 스스로 시라고 보여요」
+			PRINTFORMW 「나 혼자로 좋아져 버리는 것도, 뭔가 저것이고…」
 		ELSE
-			CALL HTMLPRINTW(@"「見てるだけではつまらないですよね？ ふふ…%HTML_PS_K39()%」")
-			PRINTFORMW 「いいですよ。%CNAME(MASTER, TARGET)%が自分でするところ、私に見せて下さい」
+			CALL HTMLPRINTW(@"「보고 있는 것 만으로는 시시하지요? 후후…%HTML_PS_K39()%」")
+			PRINTFORMW 「좋아요.%CNAME(MASTER, TARGET)%가 스스로 하는 곳, 나에게 보이게 해 주세요」
 		ENDIF
 		RETURN 1
 	ENDIF
 
-	;オナホール装着中
+	;오나홀 장착중
 	;================
-	IF TEQUIP:オナホール
-		;好意、好感度で派生
-		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-			PRINTFORMW 「ほら、自分でシてみせて？」
-			CALL HTMLPRINTW(@"「ソレを使ってどうやるのか、じっくり見させてもらうから%HTML_PS_K39()%」")
+	IF TEQUIP:오나홀
+		;호의, 호감도로 파생
+		IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+			PRINTFORMW 「이봐요, 스스로 시라고 보여?」
+			CALL HTMLPRINTW(@"「그것을 사용해 어떻게 하는지, 차분히 보게 해 받기 때문에%HTML_PS_K39()%」")
 		ELSE
-			PRINTFORMW 「さ、ソレで扱いて見せてください」
-			PRINTFORMW 「今更恥ずかしがる事なんてないんですよ？」
-			CALL FADE_TO_CLEARLINE(15, "「ふふ……」")
+			PRINTFORMW 「자, 그래서 다뤄 보여 주세요」
+			PRINTFORMW 「이제 와서 부끄러워하는 일 같은거 없어요?」
+			CALL FADE_TO_CLEARLINE(15, "「후후……」")
 		ENDIF
 		RETURN 1
 	ENDIF
 
-	;その他・条件なし //汎用ACTにはパスしない
+	;그 외·조건 없음 //범용 ACT에는 패스하지 않는다
 	;================
-	IF 口上記入チェック(100)
-		;好意、好感度で派生
-		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-			PRINTFORMW 「ねぇ、自分でシてみせて？」
-			PRINTFORM 「%CNAME(MASTER, TARGET)%がイクまで、ちゃんと見ててあげるから
+	IF 구상기입체크(100)
+		;호의, 호감도로 파생
+		IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+			PRINTFORMW 「저기, 스스로 시라고 보여?」
+			PRINTFORM 「%CNAME(MASTER, TARGET)%가 갈 때까지, 분명하게 보고 있어 주기 때문에
 		ELSE
-			PRINTFORMW 「では、自慰をしてみせてください」
-			PRINTFORM 「どういう風にするのか、じっくり見させてもらいます
+			PRINTFORMW 「그럼, 자위를 해 보여 주세요」
+			PRINTFORM 「어떤 식으로 하는지, 차분히 보게 해 받습니다
 		ENDIF
 		CALL PRINT_SYMBOL_K39
 		RETURN 1
@@ -202,94 +202,94 @@ ENDIF
 
 
 ;/////////////////
-;ACT41, 秘貝開帳//
+;ACT41, 비패개장//
 ;/////////////////
 [SKIPSTART]
-	#調教者が調教対象の秘貝を開帳する。所謂「くぱぁ」
-	#調教対象がオトコの場合は発生しない
-	#TFLAG:お仕置きフラグが立っていると発生しない
-	#ターン方針が"異常"の場合は発生しない
-	#TEQUIP:三角木馬装着中は発生しない
-	#押し倒し中は発生しない
-	#性交中/性交奉仕中は発生しない
-	#このACTに派生はない
-	#現在リアクション後の@ACTION_APPLY2に処理なし
+	#조교자가 조교 대상의 비패를 개장 한다. 소위 「쿠빠아」
+	#조교 대상이 남자의 경우는 발생하지 않는다
+	#TFLAG:벌플래그가 서 있으면 발생하지 않는다
+	#턴 방침이 "이상"의 경우는 발생하지 않는다
+	#TEQUIP:삼각 목마 장착중은 발생하지 않는다
+	#밀어 넘어뜨리기중은 발생하지 않는다
+	#성교중/성교 봉사중은 발생하지 않는다
+	#이 ACT에 파생은 없다
+	#현재 리액션 후의@ACTION_APPLY2에 처리 없음
 
-	*TEQUIP(顔面騎乗/自慰中)は解除される
-	*下半身全部強制脱衣の処理あり
+	*TEQUIP(안면 승마/자위중)은 해제된다
+	*하반신 전부 강제 탈의의 처리 있어
 [SKIPEND]
 @KOJO_MALE_ACT_K39_41
-;オトコ用口上なので不要
+;남자용 구상인 것으로 불요
 RETURN 0
 
 
 ;/////////////////////
-;ACT42, 自慰見せつけ//
+;ACT42, 자위 과시하고//
 ;/////////////////////
 [SKIPSTART]
-	#調教者が見せ付けるように自慰を始める
-	#TFLAG:お仕置きフラグが立っていると発生しない
-	#押し倒し中には発生しない
-	#調教者がすでに自慰中である場合は発生しない
-	#性交中/性交奉仕中には発生しない
+	#조교자가 과시하도록(듯이) 자위를 시작한다
+	#TFLAG:벌플래그가 서 있으면 발생하지 않는다
+	#밀어 넘어뜨리기중에는 발생하지 않는다
+	#조교자가 벌써 자위중인 경우는 발생하지 않는다
+	#성교중/성교 봉사중에는 발생하지 않는다
 
-	*調教者欲望、技巧、調教レベル、調教者技巧、器用な指先素質に応じて快Ｃ/快ＢSOURCE増加
-	*バイブ所持の場合の処理はv1.020時点では封印されている
+	*조교자 욕망, 기교, 조교 레벨, 조교자 기교, 기묘한손가락소질에 응해 쾌C/쾌BSOURCE 증가
+	*바이브 소지의 경우의 처리는 v1. 020 시점에서는 봉인되고 있다
 [SKIPEND]
 @KOJO_MALE_ACT_K39_42
 
-;調教者にペニスがある場合もしくは調教者がペニスバンド装着中である場合
-SIF PENIS(TARGET) || TEQUIP:調教者ペニスバンド
+;조교자에게 페니스가 있는 경우 혹은 조교자가 페니스 밴드 장착중인 경우
+SIF PENIS(TARGET) || TEQUIP:조교자페니스밴드
 	RETURN 0
 
-;調教者にペニスがない場合
+;조교자에게 페니스가 없는 경우
 ;========================
 IF !PENIS(TARGET)
-	;初回
+	;첫회
 	;====
 	IF FIRSTACT(0)
 		{
-		PRINTFORMW 「こんなことするトコ%CNAME(MASTER, TARGET)%に見られるのは、これが初めて\@ 
-		GET_KFLAG_K39("相思相愛", (FLAG:ご主人様)) 
-		? よね # ですね \@…」
+		PRINTFORMW 「이런 일 하는 곳%CNAME(MASTER, TARGET)%로 보여지는 것은, 이것이 처음\@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 군요# 군요\@…」
 		}
-		;好意、好感度で派生
-		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-			PRINTFORML 「まぁ確かに…、ちょっと恥ずかしいけど」
-			PRINTFORMW 「どうせなら、しっかり見ていて。でないと私…、馬鹿みたいだし……」
+		;호의, 호감도로 파생
+		IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+			PRINTFORML 「뭐 확실히…, 조금 부끄럽지만」
+			PRINTFORMW 「어차피라면, 확실히 보고 있어. 그렇지 않으면 나…, 바보 같은이고……」
 		ELSE
-			PRINTFORMW 「この厄神のいやらしい姿、しっかり見ていて下さいね……」
+			PRINTFORMW 「이 액신의 추잡한 모습, 확실히 보고 있어 주세요……」
 		ENDIF
 		RETURN 1
 	ENDIF
 
-	;調教対象も自慰中
+	;조교 대상도 자위중
 	;================
-	IF GETBIT(TEQUIP:自慰中, 0)
-		;好意、好感度で派生
-		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-			PRINTFORMW 「見せ合いっこなんて変態みたい…」
-			PRINTFORMW 「でも、%RAND_SPLIT("どうしようもな/凄")%く興奮しちゃうの。ホント駄目な神様ね、私……」
-		ELSEIF AFFECTION("溺愛")
-			PRINTFORMW 「こんなの見てたら私、もう我慢できません…」
-			PRINTFORMW 「\@ !RAND:3 ? あの…、 # \@%CNAME(MASTER, TARGET)%は、こんな私を軽蔑しますか…？」
+	IF GETBIT(TEQUIP:자위중, 0)
+		;호의, 호감도로 파생
+		IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+			PRINTFORMW 「서로 보여 진함 같은거 변태같다…」
+			PRINTFORMW 「그렇지만,%RAND_SPLIT("어떻게 하지도/처")%구흥분해 버려. 정말 몹쓸 신님이군요, 나……」
+		ELSEIF AFFECTION("몹시 사랑함")
+			PRINTFORMW 「이런 것 보고 있으면 나, 이제 참을 수 없습니다…」
+			PRINTFORMW 「\@ !RAND:3 ? 저…,# \@%CNAME(MASTER, TARGET)%는, 이런 나를 경멸합니까…?」
 		ELSE
-			CALL HTMLPRINTW(@"「%CNAME(MASTER, TARGET)%一人にさせておく訳にもいきませんね%HTML_PS_K39()%」")
-			PRINTFORMW 「さぁ、私が自分でするところも見せてあげます……」
+			CALL HTMLPRINTW(@"「%CNAME(MASTER, TARGET)%한사람에 하게 할 수도 없네요%HTML_PS_K39()%」")
+			PRINTFORMW 「자, 내가 스스로 하는 곳도 보여 줍니다……」
 		ENDIF
 		RETURN 1
 	ENDIF
 
-	;その他・条件なし //汎用ACTにはパスしない
+	;그 외·조건 없음 //범용 ACT에는 패스하지 않는다
 	;================
-	IF 口上記入チェック(100)
-		;好意、好感度で派生
-		IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-			PRINTFORMW 「人前で、自分でして興奮しちゃうなんて最低よね…」
-			PRINTFORMW 「でも、それでもいいの。もう止められないの…」
+	IF 구상기입체크(100)
+		;호의, 호감도로 파생
+		IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+			PRINTFORMW 「남의 앞에서, 스스로 해 흥분해 버린다니 최악이어요…」
+			PRINTFORMW 「그렇지만, 그런데도 좋은거야. 이제(벌써) 멈출 수 없는거야…」
 		ELSE
-			PRINTFORMW 「\@ TENSION(TARGET, 8) == "高い" ? うふ、 # \@目を逸らしては駄目ですよ？」
-			PRINTFORMW 「私が自分で慰める情けない姿、しっかり見て下さいね…」
+			PRINTFORMW 「\@ TENSION(TARGET, 8) == "높다" ? 우대신,# \@눈을 피해서는 안됩니다?」
+			PRINTFORMW 「내가 스스로 위로하는 한심한 모습, 확실히 봐 주세요…」
 		ENDIF
 		RETURN 1
 	ENDIF
@@ -297,226 +297,226 @@ ENDIF
 
 
 ;///////////////////
-;ACT43, 羞恥プレイ//
+;ACT43, 수치 플레이//
 ;///////////////////
 [SKIPSTART]
-	#調教対象を大鏡の前に連れて行く
-	#TFLAG:お仕置きフラグが立っていると発生しない
-	#ターン方針が"異常"だと発生しない
-	#押し倒し中には発生しない
-	#TEQUIP:三角木馬装着中には発生しない
-	#性交中/性交奉仕中には発生しない
-	#既に羞恥プレイ中なら、羞恥プレイ終了になる
+	#조교 대상을 대거울의 전에 데리고 간다
+	#TFLAG:벌플래그가 서 있으면 발생하지 않는다
+	#턴 방침이 "이상"이라면 발생하지 않는다
+	#밀어 넘어뜨리기중에는 발생하지 않는다
+	#TEQUIP:삼각 목마 장착중에는 발생하지 않는다
+	#성교중/성교 봉사중에는 발생하지 않는다
+	#이미 수치 플레이중이라면, 수치 플레이 종료가 된다
 [SKIPEND]
-@KOJO_MALE_ACT_K39_43 ;TFLAG:ACT派生(0=開始/1=終了)
+@KOJO_MALE_ACT_K39_43 ;TFLAG:ACT 파생(0=개시/1=종료)
 #LOCALSIZE 1
 VARSET LOCAL
-LOCAL:0 = GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+LOCAL:0 = GET_KFLAG_K39("상사상애", (FLAG:주인님))
 
-;ACT43_0, 羞恥プレイ開始
+;ACT43_0, 수치 플레이 개시
 ;=======================
-IF !TFLAG:ACT派生
-	;アイマスク装着中
+IF !TFLAG:ACT파생
+	;아이마스크 장착중
 	;================
-	IF TEQUIP:アイマスク
+	IF TEQUIP:아이마스크
 		{
 		PRINTFORMW 「\@ 
 		LOCAL:0 
-		? ねぇ、判る 
-		# 判りますか 
-		\@？ %CNAME(MASTER, TARGET)%は今、鏡の前にいる\@ 
+		? 응, 안다
+		# 압니까
+		\@？ %CNAME(MASTER, TARGET)%는 지금, 거울의 전에 있다\@ 
 		LOCAL:0 
-		? の 
-		# んです \@」
+		? 의
+		# 응입니다\@」
 		}
 		{
-		PRINTFORMW 「目隠しで何も見えないでしょうけど…、自分がどういう状況なのかは知っておいて\@ 
+		PRINTFORMW 「눈가리개로 아무것도 안보이겠지만…, 자신이 어떤 상황인 것인가는 알아 둬\@ 
 		!LOCAL:0 
-		? ください 
+		? 주세요
 		# \@」
 		}
 		{
-		PRINTFORMW 「想像力\@ 
+		PRINTFORMW 「상상력\@ 
 		FIRSTACT(0) 
-		? が豊かなら 
-		# 次第で 
-		\@、これはこれで愉しめる状況\@ 
+		? 가 풍부하면
+		# 나름으로
+		\@, 이것은 이것대로 즐길 수 있는 상황\@ 
 		LOCAL:0 
-		? なんじゃないかしら？ 
-		# ではあると思いますけど \@」
+		? 가 아닐까?
+		# 이다고 생각합니다만\@」
 		}
-		CALL FADE_TO_CLEARLINE(15, @"「\@ FIRSTACT(1) ? ふふ # くすくす \@……」")
+		CALL FADE_TO_CLEARLINE(15, @"「\@ FIRSTACT(1) ? 후후# 킥킥\@……」")
 		RETURN 1
 	ENDIF
 
-	;その他・好意、好感度で派生
+	;그 외·호의, 호감도로 파생
 	;==========================
-	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
+	IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
 		SELECTCASE RANDACT(2, 0)
 			CASE 0
-				CALL FADEIN(8, "「鏡から目を逸らしては駄目よ」")
-				PRINTFORMW 「ほら、もっと良く見て。どう？　ちょっと興奮してきたんじゃない？」
-				CALL FADE_TO_CLEARLINE(15, "「クスクス…」")
+				CALL FADEIN(8, "「거울로부터 눈을 피해서는 안 돼요」")
+				PRINTFORMW 「이봐요, 좀 더 자주(잘) 봐. 어때?   조금 흥분해 왔지 않아?」
+				CALL FADE_TO_CLEARLINE(15, "「킥킥…」")
 			CASE 1
-				PRINTFORMW 「ねぇ、こーいうのって興奮しない？」
-				PRINTFORMW 「私は凄く興奮しちゃう。人に見られてるみたいで、ゾクゾクしちゃうの……」
+				PRINTFORMW 「저기, 이런 것은 흥분하지 않아?」
+				PRINTFORMW 「나는 굉장히 흥분해 버린다. 사람에게 보여지고 있는 것 같아, 오슬오슬 해 버려……」
 		ENDSELECT
 	ELSE
-		PRINTFORMW 「ほら、鏡を見て下さい…」
-		PRINTFORMW 「目を逸らさず、ちゃんと見てないと駄目ですよ\@ TENSION(TARGET, 8) == "高い" ? ？ # …… \@」
+		PRINTFORMW 「이봐요, 거울을 봐 주세요…」
+		PRINTFORMW 「눈을 피하지 않고, 분명하게 보지 않았다고 안됩니다\@ TENSION(TARGET, 8) == "높다" ? ？ # …… \@」
 	ENDIF
 	RETURN 1
 ENDIF
 
-;ACT43_1, 羞恥プレイ終了
+;ACT43_1, 수치 플레이 종료
 ;=======================
-IF TFLAG:ACT派生 == 1
-	PRINTFORMW 「愉しんでもらえた\@ LOCAL:0 ? かしら # でしょうか \@」
-	;調教対象の状態変化によって派生
+IF TFLAG:ACT파생 == 1
+	PRINTFORMW 「즐겨 받을 수 있었다\@ LOCAL:0 ? 일까# 입니까\@」
+	;조교 대상 상태 변화에 의해 파생
 	SELECTCASE GET_CONDITION(MASTER)
-		CASE "疲弊", "衰弱"
-			PRINTFORMW 「…って。随分やつれ\@ LOCAL:0 ? ちゃったわ # てしまいました \@ね」
-		CASE "無気力"
+		CASE "피폐", "쇠약"
+			PRINTFORMW 「… 은. 상당히 여위고\@ LOCAL:0 ? 원# 라고 끝냈습니다\@군요」
+		CASE "무기력"
 			{
-			PRINTFORMW 「…って、どうした\@ 
+			PRINTFORMW 「… 읏, 어떻게 했다\@ 
 			LOCAL:0 
-			? の 
-			# んでしょう 
-			\@？ すっかり気の抜けた顔になっ\@ 
+			? 의
+			# 응이지요
+			\@? 완전히 김이 빠진 얼굴에\@ 
 			LOCAL:0 
-			? ちゃ 
-			# てしま 
-			\@って…」
+			?
+			# 라고 섬
+			\@는…」
 			}
-		CASE "朦朧"
-			CALL HTMLPRINTW(@"「あら？ 心ここにあらずって感じ\@ !LOCAL:0 ? です # \@ね…%HTML_PS_K39()%」")
-		CASE "情欲"
+		CASE "몽롱"
+			CALL HTMLPRINTW(@"「아라? 마음 여기에 있지 않고라는 느낌\@ !LOCAL:0 ? 입니다# \@군요…%HTML_PS_K39()%」")
+		CASE "정욕"
 			{
 			CALL HTMLPRINTW(
-			@"「\@ TENSION(TARGET, 8) == "高い" ? ふふ、 # \@興奮冷めやらぬって感じ" + 
-			@"\@ !LOCAL:0 ? です # \@ね？ 聞くだけ野暮だったかしら%HTML_PS_K39()%」")
+			@"「\@ TENSION(TARGET, 8) == "높다" ? 후후,# \@흥분 가시지 않은이라는 느낌" + 
+			@"\@ !LOCAL:0 ? 입니다# \@군요? (들)물을 뿐(만큼) 촌스러웠을까%HTML_PS_K39()%」")
 			}
-		CASE "怒り"
+		CASE "분노"
 			{
 			PRINTFORMW 「\@ LOCAL:0 
-			? なによ%RAND_SPLIT("ー/")%、 
-			# \@機嫌悪そう\@ 
+			? 뭐야%RAND_SPLIT("-/")%、 
+			# \@기분 나쁜 것 같다\@ 
 			!LOCAL:0 
-			? です 
+			? 입니다
 			# 
-			\@ね。そんなにこれが嫌だったの\@ 
-			!LOCAL:0 ? ですか # \@？」
+			\@군요. 그렇게 이것이 싫었어\@ 
+			!LOCAL:0 ? 입니까# \@？」
 			}
-		CASE "退屈"
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%にとっては、退屈なだけだったみたい\@ !LOCAL:0 ? です # \@ね…」
-		CASE "鬱屈"
-			PRINTFORMW 「んー。ちょっと様子がおかしい\@ LOCAL:0 ? わ # です \@ね……」
-		CASE "通常"
-			PRINTFORMW 「ふふ、お疲れさま\@ !LOCAL:0 ? でした # \@」
+		CASE "지루함"
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%에 있어서는, 지루할 뿐이었던 것 같다\@ !LOCAL:0 ? 입니다# \@군요…」
+		CASE "울적"
+			PRINTFORMW 「응─. 조금 모습이 이상함\@ LOCAL:0 ? 원# 입니다\@군요……」
+		CASE "통상"
+			PRINTFORMW 「후후, 수고 하셨습니다\@ !LOCAL:0 ? 였습니다# \@」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 
 ;///////////////////
-;ACT44, 野外プレイ//
+;ACT44, 야외 플레이//
 ;///////////////////
 [SKIPSTART]
-	#調教対象に首輪をつけて外に連れ出す
-	#ターン方針が"ソフト", "ノーマル"だと発生しない
-	#押し倒し中には発生しない
-	#TEQUIP(縄/三角木馬)装着中には発生しない
-	#性交中/性交奉仕中には発生しない
-	#既に野外プレイ中なら、野外プレイ終了になる
+	#조교 대상으로 목걸이를 입어 밖에 데리고 나간다
+	#턴 방침이 "소프트", "노멀"이라면 발생하지 않는다
+	#밀어 넘어뜨리기중에는 발생하지 않는다
+	#TEQUIP(줄/삼각 목마) 장착중에는 발생하지 않는다
+	#성교중/성교 봉사중에는 발생하지 않는다
+	#이미 야외 플레이중이라면, 야외 플레이 종료가 된다
 [SKIPEND]
-@KOJO_MALE_ACT_K39_44 ;TFLAG:ACT派生(0=開始/1=終了)
+@KOJO_MALE_ACT_K39_44 ;TFLAG:ACT 파생(0=개시/1=종료)
 
-;ACT44_0, 野外プレイ開始
+;ACT44_0, 야외 플레이 개시
 ;=======================
-IF !TFLAG:ACT派生 && FLAG:オートモード表示設定 < 1 ;オートモード簡略表示なら弾く
-	;好意、好感度で派生
-	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-		PRINTFORMW 「ねぇ、たまには気分を変えてちょっと出掛けてみる？」
-		PRINTFORMW 「行きたいところがあれば言ってね」
+IF !TFLAG:ACT파생 && FLAG:오토모드표시설정 < 1 ;오토 모드 간략 표시라면 연주한다
+	;호의, 호감도로 파생
+	IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+		PRINTFORMW 「저기, 가끔 씩은 기분을 바꾸어 조금 나가 봐?」
+		PRINTFORMW 「가고 싶은 곳이 있으면 말해」
 		PRINTL
-		PRINTFORMDL [0] 命蓮寺
-		PRINTFORMDL [1] 魔法の森
+		PRINTFORMDL [0] 명련사
+		PRINTFORMDL [1] 마법의 숲
 		PRINTL
 		CALL INPUTINTD(0, 1)
-		;オートなら止める
-		SIF FLAG:オートモード > 0
+		;오토라면 멈춘다
+		SIF FLAG:오토모드 > 0
 			FORCEWAIT
 		SELECTCASE RESULT
 			CASE 0
-				PRINTFORMW 「命蓮寺って……ねぇ、お寺でえっちな事がシたいの？」
-				PRINTFORMW 「もうっ、ほんとうにいやらしい人ね……」
+				PRINTFORMW 「명련사는……, 절에서 엣치한 일이 시 싶은거야?」
+				PRINTFORMW 「이제(벌써), 정말로 추잡한 사람이네……」
 			CASE 1
-				PRINTFORMW 「魔法の森にいきたいの？ でもあそこは瘴気が、って…」
-				PRINTFORMW 「私がなんとかするとか思ってる？ ちょっと厄神を勘違いしてない？ それ…」
+				PRINTFORMW 「마법의 숲에 가고 싶은거야? 그렇지만 저기는 장독이, 는…」
+				PRINTFORMW 「내가 어떻게든 한다든가 생각하고 있어? 조금 액신을 착각 하고 있지 않아? 그것…」
 		ENDSELECT
 	ELSE
-		PRINTFORMW 「たまには外出するのもいいと思いませんか？」
-		PRINTFORMW 「行きたいところがあれば言ってくださいね」
+		PRINTFORMW 「가끔 씩은 외출하는 것도 좋다고 생각하지 않습니까?」
+		PRINTFORMW 「가고 싶은 곳이 있으면 말해 주세요」
 		PRINTL
-		PRINTL [0] 霧の湖
-		PRINTL [1] 香霖堂
+		PRINTL [0] 안개의 호수
+		PRINTL [1] 향림당
 		PRINTL
 		CALL INPUTINTD(0, 1)
-		;オートなら止める
-		SIF FLAG:オートモード > 0
+		;오토라면 멈춘다
+		SIF FLAG:오토모드 > 0
 			FORCEWAIT
 		SELECTCASE RESULT
 			CASE 0
-				PRINTFORMW 「霧の湖、ですか。 釣りでもしたいんでしょうか？」
-				PRINTFORMW 「それもいいですけど、お愉しみのあとにしてもらいますよ？ うふ…」
+				PRINTFORMW 「안개의 호수, 입니까. 낚시라도 하고 싶을까요?」
+				PRINTFORMW 「그것도 좋지만, 즐거움이 뒤로 해 받아요? 우후…」
 			CASE 1
-				PRINTFORML 「香霖堂って確か古道具屋でしたか。何か買いたいものでもあるんですか？」
-				PRINTFORMW 「それとも、ただ店主に見せつけたいとか？」
-				PRINTFORMW 「いやらしい人ですね♪ うふ…」
+				PRINTFORML 「향림당은 확실히 고물가게였습니까. 뭔가 사고 싶은 것이라도 있습니까?」
+				PRINTFORMW 「그렇지 않으면, 다만 점주에게 과시하고 싶다든가?」
+				PRINTFORMW 「추잡한 사람이군요♪우후…」
 		ENDSELECT
 	ENDIF
 	RETURN 1
 ENDIF
 
-;ACT44_1, 野外プレイ終了
+;ACT44_1, 야외 플레이 종료
 ;=======================
-IF TFLAG:ACT派生 == 1 && FLAG:オートモード表示設定 < 1 ;オートモード簡略表示なら弾く
-	;好意、好感度で派生
-	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-		PRINTFORMW 「ねぇ、どうだった？ %CNAME(MASTER, TARGET)%は愉しんでもらえたかしら？」
+IF TFLAG:ACT파생 == 1 && FLAG:오토모드표시설정 < 1 ;오토 모드 간략 표시라면 연주한다
+	;호의, 호감도로 파생
+	IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+		PRINTFORMW 「저기, 어땠어?%CNAME(MASTER, TARGET)%는 즐겨 받을 수 있었을까?」
 		PRINTL
-		PRINTFORMDL [0] 人に見られて興奮した！
-		PRINTFORMDL [1] 二人っきりで愛し合う方が好き
+		PRINTFORMDL [0] 명에게 보여져 흥분했다!
+		PRINTFORMDL [1] 단 둘이서 서로 사랑하는 (분)편이 좋아
 		PRINTL
 		CALL INPUTINTD(0, 1)
-		;オートなら止める
-		SIF FLAG:オートモード > 0
+		;오토라면 멈춘다
+		SIF FLAG:오토모드 > 0
 			FORCEWAIT
 		SELECTCASE RESULT
 			CASE 0
-				PRINTFORML 「うふっ、ほんとうにいやらしい人」
-				CALL HTMLPRINTW(@"「まぁ、私も人の事は言えないかもだけど…%HTML_PS_K39()%」")
+				PRINTFORML 「우훗, 정말로 추잡한 사람」
+				CALL HTMLPRINTW(@"「뭐, 나도 사람의 일은 말할 수 없을지도이지만…%HTML_PS_K39()%」")
 			CASE 1
-				PRINTFORML 「あら、そうなの…？」
-				PRINTFORMW 「それなら最初に言ってくれればいいのに…」
+				PRINTFORML 「아라, 그래…?」
+				PRINTFORMW 「그렇다면 최초로 말해 준다면 좋은데…」
 		ENDSELECT
 	ELSE
-		PRINTFORMW 「外はどうでした？」
-		PRINTFORMW 「愉しんでもらえたでしょうか？」
+		PRINTFORMW 「밖은 어땠습니다?」
+		PRINTFORMW 「즐겨 받을 수 있던 것입니까?」
 		PRINTL
-		PRINTFORMDL [0] また連れてって！
-		PRINTFORMDL [1] もう勘弁して…
+		PRINTFORMDL [0] 또 데려 가!
+		PRINTFORMDL [1] 이제(벌써) 용서해…
 		PRINTL
 		CALL INPUTINTD(0, 1)
-		;オートなら止める
-		SIF FLAG:オートモード > 0
+		;오토라면 멈춘다
+		SIF FLAG:오토모드 > 0
 			FORCEWAIT
 		SELECTCASE RESULT
 			CASE 0
-				PRINTFORML 「愉しんでもらえたみたいで何よりです」
-				CALL HTMLPRINTW(@"「いいですよ。また一緒に出かけましょうね%HTML_PS_K39()%」")
+				PRINTFORML 「즐겨 받을 수 있던 것 같고 최상입니다」
+				CALL HTMLPRINTW(@"「좋아요. 또 함께 나가요%HTML_PS_K39()%」")
 			CASE 1
-				PRINTFORMW 「そうですか…。いい気分転換になると思ったのですが……」
+				PRINTFORMW 「그렇습니까…. 좋은 기분 전환이 된다고 생각한 것입니다만……」
 		ENDSELECT
 	ENDIF
 	RETURN 1
@@ -524,59 +524,59 @@ ENDIF
 
 
 ;/////////////
-;ACT45, 放尿//
+;ACT45, 방뇨//
 ;/////////////
 [SKIPSTART]
-	#おしっこしてみせろと命令する
-	#この段階では命令に従うかどうか確定していない
-	#REACT分類が消極的従う/平然と従う/積極的従う/受け入れる以外の場合は、全てREACT分類"拒否"扱い
-	#ターン方針が"ソフト"だと発生しない
-	#TEQUIP(三角木馬/ペニスバンド)装着中には発生しない
-	#押し倒し中には発生しない
-	#性交中/性交奉仕中には発生しない
-	#尿意(BASE:MASTER:尿意)が5000以下だと発生しない
+	#오줌누어 보여라라고 명령한다
+	#이 단계에서는 명령에 따를지 어떨지 확정하고 있지 않다
+	#REACT 분류가 소극적 따른다/태연하게 따른다/적극적 따른다/받아들이는 이외의 경우는, 모두 REACT 분류 "거부"취급
+	#턴 방침이 "소프트"라면 발생하지 않는다
+	#TEQUIP(삼각 목마/페니스 밴드) 장착중에는 발생하지 않는다
+	#밀어 넘어뜨리기중에는 발생하지 않는다
+	#성교중/성교 봉사중에는 발생하지 않는다
+	#소변욕(BASE:MASTER:소변욕)이 5000 이하라면 발생하지 않는다
 
-	*調教対象の尿意ゲージがセットアップされるのはTALENT:MASTER:おもらし癖を所持している場合に限られる
-	*即ち、おもらし癖のない調教対象の場合、ACT自体が発生し得ない。はず…
+	*조교 대상의 소변욕 게이지가 셋업 되는 것은 TALENT:MASTER:소변버릇을 소지하고 있는 경우에 한정된다
+	*즉, 소변버릇이 없는 조교 대상의 경우, ACT 자체가 발생 할 수 없다. 일 것…
 [SKIPEND]
-@KOJO_MALE_ACT_K39_45 ;ACT派生なし
+@KOJO_MALE_ACT_K39_45 ;ACT 파생 없음
 #LOCALSIZE  1
 #LOCALSSIZE 1
 VARSET LOCAL
 VARSET LOCALS
-LOCAL:0   = GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-LOCALS:0 = 「\@ LOCAL:0 ? クスクス # ふふ \@……」
+LOCAL:0   = GET_KFLAG_K39("상사상애", (FLAG:주인님))
+LOCALS:0 = 「\@ LOCAL:0 ? 킥킥# 후후\@……」
 
-;調教対象がオトコの場合
+;조교 대상이 남자의 경우
 ;======================
-IF TALENT:MASTER:オトコ ;オトコ用口上なのでこの条件分岐は必須ではないが、この手の条件は書いておきたい的なアレ
-	;初回
+IF TALENT:MASTER:남자 ;남자용 구상인 것으로 이 조건 분기는 필수는 아니지만, 이 손의 조건은 써 두고 싶은적인 저것
+	;첫회
 	;====
 	IF FIRSTACT(0)
-		PRINTFORMW 「さて、ここでおしっこをしてもら\@ LOCAL:0 ? おうかしら # いましょうか \@」
+		PRINTFORMW 「그런데, 여기서 눌러 개를 해 등\@ LOCAL:0 ? 왕인가# 있을까요\@」
 		{
-		PRINTFORMW 「男の\@ 
-		TALENT:MASTER:小柄 
-		? 子 # 人 
-		\@がどういう風にするのか、じっくり鑑賞させて\@ 
+		PRINTFORMW 「남자의\@ 
+		TALENT:MASTER:작은체형 
+		? 자# 인
+		\@가 어떤 식으로 하는지, 차분히 감상시켜\@ 
 		LOCAL:0 
-		? 頂くわ # もらいます \@」
+		? 받아요# 받습니다\@」
 		}
-		;無茶なことを言う…感はまぁある
-		PRINTFORMW 「ま、そう\@ LOCAL:0 ? ねぇ # ですね \@。これも厄祓いの一環と思ってもらえれば」
+		;엉뚱한 말을 하는… 감은 아무튼 있다
+		PRINTFORMW 「뭐, 그렇게\@ LOCAL:0 ? 응# 군요\@. 이것도 액불제의 일환이라고 생각해 받을 수 있으면」
 		CALL FADE_TO_CLEARLINE(10, @"%LOCALS:0%")
 		WAIT
 		RETURN 1
 	ENDIF
 
-	;その他・好意、好感度で派生
+	;그 외·호의, 호감도로 파생
 	;==========================
-	IF GET_KFLAG_K39("相思相愛", (FLAG:ご主人様))
-		PRINTFORML 「ね、%CNAME(MASTER, TARGET)%がするとこ見せて」
-		PRINTFORMW 「あら、別に汚いなんて思わないわよ？」
+	IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+		PRINTFORML 「저기,%CNAME(MASTER, TARGET)%가 하는 곳 보여 줘」
+		PRINTFORMW 「아라, 별로 더럽다고 생각하지 않아요?」
 	ELSE
-		PRINTFORML 「ではここでしてみせてもらいましょうか」
-		PRINTFORMW 「これも厄を祓う為と思ってくださいね？」
+		PRINTFORML 「그럼 여기서 해 보여 받을까요」
+		PRINTFORMW 「이것도 액을 쫓기 때문에(위해)라고 생각해 주세요?」
 	ENDIF
 	CALL FADE_TO_CLEARLINE(10, @"%LOCALS%")
 	WAIT

@@ -1,154 +1,154 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;	アリス口上 ショップイベント口上ファイル
+;	앨리스 구상 숍 이벤트 구상 파일
 ;
-;	ショップから呼び出される口上をまとめたファイル
+;	숍으로부터 불려 가는 구상을 정리한 파일
 ;
 ;version		Reason
-;1.71@0503		EV110のMS化。EV111に加筆
-;1.71			@口上記入チェック仕様に
+;1. 71@0503		EV110의 MS화. EV111에 가필
+;1. 71			@구상 기입 체크 사양에
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
 ;========================================================================
-;ショップイベント口上
+;숍 이벤트 구상
 ;========================================================================
 
-;────────────────────────────────────
-;EV101, 衣装変更
-;────────────────────────────────────
-;・ショップから衣装変更を行った場合に表示
+;─
+;EV101, 의상 변경
+;─
+;·숍으로부터 의상 변경을 실시했을 경우에 표시
 ;-------------------------------------------------
 @KOJO_EVENT_K14_101(ARG)
 ;-------------------------------------------------
-;引数内訳…
+;인수 내역…
 ;ARG=
-;　一の位…（0, もう着てる、1, 着替えた、2, 恥ずかしくて着られない、3, 嫌がって着ない、9, 持ってない）
-;　十の位…（0, 通常、10, 半裸、20, 全裸、30, 下着無し）
-;　百の位…コスプレのために保留
-;　千の位…（0, 調教者, 1000, 調教対象）
-;　例（調教対象が恥ずかしがって全裸にできなかった＝1022）
+;  1의 위…(0, 이제(벌써) 입고 있다, 1, 갈아입은, 2, 부끄러워서 입을 수 없는, 3, 싫어해 입지 않는, 9, 가지고 있지 않다)
+;  10의 위…(0, 통상, 10, 반나체, 20, 전라, 30, 속옷 없음)
+;  백의 위… 코스프레를 위해서(때문에) 보류
+;  천의 위…(0, 조교자, 1000, 조교 대상)
+;  예(조교 대상이 부끄러워해 전라로 할 수 없었다=1022)
 ;-------------------------------------------------
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教者が着替えた
+;조교자가 갈아입었다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG < 1000 && (ARG % 10) == 1
+IF 구상기입체크(100) && ARG < 1000 && (ARG % 10) == 1
 	SELECTCASE ARG
-		;通常になった
+		;통상이 되었다
 		CASE 1
-			PRINTFORMW 「これが１番私らしいかしら､ね…？」
+			PRINTFORMW 「이것이 1번 나다울, 까요…?」
 			RETURN 1
-		;半裸になった
+		;반나체가 되었다
 		CASE 11
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%、こういう格好が趣味なのかしら…？」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%, 이런 모습이 취미인 것일까…?」
 			RETURN 1
-		;全裸になった
+		;전라가 되었다
 		CASE 21
-			IF TALENT:TARGET:妊娠 && TALENT:TARGET:ご主人様
-				PRINTFORML 「家の中とは言っても……」
-				PRINTFORMW 「妊婦が全裸でうろうろするのって、ちょっとどうかって気もするわ」
+			IF TALENT:TARGET:임신 && TALENT:TARGET:주인님
+				PRINTFORML 「집안이라고는 해도……」
+				PRINTFORMW 「임산부가 전라로 우왕좌왕하는 것은, 조금 부디 라는 생각도 들어요」
 			ELSE
-				PRINTFORMW 「…変態」
+				PRINTFORMW 「… 변태」
 			ENDIF
 			RETURN 1
-		;……すーすーする          現在のR#こ_Lでは実装されていない。将来的には復活する可能性は割りとある
+		;…… 스으스으 한다          현재의 R#와_L에서는 실장되어 있지 않다. 장래적으로는 부활할 가능성은 비교적 있다
 		;CASE 31
-		;	PRINTFORMW 「私にスカートのたくし上げをして欲しいのかしら…？」
+		;	PRINTFORMW 「나에게 스커트의 걷어올림을 해 주었으면 한 것일까…?」
 		;	RETURN 1
-		;その他
+		;그 외
 		CASEELSE
 			RETURN 0
 	ENDSELECT
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教者が恥ずかしがって着替えられない
+;조교자가 부끄러워해 갈아입을 수 없다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG < 1000 && (ARG % 10) == 2
+IF 구상기입체크(100) && ARG < 1000 && (ARG % 10) == 2
 	SELECTCASE ARG
-		;半裸だって恥ずかしい
+		;반나체라도 부끄럽다
 		CASE 12
-			PRINTFORMW 「%RAND_SPLIT(@"%CNAME(MASTER, TARGET)%…、バカなの？/嫌よ")%」
+			PRINTFORMW 「%RAND_SPLIT(@"%CNAME(MASTER, TARGET)%…、바보같아？/싫어요")%」
 			RETURN 1
-		;普段から全裸はちょっと……
+		;평상시부터 전라는 조금……
 		CASE 22
-			IF TALENT:TARGET:妊娠 && TALENT:TARGET:ご主人様
-				PRINTFORMW 「妊娠中の私に、普段から裸でいてくれなんて。そんな…」
-				PRINTFORMW 「ねぇ%CNAME(MASTER, TARGET)%…、いっぺん死んでみる？」
-			;この条件を成立させるのは難しい
-			ELSEIF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
-				PRINTFORMW 「私そんな変態じゃ、ない…」
+			IF TALENT:TARGET:임신 && TALENT:TARGET:주인님
+				PRINTFORMW 「임신중의 나에게, 평상시부터알몸으로 있어 줘는. 그런…」
+				PRINTFORMW 「저기%CNAME(MASTER, TARGET)%…, 한번 죽어 봐?」
+			;이 조건을 성립시키는 것은 어렵다
+			ELSEIF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「나 그런 변태가 아니다…」
 			ELSE
-				PRINTFORMW 「凄く馬鹿っぽいわ。お断りよ」
+				PRINTFORMW 「굉장히 바보 같아요. 거절이야」
 			ENDIF
 			RETURN 1
-		;パンツが無いから恥ずかしいもん！    現在は実装されていない
+		;팬츠가 없기 때문에 부끄러운 걸!     현재는 실장되어 있지 않다
 		;CASE 32
-		;	PRINTFORMW 「却下よ」
+		;	PRINTFORMW 「각하야」
 		;	RETURN 1
-		;その他
+		;그 외
 		CASEELSE
 			RETURN 0
 	ENDSELECT
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教者が嫌がって着替えられない
+;조교자가 싫어해 갈아입을 수 없다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG < 1000 && (ARG % 10) == 3
+IF 구상기입체크(100) && ARG < 1000 && (ARG % 10) == 3
 	SELECTCASE ARG
-		;半裸は嫌
+		;반나체는 싫어
 		CASE 13
-			PRINTFORMW 「%RAND_SPLIT("くだらないわね。お断りよ/嫌っ！")%」
+			PRINTFORMW 「%RAND_SPLIT("시시하네요. 거절이야/싫엇!")%」
 			RETURN 1
-		;普段から全裸なんて嫌
+		;평상시부터 전라 같은거 싫어
 		CASE 23
-			IF TALENT:TARGET:妊娠 && TALENT:TARGET:ご主人様
-				PRINTFORML 「は？ %CNAME(MASTER, TARGET)%…、ふざけてるの？」
-				PRINTFORMW 「私、妊娠してるのよ！？ お腹の中にいるのは%CNAME(MASTER, TARGET)%の子なのよ！？」
-				PRINTFORMW 「あまり馬鹿なこと言ってると、張り倒してやるから…」
-			ELSEIF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
-				PRINTFORMW 「家に誰か来た時どうするのよ…」
-				PRINTFORMW 「絶対に嫌っ！」
+			IF TALENT:TARGET:임신 && TALENT:TARGET:주인님
+				PRINTFORML 「하?%CNAME(MASTER, TARGET)%…, 장난치고 있는 거야?」
+				PRINTFORMW 「나, 임신하고 있는거야!? 뱃속에 있는 것은%CNAME(MASTER, TARGET)%의 아이인 것이야!?」
+				PRINTFORMW 「너무 바보 같은 일 말하고 있으면, 때려 누여 주기 때문에…」
+			ELSEIF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「집에 누군가 왔을 때 어떻게 하는거야…」
+				PRINTFORMW 「절대로 싫엇!」
 			ELSE
-				PRINTFORMW 「%RAND_SPLIT("バカみたいなこと言ってないで、さっさと死んでくれる？/嫌よ。あり得ないわ")%」
+				PRINTFORMW 「%RAND_SPLIT("바보 같은 일 말하지 말고, 빨리 죽어 줄래? /싫어요. 있을 수 없어요")%」
 			ENDIF
 			RETURN 1
-		;すーすーするのは嫌						現在のRevでは実装されていない
+		;스으스으 하는 것은 혐						현재의 Rev에서는 실장되어 있지 않다
 		;CASE 33
-		;	PRINTFORMW 「嫌よ、そんな馬鹿っぽい格好…」
+		;	PRINTFORMW 「싫어요, 그런 바보 같은 모습…」
 		;	RETURN 1
-		;その他
+		;그 외
 		CASEELSE
 			RETURN 0
 	ENDSELECT
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教者が着替えるのをやめた	FIRSTEVENT(30)
+;조교자가 갈아입는 것을 그만둔	FIRSTEVENT(30)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;%CALLNAME:TARGET%の衣装はすでに[　　]に設定されています
+;%CALLNAME:TARGET%의 의상은 벌써[　　]로 설정되어 있습니다
 ;------------------------------------------------
-IF 口上記入チェック(100) && ARG < 1000 && (ARG % 10) == 0
+IF 구상기입체크(100) && ARG < 1000 && (ARG % 10) == 0
 	SELECTCASE ARG
-		;通常のまま
+		;통상인 채
 		CASE 0
-			PRINTFORMW 「別に%RAND_SPLIT("着替える必要ないわね/このままでいいわね")%」
+			PRINTFORMW 「별로%RAND_SPLIT("갈아입을 필요없네요/이대로 좋네요")%」
 			RETURN 1
-		;半裸のまま
+		;반나체인 채
 		CASE 10
-			PRINTFORMW 「ま、このままでいいかしら…」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%もその方が嬉しいんでしょう？ この変態…」
+			PRINTFORMW 「뭐, 이대로 좋을까…」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%도 그 쪽이 기쁘겠지요? 이 변태…」
 			RETURN 1
-		;全裸のまま
+		;전라인 채
 		CASE 20
-			IF TALENT:TARGET:妊娠 && TALENT:TARGET:ご主人様
-				PRINTFORMW 「正直、お腹の子に良くない気がするわ。これ…」
+			IF TALENT:TARGET:임신 && TALENT:TARGET:주인님
+				PRINTFORMW 「정직, 배의 아이에게 좋지 않는 생각이 들어요. 이것…」
 			ELSE
-				PRINTFORMW 「今更%CNAME(MASTER, TARGET)%に対して隠すものなんてないし」
-				PRINTFORMW 「別に裸のままだって構わないわ。ただ…」
-				PRINTFORM 「冷静に考えると、凄く馬鹿っぽいけど。ね
+				PRINTFORMW 「이제 와서%CNAME(MASTER, TARGET)%에 대해서 숨기는 것은 없고」
+				PRINTFORMW 「별로 벌거벗은 채로래도 상관없어요. 다만…」
+				PRINTFORM 「냉정하게 생각하면, 굉장히 바보 같지만. 저기
 				CALL PRINT_SYMBOL_K14
 			ENDIF
 			RETURN 1
@@ -158,60 +158,60 @@ IF 口上記入チェック(100) && ARG < 1000 && (ARG % 10) == 0
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教対象を着替えさせた
+;조교 대상을 갈아입게 했다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG >= 1000 && (ARG % 10) == 1
+IF 구상기입체크(100) && ARG >= 1000 && (ARG % 10) == 1
 	SELECTCASE ARG
-		;通常になった
+		;통상이 되었다
 		CASE 1001
-			PRINTFORMW 「それが１番%CNAME(MASTER, TARGET)%らしいわね」
+			PRINTFORMW 「그것이 1번%CNAME(MASTER, TARGET)%인것 같네요」
 			RETURN 1
-		;半裸になった
+		;반나체가 되었다
 		CASE 1011
-			PRINTFORMW 「こういうのも悪くない、かも…」
+			PRINTFORMW 「이런 것도 나쁘지 않은, 일지도…」
 			RETURN 1
-		;全裸になった
+		;전라가 되었다
 		CASE 1021
-			PRINTFORM 「ふふっ…、この変態
+			PRINTFORM 「후훗…, 이 변태
 			CALL PRINT_SYMBOL_K14
 			RETURN 1
-		;……すーすーする
+		;…… 스으스으 한다
 		;CASE 1031
-		;	PRINTFORMW 「これはコレで有り、かも…」
+		;	PRINTFORMW 「이것은 이것대로 있어, 일지도…」
 		;	RETURN 1
-		;その他
+		;그 외
 		CASEELSE
 			RETURN 0
 	ENDSELECT
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教対象が恥ずかしがって着替えられない
+;조교 대상이 부끄러워해 갈아입을 수 없다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG >= 1000 && (ARG & 10) == 2
+IF 구상기입체크(100) && ARG >= 1000 && (ARG & 10) == 2
 	SELECTCASE ARG
-		;半裸だって恥ずかしい
+		;반나체라도 부끄럽다
 		CASE 1012
-			IF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
-				PRINTFORMW 「そう、仕方ないわね…」
+			IF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「그래, 어쩔 수 없네요…」
 			ELSE
-				PRINTFORMW 「恥ずかしがったところで、今更どうにもならないのにね？」
-				PRINTFORMW 「ま、今回は見逃してあげるわ」
+				PRINTFORMW 「부끄러워한 곳에서, 이제 와서 어쩔 도리가 없는데?」
+				PRINTFORMW 「뭐, 이번은 놓쳐 주어요」
 			ENDIF
 			RETURN 1
-		;普段から全裸なんて恥ずかしい
+		;평상시부터 전라 같은거 부끄럽다
 		CASE 1022
-			IF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
-				PRINTFORMW 「そう、残念ね…」
+			IF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「그래, 유감이구나…」
 			ELSE
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%にまだ羞恥心が残ってるなんて…」
-				CALL FADEIN(8, "「ちょっと驚きね？」")
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%에 아직 수치심이 남아 있다니…」
+				CALL FADEIN(8, "「조금 놀라?」")
 				WAIT
 			ENDIF
 			RETURN 1
-		;パンツがないから恥ずかしいもん！
+		;팬츠가 없기 때문에 부끄러운 걸!
 		;CASE 1032
-		;	PRINTFORMW 「いいじゃない、どうせ減るものじゃあるまいし…」
+		;	PRINTFORMW 「좋지 않아, 어차피 줄어드는 것이 아닐 것이고…」
 		;	RETURN 1
 		CASEELSE
 			RETURN 0
@@ -219,21 +219,21 @@ IF 口上記入チェック(100) && ARG >= 1000 && (ARG & 10) == 2
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教対象が嫌がって着替えられない
+;조교 대상이 싫어해 갈아입을 수 없다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG >= 1000 && (ARG & 10) == 3
+IF 구상기입체크(100) && ARG >= 1000 && (ARG & 10) == 3
 	SELECTCASE ARG
-		;半裸は嫌
+		;반나체는 싫어
 		CASE ARG == 1013
-			PRINTFORMW 「そんなに嫌なの…？」
+			PRINTFORMW 「그렇게 싫어…?」
 			RETURN 1
-		;普段から全裸なんて嫌
+		;평상시부터 전라 같은거 싫어
 		CASE 1023
-			PRINTFORMW 「どうしても駄目なの…？」
+			PRINTFORMW 「아무래도 안돼…?」
 			RETURN 1
-		;すーすーするのは嫌
+		;스으스으 하는 것은 싫어
 		;CASE 1033
-		;	PRINTFORMW 「%CNAME(MASTER, TARGET)%も頑固ね…」
+		;	PRINTFORMW 「%CNAME(MASTER, TARGET)%도 완고하구나…」
 		;	RETURN 1
 		CASEELSE
 			RETURN 0
@@ -241,32 +241,32 @@ IF 口上記入チェック(100) && ARG >= 1000 && (ARG & 10) == 3
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教対象を着替えさせるのをやめた FIRSTEVENT(70)
+;조교 대상을 갈아입게 하는 것을 그만둔 FIRSTEVENT(70)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;%CALLNAME:MASTER%の衣装はすでに[　　]に設定されています
+;%CALLNAME:MASTER%의 의상은 벌써[　　]로 설정되어 있습니다
 ;------------------------------------------------
-IF 口上記入チェック(100) && ARG >= 1000 && (ARG % 10) == 0
+IF 구상기입체크(100) && ARG >= 1000 && (ARG % 10) == 0
 	SELECTCASE ARG
-		;通常のまま
+		;통상인 채
 		CASE 1000
-			PRINTFORMW 「今のところ、着替えて貰う必要はないかしらね」
+			PRINTFORMW 「현재, 갈아입어 받을 필요는 없을까요」
 			RETURN 1
-		;半裸のまま
+		;반나체인 채
 		CASE 1010
-			PRINTFORMW 「そうね。とりあえず、そのままの格好でいて貰おうかしら」
+			PRINTFORMW 「그렇구나. 우선, 그대로의 모습으로 있어 받을까」
 			RETURN 1
-		;全裸のまま
+		;전라인 채
 		CASE 1020
-			PRINTFORMW 「裸のままでも平気みたいだし、%CNAME(MASTER, TARGET)%はそのままでいいわ」
-			SELECTCASE CFLAG:MASTER:依存度
+			PRINTFORMW 「벌거벗은 채로에서도 태연같고,%CNAME(MASTER, TARGET)%는 그대로 좋아요」
+			SELECTCASE CFLAG:MASTER:의존도
 				CASE IS > 5000
-					PRINTFORM 「むしろ裸の方が良いんでしょう？ この変態…
+					PRINTFORM 「오히려 알몸이 좋겠지요? 이 변태…
 					CALL PRINT_SYMBOL_K14
 				CASE IS > 3000
-					PRINTFORM 「よく似合ってると思うし。ね
+					PRINTFORM 「잘 어울리고 있다고 생각하고. 저기
 					CALL PRINT_SYMBOL_K14
 				CASEELSE
-					PRINTFORMW 「下僕としては、それが相応しい姿だと思うし。ねぇ？」
+					PRINTFORMW 「하인으로서는, 그것이 적당한 모습이라고 생각하고. 저기?」
 			ENDSELECT
 			RETURN 1
 		;CASE 1030
@@ -276,617 +276,617 @@ IF 口上記入チェック(100) && ARG >= 1000 && (ARG % 10) == 0
 	ENDSELECT
 ENDIF
 
-;────────────────────────────────────
-;EV102, 調教者変更
-;────────────────────────────────────
-;・調教者を交代させたときに表示
+;─
+;EV102, 조교자 변경
+;─
+;·조교자를 교대시켰을 때에 표시
 ;-------------------------------------------------
 @KOJO_EVENT_K14_102(ARG)
 ;-------------------------------------------------
-;引数内訳…
-;ARG=(0, 口上主が他のキャラに任せた、1, 口上主が調教者になった)
-;旧調教者は「%CALLNAME:SHOP_OLDTARGET%」、新調教者は「%CALLNAME:SHOP_NEWTARGET%」で参照できる
-;口上主はTARGETで参照
+;인수 내역…
+;ARG=(0, 구상주가 다른 캐릭터에게 맡긴, 1, 구상주가 조교자가 되었다)
+;구조교자는 「%CALLNAME:SHOP_OLDTARGET%」, 신조교자는 「%CALLNAME:SHOP_NEWTARGET%」로 참조할 수 있다
+;구상주는 TARGET로 참조
 ;-------------------------------------------------
 
-;一行空ける
+;일행 비운다
 PRINTL
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;他の調教者に交代
+;다른 조교자에게 교대
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 0
-	;アリスがご主人様
-	IF TALENT:TARGET:ご主人様
-		;相思相愛
-		IF AFFECTION("相思相愛")
-			PRINTFORMW 「気分転換って訳？」
-			PRINTFORMW 「まぁいいわ。 %RAND_SPLIT(@"精々%CNAME(SHOP_NEWTARGET, TARGET)%に可愛がって貰うことね！ /少しくらいの我侭は許してあげる。")%でも…」
-			PRINTFORMW 「私をいつまでも待たせたらどうなるか、 良く考えておく事ね！！」
-			PRINTFORMD アリスはそう言い放つと
+IF 구상기입체크(100) && ARG == 0
+	;앨리스가 주인님
+	IF TALENT:TARGET:주인님
+		;상사상애
+		IF AFFECTION("상사상애")
+			PRINTFORMW 「기분 전환이라는 것?」
+			PRINTFORMW 「뭐 좋아요.%RAND_SPLIT(@"최대한%CNAME(SHOP_NEWTARGET, TARGET)%에귀여워해받는거네！ /조금정도의이기적임은허락해준다。")%에서도…」
+			PRINTFORMW 「나를 언제까지나 기다리게 하면 어떻게 되는지, 자주(잘) 생각해 두는 일이군요!!」
+			PRINTFORMD 앨리스는 그렇게 단언하면
 				SELECTCASE RANDEVENT(3, 0)
 					CASE 0
-						PRINTFORMDW %CALLNAME:MASTER%に藁人形を見せつけた……
+						PRINTFORMDW %CALLNAME:MASTER%에 짚으로 만든 인형을 과시했다……
 					CASE 1
-						PRINTFORMDW %CALLNAME:MASTER%に極太アナルバイブを見せつけた……
+						PRINTFORMDW %CALLNAME:MASTER%에 극태 애널 바이브를 과시했다……
 					CASE 2
-						PRINTFORMDW グリモワールを取り出し、呪詛の呪文を唱えている……
+						PRINTFORMDW 그리모워르를 꺼내, 저주의 주문을 주창하고 있다……
 				ENDSELECT
-		;その他
+		;그 외
 		ELSE
-			PRINTFORMW 「なによ、私じゃ不満だって言うの？」
-			PRINTFORMW 「まぁいいけど。 私も少し考えなくてはいけないようね！」
+			PRINTFORMW 「뭐야, 나는 불만이라고 말하는 거야?」
+			PRINTFORMW 「뭐 좋지만. 나도 조금 생각하지 않으면 안 되게!」
 		ENDIF
-	;普通の助手
+	;보통 조수
 	ELSE
-		PRINTFORMW 「%RAND_SPLIT("ふーん/あら、そう")%。別にいいわよ？」
-		PRINTFORMW 「じゃ、後は%CNAME(SHOP_NEWTARGET, TARGET)%に任せて…私はのんびりさせてもらおうかしらね」
+		PRINTFORMW 「%RAND_SPLIT("-응/아라, 그렇게")%. 별로 좋아요?」
+		PRINTFORMW 「그러면, 뒤는%CNAME(SHOP_NEWTARGET, TARGET)%에 맡겨… 나는 한가로이 시켜 받을까」
 	ENDIF
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさまが調教者になった
+;앨리스님이 조교자가 되었다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 1
-	;アリスがご主人様
-	IF TALENT:TARGET:ご主人様
-		;相思相愛
-		IF AFFECTION("相思相愛")
+IF 구상기입체크(100) && ARG == 1
+	;앨리스가 주인님
+	IF TALENT:TARGET:주인님
+		;상사상애
+		IF AFFECTION("상사상애")
 			SELECTCASE RANDEVENT(2, 10)
 				CASE 0
-					PRINTFORMW 「ま、結局こうなるのは分かってたけど！」
-					PRINTFORMDW アリスは少し拗ねてみせたあと、%CALLNAME:MASTER%に体を摺り寄せてきた… 
-					PRINTFORMW 「私に寂しい思いをさせた償い、きっちりしてもらうからね？ ウフフ…」
+					PRINTFORMW 「뭐, 결국 이렇게 되는 것은 알았지만!」
+					PRINTFORMDW 앨리스는 조금 등져 보인 뒤,%CALLNAME:MASTER%에 몸을 접대어 왔다…
+					PRINTFORMW 「나에게 외로운 생각을 시킨 보상, 빈틈없이 해 받으니까요? 우후후…」
 				CASE 1
-					PRINTFORMW 「あら、私が恋しくなったのかしら？」
-					PRINTFORMW 「ほら、どうしたの？ もうっ、素直に言いなさいよ！」
-					PRINTFORMW 「ちゃんと言えたなら、今回の事は水に流してあげてもいいわよ？」
+					PRINTFORMW 「아라, 내가 그리워졌을까?」
+					PRINTFORMW 「이봐요, 무슨 일이야? 이제(벌써), 솔직하게 말하세요!」
+					PRINTFORMW 「제대로 말할 수 있었다면, 이번 일은 없었던 것으로 해 주어도 괜찮아요?」
 			ENDSELECT
-		;その他
+		;그 외
 		ELSE
-			PRINTFORMW 「フフ… 離れてみて分かる『アリス様』の良さってとこかしら？」
-			PRINTFORMW 「さぁいらっしゃい。今日はたっぷり可愛がってあげる」
-			PRINTFORM 「色々な意味で、ね
+			PRINTFORMW 「후후… 떨어져 보고 아는 『앨리스님』의 좋은 점이라는 곳일까?」
+			PRINTFORMW 「차이등사의. 오늘은 충분히 귀여워해 준다」
+			PRINTFORM 「다양한 의미로, 말야
 			CALL PRINT_SYMBOL_K14
 		ENDIF
-	;普通の助手
+	;보통 조수
 	ELSE
-		PRINTFORMW 「ちょっと%CNAME(SHOP_OLDTARGET, TARGET)%。私に厄介ごとを押し付けるつもり？」
-		PRINTFORMW 「まぁいいわ。どうせなら、精々愉しませてもらうから」
-		PRINTFORMW 「壊しちゃっても知らないけど、ね♪」
+		PRINTFORMW 「조금%CNAME(SHOP_OLDTARGET, TARGET)%. 나에게 성가신 일을 강압할 생각?」
+		PRINTFORMW 「뭐 좋아요. 어차피라면, 최대한 즐겁게 해 받기 때문에」
+		PRINTFORMW 「부수어 버려도 모르지만, 말야♪」
 	ENDIF
 	RETURN 1
 ENDIF
 
-;────────────────────────────────────
-;EV110, 魔力使用
-;────────────────────────────────────
-;・魔力を消費して何らかの特典を購入したときに表示
+;─
+;EV110, 마력 사용
+;─
+;·마력을 소비해 어떠한 특전을 구입했을 때에 표시
 ;-------------------------------------------------
 @KOJO_MS_EVENT_K14_110(ARG)
 ;-------------------------------------------------
-;引数内訳…
-;ARG=(0, 魔力使用前、1, 調教技巧、2, 知識を得る前、3, 調合知識取得、4, 魅惑取得、5, 禁断の知識取得、
-;     6, 道具使い取得、7, 技術を得る前、8, 舌使い取得、9, 器用な指先取得、10, 縛り上手、
-;     11, サド消去/サド取得、12, 汚れ無視取得、 38, 着衣プレイ好き、39, 腰使い)
+;인수 내역…
+;ARG=(0, 마력 사용전, 1, 조교 기교, 2, 지식을 얻기 전, 3, 약학지식 취득, 4, 매혹 취득, 5, 금단의지식 취득,
+;     6, 도구사용 취득, 7, 기술을 얻기 전, 8, 혀사용 취득, 9, 기묘한손가락취득, 10, 결박능숙,
+;     11, 새디즘 소거/새디즘 취득, 12, 불결무시 취득, 38, 착의플레이선호, 39, 허리사용)
 ;
-;イベント口上：アイテム
-;引数内訳…
-;ARG=(13, アイテム練成前、14, ローター練成、15,バイブ練成、16, アナルビーズ練成、 17, ペニスバンド練成、
-;     18, アナルバイブ練成、19, クリキャップ練成、 20, ニプルキャップ練成、21, オナホール練成)
+;이벤트 구상:아이템
+;인수 내역…
+;ARG=(13, 아이템 연성전, 14, 로터 연성, 15, 바이브 연성, 16, 애널 비즈 연성, 17, 페니스 밴드 연성,
+;     18, 애널 바이브 연성, 19, 클리캡 연성, 20, 니플캡 연성, 21, 오나홀 연성)
 ;
-;イベント口上：責め具錬成
-;引数内訳…
-;ARG=(22, 責め具練成前、23, アイマスク練成、24, 鞭練成、 25, 縄練成、 26, ボールギャグ練成、27, 針練成、
-;     28, 浣腸セット練成、29, 三角木馬練成、 30, 大鏡練成、 31, 首輪練成、 32, 道具をカスタマイズした)
+;이벤트 구상:고문도구 연성
+;인수 내역…
+;ARG=(22, 고문도구 연성전, 23, 아이마스크 연성, 24, 채찍 연성, 25, 줄연성, 26, 볼개그 연성, 27, 바늘 연성,
+;     28, 관장 세트 연성, 29, 삼각 목마 연성, 30, 대거울 연성, 31, 목걸이 연성, 32, 도구를 커스터마이즈 했다)
 ;
-;その他イベント
-;引数内訳…
-;ARG=(33, ふたなり化/戻す、34, 巨乳化/戻す、35, 貧乳化/戻す、36, 精力の限界値上昇)
+;그 외 이벤트
+;인수 내역…
+;ARG=(33, 후타나리화/되돌리는, 34, 거유화/되돌리는, 35, 빈유화/되돌리는, 36, 정력의 한계 가격인상승)
 ;-------------------------------------------------
-;ご主人様の立場でない場合、微妙になる箇所がでてくる気がしたので口上関数をMSにしてしまうことに
+;주인님의 입장이 아닌 경우, 미묘하게 되는 개소가 나올 생각이 들었으므로 구상 함수를 MS로 해 버리는 일에
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさま魔力使用前
+;앨리스님마력 사용전
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 0
+IF 구상기입체크(100) && ARG == 0
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(0)
-		PRINTFORMW 「同じ魔力といっても、これにはあまり馴染みが無いのよね」
-		PRINTFORMW 「まぁ、使い方は把握できたし…」
-		PRINTFORMW 「とりあえず、試さない手は無いわね」
+	IF 구상기입체크(100) && FIRSTEVENT(0)
+		PRINTFORMW 「같은 마력이라고 해도, 이것에는 너무 친숙하지가 않네요」
+		PRINTFORMW 「뭐, 사용법은 파악할 수 있었고…」
+		PRINTFORMW 「우선, 시험하지 않는 손은 없네요」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------
-	;初回以外の処理
+	;첫회 이외의 처리
 	;-------------------------
-	;なぜかこういう事になった。というか、こんな感じだと自然に整合性がとれる気がしたｗ
+	;왠지 이런 일이 되었다. 라고 할까, 이런 느낌이라면 자연히(에) 정합성이 잡힐 생각이 들었다w
 	SELECTCASE ORDEREVENT(0)
 		CASE 0
-			PRINTFORMW 「さりげなく、カタログめいたものが手元にあったりして」
-			PRINTFORMW 「というかコレ、いつの間に家に紛れ込んだのかしら。不思議だわ…」
+			PRINTFORMW 「자연스럽게, 카탈로그인 듯한 것이 수중에 있거나 해」
+			PRINTFORMW 「라고 할까 이것, 어느새 집에 섞여 왔을까. 이상하구나…」
 		CASE 1
-			PRINTFORMW 「どうみても、外の世界由来のアイテム類。そして、何時の間にか家の中にあったカタログらしきもの」
-			PRINTFORMW 「この手の事をやってのける人物っていうと、一人思い当たるけど…」
+			PRINTFORMW 「어떻게 봐도, 밖의 세계 유래의 아이템류. 그리고, 몇시의 사이에인가 집안에 있던 카탈로그 같은 것」
+			PRINTFORMW 「이런 종류의 일을 해 치우는 인물이라고 하면, 한사람 짐작이 가지만…」
 		CASEELSE
 			SELECTCASE RANDEVENT(2, 0)
 				CASE 0
-					PRINTFORMW 「正直言って、魔力で練成してるって実感ないのよね。これ」
-					PRINTFORMW 「何か注文したら、品物が届くって感じで…」
+					PRINTFORMW 「솔직히 말해, 마력으로 연성하고 있다 라는 실감 없네요. 이것」
+					PRINTFORMW 「뭔가 주문하면, 물건이 도착한다는 느낌으로…」
 				CASE 1
-					PRINTFORMW 「もしも私の推測通りなら、あいつが何か関わってるはず…」
-					PRINTFORMW 「でもそうなると、これまでの事、全部知られてるってことになるのよね」
-					PRINTFORMW 「考えただけで、頭痛くなってきたわ……」
+					PRINTFORMW 「만약 나의 추측 대로라면, 저 녀석이 뭔가 관련되고 있을 것…」
+					PRINTFORMW 「그렇지만 그렇게 되면, 이것까지의 일, 전부 알려져 있다는 것이 되는거네요」
+					PRINTFORMW 「생각한 것 뿐으로, 머리 아파져 왔어요……」
 				CASE 2
-					PRINTFORMW 「どうせなら、他にももっと色々取り寄せられたらいいのに」
-					PRINTFORMW 「ちょっと紫に相談…、って訳にもいかないわよねぇ。建前上……」
+					PRINTFORMW 「어차피라면, 그 밖에도 좀 더 여러가지 들여올 수 있으면 좋은데」
+					PRINTFORMW 「조금 보라색에 상담…, 이라는 것도 없네요. 표면상의 방침상……」
 			ENDSELECT
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさまの調教技巧がアップ
+;앨리스님의 조교 기교가 업
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 1
+IF 구상기입체크(100) && ARG == 1
 	IF FIRSTEVENT(1)
-		PRINTFORMW 「こんな簡単に何かを得られちゃうのって、ちょっと疑問よね」
-		PRINTFORMW 「ある意味、魔術に対する冒涜…、って気もするわ」
-	;アライメント正
+		PRINTFORMW 「이런 간단하게 뭔가를 얻어져 버리는 것은, 조금 의문이군요」
+		PRINTFORMW 「어느 의미, 마술에 대한 모독…, 은 생각도 들어요」
+	;아라이먼트정
 	ELSEIF ALI(0)
-		PRINTFORMW 「私もちょっとは上達したかしら…？」
-		PRINTFORMW 「ねぇ、期待していいわよ？ \@ AFFECTION("相思相愛") ? ふふっ # ウフフ \@…」
-	;アライメント負
+		PRINTFORMW 「나도 조금은 능숙해졌을까…?」
+		PRINTFORMW 「저기, 기대해도 좋아요?\@ AFFECTION("상사상애") ? 후후# 우후후\@…」
+	;아라이먼트부
 	ELSE
-		PRINTFORMW 「私も少しは上達したかしら…？」
-		PRINTFORM 「もっと虐めてあげるから、期待して頂戴…
+		PRINTFORMW 「나도 조금은 능숙해졌을까…?」
+		PRINTFORM 「좀 더 괴롭혀 주기 때문에, 기대해 줘…
 		CALL PRINT_SYMBOL_K14
 	ENDIF
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさま魅惑取得
+;앨리스님매혹 취득
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;別に他意はないよ アリス様の心の叫びって事でよろしく
-IF 口上記入チェック(100) && ARG == 4
-	PRINTFORMW 「まぁ、こんなものかしら」
-	PRINTFORMW 「というか、私が初期設定からコレ持ってないのっておかしくない？」
-	PRINTFORMW 「ちょっと考えれば分かりそうなものだけど…」
-	PRINTFORMW 「製作者って、揃いも揃ってボンクラばかりなのかしらね？」
+;별로 타의는 없어 앨리스님의 마음의 절규라는 일로 잘 부탁드립니다
+IF 구상기입체크(100) && ARG == 4
+	PRINTFORMW 「뭐, 이런 것일까」
+	PRINTFORMW 「라고 할까, 내가 초기설정으로부터 이것 가지고 있지 않은 것은 이상하지 않아?」
+	PRINTFORMW 「조금 생각하면 알 것 같은 것이지만…」
+	PRINTFORMW 「제작자는, 모두가 다 멍청이(뿐)만인 것일까요?」
 	RETURN 1
 ENDIF
 
-;対象限定側で作ったのをとりあえずもってきた
+;대상 한정측에서 만든 것을 우선 가져 왔다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさま禁断の知識取得
+;앨리스님 금단의지식 취득
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 5
-	PRINTFORMW 「な、なによこれ。知識が、私の中に流れ込んでくるけど……」
-	PRINTFORMW 「こんな術式…、見た事も聞いた事もないわ」
-	PRINTFORMW 「正直、これがどんな影響を及ぼすのかも判らないけど」
-	PRINTFORMW 「%RAND_SPLIT("パチュリー/魔理沙")%に聞けば、何か知っているかしら？」
+IF 구상기입체크(100) && ARG == 5
+	PRINTFORMW 「뭐, 뭐야 이것. 지식이, 나의 안에 흘러들어 오지만……」
+	PRINTFORMW 「이런 술식…, 본 일도 (들)물은 일도 없어요」
+	PRINTFORMW 「정직, 이것이 어떤 영향을 미치는지도 모르지만」
+	PRINTFORMW 「%RAND_SPLIT("파츄리/마리사")%에 들으면, 뭔가 알고 있을까?」
 	RETURN 1
 ENDIF
 
-;道具封印パッチとか死ねばいい
+;도구 봉인 패치라든지 죽으면 된다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさまアイテム練成前
+;앨리스님아이템 연성전
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 13
+IF 구상기입체크(100) && ARG == 13
 	IF FIRSTEVENT(13)
-		PRINTFORMW 「さて、何を練成しようかしら」
-		PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%ならどれを選ぶ？」
-		PRINTFORMW 「あぁ、そうそう。練成したものは消す事が出来ないから、良く考えた方がいいわよ？」
-		PRINTFORM 「後悔しないように、ね
+		PRINTFORMW 「그런데, 무엇을 연성할까」
+		PRINTFORMW 「저기,%CNAME(MASTER, TARGET)%라면 어떤 것을 선택해?」
+		PRINTFORMW 「아아, 그래그래. 연성한 것은 지울 수가 없기 때문에, 자주(잘) 생각하는 것이 좋아요?」
+		PRINTFORM 「후회하지 않도, 록요
 		CALL PRINT_SYMBOL_K14
 		RETURN 1
 	ENDIF
 	
 	SELECTCASE RANDEVENT(3, 13)
 		CASE 0
-			PRINTFORMW 「正直、実際に練成してみないと私にも良く判らないのよね」
-			PRINTFORMW 「こういった物に対する知識って、そうある訳じゃないし……」
+			PRINTFORMW 「정직, 실제로 연성해 보지 않으면 나에게도 자주(잘) 알지 않네요」
+			PRINTFORMW 「이러한 물건에 대한 지식은, 그렇게 있는 것이 아니고……」
 		CASE 1
-			PRINTFORMW 「さてと、何にしようかしら」
-			PRINTFORMW 「実際にどんなものが出来上がるのか、見てのお楽しみってね」
+			PRINTFORMW 「그럼, 무엇으로 할까」
+			PRINTFORMW 「실제로 어떤 것이 완성되는지, 본 즐거움은」
 		CASE 2
-			PRINTFORMW 「コレ、何でもありな能力に見えるけど、結構制約があるのよね」
-			PRINTFORMW 「尤も…、制約があるからこその、無茶な能力って訳なんでしょうけど」
+			PRINTFORMW 「이것, 무엇이든지 있어능력으로 보이지만, 상당히 제약이 있는거네요」
+			PRINTFORMW 「무엇보다…, 제약이 있기 때문이야말로의, 엉뚱한 능력이라는 것이겠지만」
 	ENDSELECT
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさまアイテム練成
+;앨리스님아이템 연성
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && INRANGE(ARG, 14, 21)
+IF 구상기입체크(100) && INRANGE(ARG, 14, 21)
 	SELECTCASE ARG
-		;ローター
+		;로터
 		CASE 14
-			PRINTFORMW 「こうして見ただけじゃピンとこないわね。どう使う物なのかしら？」
-		;バイブ
+			PRINTFORMW 「이렇게 해 본 것 뿐으로는 핑 오지 않네요. 어떻게 사용하는 것일까?」
+		;바이브
 		CASE 15
-			PRINTFORMW 「あぁ、なるほど。流石にコレは、見れば判るわね…」
-		;アナルビーズ
+			PRINTFORMW 「아아, 과연. 과연 이것은, 보면 알아요…」
+		;애널 비즈
 		CASE 16
-			PRINTFORML 「う～ん、これは」
-			PRINTFORMW 「想像力を働かせればなんとなく判るけど、判りたくない気もするわね…」
-		;ペニスバンド
+			PRINTFORML 「응, 이것은」
+			PRINTFORMW 「상상력을 구사할 수 있으면 왠지 모르게 알지만, 알고 싶지 않은 생각도 들어요…」
+		;페니스 밴드
 		CASE 17
-			PRINTFORMW 「流石にこれは説明不要ね。試すのが愉しみ、フフ。でも…」
-			PRINTFORMW 「双頭になってるとは思わなかったわ……」
-		;アナルバイブ
+			PRINTFORMW 「과연 이것은 설명 불필요하구나. 시험하는 것이 즐겨, 후후. 그렇지만…」
+			PRINTFORMW 「쌍두가 되어 있다고는 생각하지 않았어요……」
+		;애널 바이브
 		CASE 18
-			PRINTFORMW 「まぁ…、見ればなんとなく判るけど。でも、えげつない代物ね……」
-		;クリキャップ
+			PRINTFORMW 「뭐…, 보면 왠지 모르게 알지만. 그렇지만, 지독한 대용품이군요……」
+		;클리캡
 		CASE 19
-			PRINTFORMW 「あら、これはちょっと可愛らしいわね」
-		;ニプルキャップ
+			PRINTFORMW 「아라, 이것은 조금 사랑스럽네요」
+		;니플캡
 		CASE 20
-			PRINTFORMW 「ふ～ん、なるほど。クリップ式になってて挟めばいいって訳」
-			PRINTFORMW 「よく考えるものねぇ……」
-		;オナホール
+			PRINTFORMW 「흥, 과연. 클립식이 되어 있어 사이에 두면 좋다는 것」
+			PRINTFORMW 「자주(잘) 생각하는 거네……」
+		;오나홀
 		CASE 21
-			PRINTFORMW 「ああ、これは判った。判ったけど…、判りたくない気がする」
-			PRINTFORMW 「頭痛くなってきたわ……」
+			PRINTFORMW 「아아, 이것은 알았다. 알았지만…, 알고 싶지 않은 생각이 든다」
+			PRINTFORMW 「머리 아파져 왔어요……」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさまＳＭグッズ練成前
+;앨리스님SM상품 연성전
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 22
+IF 구상기입체크(100) && ARG == 22
 	SELECTCASE ORDEREVENT(22)
 		CASE 0
-			PRINTFORMW 「見たことあるような物から、そうでない物まで…」
-			PRINTFORMW 「責め具といっても、実に色々なものがあるのね。やれやれだわ」
-			PRINTFORMW 「って良く見ると、道具毎の解説が書かれているのね。ふむふむ……」
+			PRINTFORMW 「본 적 있는 것 같은 것으로부터, 그렇지 않은 것까지…」
+			PRINTFORMW 「고문도구라고 해도, 실로 다양한 것이 있는 거네. 아휴예요」
+			PRINTFORMW 「라고 잘 보면, 도구 마다의 해설이 쓰여져 있는 거네. 흠흠……」
 		CASE 1
-			PRINTFORMW 「魔力で練成と言っても、私自身、この原理は良く判ってないのよね」
-			PRINTFORMW 「見たところ、どれも外の世界の物みたいだし。ってやっぱり、紫が何か関わってるのかしら…」
+			PRINTFORMW 「마력으로 연성이라고 말해도, 나 자신, 이 원리는 자주(잘) 알지 않네요」
+			PRINTFORMW 「본 곳, 모두 밖의 세계의 물건같고. 라고 역시, 보라색이 뭔가 관련되고 있을까…」
 		CASEELSE
 			SELECTCASE RANDEVENT(3, 22)
 				CASE 0
-					PRINTFORMW 「さて、今回はどうしようかしら」
-					PRINTFORMW 「散らかるから、あまり余計なものは練成したくないのよねぇ」
+					PRINTFORMW 「그런데, 이번은 어떻게 하지」
+					PRINTFORMW 「흩어지기 때문에, 너무 불필요한 것은 연성하고 싶지 않네요」
 				CASE 1
-					PRINTFORMW 「結局、何でも自由に練成できるって訳じゃないのね。ちょっと残念」
-					PRINTFORMW 「外の世界の人形とか手に入れられたら、最高なんだけど…」
+					PRINTFORMW 「결국, 뭐든지 자유롭게 연성할 수 있다는 것이 아닌거네. 조금 유감」
+					PRINTFORMW 「밖의 세계의 인형이라든지 손에 넣을 수 있으면, 최고인 것이지만…」
 				CASE 2
-					PRINTFORMW 「こんな代物を生み出す外の世界って、いったいどうなっているのかしら」
-					PRINTFORMW 「ちょっと見てみたい気もするし…、関わりたくない気もするわね」
+					PRINTFORMW 「이런 대용품을 낳는 밖의 세계는, 도대체 어떻게 되어 있을까」
+					PRINTFORMW 「조금 보고 싶은 생각도 들고…, 관련되고 싶지 않은 생각도 들어요」
 			ENDSELECT
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさまＳＭグッズ錬成
+;앨리스님SM상품 연성
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && INRANGE(ARG, 23, 32)            ;道具カスタマイズも含める
-	;派生を処理
+IF 구상기입체크(100) && INRANGE(ARG, 23, 32)            ;도구 커스터마이즈도 포함한다
+	;파생을 처리
 	SELECTCASE ARG
-		;アイマスク
+		;아이마스크
 		CASE 23
-			PRINTFORMW 「ふむ、目隠しねぇ。ま、視界を奪われた%CNAME(MASTER, TARGET)%を虐めるのも、一興ではあるわね」
-		;鞭
+			PRINTFORMW 「흠, 눈가리개군요. 뭐, 시야를 빼앗겼다%CNAME(MASTER, TARGET)%를 괴롭히는 것도, 일흥이어요」
+		;채찍
 		CASE 24
-			PRINTFORMW 「見るからに凶悪ね。これで、%CNAME(MASTER, TARGET)%はどんな声を聞かせてくれるのかしら？」
-			PRINTFORMW 「\@ TALENT:TARGET:サド || !ALI(0) ? フフ、もう待ちきれないわ。ゾクゾクしちゃう # 今から楽しみ、ね\@…」
-		;縄
+			PRINTFORMW 「보기에도 흉악하구나. 이것으로,%CNAME(MASTER, TARGET)%는 어떤 소리를 들려줄까?」
+			PRINTFORMW 「\@ TALENT:TARGET:새디즘 || !ALI(0) ? 후후, 이제 기다릴 수 없어요. 오슬오슬 해 버린다# 지금부터 기다려지, 구나\@…」
+		;줄
 		CASE 25
-			PRINTFORMW 「縄で拘束、ねぇ。ま、私の場合…魔力の糸を使ってもいいんだけど」
-			PRINTFORMW 「でもこういうのって、まずは形からって言うじゃない？ フフ…」
-		;ボールギャグ
+			PRINTFORMW 「줄로 구속, 저기. 뭐, 나의 경우… 마력의 실을 사용해도 괜찮지만」
+			PRINTFORMW 「그렇지만 이런 것은, 우선은 형태로부터라고 말하지 않아? 후후…」
+		;볼개그
 		CASE 26
-			PRINTFORMW 「なるほどねぇ。コレ、うるさい\@ TALENT:MASTER:オトコ ? マゾ # メス \@豚を黙らせるにはぴったりね」
-		;針
+			PRINTFORMW 「과연. 이것, 시끄럽다\@ TALENT:MASTER:남자 ? 마조# 메스\@돼지를 입다물게 하기에는 딱 맞구나」
+		;바늘
 		CASE 27
-			PRINTFORMW 「針とは言っても、こういうこと専用の物みたい。凄く細いのね」
-			PRINTFORMW 「目隠しと組み合わせると効果的って話だけど。さて、どんなものかしら…」
-		;浣腸セット
+			PRINTFORMW 「바늘이라고는 해도, 이런 일전용의 물건같다. 굉장히 가는거네」
+			PRINTFORMW 「눈가리개와 짜맞추면 효과적이라는 이야기이지만. 그런데, 어떤 것일까…」
+		;관장 세트
 		CASE 28
-			PRINTFORMW 「要するに、腸内洗浄の為のものみたいだけど…」
-			PRINTFORMW 「責め具用として最適化されてるとか。まったく、呆れた話ね」
-		;三角木馬
+			PRINTFORMW 「요컨데, 장내 세정을 위한 것같지만…」
+			PRINTFORMW 「고문구용으로서 최적화되고 있다든가. 완전히, 기가 막힌 이야기군요」
+		;삼각 목마
 		CASE 29
-			PRINTFORMW 「拷問具として存在してる事は、知識としてはあったけど…」
-			PRINTFORMW 「ってこれ、背中に生えてるじゃない！？」
-		;大鏡
+			PRINTFORMW 「고문도구로서 존재하고 있는 일은, 지식으로서는 있었지만…」
+			PRINTFORMW 「라는 이것, 등에 나 있지 않아!?」
+		;대거울
 		CASE 30
-			PRINTFORMW 「羞恥心を煽る道具としてのこういう物の存在は、割りと納得はできる話ではあるわね」
-			PRINTFORMW 「というかこれ、普通に鏡としても使えるし…」
-		;首輪
+			PRINTFORMW 「수치심을 부추기는 도구로서의 이런 물건의 존재는, 비교적 납득은 할 수 있는 이야기여요」
+			PRINTFORMW 「라고 할까 이것, 보통으로 거울로서도 사용할 수 있고…」
+		;목걸이
 		CASE 31
-			PRINTFORMW 「ペットを外に連れ出すにはこれが欠かせない、とか。ふむふむ」
-			PRINTFORMW 「正直、あまり趣味ではないけれど。首輪をはめられた、%CNAME(MASTER, TARGET)%の姿を想像すると…」
-			PRINTFORMW 「ちょっとゾクゾクしちゃうわね……」
-		;道具をカスタマイズ		ORDEREVENT使いたい感が。まぁ後で考えることに
+			PRINTFORMW 「애완동물을 밖에 데리고 나가려면 이것을 빠뜨릴 수 없는, 이라든지. 흠흠」
+			PRINTFORMW 「정직, 그다지 취미는 아니지만. 목걸이를 낄 수 있던,%CNAME(MASTER, TARGET)%의 모습을 상상하면…」
+			PRINTFORMW 「조금 오슬오슬 해 버려요……」
+		;도구를 커스터마이즈		ORDEREVENT 사용하고 싶은 감이. 뭐 다음에 생각하는 일에
 		CASE 32
-			PRINTFORMW 「道具をカスタマイズする事で、より効率的な調教云々…とか」
-			PRINTFORMW 「まったく…、呆れるくらい至れり尽くせりなのね」
-		;既存部分は汎用処理に。
+			PRINTFORMW 「도구를 커스터마이즈 하는 일로, 보다 효율적인 조교 운운… 이라든지」
+			PRINTFORMW 「완전히…, 기가 막힐 정도로 더할 나위 없음인 거네」
+		;기존 부분은 범용 처리에.
 		CASEELSE
 			SELECTCASE RANDEVENT(3, 1)
 			CASE 0
-				PRINTFORMW 「こんなもの誰が考えるのかしらね…？」
-				PRINTFORM 「まぁ、これはコレで愉しめそうだからいいけれど…ね
+				PRINTFORMW 「이런 것 누가 생각할까요…?」
+				PRINTFORM 「뭐, 이것은 이것대로 즐길 수 있을 것 같으니까 좋지만… 말야
 				CALL PRINT_SYMBOL_K14
 			CASE 1
-				PRINTFORMW 「これは中々凶悪な代物ね…」
-				PRINTFORM 「%CNAME(MASTER, TARGET)%に試すのが愉しみだわ…
+				PRINTFORMW 「이것은 꽤 흉악한 대용품이군요…」
+				PRINTFORM 「%CNAME(MASTER, TARGET)%에 시험하는 것이 즐거움이예요…
 				CALL PRINT_SYMBOL_K14
 			CASE 2
-				PRINTFORMW 「この魔力って、本当に何でもアリなのね」
-				PRINTFORMW 「ちょっと無茶過ぎる気もするけど…」
+				PRINTFORMW 「이 마력은, 정말로 뭐든지 개미인 거네」
+				PRINTFORMW 「조금 너무 엉뚱할 생각도 들지만…」
 			ENDSELECT
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさまふたなり化orふたなり消去
+;앨리스님후타나리화 or후타나리 소거
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 33 && FLAG:モード != 1
-	;ふたなり化
-	IF TALENT:TARGET:ふたなり
-		;調教対象がオトコ
-		IF TALENT:MASTER:オトコ
-			PRINTFORM 「これで%CNAME(MASTER, TARGET)%のお尻を突いてあげられるわね
+IF 구상기입체크(100) && ARG == 33 && FLAG:모드 != 1
+	;후타나리화
+	IF TALENT:TARGET:후타나리
+		;조교 대상이 남자
+		IF TALENT:MASTER:남자
+			PRINTFORM 「이것으로%CNAME(MASTER, TARGET)%의 엉덩이를 찔러 줄 수 있어요
 			CALL PRINT_SYMBOL_K14
-			PRINTFORMW 「\@ TALENT:MASTER:小柄 ? 女の子 # 女 \@みたいに鳴かせてあげるから、愉しみにしてて……」
-		;調教対象が処女
-		ELSEIF TALENT:MASTER:処女
-			PRINTFORMW 「そういえば%CNAME(MASTER, TARGET)%ってその、まだ…、だったわよね？」
-			IF CFLAG:合意
-				PRINTFORMW 「ま、%CNAME(MASTER, TARGET)%のＯＫはもう貰ってる訳だし…」
-				PRINTFORM 「あとはいつ試すか……、ってとこよね？ ふふ
+			PRINTFORMW 「\@ TALENT:MASTER:작은체형 ? 여자 아이# 녀\@같이 울릴 수 있어 주기 때문에, 기대하고 있어……」
+		;조교 대상이 처녀
+		ELSEIF TALENT:MASTER:처녀
+			PRINTFORMW 「그렇게 말하면%CNAME(MASTER, TARGET)%는 그, 아직이었…, 네요?」
+			IF CFLAG:합의
+				PRINTFORMW 「뭐,%CNAME(MASTER, TARGET)%의 OK는 이미 받고 있는 것이고…」
+				PRINTFORM 「앞으로는 언제 시험하는지……, 라는 곳이군요? 후후
 				CALL PRINT_SYMBOL_K14
 			ELSE
-				PRINTFORMW 「ま、%CNAME(MASTER, TARGET)%からのＯＫは貰えてない訳なんだけど…」
-				PRINTFORMW 「その日が来るのを愉しみにしてるわ。フフ……」
+				PRINTFORMW 「뭐,%CNAME(MASTER, TARGET)%로부터의 OK는 받을 수 있지 않은 것이지만…」
+				PRINTFORMW 「그 날이 오는 것을 기대하고 있어요. 후후……」
 			ENDIF
-		;条件なし
+		;조건 없음
 		ELSE
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%、こういうのが好きな訳…？」
-			PRINTFORM 「まぁ、折角だから私も愉しませてもらう事にするわ
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%, 이런 것을 좋아하는 (뜻)이유…?」
+			PRINTFORM 「뭐, 모처럼이니까 나도 즐겁게 해 받는 일로 해요
 			CALL PRINT_SYMBOL_K14
 		ENDIF
-	;ふたなり消去
+	;후타나리 소거
 	ELSE
-		;調教対象がオトコ
-		IF TALENT:MASTER:オトコ
-			PRINTFORMW 「女の私が自分より大きなモノをぶら下げてるのは耐えられなかったかしら？」
-			PRINTFORMW 「ほら、どうなの？ はっきり言ってみなさいよ！」
-			PRINTFORMW 「な～んて。冗談よ、冗談。クスクス」
-		;調教対象が処女
-		ELSEIF TALENT:MASTER:処女
-			PRINTFORMW 「結局、%CNAME(MASTER, TARGET)%に試す機会がなかった訳だけど…」
-			PRINTFORMW 「それが結果的に良かったのか、そうではないのか。ま、なんとも言えないところねぇ」
-		;条件なし
+		;조교 대상이 남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「여자의 내가 자기보다 큰 것을 매달고 있는 것은 견딜 수 없었을까?」
+			PRINTFORMW 「이봐요, 어때? 분명히 말해 보세요!」
+			PRINTFORMW 「. 농담이야, 농담. 킥킥」
+		;조교 대상이 처녀
+		ELSEIF TALENT:MASTER:처녀
+			PRINTFORMW 「결국,%CNAME(MASTER, TARGET)%에 시험할 기회가 없었던 (뜻)이유이지만…」
+			PRINTFORMW 「그것이 결과적으로 좋았던 것일까, 그렇지 않는 것인지. 뭐, 뭐라고도 말할 수 없는 곳」
+		;조건 없음
 		ELSE
-			PRINTFORMW 「やっぱり元の私の方がいいかしら？ っていうか…」
-			PRINTFORMW 「急にこう…、すっきりしちゃうと。なんか、逆に落ち着かないわ」
-			PRINTFORMW 「これが普通のはずなのにね？ ふふ」
+			PRINTFORMW 「역시 원의 내 쪽이 좋을까? 라고 할까…」
+			PRINTFORMW 「갑자기 이렇게…, 시원해져 버리면. 무엇인가, 반대로 침착하지 않아요」
+			PRINTFORMW 「이것이 보통일 것인데 말야? 후후」
 		ENDIF
 	ENDIF
 	RETURN 2
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさま巨乳化or通常に戻す
+;앨리스님거유화 or통상에 되돌린다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 34 && FLAG:モード != 1
-	;巨乳化
-	IF TALENT:TARGET:巨乳
-		;調教対象がオトコ
-		IF TALENT:MASTER:オトコ
-			PRINTFORMW 「男ってやっぱり胸が大きい方が好きなのかしら？」
-			PRINTFORMW 「ちょっと、視線がいやらしいわよ。この変態…」
-		;調教対象が巨乳
-		ELSEIF TALENT:MASTER:巨乳
-			PRINTFORMW 「うふっ、これでお揃いって訳ね？」
-		;条件なし
+IF 구상기입체크(100) && ARG == 34 && FLAG:모드 != 1
+	;거유화
+	IF TALENT:TARGET:거유
+		;조교 대상이 남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「남자는 역시 가슴이 큰 것이 좋아일까?」
+			PRINTFORMW 「좀, 시선이 추잡해요. 이 변태…」
+		;조교 대상이 거유
+		ELSEIF TALENT:MASTER:거유
+			PRINTFORMW 「우훗, 이것으로 갖춤이라는거네?」
+		;조건 없음
 		ELSE
-			PRINTFORMW 「大きい方がお好み？」
+			PRINTFORMW 「큰 것이 기호?」
 		ENDIF
-	;元に戻す
+	;바탕으로 되돌린다
 	ELSE
-		;調教対象がオトコ
-		IF TALENT:MASTER:オトコ
-			PRINTFORMW 「元の私が1番って訳ね？」
-		;その他
+		;조교 대상이 남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「원래의 내가 1교미하는거네?」
+		;그 외
 		ELSE
-			PRINTFORMW 「やっぱりこの方が私らしいでしょ？」
+			PRINTFORMW 「역시 이 (분)편이 나답지요?」
 		ENDIF
 	ENDIF
 	RETURN 2
 ENDIF	
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスさま貧乳化or通常に戻す
+;앨리스님빈유화 or통상에 되돌린다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 35 && FLAG:モード != 1
-	;貧乳化
-	IF TALENT:TARGET:貧乳
-		;調教対象がオトコ
-		IF TALENT:MASTER:オトコ
-			PRINTFORMW 「男は大きい方が好きってよく聞くけど…」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%は違うみたいね？」
-		;調教対象が巨乳
-		ELSEIF TALENT:MASTER:巨乳
-			PRINTFORMW 「その勝ち誇ったような顔…」
-			PRINTFORMW 「どういうつもりなのか、聞かせてもらう必要がありそうね！」
-		;調教対象が貧乳
-		ELSEIF TALENT:MASTER:貧乳
-			PRINTFORMW 「自分より大きいのが妬ましいとか？」
-		;その他
+IF 구상기입체크(100) && ARG == 35 && FLAG:모드 != 1
+	;빈유화
+	IF TALENT:TARGET:빈유
+		;조교 대상이 남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「남자는 큰 것이 좋아한다는 것은 자주(잘) 듣지만…」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%는 다른 것 같구나?」
+		;조교 대상이 거유
+		ELSEIF TALENT:MASTER:거유
+			PRINTFORMW 「그 우쭐거린 것 같은 얼굴…」
+			PRINTFORMW 「어떤 생각인가, 들려주어 받을 필요가 있을 듯 하구나!」
+		;조교 대상이 빈유
+		ELSEIF TALENT:MASTER:빈유
+			PRINTFORMW 「자기보다 큰 것이 부럽다든가?」
+		;그 외
 		ELSE
-			PRINTFORMW 「小さい方が好きなの？」
-			PRINTFORMW 「変わってるのね…」
+			PRINTFORMW 「작은 것이 좋아해?」
+			PRINTFORMW 「변하는 거네…」
 		ENDIF
-	;元に戻す
+	;바탕으로 되돌린다
 	ELSE
-		;調教対象がオトコ
-		IF TALENT:MASTER:オトコ
-			PRINTFORMW 「元の私が一番って訳ね？」
-		;胸を小さく
+		;조교 대상이 남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「원래의 내가 제일이라는거네?」
+		;가슴을 작고
 		ELSE
-			PRINTFORMW 「肩が凝るからこの方がいいわね」
+			PRINTFORMW 「어깨가 뻐근하기 때문에 이 (분)편이 좋네요」
 		ENDIF
 	ENDIF
 	RETURN 2
 ENDIF
 
-;────────────────────────────────────
-;EV111, ご主人様として新しい調教者を雇った
-;────────────────────────────────────
+;─
+;EV111, 주인님으로서 새로운 조교자를 고용했다
+;─
 @KOJO_EVENT_K14_111(ARG)
 ;-------------------------------------------------
-;・新しい調教者がTARGETになっているため、口上主はTARGETではないので注意
-;・口上主を参照したい場合はFLAG:ご主人様で
+;·새로운 조교자가 TARGET가 되어 있기 (위해)때문에, 구상주는 TARGET는 아니기 때문에 주의
+;·구상주를 참조하고 싶은 경우는 FLAG:주인님으로
 ;-------------------------------------------------
-;戻り値（1,表示、2,表示して加入したキャラの加入口上をスキップ）
-IF 口上記入チェック(100)
+;반환값(1, 표시, 2, 표시해 가입한 캐릭터의 가입 구상을 스킵)
+IF 구상기입체크(100)
 	IF 0
-	;サニー/ルナチャ/スターの場合
-	;妖精風情が、とか言ってたけど一度面識のある場合は妖精さんとか呼びそう。でもあくまで個としては認識してはいないという感じで
+	;사니/르나체/스타의 경우
+	;요정 풍치가, 라든지 말했지만 한 번 안면이 있는 경우는 요정씨라든지 부를 것 같다. 그렇지만 어디까지나 개로서는 인식 하고 있지는 않다고 하는 느낌으로
 	ELSEIF GROUPMATCH(NO:TARGET, 45, 46, 47)
-		CSTR:(FLAG:ご主人様):呼び方リスト = %CALLNAME:TARGET%_妖精さん/%CSTR:(FLAG:ご主人様):呼び方リスト%
-	;メディスンの場合。なんとなくこう呼びそうな気がするという。儚月抄では一緒にいる場面があったし、まぁ多少はね？
-	ELSEIF NO:TARGET == 33 && CALLNAME:TARGET == "メディスン"
-		CSTR:(FLAG:2):呼び方リスト = メディスン_メディ/%CSTR:(FLAG:2):呼び方リスト%
+		CSTR:(FLAG:주인님):호칭목록 = %CALLNAME:TARGET%_요정씨/%CSTR:(FLAG:주인님):호칭목록%
+	;메디슨의 경우. 어딘지 모르게 이렇게 부를 것 같은 생각이 든다고 한다. 맹월초에서는 함께 있는 장면이 있었고, 뭐 다소는 말야?
+	ELSEIF NO:TARGET == 33 && CALLNAME:TARGET == "메디슨"
+		CSTR:(FLAG:2):호칭목록 = 메디슨_메디/%CSTR:(FLAG:2):호칭목록%
 	ELSE
-		;その他召喚可能な相手（霊夢/魔理沙/パチュリー/咲夜/レミリア/紫/幽香/雛/早苗）は呼び捨て
+		;그 외 소환 가능한 상대(레이무/마리사/파츄리/사쿠야/레미리아/자/유향/추/사나에)는 경칭 생략
 	ENDIF
-	;CSTR:(FLAG:2):呼び方リスト = 元の名前_呼ばせたい名前/%CSTR:(FLAG:2):呼び方リスト%
-	IF FAVOR(3000, 3000, (FLAG:ご主人様))
+	;CSTR:(FLAG:2):호칭목록 = 전의 이름_부르게 하고 싶은 이름 /%CSTR:(FLAG:2):호칭목록%
+	IF FAVOR(3000, 3000, (FLAG:주인님))
 		SELECTCASE NO:TARGET
-			;スキマ妖怪		紫口上に対応させておく
+			;스키마 요괴		보라색 구상에 대응 하게 한다
 			CASE 22
-				PRINTFORMW 「ま、あんたのことだから……そういう登場の仕方するとは思ってたけど…」
-				PRINTFORMW 「人の家に来るときくらい、普通にできないの！？」
-				PRINTFORMW 「ていうか私…、なんで紫を呼んじゃったのかしら……」
-			;その他
+				PRINTFORMW 「뭐, 너의 일이니까…… 그러한 등장의 방법 한다고는 생각했지만…」
+				PRINTFORMW 「사람의 집에 올 때 정도, 보통으로 할 수 없는거야!?」
+				PRINTFORMW 「라고 말할까 나…, 어째서 보라색을 불러 버렸을까……」
+			;그 외
 			CASEELSE
-				PRINTFORML 「あら、%CNAME(TARGET, (FLAG:ご主人様))%｡  急にどうしたの？」
-				PRINTFORMW 「家に呼んだ覚えはないけど…」
-				PRINTFORMW 「ってコラ！　勝手に家の中入らないでよ！」
+				PRINTFORML 「아라,%CNAME(TARGET, (FLAG:주인님))%  갑자기 무슨 일이야?」
+				PRINTFORMW 「집에 부른 기억은 없지만…」
+				PRINTFORMW 「라는 코라!   마음대로 집안 들어가지 말아요!」
 				CALL TWAIT3_K14
-				PRINTFORMW 「まぁ、ばれてしまったものは仕方無いわね…」
-				PRINTFORMW 「でも良く覚えておきなさいよ？　人のものに勝手に手を出したら、許さないからねっ！」
+				PRINTFORMW 「뭐, 발각되어 버린 것은 방법 없네요…」
+				PRINTFORMW 「그렇지만 자주(잘) 기억해 두세요?   인의 것에 마음대로 손을 대면, 허락하지 않으니까!」
 		ENDSELECT
-	;調教対象に反抗刻印あり
-	ELSEIF MARK:(FLAG:ご主人様):反抗刻印 >= 1
-		PRINTFORMW 「よく来てくれたわね、%CNAME(TARGET, (FLAG:ご主人様))%。取りあえず、秘密厳守でお願いするわ」
-		PRINTFORMW 「まぁ情けない話なんだけど、ちょっと苦労してるのよね」
-		PRINTFORMW 「%CNAME(TARGET, (FLAG:ご主人様))%が手伝ってくれると助かるんだけど…」
-	;その他
+	;조교 대상으로 반항 각인 있어
+	ELSEIF MARK:(FLAG:주인님):반항각인 >= 1
+		PRINTFORMW 「잘 와 주었군요,%CNAME(TARGET, (FLAG:주인님))%. 우선, 비밀 엄수로 부탁해요」
+		PRINTFORMW 「뭐 한심한 이야기인 것이지만, 조금 고생하고 있는거네요」
+		PRINTFORMW 「%CNAME(TARGET, (FLAG:주인님))%가 도와 주면 살아나지만…」
+	;그 외
 	ELSE
 		SELECTCASE NO:TARGET
-			;魔理沙           結構酷いかも知れないｗ
+			;마리사           상당히 심할지도 모른다w
 			CASE 2
-				PRINTFORMW 「いらっしゃい魔理沙。早かったわね」
-				PRINTFORMW 「先に言っておくけど、べつに食事に招待したって訳じゃないからね？」
-				PRINTFORMW 「まぁその……なんて言うか。魔理沙も魔法使いなら、こういう事も知っておくべきだと思って」
-				PRINTFORMW 「正直、こんな機会はそうないと思うわよ？ クスクス」
-			;パチュリー
+				PRINTFORMW 「계(오)세요 마리사. 빨랐지요」
+				PRINTFORMW 「먼저 말해 두지만, 별로 식사에 초대했다는 것이 아니니까?」
+				PRINTFORMW 「아무튼 그…… 뭐라고 말할까. 마리사도 마법사라면, 이런 일도 알아 두어야 한다고 생각해」
+				PRINTFORMW 「정직, 이런 기회는 그런 실 생각해요? 킥킥」
+			;파츄리
 			CASE 8
-				PRINTFORMW 「よく来てくれたわね。ん、急にどうしたのかって？」
-				PRINTFORMW 「そうね、本を読んでばかりいるのにも飽きたんじゃないかと思って」
-				PRINTFORMW 「ってまぁ、パチュリーに限ってそんな事はなさそうだけど。ふふ」
-			;スキマ妖怪       紫口上に対応させておく
+				PRINTFORMW 「잘 와 주었군요. 응, 갑자기 어떻게 했는지라는?」
+				PRINTFORMW 「그렇구나, 책을 읽고만 있는데도 질렸지 않은가 생각해」
+				PRINTFORMW 「라는 아무튼, 파츄리에 한해서 그런 일은 없는 것 같지만. 후후」
+			;스키마 요괴       보라색 구상에 대응 하게 한다
 			CASE 22
-				PRINTFORMW 「あら、いらっしゃい紫、って……アンタ」
-				PRINTFORMW 「そういう登場の仕方やめてくれる？ 普通に玄関から入ってきなさいよ、玄関から！」
-			;その他
+				PRINTFORMW 「아라, 계(오)세요 보라색, 은…… 너」
+				PRINTFORMW 「그러한 등장의 방법 그만두어 줄래? 보통으로 현관으로부터 들어 오세요, 현관으로부터!」
+			;그 외
 			CASEELSE
-				;アライメント正
-				IF ALI(0, (FLAG:ご主人様))		;TARGETで参照できないこの箇所で使う為に@ALIを改変。まぁ他でも使い道はなにかしらありそう？
-					PRINTFORMW 「いらっしゃい、%CNAME(TARGET, (FLAG:ご主人様))%｡  よく来てくれたわね」
-					PRINTFORMW 「そうよ、これが例の。手伝ってくれると色々と助かるわ」
-					PRINTFORMW 「じゃ、これから宜しく頼むわね」
-				;アライメント負
+				;아라이먼트정
+				IF ALI(0, (FLAG:주인님))		;TARGET로 참조 할 수 없는 이 개소에서 사용하기 위해서(때문에)@ALI를 개변. 뭐 다른 것이라도 용도는 뭘까 있어 그렇게?
+					PRINTFORMW 「어서오세요,%CNAME(TARGET, (FLAG:주인님))%  잘 와 주었군요」
+					PRINTFORMW 「그래요, 이것이 예의. 도와 주면 다양하게 살아나요」
+					PRINTFORMW 「그러면, 지금부터 잘 부탁해요」
+				;아라이먼트부
 				ELSE
-					PRINTFORMW 「あら、思ったより早かったわね。%CNAME(TARGET, (FLAG:ご主人様))%」
-					PRINTFORMW 「急に呼びつけてどうしたのかって？ それはまぁ、うん……、そうね」
-					PRINTFORMW 「とりあえず、玄関先で話せることじゃないのよ。ま、すぐにわかるわ……」
+					PRINTFORMW 「아라, 생각했던 것보다 빨랐지요.%CNAME(TARGET, (FLAG:주인님))%」
+					PRINTFORMW 「갑자기 불러내 어떻게 했는지라는? 그것은 아무튼, 응……, 그렇구나」
+					PRINTFORMW 「우선, 현관앞에서 이야기할 수 있는 것이지 않아. 뭐, 곧바로 알아요……」
 				ENDIF
 		ENDSELECT
 	ENDIF
 	
 	;---------------------------------------------------------------------------
-	;現在TALENT:ご主人様以外は助手を呼べないらしいけど、予期せぬ改変に備えて保険の意味で召喚可能助手を代入しておく
-	;というか、仮に召喚した対象の口上内で設定されていた場合はアレな感じ。EV11の頭でもやるとか、あまり考えたくないな！
+	;현재 TALENT:주인님 이외는 조수를 부를 수 없는 것 같지만, 예기치 않은 개변에 대비해 보험의 의미로 소환 가능 조수를 대입해 둔다
+	;라고 할까, 만일 소환한 대상의 구상내에서 설정되어 있었을 경우는 저것인 느낌. EV11의 머리에서도 한다든가, 그다지 생각하고 싶지 않구나!
 	;---------------------------------------------------------------------------
-	;霊夢
+	;레이무
 	SIF NO:TARGET == 1
-		CSTR:召喚可能助手 = 魔理沙/咲夜/レミリア/紫/萃香/てゐ/鈴仙/文/幽香/小町/にとり/サニーミルク/ルナチャイルド/スターサファイア/天子/華扇/小鈴/針妙丸/
-	;魔理沙
+		CSTR:소환가능조수 = 마리사/사쿠야/레미리아/자/췌향//령선/문/유향/코마치/에 있어/사니 밀크/루나 차일드/스타 사파이어/천자/화선/코스즈/침묘환/
+	;마리사
 	SIF NO:TARGET == 2
-		CSTR:召喚可能助手 = 霊夢/パチュリー/咲夜/レミリア/紫/萃香/にとり/華扇/小鈴/
-	;パチュリー
+		CSTR:소환가능조수 = 레이무/파츄리/사쿠야/레미리아/자/췌향/에 있어/화선/코스즈/
+	;파츄리
 	SIF NO:TARGET == 8
-		CSTR:召喚可能助手 = 魔理沙/小悪魔/咲夜/レミリア/
-	;咲夜
+		CSTR:소환가능조수 = 마리사/소악마/사쿠야/레미리아/
+	;사쿠야
 	SIF NO:TARGET == 9
-		CSTR:召喚可能助手 = 霊夢/魔理沙/美鈴/レミリア/妖夢/
-	;レミリア
+		CSTR:소환가능조수 = 레이무/마리사/미스즈/레미리아/요몽/
+	;레미리아
 	SIF NO:TARGET == 10
-		CSTR:召喚可能助手 = 霊夢/魔理沙/パチュリー/美鈴/咲夜/
-	;紫
+		CSTR:소환가능조수 = 레이무/마리사/파츄리/미스즈/사쿠야/
+	;보라색
 	SIF NO:TARGET == 22
-		CSTR:召喚可能助手 = 霊夢/魔理沙/妖夢/幽々子/藍/萃香/
-	;メディスン
+		CSTR:소환가능조수 = 레이무/마리사/요몽/유들자/람/췌향/
+	;메디슨
 	SIF NO:TARGET == 33
-		CSTR:召喚可能助手 = 幽香/永琳/
-	;幽香
+		CSTR:소환가능조수 = 유향/영림/
+	;유향
 	SIF NO:TARGET == 34
-		CSTR:召喚可能助手 = リグル/メディスン/
-	;雛
+		CSTR:소환가능조수 = 리굴/메디슨/
+	;병아리
 	SIF NO:TARGET == 39
-		CSTR:召喚可能助手 = にとり/パルスィ/
-	;早苗
+		CSTR:소환가능조수 = 에 있어/파르스/
+	;사나에
 	SIF NO:TARGET == 42
-		CSTR:召喚可能助手 = 霊夢/魔理沙/諏訪子/小傘/
-	;サニーミルク
+		CSTR:소환가능조수 = 레이무/마리사/스와자/소우산/
+	;사니 밀크
 	SIF NO:TARGET == 45
-		CSTR:召喚可能助手 = チルノ/リリーホワイト/ルナチャイルド/スターサファイア/
-	;ルナチャイルド
+		CSTR:소환가능조수 = 치르노/릴리 화이트/루나 차일드/스타 사파이어/
+	;루나 차일드
 	SIF NO:TARGET == 46
-		CSTR:召喚可能助手 = チルノ/リリーホワイト/サニーミルク/スターサファイア/
-	;スターサファイア
+		CSTR:소환가능조수 = 치르노/릴리 화이트/사니 밀크/스타 사파이어/
+	;스타 사파이어
 	SIF NO:TARGET == 47
-		CSTR:召喚可能助手 = チルノ/リリーホワイト/サニーミルク/ルナチャイルド/
+		CSTR:소환가능조수 = 치르노/릴리 화이트/사니 밀크/루나 차일드/
 	RETURN 1
 ENDIF
 
-;────────────────────────────────────
-;EV112, アリスさまが調教者として加入した
-;────────────────────────────────────
+;─
+;EV112, 앨리스님이 조교자로서 가입했다
+;─
 @KOJO_EVENT_K14_112(ARG)
 ;-------------------------------------------------
-;・ご主人様の名前は「FLAG:ご主人様」で参照できる
-;・ご主人様が雇用口上で戻り値2を返していると表示されない
-;・口上主はTARGET
+;·주인님의 이름은 「FLAG:주인님」로 참조할 수 있다
+;·주인님이 고용 구상으로 반환값 2를 돌려주고 있으면 표시되지 않는다
+;·구상주는 TARGET
 ;-------------------------------------------------
-IF 口上記入チェック(100)
-	;調教対象の反抗刻印Lv2以上
-	IF MARK:(FLAG:ご主人様):反抗刻印 >= 2
-		PRINTFORMW 「%CNAME((FLAG:ご主人様), TARGET)%が苦労してるって言われて来てみたけど…」
-		PRINTFORMW 「これは確かに、中々の難物みたいね…」
-		PRINTFORMW 「まぁ、この際仕方無いから、%CNAME((FLAG:ご主人様), TARGET)%には躾の仕方ってものを教えてあげるわ」
-		PRINTFORMW 「私の手並み、良く見ていて頂戴。ウフフ…」
-	;調教対象の反抗刻印Lv2以下
+IF 구상기입체크(100)
+	;조교 대상의 반항 각인 Lv2 이상
+	IF MARK:(FLAG:주인님):반항각인 >= 2
+		PRINTFORMW 「%CNAME((FLAG:주인님), TARGET)%가 고생하고 있다 라고 말해져 와 보았지만…」
+		PRINTFORMW 「이것은 확실히, 상당한 골칫거리같구나…」
+		PRINTFORMW 「뭐, 이 때 방법 없기 때문에,%CNAME((FLAG:주인님), TARGET)%에는 예의 범절의 방법이라는 것을 가르쳐 주어요」
+		PRINTFORMW 「나의 솜씨, 자주(잘) 보고 있어 줘. 우후후…」
+	;조교 대상의 반항 각인 Lv2 이하
 	ELSE
-		PRINTFORMW 「何事かと思って来てみれば、中々楽しそうな事になってるみたいね？」
-		PRINTFORMW 「%CNAME((FLAG:ご主人様), TARGET)%にこんな趣味があるなんて知らなかったけど…」
-		PRINTFORMW 「まぁ折角の機会だから、精々愉しませてもらう事にするわ。ウフフ…」
+		PRINTFORMW 「무슨 일일까하고 생각해 와 보면, 꽤 즐거운 듯 하는 일이 되고 있는 것 같구나?」
+		PRINTFORMW 「%CNAME((FLAG:주인님), TARGET)%에 이런 취미가 있다니 몰랐지만…」
+		PRINTFORMW 「뭐 모처럼의 기회이니까, 최대한 즐겁게 해 받는 일로 해요. 우후후…」
 	ENDIF
 	RETURN 1
 ENDIF

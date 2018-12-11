@@ -1,421 +1,421 @@
 ﻿
-;────────────────────────────────────
-;道具生成処理
-;────────────────────────────────────
+;─
+;도구 생성 처리
+;─
 @MANAGE_MP
 #DIM LCOUNT
-#DIM 収入見込
-#DIM 平均
-#DIM 分配種数
-#DIM 最大値
-#DIM 処理種
-#DIMS 分配種
-#DIM 元REDRAW
+#DIM 수입예상
+#DIM 평균
+#DIM 분배종수
+#DIM 최대치
+#DIM 처리종
+#DIMS 분배종
+#DIM 원REDRAW
 
-;魔力が全く無ければ処理しない
-SIF CFLAG:魔力 == 0
+;마력이 전혀 없으면 처리하지 않는다
+SIF CFLAG:마력 == 0
 	RETURN 0
-IF FLAG:オートモード > 0 && FLAG:オートモード表示設定 == 1
+IF FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1
 	SKIPDISP 1
 ENDIF
 ;-------------------------------------------------------------------------
-;魔力収入に関する処理
+;마력 수입에 관한 처리
 ;-------------------------------------------------------------------------
-;収入の記録を参照し、将来の収入を予測する
+;수입의 기록을 참조해, 장래의 수입을 예측한다
 
-;既に現在の魔力はデータベースに記入済みであること前提
-収入見込 = CFLAG:6101 - CFLAG:6100
+;이미 현재의 마력은 데이타베이스에 기입필 보고인 것 전제
+수입예상 = CFLAG:6101 - CFLAG:6100
 FOR LCOUNT, 0, 20
 	SIF CFLAG:(6101 + LCOUNT) == 0
 		BREAK
-	収入見込 = (収入見込 * LCOUNT + CFLAG:(6102 + LCOUNT) - CFLAG:(6101 + LCOUNT)) / (LCOUNT + 1)
+	수입예상 = (수입예상 * LCOUNT + CFLAG:(6102 + LCOUNT) - CFLAG:(6101 + LCOUNT)) / (LCOUNT + 1)
 NEXT
 ;-------------------------------------------------------------------------
-;ランニングコストに関する処理
+;런닝코스트(running cost)에 관한 처리
 ;-------------------------------------------------------------------------
-;※現在は0で処理しているが、魔力を収集する必要があるくらいだから
-;  自動的に消耗してしかるべきなのでは？
+;※현재는 0으로 처리하고 있지만, 마력을 수집할 필요가 있는 정도이니까
+;  자동적으로 소모해 마땅한 것은?
 
 ;-------------------------------------------------------------------------
-;魔力分配に関する処理
+;마력 분배에 관한 처리
 ;-------------------------------------------------------------------------
-;魔力の使用先には『調教者追加、技巧上昇、知識・技能取得、道具錬成』が存在する。
-;これらを現在の状況、素質、能力などによって判断し、優先度や消費限界魔力を設定する。
+;마력의 사용 먼저는 『조교자 추가, 기교 상승, 지식·기능 취득, 도구 연성』이 존재한다.
+;이것들을 현재의 상황, 소질, 능력 따위에 의해 판단해, 우선도나 소비 한계 마력을 설정한다.
 
-SIF FLAG:デバッグ
-	PRINTFORML 『魔力消費処理』(可用魔力：{CFLAG:魔力})
+SIF FLAG:디버그
+	PRINTFORML 『마력 소비 처리』(가용 마력:{CFLAG:마력})
 
-分配種 = 人員追加/技巧上昇/技能取得/道具錬成
+분배종 = 인원추가/기교상승/기능취득/도구연성
 
-CALL SET_CRI_VAR, 分配種
+CALL SET_CRI_VAR, 분배종
 
 LOCALS = MANAGE_MP
 
-CALL CHA_CRI_VAR, "調教者の素質"
+CALL CHA_CRI_VAR, "조교자의 소질"
 CALLFORM %LOCALS%_TALENT_T
 
-CALL CHA_CRI_VAR, "調教対象の素質"
+CALL CHA_CRI_VAR, "조교 대상의 소질"
 CALLFORM %LOCALS%_TALENT_M
 
-CALL CHA_CRI_VAR, "調教者が妊娠"
+CALL CHA_CRI_VAR, "조교자가 임신"
 CALLFORM %LOCALS%_MATERNITY_T
 
-CALL CHA_CRI_VAR, "調教者の能力"
+CALL CHA_CRI_VAR, "조교자의 능력"
 CALLFORM %LOCALS%_ABL_T
 
-CALL CHA_CRI_VAR, "性別関係"
+CALL CHA_CRI_VAR, "성별 관계"
 CALLFORM %LOCALS%_SEX
 
-CALL CHA_CRI_VAR, "調教者の体力"
+CALL CHA_CRI_VAR, "조교자의 체력"
 CALLFORM %LOCALS%_PHYSICAL_T
 
-CALL CHA_CRI_VAR, "調教者の気力"
+CALL CHA_CRI_VAR, "조교자의 기력"
 CALLFORM %LOCALS%_MENTAL_T
 
-CALL CHA_CRI_VAR, "調教者の興味"
+CALL CHA_CRI_VAR, "조교자의 흥미"
 CALLFORM %LOCALS%_INTEREST_T
 
-CALL CHA_CRI_VAR, "調教者の苛立ち"
+CALL CHA_CRI_VAR, "조교자의 초조"
 CALLFORM %LOCALS%_IRRITATION_T
 
-CALL CHA_CRI_VAR, "調教者の好感度"
+CALL CHA_CRI_VAR, "조교자의 호감도"
 CALLFORM %LOCALS%_LIKE_T
 
-CALL CHA_CRI_VAR, "調教対象の好感度"
+CALL CHA_CRI_VAR, "조교 대상의 호감도"
 CALLFORM %LOCALS%_LIKE_M
 
-CALL CHA_CRI_VAR, "実行判定"
+CALL CHA_CRI_VAR, "실행 판정"
 CALLFORM %LOCALS%_ABLE
 
-;──────────────────────────────
-;最終判定
-;──────────────────────────────
+;─
+;최종 판정
+;─
 CALL DEF_CRI_VAR()
 CALL ANA_CRI_VAR()
 
-SIF FLAG:デバッグ
+SIF FLAG:디버그
 	PRINTW 
 
-;分配種ごとの基準値取得
-SPLIT 分配種, "/", LOCALS
-分配種数 = RESULT
-CALLF GET_CRI_VAR("累計")
-;ついでに平均値をとる
-平均 = 0
-FOR LCOUNT, 0, 分配種数
+;분배종 마다의 기준치 취득
+SPLIT 분배종, "/", LOCALS
+분배종수 = RESULT
+CALLF GET_CRI_VAR("누계")
+;하는 김에 평균치를 취한다
+평균 = 0
+FOR LCOUNT, 0, 분배종수
 	LOCAL:LCOUNT = RESULT:LCOUNT
 	SIF LOCAL:LCOUNT > -99
-		平均 += LOCAL:LCOUNT
+		평균 += LOCAL:LCOUNT
 NEXT
-平均 /= 分配種数
+평균 /= 분배종수
 WHILE 1
-	;最大値取得
-	最大値 = MAXARRAY(LOCAL, 0, 分配種数)
-	;最大値が-99を下回れば終了
-	SIF 最大値 <= -99
+	;최대치 취득
+	최대치 = MAXARRAY(LOCAL, 0, 분배종수)
+	;최대치가-99를 밑돌면 종료
+	SIF 최대치 <= -99
 		BREAK
-	;大きな値のものから順に処理
-	処理種 = FINDELEMENT(LOCAL, 最大値, 0, 分配種数)
-	;使用可能魔力判定用数値代入
-	CALLF MANAGE_MP_PROP(1, LOCAL:処理種 - 平均, 収入見込)
-	;処理種が……
-	SELECTCASE LOCALS:処理種
-		CASE "人員追加"
-			;SIF FLAG:デバッグ
-			;	PRINTFORML 『人員追加』
-		CASE "技巧上昇"
+	;큰 값의 것으로부터 순서에 처리
+	처리종 = FINDELEMENT(LOCAL, 최대치, 0, 분배종수)
+	;사용 가능 마력 판정용 수치 대입
+	CALLF MANAGE_MP_PROP(1, LOCAL:처리종 - 평균, 수입예상)
+	;처리종이……
+	SELECTCASE LOCALS:처리종
+		CASE "인원 추가"
+			;SIF FLAG:디버그
+			;	PRINTFORML 『인원 추가』
+		CASE "기교 상승"
 			CALL RIZE_ABL_AI
-		CASE "技能取得"
+		CASE "기능 취득"
 			CALL GAIN_TALENT_AI
-		CASE "道具錬成"
+		CASE "도구 연성"
 			CALL MAKE_TOOLS
 	ENDSELECT
-	;現在の処理種に対して処理を終了する
-	LOCAL:処理種 = -99
-	IF FLAG:オートモード > 0 && FLAG:オートモード表示設定 == 1
+	;현재의 처리종에 대해서 처리를 종료한다
+	LOCAL:처리종 = -99
+	IF FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1
 		SKIPDISP 1
 	ENDIF
 WEND
 ;-------------------------------------------------------------------------
-;調教者の素質を参照
+;조교자의 소질을 참조
 ;-------------------------------------------------------------------------
 @MANAGE_MP_TALENT_T
 
-;調教者が臆病
-SIF TALENT:臆病
-	CALL ADD_CRI_VAR("人員追加", 3)
+;조교자가 겁쟁이
+SIF TALENT:겁쟁이
+	CALL ADD_CRI_VAR("인원 추가", 3)
 
-;調教者がプライド高い/低い
-IF TALENT:プライド高い
-	CALL ADD_CRI_VAR("技巧上昇", 6)
-	CALL ADD_CRI_VAR("技能取得", 9)
-	CALL ADD_CRI_VAR("道具錬成", -6)
-ELSEIF TALENT:プライド低い
-	CALL ADD_CRI_VAR("技巧上昇", -6)
-	CALL ADD_CRI_VAR("技能取得", -9)
-	CALL ADD_CRI_VAR("道具錬成", 6)
+;조교자가 프라이드높음/낮다
+IF TALENT:프라이드높음
+	CALL ADD_CRI_VAR("기교 상승", 6)
+	CALL ADD_CRI_VAR("기능 취득", 9)
+	CALL ADD_CRI_VAR("도구 연성", -6)
+ELSEIF TALENT:프라이드낮음
+	CALL ADD_CRI_VAR("기교 상승", -6)
+	CALL ADD_CRI_VAR("기능 취득", -9)
+	CALL ADD_CRI_VAR("도구 연성", 6)
 ENDIF
 
-;調教者が無関心/好奇心
-IF TALENT:無関心
-	CALL ADD_CRI_VAR("技巧上昇", -3)
-	CALL ADD_CRI_VAR("技能取得", -9)
-	CALL ADD_CRI_VAR("道具錬成", -9)
-ELSEIF TALENT:好奇心
-	CALL ADD_CRI_VAR("技巧上昇", 3)
-	CALL ADD_CRI_VAR("技能取得", 9)
-	CALL ADD_CRI_VAR("道具錬成", 9)
+;조교자가 무관심/호기심
+IF TALENT:무관심
+	CALL ADD_CRI_VAR("기교 상승", -3)
+	CALL ADD_CRI_VAR("기능 취득", -9)
+	CALL ADD_CRI_VAR("도구 연성", -9)
+ELSEIF TALENT:호기심
+	CALL ADD_CRI_VAR("기교 상승", 3)
+	CALL ADD_CRI_VAR("기능 취득", 9)
+	CALL ADD_CRI_VAR("도구 연성", 9)
 ENDIF
 
-;調教者が習得早い/習得遅い
-IF TALENT:習得早い
-	CALL ADD_CRI_VAR("技巧上昇", 6)
-	CALL ADD_CRI_VAR("技能取得", 6)
-ELSEIF TALENT:習得遅い
-	CALL ADD_CRI_VAR("技巧上昇", -6)
-	CALL ADD_CRI_VAR("技能取得", -6)
+;조교자가 습득빠름/습득느림
+IF TALENT:습득빠름
+	CALL ADD_CRI_VAR("기교 상승", 6)
+	CALL ADD_CRI_VAR("기능 취득", 6)
+ELSEIF TALENT:습득느림
+	CALL ADD_CRI_VAR("기교 상승", -6)
+	CALL ADD_CRI_VAR("기능 취득", -6)
 ENDIF
 
-;調教者が献身的
-IF TALENT:献身的
-	CALL ADD_CRI_VAR("技巧上昇", 6)
-	CALL ADD_CRI_VAR("技能取得", 3)
+;조교자가 헌신적
+IF TALENT:헌신적
+	CALL ADD_CRI_VAR("기교 상승", 6)
+	CALL ADD_CRI_VAR("기능 취득", 3)
 ENDIF
 
-;調教者が受け身
-IF TALENT:受け身
-	CALL ADD_CRI_VAR("人員追加", 6)
-	CALL ADD_CRI_VAR("道具錬成", 3)
+;조교자가 수동
+IF TALENT:수동
+	CALL ADD_CRI_VAR("인원 추가", 6)
+	CALL ADD_CRI_VAR("도구 연성", 3)
 ENDIF
 	
 ;-------------------------------------------------------------------------
-;調教対象の素質を参照
+;조교 대상의 소질을 참조
 ;-------------------------------------------------------------------------
 @MANAGE_MP_TALENT_M
 
-;調教対象が無関心/好奇心
-IF TALENT:MASTER:無関心
-	CALL ADD_CRI_VAR("技能取得", -3)
-	CALL ADD_CRI_VAR("道具錬成", -3)
-ELSEIF TALENT:MASTER:好奇心
-	CALL ADD_CRI_VAR("技能取得", 3)
-	CALL ADD_CRI_VAR("道具錬成", 3)
+;조교 대상이 무관심/호기심
+IF TALENT:MASTER:무관심
+	CALL ADD_CRI_VAR("기능 취득", -3)
+	CALL ADD_CRI_VAR("도구 연성", -3)
+ELSEIF TALENT:MASTER:호기심
+	CALL ADD_CRI_VAR("기능 취득", 3)
+	CALL ADD_CRI_VAR("도구 연성", 3)
 ENDIF
 
 ;-------------------------------------
-;調教者が妊娠中
+;조교자가 임신중
 ;-------------------------------------
 @MANAGE_MP_MATERNITY_T
 
-;妊娠中
-IF TALENT:妊娠
-	CALL ADD_CRI_VAR("人員追加", 9)
-	CALL ADD_CRI_VAR("技巧上昇", -9)
-	CALL ADD_CRI_VAR("技能取得", -9)
-	CALL ADD_CRI_VAR("道具錬成", 6)
+;임신중
+IF TALENT:임신
+	CALL ADD_CRI_VAR("인원 추가", 9)
+	CALL ADD_CRI_VAR("기교 상승", -9)
+	CALL ADD_CRI_VAR("기능 취득", -9)
+	CALL ADD_CRI_VAR("도구 연성", 6)
 ENDIF
 
 ;-------------------------------------------------------------------------
-;調教者の能力を参照
+;조교자의 능력을 참조
 ;-------------------------------------------------------------------------
 @MANAGE_MP_ABL_T
 
-;調教者の奉仕精神が[0→0, 5→5]を加算(0～5)
-CALL ADD_CRI_VAR("技巧上昇", LINE_CALC(ABL:奉仕精神, "0→0,5→5,LIMIT/0～5"))
-CALL ADD_CRI_VAR("技能取得", LINE_CALC(ABL:奉仕精神, "0→0,5→5,LIMIT/0～5"))
+;조교자의 봉사 정신이[0→0, 5→5]를 가산(0~5)
+CALL ADD_CRI_VAR("기교 상승", LINE_CALC(ABL:봉사정신, "0→0,5→5,LIMIT/0～5"))
+CALL ADD_CRI_VAR("기능 취득", LINE_CALC(ABL:봉사정신, "0→0,5→5,LIMIT/0～5"))
 
 ;-------------------------------------------------------------------------
-;性別関係
-;同性で対応の能力や素質がない場合は体の接触を避けるように
+;성별 관계
+;동성으로 대응의 능력이나 소질이 없는 경우는 몸의 접촉을 피하도록(듯이)
 ;-------------------------------------------------------------------------
 @MANAGE_MP_SEX
 
-;調教者に両刀が無く、オトコ同士
-IF TALENT:オトコ && TALENT:MASTER:オトコ && !TALENT:両刀
-	;調教者のＢＬっ気が[0→0, 4→4]を加算(0～4)
-	CALL ADD_CRI_VAR("人員追加", LINE_CALC(ABL:ＢＬっ気, "0→0,4→4,LIMIT/0～4"))
-	;調教者のＢＬっ気が[0→0, 4→2]を加算(0～2)
-	CALL ADD_CRI_VAR("道具錬成", LINE_CALC(ABL:ＢＬっ気, "0→0,4→2,LIMIT/0～2"))
-	;調教者のＢＬっ気が[0→-2, 4→0]を加算(-2～0)
-	CALL ADD_CRI_VAR("技巧上昇", LINE_CALC(ABL:ＢＬっ気, "0→-2,4→0,LIMIT/-2～0"))
-	CALL ADD_CRI_VAR("技能取得", LINE_CALC(ABL:ＢＬっ気, "0→-2,4→0,LIMIT/-2～0"))
+;조교자에게 양도가 없고, 남자끼리
+IF TALENT:남자 && TALENT:MASTER:남자 && !TALENT:양도
+	;조교자의 ＢＬ끼이[0→0, 4→4]를 가산(0~4)
+	CALL ADD_CRI_VAR("인원 추가", LINE_CALC(ABL:ＢＬ끼, "0→0,4→4,LIMIT/0～4"))
+	;조교자의 ＢＬ끼이[0→0, 4→2]를 가산(0~2)
+	CALL ADD_CRI_VAR("도구 연성", LINE_CALC(ABL:ＢＬ끼, "0→0,4→2,LIMIT/0～2"))
+	;조교자의 ＢＬ끼이[0→-2, 4→0]을 가산(-2~0)
+	CALL ADD_CRI_VAR("기교 상승", LINE_CALC(ABL:ＢＬ끼, "0→-2,4→0,LIMIT/-2～0"))
+	CALL ADD_CRI_VAR("기능 취득", LINE_CALC(ABL:ＢＬ끼, "0→-2,4→0,LIMIT/-2～0"))
 ENDIF
 
-;調教者に両刀が無く、女の子同士
-IF !TALENT:オトコ && !TALENT:MASTER:オトコ && !TALENT:両刀
-	;調教者のレズっ気が[0→0, 4→4]を加算(0～4)
-	CALL ADD_CRI_VAR("人員追加", LINE_CALC(ABL:レズっ気, "0→0,4→4,LIMIT/0～4"))
-	;調教者のレズっ気が[0→0, 4→2]を加算(0～2)
-	CALL ADD_CRI_VAR("道具錬成", LINE_CALC(ABL:レズっ気, "0→0,4→2,LIMIT/0～2"))
-	;調教者のレズっ気が[0→-2, 4→0]を加算(-2～0)
-	CALL ADD_CRI_VAR("技巧上昇", LINE_CALC(ABL:レズっ気, "0→-2,4→0,LIMIT/-2～0"))
-	CALL ADD_CRI_VAR("技能取得", LINE_CALC(ABL:レズっ気, "0→-2,4→0,LIMIT/-2～0"))
+;조교자에게 양도가 없고, 여자 아이끼리
+IF !TALENT:남자 && !TALENT:MASTER:남자 && !TALENT:양도
+	;조교자의 레즈끼가[0→0, 4→4]를 가산(0~4)
+	CALL ADD_CRI_VAR("인원 추가", LINE_CALC(ABL:레즈끼, "0→0,4→4,LIMIT/0～4"))
+	;조교자의 레즈끼가[0→0, 4→2]를 가산(0~2)
+	CALL ADD_CRI_VAR("도구 연성", LINE_CALC(ABL:레즈끼, "0→0,4→2,LIMIT/0～2"))
+	;조교자의 레즈끼가[0→-2, 4→0]을 가산(-2~0)
+	CALL ADD_CRI_VAR("기교 상승", LINE_CALC(ABL:레즈끼, "0→-2,4→0,LIMIT/-2～0"))
+	CALL ADD_CRI_VAR("기능 취득", LINE_CALC(ABL:레즈끼, "0→-2,4→0,LIMIT/-2～0"))
 	
-	;調教者のレズ中毒が[0→0, 4→4]を加算(0～4)
-	CALL ADD_CRI_VAR("技巧上昇", LINE_CALC(ABL:レズ中毒, "0→0,4→4,LIMIT/0～4"))
-	CALL ADD_CRI_VAR("技能取得", LINE_CALC(ABL:レズ中毒, "0→0,4→4,LIMIT/0～4"))
+	;조교자의 레즈중독이[0→0, 4→4]를 가산(0~4)
+	CALL ADD_CRI_VAR("기교 상승", LINE_CALC(ABL:레즈중독, "0→0,4→4,LIMIT/0～4"))
+	CALL ADD_CRI_VAR("기능 취득", LINE_CALC(ABL:레즈중독, "0→0,4→4,LIMIT/0～4"))
 ENDIF
 
-;調教者が男嫌いかつ、調教対象がオトコ
-IF TALENT:男嫌い && TALENT:MASTER:オトコ
-	CALL ADD_CRI_VAR("人員追加", 2)
-	CALL ADD_CRI_VAR("道具錬成", 4)
+;조교자가 남성혐오 한편, 조교 대상이 남자
+IF TALENT:남성혐오 && TALENT:MASTER:남자
+	CALL ADD_CRI_VAR("인원 추가", 2)
+	CALL ADD_CRI_VAR("도구 연성", 4)
 ENDIF
 
 ;-------------------------------------
-;調教者の体力
+;조교자의 체력
 ;-------------------------------------
 @MANAGE_MP_PHYSICAL_T
 
-;調教者の体力が[0→-4, 1500→2]を加算(-4～2)
-CALL ADD_CRI_VAR("技巧上昇", LINE_CALC(BASE:体力, "0→-4,1500→2,LIMIT/-4～2"))
-CALL ADD_CRI_VAR("技能取得", LINE_CALC(BASE:体力, "0→-4,1500→2,LIMIT/-4～2"))
-;調教者の体力が[0→-2, 500→0]を加算(-2～0)
-CALL ADD_CRI_VAR("道具錬成", LINE_CALC(BASE:体力, "0→-2,500→0,LIMIT/-2～0"))
+;조교자의 체력이[0→-4, 1500→2]를 가산(-4~2)
+CALL ADD_CRI_VAR("기교 상승", LINE_CALC(BASE:체력, "0→-4,1500→2,LIMIT/-4～2"))
+CALL ADD_CRI_VAR("기능 취득", LINE_CALC(BASE:체력, "0→-4,1500→2,LIMIT/-4～2"))
+;조교자의 체력이[0→-2, 500→0]을 가산(-2~0)
+CALL ADD_CRI_VAR("도구 연성", LINE_CALC(BASE:체력, "0→-2,500→0,LIMIT/-2～0"))
 
 ;-------------------------------------
-;調教者の気力
+;조교자의 기력
 ;-------------------------------------
 @MANAGE_MP_MENTAL_T
 
-;調教者の気力が[0→-4, 1500→2]を加算(-4～2)
-CALL ADD_CRI_VAR("技巧上昇", LINE_CALC(BASE:気力, "0→-4,1500→2,LIMIT/-4～2"))
-CALL ADD_CRI_VAR("技能取得", LINE_CALC(BASE:気力, "0→-4,1500→2,LIMIT/-4～2"))
-;調教者の体力が[0→-2, 500→0]を加算(-2～0)
-CALL ADD_CRI_VAR("人員追加", LINE_CALC(BASE:気力, "0→-2,500→0,LIMIT/-2～0"))
-CALL ADD_CRI_VAR("道具錬成", LINE_CALC(BASE:気力, "0→-2,500→0,LIMIT/-2～0"))
+;조교자의 기력이[0→-4, 1500→2]를 가산(-4~2)
+CALL ADD_CRI_VAR("기교 상승", LINE_CALC(BASE:기력, "0→-4,1500→2,LIMIT/-4～2"))
+CALL ADD_CRI_VAR("기능 취득", LINE_CALC(BASE:기력, "0→-4,1500→2,LIMIT/-4～2"))
+;조교자의 체력이[0→-2, 500→0]을 가산(-2~0)
+CALL ADD_CRI_VAR("인원 추가", LINE_CALC(BASE:기력, "0→-2,500→0,LIMIT/-2～0"))
+CALL ADD_CRI_VAR("도구 연성", LINE_CALC(BASE:기력, "0→-2,500→0,LIMIT/-2～0"))
 
 ;-------------------------------------
-;調教者の興味
+;조교자의 흥미
 ;-------------------------------------
 @MANAGE_MP_INTEREST_T
 
-;調教者の興味が[0→-4, 1000→4]を加算(-4～4)
-CALL ADD_CRI_VAR("技巧上昇", LINE_CALC(BASE:興味, "0→-4,1000→4,LIMIT/-4～4"))
-CALL ADD_CRI_VAR("技能取得", LINE_CALC(BASE:興味, "0→-4,1000→4,LIMIT/-4～4"))
-;調教者の興味が[0→2, 1000→-2]を加算(-2～2)
-CALL ADD_CRI_VAR("人員追加", LINE_CALC(BASE:興味, "0→-2,1000→2,LIMIT/-2～2"))
-;調教者の興味が[0→4, 1000→-4]を加算(-4～4)
-CALL ADD_CRI_VAR("道具錬成", LINE_CALC(BASE:興味, "0→-4,1000→4,LIMIT/-4～4"))
+;조교자의 흥미가[0→-4, 1000→4]를 가산(-4~4)
+CALL ADD_CRI_VAR("기교 상승", LINE_CALC(BASE:흥미, "0→-4,1000→4,LIMIT/-4～4"))
+CALL ADD_CRI_VAR("기능 취득", LINE_CALC(BASE:흥미, "0→-4,1000→4,LIMIT/-4～4"))
+;조교자의 흥미가[0→2, 1000→-2]를 가산(-2~2)
+CALL ADD_CRI_VAR("인원 추가", LINE_CALC(BASE:흥미, "0→-2,1000→2,LIMIT/-2～2"))
+;조교자의 흥미가[0→4, 1000→-4]를 가산(-4~4)
+CALL ADD_CRI_VAR("도구 연성", LINE_CALC(BASE:흥미, "0→-4,1000→4,LIMIT/-4～4"))
 
 ;-------------------------------------
-;調教者の苛立ち
+;조교자의 초조
 ;-------------------------------------
 @MANAGE_MP_IRRITATION_T
 
-;調教者の苛立ちが[0→0, 800→5]を加算(0～5)
-CALL ADD_CRI_VAR("道具錬成", LINE_CALC(BASE:苛立ち, "0→0,800→5,LIMIT/0～5"))
+;조교자의 초조가[0→0, 800→5]를 가산(0~5)
+CALL ADD_CRI_VAR("도구 연성", LINE_CALC(BASE:초조, "0→0,800→5,LIMIT/0～5"))
 
 ;-------------------------------------
-;調教者の好意
+;조교자의 호의
 ;-------------------------------------
 @MANAGE_MP_LIKE_T
 
-;調教者の好意が[-2000→3 2000→-3]を加算(-3～3)
-CALL ADD_CRI_VAR("人員追加", LINE_CALC(CFLAG:好意, "-2000→3,2000→-3,LIMIT/-3～3"))
-;調教者の好意が[-2000→-3 2000→3]を加算(-3～3)
-CALL ADD_CRI_VAR("技巧上昇", LINE_CALC(CFLAG:好意, "-2000→-3,2000→3,LIMIT/-3～3"))
-CALL ADD_CRI_VAR("技能取得", LINE_CALC(CFLAG:好意, "-2000→-3,2000→3,LIMIT/-3～3"))
+;조교자의 호의가[-2000→3 2000→-3]을 가산(-3~3)
+CALL ADD_CRI_VAR("인원 추가", LINE_CALC(CFLAG:호의, "-2000→3,2000→-3,LIMIT/-3～3"))
+;조교자의 호의가[-2000→-3 2000→3]을 가산(-3~3)
+CALL ADD_CRI_VAR("기교 상승", LINE_CALC(CFLAG:호의, "-2000→-3,2000→3,LIMIT/-3～3"))
+CALL ADD_CRI_VAR("기능 취득", LINE_CALC(CFLAG:호의, "-2000→-3,2000→3,LIMIT/-3～3"))
 
 ;-------------------------------------
-;調教対象の好意
-;主人公から調教者への好意は調教者自身が保持しているのに注意
+;조교 대상의 호의
+;주인공으로부터 조교자에게로의 호의는 조교자 자신이 보유 하고 있는데 주의
 ;-------------------------------------
 @MANAGE_MP_LIKE_M
 
-;調教者の好意が[-2000→3 2000→-3]を加算(-3～3)
-CALL ADD_CRI_VAR("人員追加", LINE_CALC(CFLAG:M好意, "-2000→3,2000→-3,LIMIT/-3～3"))
+;조교자의 호의가[-2000→3 2000→-3]을 가산(-3~3)
+CALL ADD_CRI_VAR("인원 추가", LINE_CALC(CFLAG:M호의, "-2000→3,2000→-3,LIMIT/-3～3"))
 
 ;----------------------------------------------------------
-;実行判定
+;실행 판정
 ;----------------------------------------------------------
 @MANAGE_MP_ABLE
 
-;オンになっていない設定に関しては実行不可
-SIF !(FLAG:AI自由度 & 1)
-	CALL DIM_CRI_VAR("人員追加", -999)
-SIF !(FLAG:AI自由度 & 2)
-	CALL DIM_CRI_VAR("技巧上昇", -999)
-SIF !(FLAG:AI自由度 & 4)
-	CALL DIM_CRI_VAR("技能取得", -999)
-SIF !(FLAG:AI自由度 & 8)
-	CALL DIM_CRI_VAR("道具錬成", -999)
+;온으로 되어 있지 않은 설정에 관해서는 실행 불가
+SIF !(FLAG:AI자유도 & 1)
+	CALL DIM_CRI_VAR("인원 추가", -999)
+SIF !(FLAG:AI자유도 & 2)
+	CALL DIM_CRI_VAR("기교 상승", -999)
+SIF !(FLAG:AI자유도 & 4)
+	CALL DIM_CRI_VAR("기능 취득", -999)
+SIF !(FLAG:AI자유도 & 8)
+	CALL DIM_CRI_VAR("도구 연성", -999)
 
-;────────────────────────────────────
-;関連諸関数
-;────────────────────────────────────
+;─
+;관련제함수
+;─
 ;-------------------------------------
-;魔力消費性向
-;0を基準に大きいほど魔力を消費したがる
-;ARG:0 = 0:使用可能魔力判定 1:数値代入
-;ARG:1 = 要求偏差(0を基準に大きいほどこの種別で魔力を消費したがる)
-;ARG:2 = 収入見込
+;마력 소비성향
+;0를 기준에 큰 만큼 마력을 소비 하고 싶어한다
+;ARG:0 = 0:사용 가능 마력 판정 1:수치 대입
+;ARG:1 =요구 편차(0을 기준에 큰 만큼 이 종별로 마력을 소비 하고 싶어한다)
+;ARG:2 =수입 예상
 ;-------------------------------------
 @MANAGE_MP_PROP(ARG = 0, ARG:1, ARG:2)
 #FUNCTION
 IF ARG
 	LOCAL:0 = ARG:1 / 5
-	LOCAL:1 = (ARG:2 * 2 / MAX(CFLAG:魔力, 1)) - 2
+	LOCAL:1 = (ARG:2 * 2 / MAX(CFLAG:마력, 1)) - 2
 	RETURNF 0
 ENDIF
-RETURNF LOCAL + LOCAL:1 + TALENT:好奇心 - TALENT:無関心 + TALENT:衝動的 - TALENT:自制的 + TALENT:楽観的 - TALENT:悲観的
+RETURNF LOCAL + LOCAL:1 + TALENT:호기심 - TALENT:무관심 + TALENT:충동적 - TALENT:자제적 + TALENT:낙관적 - TALENT:비관적
 
-;────────────────────────────────────
-;技巧上昇処理
-;※ARGは要求偏差(0を基準に大きいほどこの種別で魔力を消費したがる)
-;────────────────────────────────────
+;─
+;기교 상승 처리
+;※ARG는 요구 편차(0을 기준에 큰 만큼 이 종별로 마력을 소비 하고 싶어한다)
+;─
 @RIZE_ABL_AI
-#DIM 可用魔力
+#DIM 가용마력
 
-;使用可能魔力判定
-可用魔力 = RIZE_ABL_MP_ABLE()
+;사용 가능 마력 판정
+가용마력 = RIZE_ABL_MP_ABLE()
 
-SIF FLAG:デバッグ
-	PRINTFORML 『技巧上昇処理』(可用魔力：{可用魔力})
+SIF FLAG:디버그
+	PRINTFORML 『기교 상승 처리』(가용 마력:{가용마력})
 
 SKIPDISP 0
 WHILE 1
-	;魔力不足判定
-	IF 可用魔力 < RIZE_ABL_V(0)
-		SIF FLAG:デバッグ
-			PRINTFORMW 可用魔力が不足しています(あと{RIZE_ABL_V(0) - 可用魔力})
+	;마력 부족 판정
+	IF 가용마력 < RIZE_ABL_V(0)
+		SIF FLAG:디버그
+			PRINTFORMW 가용 마력이 부족합니다(그리고{RIZE_ABL_V(0) - 가용마력})
 		RETURN 0
 	ENDIF
-	;技巧上昇に挑戦
+	;기교 상승에 도전
 	CALL RIZE_ABL
 	LOCAL = RESULT:1
 	SELECTCASE RESULT
-		;成功時
+		;성공시
 		CASE 0
-			;地の文表示
-			PRINTFORMW %CALLNAME:TARGET%の調教技巧は<{ABL:技巧}>になりました
-			;イベント口上：調教技巧アップ
+			;지문 표시
+			PRINTFORMW %CALLNAME:TARGET%의 조교 기교는<{ABL:기교}>가 되었습니다
+			;이벤트 구상:조교 기교 업
 			;CALL KOJO_EVENT(110, 1)
 			;CALL VOIDLINE_IF(RESULT)
 			
-			;魔力・可用魔力を消費
-			CFLAG:魔力 -= LOCAL
-			可用魔力 -= LOCAL
-			SIF FLAG:デバッグ
-				PRINTFORML (可用魔力：{可用魔力})
-		;魔力不足時
+			;마력·가용 마력을 소비
+			CFLAG:마력 -= LOCAL
+			가용마력 -= LOCAL
+			SIF FLAG:디버그
+				PRINTFORML (가용 마력:{가용마력})
+		;마력 부족시
 		CASE 1
-			IF FLAG:デバッグ
-				PRINTFORML 魔力が不足しています(あと{RIZE_ABL_V(0) - CFLAG:魔力})
+			IF FLAG:디버그
+				PRINTFORML 마력이 부족합니다(그리고{RIZE_ABL_V(0) - CFLAG:마력})
 				PRINTW 
 			ENDIF
 			RETURN 0
-		;調教レベル不足時
+		;조교 레벨 부족시
 		CASE 2
-			IF FLAG:デバッグ
-				PRINTFORML 調教レベルが不足しています(あと{RIZE_ABL_V(1) - CFLAG:調教レベル})
+			IF FLAG:디버그
+				PRINTFORML 조교 레벨이 부족합니다(그리고{RIZE_ABL_V(1) - CFLAG:조교레벨})
 				PRINTW 
 			ENDIF
 			RETURN 0
-		;技巧上限時
+		;기교 상한시
 		CASE 3
-			IF FLAG:デバッグ
-				PRINTFORML これ以上技巧は上げられません(現在技巧：{ABL:技巧})
+			IF FLAG:디버그
+				PRINTFORML 더 이상 기교는 올려지지 않습니다(현재 기교:{ABL:기교})
 				PRINTW 
 			ENDIF
 			RETURN 0
@@ -423,10 +423,10 @@ WHILE 1
 WEND
 
 ;------------------------------------------
-;使用可能魔力判定
+;사용 가능 마력 판정
 ;------------------------------------------
 @RIZE_ABL_MP_ABLE()
 #FUNCTION
-;魔力不足基準設定
-RETURNF LIMIT(CFLAG:魔力 * (8 + MANAGE_MP_PROP() + TALENT:習得早い - TALENT:習得遅い) * 10 / 100, 0, CFLAG:魔力)
+;마력 부족 기준 설정
+RETURNF LIMIT(CFLAG:마력 * (8 + MANAGE_MP_PROP() + TALENT:습득빠름 - TALENT:습득느림) * 10 / 100, 0, CFLAG:마력)
 

@@ -1,79 +1,79 @@
-﻿;衣装関連の処理
-;────────────────────────────────────
-;調教者の衣装初期化。勝手に拝借したものなので作者さんに最高の敬意を
+﻿;의상 관련의 처리
+;─
+;조교자의 의상 초기화. 마음대로 빌린 것으로 작자씨에게 최고의 경의를
 
-;とはいうけどこれcsvにすべきよね。つーわけでcsvにしました
-;────────────────────────────────────
+;라고는 말하지만 이것 csv에 해야 해요. 라는 (뜻)이유로 csv로 했습니다
+;─
 @CLOTHES_SETUP(ARG)
-;衣装未設定（デフォ全裸）の場合のみここで設定します
-IF !(EQUIP:ARG:アクセサリ+EQUIP:ARG:靴下+EQUIP:ARG:下半身下着+EQUIP:ARG:上半身下着+EQUIP:ARG:下半身上着+EQUIP:ARG:上半身上着+EQUIP:ARG:全身上着)
-	;脚があればソックス
-	SIF !TALENT:ARG:足無し
-		EQUIP:ARG:靴下 = 1
-	;オトコの場合、トランクス・ズボン・Ｔシャツ・上着
-	IF TALENT:ARG:オトコ
-		EQUIP:ARG:下半身下着 = 3
-		EQUIP:ARG:上半身下着 = 4
-		EQUIP:ARG:下半身上着 = 3
-		EQUIP:ARG:上半身上着 = 1
-	;貧乳の場合、パンティ・キャミソール・ワンピース
-	ELSEIF TALENT:ARG:貧乳
-		EQUIP:ARG:下半身下着 = 2
-		EQUIP:ARG:上半身下着 = 2
-		EQUIP:ARG:全身上着 = 3
-	;それ以外の場合、パンティ・ブラジャー・スカート・上着
+;의상 미설정(데포 전라)의 경우만 여기서 설정합니다
+IF !(EQUIP:ARG:악세사리+EQUIP:ARG:양말+EQUIP:ARG:하반신속옷+EQUIP:ARG:상반신속옷+EQUIP:ARG:하반신윗도리+EQUIP:ARG:상반신윗도리+EQUIP:ARG:전신윗도리)
+	;다리가 있으면 삭스
+	SIF !TALENT:ARG:다리없음
+		EQUIP:ARG:양말 = 1
+	;남자의 경우, 트렁크스·바지·T셔츠·윗도리
+	IF TALENT:ARG:남자
+		EQUIP:ARG:하반신속옷 = 3
+		EQUIP:ARG:상반신속옷 = 4
+		EQUIP:ARG:하반신윗도리 = 3
+		EQUIP:ARG:상반신윗도리 = 1
+	;빈유의 경우, 팬티·캐미숄·원피스
+	ELSEIF TALENT:ARG:빈유
+		EQUIP:ARG:하반신속옷 = 2
+		EQUIP:ARG:상반신속옷 = 2
+		EQUIP:ARG:전신윗도리 = 3
+	;그 이외의 경우, 팬티·브래지어·스커트·윗도리
 	ELSE
-		EQUIP:ARG:下半身下着 = 2
-		EQUIP:ARG:上半身下着 = 1
-		EQUIP:ARG:下半身上着 = 1
-		EQUIP:ARG:上半身上着 = 1
+		EQUIP:ARG:하반신속옷 = 2
+		EQUIP:ARG:상반신속옷 = 1
+		EQUIP:ARG:하반신윗도리 = 1
+		EQUIP:ARG:상반신윗도리 = 1
 	ENDIF
-	;ふたなりの場合ドロワーズに（パンティに入らない気がするので）
-	SIF TALENT:ARG:ふたなり
-		EQUIP:ARG:下半身下着 = 1
+	;후타나리의 경우 드로워즈에(팬티에 들어가지 않는 생각이 들므로)
+	SIF TALENT:ARG:후타나리
+		EQUIP:ARG:하반신속옷 = 1
 ENDIF
 
-;────────────────────────────────────
-;ショップメニューでの服装セッティング
-;────────────────────────────────────
+;─
+;숍 메뉴에서의 복장 세팅
+;─
 @CLOTHES_SETTING
-PRINTFORM %CALLNAME:MASTER%の衣装：
-SIF CFLAG:MASTER:衣装 == 0
-	PRINTFORM \@ EQUIP:MASTER:全身上着 ? [%DRESS(MASTER)%] # \@\@ EQUIP:MASTER:上半身上着 ? [%OUTER_T(MASTER)%] # \@\@ EQUIP:MASTER:下半身上着 ? [%OUTER_B(MASTER)%] # \@
-SELECTCASE CFLAG:MASTER:衣装
+PRINTFORM %CALLNAME:MASTER%의 의상:
+SIF CFLAG:MASTER:의상 == 0
+	PRINTFORM \@ EQUIP:MASTER:전신윗도리 ? [%DRESS(MASTER)%] # \@\@ EQUIP:MASTER:상반신윗도리 ? [%OUTER_T(MASTER)%] # \@\@ EQUIP:MASTER:하반신윗도리 ? [%OUTER_B(MASTER)%] # \@
+SELECTCASE CFLAG:MASTER:의상
 	CASE IS < 2
-		PRINTFORM \@ EQUIP:MASTER:上半身下着 ? [%INNER_T(MASTER)%] # \@\@ EQUIP:MASTER:下半身下着 ? [%INNER_B(MASTER)%] # \@\@ EQUIP:MASTER:靴下 ? [%SOCKS(MASTER)%] # \@\@ EQUIP:MASTER:アクセサリ ? [%GLOVES(MASTER)%] # \@
+		PRINTFORM \@ EQUIP:MASTER:상반신속옷 ? [%INNER_T(MASTER)%] # \@\@ EQUIP:MASTER:하반신속옷 ? [%INNER_B(MASTER)%] # \@\@ EQUIP:MASTER:양말 ? [%SOCKS(MASTER)%] # \@\@ EQUIP:MASTER:악세사리 ? [%GLOVES(MASTER)%] # \@
 	CASE 2
-		PRINT [全裸]
+		PRINT [전라]
 	CASEELSE
-		PRINTFORM \@ EQUIP:MASTER:コスプレ ? [%COSPLAY(MASTER)%] # \@
+		PRINTFORM \@ EQUIP:MASTER:코스프레 ? [%COSPLAY(MASTER)%] # \@
 ENDSELECT
 PRINTL 
 
 IF TARGET >= 0
-	PRINTFORM %CALLNAME:TARGET%の衣装：
-	SIF CFLAG:TARGET:衣装 == 0
-		PRINTFORM \@ EQUIP:TARGET:全身上着 ? [%DRESS(TARGET)%] # \@\@ EQUIP:TARGET:上半身上着 ? [%OUTER_T(TARGET)%] # \@\@ EQUIP:TARGET:下半身上着 ? [%OUTER_B(TARGET)%] # \@
-	SELECTCASE CFLAG:TARGET:衣装
+	PRINTFORM %CALLNAME:TARGET%의 의상:
+	SIF CFLAG:TARGET:의상 == 0
+		PRINTFORM \@ EQUIP:TARGET:전신윗도리 ? [%DRESS(TARGET)%] # \@\@ EQUIP:TARGET:상반신윗도리 ? [%OUTER_T(TARGET)%] # \@\@ EQUIP:TARGET:하반신윗도리 ? [%OUTER_B(TARGET)%] # \@
+	SELECTCASE CFLAG:TARGET:의상
 		CASE IS < 2
-			PRINTFORM \@ EQUIP:TARGET:上半身下着 ? [%INNER_T(TARGET)%] # \@\@ EQUIP:TARGET:下半身下着 ? [%INNER_B(TARGET)%] # \@\@ EQUIP:TARGET:靴下 ? [%SOCKS(TARGET)%] # \@\@ EQUIP:TARGET:アクセサリ ? [%GLOVES(TARGET)%] # \@
+			PRINTFORM \@ EQUIP:TARGET:상반신속옷 ? [%INNER_T(TARGET)%] # \@\@ EQUIP:TARGET:하반신속옷 ? [%INNER_B(TARGET)%] # \@\@ EQUIP:TARGET:양말 ? [%SOCKS(TARGET)%] # \@\@ EQUIP:TARGET:악세사리 ? [%GLOVES(TARGET)%] # \@
 		CASE 2
-			PRINT [全裸]
+			PRINT [전라]
 		CASEELSE
-			PRINTFORM \@ EQUIP:TARGET:コスプレ ? [%COSPLAY(TARGET)%] # \@
+			PRINTFORM \@ EQUIP:TARGET:코스프레 ? [%COSPLAY(TARGET)%] # \@
 	ENDSELECT
 	PRINTL 
 ENDIF
 
 DRAWLINE
-PRINTL  [ 0] 戻ります
-PRINTFORML  [ 1] %CALLNAME:MASTER%の服装を[通常]に設定します
-PRINTFORML  [ 2] %CALLNAME:MASTER%の服装を[半裸]に設定します
-PRINTFORML  [ 3] %CALLNAME:MASTER%の服装を[全裸]に設定します
+PRINTL  [ 0] 돌아옵니다
+PRINTFORML  [ 1] %CALLNAME:MASTER%의 복장을[통상]으로 설정합니다
+PRINTFORML  [ 2] %CALLNAME:MASTER%의 복장을[반나체]로 설정합니다
+PRINTFORML  [ 3] %CALLNAME:MASTER%의 복장을[전라]로 설정합니다
 IF TARGET >= 0
-	PRINTFORML  [51] %CALLNAME:TARGET%の服装を[通常]に設定します
-	PRINTFORML  [52] %CALLNAME:TARGET%の服装を[半裸]に設定します
-	PRINTFORML  [53] %CALLNAME:TARGET%の服装を[全裸]に設定します
+	PRINTFORML  [51] %CALLNAME:TARGET%의 복장을[통상]으로 설정합니다
+	PRINTFORML  [52] %CALLNAME:TARGET%의 복장을[반나체]로 설정합니다
+	PRINTFORML  [53] %CALLNAME:TARGET%의 복장을[전라]로 설정합니다
 ENDIF
 
 $INPUT_LOOPC
@@ -81,98 +81,98 @@ INPUT
 IF RESULT == 0
 	RETURN 0
 ELSEIF RESULT == 1
-	IF CFLAG:MASTER:衣装 == 0
-		PRINTFORMW %CALLNAME:MASTER%の衣装はすでに[通常]に設定されています
+	IF CFLAG:MASTER:의상 == 0
+		PRINTFORMW %CALLNAME:MASTER%의 의상은 벌써[통상]으로 설정되어 있습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1000)
 		GOTO INPUT_LOOPC
 	ELSE
-		CFLAG:MASTER:衣装 = 0
-		PRINTFORMW %CALLNAME:MASTER%の衣装を[通常]に設定しました
+		CFLAG:MASTER:의상 = 0
+		PRINTFORMW %CALLNAME:MASTER%의 의상을[통상]으로 설정했습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1001)
 	ENDIF
 	RESTART
 ELSEIF RESULT == 2
-	IF CFLAG:MASTER:衣装 == 1
-		PRINTFORMW %CALLNAME:MASTER%の衣装はすでに[半裸]に設定されています
+	IF CFLAG:MASTER:의상 == 1
+		PRINTFORMW %CALLNAME:MASTER%의 의상은 벌써[반나체]로 설정되어 있습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1010)
-	ELSEIF TALENT:MASTER:抑圧 * 3 - TALENT:MASTER:解放 * 2 + TALENT:MASTER:恥じらい * 2 - TALENT:MASTER:恥薄い + 2 > CFLAG:MASTER:調教レベル / 2 + ABL:MASTER:欲望
-		PRINTFORMW %CALLNAME:MASTER%は恥ずかしくて[半裸]にできません
+	ELSEIF TALENT:MASTER:억압 * 3 - TALENT:MASTER:해방 * 2 + TALENT:MASTER:수줍음 * 2 - TALENT:MASTER:수치심옅음 + 2 > CFLAG:MASTER:조교레벨 / 2 + ABL:MASTER:욕망
+		PRINTFORMW %CALLNAME:MASTER%는 부끄러워서[반나체]로 할 수 없습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1012)
-	ELSEIF TALENT:MASTER:反抗的 * 3 - TALENT:MASTER:素直 * 2 + MARK:反抗刻印 - MARK:屈服刻印 + 2 > CFLAG:MASTER:調教レベル / 2 + ABL:MASTER:従順 + ABL:MASTER:欲望
-		PRINTFORMW %CALLNAME:MASTER%は嫌がって[半裸]になりません
+	ELSEIF TALENT:MASTER:반항적 * 3 - TALENT:MASTER:순수 * 2 + MARK:반항각인 - MARK:굴복각인 + 2 > CFLAG:MASTER:조교레벨 / 2 + ABL:MASTER:순종 + ABL:MASTER:욕망
+		PRINTFORMW %CALLNAME:MASTER%는 싫어해[반나체]가 되지 않습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1013)
 	ELSE
-		CFLAG:MASTER:衣装 = 1
-		PRINTFORMW %CALLNAME:MASTER%の衣装を[半裸]に設定しました
+		CFLAG:MASTER:의상 = 1
+		PRINTFORMW %CALLNAME:MASTER%의 의상을[반나체]로 설정했습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1011)
 	ENDIF
 	RESTART
 ELSEIF RESULT == 3
-	IF CFLAG:MASTER:衣装 == 2
-		PRINTFORMW %CALLNAME:MASTER%の衣装はすでに[全裸]に設定されています
+	IF CFLAG:MASTER:의상 == 2
+		PRINTFORMW %CALLNAME:MASTER%의 의상은 벌써[전라]로 설정되어 있습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1020)
-	ELSEIF TALENT:MASTER:抑圧 * 3 - TALENT:MASTER:解放 * 2 + TALENT:MASTER:恥じらい * 2 - TALENT:MASTER:恥薄い + 5 > CFLAG:MASTER:調教レベル / 2 + ABL:MASTER:欲望
-		PRINTFORMW %CALLNAME:MASTER%は恥ずかしくて[全裸]にできません
+	ELSEIF TALENT:MASTER:억압 * 3 - TALENT:MASTER:해방 * 2 + TALENT:MASTER:수줍음 * 2 - TALENT:MASTER:수치심옅음 + 5 > CFLAG:MASTER:조교레벨 / 2 + ABL:MASTER:욕망
+		PRINTFORMW %CALLNAME:MASTER%는 부끄러워서[전라]로 할 수 없습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1022)
-	ELSEIF TALENT:MASTER:反抗的 * 3 - TALENT:MASTER:素直 * 2 + MARK:反抗刻印 - MARK:屈服刻印 + 4 > CFLAG:MASTER:調教レベル / 2 + ABL:MASTER:従順 + ABL:MASTER:欲望
-		PRINTFORMW %CALLNAME:MASTER%は嫌がって[全裸]になりません
+	ELSEIF TALENT:MASTER:반항적 * 3 - TALENT:MASTER:순수 * 2 + MARK:반항각인 - MARK:굴복각인 + 4 > CFLAG:MASTER:조교레벨 / 2 + ABL:MASTER:순종 + ABL:MASTER:욕망
+		PRINTFORMW %CALLNAME:MASTER%는 싫어해[전라]가 되지 않습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1023)
 	ELSE
-		CFLAG:MASTER:衣装 = 2
-		PRINTFORMW %CALLNAME:MASTER%の衣装を[全裸]に設定しました
+		CFLAG:MASTER:의상 = 2
+		PRINTFORMW %CALLNAME:MASTER%의 의상을[전라]로 설정했습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1021)
 	ENDIF
 	RESTART
 ELSEIF RESULT == 51
-	IF CFLAG:TARGET:衣装 == 0
-		PRINTFORMW %CALLNAME:TARGET%の衣装はすでに[通常]に設定されています
+	IF CFLAG:TARGET:의상 == 0
+		PRINTFORMW %CALLNAME:TARGET%의 의상은 벌써[통상]으로 설정되어 있습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 0)
 	ELSE
-		CFLAG:TARGET:衣装 = 0
-		PRINTFORMW %CALLNAME:TARGET%の衣装を[通常]に設定しました
+		CFLAG:TARGET:의상 = 0
+		PRINTFORMW %CALLNAME:TARGET%의 의상을[통상]으로 설정했습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 1)
 	ENDIF
 	RESTART
 ELSEIF RESULT == 52
-	IF CFLAG:TARGET:衣装 == 1
-		PRINTFORMW %CALLNAME:TARGET%の衣装はすでに[半裸]に設定されています
+	IF CFLAG:TARGET:의상 == 1
+		PRINTFORMW %CALLNAME:TARGET%의 의상은 벌써[반나체]로 설정되어 있습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 10)
-	ELSEIF TALENT:抑圧 * 3 - TALENT:解放 * 2 + TALENT:恥じらい * 2 - TALENT:恥薄い + 2 > CFLAG:調教レベル / 2 + ABL:欲望
-		PRINTFORMW %CALLNAME:TARGET%は恥ずかしくて[半裸]にできません
+	ELSEIF TALENT:억압 * 3 - TALENT:해방 * 2 + TALENT:수줍음 * 2 - TALENT:수치심옅음 + 2 > CFLAG:조교레벨 / 2 + ABL:욕망
+		PRINTFORMW %CALLNAME:TARGET%는 부끄러워서[반나체]로 할 수 없습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 12)
 	ELSE
-		CFLAG:TARGET:衣装 = 1
-		PRINTFORMW %CALLNAME:TARGET%の衣装を[半裸]に設定しました
+		CFLAG:TARGET:의상 = 1
+		PRINTFORMW %CALLNAME:TARGET%의 의상을[반나체]로 설정했습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 11)
 	ENDIF
 	RESTART
 ELSEIF RESULT == 53
-	IF CFLAG:TARGET:衣装 == 2
-		PRINTFORMW %CALLNAME:TARGET%の衣装はすでに[全裸]に設定されています
+	IF CFLAG:TARGET:의상 == 2
+		PRINTFORMW %CALLNAME:TARGET%의 의상은 벌써[전라]로 설정되어 있습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 20)
-	ELSEIF TALENT:抑圧 * 3 - TALENT:解放 * 2 + TALENT:恥じらい * 2 - TALENT:恥薄い + 5 > CFLAG:調教レベル / 2 + ABL:欲望
-		PRINTFORMW %CALLNAME:TARGET%は恥ずかしくて[全裸]にできません
+	ELSEIF TALENT:억압 * 3 - TALENT:해방 * 2 + TALENT:수줍음 * 2 - TALENT:수치심옅음 + 5 > CFLAG:조교레벨 / 2 + ABL:욕망
+		PRINTFORMW %CALLNAME:TARGET%는 부끄러워서[전라]로 할 수 없습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 22)
 	ELSE
-		CFLAG:TARGET:衣装 = 2
-		PRINTFORMW %CALLNAME:TARGET%の衣装を[全裸]に設定しました
+		CFLAG:TARGET:의상 = 2
+		PRINTFORMW %CALLNAME:TARGET%의 의상을[전라]로 설정했습니다
 		PRINTL 
 		CALL KOJO_EVENT(101, 21)
 	ENDIF

@@ -1,306 +1,306 @@
 ﻿;-------------------------------------------------
-;大妖精口上 リアクション口上ファイル
+;대요정 구상 리액션 구상 파일
 ;-------------------------------------------------
-;「KOJO_ACT_K4.ERB」で個別リアクションを設定しなかった場合に参照されるファイルです
+;「KOJO_ACT_K4.ERB」로 개별 리액션을 설정하지 않았던 경우에 참조되는 파일입니다
 ;-------------------------------------------------
-;REACTが充実するまでの捌け口として、TFLAG:80とTFLAG:90を用いて、おおざっぱに調教内容と対応させてしまう
+;REACT가 충실할 때까지의 배출구로서 TFLAG:80으로 TFLAG:90을 이용해, 조잡하게 조교 내용과 대응시켜 버린다
 ;*************************************************
-;調教アクション・コマンド口上
+;조교 액션·커맨드 구상
 ;*************************************************
 ;=================================================
-;汎用リアクション口上
+;범용 리액션 구상
 ;=================================================
-;・個別リアクション口上を表示しなかった場合に表示
-;・「@KOJO_COM_K4_(コマンド番号)」でコマンドごとの関数を作成して書く。関数ごとコピペして改変を推奨
+;·개별 리액션 구상을 표시하지 않았던 경우에 표시
+;·「@KOJO_COM_K4_(커맨드 번호)」로 커맨드마다의 함수를 작성하고 쓴다. 함수마다 코피페 해 개변을 추천
 ;-------------------------------------------------
 
 ;=================================================
-;会話系反応
+;회화계 반응
 ;=================================================
-;・会話系・休憩系行動に対してよく発生する
-;・「今の気分を聞く」などの汎用的に対処できないものは個別リアクション口上で処理することを推奨
+;·회화계·휴게계 행동에 대해서 자주(잘) 발생한다
+;·「지금의 기분을 (듣)묻는다」등의 범용적으로 대처 할 수 없는 것은 개별 리액션 구상으로 처리하는 것을 추천
 ;-------------------------------------------------
 
 ;-------------------------------------------------
-;COM0, 沈黙する
+;COM0, 침묵한다
 ;-------------------------------------------------
-;・従ったことにはならない
-;・質問に対して黙秘した場合は軽く反抗した扱いになる
+;·따랐던 것에는 안 된다
+;·질문에 대해서 묵비했을 경우는 가볍게 반항한 취급이 된다
 ;-------------------------------------------------
 @KOJO_COM_K4_0
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(3000, 3000)
-		PRINTFORMW 「ねぇ？　どうして口を閉ざしているの？」
-		PRINTFORMW 「聴きたいよ……%CNAME(MASTER)%の言葉……」
-		PRINTFORMW 「知りたいよ……%CNAME(MASTER)%の気持ち……」
-		PRINTFORM 「ね～え？　お　し　え　て　
+		PRINTFORMW 「저기?   어째서 입을 닫고 있는 거야?」
+		PRINTFORMW 「듣고 싶어……%CNAME(MASTER)%의 말……」
+		PRINTFORMW 「알고 싶어……%CNAME(MASTER)%의 기분……」
+		PRINTFORM 「그런데~네?     해  네  라고  
 		CALL HEARTCB
 		PRINTW 」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「なにも言わないなんてだーめ」
-		PRINTFORMW 「なにか反応を返して欲しいよ……」
+		PRINTFORMW 「아무것도 말하지 않는다니 안돼」
+		PRINTFORMW 「뭔가 반응을 돌려주었으면 좋아……」
 	ELSE
-		PRINTFORMW 「……？　どうしたんですか？」
-		PRINTFORMW 「言葉にしなければ伝わらないこともありますよ？」
+		PRINTFORMW 「……?   어떻게 한 것입니까?」
+		PRINTFORMW 「말로 하지 않으면 전해지지 않는 것도 있어요?」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM1, 気弱く応答する
+;COM1, 심약구응답한다
 ;-------------------------------------------------
-;・「消極的従う」扱い＆一定の条件で「許しを乞う」扱い
-;・許しを乞うに変化した場合はそちらの口上へパスする
+;·「소극적 따른다」취급해＆일정한 조건으로 「허가를 청한다」취급
+;·허가를 청하는 것에 변화했을 경우는 그 쪽의 구상에 패스한다
 ;-------------------------------------------------
 @KOJO_COM_K4_1
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-	;「許しを乞う」扱いの場合の処理
-	IF TFLAG:REACT派生 == 1
+	;「허가를 청한다」취급의 경우의 처리
+	IF TFLAG:REACT파생 == 1
 		CALL KOJO_COM_K4_7
 		RETURN RESULT
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(3000, 3000)
-		PRINTFORMW 「どうしちゃったの？　弱気になっちゃって」
-		PRINTFORMW 「そんな%CNAME(MASTER)%も可愛いけれど、でもやっぱり素直な%CNAME(MASTER)%が見たいよ……」
-		PRINTFORMW 「ねぇ……見せて？　素直な%CNAME(MASTER)%の気持ちを聞かせて？」
+		PRINTFORMW 「어떻게 해 버렸어?   무기력이 되어 버려」
+		PRINTFORMW 「그런%CNAME(MASTER)%도 사랑스럽지만, 그렇지만 역시 솔직한%CNAME(MASTER)%를 보고 싶어……」
+		PRINTFORMW 「저기…… 보여 줘?   솔직한%CNAME(MASTER)%의 기분을 들려주어?」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「もっと、元気出して欲しいよ……」
-		PRINTFORMW 「ね、私も頑張るから……恥ずかしがらずに素直な%CNAME(MASTER)%を見せて……」
+		PRINTFORMW 「좀 더, 힘냈으면 좋아……」
+		PRINTFORMW 「저기, 나도 노력하기 때문에…… 부끄러워하지 않고 솔직한%CNAME(MASTER)%를 보여 줘……」
 	ELSE
-		PRINTFORMW 「そんなに気弱にならなくても……」
-		PRINTFORMW 「言うことを聞いてる内は酷い事はしませんから……」
+		PRINTFORMW 「그렇게 마음이 약하게 안 돼도……」
+		PRINTFORMW 「말하는 일을 (듣)묻고 있는 동안은 심한 일은 하지 않기 때문에……」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM2, 無愛想に応答する
+;COM2, 무뚝뚝하게 응답한다
 ;-------------------------------------------------
-;・従ったことにはならない
+;·따랐던 것에는 안 된다
 ;-------------------------------------------------
 @KOJO_COM_K4_2
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(3000, 3000)
-		PRINTFORMW 「なにを拗ねてるの？」
-		PRINTFORMW 「うん、そんな%CNAME(MASTER)%も可愛いけれど」
-		PRINTFORMW 「でもやっぱり、素直な%CNAME(MASTER)%でいて欲しいよ……」
+		PRINTFORMW 「무엇을 등지고 있는 거야?」
+		PRINTFORMW 「응, 그런%CNAME(MASTER)%도 사랑스럽지만」
+		PRINTFORMW 「그렇지만 역시, 솔직한%CNAME(MASTER)%로 있었으면 좋아……」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「むぅ、そんな態度をとるのね……」
-		PRINTFORMW 「少し……可愛がってあげようか」
+		PRINTFORMW 「므우, 그렇게 태도를 취하는 거네……」
+		PRINTFORMW 「조금…… 귀여워해 줄까」
 	ELSE
-		PRINTFORMW 「そんなに投げやりに返さないでください」
-		PRINTFORMW 「調伏したく……なるじゃないですか」
+		PRINTFORMW 「그렇게 무책임하게 돌려주지 말아 주세요」
+		PRINTFORMW 「조복 하고 싶어…… 지지 않습니까」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM3, 愛想よく応答する
+;COM3, 붙임성 좋게 응답한다
 ;-------------------------------------------------
-;・「積極的従う」扱い
+;·「적극적 따른다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_3
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(3000, 3000)
-		PRINTFORMW 「あん♪　そんなに素直に反応されたらぁ、私も嬉しくなっちゃう」
-		PRINTFORMW 「もっともっといっぱい悦ばせてあげる……」
-		PRINTFORMW 「私のモノになれて良かったって、思わせてあげるよ♪」
+		PRINTFORMW 「앙♪  그렇게 솔직하게 반응되면, 나도 기뻐져 버린다」
+		PRINTFORMW 「좀더 좀더 가득 기쁘게 해 준다……」
+		PRINTFORMW 「나의 것이 될 수 있어 좋았다고, 생각하게 해 준다♪」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「んふ♪　可愛い♪」
-		PRINTFORMW 「いい子だね……従順でいい子……」
-		PRINTFORMW 「もう私のモノ……かな？」
+		PRINTFORMW 「응후♪  사랑스럽다♪」
+		PRINTFORMW 「좋은 아이구나…… 온순하고 좋은 아이……」
+		PRINTFORMW 「이제(벌써) 나의 것…… 일까?」
 	ELSE
-		PRINTFORMW 「くすっ、良い反応ですね……思わず可愛いって思っちゃいました」
-		PRINTFORMW 「期待……しちゃってもいいんですよ？　頑張っちゃいますから♪」
+		PRINTFORMW 「키득, 좋은 반응이군요…… 무심코 사랑스럽다고 생각해 버렸습니다」
+		PRINTFORMW 「기대…… 해 버려도 괜찮아요?   노력해 버릴테니까♪」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM4, 強気に応答する
+;COM4, 강하게 응답한다
 ;-------------------------------------------------
-;・従ったことにはならない
+;·따랐던 것에는 안 된다
 ;-------------------------------------------------
 @KOJO_COM_K4_4
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;もうやめろと強く言った
-	;記入チェック
+	;이제 그만두라고 강하게 말했다
+	;기입 체크
 	LOCAL:1 = 0
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:REACT派生 == 1
+	IF LOCAL:1 && TFLAG:REACT파생 == 1
 		PRINTFORMW 
 		PRINTFORMW 
 		RETURN LOCAL
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(3000, 3000)
-		PRINTFORMW 「ふふ、可愛いものね……」
-		PRINTFORM 「やんちゃな%CNAME(MASTER)%は、手の上で転がしてあげる
+		PRINTFORMW 「후후, 사랑스러운 거네……」
+		PRINTFORM 「응석부리는%CNAME(MASTER)%는, 손 위에서 전매해 준다
 		CALL HEARTCB
 		PRINTW 」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「あらあら、強く当たっちゃって……」
-		PRINTFORMW 「そんな勇気があるなら……少しＨＩ☆ＤＯ☆Ｉ事しても大丈夫だよね？」
+		PRINTFORMW 「아라아라, 강하게 맞아 버려……」
+		PRINTFORMW 「그런 용기가 있다면…… 조금 HI☆DO☆I일 해도 괜찮네요?」
 	ELSE
-		PRINTFORMW 「わ、わ……凄い威勢ですね……」
-		PRINTFORMW 「でも、無意味ですよ？」
+		PRINTFORMW 「괴, 괴…… 굉장한 위세군요……」
+		PRINTFORMW 「그렇지만, 무의미해요?」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM5, 皮肉を言う
+;COM5, 빈정거린다
 ;-------------------------------------------------
-;・「消極的従う」扱い
-;・反抗的に振舞いながらも従うのでこっそり屈服が入る
+;·「소극적 따른다」취급
+;·반항적으로 행동하면서도 따르므로 몰래 굴복이 들어간다
 ;-------------------------------------------------
 @KOJO_COM_K4_5
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(3000, 3000)
-		PRINTFORMW 「くすっ、嬉しいよ……」
-		PRINTFORMW 「そんな皮肉を言えるくらいの余裕を持ってくれて……」
-		PRINTFORMW 「私を気の置けない仲だと思ってくれて……」
-		PRINTFORM 「……今度はもっと悦ばせてあげようね
+		PRINTFORMW 「키득, 기뻐……」
+		PRINTFORMW 「그렇게 빈정거릴 수 있을 정도의 여유를 가져 줘……」
+		PRINTFORMW 「나를 거리낌 없는 사이라고 생각해 줘……」
+		PRINTFORM 「…… 이번은 좀 더 기쁘게 해 주자
 		CALL HEARTCB
 		PRINTW 」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「それは……おねだりの一種なのかな？」
-		PRINTFORMW 「そんな回りくどい事しなくても……」
-		PRINTFORMW 「ちゃんとおねだり出来れば……たっぷりと犯してあげるのに……ねぇ？」
+		PRINTFORMW 「그것은…… 졸라댐의 일종인 것일까?」
+		PRINTFORMW 「그렇게 장황한 일 하지 않아도……」
+		PRINTFORMW 「분명하게 졸라댈 수 있으면…… 충분히 범해 주는데……?」
 	ELSE
-		PRINTFORMW 「随分と……達者な物言いですね……」
-		PRINTFORMW 「後になって取り消し……てのは無しですよ」
+		PRINTFORMW 「상당히…… 능숙한 말투군요……」
+		PRINTFORMW 「뒤가 되어 취소…… 라는 것은 없음이에요」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM6, もっとハードにして
+;COM6, 좀 더 하드하게 해
 ;-------------------------------------------------
-;・実は従った扱いにはならない
-;・「恥知らず！」となってお仕置きになる場合もある
+;· 실은 따른 취급은 되지 않는다
+;·「철면피!」라고 되어 벌이 되는 경우도 있다
 ;-------------------------------------------------
 @KOJO_COM_K4_6
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
-	IF KFLAG:2 == 1 && !FLAG:オートモード		;オートモード時には弾くようにしておきます@/L
-		PRINTFORMW 「あら、じゃあ本気だしちゃってもいい？」
+;일반
+	IF KFLAG:2 == 1 && !FLAG:오토모드		;오토 모드시에는 연주하도록(듯이)해 둡니다@/L
+		PRINTFORMW 「아라, 그러면 진심 내 버려도 괜찮아?」
 		PRINTL  
-		PRINTFORMDL 大妖精の素質に調教者的に有利な素質を大幅に付けるかどうかを決定できます。
-		PRINTFORMDW 一度つけたら元には戻せませんが、選択チャンスは以降もあります。
+		PRINTFORMDL 대요정의 소질에 조교자적으로 유리한 소질을 큰폭으로 붙일지 어떨지를 결정할 수 있습니다.
+		PRINTFORMDW 한 번 붙이면 바탕으로는 되돌릴 수 없습니다만, 선택 찬스는 이후도 있습니다.
 		$INPUT_LOOP5
-		PRINTFORMDL %CALLNAME:MASTER%は……
-		PRINTFORMDL [1]遠慮しておきます
-		PRINTFORMDL [2]所詮ハッタリだ……(ﾁﾗｯ
+		PRINTFORMDL %CALLNAME:MASTER%는……
+		PRINTFORMDL [1]사양해 둡니다
+		PRINTFORMDL [2]결국 허세다……(치락
 		INPUT
 		IF RESULT == 1
-			PRINTFORMW 「そう……それなら、今まで通り……」
-			PRINTFORM 「優ぁしく
+			PRINTFORMW 「그렇게…… 그렇다면, 지금까지 대로……」
+			PRINTFORM 「스구루깐다
 			CALL HEARTCB
-			PRINTW 　可愛い転がしてあげるね」
-			PRINTFORMW 「もし、シゲキが欲しくなったら……」
-			PRINTFORMW 「『気持ち良くして』『ハードにして』って言えばまた考えてあげるから」
+			PRINTW   사랑스러운 굴려 주네요」
+			PRINTFORMW 「만약, 시게키를 갖고 싶어지면……」
+			PRINTFORMW 「『기분 좋게 해』 『하드하게 해』라고 말하면 또 생각해 주기 때문에」
 		ELSEIF RESULT == 2
-			PRINTFORMW 「そう、そこまでおねだりされちゃったら……」
-			PRINTFORMW 「私も、誠心誠意、尽くしてあげなくちゃ……だね」
+			PRINTFORMW 「그래, 거기까지 졸라대져 버리면……」
+			PRINTFORMW 「나도, 성심성의, 다해 주지 않으면이…… 구나」
 			PRINTL  
-			PRINTFORMDW 刹那、大妖精の目の色が、微かに変わる……
-			PRINTFORMDW それは%CALLNAME:MASTER%がその異変に気付かないほど微かに……
-			PRINTFORMDW しかしそこには、はっきりと、嗜虐的な光彩を帯びて……
-			TALENT:衝動的 = 1
-			TALENT:情緒豊か = 1
-			TALENT:解放 = 1
-			TALENT:習得早い = 1
-			TALENT:快感に素直 = 1
-			TALENT:倒錯的 = 1
+			PRINTFORMDW 찰나, 대요정의 눈의 색이, 희미하게 바뀐다……
+			PRINTFORMDW 그것은%CALLNAME:MASTER%가 그 이변을 알아차리지 않을 정도(수록) 희미하게……
+			PRINTFORMDW 그러나 거기에는, 분명히, 기학적인 광채를 띠어……
+			TALENT:충동적 = 1
+			TALENT:감수성 = 1
+			TALENT:해방 = 1
+			TALENT:습득빠름 = 1
+			TALENT:쾌감에순수 = 1
+			TALENT:도착적 = 1
 			PRINTL  
-			PRINTFORMW 「ふふっ、ふふふ……」
-			PRINTFORM 「気をつけて……%CNAME(MASTER)%
+			PRINTFORMW 「후훗, 후후후……」
+			PRINTFORM 「조심해……%CNAME(MASTER)%
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「今まで通りに優しくはできないよ？」
-			PRINTFORM 「うっかり……壊しちゃうか…も
+			PRINTFORMW 「지금까지 대로에 상냥하게는 할 수 없어?」
+			PRINTFORM 「무심코…… 부수어 버릴까… 도
 			CALL HEARTCB
 			PRINTW 」
-			;EX2用カウンタ
+			;EX2용 카운터
 			KFLAG:2 = 2
 		ELSE
 			GOTO INPUT_LOOP5
 		ENDIF
 	ELSEIF FAVOR(3000, 3000)
-		PRINTFORMW 「あらっ♪　もう普通のプレイじゃ満足できないのね」
-		PRINTFORM 「ふふっ、わかったぁ
+		PRINTFORMW 「아랏♪  이제 보통 플레이는 만족할 수 없는거네」
+		PRINTFORM 「후훗, 알았다아
 		CALL HEARTCB
-		PRINTW 　このままどんどん開発しましょ」
-		PRINTFORMW 「徐々に徐々にハードに、私専用に……くすっ」
+		PRINTW   이대로 자꾸자꾸 개발합시다」
+		PRINTFORMW 「서서히 서서히 하드하게, 나전용에…… 키득」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「もっと激しくして欲しいの？　いやしんぼうね」
-		PRINTFORMW 「でも、%CNAME(MASTER)%をこんなにしちゃったのは私の所為だし」
-		PRINTFORMW 「きちんと、責任とって仕込んであげなくちゃね」
+		PRINTFORMW 「좀 더 격렬하게 했으면 좋은거야?   달래 밭이랑」
+		PRINTFORMW 「그렇지만,%CNAME(MASTER)%를 이렇게 해 버린 것은 나의 열심히 일해」
+		PRINTFORMW 「제대로, 책임 취해 가르쳐 주지 않으면 말야」
 	ELSE
-		PRINTFORMW 「あ……ごめんなさい。満足できませんでしたか？」
-		PRINTFORMW 「じゃあ少しだけ、本気出しちゃいますね♪」
+		PRINTFORMW 「아…… 미안해요. 만족할 수 없잖습니까?」
+		PRINTFORMW 「그러면 약간, 진심 내 버리네요♪」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM7, 許しを乞う
+;COM7, 허가를 청한다
 ;-------------------------------------------------
-;・「生意気だ！」となってお仕置きになる場合もある
+;·「건방지다!」라고 되어 벌이 되는 경우도 있다
 ;-------------------------------------------------
 @KOJO_COM_K4_7
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;お仕置きポイント加算
-	;記入チェック
+	;벌포인트 가산
+	;기입 체크
 	LOCAL:1 = 0
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:REACT派生 == 1
+	IF LOCAL:1 && TFLAG:REACT파생 == 1
 		IF FAVOR(3000, 3000)
 		ELSEIF FAVOR(0, 2000)
 		ELSE
@@ -308,753 +308,753 @@ IF LOCAL
 		RETURN LOCAL
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(3000, 3000)
-		PRINTFORMW 「んー？　許して欲しいの？」
-		PRINTFORM 「じゃあ……もっとおねだり……して
+		PRINTFORMW 「응─?   허락했으면 좋은거야?」
+		PRINTFORM 「그러면…… 좀 더 졸라댐…… 해
 		CALL HEARTCB
 		PRINTW 」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「そんな風に可愛いお願いされちゃうと……」
-		PRINTFORMW 「もっともっと可愛がってあげたくなっちゃう♪」
+		PRINTFORMW 「그런 식으로 사랑스러운 부탁되어 버리면……」
+		PRINTFORMW 「좀더 좀더 귀여워해 주고 싶어져 버린다♪」
 	ELSE
-		PRINTFORMW 「うーむ……どうしましょうか？」
-		PRINTFORMW 「どう……シましょうかね……くすっ」
+		PRINTFORMW 「으음…… 어떻게 할까요?」
+		PRINTFORMW 「어떻게…… 시짊어지는 거야…… 키득」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM8, 気持ち良くして
+;COM8, 기분 좋게 해
 ;-------------------------------------------------
-;・「積極的従う」扱い
-;・「恥知らず！」となってお仕置きになる場合もある
+;·「적극적 따른다」취급
+;·「철면피!」라고 되어 벌이 되는 경우도 있다
 ;-------------------------------------------------
 @KOJO_COM_K4_8
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
-	IF KFLAG:2 == 1 && !FLAG:オートモード		;オートモード時には弾くようにしておきます@/L
-		PRINTFORMW 「あら、じゃあ本気だしちゃってもいい？」
+;일반
+	IF KFLAG:2 == 1 && !FLAG:오토모드		;오토 모드시에는 연주하도록(듯이)해 둡니다@/L
+		PRINTFORMW 「아라, 그러면 진심 내 버려도 괜찮아?」
 		PRINTL  
-		PRINTFORMDL 大妖精の素質に調教者的に有利な素質を大幅に付けるかどうかを決定できます。
-		PRINTFORMDW 一度つけたら元には戻せませんが、選択チャンスは以降もあります。
+		PRINTFORMDL 대요정의 소질에 조교자적으로 유리한 소질을 큰폭으로 붙일지 어떨지를 결정할 수 있습니다.
+		PRINTFORMDW 한 번 붙이면 바탕으로는 되돌릴 수 없습니다만, 선택 찬스는 이후도 있습니다.
 		$INPUT_LOOP6
-		PRINTFORMDL %CALLNAME:MASTER%は……
-		PRINTFORMDL [1]遠慮しておきます
-		PRINTFORMDL [2]所詮ハッタリだ……(ﾁﾗｯ
+		PRINTFORMDL %CALLNAME:MASTER%는……
+		PRINTFORMDL [1]사양해 둡니다
+		PRINTFORMDL [2]결국 허세다……(치락
 		INPUT
 		IF RESULT == 1
-			PRINTFORMW 「そう……それなら、今まで通り……」
-			PRINTFORM 「優ぁしく
+			PRINTFORMW 「그렇게…… 그렇다면, 지금까지 대로……」
+			PRINTFORM 「스구루깐다
 			CALL HEARTCB
-			PRINTW 　可愛い転がしてあげるね」
-			PRINTFORMW 「もし、シゲキが欲しくなったら……」
-			PRINTFORMW 「『気持ち良くして』『ハードにして』って言えばまた考えてあげるから」
+			PRINTW   사랑스러운 굴려 주네요」
+			PRINTFORMW 「만약, 시게키를 갖고 싶어지면……」
+			PRINTFORMW 「『기분 좋게 해』 『하드하게 해』라고 말하면 또 생각해 주기 때문에」
 		ELSEIF RESULT == 2
-			PRINTFORMW 「そう、そこまでおねだりされちゃったら……」
-			PRINTFORMW 「私も、誠心誠意、尽くしてあげなくちゃ……だね」
+			PRINTFORMW 「그래, 거기까지 졸라대져 버리면……」
+			PRINTFORMW 「나도, 성심성의, 다해 주지 않으면이…… 구나」
 			PRINTL  
-			PRINTFORMDW 刹那、大妖精の目の色が、微かに変わる……
-			PRINTFORMDW それは%CALLNAME:MASTER%がその異変に気付かないほど微かに……
-			PRINTFORMDW しかしそこには、はっきりと、嗜虐的な光彩を帯びて……
-			TALENT:衝動的 = 1
-			TALENT:情緒豊か = 1
-			TALENT:解放 = 1
-			TALENT:習得早い = 1
-			TALENT:快感に素直 = 1
-			TALENT:倒錯的 = 1
+			PRINTFORMDW 찰나, 대요정의 눈의 색이, 희미하게 바뀐다……
+			PRINTFORMDW 그것은%CALLNAME:MASTER%가 그 이변을 알아차리지 않을 정도(수록) 희미하게……
+			PRINTFORMDW 그러나 거기에는, 분명히, 기학적인 광채를 띠어……
+			TALENT:충동적 = 1
+			TALENT:감수성 = 1
+			TALENT:해방 = 1
+			TALENT:습득빠름 = 1
+			TALENT:쾌감에순수 = 1
+			TALENT:도착적 = 1
 			PRINTL  
-			PRINTFORMW 「ふふっ、ふふふ……」
-			PRINTFORM 「気をつけて……%CNAME(MASTER)%
+			PRINTFORMW 「후훗, 후후후……」
+			PRINTFORM 「조심해……%CNAME(MASTER)%
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「今まで通りに優しくはできないよ？」
-			PRINTFORM 「うっかり……壊しちゃうか…も
+			PRINTFORMW 「지금까지 대로에 상냥하게는 할 수 없어?」
+			PRINTFORM 「무심코…… 부수어 버릴까… 도
 			CALL HEARTCB
 			PRINTW 」
-			;EX2用カウンタ
+			;EX2용 카운터
 			KFLAG:2 = 2
 		ELSE
 			GOTO INPUT_LOOP6
 		ENDIF
 	ELSEIF FAVOR(3000, 3000)
-		PRINTFORMW 「もう……貪欲なんだからぁ……でもそこが好き♪」
-		PRINTFORMW 「そんな%CNAME(MASTER)%を満足させられるのは私だけね」
-		PRINTFORMW 「%CNAME(MASTER)%も……そう思うでしょ？」
-		PRINTFORM 「たっぷりとその私専用の体に、尋ねてみようね
+		PRINTFORMW 「이제(벌써)…… 탐욕인 것이니까…… 그렇지만 거기를 좋아해♪」
+		PRINTFORMW 「그런%CNAME(MASTER)%를 만족 당하는 것은 나만이구나」
+		PRINTFORMW 「%CNAME(MASTER)%도…… 그렇게 생각하겠죠?」
+		PRINTFORM 「충분히 그 나전용의 몸에, 물어 보자
 		CALL HEARTCB
 		PRINTW 」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「うん、言われなくても……えへへ」
-		PRINTFORMW 「失神しちゃうくらい気持ちいいのをしてあげるよ♪」
-		PRINTFORM 「よがり狂った可愛い姿、見せてね
+		PRINTFORMW 「응, 말해지지 않아도…… 에헤헤」
+		PRINTFORMW 「실신해 버릴 정도로 기분이 좋은 것을 해 준다♪」
+		PRINTFORM 「좋아해 미친 사랑스러운 모습, 보여
 		CALL HEARTCB
 		PRINTW 」
 	ELSE
-		PRINTFORMW 「ふふっ、正直ですね。嬉しい限りです」
-		PRINTFORMW 「ご褒美、期待してください♪」
+		PRINTFORMW 「후훗, 정직하네요. 너무 기쁩니다」
+		PRINTFORMW 「포상, 기대해 주세요♪」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 
 ;=================================================
-;快楽系反応
+;쾌락계 반응
 ;=================================================
-;・愛撫系等多数の行動に対して発生するほか、装備アイテムの快感で会話系等に紛れ込む場合もある
+;·애무계등 다수의 행동에 대해서 발생하는 것 외에 장비 아이템의 쾌감으로 회화계등에 섞여 오는 경우도 있다
 ;-------------------------------------------------
 
 ;-------------------------------------------------
-;COM10, 恥ずかしがる
+;COM10, 부끄러워한다
 ;-------------------------------------------------
-;・「消極的従う」扱い
+;·「소극적 따른다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_10
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;快感に対して恥ずかしがる
-	;記入チェック
+	;쾌감에 대해서 부끄러워한다
+	;기입 체크
 	LOCAL:1 = 0
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:REACT派生 == 1
+	IF LOCAL:1 && TFLAG:REACT파생 == 1
 		PRINTFORMW 
 		PRINTFORMW 
 		RETURN LOCAL
 	ENDIF
 	
-;一般
-	;アナル愛撫
+;일반
+	;애널 애무
 	IF TFLAG:ACT == 13 || TFLAG:ACT == 14 || TFLAG:ACT == 22 || TFLAG:ACT == 23 || TFLAG:ACT == 35
 		IF FAVOR(0, 2000)
 			IF RAND:3 == 0
-				PRINTFORMW 「恥ずかしがっちゃだーめ！　ちゃんと、私の顔を見つめて……」
-				PRINTFORMW 「興奮が……止まらなくなっちゃうでしょ？　おしり……気持ちいいんでしょ？」
-				PRINTFORMW 「ほら……ヒクついてるよ？　可愛いね♪」
+				PRINTFORMW 「부끄러워해서는 안돼!   분명하게, 나의 얼굴을 응시해……」
+				PRINTFORMW 「흥분이…… 멈추지 않게 되어 버리겠죠?   엉덩이…… 기분이 좋지요?」
+				PRINTFORMW 「이봐요…… 실룩거리고 있어?   사랑스럽다♪」
 			ELSEIF RAND:2
-				PRINTFORMW 「口では恥ずかしがっていても、おしりの方はよろこんでるみたいだよ？」
-				PRINTFORM 「キュンキュンッて締め付けて、咥え込んで離そうとしないもの
+				PRINTFORMW 「입에서는 부끄러워하고 있어도, 엉덩이는 기뻐하고 있는 것 같아?」
+				PRINTFORM 「쿨쿨이라고 단단히 조여, 물어 떼어 놓으려고 하지 않는 것
 				CALL HEARTCB
-				PRINTW 　素直なおしりさんだねぇ♪」
-				PRINTFORM 「素直なおしりさんには……ごほーび、あげなくちゃ……だよね
+				PRINTW   솔직한 엉덩이씨구나♪」
+				PRINTFORM 「솔직한 엉덩이씨에게는……-, 주지 않으면이…… 지요
 				CALL HEARTCB
 				PRINTW 」
 			ELSE
-				PRINTFORM 「くすっ、おしりを責められて恥ずかしくなってるの？
+				PRINTFORM 「키득, 엉덩이를 꾸짖을 수 있어 부끄러워지고 있는 거야?
 				CALL HEARTCB
-				PRINTFORMW 　%CNAME(MASTER)%ってば清楚なのね」
-				PRINTFORM 「そう言う所……好きだよ♪　だからいっぱい、汚してあげる
+				PRINTFORMW 　%CNAME(MASTER)%는 정말 청초한거네」
+				PRINTFORM 「그렇게 말하는 곳…… 좋아해♪  이니까 가득, 더럽혀 준다
 				CALL HEARTCB
-				PRINT 　犯してあげる
+				PRINT   범해 준다
 				CALL HEARTCB
 				PRINTW 」
-				PRINTFORM 「すぐにおしりのことしか考えられない尻穴奴隷さんにしてあげるよ
+				PRINTFORM 「곧바로 엉덩이의 일 밖에 생각할 수 없는 엉덩이 구멍 노예씨로 해 준다
 				CALL HEARTCB
-				PRINTW 　嬉しいでしょ？」
+				PRINTW   기쁘지요?」
 			ENDIF
 		ELSE
 			IF RAND:3 == 0
-				PRINTFORMW 「恥ずかしがることないですよ……ココだって、気持ち良くなる為の場所なんですから」
-				PRINTFORMW 「少し、辛抱すれば……もう病みつきになるぐらい、気持ち良くなれるんですよ？」
-				PRINTFORMW 「それとも……既に気持ちいいから感じてるのでしょうか？」
+				PRINTFORMW 「부끄러워하는 것 없어요…… 코코도, 기분 좋아지기 위한 장소이니까」
+				PRINTFORMW 「조금, 참고 견디면…… 이제(벌써) 푹 빠지는 정도, 기분 좋아질 수 있습니다?」
+				PRINTFORMW 「그렇지 않으면…… 이미 기분이 좋기 때문에 느끼고 있는 것일까요?」
 			ELSEIF RAND:2
-				PRINTFORMW 「いい反応ですね、お尻を責められるのは屈辱ですか？」
-				PRINTFORMW 「私は……そんな%CNAME(MASTER)%の反応が最高に楽しいんですけれどね」
-				PRINTFORMW 「ほら、もっとおしりを虐めてあげますよ」
+				PRINTFORMW 「좋은 반응이군요, 엉덩이를 꾸짖을 수 있는 것은 굴욕입니까?」
+				PRINTFORMW 「나는…… 그런%CNAME(MASTER)%의 반응이 최고로 즐거운데요 말이죠」
+				PRINTFORMW 「이봐요, 좀 더 엉덩이를 괴롭혀 주어요」
 			ELSE
-				PRINTFORMW 「おしりで感じるのは恥ずかしいですか？」
-				PRINTFORMW 「ふふっ、その気持ち、良く分かりますよ♪」
-				PRINTFORMW 「というわけで、さ、遠慮なく恥ずかしがってください♪」
+				PRINTFORMW 「엉덩이로 느끼는 것은 부끄럽습니까?」
+				PRINTFORMW 「후훗, 그 기분, 자주(잘) 알아요♪」
+				PRINTFORMW 「그래서, 자, 사양말고 부끄러워해 주세요♪」
 			ENDIF
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	IF FAVOR(3000, 3000) && RAND:6 == 0
-		PRINTFORMW 「くすっ、ホントに恥ずかしがり屋さんなのね」
-		PRINTFORMW 「そんなに恥ずかしがられたら私もますますサムズアップしちゃうというのに」
-		PRINTFORMW 「それとももしかして狙ってる？」
+		PRINTFORMW 「키득, 정말 부끄럼쟁이씨인 거네」
+		PRINTFORMW 「그렇게 부끄러워해지면 나도 더욱 더 썸업 해 버린다고 하는데」
+		PRINTFORMW 「그렇지 않으면 혹시 노리고 있어?」
 	ELSEIF FAVOR(0, 2000)
 		IF RAND:5 == 0
-			PRINTFORMW 「そんなに恥ずかしがらないで……ちゃんと私の目を見て？」
-			PRINTFORM 「もっと、素直になって……いっぱい感じて
+			PRINTFORMW 「그렇게 부끄러워하지 말고…… 분명하게 나의 눈을 봐?」
+			PRINTFORM 「좀 더, 솔직해져…… 가득 느껴
 			CALL HEARTCB
 			PRINTW 」
 		ELSEIF RAND:4 == 0
-			PRINTFORMW 「こらこら、何を隠しているの？」
-			PRINTFORMW 「感じていることを隠そうと隠すまいと、精の回収には関係ないけれど……」
-			PRINTFORMW 「でも、%CNAME(MASTER)%が感じていること……ちゃんと知りたいんだよ？」
+			PRINTFORMW 「이봐이봐, 무엇을 숨기고 있는 거야?」
+			PRINTFORMW 「느끼고 있는 것을 숨기려고 숨기지 않으리라고, 정령의 회수에는 관계없지만……」
+			PRINTFORMW 「그렇지만,%CNAME(MASTER)%가 느끼고 있는 것…… 제대로 알고 싶어?」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「あらあら、気持ちいいこと、恥ずかしがっちゃうの？」
-			PRINTFORMW 「でもね、私はよぉーく分かってるんだよ♪」
-			PRINTFORM 「%CNAME(MASTER)%が、本当は気持ちいこと大好きな淫乱さんだってこと
+			PRINTFORMW 「아라아라, 기분이 좋은 일, 부끄러워해 버리는 거야?」
+			PRINTFORMW 「그렇지만 말야, 나는 잘 알고 있는거야♪」
+			PRINTFORM 「%CNAME(MASTER)%가, 사실은 기분 있고 일 정말 좋아하는 음란씨라는 것
 			CALL HEARTCB
 			PRINTW 」
 		ELSEIF RAND:2
-			PRINTFORM 「恥ずかしがる%CNAME(MASTER)%も素敵だよ……
+			PRINTFORM 「부끄러워한다%CNAME(MASTER)%도 멋져……
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「無理矢理感じさせたくなっちゃって……堪らないわ」
+			PRINTFORMW 「무리하게 느끼게 하고 싶어져 버려…… 견딜 수 없어요」
 		ELSE
-			PRINTFORMW 「ふふっ、可愛いのね……」
-			PRINTFORMW 「でも素直な%CNAME(MASTER)%の気持ちも聴きたいな……」
-			PRINTFORMW 「だから無理矢理……素直な心にしてあげる♪」
+			PRINTFORMW 「후훗, 사랑스러운거네……」
+			PRINTFORMW 「그렇지만 솔직한%CNAME(MASTER)%의 기분도 듣고 싶구나……」
+			PRINTFORMW 「그러니까 무리하게…… 솔직한 마음으로 해 준다♪」
 		ENDIF
 	ELSE
 		IF RAND:5 == 0
-			PRINTFORMW 「あなたの恥じらうその姿……いいですよ」
-			PRINTFORMW 「調教は、こうでなくては……って感じがします」
+			PRINTFORMW 「당신이 부끄러워하는 그 모습…… 좋아요」
+			PRINTFORMW 「조교는, 이러하지 않으면…… 이라는 느낌이 듭니다」
 		ELSEIF RAND:4 == 0
-			PRINTFORMW 「あっ……その……」
-			PRINTFORMW 「あなたが気持ちいいことを恥ずかしがってる姿……」
-			PRINTFORMW 「その……可愛い……です」
+			PRINTFORMW 「앗…… 그……」
+			PRINTFORMW 「당신이 기분이 좋은 일을 부끄러워하고 있는 모습……」
+			PRINTFORMW 「그…… 사랑스러운…… 입니다」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「ふふふ……恥ずかしがって、感じている所を隠そうとしても無駄です」
-			PRINTFORMW 「ちゃんと見せてください。奴隷は、御主人さまに隠し事しちゃいけないんです」
+			PRINTFORMW 「후후후…… 부끄러워해, 느끼고 있는 곳을 숨기려고 해도 쓸데없습니다」
+			PRINTFORMW 「분명하게 보이게 해 주세요. 노예는, 주인님에 비밀사항 해서는 안 됩니다」
 		ELSEIF RAND:2
-			PRINTFORMW 「あれれ？　もしかして、感じている所を私に見られるのが恥ずかしいんですか？」
-			PRINTFORMW 「気にしなくてもいいんですよ？　私は%CNAME(MASTER)%を感じさせるためにシてるんですから……」
+			PRINTFORMW 「어라?   혹시, 느끼고 있는 곳을 나에게 보여지는 것이 부끄럽습니까?」
+			PRINTFORMW 「신경쓰지 않아도 괜찮아요?   나는%CNAME(MASTER)%를 느끼게 하기 위해서(때문에) 시 비치니까……」
 		ELSE
-			PRINTFORMW 「ふふっ……可愛らしい反応ですね」
-			PRINTFORMW 「でも……私の関心がそそられるだけですよ？」
-			PRINTFORMW 「%CNAME(MASTER)%の隠したいもの、恥ずかしいものを全部見てあげますね」
+			PRINTFORMW 「후훗…… 사랑스러운 반응이군요」
+			PRINTFORMW 「그렇지만…… 나의 관심이 돋워질 뿐입니다?」
+			PRINTFORMW 「%CNAME(MASTER)%의 숨기고 싶은 것, 부끄러운 것을 전부 봐 주네요」
 		ENDIF
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM11, 嫌がる
+;COM11, 싫어한다
 ;-------------------------------------------------
-;・弱い「暴れる」扱い
-;・反抗とみなされる
+;·약한 「날뛴다」취급
+;·반항으로 간주해진다
 ;-------------------------------------------------
 @KOJO_COM_K4_11
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
-	;アナル愛撫
+;일반
+	;애널 애무
 	IF TFLAG:ACT == 13 || TFLAG:ACT == 14 || TFLAG:ACT == 23 || TFLAG:ACT == 22 || TFLAG:ACT == 35
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「嫌、いやぁというのは……まだ開発されてない証拠だね♪」
-			PRINTFORM 「私が責任を持って……ううん、愛をもって開発してあげるわ
+			PRINTFORMW 「싫어, 아니라고 하는 것은…… 아직 개발되어 있지 않은 증거구나♪」
+			PRINTFORM 「내가 책임을 가져…… 우응, 사랑을 가지고 개발 해 주어요
 			CALL HEARTCB
 			PRINTW 」
 		ELSE
-			PRINTFORMW 「始めはみんな、嫌がるんですよ……おしりを触られるのって」
-			PRINTFORMW 「でも……すぐです。すぐに気持ち良くなって、おねだりする尻穴奴隷さんになっちゃうんですよ」
+			PRINTFORMW 「처음은 모두, 싫어합니다…… 엉덩이를 손대어지는 것은」
+			PRINTFORMW 「그렇지만…… 곧입니다. 곧바로 기분 좋아져, 졸라대는 엉덩이 구멍 노예씨가 되어 버립니다」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「そう、嫌なの……ふぅ～ん」
-		PRINTFORMW 「じゃあ嫌じゃなくなるまで、じっくりと仕込んであげるね♪」
+		PRINTFORMW 「그래, 싫어…… 후응」
+		PRINTFORMW 「그러면 싫지 않게 될 때까지, 차분히 가르쳐 주네요♪」
 	ELSE
-		PRINTFORMW 「……そうですか、嫌ですか、そうですよね」
-		PRINTFORMW 「……さ、もっとしちゃいますよ♪」
+		PRINTFORMW 「…… 그렇습니까, 싫습니까, 그렇네요」
+		PRINTFORMW 「…… 자, 좀 더 해 버려요♪」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM12, 下手だと罵る
+;COM12, 서투르다고 매도한다
 ;-------------------------------------------------
-;・当然、反抗とみなされる
+;·당연, 반항으로 간주해진다
 ;-------------------------------------------------
 @KOJO_COM_K4_12
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;実際に下手な場合
-	;記入チェック
+	;실제로 서투른 경우
+	;기입 체크
 	LOCAL:1 = 1
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:REACT派生 == 0
+	IF LOCAL:1 && TFLAG:REACT파생 == 0
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「そう……ごめんね、上手に出来なくて」
-			PRINTFORMW 「それなら、上手にするって約束するから、%CNAME(MASTER)%の体で練習させて」
+			PRINTFORMW 「그렇게…… 미안해요, 능숙하게 할 수 없어서」
+			PRINTFORMW 「그렇다면, 능숙하게 한다 라는 약속하기 때문에,%CNAME(MASTER)%의 몸으로 연습시켜」
 		ELSE
-			PRINTFORMW 「そうですか、そうですよね……こんなこと初めてですもの」
-			PRINTFORMW 「でも、口のきき方には気をつけた方が身のためですよ？」
+			PRINTFORMW 「그렇습니까, 그렇네요…… 이런 일 처음인거야」
+			PRINTFORMW 「그렇지만, 말의 하는 방법에는 조심한 (분)편이 몸을 위해서(때문에)예요?」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「それは……おねだりかな？」
-		PRINTFORMW 「ふふっ、もう下手なんて言えなくなるまで快楽漬けにしてあげるね」
+		PRINTFORMW 「그것은…… 졸라댐일까?」
+		PRINTFORMW 「후훗, 이제(벌써) 서투름 같은거 말할 수 없게 될 때까지 쾌락 절임으로 해 주네요」
 	ELSE
-		PRINTFORMW 「下手……ですか……」
-		PRINTFORMW 「でも体は……そうは言ってないみたいですよ？」
+		PRINTFORMW 「서투름…… 입니까……」
+		PRINTFORMW 「그렇지만 몸은…… 그렇게는 말하지 않은 것 같아요?」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM13, 不敵に笑う
+;COM13, 겁없게 웃는다
 ;-------------------------------------------------
-;・「消極的従う」扱い
-;・余裕ぶりながらも従うが、反抗とみなされる
+;·「소극적 따른다」취급
+;·여유상이면서도 따르지만, 반항으로 간주해진다
 ;-------------------------------------------------
 @KOJO_COM_K4_13
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「くすっ、随分と余裕のある顔してるね」
-		PRINTFORMW 「もしかして調教にも慣れてきたって事かしら？」
-		PRINTFORMW 「なら……ふふふ……少し激しい事、しちゃってもいいんだよね？」
-		PRINTFORMW 「シビれるやつ……いってみようか♪」
+		PRINTFORMW 「키득, 상당히 여유가 있는 얼굴 하고 있네요」
+		PRINTFORMW 「혹시 조교에도 익숙해져 왔다는 일일까?」
+		PRINTFORMW 「그러면…… 후후후…… 조금 격렬한 일, 해 버려도 괜찮네요?」
+		PRINTFORMW 「시비녀석…… 말해 볼까♪」
 	ELSE
-		PRINTFORMW 「むむっ！　なにか余裕ですね……」
-		PRINTFORMW 「それならまぁ……私としても本気でいろいろ出来るというものです」
+		PRINTFORMW 「!   뭔가 여유군요……」
+		PRINTFORMW 「그렇다면 아무튼…… 나로서도 진심으로 여러 가지 할 수 있다고 하는 것입니다」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM14, 快感を我慢する
+;COM14, 쾌감을 참는다
 ;-------------------------------------------------
-;・一定条件で「許しを乞う」扱い
+;·일정 조건으로 「허가를 청한다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_14
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;「許しを乞う」扱いの場合（もうこんなことやめて）
-	;記入チェック
+	;「허가를 청한다」취급의 경우(이제(벌써) 이런 일 그만두어)
+	;기입 체크
 	LOCAL:1 = 0
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:REACT派生 == 1
+	IF LOCAL:1 && TFLAG:REACT파생 == 1
 		PRINTFORMW 
 		PRINTFORMW 
 		RETURN LOCAL
 	ENDIF
-	;アナル愛撫
+	;애널 애무
 	IF TFLAG:ACT == 13 || TFLAG:ACT == 14 || TFLAG:ACT == 23 || TFLAG:ACT == 22 || TFLAG:ACT == 35
 		IF FAVOR(0, 2000)
-			PRINTFORM 「ふぅーん、%CNAME(MASTER)%はアナルえっちを否定するんだぁ
+			PRINTFORM 「후응,%CNAME(MASTER)%는 애널 엣치를 부정한다아
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「それじゃあ私も、少し頑張っちゃおうかな……」
-			PRINTFORMW 「%CNAME(MASTER)%がアナルえっちの気持ち良さを認めるようになるまで……ふふっ」
+			PRINTFORMW 「그러면 나도, 조금 노력해 버릴까……」
+			PRINTFORMW 「%CNAME(MASTER)%가 애널 엣치의 기분 좋음을 인정하게 될 때까지…… 후훗」
 		ELSE
-			PRINTFORMW 「せっかくのおしりの快感……我慢しちゃうんですか？　もったいない」
-			PRINTFORMW 「こうなったら素直になるまで、とことん責めてあげますっ」
+			PRINTFORMW 「모처럼의 엉덩이의 쾌감…… 참아 버립니까?   아깝다」
+			PRINTFORMW 「이렇게 되면 솔직해질 때까지, 철저히 꾸짖어 줍니닷」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
-;一般
+;일반
 	IF FAVOR(3000, 3000) && RAND:6 == 0
-		PRINTFORMW 「そう……気持ちいい事、我慢するのね……」
-		PRINTFORMW 「それなら私も……くすっ♪」
-		PRINTFORMW 「じんわりと、%CNAME(MASTER)%の体に快楽を積み重ねていってあげるね」
-		PRINTFORMW 「快楽の積み木遊びだよ……%CNAME(MASTER)%は崩れないように心で支えるの」
-		PRINTFORMW 「いつまで、我慢し続けられるかしら……」
+		PRINTFORMW 「그렇게…… 기분이 좋은 일, 참는 거네……」
+		PRINTFORMW 「그렇다면 나도…… 키득♪」
+		PRINTFORMW 「서서히와%CNAME(MASTER)%의 몸에 쾌락을 겹쳐 쌓아 가 주네요」
+		PRINTFORMW 「쾌락의 집짓기 놀이 놀이야……%CNAME(MASTER)%는 무너지지 않게 마음으로 지지해」
+		PRINTFORMW 「언제까지, 참아 계속될까……」
 	ELSEIF FAVOR(0, 2000)
 		IF RAND:5 == 0
-			PRINTFORMW 「はぁ…ん…、%CNAME(MASTER)%の快感を必死に耐える顔……可愛いなぁ♪」
-			PRINTFORMW 「その表情……もっと見ていたい、ねぇ見せて？」
-			PRINTFORM 「ううん……見させて、もらうね
+			PRINTFORMW 「하아… 응…,%CNAME(MASTER)%의 쾌감을 필사적으로 참는 얼굴…… 사랑스럽구나♪」
+			PRINTFORMW 「그 표정…… 좀 더 보고 있고 싶은, 저기 보여 줘?」
+			PRINTFORM 「우응…… 보게 해, 받네요
 			CALL HEARTCB
 			PRINTW 」
 		ELSEIF RAND:4 == 0
-			PRINTFORMW 「そんなに歯を食いしばって、体を震わせて気持ち良くないふりをされたら……」
-			PRINTFORMW 「私……なんだか悲しくなっちゃうよ」
-			PRINTFORMW 「ねえ……素直になりましょう？　その方があなたの為よ」
+			PRINTFORMW 「그렇게 이를 악물어, 몸을 진동시켜 기분 좋지 않는 체를 되면……」
+			PRINTFORMW 「나…… 어쩐지 슬퍼져 버린다」
+			PRINTFORMW 「저기…… 솔직해집시다?   그 쪽이 당신을 위해서(때문에)」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「そう……気持ち良くないんだ……悪いお口はそういうことを言うのね」
-			PRINTFORMW 「じゃあ素直な体さんは……何て言うのかな？」
-			PRINTFORM 「ねぇ？　聞いてみようよ……じっくりと、ね
+			PRINTFORMW 「그렇게…… 기분 좋지 않다…… 나쁜 입은 그런 일을 말하는 거네」
+			PRINTFORMW 「그러면 솔직한 몸씨는…… 뭐라고 말할까나?」
+			PRINTFORM 「저기?   (들)물어 보자…… 차분히,
 			CALL HEARTCB
 			PRINTW 」
 		ELSEIF RAND:2
-			PRINTFORMW 「そんなこと言わないで……」
-			PRINTFORMW 「気持ちいいこと……認めようよ……」
-			PRINTFORM 「いっぱい気持ちよくなって……幸せになって欲しいよ
+			PRINTFORMW 「그런 일 말하지 마……」
+			PRINTFORMW 「기분이 좋은 일…… 인정하자……」
+			PRINTFORM 「가득 기분 좋아져…… 행복하게 되었으면 좋아
 			CALL HEARTCB
 			PRINTW 」
 		ELSE
-			PRINTFORMW 「あはぁ♪　全身をぶるぶるふるわせて、涙目になって……」
-			PRINTFORMW 「こうなったら私もとことん付き合ってあげる♪」
-			PRINTFORMW 「ふふっ、素直に『気持ちいいです』って認めるまで……」
-			PRINTFORMW 「たっぷりと……遊んでア…ゲ…ル♪」
+			PRINTFORMW 「아하아♪  전신을 부들부들 떨어, 눈물고인 눈이 되어……」
+			PRINTFORMW 「이렇게 되면 나도 철저히 교제해 준다♪」
+			PRINTFORMW 「후훗, 솔직하게 『기분이 좋습니다』는 인정할 때까지……」
+			PRINTFORMW 「충분히…… 놀아 아… 게… 르♪」
 		ENDIF
 	ELSE
 		IF RAND:5 == 0
-			PRINTFORMW 「気持ちいいことを我慢する為に、必死になって、体力使っちゃって……本末転倒じゃないですか？」
-			PRINTFORMW 「快感に身を委ねて、大人しく私に精を委ねれば……楽させて、あげますよ♪」
+			PRINTFORMW 「기분이 좋은 일을 참기 위해서(때문에), 필사적으로, 체력 사용해 버려…… 본말 전도가 아닙니까?」
+			PRINTFORMW 「쾌감에 몸을 바쳐, 얌전하게 나에게 정령을 맡기면…… 락 시켜, 주어요♪」
 		ELSEIF RAND:4 == 0
-			PRINTFORMW 「性奴隷として、気持ち良かったら大人しく“気持ちいいっ”、と叫ぶのが筋だと思いますが……」
-			PRINTFORMW 「反抗期の奴隷さんには、ちょっとお仕置きしないとだめみたいですね♪」
+			PRINTFORMW 「성 노예로서 기분 좋았으면 얌전하고 "기분이 좋다", 라고 외치는 것이 줄기라고 생각합니다만……」
+			PRINTFORMW 「반항기의 노예씨에게는, 조금 벌 하지 않으면 안 되는 것 같네요♪」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「その快感を必死に抑え込もうとする仕草……興奮してしまいますね」
-			PRINTFORMW 「もっと気持ち良くしてあげますよ……もっと見せてください」
+			PRINTFORMW 「그 쾌감을 필사적으로 억누르려고 하는 행동…… 흥분해 버리네요」
+			PRINTFORMW 「좀 더 기분 좋게 해 주어요…… 좀 더 보여 주세요」
 		ELSEIF RAND:2
-			PRINTFORMW 「そんなに歯を食いしばって、何を堪えているんですか？」
-			PRINTFORMW 「いくら%CNAME(MASTER)%が、頑張って気持ちいいのを抑え込もうとしても無駄です」
-			PRINTFORMW 「早く気持ちいいことを受け入れて、楽になってしまえばいいのに……」
+			PRINTFORMW 「그렇게 이를 악물어, 무엇을 견디고 있습니까?」
+			PRINTFORMW 「아무리%CNAME(MASTER)%가, 노력해 기분이 좋은 것을 억누르려고 해도 쓸데없습니다」
+			PRINTFORMW 「빨리 기분이 좋은 일을 받아들여, 편해져 버리면 좋은데……」
 		ELSE
-			PRINTFORMW 「くすっ……いいですよ、その快楽に耐える表情……」
-			PRINTFORMW 「体と心、先に音をあげるのはどちらか、楽しみです」
+			PRINTFORMW 「키득…… 좋아요, 그 쾌락에 참는 표정……」
+			PRINTFORMW 「몸과 마음, 먼저 소리를 지르는 것은 어느 쪽인지, 즐거움입니다」
 		ENDIF
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM15, 快感を受け入れる
+;COM15, 쾌감을 받아들인다
 ;-------------------------------------------------
-;・「積極的従う」扱い
+;·「적극적 따른다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_15
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
-	;アナル愛撫
+;일반
+	;애널 애무
 	IF TFLAG:ACT == 13 || TFLAG:ACT == 14 || TFLAG:ACT == 23 || TFLAG:ACT == 22 || TFLAG:ACT == 35
 		IF FAVOR(0, 2000)
 			IF RAND:3 == 0
-				PRINTFORM 「そう……おしり、気持ちいいの？　よかったねぇ
+				PRINTFORM 「그렇게…… 엉덩이, 기분이 좋은거야?   좋았어
 				CALL HEARTCB
 				PRINTW 」
-				PRINTFORMW 「私なら……嫌な顔一つせずにお尻を可愛がってもらえるんだよ？」
-				PRINTFORMW 「だって……あなたのおしり、可愛いんだもの♪」
+				PRINTFORMW 「나라면…… 싫은 얼굴 하나 하지 않고 엉덩이를 귀여워해 받을 수 있는거야?」
+				PRINTFORMW 「왜냐하면…… 당신의 엉덩이, 사랑스러운걸♪」
 			ELSEIF RAND:2
-				PRINTFORM 「はぁ…ん
+				PRINTFORM 「하아… 응
 				CALL HEARTCB
-				PRINTW 　いくらなんでもよがりすぎだよ♪」
-				PRINTFORMW 「でも最後まで、面倒見てあげる♪　くたくたになるまでおしりえっちしてあげる」
-				PRINTFORM 「だって……%CNAME(MASTER)%を尻穴狂いさんにしちゃったの……私だもの
+				PRINTW   너무 아무리 뭐라해도 좋아하는거야♪」
+				PRINTFORMW 「그렇지만 끝까지, 돌봐 주는♪  기진맥진이 될 때까지 엉덩이 엣치해 준다」
+				PRINTFORM 「왜냐하면……%CNAME(MASTER)%를 엉덩이 구멍 이상씨로 해 버린 것…… 나인걸
 				CALL HEARTCB
 				PRINTW 」
 			ELSE
-				PRINTFORMW 「ん？　おしり……感じちゃうの？」
-				PRINTFORM 「ねぇ言って見せて
+				PRINTFORMW 「응?   엉덩이…… 느껴 버리는 거야?」
+				PRINTFORM 「저기 말해 보여 줘
 				CALL HEARTCB
-				PRINTFORMW 　聴きたいよ……%CNAME(MASTER)%の言葉」
-				PRINTFORM 「『おしりしゅごいの～』って言ってみせてよ
+				PRINTFORMW   듣고 싶어……%CNAME(MASTER)%의 말」
+				PRINTFORM 「『엉덩이 굉장한거야~』라고 말해 보여요
 				CALL HEARTCB
 				PRINTW 」
 			ENDIF
 		ELSE
 			IF RAND:2
-				PRINTFORMW 「ふふ……お尻の穴が可愛くヒクついてるじゃないですか」
-				PRINTFORMW 「たっぷりと愉しんでください……おしりの良さはこんなもんじゃないですよ」
+				PRINTFORMW 「후후…… 엉덩이의 구멍이 사랑스럽게 실룩거리고 있지 않습니까」
+				PRINTFORMW 「충분히 즐겨 주세요…… 엉덩이의 좋은 점은 이런 것이 아니에요」
 			ELSE
-				PRINTFORMW 「すっかりお尻でメロメロになっちゃいましたね♪」
-				PRINTFORMW 「もっとおねだりすれば、もっと気持ち良くしてあげますよ」
+				PRINTFORMW 「완전히 엉덩이로 헤롱헤롱이 되어 버렸어요♪」
+				PRINTFORMW 「좀 더 졸라대면, 좀 더 기분 좋게 해 주어요」
 			ENDIF
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	
 	IF FAVOR(3000, 3000) && RAND:6 == 0
-		PRINTFORMW 「そんなにトロけきった顔されると、私も嬉しくなっちゃうな……
-		PRINTFORM 「こうなったら私、もっともっと%CNAME(MASTER)%に悦んでもらうために頑張っちゃうよ
+		PRINTFORMW 「그렇게 다랑어자른 얼굴 되면, 나도 기뻐져 버리는군……
+		PRINTFORM 「이렇게 되면 나, 좀더 좀더%CNAME(MASTER)%에 기뻐해 받기 위해서(때문에) 노력해 버린다
 		CALL HEARTCB
 		PRINTW 」
-		PRINTFORMW 「いっぱい……いっぱい愉しみましょう♪」
+		PRINTFORMW 「가득…… 가득 즐깁시다♪」
 	ELSEIF FAVOR(0, 2000)
 		IF RAND:5 == 0
-			PRINTFORMW 「ふふふ、悦んでくれて……嬉しいよ。精もいっぱいだね♪」
-			PRINTFORM 「御褒美に……もっと気持ち良くしてあげるね
+			PRINTFORMW 「후후후, 기뻐해 주어…… 기뻐. 정령도 가득하다♪」
+			PRINTFORM 「포상에…… 좀 더 기분 좋게 해 주네요
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORM 「ほら……たっぷりよがって、喘いで、愉しんでほしいな
+			PRINTFORM 「이봐요…… 충분히가는, 허덕여, 즐기기를 원하는데
 			CALL HEARTCB
 			PRINTW 」
 		ELSEIF RAND:4 == 0
-			PRINTFORM 「あ…ん♪　息、熱すぎぃ
+			PRINTFORM 「아… 응♪  숨, 너무 뜨겁고
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「そんなに荒げちゃって……快感は逃げないよ♪」
-			PRINTFORMW 「むしろ……%CNAME(MASTER)%が快感から逃げたくっても……逃げられないんだよね」
+			PRINTFORMW 「그렇게 거칠게 해 버려…… 쾌감은 도망치지 않아♪」
+			PRINTFORMW 「오히려……%CNAME(MASTER)%가 쾌감으로부터 도망치고 싶어서도…… 도망칠 수 없네요」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「そう……気持ちいい時は、どうすればいいんだっけ？」
-			PRINTFORM 「……はい、よくおねだり出来ました
+			PRINTFORMW 「그렇게…… 기분이 좋을 때는, 어떻게 하면 좋은 것이던가?」
+			PRINTFORM 「…… 네, 자주(잘) 졸라댈 수 있었습니다
 			CALL HEARTCB
-			PRINTW 　いいこ、いいこ」
-			PRINTFORMW 「それじゃあたっぷりと、いい夢をみせてあげないと……ね♪」
+			PRINTW   좋은 개, 좋은 와」
+			PRINTFORMW 「그러면 아 충분히와 좋은 꿈을 보여 주지 않으면……♪」
 		ELSEIF RAND:2
-			PRINTFORMW 「あらあら……感じちゃうんだ、可愛らしいものね」
-			PRINTFORMW 「その幸せそうな顔……素敵だよ♪」
+			PRINTFORMW 「아라아라…… 느껴 버린다, 사랑스러운 거네」
+			PRINTFORMW 「그 행복한 얼굴…… 멋져♪」
 		ELSE
-			PRINTFORMW 「ふふっ……%CNAME(MASTER)%の感じている顔、可愛いね♪」
-			PRINTFORM 「もっと見てあげるわ。いっぱい感じて欲しいな……
+			PRINTFORMW 「후훗……%CNAME(MASTER)%가 느끼고 있는 얼굴, 사랑스럽다♪」
+			PRINTFORM 「좀 더 봐 주어요. 가득 느꼈으면 좋구나……
 			CALL HEARTCB
 			PRINTW 」
 		ENDIF
 	ELSE
 		IF RAND:5 == 0
-			PRINTFORMW 「ふふふ……すっかり気持ち良くなっちゃって……はしたない」
-			PRINTFORMW 「……なんていうと思いました？　ぜんぜん恥ずかしくないですよ」
-			PRINTFORMW 「そのまま……もっと気持ち良くなってくださいっ」
+			PRINTFORMW 「후후후…… 완전히 기분 좋아져 버려…… 상스럽다」
+			PRINTFORMW 「…… 뭐라고 한다고 생각했습니까?   전혀 부끄럽지 않아요」
+			PRINTFORMW 「그대로…… 좀 더 기분 좋아져 주세욧」
 		ELSEIF RAND:4 == 0
-			PRINTFORMW 「ん……快感に素直なんですね……いいですよ」
-			PRINTFORMW 「そのままもっと気持ち良くしてあげます♪」
+			PRINTFORMW 「응…… 쾌감에순수이군요…… 좋아요」
+			PRINTFORMW 「그대로 좀 더 기분 좋게 해 줍니다♪」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「気持ちいいこと……お好きなんですね」
-			PRINTFORMW 「もっと……気持ち良くなってください……私に精を、いっぱいくださいっ」
+			PRINTFORMW 「기분이 좋은 일…… 좋아하네요」
+			PRINTFORMW 「좀 더…… 기분 좋아져 주세요…… 나에게 정령을, 가득 주세욧」
 		ELSEIF RAND:2
-			PRINTFORMW 「あ……お気に召して頂けたのですね♪」
-			PRINTFORMW 「嬉しいですっ！　もっと、もっと気持ち良くなれるよう、頑張りますね」
+			PRINTFORMW 「아…… 마음에 드셔 받을 수 있던 것이군요♪」
+			PRINTFORMW 「기쁩니닷!   좀 더, 좀 더 기분 좋아질 수 있도록, 노력하네요」
 		ELSE
-			PRINTFORMW 「そう、その調子ですよ♪」
-			PRINTFORMW 「いっぱい感じて……私に精を提供してくださいね」
+			PRINTFORMW 「그래, 그 상태예요♪」
+			PRINTFORMW 「가득 느껴…… 나에게 정령을 제공해 주세요」
 		ENDIF
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM16, 気持ち良い！
+;COM16, 기분 좋다!
 ;-------------------------------------------------
-;・「受け入れる」扱い
+;·「받아들인다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_16
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
-	;アナル愛撫
+;일반
+	;애널 애무
 	IF TFLAG:ACT == 13 || TFLAG:ACT == 14 || TFLAG:ACT == 23 || TFLAG:ACT == 22 || TFLAG:ACT == 35
 		IF FAVOR(0, 2000)
 			IF RAND:3 == 0
-				PRINTFORM 「そう……おしり、気持ちいいの？　よかったねぇ
+				PRINTFORM 「그렇게…… 엉덩이, 기분이 좋은거야?   좋았어
 				CALL HEARTCB
 				PRINTW 」
-				PRINTFORMW 「私なら……嫌な顔一つせずにお尻を可愛がってもらえるんだよ？」
-				PRINTFORMW 「だって……あなたのおしり、可愛いんだもの♪」
+				PRINTFORMW 「나라면…… 싫은 얼굴 하나 하지 않고 엉덩이를 귀여워해 받을 수 있는거야?」
+				PRINTFORMW 「왜냐하면…… 당신의 엉덩이, 사랑스러운걸♪」
 			ELSEIF RAND:2
-				PRINTFORM 「はぁ…ん
+				PRINTFORM 「하아… 응
 				CALL HEARTCB
-				PRINTW 　いくらなんでもよがりすぎだよ♪」
-				PRINTFORMW 「でも最後まで、面倒見てあげる♪　くたくたになるまでおしりえっちしてあげる」
-				PRINTFORM 「だって……%CNAME(MASTER)%を尻穴狂いさんにしちゃったの……私だもの
+				PRINTW   너무 아무리 뭐라해도 좋아하는거야♪」
+				PRINTFORMW 「그렇지만 끝까지, 돌봐 주는♪  기진맥진이 될 때까지 엉덩이 엣치해 준다」
+				PRINTFORM 「왜냐하면……%CNAME(MASTER)%를 엉덩이 구멍 이상씨로 해 버린 것…… 나인걸
 				CALL HEARTCB
 				PRINTW 」
 			ELSE
-				PRINTFORMW 「ん？　おしり……感じちゃうの？」
-				PRINTFORM 「ねぇ言って見せて
+				PRINTFORMW 「응?   엉덩이…… 느껴 버리는 거야?」
+				PRINTFORM 「저기 말해 보여 줘
 				CALL HEARTCB
-				PRINTFORMW 　聴きたいよ……%CNAME(MASTER)%の言葉」
-				PRINTFORM 「『おしりしゅごいの～』って言ってみせてよ
+				PRINTFORMW   듣고 싶어……%CNAME(MASTER)%의 말」
+				PRINTFORM 「『엉덩이 굉장한거야~』라고 말해 보여요
 				CALL HEARTCB
 				PRINTW 」
 			ENDIF
 		ELSE
 			IF RAND:2
-				PRINTFORMW 「ふふ……お尻の穴が可愛くヒクついてるじゃないですか」
-				PRINTFORMW 「たっぷりと愉しんでください……おしりの良さはこんなもんじゃないですよ」
+				PRINTFORMW 「후후…… 엉덩이의 구멍이 사랑스럽게 실룩거리고 있지 않습니까」
+				PRINTFORMW 「충분히 즐겨 주세요…… 엉덩이의 좋은 점은 이런 것이 아니에요」
 			ELSE
-				PRINTFORMW 「すっかりお尻でメロメロになっちゃいましたね♪」
-				PRINTFORMW 「もっとおねだりすれば、もっと気持ち良くしてあげますよ」
+				PRINTFORMW 「완전히 엉덩이로 헤롱헤롱이 되어 버렸어요♪」
+				PRINTFORMW 「좀 더 졸라대면, 좀 더 기분 좋게 해 주어요」
 			ENDIF
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	
 	IF FAVOR(3000, 3000) && RAND:6 == 0
-		PRINTFORMW 「そんなにトロけきった顔されると、私も嬉しくなっちゃうな……
-		PRINTFORM 「こうなったら私、もっともっと%CNAME(MASTER)%に悦んでもらうために頑張っちゃうよ
+		PRINTFORMW 「그렇게 다랑어자른 얼굴 되면, 나도 기뻐져 버리는군……
+		PRINTFORM 「이렇게 되면 나, 좀더 좀더%CNAME(MASTER)%에 기뻐해 받기 위해서(때문에) 노력해 버린다
 		CALL HEARTCB
 		PRINTW 」
-		PRINTFORMW 「いっぱい……いっぱい愉しみましょう♪」
+		PRINTFORMW 「가득…… 가득 즐깁시다♪」
 	ELSEIF FAVOR(0, 2000)
 		IF RAND:5 == 0
-			PRINTFORMW 「ふふふ、悦んでくれて……嬉しいよ。精もいっぱいだね♪」
-			PRINTFORM 「御褒美に……もっと気持ち良くしてあげるね
+			PRINTFORMW 「후후후, 기뻐해 주어…… 기뻐. 정령도 가득하다♪」
+			PRINTFORM 「포상에…… 좀 더 기분 좋게 해 주네요
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORM 「ほら……たっぷりよがって、喘いで、愉しんでほしいな
+			PRINTFORM 「이봐요…… 충분히가는, 허덕여, 즐기기를 원하는데
 			CALL HEARTCB
 			PRINTW 」
 		ELSEIF RAND:4 == 0
-			PRINTFORM 「あ…ん♪　息、熱すぎぃ
+			PRINTFORM 「아… 응♪  숨, 너무 뜨겁고
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「そんなに荒げちゃって……快感は逃げないよ♪」
-			PRINTFORMW 「むしろ……%CNAME(MASTER)%が快感から逃げたくっても……逃げられないんだよね」
+			PRINTFORMW 「그렇게 거칠게 해 버려…… 쾌감은 도망치지 않아♪」
+			PRINTFORMW 「오히려……%CNAME(MASTER)%가 쾌감으로부터 도망치고 싶어서도…… 도망칠 수 없네요」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「そう……気持ちいい時は、どうすればいいんだっけ？」
-			PRINTFORM 「……はい、よくおねだり出来ました
+			PRINTFORMW 「그렇게…… 기분이 좋을 때는, 어떻게 하면 좋은 것이던가?」
+			PRINTFORM 「…… 네, 자주(잘) 졸라댈 수 있었습니다
 			CALL HEARTCB
-			PRINTW 　いいこ、いいこ」
-			PRINTFORMW 「それじゃあたっぷりと、いい夢をみせてあげないと……ね♪」
+			PRINTW   좋은 개, 좋은 와」
+			PRINTFORMW 「그러면 아 충분히와 좋은 꿈을 보여 주지 않으면……♪」
 		ELSEIF RAND:2
-			PRINTFORMW 「あらあら……感じちゃうんだ、可愛らしいものね」
-			PRINTFORMW 「その幸せそうな顔……素敵だよ♪」
+			PRINTFORMW 「아라아라…… 느껴 버린다, 사랑스러운 거네」
+			PRINTFORMW 「그 행복한 얼굴…… 멋져♪」
 		ELSE
-			PRINTFORMW 「ふふっ……%CNAME(MASTER)%の感じている顔、可愛いね♪」
-			PRINTFORM 「もっと見てあげるわ。いっぱい感じて欲しいな……
+			PRINTFORMW 「후훗……%CNAME(MASTER)%가 느끼고 있는 얼굴, 사랑스럽다♪」
+			PRINTFORM 「좀 더 봐 주어요. 가득 느꼈으면 좋구나……
 			CALL HEARTCB
 			PRINTW 」
 		ENDIF
 	ELSE
 		IF RAND:5 == 0
-			PRINTFORMW 「ふふふ……すっかり気持ち良くなっちゃって……はしたない」
-			PRINTFORMW 「……なんていうと思いました？　ぜんぜん恥ずかしくないですよ」
-			PRINTFORMW 「そのまま……もっと気持ち良くなってくださいっ」
+			PRINTFORMW 「후후후…… 완전히 기분 좋아져 버려…… 상스럽다」
+			PRINTFORMW 「…… 뭐라고 한다고 생각했습니까?   전혀 부끄럽지 않아요」
+			PRINTFORMW 「그대로…… 좀 더 기분 좋아져 주세욧」
 		ELSEIF RAND:4 == 0
-			PRINTFORMW 「ん……快感に素直なんですね……いいですよ」
-			PRINTFORMW 「そのままもっと気持ち良くしてあげます♪」
+			PRINTFORMW 「응…… 쾌감에순수이군요…… 좋아요」
+			PRINTFORMW 「그대로 좀 더 기분 좋게 해 줍니다♪」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「気持ちいいこと……お好きなんですね」
-			PRINTFORMW 「もっと……気持ち良くなってください……私に精を、いっぱいくださいっ」
+			PRINTFORMW 「기분이 좋은 일…… 좋아하네요」
+			PRINTFORMW 「좀 더…… 기분 좋아져 주세요…… 나에게 정령을, 가득 주세욧」
 		ELSEIF RAND:2
-			PRINTFORMW 「あ……お気に召して頂けたのですね♪」
-			PRINTFORMW 「嬉しいですっ！　もっと、もっと気持ち良くなれるよう、頑張りますね」
+			PRINTFORMW 「아…… 마음에 드셔 받을 수 있던 것이군요♪」
+			PRINTFORMW 「기쁩니닷!   좀 더, 좀 더 기분 좋아질 수 있도록, 노력하네요」
 		ELSE
-			PRINTFORMW 「そう、その調子ですよ♪」
-			PRINTFORMW 「いっぱい感じて……私に精を提供してくださいね」
+			PRINTFORMW 「그래, 그 상태예요♪」
+			PRINTFORMW 「가득 느껴…… 나에게 정령을 제공해 주세요」
 		ENDIF
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;=================================================
-;性交系反応
+;성교계 반응
 ;=================================================
-;・数も少ないし汎用処理にあまり向いていない
-;・最低でも逆レイプやアナルセックスは「個別リアクション口上」で処理することが望ましい
+;·수도 적고 범용 처리에 그다지 향하지 않았다
+;·최악이어도 역강간이나 애널 섹스는 「개별 리액션 구상」으로 처리하는 것이 바람직함
 ;-------------------------------------------------
 
 ;-------------------------------------------------
-;COM20, 腰を振る
+;COM20, 허리를 흔든다
 ;-------------------------------------------------
 @KOJO_COM_K4_20
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
-	;MASTER挿入中アヌス
-	IF TEQUIP:性交奉仕中 == 6
+;일반
+	;MASTER 삽입중 아누스
+	IF TEQUIP:성교봉사중 == 6
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「ふぁぁ…、あっ…、お尻……気持ちいいよっ！」
-			PRINTFORMW 「もっと奥まで……おちんちん抜き差ししてっ！」
-			PRINTFORMW 「私もお尻で%CNAME(MASTER)%のこと気持ち良くさせてあげるからっ！」
+			PRINTFORMW 「후아…, 앗…, 엉덩이…… 기분이 좋아!」
+			PRINTFORMW 「좀 더 안쪽까지…… 자지 빼고 꽂기 햇!」
+			PRINTFORMW 「나도 엉덩이로%CNAME(MASTER)%의 일 기분 좋게 시켜 주기 때문에!」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「んふ…、お尻に……熱くて太いのが……ずんっ、ずんってきてる……」
-			PRINTFORMW 「もっと奥まで……根元まで入れて♪」
+			PRINTFORMW 「응후…, 엉덩이에…… 뜨겁고 굵은 것이…… 즈읏, 두응은 오고 있다……」
+			PRINTFORMW 「좀 더 안쪽까지…… 근원까지 넣으며♪」
 		ELSE
-			PRINTFORMW 「私のお尻……気持ちいい……ですか？」
-			PRINTFORMW 「んっ……お尻の中が熱いですっ」
+			PRINTFORMW 「나의 엉덩이…… 기분이 좋은…… 입니까?」
+			PRINTFORMW 「읏…… 엉덩이안이 뜨겁습니닷」
 		ENDIF
-	;MASTER挿入中性器
-	ELSEIF TEQUIP:性交奉仕中
+	;MASTER 삽입 중성기
+	ELSEIF TEQUIP:성교봉사중
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「そんなに一生懸命にっ、腰を振ってくれるんだ……」
-			PRINTFORMW 「それじゃあ私も…、んっ…、おまんこをきゅぅぅ～って締め付けてあげる」
-			PRINTFORMW 「ほら、もっと狂ったみたいに突き転がしてもいいんだよ？」
+			PRINTFORMW 「그렇게 열심히, 허리를 흔들어 준다……」
+			PRINTFORMW 「그러면 나도…, 읏…, 만개를 나무~는 단단히 조여 준다」
+			PRINTFORMW 「이봐요, 좀 더 미친 것 같이 찔러 굴려도 괜찮아?」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「ん…、ふぁ……いいよっ……奥までおちんちんが来てるっ」
-			PRINTFORMW 「もっと……もっと頂戴っ……%CNAME(MASTER)%の精……%CNAME(MASTER)%のおちんちん」
-			PRINTFORMW 「私を気持ち良くしてっ！　私で……いっぱい気持ち良くなって♪」
+			PRINTFORMW 「응…, 후아…… 좋아…… 안쪽까지 자지가 오고 있닷」
+			PRINTFORMW 「좀 더…… 좀 더 줘……%CNAME(MASTER)%의 정령……%CNAME(MASTER)%의 자지」
+			PRINTFORMW 「나를 기분 좋게 햇!   나로…… 가득 기분 좋아지며♪」
 		ELSE
-			PRINTFORMW 「はぁっ、はぁっ……私のおまんこ……気持ちいいですか？」
-			PRINTFORMW 「気持ち良く無いわけ……ありませんよねっ……そんなにだらしなく腰を振って……っ」
+			PRINTFORMW 「하앗, 하앗…… 나의 보지…… 기분이 좋습니까?」
+			PRINTFORMW 「기분 좋지 않을 이유…… 없겠지요…… 그렇게 야무지지 못하게 허리를 흔들어……」
 		ENDIF
-	;TARGET挿入中
-	ELSEIF TEQUIP:性交中
-		;てぃむてぃむが付いている
+	;TARGET 삽입중
+	ELSEIF TEQUIP:성교중
+		;가 붙어 있다
 		IF PENIS(TARGET)
-			;アナルセックス
-			IF TEQUIP:性交中 == 6
+			;애널 섹스
+			IF TEQUIP:성교중 == 6
 				IF FAVOR(3000, 3000)
-					PRINTFORMW 「あはっ！　おちんちんが根元まで飲み込まれてるっ！」
-					PRINTFORMW 「ほら私からもいっぱいずんずんってしてあげるわ♪」
-					PRINTFORM 「腸内で私の逸物の形、しっかりと味わって
+					PRINTFORMW 「아핫!   자지가 근원까지 삼켜지고 있닷!」
+					PRINTFORMW 「이봐요 나부터도 가득 부쩍부쩍은 해 주어요♪」
+					PRINTFORM 「장내에서 나의 일물의 형태, 제대로 맛봐
 					CALL HEARTCB
 					PRINTW 」
 				ELSEIF FAVOR(0, 2000)
-					PRINTFORM 「あ…ん♪　そんな一生懸命にお尻を振っちゃって
+					PRINTFORM 「아… 응♪  그런 열심히 엉덩이를 흔들어 버려
 					CALL HEARTCB
 					PRINTW 」
-					PRINTFORMW 「腸内の括約筋が私のにぴったりと絡み付いて……気持ちいいよ♪」
-					PRINTFORMW 「私からもご褒美に……ふふふ、それっ！」
+					PRINTFORMW 「장내의 괄약근이 나의 것에 딱 휘감겨…… 기분이 좋아♪」
+					PRINTFORMW 「나부터도 포상에…… 후후후, 그것!」
 				ELSE
-					PRINTFORMW 「お尻、気持ちいいんですか？　私の逸物は……気持ちいいですか？」
-					PRINTFORMW 「ふふ、雁首の形から、なにからなにまで、お尻で私の形を覚えてくださいね」
+					PRINTFORMW 「엉덩이, 기분이 좋습니까?   나의 일물은…… 기분이 좋습니까?」
+					PRINTFORMW 「후후, 대통의 형태로부터, 무엇부터 무엇까지, 엉덩이로 나의 형태를 기억해 주세요」
 				ENDIF
 			ELSE
 				IF FAVOR(3000, 3000)
-					PRINTFORMW 「はぁ…ん、いいよ……もっと腰を振って。私のおちんちん悦ばせて」
-					PRINTFORM 「あはっ、%CNAME(MASTER)%のおまんこが私のおちんちんに絡み付いてるぅ
+					PRINTFORMW 「하아… 응, 좋아…… 좀 더 허리를 흔들어. 나의 자지 기쁘게 해」
+					PRINTFORM 「아핫,%CNAME(MASTER)%의 보지가 나의 자지에 휘감기고 있다아
 					CALL HEARTCB
 					PRINTW 」
-					PRINTFORMW 「柔らかくて、気持ちいいおまんこがわたしの竿を扱いてるよっ！」
+					PRINTFORMW 「부드럽고, 기분이 좋은 보지가 나의 장대를 다루고 있는!」
 				ELSEIF FAVOR(0, 2000)
-					PRINTFORMW 「ん……♪　いいよ、もっと振って」
-					PRINTFORMW 「私も、いっぱい腰を振って犯してしてあげるから」
-					PRINTFORMW 「%CNAME(MASTER)%のおまんこをめいいっぱいズコズコしてあげるから♪」
+					PRINTFORMW 「응……♪  좋아, 좀 더 털어」
+					PRINTFORMW 「나도, 가득 허리를 흔들어 범해 해 주기 때문에」
+					PRINTFORMW 「%CNAME(MASTER)%의 보지를 힘껏 푹푹 해 주기 때문에♪」
 				ELSE
-					PRINTFORMW 「おまんこ……気持ちいいですか？」
-					PRINTFORMW 「きゅうきゅう締め付けちゃって……可愛いですね」
+					PRINTFORMW 「보지…… 기분이 좋습니까?」
+					PRINTFORMW 「큐우큐우 단단히 조여 버려…… 사랑스럽네요」
 				ENDIF
 			ENDIF
-		;紛い物のてぃむてぃむがついている
+		;유사품의 가 붙어 있다
 		ELSE
-			;アナルセックス
-			IF TEQUIP:性交中 == 6
+			;애널 섹스
+			IF TEQUIP:성교중 == 6
 				IF FAVOR(3000, 3000)
-					PRINTFORMW 「自分から腰を振っちゃうほどお尻に挿入れられるのが好きなのね」
-					PRINTFORMW 「ふふっ、涎まで垂らしちゃって……可愛いんだから♪」
-					PRINTFORMW 「紛い物でしか%CNAME(MASTER)%に挿入れてあげられないのが心底悔しいけれど」
-					PRINTFORMW 「%CNAME(MASTER)%が満足するまでたっぷりと突き込んであげるわ……」
+					PRINTFORMW 「자신으로부터 허리를 흔들어 버릴 만큼 엉덩이에 삽입한차의를 좋아하는」
+					PRINTFORMW 「후훗, 군침까지 늘어뜨려 버려…… 사랑스럽기 때문에♪」
+					PRINTFORMW 「유사품으로 밖에%CNAME(MASTER)%에 삽입할 수 있어 줄 수 없는 것이 마음 속 분하지만」
+					PRINTFORMW 「%CNAME(MASTER)%가 만족할 때까지 충분히 돌진해 주어요……」
 				ELSEIF FAVOR(0, 2000)
-					PRINTFORMW 「ん？　おしり……好きなのね♪」
-					PRINTFORMW 「分かったわ……こんな紛い物でも満足できるというのなら」
-					PRINTFORMW 「いっぱい……気持ち良くなって」
+					PRINTFORMW 「응?   엉덩이…… 좋아하는♪」
+					PRINTFORMW 「알았어요…… 이런 유사품에서도 만족할 수 있다는 것이라면」
+					PRINTFORMW 「가득…… 기분 좋아져」
 				ELSE
-					PRINTFORMW 「そんなに必死になって腰を振るなんて……」
-					PRINTFORMW 「すっかり、お尻をズボズボされるのが病みつきになってしまったのですね」
+					PRINTFORMW 「그렇게 필사적으로 허리를 흔들다니……」
+					PRINTFORMW 「완전히, 엉덩이를 쑤컹쑤컹 되는 것이 푹 빠져 버린 것이군요」
 				ENDIF
 			ELSE
 				IF FAVOR(3000, 3000)
-					PRINTFORMW 「涎を垂らしながら腰を振っちゃって……」
-					PRINTFORMW 「感じてくれてるのは嬉しいけれど、程々に……ね♪」
-					PRINTFORMW 「おまんこが馬鹿になっちゃうかもしれないし……」
-					PRINTFORMW 「いつの日か、本物を使う時までに壊れたら……嫌でしょう？」
+					PRINTFORMW 「군침을 늘어뜨리면서 허리를 흔들어 버려……」
+					PRINTFORMW 「느껴 주고 있는 것은 기쁘지만, 적당히…… 말야♪」
+					PRINTFORMW 「보지가 바보가 되어 버릴지도 모르고……」
+					PRINTFORMW 「언제의 날인가, 진짜를 사용할 때까지 망가지면…… 싫겠지요?」
 				ELSEIF FAVOR(0, 2000)
-					PRINTFORMW 「ふふ、激しい腰使い……おまんこが気持ちいいのね」
-					PRINTFORMW 「どうせなら……本物でしてあげたかったなぁ」
-					PRINTFORMW 「くすっ、言ってもしょうがないし、これで満足させてあげる」
+					PRINTFORMW 「후후, 격렬한 허리사용…… 보지가 기분이 좋은거네」
+					PRINTFORMW 「어차피라면…… 진짜로 해 주고 싶었구나」
+					PRINTFORMW 「키득, 말해도 어쩔 수 없고, 이것으로 만족시켜 준다」
 				ELSE
-					PRINTFORMW 「おまんこ……気持ちいいですか？　腰使いがいやらしいですね」
-					PRINTFORMW 「忠実に形を再現した張り子ですから、膣内でその感触をめいいっぱい味わってください♪」
+					PRINTFORMW 「보지…… 기분이 좋습니까?   허리사용이 추잡하네요」
+					PRINTFORMW 「충실히 형태를 재현 한 의욕자이기 때문에, 질내에서 그 감촉을 힘껏 맛봐 주세요♪」
 				ENDIF
 			ENDIF
 		ENDIF
@@ -1063,94 +1063,94 @@ IF LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM21, 中に出して！
+;COM21, 안에 내!
 ;-------------------------------------------------
-;・「積極的従う」扱い
-;・満足度の上昇が半端じゃない
+;·「적극적 따른다」취급
+;·만족도의 상승이 장난 아니다
 ;-------------------------------------------------
 @KOJO_COM_K4_21
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;もう出そう
-	;記入チェック
+	;이제 내자
+	;기입 체크
 	LOCAL:1 = 0
 	;-------------------------------------------------
-	IF LOCAL:1 && PALAM:快Ｃ >= 8000
+	IF LOCAL:1 && PALAM:쾌C >= 8000
 		PRINTFORMW 
 		PRINTFORMW 
 		RETURN LOCAL
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「いいよっ、いっぱい中出ししてあげる……」
-		PRINTFORMW 「私が吸い取っちゃった精の内、いくらかをザーメンにして返してあげるからっ」
-		PRINTFORMW 「いっぱい吸収してね♪」
+		PRINTFORMW 「좋아, 가득 질내사정 해 준다……」
+		PRINTFORMW 「내가 빨아 들여 버린 정령중, 얼마인지를 정액으로 해 돌려주기 때문에」
+		PRINTFORMW 「가득 흡수해♪」
 	ELSE
-		PRINTFORMW 「ふふっ、せーえき……欲しいんですか？　可愛らしいですね」
-		PRINTFORMW 「ほら、こうしてギュッと抱きしめて……もう心変わりしても逃げられませんよ」
-		PRINTFORMW 「遠慮な～く、せーしを注ぎ込んであげましょうね」
+		PRINTFORMW 「후훗, 정액…… 갖고 싶습니까?   사랑스럽네요」
+		PRINTFORMW 「이봐요, 이렇게 해 꾹 껴안아…… 이제 변심 해도 도망칠 수 없어요」
+		PRINTFORMW 「사양말고, 키─해를 쏟아 주어요」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM22, 中に出さないで！
+;COM22, 안에 내지 마!
 ;-------------------------------------------------
-;・一定条件で「許しを乞う」扱い
+;·일정 조건으로 「허가를 청한다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_22
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;願いを聞いた
-	;記入チェック
+	;소원을 (들)물었다
+	;기입 체크
 	LOCAL:1 = 0
 	;-------------------------------------------------
-	IF LOCAL:1 && !TFLAG:REACT派生
+	IF LOCAL:1 && !TFLAG:REACT파생
 		PRINTFORMW 
 		PRINTFORMW 
 		RETURN LOCAL
 	ENDIF
 	
 	;-------------------------------------------------
-	;そんなこと言うから中で出したくなったわフヒヒ
-	;記入チェック
+	;그런 일 하기 때문에 중에서 내고 싶어진 원후히히
+	;기입 체크
 	LOCAL:1 = 1
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:REACT派生 == 1 && PALAM:快Ｃ >= 8000
+	IF LOCAL:1 && TFLAG:REACT파생 == 1 && PALAM:쾌C >= 8000
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「だーめ、%CNAME(MASTER)%のお腹を、しっかりとザーメンタンクにしてあげる」
-			PRINTFORMW 「ほ～らっ…、歌も歌ってあげるよっ」
-			PRINTFORMW 『こんにちは～赤ちゃんっ♪』
+			PRINTFORMW 「안돼,%CNAME(MASTER)%의 배를, 제대로 정액 탱크로 해 준다」
+			PRINTFORMW 「이봐요…, 노래도 노래해 준다」
+			PRINTFORMW 『안녕하세요~아기♪』
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「それ…、無理っ」
-			PRINTFORMW 「%CNAME(MASTER)%が悪いんだよっ…、そんな反則的な可愛さでっ、中に出さないで、なんてっ」
-			PRINTFORMW 「我慢できるわけ……ないじゃないっ」
+			PRINTFORMW 「그것…, 무리」
+			PRINTFORMW 「%CNAME(MASTER)%가 나빠…, 그런 반칙적인 사랑스러움으로, 안에 내지 말고, 뭐라고 하는」
+			PRINTFORMW 「참을 수 있을 이유…… 없잖앗」
 		ELSE
-			PRINTFORMW 「そんなぁこと…、言われたらぁ……」
-			PRINTFORMW 「私っ…、我慢できそうにありませんっ」
-			PRINTFORMW 「あはぁ…、ん…、射精そう……っ…、射精しますよっ」
+			PRINTFORMW 「그런일…, 말해지면……」
+			PRINTFORMW 「나…, 참을 수 있을 것 같게 없습니다」
+			PRINTFORMW 「아하아…, 응…, 사정한 듯하다………, 사정해요」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「ん？　中出し……嫌なの？」
-		PRINTFORMW 「でもせーえきが流れ込んでくる感触……病みつきなんでしょ？」
-		PRINTFORMW 「ほらぁ、こうしてお腹をナデナデしてあげるからぁ……ダメ？」
+		PRINTFORMW 「응?   질내사정…… 싫어?」
+		PRINTFORMW 「그렇지만 정액이 흘러들어 오는 감촉…… 중독인 것이지요?」
+		PRINTFORMW 「이봐요, 이렇게 해 배를 스윽스윽 해 주기 때문에…… 안돼?」
 		RETURN LOCAL
 	ELSE
 	ENDIF
@@ -1158,486 +1158,486 @@ ENDIF
 
 
 ;=================================================
-;苦痛系反応
+;고통계 반응
 ;=================================================
-;・加虐系行動や挿入を伴う各種行動で見られる
+;·가학계 행동이나 삽입을 수반하는 각종 행동으로 볼 수 있다
 ;-------------------------------------------------
 
 ;-------------------------------------------------
-;COM30, 痛みを我慢する
+;COM30, 아픔을 참는다
 ;-------------------------------------------------
-;・多少反抗扱いになるが、痛みは多少軽減される
+;·다소 반항 취급이 되지만, 아픔은 다소 경감된다
 ;-------------------------------------------------
 @KOJO_COM_K4_30
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-	;アナル愛撫
+	;애널 애무
 	IF TFLAG:ACT == 13 || TFLAG:ACT == 14 || TFLAG:ACT == 23 || TFLAG:ACT == 22 || TFLAG:ACT == 35
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「ちょっと痛いだろうけれど、我慢してね……」
-			PRINTFORM 「注射器みたいなものだよ
+			PRINTFORMW 「조금 아프겠지만, 참아……」
+			PRINTFORM 「주사기 같은 것이야
 			CALL HEARTCB
-			PRINT 　痛いからこそ……キくんだよ
+			PRINT   아프기 때문에 더욱…… 키군이야
 			CALL HEARTCB
 			PRINTW 」
 		ELSE
-			PRINTFORMW 「ごめんなさい……少しの辛抱です」
-			PRINTFORMW 「開発して行けば……気持ち良くなりますから」
+			PRINTFORMW 「미안해요…… 조금의 인내입니다」
+			PRINTFORMW 「개발해 가면…… 기분 좋아질테니까」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「あ……ん、ごめんね……ちょっと、痛くしすぎちゃったかな」
-		PRINTFORMW 「ほらぁ、おまじないをかけてあげるからぁ、それで許して？」
-		PRINTFORMW 「痛いの痛いの飛んで行け～」
+		PRINTFORMW 「아…… 응, 미안해요…… 조금, 너무 아프게 해 버렸는지」
+		PRINTFORMW 「이봐요, 주술을 걸쳐 주기 때문에, 그래서 허락해?」
+		PRINTFORMW 「아픈 것 아픈 것 날아 가라~」
 	ELSE
-		PRINTFORMW 「痛いですか？」
-		PRINTFORMW 「でも、その顔……興奮しちゃいます」
-		PRINTFORMW 「ええ……安心して下さい。もっと見てあげますよ……」
+		PRINTFORMW 「아픕니까?」
+		PRINTFORMW 「그렇지만, 그 얼굴…… 흥분해 버립니다」
+		PRINTFORMW 「에에…… 안심해 주세요. 좀 더 봐 주어요……」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM31, 悲鳴を上げる
+;COM31, 비명을 올린다
 ;
-;大ちゃんは、快楽応答としての悲鳴は喜ぶ一方で、恐怖応答として悲鳴を上げられるのは困るイメージ
+;대짱은, 쾌락 응답으로서의 비명은 기뻐하는 한편으로, 공포 응답으로서 비명을 올려지는 것은 곤란한 이미지
 ;-------------------------------------------------
-;・屈従扱いで、満足度の上昇が大きい
+;·굴종 취급으로, 만족도의 상승이 크다
 ;-------------------------------------------------
 @KOJO_COM_K4_31
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;会話系行動（脅す等）から実行
-	;記入チェック
+	;회화계 행동(위협하는 등)으로부터 실행
+	;기입 체크
 	LOCAL:1 = 1
 	;-------------------------------------------------
 	IF LOCAL:1 && (TFLAG:ACT < 10 || TFLAG:ACT == 66)
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「ちょ、ちょっと！　うそ、うそだよ～ん！」
+			PRINTFORMW 「조, 조금!   거짓말, 거짓말이야~응!」
 		ELSE
-			PRINTFORMW 「あらあら……%CNAME(MASTER)%には少し、刺激が強すぎましたかねぇ」
+			PRINTFORMW 「아라아라……%CNAME(MASTER)%에는 조금, 자극이 너무 강했습니까」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	
-	;アナル愛撫
+	;애널 애무
 	IF TFLAG:ACT == 13 || TFLAG:ACT == 14 || TFLAG:ACT == 23 || TFLAG:ACT == 22 || TFLAG:ACT == 35
 		IF FAVOR(0, 2000)
-			PRINTFORM 「可愛い声ね……大好きだよ
+			PRINTFORM 「사랑스러운 소리군요…… 정말 좋아해
 			CALL HEARTCB
-			PRINTFORMW 　%CNAME(MASTER)%も、その声も……」
-			PRINTFORM 「いっぱいお尻で可愛がって上げるから、いっぱい啼いて、甘えてみせて
+			PRINTFORMW 　%CNAME(MASTER)%도, 그 소리도……」
+			PRINTFORM 「가득 엉덩이로 귀여워해 올리기 때문에, 가득 울어, 응석부려 보여
 			CALL HEARTCB
 			PRINTW 」
 		ELSE
-			PRINTFORMW 「はぁ…、ん……アヌスを刺激してそんな声をあげられると……」
-			PRINTFORM 「興奮が止められなくなっちゃいますよぅ
+			PRINTFORMW 「하아…, 응…… 아누스를 자극해 그렇게 소리를 지를 수 있으면……」
+			PRINTFORM 「흥분이 멈출 수 없게 되어 버려요
 			CALL HEARTCB
 			PRINTW 」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「ん…、大丈夫だよ♪　%CNAME(MASTER)%は私にとって大切な人だから……大丈夫」
-		PRINTFORM 「だから安心して、遠慮啼く……啼き声を聞かせて
+		PRINTFORMW 「응…, 괜찮아♪  %CNAME(MASTER)%는 나에게 있어 소중한 사람이니까…… 괜찮아」
+		PRINTFORM 「그러니까 안심해, 사양 우는…… 울음 소리를 들려줘
 		CALL HEARTCB
 		PRINTW 」
 	ELSE
-		PRINTFORMW 「あはぁ…ん、可愛らしく……啼くのですね……」
-		PRINTFORMW 「そんなに可愛らしく啼かれてしまうと……もっと聞きたい、啼かせたいと思ってしまいます」
+		PRINTFORMW 「아하아… 응, 사랑스럽고…… 우는 것이군요……」
+		PRINTFORMW 「그렇게 사랑스럽게 울어져 버리면…… 좀 더 (듣)묻고 싶은, 울려지고 싶다고 생각해 버립니다」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM32, 暴れる
+;COM32, 날뛴다
 ;-------------------------------------------------
-;・「暴れる」扱い。もちろん反抗とみなされる
-;・暴れが通ると道具系コマンドを失敗させる
+;·「날뛴다」취급. 물론 반항으로 간주해진다
+;·날뛰고가 통과하면 도구계 커맨드를 실패시킨다
 ;-------------------------------------------------
 @KOJO_COM_K4_32
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;暴れが通った
-	;記入チェック
+	;날뛰고가 다녔다
+	;기입 체크
 	LOCAL:1 = 1
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:REACT派生 == 0
+	IF LOCAL:1 && TFLAG:REACT파생 == 0
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「あら…？」
-			PRINTFORMW 「もしかして、こんな生温いのじゃ満足できなかった？」
-			PRINTFORM 「くすっ。ごめんね、それならもっと凄いの、してあげる
+			PRINTFORMW 「아라…?」
+			PRINTFORMW 「혹시, 이런 미지근한 것은 만족할 수 없었어?」
+			PRINTFORM 「키득. 미안해요, 그렇다면 좀 더 굉장한 것, 해 준다
 			CALL HEARTCB
 			PRINTW 」
 		ELSE
-			PRINTFORMW 「くっ…！　やりましたねっ！」
-			PRINTFORMW 「後悔……させてあげますっ！」
+			PRINTFORMW 「쿳…!   했어요!」
+			PRINTFORMW 「후회…… 시켜 줍니닷!」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	
 	;-------------------------------------------------
-	;既に縛られている状態で暴れた
-	;記入チェック
+	;이미 속박되고 있는 상태로 날뛰었다
+	;기입 체크
 	LOCAL:1 = 1
 	;-------------------------------------------------
-	IF LOCAL:1 && (TFLAG:REACT派生 == 1 || TFLAG:REACT派生 == 4 || TFLAG:REACT派生 == 5)
+	IF LOCAL:1 && (TFLAG:REACT파생 == 1 || TFLAG:REACT파생 == 4 || TFLAG:REACT파생 == 5)
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「ああこらっ、そんなに暴れて……体に喰いこんじゃうじゃない」
-			PRINTFORMW 「でも見てると、ちょっと興奮しちゃうな……」
+			PRINTFORMW 「아 이거 참, 그렇게 날뛰어…… 몸에 파먹어버린다가 아니다」
+			PRINTFORMW 「그렇지만 보고 있으면, 조금 흥분해 버리는군……」
 		ELSE
-			PRINTFORMW 「何のための縄だと思ってるんです？」
-			PRINTFORMW 「それとも、もっときつく縛って欲しいというおねだりでしたか？」
+			PRINTFORMW 「무엇 때문의 줄이라고 생각하고 있습니다?」
+			PRINTFORMW 「그렇지 않으면, 좀 더 힘들게 묶었으면 좋겠다고 하는 졸라댐이었습니까?」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「あらあら、随分やんちゃさんなのね♪」
-		PRINTFORMW 「ふふっ……」
-		PRINTFORMW 「壊されるのは……好き？」
+		PRINTFORMW 「아라아라, 상당히 응석씨인 거네♪」
+		PRINTFORMW 「후훗……」
+		PRINTFORMW 「부수어지는 것은…… 좋아?」
 	ELSE
-		PRINTFORMW 「きゃっ！　むぅー！　負けませんっ！」
-		PRINTFORMW 「ほら……じっとしていることも出来ないというのなら、もっとひどいことしちゃいますよっ！」
+		PRINTFORMW 「꺗!   ―!  지지 않습니다!」
+		PRINTFORMW 「이봐요…… 가만히 하고 있는 일도 할 수 없다고 한다면, 좀 더 심한 일 해 버려요!」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM33, 怯える
+;COM33, 무서워한다
 ;-------------------------------------------------
-;・「許しを乞う」扱い。だが怒りを買うこともある
-;好感度により、怒りに違う意味を持たせたかった
+;·「허가를 청한다」취급. 하지만 분노를 사는 일도 있다
+;호감도에 의해, 분노에 다른 의미를 갖게하고 싶었다
 ;-------------------------------------------------
 @KOJO_COM_K4_33
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;お仕置きポイント加算
-	;記入チェック
+	;벌포인트 가산
+	;기입 체크
 	LOCAL:1 = 0
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:REACT派生 == 1
+	IF LOCAL:1 && TFLAG:REACT파생 == 1
 		PRINTFORMW 
 		PRINTFORMW 
 		RETURN LOCAL
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「そんなに……怯えないで」
-		PRINTFORMW 「私……悲しくなっちゃう」
+		PRINTFORMW 「그렇게…… 무서워하지 마」
+		PRINTFORMW 「나…… 슬퍼져 버린다」
 	ELSE
-		PRINTFORMW 「ここまで私を怖がってくれるのは……%CNAME(MASTER)%が初めてですよ」
-		PRINTFORMW 「……あまりいい気分は、しませんけどね」
+		PRINTFORMW 「여기까지 나를 무서워해 주는 것은……%CNAME(MASTER)%가 처음이에요」
+		PRINTFORMW 「…… 너무 좋은 기분은, 하지 않지만 말야」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 
 ;=================================================
-;奉仕系反応
+;봉사계 반응
 ;=================================================
-;・調教者への愛撫を含む行動で見られる
+;·조교자에게로의 애무를 포함한 행동으로 볼 수 있다
 ;-------------------------------------------------
 
 ;-------------------------------------------------
-;COM40, 拒否する
+;COM40, 거부한다
 ;-------------------------------------------------
-;・だが断る
+;·이지만 거절한다
 ;-------------------------------------------------
 @KOJO_COM_K4_40
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「あら、してくれないの？　反抗期なのね」
-		PRINTFORMW 「反抗期の子には、たっぷりと愛情を注いであげなくちゃね」
-		PRINTFORM 「そう、たぁっぷりと……ね
+		PRINTFORMW 「아라, 해 주지 않는거야?   반항기인 거네」
+		PRINTFORMW 「반항기의 아이에게는, 충분히 애정을 따라 주지 않으면 말야」
+		PRINTFORM 「그래, 충분히와……
 		CALL HEARTCB
 		PRINTW 」
 	ELSE
-		PRINTFORMW 「そう言わずに……シて下さいよ」
-		PRINTFORMW 「嫌……ですか？　どうしても？　むぅ」
+		PRINTFORMW 「그렇게 말하지 않고…… 시라고 주세요」
+		PRINTFORMW 「싫어…… 입니까?   아무래도?   」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM41, 消極的やる
+;COM41, 소극적 한다
 ;-------------------------------------------------
-;・「消極的従う」扱い
-;・じれったいのかこれでもお仕置きを食らう場合がある
+;·「소극적 따른다」취급
+;·속상한 것인지 이것이라도 벌을 먹는 경우가 있다
 ;-------------------------------------------------
 @KOJO_COM_K4_41
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「あら？　いっちょまえに焦らしているのかしら？」
-		PRINTFORMW 「ふぅん……素直なのが好きだけれど、こういうのも悪くはないわね」
+		PRINTFORMW 「아라?   일인분에 초조하게 하고 있을까?」
+		PRINTFORMW 「후응…… 솔직한 것이 좋아하지만, 이런 것도 나쁘지는 않네요」
 	ELSE
 	IF RAND:5 == 0
-			PRINTFORMW 「恥ずかしがってばかりいてもだめですよ」
-			PRINTFORMW 「ちゃんと……シテください」
+			PRINTFORMW 「부끄러워하고만 있어도 안됩니다」
+			PRINTFORMW 「제대로…… 해 주세요」
 		ELSEIF RAND:4 == 0
-			PRINTFORMW 「恥ずかしい……ですか」
-			PRINTFORMW 「私だって……こんなこと、本当は恥ずかしいです」
-			PRINTFORMW 「でも、我慢してる……だからあなたも、しっかりやってください」
+			PRINTFORMW 「부끄러운…… 입니까」
+			PRINTFORMW 「나라고…… 이런 일, 사실은 부끄럽습니다」
+			PRINTFORMW 「그렇지만, 참고 있는…… 이니까 당신도, 확실히 해 주세요」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「焦れったいですね……もう少ししっかりと、出来ませんか？」
-			PRINTFORMW 「%CNAME(MASTER)%だけ気持ち良くなるなんて……不公平ですよね」
+			PRINTFORMW 「속상하네요…… 좀 더 제대로, 할 수 없습니까?」
+			PRINTFORMW 「%CNAME(MASTER)%만 기분 좋아지다니…… 불공평하네요」
 		ELSEIF RAND:2
-			PRINTFORMW 「そんな風にいやいやながらされると……なんだか無理矢理させてるみたいで興奮しちゃいます♪」
-			PRINTFORMW 「……でも手をとめちゃだめですよ？　ちゃんと、シてください」
+			PRINTFORMW 「그런 식으로 마지 못해 되면…… 뭔가 무리하게 시키고 있는 것 같아 흥분해 버립니다♪」
+			PRINTFORMW 「…… 그렇지만 손을 세우면 안됩니다?   분명하게, 시라고 주세요」
 		ELSE
-			PRINTFORMW 「ふふ、そう……従った方が、%CNAME(MASTER)%の為ですよ……」
-			PRINTFORMW 「ちゃんと言うこと聞くのなら……安全は保証しますから」
+			PRINTFORMW 「후후, 그렇게…… 따른 (분)편이,%CNAME(MASTER)%를 위해서(때문에)예요……」
+			PRINTFORMW 「분명하게 하는 일 (듣)묻는다면…… 안전은 보증할테니까」
 		ENDIF
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM42, 積極的やる
+;COM42, 적극적 한다
 ;-------------------------------------------------
-;・「積極的従う」扱い
+;·「적극적 따른다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_42
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(3000, 3000)
-		PRINTFORMW 「そんな風に……従順な眼差しでされたら」
-		PRINTFORMW 「私も、嬉しくなっちゃうよ♪」
-		PRINTFORMW 「ね、もっと……私の眼を見ながら……もっと」
+		PRINTFORMW 「그런 식으로…… 온순한 시선으로 되면」
+		PRINTFORMW 「나도, 기뻐져 버린다♪」
+		PRINTFORMW 「저기, 좀 더…… 나의 눈을 보면서…… 좀 더」
 	ELSEIF FAVOR(0, 2000)
 		IF RAND:5 == 0
-			PRINTFORMW 「いい……気持ちいいよ。いい子ね……」
-			PRINTFORMW 「後でどんなふうに悦ばせてあげようかしら……んっ……」
-			PRINTFORMW 「ねぇ？　どんなふうに、して欲しいのかな？」
+			PRINTFORMW 「좋은…… 기분이 좋아. 좋은 아이네……」
+			PRINTFORMW 「다음에 어떤 식으로 기쁘게 해 줄까…… 읏……」
+			PRINTFORMW 「저기?   어떤 식으로, 해 주었으면 한 것인지?」
 		ELSEIF RAND:4 == 0
-			PRINTFORMW 「ふふっ……そのまま、私の顔を……見て欲しいよ！」
-			PRINTFORMW 「あんっ…、可愛いっ♪　欲しいよ、%CNAME(MASTER)%のこと……」
-			PRINTFORM 「私を気持ち良くしてくれた分だけ……%CNAME(MASTER)%を奪い去ってあげますっ
+			PRINTFORMW 「후훗…… 그대로, 나의 얼굴을…… 보았으면 좋아!」
+			PRINTFORMW 「아읏…, 사랑스럽닷♪  갖고 싶어,%CNAME(MASTER)%의 일……」
+			PRINTFORM 「나를 기분 좋게 해 준 만큼 만……%CNAME(MASTER)%를 빼앗아 가 줍니닷
 			CALL HEARTCB
 			PRINTW 」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「あ…、ん……一生懸命……尽くしてくれるんだぁ、えらいぞぉ♪」
-			PRINTFORMW 「はぁ…、あんぅ……遠慮せずに、私の体で愉しんでっ」
-			PRINTFORM 「私も……%CNAME(MASTER)%が悦んでくれるの、嬉しいからっ
+			PRINTFORMW 「아…, 응…… 열심히…… 다해 준다아, 대단해♪」
+			PRINTFORMW 「하아…, 아응우…… 사양하지 않고, 나의 몸으로 즐겨」
+			PRINTFORM 「나도……%CNAME(MASTER)%가 기뻐해 주는 것, 기쁘니까
 			CALL HEARTCB
 			PRINTW 」
 		ELSEIF RAND:2
-			PRINTFORMW 「あぁっ…、はぁ……やぁっ…、んっ……」
-			PRINTFORMW 「ふふっ、どうかしら？　私の喘ぎ声に、興奮しちゃった？」
-			PRINTFORMW 「一生懸命くれたから……ごほーび、だよ♪」
+			PRINTFORMW 「아앗…, 하아…… 야앗…, 읏……」
+			PRINTFORMW 「후훗, 어떨까?   나의 허덕이는 소리에, 흥분해 버렸어?」
+			PRINTFORMW 「열심히 주었기 때문에……-야,♪」
 		ELSE
-			PRINTFORMW 「はぁ…、ん……そんな積極的にされたらぁ……」
-			PRINTFORMW 「私も……興奮が収まらなくなっちゃう♪」
-			PRINTFORMW 「はぁん……いい子だよ♪　もっと気持ちよくして……」
+			PRINTFORMW 「하아…, 응…… 그런 적극적으로 되면……」
+			PRINTFORMW 「나도…… 흥분이 수습되지 않게 되어 버린다♪」
+			PRINTFORMW 「하앙…… 좋은 아이야♪  좀 더 기분 좋게 해……」
 		ENDIF
 	ELSE
 		IF RAND:5 == 0
-			PRINTFORMW 「そう……ですよ……いい子ですね」
-			PRINTFORMW 「私が%CNAME(MASTER)%を気持ち良くした恩返し……きちんと返さないと、だめですよ？」
+			PRINTFORMW 「그렇게…… 예요…… 좋은 아이군요」
+			PRINTFORMW 「내가%CNAME(MASTER)%를 기분 좋게 한 보은…… 제대로 돌려주지 않으면, 안됩니다?」
 		ELSEIF RAND:4 == 0
-			PRINTFORMW 「ふふっ……私の体、夢中になっちゃいますか？」
-			PRINTFORMW 「自信は無いんですけどね……でも今までに多くの人が鬱憤を晴らした体ですから」
-			PRINTFORMW 「好きなだけ、愛でていいんですよ」
+			PRINTFORMW 「후훗…… 나의 몸, 열중해 버립니까?」
+			PRINTFORMW 「자신은 없습니다만 말이죠…… 그렇지만 지금까지 많은 사람이 울분을 푼 몸이기 때문에」
+			PRINTFORMW 「좋아하는 뿐, 찬미해도 좋아요」
 		ELSEIF RAND:3 == 0
-			PRINTFORMW 「その私を見つめながら、真摯に尽くしてくれる姿……」
-			PRINTFORMW 「いいっ…、凄く……好印象ですよ……」
-			PRINTFORMW 「夢中になってしまいそうで、自分が怖いですね」
+			PRINTFORMW 「그 나를 응시하면서, 진지하게 다해 주는 모습……」
+			PRINTFORMW 「좋앗…, 굉장히…… 좋은 인상이에요……」
+			PRINTFORMW 「열중해 버릴 것 같아, 자신이 무섭네요」
 		ELSEIF RAND:2
-			PRINTFORMW 「んっ……はぁ…、やるじゃ……ないですか……」
-			PRINTFORMW 「気持ち良くして精を頂くのはっ……私の方なのにっ」
-			PRINTFORMW 「んはぁ……でもこういうの……いいですよ……」
+			PRINTFORMW 「읏…… 하아…, 하는은…… 아닙니까……」
+			PRINTFORMW 「기분 좋게 해 정령을 받는 것은…… 내 쪽인데」
+			PRINTFORMW 「응하아…… 그렇지만 이런 것…… 좋아요……」
 		ELSE
-			PRINTFORMW 「ん……良いですよ、そのまま続けてください」
-			PRINTFORMW 「最後まで上手に出来たら、ご褒美……あげますね」
+			PRINTFORMW 「응…… 좋아요, 그대로 계속해 주세요」
+			PRINTFORMW 「끝까지 능숙하게 할 수 있으면, 포상…… 주네요」
 		ENDIF
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM43, 愛情を込めてやる
+;COM43, 애정을 담아 준다
 ;-------------------------------------------------
-;・「積極的従う」扱い
+;·「적극적 따른다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_43
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
-	PRINTFORMW 「あ…、んっ……しっかりと、受け止めてあげるよ」
-	PRINTFORMW 「%CNAME(MASTER)%の“大好き”、しっかりと受け止めて……」
-	PRINTFORM 「%CNAME(MASTER)%に、私の“大好き”をお返ししてあげるよ
+;일반
+	PRINTFORMW 「아…, 읏…… 제대로, 받아 들여 준다」
+	PRINTFORMW 「%CNAME(MASTER)%의 "너무 좋아", 제대로 받아 들여……」
+	PRINTFORM 「%CNAME(MASTER)%에, 나의 "너무 좋아"를 답례 해 준다
 	CALL HEARTCB
 	PRINTW 」
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM44, 平然とやる
+;COM44, 태연하게 한다
 ;-------------------------------------------------
-;・「平然と従う」扱い
+;·「태연하게 따른다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_44
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「上手だよ……テクニックは、完璧だよ」
-		PRINTFORMW 「だから、ね？　私の方を……向いて？」
-		PRINTFORMW 「それとも、ごほーしを心から喜んで愛するのは……嫌？」
+		PRINTFORMW 「능숙해…… 테크닉은, 완벽해」
+		PRINTFORMW 「그러니까, 말야?   제 쪽을…… 향해?」
+		PRINTFORMW 「그렇지 않으면, 오─해를 진심으로 기꺼이 사랑하는 것은…… 싫어?」
 	ELSE
-		PRINTFORMW 「%CNAME(MASTER)%って……ふふ、可愛いですね」
-		PRINTFORMW 「そうまでして気丈を振る舞って……」
-		PRINTFORMW 「心の中では自尊心を折られ、不安に苛まれてるとを必死に隠そうとしてる、くすっ」
+		PRINTFORMW 「%CNAME(MASTER)%는…… 후후, 사랑스럽네요」
+		PRINTFORMW 「그렇게까지 해 기장을 행동해……」
+		PRINTFORMW 「마음 속에서는 자존심을 꺾어져 불안에 시달리고 있으면를 필사적으로 숨기려고 하고 있다, 키득」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 
 ;=================================================
-;その他の反応
+;그 외의 반응
 ;=================================================
-;・特定の場面で発生する変な行動
+;·특정의 장면에서 발생하는 이상한 행동
 ;-------------------------------------------------
 
 ;-------------------------------------------------
-;COM50, 自慰し始める
+;COM50, 자위하기 시작한다
 ;-------------------------------------------------
-;・会話系にすら紛れ込む。人の話聞かないでオナニーを始めるという…
-;・もちろんご褒ｂ…お仕置きの対象になる
-;・放置プレイあたりは個別リアクションを推奨する
+;·회화계에조차 섞여 온다. 사람의 이야기 (듣)묻지 말고 자위를 시작한다고 한다…
+;·물론 포b… 벌의 대상이 된다
+;·방치 플레이 근처는 개별 리액션을 추천 한다
 ;-------------------------------------------------
 @KOJO_COM_K4_50
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;会話系行動から実行
-	;記入チェック
+	;회화계 행동으로부터 실행
+	;기입 체크
 	LOCAL:1 = 1
 	;-------------------------------------------------
 	IF LOCAL:1 && (TFLAG:ACT < 10 || TFLAG:ACT == 66)
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「もしかして、私の言葉に欲情したのかな？」
-			PRINTFORMW 「だとしたら、もっといいおかずがあるのだけれど」
-			PRINTFORMW 「もっと気持ちいい、体中の精を全て放出しそうなくらいにステキなおかず、試してみる？」
+			PRINTFORMW 「혹시, 나의 말에 욕정했던가?」
+			PRINTFORMW 「라고 하면, 좀 더 좋은 반찬이 있는 것이지만」
+			PRINTFORMW 「좀 더 기분이 좋은, 체내의 정령을 모두 방출할 것 같은 정도에 멋진 반찬, 시험해 봐?」
 		ELSE
-			PRINTFORMW 「盛ってるのでしょうか？　それとも私への挑発？」
-			PRINTFORMW 「いずれにせよ、折檻しなければならないのは確かなようです」
+			PRINTFORMW 「번창하고 있는 것일까요?   그렇지 않으면 나에게로의 도발?」
+			PRINTFORMW 「어쨌든, 엄벌 하지 않으면 안 되는 것은 확실한 것 같습니다」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「ふぅ～ん……漲ってるのね」
-		PRINTFORMW 「その有り余る精、少しくらい分けてもらえないかしら？」
-		PRINTFORMW 「そう、少ぉ～しだけ、ね、いいでしょ？」
+		PRINTFORMW 「후응…… 넘치고 있는 거네」
+		PRINTFORMW 「그 남아 도는 정령, 조금 정도 나누어 받을 수 없을까?」
+		PRINTFORMW 「그래, 소~하기 만,, 좋지요?」
 	ELSE
-		PRINTFORMW 「あら、我慢できませんでしたか？」
-		PRINTFORMW 「それはそれは、大変失礼いたしました」
-		PRINTFORMW 「これより、心行くまで精を搾り取って差し上げますので、どうぞご堪能ください」
+		PRINTFORMW 「아라, 참을 수 있지 않았습니까?」
+		PRINTFORMW 「이거 정말, 몹시 실례했습니다」
+		PRINTFORMW 「이것보다, 흡족해 할 때까지 정령을 짜내 드리기 때문에, 아무쪼록 능숙 주세요」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM51, 道具を外す
+;COM51, 도구를 제외한다
 ;-------------------------------------------------
-;・「暴れる」扱い
-;・装備している道具を勝手に外してオナニーまでやめてしまう
-;・当然強い反抗扱いになる
+;·「날뛴다」취급
+;·장비 하고 있는 도구를 마음대로 제외해 자위까지 그만두어 버린다
+;·당연 강한 반항 취급이 된다
 ;-------------------------------------------------
 @KOJO_COM_K4_51
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「あら？　どうぐはお気に召さなかった？」
-		PRINTFORMW 「それじゃあ、私の手で調節しましょうか」
-		PRINTFORMW 「道具に合う様に……%CNAME(MASTER)%のほうを、ね♪」
+		PRINTFORMW 「아라?   는 마음에 드시지 않았어?」
+		PRINTFORMW 「그러면, 나의 손으로 조절할까요」
+		PRINTFORMW 「도구에 맞는 것처럼……%CNAME(MASTER)%쪽을, 말야♪」
 	ELSE
-		PRINTFORMW 「……はぁ」
-		PRINTFORMW 「道具は決して乱暴をしません」
-		PRINTFORMW 「私は……どうでしょうね」
+		PRINTFORMW 「…… 하아」
+		PRINTFORMW 「도구는 결코 난폭을 하지 않습니다」
+		PRINTFORMW 「나는…… 어떨까요」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;COM52, なすがまま
+;COM52, 하는 대로
 ;-------------------------------------------------
-;・可能な行動が無いときに登場。ポケモンで言うとわるあがき
-;・特別な効果は何もない
+;·가능한 행동이 없을 때에 등장. 포케몬으로 말하면 깨는 발버둥
+;·특별한 효과는 아무것도 없다
 ;-------------------------------------------------
 @KOJO_COM_K4_52
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;ご褒美による一回休みの場合
-	;記入チェック
+	;포상에 의한 한번휴식의 경우
+	;기입 체크
 	;
-	;大量加筆予定
+	;대량 가필 예정
 	LOCAL:1 = 0
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:一回休み && TFLAG:今日の方針 == 8
+	IF LOCAL:1 && TFLAG:한번휴식 && TFLAG:오늘의방침 == 8
 		IF FAVOR(0, 2000)
 		ELSE
 			PRINTFORMW 
@@ -1646,86 +1646,86 @@ IF LOCAL
 	ENDIF
 	
 	;-------------------------------------------------
-	;一回休みの場合
-	;記入チェック
+	;한번휴식의 경우
+	;기입 체크
 	LOCAL:1 = 1
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:一回休み
+	IF LOCAL:1 && TFLAG:한번휴식
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「身動きがとれないのなら……私のやりたい放題だね」
-			PRINTFORMW 「ほら、こうして私の膝を頭の下に挿し込んで……膝枕～♪」
-			PRINTFORMW 「眠たいでしょう？　なら私は、精の代わりに%CNAME(MASTER)%の寝顔を御馳走になることにします」
+			PRINTFORMW 「꼼짝 못하다면…… 나의 제멋대로구나」
+			PRINTFORMW 「이봐요, 이렇게 해 나의 무릎을 머리아래에 꽂아넣어…… 무릎 베개~♪」
+			PRINTFORMW 「졸릴 것입니다?   라면 나는, 정령 대신에%CNAME(MASTER)%의 잠자는 얼굴을 대접하게 되기로 하겠습니다」
 		ELSE
-			PRINTFORMW 「身勝手かとは思いますが、こんなときにしか言う機会が無いので言わせてください」
-			PRINTFORMW 「いつも精を、ありがとうございます」
-			PRINTFORMW 「ちゃんと、役立ってるんですよ？　だからちゃんと、感謝です」
+			PRINTFORMW 「제멋대로인 것으로는 생각합니다만, 이런 때에 밖에 말할 기회가 없기 때문에 말하게 해 주세요」
+			PRINTFORMW 「언제나 정령을, 감사합니다」
+			PRINTFORMW 「분명하게, 도움이 되고 있습니다?   이니까 분명하게, 감사입니다」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 	
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「なにも……言えないみたいね」
-		PRINTFORMW 「回復するまで、抱き締めちゃおっ♪」
-		PRINTFORMW 「んんぅ……温かぁい
+		PRINTFORMW 「아무것도…… 말할 수 없는 것 같구나」
+		PRINTFORMW 「회복할 때까지, 껴안아♪」
+		PRINTFORMW 「응응우…… 유타카인가있고
 		CALL HEARTCB
 		PRINTW 」
 		
 	ELSE
-		PRINTFORMW 「おーい、もしもーし」
-		PRINTFORMW 「……やりすぎちゃいましたかね」
+		PRINTFORMW 「어이, 여보세요」
+		PRINTFORMW 「…… 너무 해 버렸습니까」
 	ENDIF
 	RETURN LOCAL
 ENDIF
 
 
 ;=================================================
-;特殊な反応
+;특수한 반응
 ;=================================================
-;・
+;·
 ;-------------------------------------------------
 
 ;-------------------------------------------------
-;COM70, イかせて！
+;COM70, 가게 해!
 ;-------------------------------------------------
-;・「積極的従う」扱い
+;·「적극적 따른다」취급
 ;-------------------------------------------------
 @KOJO_COM_K4_70
 ;-------------------------------------------------
-;記入チェック
+;기입 체크
 LOCAL = 1
 ;-------------------------------------------------
 IF LOCAL
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;焦らし始める
-	;記入チェック
+	;초조하게 하기 시작한다
+	;기입 체크
 	LOCAL:1 = 1
 	;-------------------------------------------------
-	IF LOCAL:1 && TFLAG:REACT派生 == 2
+	IF LOCAL:1 && TFLAG:REACT파생 == 2
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「ふふふ、可愛らしいおねだりをするのね」
-			PRINTFORM 「でも、そんな風におねだりされたら……もっと、見てみたくなっちゃうよ
+			PRINTFORMW 「후후후, 사랑스러운 졸라댐을 하는 거네」
+			PRINTFORM 「그렇지만, 그런 식으로 졸라대지면…… 좀 더, 보고 싶어져 버린다
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「だからだ～め、イかせてあげないっ♪」
+			PRINTFORMW 「그러니까 안돼, 가게 해 주지 않는닷♪」
 		ELSE
-			PRINTFORMW 「あらあら、随分と素直な反応じゃないですか」
-			PRINTFORMW 「ならばもう少し……熟成してみましょうかね」
+			PRINTFORMW 「아라아라, 상당히 솔직한 반응이 아닙니까」
+			PRINTFORMW 「그러면 좀 더…… 숙성해 볼까요」
 		ENDIF
 		RETURN LOCAL
 	ENDIF
 
-;一般
+;일반
 	IF FAVOR(0, 2000)
-		PRINTFORMW 「いいよ♪　イかせてあげる……狂わせてあげる」
-		PRINTFORMW 「ずっと見つめていてあげるから、%CNAME(MASTER)%も私の目を見ながらイってね」
+		PRINTFORMW 「좋아♪  가게 해 주는…… 미치게 해 준다」
+		PRINTFORMW 「쭉 응시해 있어 주기 때문에,%CNAME(MASTER)%도 나의 눈을 보면서 가」
 	ELSE
-		PRINTFORM 「はい♪　%CNAME(MASTER)%の精、たっぷりと私に捧げてください
+		PRINTFORM 「네♪  %CNAME(MASTER)%의 정령, 충분히 나에게 바쳐 주세요
 		CALL HEARTCB
 		PRINTW 」
-		PRINTFORMW 「それからせめて……%CNAME(MASTER)%も気持ち良く、幸せを味わってくださいね」
+		PRINTFORMW 「그리고 적어도……%CNAME(MASTER)%도 기분 좋게, 행복을 맛봐 주세요」
 	ENDIF
 	RETURN LOCAL
 ENDIF

@@ -1,409 +1,409 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;	アリス口上(対象限定) 休憩系アクション口上ファイル
+;	앨리스 구상(대상 한정) 휴게계 액션 구상 파일
 ;
-;		休憩系アクション口上をまとめたファイル
+;		휴게계 액션 구상을 정리한 파일
 ;
-;	EXTRAモードでNO:9咲夜をMASTERに選択した場合のみ表示
+;	EXTRA 모드로 NO:9 사쿠야를 MASTER에 선택했을 경우만 표시
 ;
 ;Version		Reason
-;1.70			@口上記入チェック仕様に。その他細かな修正
+;1. 70			@구상 기입 체크 사양에. 그 외 섬세한 수정
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
 ;========================================================================
-;休憩系 ACT90～92
+;휴게계 ACT90~92
 ;========================================================================
-;・TFLAG:ACT(90=休ませる/91=栄養剤を飲ませる/92=治療する)
-;・TFLAG:ACT分類 == 9に該当
-;・汎用リアクションにおいてはMENUMATCH(TFLAG:ACT, "休憩")で参照する事が可能
-;・ACT91, 栄養剤を飲ませるとACT92, 治療するの発生には特定の素質が条件となる
+;·TFLAG:ACT(90=쉬게 한다/91=영양제를 먹인다/92=치료한다)
+;·TFLAG:ACT 분류 == 9에 해당
+;·범용 리액션에 대해서는 MENUMATCH(TFLAG:ACT, "휴게")로 참조하는 것이 가능
+;·ACT91, 영양제를 먹이면 ACT92, 치료하는 것 발생에는 특정의 소질이 조건이 된다
 ;-------------------------------------------------
-;・戻り値(RESULT)について
-;・システム側では口上側のRESULT(終端のRETURN 1など)によって口上が表示されたのか否か、
-;・また箇所毎の特有の挙動(媚薬等口上をスキップなど)を制御しています
-;・@口上記入チェックの場合代入処理を省略できますが、RESULT値は口上側で決めうちする必要があります
+;·반환값(RESULT)에 대해
+;·시스템측에서는 구상측의 RESULT(종단의 RETURN 1 등)에 의해 구상이 표시되었는지 아닌지,
+;·또 개소 마다의 특유의 거동(미약등 구상을 스킵 따위)을 제어하고 있습니다
+;·@구상 기입 체크의 경우 대입 처리를 생략 할 수 있습니다만, RESULT치는 구상측에서 결정하고 쳐 할 필요가 있습니다
 ;-------------------------------------------------
-;関連変数…
-;TENSION BASE値を大雑把に表す関数
-;50%以上は高い、25%以上は一般、25%未満は低い
-;AFFECTION (相思相愛:好意、好感度3000以上)(溺愛:好感度2000以上)(眷愛:好感度1000以上)(嫌悪:好意-100以下)
+;관련 변수…
+;TENSION BASE치를 대략적으로 나타내는 함수
+;50% 이상은 높은,25%이상은 일반,25% 미만은 낮다
+;AFFECTION (상사상애:호의, 호감도 3000이상)(몹시 사랑함:호감도 2000이상)(권애:호감도 1000이상)(혐오:호의-100 이하)
 ;-------------------------------------------------
 ;FIRSTACT
-;初回ACT判定関数
-;TFLAG:ACT（TFLAG:90）を自動で参照、現在実行されているACTごとに番号が独立して保存される
+;첫회 ACT 판정 함수
+;TFLAG:ACT(TFLAG:90)를 자동으로 참조, 현재 실행되고 있는 ACT 마다 번호가 독립해 보존된다
 ;
 ;ONCEACT
-;調教内未読判定関数　調教前に初期化される
-;その他の仕様はほぼFIRSTACTと同様
+;조교내미독판정 함수  조교전에 초기화된다
+;그 외의 사양은 거의 FIRSTACT와 같이
 ;-------------------------------------------------
 
-;────────────────────────────────────
-;NO9_ACT90, 休ませる
-;────────────────────────────────────
-;・この時点では命令のみ
-;・顔面騎乗系は解除される
-;・拘束系TEQUIP(縄/アイマスク/ボールギャグ/三角木馬)は解除される
-;・汚れはリセットされる
-;・調教者、調教対象の自慰は中断
-;・リアクションが"自慰し始める"だった場合"勝手に自慰をし始めた"に派生する
-;・持続系道具(バイブ/アナルバイブ/アナルビーズ/浣腸器＋プラグ/ニプルキャップ)装着時は
-;・道具のせいであまり休めなかったに派生する
+;─
+;NO9_ACT90, 쉬게 한다
+;─
+;·이 시점에서는 명령만
+;·안면 승마계는 해제된다
+;·구속계 TEQUIP(줄/아이마스크/볼개그/삼각 목마)는 해제된다
+;·더러움은 리셋트 된다
+;·조교자, 조교 대상의 자위는 중단
+;·리액션이 "자위하기 시작한다"(이었)였던 경우 "마음대로 자위를하기 시작했다"에 파생한다
+;·지속계 도구(바이브/애널 바이브/애널 비즈/관장기＋플러그/니플캡) 장착시는
+;·도구의 탓으로 너무 쉬게 하지 않았다에 파생한다
 ;-------------------------------------------------
 @KOJO_NO9_MS_ACT_K14_90
 ;-------------------------------------------------
-;・TFLAG:ACT派生(0=普通に休んだ/1=道具のせいであまり休めなかった/2=勝手に自慰をし始めた)
-;※ACT派生への代入は@ACTION_APPLY2_90で行われ、これを参照できるのはREACT以降(即ち、ACTでは参照はできない)
+;·TFLAG:ACT 파생(0=보통으로 쉰/1=도구의 탓으로 너무 쉬게 하지 않았다/2=마음대로 자위를하기 시작했다)
+;※ACT 파생에의 대입은@ACTION_APPLY2_90으로 행해져 이것을 참조할 수 있는 것은 REACT 이후(즉, ACT에서는 참조는 할 수 없다)
 ;-------------------------------------------------
-;APPLY2で代入を行っているものをACT派生とするのは色々と問題ありと考えるので
-;いずれなんとかすべき
+;APPLY2로 대입을 실시하고 있는 것을 ACT 파생으로 하는 것은 다양하게 문제있음으로 생각하므로
+;머지않아 어떻게든 해야 할
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;NO9_ACT90, 休ませる
+;NO9_ACT90, 쉬게 한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;=================================================
-	;調教対象BASE:体力50%以上
+	;조교 대상 BASE:체력 50%이상
 	;=================================================
-	IF 口上記入チェック(100) && TENSION(MASTER, 0) == "高い"
-		;好意、好感度派生
-		IF AFFECTION("相思相愛")
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ちょっとアリス！ もう終わりにするつもり？」")
-			PRINTFORMW 「なによ、どうかした？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だ、だってその…私、まだ…」")
-			PRINTFORMW 「あら、聞こえてなかった？ ただの休憩よ、安心して」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、それなら…って、何ジロジロ見てるのよ」")
-			PRINTFORMW 「ふふふ…」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「な、何よ！ なに笑ってるのよ！」")
+	IF 구상기입체크(100) && TENSION(MASTER, 0) == "높다"
+		;호의, 호감도 파생
+		IF AFFECTION("상사상애")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「조금 앨리스! 벌써 끝낼 생각?」")
+			PRINTFORMW 「뭐야, 어떻게든 했어?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「왜, 왜냐하면 그… 나, 아직…」")
+			PRINTFORMW 「아라, 들리지 않았어? 단순한 휴게야, 안심해」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그래, 그렇다면… 은, 무엇 빤히 보고 있는거야」")
+			PRINTFORMW 「후후후…」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭐, 뭐야! 뭐 웃고 있는거야!」")
 			
-			PRINTFORM 「だって、ねぇ？ くすくす…ホント、貴女といると飽きないわ、咲夜…
+			PRINTFORM 「왜냐하면, 저기? 킥킥… 정말, 당신과 있으면 질리지 않아요, 사쿠야…
 			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
-		ELSEIF AFFECTION("眷愛")
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なによ。もう終わり、なの？」")
-			PRINTFORMW 「ふふ、そんなにがっかりしなくていいわよ？ ちょっと休むだけだから」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なっ！？ がっかりなんてしてないわよ！」")
+		ELSEIF AFFECTION("권애")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭐야. 벌써 끝나, 야?」")
+			PRINTFORMW 「후후, 그렇게 실망하지 않아도 괜찮아요? 조금 쉴 뿐(만큼)이니까」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「낫!? 실망은 하고 있지 않아요!」")
 			
-			PRINTFORM 「はいはい…♪ そういう事にしておいてあげるわ
+			PRINTFORM 「네네…♪그런 일로 해 두어 주어요
 			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
-		ELSEIF AFFECTION("嫌悪")
-			PRINTFORMW 「少し早目に休憩しましょう。精々しっかりと休んで頂戴」
-			PRINTFORMW 「貴女にはまだまだ頑張って貰わないと、ねぇ咲夜？ フフ…」
+		ELSEIF AFFECTION("혐오")
+			PRINTFORMW 「조금 빨리 쉽시다. 최대한 제대로 쉬어 줘」
+			PRINTFORMW 「당신에게는 아직도 노력해 받지 않으면, 저기 사쿠야? 후후…」
 		ELSE
-			PRINTFORMW 「ちょっと早いけど休憩にするわ。今のうちにしっかりと休んでおいて」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、まぁそれでもいいけど」")
-			PRINTFORMW 「何よ、少し不満そうね？ 続きをしたかったのかしら」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「誰もそんな事言ってないわよ…」")
+			PRINTFORMW 「조금 빠르지만 휴게로 해요. 지금 제대로 쉬어 둬」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그래, 아무튼 그런데도 좋지만」")
+			PRINTFORMW 「뭐야, 조금 불만인 것 같구나? 계속을 하고 싶었을까」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「아무도 그런 일 말하지 않아요…」")
 			
-			PRINTFORM 「あら、これは失礼したわね…
+			PRINTFORM 「아라, 이것은 실례했군요…
 			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;調教対象BASE:体力25%以上
+	;조교 대상 BASE:체력 25%이상
 	;=================================================
-	IF 口上記入チェック(100) && TENSION(MASTER, 0) == "一般"
-		;好意、好感度派生
-		IF AFFECTION("相思相愛")
-			PRINTFORMW 「ねぇ咲夜、少し休憩する？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、そうして貰えると有り難いわ」")
-			PRINTFORMW 「了解～♪ でも、そうね…どうしても自分でシたくなったら、それは自己責任でお願いね？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はぁ？ 何で私がそんな事」")
-			PRINTFORMW 「…何でって。咲夜、時々自分で勝手に始めるじゃない」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「記憶に無いわね、そんな事…」")
-			PRINTFORMW 「やだ咲夜ったら…ボケるにはまだちょっと早いんじゃないかしら」
+	IF 구상기입체크(100) && TENSION(MASTER, 0) == "일반"
+		;호의, 호감도 파생
+		IF AFFECTION("상사상애")
+			PRINTFORMW 「저기 사쿠야, 조금 쉬어?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그렇구나, 그렇게 해서 받을 수 있으면 고마워요」")
+			PRINTFORMW 「양해~♪그렇지만, 그렇구나… 아무래도 스스로 시 싶어지면, 그것은 자기책임으로 부탁이군요?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하아? 무엇으로 내가 그런 일」")
+			PRINTFORMW 「… 무엇으로는. 사쿠야, 가끔 스스로 마음대로 시작하지 않아」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「기억에 없네요, 그런 일…」")
+			PRINTFORMW 「(이)나다 사쿠야도 참… 보케하려면 아직 조금 빠른 것이 아닐까」
 			
-			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
-			CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "張り倒すわよ", 1)
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
-		ELSEIF AFFECTION("眷愛")
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス。私、ちょっと疲れたわ…」")
-			PRINTFORMW 「そう…あれだけアンアン鳴いてたんだから、さぞかし疲れたんでしょうね」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「不思議ね？ 貴女が何を言ってるのか、全然判らないんだけど」")
-			PRINTFORMW 「あら、とぼける気？ 何なら今すぐ思い出させてあげてもいいのよ？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あぁもう、わかった、わかったから！ お願いだから少し休ませて」")
+			CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「")
+			CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "때려 누여요", 1)
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "」")
+		ELSEIF AFFECTION("권애")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기 앨리스. 나, 조금 지쳤어요…」")
+			PRINTFORMW 「그렇게… 그토록 앙앙 울고 있던 것이니까, 필시 지친 것이군요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이상하구나? 당신이 무슨 말을 하고 있는지, 전혀 모르지만」")
+			PRINTFORMW 「아라, 시치미를 뗄 생각? 무엇이라면 금방 생각나게 해 주어도 괜찮은거야?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「아벌써, 알았다, 알았기 때문에! 부탁이니까 조금 쉬게 해」")
 			
-			PRINTFORM 「ふふ、最初から素直にそう言えばいいのに、ね…
+			PRINTFORM 「후후, 최초부터 솔직하게 그렇게 말하면 좋은, 데…
 			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
-		ELSEIF AFFECTION("嫌悪")
-			PRINTFORMW 「少し疲れてるみたいね？ だからと言って、これで終わりにするつもりはないんだけど」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ええ、そうでしょうね。期待はしていないわ…」")
-			PRINTFORMW 「殊勝な心掛けね？ まぁ休憩くらいなら構わないわ。精々しっかりと休む事ね」
+		ELSEIF AFFECTION("혐오")
+			PRINTFORMW 「조금 지치고 있는 것 같구나? 그렇다고 해서 이것으로 끝낼 생각은 없지만」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「에에, 그렇겠지요. 기대는 하고 있지 않아요…」")
+			PRINTFORMW 「기특한 마음가짐이군요? 뭐 휴게 정도라면 상관없어요. 최대한 제대로 쉬는 일이군요」
 		ELSE
-			PRINTFORMW 「あら、ちょっとお疲れな感じね？」
-			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「そうね、確かに少し疲れたわ」")
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「と言っても、貴女は止めるつもりなんて無いんでしょうけど…」")
-			PRINTFORMW 「そうね？ でも、休憩を挟む程度の気配りはするつもりよ」
-			PRINTFORMW 「少しの間だけどゆっくり休んで頂戴、咲夜」
+			PRINTFORMW 「아라, 조금 피로인 느낌이군요?」
+			CALL PRINTCOLORL(COLOR_K14("사쿠야"), "「그렇구나, 확실히 조금 지쳤어요」")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이렇게 말해도, 당신은 멈출 생각은 없겠지만…」")
+			PRINTFORMW 「그렇구나? 그렇지만, 휴게를 사이에 두는 정도의 배려는 할 생각이야」
+			PRINTFORMW 「조금의 사이이지만 천천히 쉬어 줘, 사쿠야」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------
-	;その他
+	;그 외
 	;-------------------------
-	;好意、好感度派生
-	IF AFFECTION("相思相愛")
-		PRINTFORMW 「ねぇ咲夜…疲れてるなら言ってくれればいいのに、って思うんだけど？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はぁ、はぁ…よく言うわね。どうせ言ったところで聞かない癖に」")
-		PRINTFORMW 「流石瀟洒なメイド長は良く判ってらっしゃる。ってとこかしら？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そこまで開き直られると何も言う気がしないわ。ホント度し難いわね、アリス…」")
-		PRINTFORMW 「ふふ…お互いに、ね？ ま、それは置いといて休憩にしましょう」
+	;호의, 호감도 파생
+	IF AFFECTION("상사상애")
+		PRINTFORMW 「저기 사쿠야… 지치고 있다면 말해 준다면 좋은데, 라고 생각하지만?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하아, 하아… 자주(잘) 말해요. 어차피 말한 곳에서 (듣)묻지 않는 주제에」")
+		PRINTFORMW 「과연 소쇄인 메이드장은 잘 알고 계신다. 라는 곳일까?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「거기까지 정색해지면 아무것도 말할 생각이 들지 않아요. 정말 구제할 길 없네요, 앨리스…」")
+		PRINTFORMW 「후후… 서로,? 뭐, 그것은 놓아두어 휴게로 합시다」
 		
-		PRINTFORM 「\@ TIME ? 夜はまだまだこれからだし # まだまだ時間はあるし \@、ね…
+		PRINTFORM 「\@ TIME ? 밤은 아직도 지금부터이고# 아직도 시간은 있고\@, 저기…
 		CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
-	ELSEIF AFFECTION("眷愛")
-		CALL PRINTCOLORL(COLOR_K14("咲夜"), "「ハァ、ハァ……まったく。少しは加減して欲しいものね」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「流石にこれじゃ身体が持たないわ…」")
-		PRINTFORMW 「そうは言うけど仕方無いでしょ？ 咲夜がもっと、もっとっておねだりするんだから…♪」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女が何を言ってるのか良く判らないわね、アリス…」")
-		PRINTFORMW 「ふふ、まぁいいわ。とりあえずちょっと休憩にしましょう」
+	ELSEIF AFFECTION("권애")
+		CALL PRINTCOLORL(COLOR_K14("사쿠야"), "「하, 하…… 완전히. 조금은 가감(상태)해 주었으면 하는 거네」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「과연 이래서야 신체가 견딜 수 없어요…」")
+		PRINTFORMW 「그렇게는 말하지만 방법 없지요? 사쿠야가 좀 더, 좀 더는 졸라대기 때문에…♪」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「당신이 무슨 말을 하고 있는지 자주(잘) 알지 않네요, 앨리스…」")
+		PRINTFORMW 「후후, 뭐 좋아요. 우선 조금 휴게로 합시다」
 		
-		PRINTFORM 「\@ TIME ? 夜はまだまだこれからだし # まだまだ時間はあるし \@、ね…
+		PRINTFORM 「\@ TIME ? 밤은 아직도 지금부터이고# 아직도 시간은 있고\@, 저기…
 		CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
-	ELSEIF AFFECTION("嫌悪")
-		PRINTFORMW 「あらあら、大分お疲れの様子ね？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はぁ、はぁ…誰のせいでこうなったと思ってるのよ」")
-		PRINTFORMW 「そんな事言われるまでも無いけど…まぁいいわ。ちょっと休みましょう」
-		PRINTFORMW 「でも、これで終わりって訳じゃないから…」
+	ELSEIF AFFECTION("혐오")
+		PRINTFORMW 「아라아라, 대단히 피로의 모습이군요?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하아, 하아… 누구의 탓으로 이렇게 되었다고 생각하고 있는거야」")
+		PRINTFORMW 「그런 일 말해질 것도 없지만… 뭐 좋아요. 조금 쉽시다」
+		PRINTFORMW 「그렇지만, 이것으로 끝이라는 것이 아니니까…」
 	ELSE
-		PRINTFORMW 「ねぇ咲夜、随分疲れてるみたいだけど」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ハァ、ハァ…見ての通りよ…」")
-		PRINTFORMW 「わかった、少しの間休憩にするわ。でも、まだ終わりじゃないからね？」
+		PRINTFORMW 「저기 사쿠야, 상당히 지치고 있는 것 같지만」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하, 하… 본 대로야…」")
+		PRINTFORMW 「알았다, 조금의 사이 휴게로 해요. 그렇지만, 아직 끝이 아니니까?」
 	ENDIF
 	RETURN 1
 ENDIF
-;NO9_ACT90, 休ませる
+;NO9_ACT90, 쉬게 한다
 
-;────────────────────────────────────
-;NO9_ACT91, 栄養剤を飲ませる
-;────────────────────────────────────
-;・この時点では命令のみ
-;・調教対象のリアクションが"拒否する"であった場合は"栄養剤を捨てた"に派生する
-;・その他の反応の場合は"栄養剤を飲んだ"扱いになる
-;・調教者にTALENT:調合知識が無い場合は発生しない(調合知識自体はSHOPでの購入が可能)
-;・媚薬を使用することもある
-;・TEQUIP(ボールギャグ/三角木馬)は解除される
-;・顔面騎乗系、自慰系は解除される
+;─
+;NO9_ACT91, 영양제를 먹인다
+;─
+;·이 시점에서는 명령만
+;·조교 대상의 리액션이 "거부한다"(이었)였던 경우는 "영양제를 버렸다"에 파생한다
+;·그 외의 반응의 경우는 "영양제를 마셨다"취급이 된다
+;·조교자에게 TALENT:약학지식이 없는 경우는 발생하지 않는다(약학지식 자체는 SHOP에서의 구입이 가능)
+;·미약을 사용하는 일도 있다
+;·TEQUIP(볼개그/삼각 목마)는 해제된다
+;·안면 승마계, 자위계는 해제된다
 ;-------------------------------------------------
 @KOJO_NO9_MS_ACT_K14_91
 ;-------------------------------------------------
-;・TFLAG:ACT派生(0=栄養剤を飲んだ/1=栄養剤を捨てた)
-;※ACT派生への代入は@ACTION_APPLY2_91で行われ、これを参照できるのはREACT以降(即ち、ACTでは参照はできない)
+;·TFLAG:ACT 파생(0=영양제를 마신/1=영양제를 버렸다)
+;※ACT 파생에의 대입은@ACTION_APPLY2_91으로 행해져 이것을 참조할 수 있는 것은 REACT 이후(즉, ACT에서는 참조는 할 수 없다)
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;NO9_ACT91, 栄養剤を飲ませる
-;RESULT値（=0, これ以下も表示、1, これ以下を非表示、2, 媚薬等口上をスキップしこれ以下を表示しない）
+;NO9_ACT91, 영양제를 먹인다
+;RESULT치(=0, 이것 이하도 표시, 1, 이것 이하를 비표시, 2, 미약등 구상을 스킵 응어리질 수 있는 이하를 표시하지 않는다)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;RESULT値は全て2にしておく
+;RESULT치는 모두 2로 해 둔다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && !TEQUIP:アイマスク
+IF 구상기입체크(100) && !TEQUIP:아이마스크
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTACT(0)
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「な、なによ、これ…」")
-		PRINTFORMW 「何って、私の特製栄養剤だけど？ 味は兎も角、効き目は保障するわよ」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「本当に大丈夫なんでしょうね？」")
-		PRINTFORMW 「失礼しちゃうわね！ この私が研究に研究を重ねて作ったっていうのに！」
-		PRINTFORMW 「確かに見た目は、まぁちょっとアレかも知れないけど…人間が飲んでも、きっと大丈夫！」
-		PRINTFORMW 「な、はずよ…」
+	IF 구상기입체크(100) && FIRSTACT(0)
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭐, 뭐야, 이것…」")
+		PRINTFORMW 「무엇은, 나의 특제 영양제이지만? 맛은 차치하고, 효력은 보장해요」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「정말로 괜찮은 것이군요?」")
+		PRINTFORMW 「실례해 버려요! 이 내가 연구에 연구를 거듭해 만들었다고 하는데!」
+		PRINTFORMW 「확실히 겉모습은, 아무튼 조금 저것일지도 모르지만… 인간이 마셔도, 반드시 괜찮아!」
+		PRINTFORMW 「, 는 두야…」
 		PRINTL
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇ、最後にトーンダウンしたのが凄く気になるんだけど？」")
-		PRINTFORMW 「気のせいじゃないの？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「まあそれはいいとしても…何から、どうやって作ったのかちょっと知りたいわね」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기, 마지막에 톤 다운했던 것이 굉장히 신경이 쓰이지만?」")
+		PRINTFORMW 「기분탓이 아닌거야?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭐그것은 좋다고 해도… 무엇으로부터, 어떻게 만들었는지 조금 알고 싶네요」")
 		PRINTL
-		PRINTFORML 「…聞かないで」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「は？」")
-		PRINTFORMW 「いや、だから聞かないで、って。知らない方が幸せって事、あるでしょう？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何の慰めにもならないわね…というか貴女、不安を煽って愉しんでない？」")
+		PRINTFORML 「…(듣)묻지 마」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하?」")
+		PRINTFORMW 「아니, 그러니까 (듣)묻지 말고, 는. 모르는 것이 행복하다는 일, 있을까요?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「무슨 위로도 안 되네요… 라고 할까 당신, 불안을 부추기고 즐기지 않아?」")
 		PRINTL
-		PRINTFORMW 「…流石、咲夜は全てお見通しなのね」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はぁ…そこまで開き直られると、もう何も言う気がしないわ」")
-		PRINTFORMW 「ふふ、それは何よりね。さ、そんな訳で…早速飲んでもらうわよ？」
-		PRINTFORMDW アリスは期待に満ちた表情で、栄養剤を手にした咲夜を見つめている…
+		PRINTFORMW 「… 과연, 사쿠야는 모두 꿰뚫어 보심인 거네」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하아… 거기까지 정색해지면, 이제(벌써) 아무것도 말할 생각이 들지 않아요」")
+		PRINTFORMW 「후후, 그것은 무엇보다네. 자, 그런 (뜻)이유로… 조속히 마셔 받아요?」
+		PRINTFORMDW 앨리스는 기대로 가득 찬 표정으로, 영양제를 손에 넣은 사쿠야를 응시하고 있다…
 		RETURN 2
 	ENDIF
 	
 	;=================================================
-	;調教対象BASE:体力50%以上
+	;조교 대상 BASE:체력 50%이상
 	;=================================================
-	IF 口上記入チェック(100) && TENSION(MASTER, 0) == "高い"
-		IF AFFECTION("相思相愛")
-			PRINTFORMW 「ねぇ見て。ちょっと栄養剤のビンを変えてみたんだけど」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「変なとこに拘るのね？ こんなの何でもいいと思うけど…」")
-			PRINTFORMW 「私の性分だから仕方無いわね。ちなみにご感想は？」
+	IF 구상기입체크(100) && TENSION(MASTER, 0) == "높다"
+		IF AFFECTION("상사상애")
+			PRINTFORMW 「저기 봐. 조금 영양제의 빈을 바꾸어 보았지만」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이상한 곳에 구애받는 거네? 이런 것 뭐든지 좋다고 생각하지만…」")
+			PRINTFORMW 「나의 성품이니까 방법 없네요. 덧붙여서 감상은?」
 			
-			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
-			CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "微妙", 1)
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "」")
+			CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「")
+			CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "미묘", 1)
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "」")
 			
-			PRINTFORMW 「……酷い感想。でも、センスの欠片も無い咲夜が微妙って言うなら、悪くないって事かしら」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どういう意味よ」")
-			PRINTFORMW 「そのままの意味だけど？ 何の捻りもなくて悪かったわね」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ホント可愛くないわね、アリス…」")
+			PRINTFORMW 「…… 심한 감상. 그렇지만, 센스의 조각도 없는 사쿠야가 미묘하다고 말한다면, 나쁘지 않다는 일일까」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「어떤 의미야」")
+			PRINTFORMW 「그대로의 의미이지만? 아무 비틂도 없어 나빴지요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「정말 사랑스럽지 않네요, 앨리스…」")
 			
-			PRINTFORM 「ふふっ、お互いに、ね…
+			PRINTFORM 「후훗, 서로,…
 			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
-		ELSEIF AFFECTION("溺愛")
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「折角出してくれたのに悪いけど、私、疲れてないわよ」")
-			PRINTFORMW 「自分で気が付いてないだけじゃない？ 私には疲れてるように見えるけど」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう？」")
-			PRINTFORMW 「そうよ？ だから早くこれを飲んだ方がいいわ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なんか騙されてる気がするわね…」")
-			PRINTFORML 「考え過ぎよ。ほら、時間が勿体無いからさっさと飲んじゃって」
-			PRINTFORMW 「ふふっ…」
-		ELSEIF AFFECTION("眷愛")
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「用意してくれたのに悪いけど、まだそんなに疲れてないから」")
-			PRINTFORMW 「まぁそう言わないでよ。ちょっと配合を変えてみたから、試してみて」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「人体実験って訳？」")
-			PRINTFORMW 「そうとも言えるかしら？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「冗談も大概にして欲しいわね！」")
-			PRINTFORMW 「大丈夫、大丈夫…♪ だって、味をちょっと変えてみただけだから」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そういう事は先に言いなさいよ、馬鹿…」")
-			PRINTFORMW 「あら、先に言ったら面白くないじゃない」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「叩いていい？」")
-		ELSEIF AFFECTION("嫌悪")
-			PRINTFORMW 「ほら、飲みたければ飲めば？」
-			PRINTFORMDW アリスは咲夜に栄養剤を投げて渡した…
+		ELSEIF AFFECTION("몹시 사랑함")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「모처럼 내 주었는데 나쁘지만, 나, 피곤하지 않아요」")
+			PRINTFORMW 「스스로 깨닫지 않은 것뿐이 아니야? 내에게는 지치고 있는 것 같게 보이지만」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그래?」")
+			PRINTFORMW 「그래요? 그러니까 빨리 이것을 마시는 것이 좋아요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭔가 속고 있는 생각이 들어요…」")
+			PRINTFORML 「지나치게 생각했어. 이봐요, 시간이 과분하기 때문에 빨리 마셔 버려」
+			PRINTFORMW 「후훗…」
+		ELSEIF AFFECTION("권애")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「준비해 주었는데 나쁘지만, 아직 그렇게 피곤하지 않으니까」")
+			PRINTFORMW 「아무튼 그렇게 말하지 말아요. 조금 배합을 바꾸어 보았기 때문에, 시험해 봐」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「인체실험이라는 것?」")
+			PRINTFORMW 「그렇게도 말할 수 있을까?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「농담도 대충 해두었으면 좋네요!」")
+			PRINTFORMW 「괜찮아, 괜찮아…♪왜냐하면, 맛을 조금 바꾸어 본 것 뿐이니까」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그런 일은 먼저 말하세요, 바보…」")
+			PRINTFORMW 「아라, 먼저 말하면 재미있지 않잖아」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「두드려도 좋아?」")
+		ELSEIF AFFECTION("혐오")
+			PRINTFORMW 「이봐요, 마시고 싶다면 마시면?」
+			PRINTFORMDW 앨리스는 사쿠야에게 영양제를 던져 건네주었다…
 		ELSE
-			PRINTFORMW 「はい、これを飲んで頂戴」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「まだそんなに疲れてないけど」")
-			PRINTFORMW 「あら、何事も早目早目が肝心よ？」
-			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「まぁそれはそうなんでしょうけど、でも…」")
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「美味しくないのよね、コレ」")
-			PRINTFORMW 「ウルサイわね！ つべこべ言ってないでさっさと飲みなさいよっ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……やれやれ、ね」")
+			PRINTFORMW 「네, 이것을 마셔 줘」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「아직 그렇게 피곤하지 않지만」")
+			PRINTFORMW 「아라, 무슨 일도 조목조목이 중요해요?」
+			CALL PRINTCOLORL(COLOR_K14("사쿠야"), "「아무튼 그것은 그렇겠지요하지만, 에서도…」")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「맛있지 않네요, 이것」")
+			PRINTFORMW 「시끄럽네요! 이러쿵저러쿵 말하지 말고 빨리 마시세요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「…… 아휴,」")
 		ENDIF
 		RETURN 2
 	ENDIF
 	
 	;=================================================
-	;調教対象BASE:体力25%以上
+	;조교 대상 BASE:체력 25%이상
 	;=================================================
-	IF 口上記入チェック(100) && TENSION(MASTER, 0) == "一般"
-		;ここは地の文捏造する必要ありかな
-		IF AFFECTION("相思相愛")
-			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「…………」")
+	IF 구상기입체크(100) && TENSION(MASTER, 0) == "일반"
+		;여기는 지문 날조 할 필요 있는 곳인
+		IF AFFECTION("상사상애")
+			CALL PRINTCOLORL(COLOR_K14("사쿠야"), "「…………」")
 			PRINTFORMW 「…？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それ、私にはくれないの？」")
-			PRINTFORMW 「美味しくない、マズイって言ってた癖に、どういう風の吹き回し？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「覚えてない」")
-			PRINTFORMW 「今からボケてたら将来心配ね」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「その時はアリスにお世話になるわ」")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그것, 나에게는 주지 않는거야?」")
+			PRINTFORMW 「맛있지 않은, 맛이 없다고 말하고 있었던 주제에, 어떤 바람의 불어 돌리기?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「기억하지 않았다」")
+			PRINTFORMW 「지금부터 보케하고 있으면 장래 걱정이구나」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그 때는 앨리스에게 신세를 져요」")
 			
 			PRINTFORM 「
-			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "お断りよ", 1)
+			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "거절이야", 1)
 			PRINTFORMW 」
 			
-			PRINTFORMDW 咲夜は隙をついてアリスの手から栄養剤を奪った…
+			PRINTFORMDW 사쿠야는 틈을 찔러 앨리스의 손으로부터 영양제를 빼앗았다…
 			PRINTL
-			PRINTFORMW 「ちょっと！ 何するのよ！」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いいじゃない。どうせ私の為に作ってくれたんだから」")
-			PRINTFORMW 「それはまぁ、そう、なんだけど…って、何言わせるのよっ」
+			PRINTFORMW 「조금! 뭐 하는거야!」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「좋지 않아. 어차피 나를 위해서(때문에) 만들어 준 것이니까」")
+			PRINTFORMW 「그것은 아무튼, 그런, 것이지만… 은, 무엇 말하게 하는거야」
 			
-			CALL PRINTCOLOR(COLOR_K14("咲夜"), "「アリスのそういう素直じゃないとこ、私は好きよ…")
+			CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「앨리스의 그러한 솔직하지 않은 곳, 나는 좋아해요…")
 			CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"))
 			
 			PRINTFORM 「…
-			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "ウルサイわね", 1)
-			PRINTFORMW 。いいから飲むならさっさと飲んじゃってよ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はいはい…♪」")
-		ELSEIF AFFECTION("溺愛")
-			PRINTFORMW 「はい、疲れた時はこれが一番よ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「またこれ？ あまり美味しくないのよね…」")
-			PRINTFORMW 「仕方無いでしょ？ 良薬は口に苦し、ってね」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「うん、まぁ確かにそうなんでしょうけど」")
-			PRINTFORMW 「往生際が悪いわね。ほら、時間が勿体ないわ。さっさと飲んじゃってよ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ハァ～。気が重いわね…」")
-		ELSEIF AFFECTION("眷愛")
-			PRINTFORMW 「あら、ちょっとお疲れな感じね？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ん、そうね。言われてみれば、少し疲れたわね」")
-			PRINTFORMW 「じゃぁ、アレ飲む？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「断っても結局飲ませる癖に良く言うわ」")
-			PRINTFORMW 「ま、そうなんだけど、ね…♪」 
-		ELSEIF AFFECTION("嫌悪")
-			PRINTFORMW 「ちょっとお疲れみたいね？ ほら、これでも飲んだら？」
-			PRINTFORMDW アリスは咲夜に栄養剤を投げて渡した…
+			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "시끄럽네요", 1)
+			PRINTFORMW . 좋으니까 마신다면 빨리 마셔 버려요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「네네…♪」")
+		ELSEIF AFFECTION("몹시 사랑함")
+			PRINTFORMW 「네, 지쳤을 때는 이것이 제일이야」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「또 이것? 그다지 맛있지 않네요…」")
+			PRINTFORMW 「방법 없지요? 좋은 약은 입에 근심 해, 는」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「응, 뭐 확실히 그렇겠지만」")
+			PRINTFORMW 「단념하지 못하네요. 이봐요, 시간이 아까워요. 빨리 마셔 버려요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하~. 마음이 무겁네요…」")
+		ELSEIF AFFECTION("권애")
+			PRINTFORMW 「아라, 조금 피로인 느낌이군요?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「응, 그렇구나. 말해져 보면, 조금 지쳤군요」")
+			PRINTFORMW 「그러면, 저것 마셔?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「거절해도 결국 먹이는 주제에 자주(잘) 말해요」")
+			PRINTFORMW 「뭐, 그렇지만, 말야…♪」 
+		ELSEIF AFFECTION("혐오")
+			PRINTFORMW 「조금 지친 것 같구나? 이봐요, 이것이라도 마시면?」
+			PRINTFORMDW 앨리스는 사쿠야에게 영양제를 던져 건네주었다…
 		ELSE
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「少し疲れたわね…」")
-			PRINTFORMW 「はい、じゃぁこれ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…………」")
-			PRINTFORMW 「何黙ってるのよ、失礼しちゃうわね！」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だってこれ、あまり美味しく…」")
-			PRINTFORMW 「聞きたくないわね、そんな話！」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……やれやれ、ね」")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「조금 지쳤군요…」")
+			PRINTFORMW 「네, 그러면 이것」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「…………」")
+			PRINTFORMW 「무엇 입다물고 있는거야, 실례해 버려요!」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「왜냐하면 이것, 너무 맛있고…」")
+			PRINTFORMW 「(듣)묻고 싶지 않네요, 그런 이야기!」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「…… 아휴,」")
 		ENDIF
 		RETURN 2
 	ENDIF
 	
 	;-------------------------
-	;その他
+	;그 외
 	;-------------------------
-	IF AFFECTION("相思相愛")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス。それ、私にはくれないの？」")
+	IF AFFECTION("상사상애")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기 앨리스. 그것, 나에게는 주지 않는거야?」")
 		
-		PRINTFORM 「散々
-		CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "マズイ", 1)
-		PRINTFORMW とか言っといてよく言うわね」
+		PRINTFORM 「심하게
+		CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "곤란함", 1)
+		PRINTFORMW 라든지 말해 두어 자주(잘) 말해요」
 		
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何かの間違いではなくて？ 私がそんな事言う訳がないわ」")
-		PRINTFORMW 「白々しいにも程があるわね！ まぁ、でも…どうしてもって言うなら」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭔가의 실수가 아니라? 내가 그런 일 말할 이유가 없어요」")
+		PRINTFORMW 「속이 빤한에도 정도가 있어요! 뭐, 그렇지만… 아무래도라고 말한다면」
 		
-		CALL PRINTCOLOR(COLOR_K14("咲夜"), "「フフ、何だかんだ言っても結局くれるのね？ 貴女のそういうとこ、好きよ…")
+		CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「후후, 이러니 저러니 말해도 결국 주는 거네? 당신의 그러한 곳, 좋아해요…")
 		CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"))
-		PRINTFORMW 「はいはい、それはいいから…飲むならさっさと済ませちゃってよ」
-	ELSEIF AFFECTION("溺愛")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はぁ、またそれを飲ませるつもり？」")
-		PRINTFORMW 「そうだけど、何か問題でもあるの？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…美味しくない」")
-		PRINTFORMW 「ねぇ咲夜…良く聞き取れなかったんだけど、もう一度言ってくれる？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だ・か・ら、美味しくないのよ。というかハッキリ言ってマズイの」")
-		PRINTFORMW 「……咲夜って味覚音痴だったのね」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「はぁ？ なんでそうなるのよ！」")
-		PRINTFORMW 「大丈夫、心配しないで。咲夜の味覚音痴は私が少しずつ治していってあげるわ」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どうしても自分の非を認めないつもり？」")
-		PRINTFORMW 「そうねぇ、じゃ、今度はアレを加えてみようかしら…」
+		PRINTFORMW 「네네, 그것은 좋으니까… 마신다면 빨리 끝마쳐 버려요」
+	ELSEIF AFFECTION("몹시 사랑함")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하아, 또 그것을 먹일 생각?」")
+		PRINTFORMW 「그렇지만, 뭔가 문제라도 있는 거야?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「… 맛있지 않다」")
+		PRINTFORMW 「저기 사쿠야… 자주(잘) 알아 들을 수 없었지만, 한번 더 말해 줄래?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그·러·니·까, 맛있지 않은거야. 라고 할까 분명하게 말해 맛이 없는거야」")
+		PRINTFORMW 「…… 사쿠야는 미각 음치였던 것이군요」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하아? 어째서 그렇게 되는거야!」")
+		PRINTFORMW 「괜찮아, 걱정하지 말아줘. 사쿠야의 미각 음치는 내가 조금씩 치료해 가 주어요」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「아무래도 자신의 잘못을 인정하지 않을 생각?」")
+		PRINTFORMW 「그렇구나, 그러면, 이번은 저것을 더해 볼까…」
 		
-		CALL PRINTCOLOR(COLOR_K14("咲夜"), "「")
-		CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "人の話を聞きなさいよ", 1)
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "！！」")
-	ELSEIF AFFECTION("眷愛")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ハァ、ハァ…ねぇアリス。私、疲れたわ…」")
-		PRINTFORMW 「そんな時はこの、アリスさん特製の栄養剤ね！」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんな得意げな顔されても困るんだけど」")
-		PRINTFORMW 「でも、効き目は認めるでしょう？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「うん、まぁ…そうなんだけどね」")
-	ELSEIF AFFECTION("嫌悪")
-		PRINTFORMW 「随分お疲れみたいね？ ほら、これでも飲んだら？」
-		PRINTFORMDW アリスは咲夜に栄養剤を投げて渡した…
+		CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「")
+		CALL PRINTFONTSTYLE(COLOR2_K14("SAKUYA"), "인의 이야기를 들으세요", 1)
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "！！」")
+	ELSEIF AFFECTION("권애")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하, 하… 응 앨리스. 나, 지쳤어요…」")
+		PRINTFORMW 「그런 때는 이, 앨리스씨특제의 영양제군요!」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그런 우쭐해하는 얼굴 되어도 곤란하지만」")
+		PRINTFORMW 「그렇지만, 효력은 인정할까요?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「응, 뭐… 그렇지만 말야」")
+	ELSEIF AFFECTION("혐오")
+		PRINTFORMW 「상당히 지친 것 같구나? 이봐요, 이것이라도 마시면?」
+		PRINTFORMDW 앨리스는 사쿠야에게 영양제를 던져 건네주었다…
 	ELSE
-		PRINTFORMW 「疲れた時はこれが一番よ。さぁ、飲んで頂戴」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「気が進まないけど仕方無いわね…」")
+		PRINTFORMW 「지쳤을 때는 이것이 제일이야. 자, 마셔 줘」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「마음이 내키지 않지만 방법 없네요…」")
 	ENDIF
 	RETURN 2
 ENDIF
-;NO9_ACT91, 栄養剤を飲ませる
+;NO9_ACT91, 영양제를 먹인다
 
-;────────────────────────────────────
-;NO9_ACT92, 治療する
-;────────────────────────────────────
-;・調教者が調教対象を治療しようとする
-;・REACT分類が"暴れる"であった場合は"暴れたため治療できなかった"に派生する
-;・その他の場合は"体の隅々まで撫で回して治療した"という扱い
-;・調教者にTALENT:治療がなければ発生しない
-;・媚薬を使用することもある
-;・TEQUIP:三角木馬は解除される
-;・顔面騎乗系、自慰系は解除される
+;─
+;NO9_ACT92, 치료한다
+;─
+;·조교자가 조교 대상을 치료하려고 한다
+;·REACT 분류가 "날뛴다"(이었)였던 경우는 "날뛰었기 때문에 치료 할 수 없었다"에 파생한다
+;·그 외의 경우는 "몸의 구석구석까지 더듬어 치료했다"라고 하는 취급
+;·조교자에게 TALENT:치료가 없으면 발생하지 않는다
+;·미약을 사용하는 일도 있다
+;·TEQUIP:삼각 목마는 해제된다
+;·안면 승마계, 자위계는 해제된다
 ;-------------------------------------------------
 ;@KOJO_NO9_MS_ACT_K14_92
 ;-------------------------------------------------
-;・TFLAG:ACT派生(0=体の隅々まで撫で回して治療した/1=暴れたため治療できなかった)
-;※ACT派生への代入は@ACTION_APPLY2_92で行われ、これを参照できるのはREACT以降(即ち、ACTでは参照はできない)
+;·TFLAG:ACT 파생(0=몸의 구석구석까지 더듬어 치료한/1=날뛰었기 때문에 치료 할 수 없었다)
+;※ACT 파생에의 대입은@ACTION_APPLY2_92로 행해져 이것을 참조할 수 있는 것은 REACT 이후(즉, ACT에서는 참조는 할 수 없다)
 ;-------------------------------------------------
-;アリスさんの素質的に発生しない
-;TARGETの素質を弄るようなパッチは理由の如何を問わず殺す
-;まぁ個人的に言わせて貰えば、内部的に機能を殺せない追加機能はクソ
-;導入しなければとかデバッグなんだから云々言うのはこちらの事情を理解できない馬鹿の発言とみなす
+;앨리스씨의 소질적으로 발생하지 않는다
+;TARGET의 소질을 만지작거리는 것 같은 패치는 이유의 여하를 불문하고 죽인다
+;아무튼 개인적으로 말하게 해 받으면, 내부적으로 기능을 죽일 수 없는 추가 기능은 젠장
+;도입하지 않으면이라든지 디버그인 것이니까 운운 말하는 것은 이쪽의 사정을 이해 할 수 없는 바보의 발언으로 간주한다
 ;-------------------------------------------------

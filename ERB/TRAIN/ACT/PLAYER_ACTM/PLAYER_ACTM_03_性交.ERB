@@ -1,519 +1,519 @@
-﻿;────────────────────────────────────
-;性交 (正常30/後背31/騎乗32/対面33/背面34/ＡＳ35)
-;────────────────────────────────────
+﻿;─
+;성교(정상 30/후배 31/승마 32/대면 33/배면 34/AS35)
+;─
 @ACT_M3(ARG = 0)
-;1以上なら判定を行わない
+;1이상이라면 판정을 실시하지 않는다
 #DIM LCOUNT, 1
 
-;関数初期化
+;함수 초기화
 CALL ACT_M_INIT(3)
 
-;処理開始
+;처리 개시
 
 LOCALS = ACT_ACTM3
 
-CALL CHA_CRI_VAR, "基準値"
+CALL CHA_CRI_VAR, "기준치"
 CALLFORM %LOCALS%_REFERENCE
 
-CALL CHA_CRI_VAR, @"本日の方針(%POLICY("今日")%)"
+CALL CHA_CRI_VAR, @"오늘의 방침(%POLICY("오늘")%)"
 CALLFORM %LOCALS%_POLYCY
 
-CALL CHA_CRI_VAR, @"ターン方針(%POLICY("今")%)"
+CALL CHA_CRI_VAR, @"턴 방침(%POLICY("지금")%)"
 CALLFORM %LOCALS%_MENU
 
-CALL CHA_CRI_VAR, "調教者の素質"
+CALL CHA_CRI_VAR, "조교자의 소질"
 CALLFORM %LOCALS%_TALENT_T
 
-CALL CHA_CRI_VAR, "調教対象が処女"
+CALL CHA_CRI_VAR, "조교 대상이 처녀"
 CALLFORM %LOCALS%_MAIDEN_M
 
-CALL CHA_CRI_VAR, "調教対象の素質"
+CALL CHA_CRI_VAR, "조교 대상의 소질"
 CALLFORM %LOCALS%_TALENT_M
 
-CALL CHA_CRI_VAR, "調教者の能力"
+CALL CHA_CRI_VAR, "조교자의 능력"
 CALLFORM %LOCALS%_ABL_T
 
-CALL CHA_CRI_VAR, "調教対象の能力"
+CALL CHA_CRI_VAR, "조교 대상의 능력"
 CALLFORM %LOCALS%_ABL_M
 
-CALL CHA_CRI_VAR, "調教対象の恭順"
+CALL CHA_CRI_VAR, "조교 대상의 공순"
 CALLFORM %LOCALS%_ALLEGIANCE_M
 
-CALL CHA_CRI_VAR, "調教対象の経験"
+CALL CHA_CRI_VAR, "조교 대상의 경험"
 CALLFORM %LOCALS%_EXP_M
 
-CALL CHA_CRI_VAR, "調教者の罪悪感"
+CALL CHA_CRI_VAR, "조교자의 죄악감"
 CALLFORM %LOCALS%_SIN_T
 
-CALL CHA_CRI_VAR, "調教者のALI"
+CALL CHA_CRI_VAR, "조교자의 ALI"
 CALLFORM %LOCALS%_ALI_T
 
-CALL CHA_CRI_VAR, "調教対象の体力"
+CALL CHA_CRI_VAR, "조교 대상의 체력"
 CALLFORM %LOCALS%_PHYSICAL_M
 
-CALL CHA_CRI_VAR, "調教対象の気力"
+CALL CHA_CRI_VAR, "조교 대상의 기력"
 CALLFORM %LOCALS%_MENTAL_M
 
-CALL CHA_CRI_VAR, "縄"
+CALL CHA_CRI_VAR, "줄"
 CALLFORM %LOCALS%_ROPE
 
-CALL CHA_CRI_VAR, "アイマスク"
+CALL CHA_CRI_VAR, "아이마스크"
 CALLFORM %LOCALS%_EYEMASK
 
-CALL CHA_CRI_VAR, "大鏡"
+CALL CHA_CRI_VAR, "대거울"
 CALLFORM %LOCALS%_T_MILLER
 
-CALL CHA_CRI_VAR, "体位"
+CALL CHA_CRI_VAR, "체위"
 CALLFORM %LOCALS%_S_POSITION
 
-CALL CHA_CRI_VAR, "連続行動補正"
+CALL CHA_CRI_VAR, "연속 행동 보정"
 CALLFORM %LOCALS%_PREV
 
-CALL CHA_CRI_VAR, "お仕置き"
+CALL CHA_CRI_VAR, "벌"
 CALLFORM %LOCALS%_OSHIOKI
 
-CALL CHA_CRI_VAR, "口上補正値"
+CALL CHA_CRI_VAR, "구상 보정치"
 CALL ACT_ACTM_KOJO_CORRECTION_T, 3
 
-CALL CHA_CRI_VAR, "ACT補正値"
+CALL CHA_CRI_VAR, "ACT 보정치"
 CALLFORM %LOCALS%_CORRECTION(ARG)
 
-;ARGが1以上なら処理中断
+;ARG가 1이상이라면 처리 중단
 SIF ARG
 	RETURN RESULT
 
-CALL CHA_CRI_VAR, "実行判定"
+CALL CHA_CRI_VAR, "실행 판정"
 CALLFORM %LOCALS%_ABLE
 
-;────────────────────────────────────
-;最終判定
-;────────────────────────────────────
-CALL DEF_CRI_VAR("最大前者")
-LOCAL = GET_CRI_VAR("決定")
-;挿入する棒が無い場合、可能ならばペニスバンド装着に変化。ペニスバンドが無いならここへは来ない
-IF !PENIS(TARGET) && !TEQUIP:調教者ペニスバンド
+;─
+;최종 판정
+;─
+CALL DEF_CRI_VAR("최대 전자")
+LOCAL = GET_CRI_VAR("결정")
+;삽입하는 봉이 없는 경우, 가능하면 페니스 밴드 장착에 변화. 페니스 밴드가 없으면 여기에는 오지 않는다
+IF !PENIS(TARGET) && !TEQUIP:조교자페니스밴드
 	CALL ACT_ABLE75
 	IF RESULT
-		TFLAG:ACT分類 = 7
+		TFLAG:ACT분류 = 7
 		TFLAG:ACT = 75
 	ELSE
-		TFLAG:ACT分類 = 0
+		TFLAG:ACT분류 = 0
 		TFLAG:ACT = 0
 	ENDIF
 ELSEIF LOCAL == -1
-	SIF FLAG:デバッグ
-		PRINTL (性交ACT分類に実行可能なACTが存在しません)
+	SIF FLAG:디버그
+		PRINTL (성교 ACT 분류에 실행 가능한 ACT가 존재하지 않습니다)
 	TFLAG:ACT = -1
-	CALL ACT_MENU_RESULT(2, "性交")
+	CALL ACT_MENU_RESULT(2, "성교")
 ELSE
 	TFLAG:ACT = GET_ACTNUM(RESULTS)
-	;連続数加算
+	;연속수가산
 	TFLAG:(326 + GET_ACTNUM(RESULTS))++
 ENDIF
 CALL ANA_CRI_VAR()
 
 ;-------------------------------------------------------------------------
-;基準値
+;기준치
 ;-------------------------------------------------------------------------
 @ACT_ACTM3_REFERENCE
 
-;要らないかもと思ったので試しに無効化@これみ
+;필요하지 않을지도라고 생각했으므로 시험삼아 무효화@이것 보고
 [SKIPSTART]
-CALL ADD_CRI_VAR("正常位", 10)
-CALL ADD_CRI_VAR("後背位", 6)
-CALL ADD_CRI_VAR("騎乗位", 8)
-CALL ADD_CRI_VAR("対面座位", 8, 4)
-CALL ADD_CRI_VAR("背面座位", 6, 6)
-CALL ADD_CRI_VAR("アナルセックス", 5)
+CALL ADD_CRI_VAR("정상위", 10)
+CALL ADD_CRI_VAR("후배위", 6)
+CALL ADD_CRI_VAR("승마위", 8)
+CALL ADD_CRI_VAR("대면좌위", 8, 4)
+CALL ADD_CRI_VAR("배면좌위", 6, 6)
+CALL ADD_CRI_VAR("애널 섹스", 5)
 [SKIPEND]
 
 ;-------------------------------------------------------------
-;本日の方針
-;本日の方針(0=いつもどおり/1=A開発/2=お仕置き/3=ハード/4=イチャイチャ/5=異常/6=野外/7=子作り/8=休憩/9=抱いて/10=ご奉仕/11=かわいがり)
+;오늘의 방침
+;오늘의 방침(0=언제나 대로/1=A개발/2=벌/3=하드/4=러브러브/5=이상/6=야외/7=아이 만들기/8=휴게/9=안아/10= 봉사/11=귀여워해)
 ;-------------------------------------------------------------
 @ACT_ACTM3_POLYCY
-;今日の方針
-SELECTCASE POLICY("今日")
-	CASE "アナル"
-		CALL ADD_CRI_VAR("正常位"  , -10)
-		CALL ADD_CRI_VAR("後背位"  , -10)
-		CALL ADD_CRI_VAR("騎乗位"  , -10)
-		CALL ADD_CRI_VAR("対面座位", -10)
-		CALL ADD_CRI_VAR("背面座位", -10)
-		CALL ADD_CRI_VAR("アナルセックス", 15)
-	CASE "抱いて"
-		CALL ADD_CRI_VAR("アナルセックス", -10)
-		CALL ADD_CRI_VAR("正常位"  , 10)
-		CALL ADD_CRI_VAR("後背位"  , 10)
-		CALL ADD_CRI_VAR("騎乗位"  , 10)
-		CALL ADD_CRI_VAR("対面座位", 10)
-		CALL ADD_CRI_VAR("背面座位", 10)
-	CASE "かわいがり"
-		CALL ADD_CRI_VAR("正常位"  ,   5)
-		CALL ADD_CRI_VAR("後背位"  , -10)
-		CALL ADD_CRI_VAR("騎乗位"  , -10)
-		CALL ADD_CRI_VAR("対面座位",  15)
-		CALL ADD_CRI_VAR("背面座位", -10)
-		CALL ADD_CRI_VAR("アナルセックス", -10)
+;오늘의 방침
+SELECTCASE POLICY("오늘")
+	CASE "애널"
+		CALL ADD_CRI_VAR("정상위"  , -10)
+		CALL ADD_CRI_VAR("후배위"  , -10)
+		CALL ADD_CRI_VAR("승마위"  , -10)
+		CALL ADD_CRI_VAR("대면좌위", -10)
+		CALL ADD_CRI_VAR("배면좌위", -10)
+		CALL ADD_CRI_VAR("애널 섹스", 15)
+	CASE "안아"
+		CALL ADD_CRI_VAR("애널 섹스", -10)
+		CALL ADD_CRI_VAR("정상위"  , 10)
+		CALL ADD_CRI_VAR("후배위"  , 10)
+		CALL ADD_CRI_VAR("승마위"  , 10)
+		CALL ADD_CRI_VAR("대면좌위", 10)
+		CALL ADD_CRI_VAR("배면좌위", 10)
+	CASE "귀여워해"
+		CALL ADD_CRI_VAR("정상위"  ,   5)
+		CALL ADD_CRI_VAR("후배위"  , -10)
+		CALL ADD_CRI_VAR("승마위"  , -10)
+		CALL ADD_CRI_VAR("대면좌위",  15)
+		CALL ADD_CRI_VAR("배면좌위", -10)
+		CALL ADD_CRI_VAR("애널 섹스", -10)
 	CASEELSE
 		;none
 ENDSELECT
 
 
 ;-------------------------------------------------------------------------
-;調教方針(1=休憩/2=ソフト/3=ノーマル/4=ハード/5=異常)
+;조교 방침(1=휴게/2=소프트/3=노멀/4=하드/5=이상)
 ;-------------------------------------------------------------------------
 @ACT_ACTM3_MENU
-;ターン方針を見る
-SELECTCASE POLICY("今")
-	CASE "ソフト"
-		CALL ADD_CRI_VAR("騎乗位", 2)
-	CASE "ハード"
-		CALL ADD_CRI_VAR("後背位", 4)
-		CALL ADD_CRI_VAR("アナルセックス", 3)
-	CASE "異常"
-		CALL ADD_CRI_VAR("後背位", 2)
-		CALL ADD_CRI_VAR("アナルセックス", 5)
+;턴 방침을 본다
+SELECTCASE POLICY("지금")
+	CASE "소프트"
+		CALL ADD_CRI_VAR("승마위", 2)
+	CASE "하드"
+		CALL ADD_CRI_VAR("후배위", 4)
+		CALL ADD_CRI_VAR("애널 섹스", 3)
+	CASE "이상"
+		CALL ADD_CRI_VAR("후배위", 2)
+		CALL ADD_CRI_VAR("애널 섹스", 5)
 ENDSELECT
 
 ;-------------------------------------------------------------------------
-;調教者の素質を参照
+;조교자의 소질을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM3_TALENT_T
 
-;調教者が臆病/気丈
-IF TALENT:臆病
-	CALL ADD_CRI_VAR("後背位", -2)
-	CALL ADD_CRI_VAR("アナルセックス", -4)
-ELSEIF TALENT:気丈
-	CALL ADD_CRI_VAR("後背位", 3, 3)
-	CALL ADD_CRI_VAR("アナルセックス", 2, 5)
+;조교자가 겁쟁이/기장
+IF TALENT:겁쟁이
+	CALL ADD_CRI_VAR("후배위", -2)
+	CALL ADD_CRI_VAR("애널 섹스", -4)
+ELSEIF TALENT:기장
+	CALL ADD_CRI_VAR("후배위", 3, 3)
+	CALL ADD_CRI_VAR("애널 섹스", 2, 5)
 ENDIF
 
-;調教者が腰使い
-IF TALENT:腰使い
-	CALL ADD_CRI_VAR("正常位"  ,  5)
-	CALL ADD_CRI_VAR("後背位"  ,  4)
-	CALL ADD_CRI_VAR("騎乗位"  , -1)
-	CALL ADD_CRI_VAR("対面座位",  3)
-	CALL ADD_CRI_VAR("背面座位",  3)
-	CALL ADD_CRI_VAR("アナルセックス", 1)
+;조교자가 허리사용
+IF TALENT:허리사용
+	CALL ADD_CRI_VAR("정상위"  ,  5)
+	CALL ADD_CRI_VAR("후배위"  ,  4)
+	CALL ADD_CRI_VAR("승마위"  , -1)
+	CALL ADD_CRI_VAR("대면좌위",  3)
+	CALL ADD_CRI_VAR("배면좌위",  3)
+	CALL ADD_CRI_VAR("애널 섹스", 1)
 ENDIF
 
 
-;調教者が一線越えない
-IF TALENT:一線越えない
-	CALL ADD_CRI_VAR("後背位"  , -3)
-	CALL ADD_CRI_VAR("騎乗位"  , -1)
-	CALL ADD_CRI_VAR("対面座位", -2)
-	CALL ADD_CRI_VAR("背面座位", -3)
-	CALL ADD_CRI_VAR("アナルセックス", -5)
+;조교자가 선을그음
+IF TALENT:선을그음
+	CALL ADD_CRI_VAR("후배위"  , -3)
+	CALL ADD_CRI_VAR("승마위"  , -1)
+	CALL ADD_CRI_VAR("대면좌위", -2)
+	CALL ADD_CRI_VAR("배면좌위", -3)
+	CALL ADD_CRI_VAR("애널 섹스", -5)
 ENDIF
 
-;調教者が受け身
-SIF TALENT:受け身
-	CALL ADD_CRI_VAR("騎乗位", 5)
+;조교자가 수동
+SIF TALENT:수동
+	CALL ADD_CRI_VAR("승마위", 5)
 
-;調教者がサド
-IF TALENT:サド
-	CALL ADD_CRI_VAR("後背位"  , 5)
-	CALL ADD_CRI_VAR("背面座位", 3)
-	CALL ADD_CRI_VAR("アナルセックス", 7)
+;조교자가 새디즘
+IF TALENT:새디즘
+	CALL ADD_CRI_VAR("후배위"  , 5)
+	CALL ADD_CRI_VAR("배면좌위", 3)
+	CALL ADD_CRI_VAR("애널 섹스", 7)
 ENDIF
 
-;調教者が狂気
-SIF TALENT:狂気
-	CALL ADD_CRI_VAR("アナルセックス", , 5)
+;조교자가 광기
+SIF TALENT:광기
+	CALL ADD_CRI_VAR("애널 섹스", , 5)
 	
 ;-----------------------------------------
-;調教対象が処女
+;조교 대상이 처녀
 ;-----------------------------------------
 @ACT_ACTM3_MAIDEN_M
 
-IF TALENT:MASTER:処女
-	CALL ADD_CRI_VAR("正常位"  , -12 + CFLAG:合意 * 10 + CFLAG:M好意 / 200 + GET_TRAINLV(TARGET) / 3)
-	CALL ADD_CRI_VAR("後背位"  , -12 + CFLAG:合意 * 10 + CFLAG:M好意 / 200 + GET_TRAINLV(TARGET) / 3)
-	CALL ADD_CRI_VAR("騎乗位"  , -12 + CFLAG:合意 * 10 + CFLAG:M好意 / 200 + GET_TRAINLV(TARGET) / 3)
-	CALL ADD_CRI_VAR("対面座位", -12 + CFLAG:合意 * 10 + CFLAG:M好意 / 200 + GET_TRAINLV(TARGET) / 3)
-	CALL ADD_CRI_VAR("背面座位", -12 + CFLAG:合意 * 10 + CFLAG:M好意 / 200 + GET_TRAINLV(TARGET) / 3)
+IF TALENT:MASTER:처녀
+	CALL ADD_CRI_VAR("정상위"  , -12 + CFLAG:합의 * 10 + CFLAG:M호의 / 200 + GET_TRAINLV(TARGET) / 3)
+	CALL ADD_CRI_VAR("후배위"  , -12 + CFLAG:합의 * 10 + CFLAG:M호의 / 200 + GET_TRAINLV(TARGET) / 3)
+	CALL ADD_CRI_VAR("승마위"  , -12 + CFLAG:합의 * 10 + CFLAG:M호의 / 200 + GET_TRAINLV(TARGET) / 3)
+	CALL ADD_CRI_VAR("대면좌위", -12 + CFLAG:합의 * 10 + CFLAG:M호의 / 200 + GET_TRAINLV(TARGET) / 3)
+	CALL ADD_CRI_VAR("배면좌위", -12 + CFLAG:합의 * 10 + CFLAG:M호의 / 200 + GET_TRAINLV(TARGET) / 3)
 ENDIF
 
 ;-------------------------------------------------------------------------
-;調教対象の素質を参照
+;조교 대상의 소질을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM3_TALENT_M
 
-;調教対象が小柄体型
-IF TALENT:MASTER:小柄
-	CALL ADD_CRI_VAR("騎乗位"  , 2)
-	CALL ADD_CRI_VAR("対面座位", 3)
-	CALL ADD_CRI_VAR("背面座位", 3)
+;조교 대상이 작은체형 체형
+IF TALENT:MASTER:작은체형
+	CALL ADD_CRI_VAR("승마위"  , 2)
+	CALL ADD_CRI_VAR("대면좌위", 3)
+	CALL ADD_CRI_VAR("배면좌위", 3)
 ENDIF
 
-;調教対象が腰使い
-IF TALENT:MASTER:腰使い
-	CALL ADD_CRI_VAR("正常位"  , 3)
-	CALL ADD_CRI_VAR("後背位"  , 2)
-	CALL ADD_CRI_VAR("騎乗位"  , 6)
-	CALL ADD_CRI_VAR("対面座位", 4)
-	CALL ADD_CRI_VAR("背面座位", 2)
+;조교 대상이 허리사용
+IF TALENT:MASTER:허리사용
+	CALL ADD_CRI_VAR("정상위"  , 3)
+	CALL ADD_CRI_VAR("후배위"  , 2)
+	CALL ADD_CRI_VAR("승마위"  , 6)
+	CALL ADD_CRI_VAR("대면좌위", 4)
+	CALL ADD_CRI_VAR("배면좌위", 2)
 ENDIF
 
-;調教対象が目立ちたがり/解放/献身的
-SIF TALENT:MASTER:目立ちたがり || TALENT:MASTER:解放 || TALENT:MASTER:献身的
-	CALL ADD_CRI_VAR("騎乗位", 2, 4)
+;조교 대상이튀고싶어함/해방/헌신적
+SIF TALENT:MASTER:튀고싶어함 || TALENT:MASTER:해방 || TALENT:MASTER:헌신적
+	CALL ADD_CRI_VAR("승마위", 2, 4)
 
-;調教対象が淫壷
-IF TALENT:MASTER:淫壷
-	CALL ADD_CRI_VAR("正常位"  , 5)
-	CALL ADD_CRI_VAR("後背位"  , 5)
-	CALL ADD_CRI_VAR("騎乗位"  , 5)
-	CALL ADD_CRI_VAR("対面座位", 5)
-	CALL ADD_CRI_VAR("背面座位", 5)
+;조교 대상이 음란
+IF TALENT:MASTER:음란
+	CALL ADD_CRI_VAR("정상위"  , 5)
+	CALL ADD_CRI_VAR("후배위"  , 5)
+	CALL ADD_CRI_VAR("승마위"  , 5)
+	CALL ADD_CRI_VAR("대면좌위", 5)
+	CALL ADD_CRI_VAR("배면좌위", 5)
 ENDIF
 
-;調教対象が淫尻
-SIF TALENT:MASTER:淫尻
-	CALL ADD_CRI_VAR("アナルセックス", 5)
+;조교 대상이 음고
+SIF TALENT:MASTER:음고
+	CALL ADD_CRI_VAR("애널 섹스", 5)
 
-;調教対象が倒錯的
-IF TALENT:MASTER:倒錯的
-	CALL ADD_CRI_VAR("後背位", 2, 2)
-	CALL ADD_CRI_VAR("アナルセックス", , 6)
+;조교 대상이 도착적
+IF TALENT:MASTER:도착적
+	CALL ADD_CRI_VAR("후배위", 2, 2)
+	CALL ADD_CRI_VAR("애널 섹스", , 6)
 ENDIF
 
-;調教対象がＶ敏感/鈍感
-IF TALENT:MASTER:Ｖ敏感
-	CALL ADD_CRI_VAR("正常位"  , , 4)
-	CALL ADD_CRI_VAR("後背位"  , , 4)
-	CALL ADD_CRI_VAR("騎乗位"  , , 4)
-	CALL ADD_CRI_VAR("対面座位", , 4)
-	CALL ADD_CRI_VAR("背面座位", , 4)
-ELSEIF TALENT:MASTER:Ｖ鈍感
-	CALL ADD_CRI_VAR("正常位"  , , -4)
-	CALL ADD_CRI_VAR("後背位"  , , -4)
-	CALL ADD_CRI_VAR("騎乗位"  , , -4)
-	CALL ADD_CRI_VAR("対面座位", , -4)
-	CALL ADD_CRI_VAR("背面座位", , -4)
+;조교 대상이 V민감/둔감
+IF TALENT:MASTER:V민감
+	CALL ADD_CRI_VAR("정상위"  , , 4)
+	CALL ADD_CRI_VAR("후배위"  , , 4)
+	CALL ADD_CRI_VAR("승마위"  , , 4)
+	CALL ADD_CRI_VAR("대면좌위", , 4)
+	CALL ADD_CRI_VAR("배면좌위", , 4)
+ELSEIF TALENT:MASTER:V둔감
+	CALL ADD_CRI_VAR("정상위"  , , -4)
+	CALL ADD_CRI_VAR("후배위"  , , -4)
+	CALL ADD_CRI_VAR("승마위"  , , -4)
+	CALL ADD_CRI_VAR("대면좌위", , -4)
+	CALL ADD_CRI_VAR("배면좌위", , -4)
 ENDIF
 
-;調教対象がＡ敏感/鈍感
-IF TALENT:Ａ敏感
-	CALL ADD_CRI_VAR("アナルセックス", , 4)
-ELSEIF TALENT:Ａ鈍感
-	CALL ADD_CRI_VAR("アナルセックス", , -4)
+;조교 대상이 A민감/둔감
+IF TALENT:A민감
+	CALL ADD_CRI_VAR("애널 섹스", , 4)
+ELSEIF TALENT:A둔감
+	CALL ADD_CRI_VAR("애널 섹스", , -4)
 ENDIF
 
-;調教対象が巨躯
-IF TALENT:MASTER:長身
-	CALL ADD_CRI_VAR("騎乗位"  , -3)
-	CALL ADD_CRI_VAR("対面座位", -5)
-	CALL ADD_CRI_VAR("背面座位", -5)
+;조교 대상이 거구
+IF TALENT:MASTER:장신
+	CALL ADD_CRI_VAR("승마위"  , -3)
+	CALL ADD_CRI_VAR("대면좌위", -5)
+	CALL ADD_CRI_VAR("배면좌위", -5)
 ENDIF
 
-;────────────────────────────────────
-;能力、パラメーターによる変動
-;────────────────────────────────────
+;─
+;능력, 파라미터에 의한 변동
+;─
 ;-------------------------------------------------------------------------
-;調教者の能力を参照
+;조교자의 능력을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM3_ABL_T
 
-;調教者のＣ感覚(調教者にペニスがある場合)
-IF TALENT:ふたなり || TALENT:オトコ || TEQUIP:調教者ペニスバンド
-	;が[0→0, 5→3～7]を加算(0～7)
-	CALL ADD_CRI_VAR("正常位"  , LINE_CALC(ABL:Ｃ感覚, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:Ｃ感覚, "0→0,5→4,LIMIT/0～4"))
-	CALL ADD_CRI_VAR("騎乗位"  , LINE_CALC(ABL:Ｃ感覚, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:Ｃ感覚, "0→0,5→4,LIMIT/0～4"))
-	CALL ADD_CRI_VAR("対面座位", LINE_CALC(ABL:Ｃ感覚, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:Ｃ感覚, "0→0,5→4,LIMIT/0～4"))
-	;が[0→0, 5→4～9]を加算(0～9)
-	CALL ADD_CRI_VAR("後背位"  , LINE_CALC(ABL:Ｃ感覚, "0→0,5→4,LIMIT/0～4"), LINE_CALC(ABL:Ｃ感覚, "0→0,5→5,LIMIT/0～5"))
-	CALL ADD_CRI_VAR("背面座位", LINE_CALC(ABL:Ｃ感覚, "0→0,5→4,LIMIT/0～4"), LINE_CALC(ABL:Ｃ感覚, "0→0,5→5,LIMIT/0～5"))
-	;が[0→0, 5→4～11]を加算(0～11)
-	CALL ADD_CRI_VAR("アナルセックス", LINE_CALC(ABL:Ｃ感覚, "0→0,5→4,LIMIT/0～4"), LINE_CALC(ABL:Ｃ感覚, "0→0,5→7,LIMIT/0～7"))
+;조교자의 C감각(조교자에게 페니스가 있는 경우)
+IF TALENT:후타나리 || TALENT:남자 || TEQUIP:조교자페니스밴드
+	;가[0→0, 5→3~7]을 가산(0~7)
+	CALL ADD_CRI_VAR("정상위"  , LINE_CALC(ABL:C감각, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:C감각, "0→0,5→4,LIMIT/0～4"))
+	CALL ADD_CRI_VAR("승마위"  , LINE_CALC(ABL:C감각, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:C감각, "0→0,5→4,LIMIT/0～4"))
+	CALL ADD_CRI_VAR("대면좌위", LINE_CALC(ABL:C감각, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:C감각, "0→0,5→4,LIMIT/0～4"))
+	;가[0→0, 5→4~9]를 가산(0~9)
+	CALL ADD_CRI_VAR("후배위"  , LINE_CALC(ABL:C감각, "0→0,5→4,LIMIT/0～4"), LINE_CALC(ABL:C감각, "0→0,5→5,LIMIT/0～5"))
+	CALL ADD_CRI_VAR("배면좌위", LINE_CALC(ABL:C감각, "0→0,5→4,LIMIT/0～4"), LINE_CALC(ABL:C감각, "0→0,5→5,LIMIT/0～5"))
+	;가[0→0, 5→4~11]을 가산(0~11)
+	CALL ADD_CRI_VAR("애널 섹스", LINE_CALC(ABL:C감각, "0→0,5→4,LIMIT/0～4"), LINE_CALC(ABL:C감각, "0→0,5→7,LIMIT/0～7"))
 ENDIF
 
 ;-------------------------------------------------------------------------
-;調教対象の能力を参照
+;조교 대상의 능력을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM3_ABL_M
 
-;調教対象のＶ感覚が[0→0, 5→2～10]を加算(0～10)
-CALL ADD_CRI_VAR("正常位"  , LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→8,LIMIT/0～8"))
-CALL ADD_CRI_VAR("後背位"  , LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→8,LIMIT/0～8"))
-CALL ADD_CRI_VAR("騎乗位"  , LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→8,LIMIT/0～8"))
-CALL ADD_CRI_VAR("対面座位", LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→8,LIMIT/0～8"))
-CALL ADD_CRI_VAR("背面座位", LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→8,LIMIT/0～8"))
+;조교 대상의 V감각이[0→0, 5→2~10]을 가산(0~10)
+CALL ADD_CRI_VAR("정상위"  , LINE_CALC(ABL:MASTER:V감각, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:V감각, "0→0,5→8,LIMIT/0～8"))
+CALL ADD_CRI_VAR("후배위"  , LINE_CALC(ABL:MASTER:V감각, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:V감각, "0→0,5→8,LIMIT/0～8"))
+CALL ADD_CRI_VAR("승마위"  , LINE_CALC(ABL:MASTER:V감각, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:V감각, "0→0,5→8,LIMIT/0～8"))
+CALL ADD_CRI_VAR("대면좌위", LINE_CALC(ABL:MASTER:V감각, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:V감각, "0→0,5→8,LIMIT/0～8"))
+CALL ADD_CRI_VAR("배면좌위", LINE_CALC(ABL:MASTER:V감각, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:V감각, "0→0,5→8,LIMIT/0～8"))
 
-;調教対象のＡ感覚が[0→0, 5→0～12]を加算(0～12)
-CALL ADD_CRI_VAR("アナルセックス", , LINE_CALC(ABL:MASTER:Ａ感覚, "0→0,5→12,LIMIT/0～12"))
+;조교 대상의 A감각이[0→0, 5→0~12]를 가산(0~12)
+CALL ADD_CRI_VAR("애널 섹스", , LINE_CALC(ABL:MASTER:A감각, "0→0,5→12,LIMIT/0～12"))
 
-;調教対象の奉仕精神が[0→0, 5→2～10]を加算(0～10)
-CALL ADD_CRI_VAR("騎乗位", LINE_CALC(ABL:MASTER:奉仕精神, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:奉仕精神, "0→0,5→8,LIMIT/0～8"))
+;조교 대상의 봉사 정신이[0→0, 5→2~10]을 가산(0~10)
+CALL ADD_CRI_VAR("승마위", LINE_CALC(ABL:MASTER:봉사정신, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:MASTER:봉사정신, "0→0,5→8,LIMIT/0～8"))
 
 ;-------------------------------------------------------------------------
-;PALAM群
-;ここは個別に
+;PALAM군
+;여기는 개별적으로
 ;-------------------------------------------------------------------------
 ;----------------------------------
-;恭順
+;공순
 ;----------------------------------
 @ACT_ACTM3_ALLEGIANCE_M
 
-;調教対象の恭順PALAMが[3000→0, 8000→5]を加算(0～5)
-CALL ADD_CRI_VAR("騎乗位", LINE_CALC(PALAM:MASTER:恭順, "3000→0,8000→5,LIMIT/0～5"))
+;조교 대상의 공순 PALAM가[3000→0, 8000→5]를 가산(0~5)
+CALL ADD_CRI_VAR("승마위", LINE_CALC(PALAM:MASTER:공순, "3000→0,8000→5,LIMIT/0～5"))
 
 ;-------------------------------------------------------------------------
-;調教対象の経験を参照
+;조교 대상의 경험을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM3_EXP_M
 
-;調教対象のＡ経験が[0→-15, 20→0]を加算(-15～0)
-CALL ADD_CRI_VAR("アナルセックス", LINE_CALC(EXP:MASTER:Ａ経験, "0→-15,20→0,LIMIT/-15～0"))
+;조교 대상의 A경험이[0→-15, 20→0]을 가산(-15~0)
+CALL ADD_CRI_VAR("애널 섹스", LINE_CALC(EXP:MASTER:A경험, "0→-15,20→0,LIMIT/-15～0"))
 
 ;-------------------------------------
-;調教者の罪悪感
+;조교자의 죄악감
 ;-------------------------------------
 @ACT_ACTM3_SIN_T
 
-;調教者の罪悪感が[60→0, 100→-2]を加算(-2～0)
-CALL ADD_CRI_VAR("後背位", LINE_CALC(CFLAG:罪悪感, "60→0,100→-2,LIMIT/-2～0"))
-;調教者の罪悪感が[80→0, 100→-1]を加算(-1～0)
-CALL ADD_CRI_VAR("背面座位", LINE_CALC(CFLAG:罪悪感, "80→0,100→-1,LIMIT/-1～0"))
-;調教者の罪悪感が[0→0, 100→-4]を加算(-4～0)
-CALL ADD_CRI_VAR("アナルセックス", LINE_CALC(CFLAG:罪悪感, "0→0,100→-4,LIMIT/-4～0"))
+;조교자의 죄악감이[60→0, 100→-2]를 가산(-2~0)
+CALL ADD_CRI_VAR("후배위", LINE_CALC(CFLAG:죄악감, "60→0,100→-2,LIMIT/-2～0"))
+;조교자의 죄악감이[80→0, 100→-1]을 가산(-1~0)
+CALL ADD_CRI_VAR("배면좌위", LINE_CALC(CFLAG:죄악감, "80→0,100→-1,LIMIT/-1～0"))
+;조교자의 죄악감이[0→0, 100→-4]를 가산(-4~0)
+CALL ADD_CRI_VAR("애널 섹스", LINE_CALC(CFLAG:죄악감, "0→0,100→-4,LIMIT/-4～0"))
 
 ;-------------------------------------
-;調教者のALI
+;조교자의 ALI
 ;-------------------------------------
 @ACT_ACTM3_ALI_T
 
-;アライメントが[-50→-3, 50→3]を加算(-3～3)
-CALL ADD_CRI_VAR("正常位", LINE_CALC(CFLAG:アライメント, "-50→-3,50→3,LIMIT/-3～3"))
-;アライメントが[-50→3, 50→-3]を加算(-3～3)
-CALL ADD_CRI_VAR("アナルセックス", LINE_CALC(CFLAG:アライメント, "-50→3,50→-3,LIMIT/-3～3"))
+;아라이먼트가[-50→-3, 50→3]을 가산(-3~3)
+CALL ADD_CRI_VAR("정상위", LINE_CALC(CFLAG:아라이먼트, "-50→-3,50→3,LIMIT/-3～3"))
+;아라이먼트가[-50→3, 50→-3]을 가산(-3~3)
+CALL ADD_CRI_VAR("애널 섹스", LINE_CALC(CFLAG:아라이먼트, "-50→3,50→-3,LIMIT/-3～3"))
 
-;────────────────────────────────────
-;ゲージや状態による変動
-;────────────────────────────────────
+;─
+;게이지나 상태에 의한 변동
+;─
 ;-------------------------------------
-;調教対象の体力
+;조교 대상의 체력
 ;-------------------------------------
 @ACT_ACTM3_PHYSICAL_M
 
-;調教対象の体力が[0→-2, 1500→0]を加算(-2～0)
-CALL ADD_CRI_VAR("対面座位", LINE_CALC(BASE:MASTER:体力, "0→-2,1500→0,LIMIT/-2～0"))
-;調教対象の体力が[0→-3, 1500→0]を加算(-3～0)
-CALL ADD_CRI_VAR("後背位"  , LINE_CALC(BASE:MASTER:体力, "0→-3,1500→0,LIMIT/-3～0"))
-CALL ADD_CRI_VAR("背面座位", LINE_CALC(BASE:MASTER:体力, "0→-3,1500→0,LIMIT/-3～0"))
-;調教対象の体力が[0→-4, 1500→0]を加算(-4～0)
-CALL ADD_CRI_VAR("アナルセックス", LINE_CALC(BASE:MASTER:体力, "0→-4,1500→0,LIMIT/-4～0"))
-;調教対象の体力が[0→-5, 1500→0]を加算(-5～0)
-CALL ADD_CRI_VAR("騎乗位", LINE_CALC(BASE:MASTER:体力, "0→-5,1500→0,LIMIT/-5～0"))
+;조교 대상의 체력이[0→-2, 1500→0]을 가산(-2~0)
+CALL ADD_CRI_VAR("대면좌위", LINE_CALC(BASE:MASTER:체력, "0→-2,1500→0,LIMIT/-2～0"))
+;조교 대상의 체력이[0→-3, 1500→0]을 가산(-3~0)
+CALL ADD_CRI_VAR("후배위"  , LINE_CALC(BASE:MASTER:체력, "0→-3,1500→0,LIMIT/-3～0"))
+CALL ADD_CRI_VAR("배면좌위", LINE_CALC(BASE:MASTER:체력, "0→-3,1500→0,LIMIT/-3～0"))
+;조교 대상의 체력이[0→-4, 1500→0]을 가산(-4~0)
+CALL ADD_CRI_VAR("애널 섹스", LINE_CALC(BASE:MASTER:체력, "0→-4,1500→0,LIMIT/-4～0"))
+;조교 대상의 체력이[0→-5, 1500→0]을 가산(-5~0)
+CALL ADD_CRI_VAR("승마위", LINE_CALC(BASE:MASTER:체력, "0→-5,1500→0,LIMIT/-5～0"))
 
 ;-------------------------------------
-;調教対象の気力
+;조교 대상의 기력
 ;-------------------------------------
 @ACT_ACTM3_MENTAL_M
 
-;調教対象の気力が[0→-4, 750→0]を加算(-4～0)
-CALL ADD_CRI_VAR("騎乗位", LINE_CALC(BASE:MASTER:気力, "0→-4,750→0,LIMIT/-4～0"))
+;조교 대상의 기력이[0→-4, 750→0]을 가산(-4~0)
+CALL ADD_CRI_VAR("승마위", LINE_CALC(BASE:MASTER:기력, "0→-4,750→0,LIMIT/-4～0"))
 
 ;-------------------------------------
-;調教者の状態(0=通常/1=疲弊/2=衰弱/3=無気力/4=朦朧/5=情欲/6=怒り/7=退屈/8=鬱屈)
+;조교자 상태(0=통상/1=피폐/2=쇠약/3=무기력/4=몽롱/5=정욕/6=분노/7=싫증/8=울적)
 ;-------------------------------------
 @ACT_ACTM3_CONDITION_T
 SELECTCASE GET_CONDITION(TARGET)
-	CASE "疲弊", "衰弱"
-		CALL ADD_CRI_VAR("正常位", -TFLAG:調教者消耗度)
-		CALL ADD_CRI_VAR("後背位", -TFLAG:調教者消耗度 * 2)
-		CALL ADD_CRI_VAR("騎乗位"  , , -TFLAG:調教者消耗度)
-		CALL ADD_CRI_VAR("対面座位", , -TFLAG:調教者消耗度 * 3)
-		CALL ADD_CRI_VAR("背面座位", , -TFLAG:調教者消耗度 * 3)
-		CALL ADD_CRI_VAR("アナルセックス", -TFLAG:調教者消耗度 * 2)
-	CASE "無気力"
-		CALL ADD_CRI_VAR("正常位", -1)
-		CALL ADD_CRI_VAR("後背位", -3)
-		CALL ADD_CRI_VAR("騎乗位", , 5)
-		CALL ADD_CRI_VAR("対面座位", -5)
-		CALL ADD_CRI_VAR("背面座位", -5)
-		CALL ADD_CRI_VAR("アナルセックス", -3)
+	CASE "피폐", "쇠약"
+		CALL ADD_CRI_VAR("정상위", -TFLAG:조교자소모도)
+		CALL ADD_CRI_VAR("후배위", -TFLAG:조교자소모도 * 2)
+		CALL ADD_CRI_VAR("승마위"  , , -TFLAG:조교자소모도)
+		CALL ADD_CRI_VAR("대면좌위", , -TFLAG:조교자소모도 * 3)
+		CALL ADD_CRI_VAR("배면좌위", , -TFLAG:조교자소모도 * 3)
+		CALL ADD_CRI_VAR("애널 섹스", -TFLAG:조교자소모도 * 2)
+	CASE "무기력"
+		CALL ADD_CRI_VAR("정상위", -1)
+		CALL ADD_CRI_VAR("후배위", -3)
+		CALL ADD_CRI_VAR("승마위", , 5)
+		CALL ADD_CRI_VAR("대면좌위", -5)
+		CALL ADD_CRI_VAR("배면좌위", -5)
+		CALL ADD_CRI_VAR("애널 섹스", -3)
 ENDSELECT
 
-;────────────────────────────────────
-;前回の行動や状況による変動
-;────────────────────────────────────
+;─
+;전회의 행동이나 상황에 의한 변동
+;─
 ;-------------------------------------
-;縄
+;줄
 ;-------------------------------------
 @ACT_ACTM3_ROPE
-SIF TEQUIP:縄
-	CALL ADD_CRI_VAR("騎乗位", -5)
+SIF TEQUIP:줄
+	CALL ADD_CRI_VAR("승마위", -5)
 
 ;-------------------------------------
-;アイマスク
+;아이마스크
 ;-------------------------------------
 @ACT_ACTM3_EYEMASK
-SIF TEQUIP:アイマスク
-	CALL ADD_CRI_VAR("騎乗位", -7)
+SIF TEQUIP:아이마스크
+	CALL ADD_CRI_VAR("승마위", -7)
 
 ;-------------------------------------
-;大鏡
+;대거울
 ;-------------------------------------
 @ACT_ACTM3_T_MILLER
-SIF TEQUIP:大鏡
-	CALL ADD_CRI_VAR("背面座位", 5)
+SIF TEQUIP:대거울
+	CALL ADD_CRI_VAR("배면좌위", 5)
 
-;────────────────────────────────────
-;体位関連
-;────────────────────────────────────
+;─
+;체위 관련
+;─
 @ACT_ACTM3_S_POSITION
 #DIM LCOUNT
 
-;体位変更のハードル
-SIF TEQUIP:性交中
-	CALL ADD_CRI_VAR(GET_ACTNAME(29 + TEQUIP:性交中), 5, 5)
+;체위 변경의 허들
+SIF TEQUIP:성교중
+	CALL ADD_CRI_VAR(GET_ACTNAME(29 + TEQUIP:성교중), 5, 5)
 
-;────────────────────────────────────
-;同じ行動連続実行の確率をダウンします
-;────────────────────────────────────
+;─
+;같은 행동 연속 실행의 확률을 다운합니다
+;─
 @ACT_ACTM3_PREV
-SELECTCASE TFLAG:前ACT
-	;アナルセックスは連続実行制限に引っかからない
+SELECTCASE TFLAG:전ACT
+	;애널 섹스는 연속 실행 제한으로 걸리지 않는다
 	CASE 30 TO 34
-		CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:前ACT), -3 * TFLAG:(TFLAG:前ACT + 326) / 100, -4 * TFLAG:(TFLAG:前ACT + 326) / 100)
+		CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:전ACT), -3 * TFLAG:(TFLAG:전ACT + 326) / 100, -4 * TFLAG:(TFLAG:전ACT + 326) / 100)
 ENDSELECT
 
 ;-------------------------------------
-;お仕置き中
+;벌중
 ;-------------------------------------
 @ACT_ACTM3_OSHIOKI
-IF TFLAG:お仕置きフラグ
-	CALL ADD_CRI_VAR("後背位", , 4)
-	CALL ADD_CRI_VAR("アナルセックス", 3, 3)
+IF TFLAG:벌플래그
+	CALL ADD_CRI_VAR("후배위", , 4)
+	CALL ADD_CRI_VAR("애널 섹스", 3, 3)
 ENDIF
 
-;────────────────────────────────────
-;補正値計算
-;────────────────────────────────────
+;─
+;보정치 계산
+;─
 @ACT_ACTM3_CORRECTION(ARG)
 #DIM LCOUNT
 
-;ARGが0以外なら補正値を計算し、以後の処理を行わない
+;ARG가 0이외라면 보정치를 계산해, 이후의 처리를 실시하지 않는다
 IF ARG
 	FOR LCOUNT, 30, 36
-		CALL ACT_M_RES_CALC(LCOUNT, GET_CRI_VAR(GET_ACTNAME(LCOUNT) + "累計"))
+		CALL ACT_M_RES_CALC(LCOUNT, GET_CRI_VAR(GET_ACTNAME(LCOUNT) + "누계"))
 	NEXT
 ELSE
-	;補正値を判定値に加算する
+	;보정치를 판정치에 가산한다
 	CALL ACT_ACTM_CORRECTION(3)
 ENDIF
 
-;────────────────────────────────────
-;その他変動や実行不可能の判定
-;────────────────────────────────────
+;─
+;그 외 변동이나 실행 불가능의 판정
+;─
 @ACT_ACTM3_ABLE
 #DIM LCOUNT
 
-;不可能判定
+;불가능 판정
 CALL ACT_ACTM_ABLE(3)
 

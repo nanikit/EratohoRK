@@ -1,300 +1,300 @@
 ﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;雛口上 休憩系個別リアクション口上ファイル
+;병아리 구상 휴게계 개별 리액션 구상 파일
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;#################
-;休憩系 REACT90~92
-;#################
+;        #
+;휴게계 REACT90~92
+;        #
 [SKIPSTART]
 	#TFLAG:ACT
-		90 = 休ませる
-		91 = 栄養剤を飲ませる
-		92 = 治療する
+		90 =쉬게 한다
+		91 =영양제를 먹인다
+		92 =치료한다
 
-・ACT分類:休憩系の場合、会話系COM(COM0~COM8)中心の選択肢となりますが
-・状況によってはその他のものが選択肢に含まれる可能性もあります
-・※持続効果のあるTEQUIPで愛撫系反応が選択肢となる場合があります
+·ACT 분류:휴게계의 경우, 회화계 COM(COM0~COM8) 중심의 선택지가 됩니다만
+·상황에 따라서는 그 외의 것이 선택지에 포함될 가능성도 있습니다
+·※지속 효과가 있는 TEQUIP로 애무계 반응이 선택지가 되는 경우가 있습니다
 [SKIPEND]
 
 
 ;///////////////////////////////////
-;REACT90, 休ませる・個別リアクション
+;REACT90, 쉬게 하는·개별 리액션
 ;///////////////////////////////////
 [SKIPSTART]
-想定されるCOM…
-	会話系反応
-		COM:沈黙する/気弱く応答する/無愛想に応答する/愛想よく応答する/
-			強気に応答する/皮肉を言う/もっとハードにして/許しを乞う/気持ち良くして
-	愛撫系反応
-		COM:快感を我慢する/快感を受け入れる/気持ち良い！
-	苦痛系反応
-		COM:痛みを我慢する/悲鳴を上げる
+상정되는 COM…
+	회화계 반응
+		COM:침묵한다/심약구응답한다/무뚝뚝하게 응답한다/붙임성 좋게 응답한다/
+			강하게 응답한다/빈정거린다/좀 더 하드하게 해/허가를 청한다/기분 좋게 해
+	애무계 반응
+		COM:쾌감을 참는다/쾌감을 받아들인다/기분 좋다!
+	고통계 반응
+		COM:아픔을 참는다/비명을 올린다
 
-・地の文はACT派生で分岐
-・REACT分類が受け入れるの場合のみ処理が異なる
+·지문은 ACT 파생으로 분기
+·REACT 분류가 받아들이는 것 경우만 처리가 다르다
 [SKIPEND]
-@KOJO_MALE_REACT_K39_90 ;TFLAG:ACT派生(0=普通に休んだ/1=道具のせいであまり休めなかった/2=勝手に自慰をし始めた)
+@KOJO_MALE_REACT_K39_90 ;TFLAG:ACT 파생(0=보통으로 쉰/1=도구의 탓으로 너무 쉬게 하지 않았다/2=마음대로 자위를하기 시작했다)
 #DIM  DYNAMIC FAV_RATING
 #DIMS DYNAMIC SYMBOL
 #DIMS DYNAMIC STRING
 #DIMS DYNAMIC MSTR
-FAV_RATING = GET_KFLAG_K39("相思相愛")
+FAV_RATING = GET_KFLAG_K39("상사상애")
 SYMBOL    '= HTML_PS_K39()
-STRING    '= RAND_SPLIT("ふふ/うふ/ふふっ/うふっ/くすっ/クスクス") + "…"
+STRING    '= RAND_SPLIT("후후/우대신/후후/우대신/키득/킥킥") + "…"
 MSTR      '= CNAME(MASTER, TARGET)
 
-;REACT90_0, 普通に休んだ // 負荷2は弾く
+;REACT90_0, 보통으로 쉰 // 부하 2는 연주한다
 ;=======================
-IF !TFLAG:ACT派生 && TFLAG:REACT負荷 < 2
-	;COM1, 気弱く応答する
-	IF IS_NOWCOMNAME("気弱く応答する") && TFLAG:REACT派生 < 1
-		PRINTFORMW 「\@ FAV_RATING ? あまり元気がないみたい… # 元気がありませんね？ \@」
-		PRINTFORMW 「\@ FAV_RATING ? ねぇ、まだ疲れが残ってるの？ # まだ疲れが残ってるのでしょうか \@」
+IF !TFLAG:ACT파생 && TFLAG:REACT부하 < 2
+	;COM1, 심약구응답한다
+	IF IS_NOWCOMNAME("심약구응답한다") && TFLAG:REACT파생 < 1
+		PRINTFORMW 「\@ FAV_RATING ? 너무 기운이 없는 것 같다…# 건강해 보이지 않네요?\@」
+		PRINTFORMW 「\@ FAV_RATING ? 응, 아직 피로가 남아 있는 거야?# 아직 피로가 남아 있는 것일까요\@」
 		RETURN 1
 	ENDIF
 
-	;COM2, 無愛想に応答する
-	IF IS_NOWCOMNAME("無愛想に応答する")
+	;COM2, 무뚝뚝하게 응답한다
+	IF IS_NOWCOMNAME("무뚝뚝하게 응답한다")
 		{
 		PRINTFORMW 「\@ FAV_RATING 
-		? なにそれ、%RAND_SPLIT("機嫌でも悪いの…？/なんで不貞腐れてる訳？")% 
-		# そういう態度は%RAND_SPLIT("良くありませんよ？/感心しませんね…")% \@」
+		? 뭐야 그것,%RAND_SPLIT("기분에서도 나쁜거야…? /어째서 심통이 나고 있는 것?")% 
+		# 그러한 태도는%RAND_SPLIT("좋지 않아요? /감탄하지 않네요…")% \@」
 		}
 		RETURN 1
 	ENDIF
 
-	;COM3, 愛想よく応答する
-	IF IS_NOWCOMNAME("愛想よく応答する")
+	;COM3, 붙임성 좋게 응답한다
+	IF IS_NOWCOMNAME("붙임성 좋게 응답한다")
 		SELECTCASE RANDREACT(3, 30)
 			CASE 0
-				CALL HTMLPRINTW(@"「%STRING%、元気いっぱいって感じ\@ FAV_RATING ? ね # ですね \@%SYMBOL%」")
+				CALL HTMLPRINTW(@"「%STRING%, 활기가 가득이라는 느낌\@ FAV_RATING ? 군요# 군요\@%SYMBOL%」")
 			CASE 1
-				PRINTFORMW 「\@ FAV_RATING ? ほら # さあ \@、もっと楽にして\@ FAV_RATING ? ？ # ください \@」
-				CALL HTMLPRINTW(@"「肩を揉んであげ\@ FAV_RATING ? るから # ます \@%SYMBOL%」")
+				PRINTFORMW 「\@ FAV_RATING ? 이봐요# 자\@, 좀 더 편하게 해\@ FAV_RATING ? ？ # 주세요\@」
+				CALL HTMLPRINTW(@"「어깨를 비비어 주고\@ FAV_RATING ? 로부터#\@%SYMBOL%」")
 			CASE 2
-				PRINTFORMW 「すっかり元気にな\@ FAV_RATING ? ったわね # りましたね \@」
+				PRINTFORMW 「완전히 건강하게\@ FAV_RATING ? 원이군요# 했군요\@」
 				{
-				CALL HTMLPRINTW(@"「\@ FAV_RATING ? じゃぁ # では \@続きを頑張\@ FAV_RATING 
-				? %RAND_SPLIT("ってもらうわよ/ってね")% 
-				# %RAND_SPLIT("ってもらいますよ/りましょうか")% \@%SYMBOL%」")
+				CALL HTMLPRINTW(@"「\@ FAV_RATING ? 다# 에서는\@계속을 완장\@ FAV_RATING 
+				? %RAND_SPLIT("는 받아요/라고")% 
+				# %RAND_SPLIT("는 받아요/짊어질까")% \@%SYMBOL%」")
 				}
 		ENDSELECT
 		RETURN 1
 	ENDIF
 
-	;COM4, 強気に応答する
-	IF IS_NOWCOMNAME("強気に応答する") && TFLAG:REACT派生 < 1
+	;COM4, 강하게 응답한다
+	IF IS_NOWCOMNAME("강하게 응답한다") && TFLAG:REACT파생 < 1
 		{
 		PRINTFORMW 「\@ FAV_RATING 
-		? なにそれ？ 急に強気になっちゃって 
-		# 私、そういうのはあまり好きではありません \@…」
+		? 뭐야 그것? 갑자기 강하게 되어 버려
+		# 나, 그러한 것은 별로 좋아하지는 않습니다\@…」
 		}
 		RETURN 1
 	ENDIF
 
-	;COM6, もっとハードにして
-	IF IS_NOWCOMNAME("もっとハードにして") && TFLAG:REACT派生 < 1
-		PRINTFORMW 「すっかり元気になったみたいで何より\@ FAV_RATING ? だ # です \@けど…」
-		CALL HTMLPRINTW(@"「そんなこと言って…、後悔しても知\@ FAV_RATING ? らないわよ # りませんよ \@%SYMBOL%」")
+	;COM6, 좀 더 하드하게 해
+	IF IS_NOWCOMNAME("좀 더 하드하게 해") && TFLAG:REACT파생 < 1
+		PRINTFORMW 「완전히 건강하게 된 것 같아 무엇보다\@ FAV_RATING ? 다# 입니다\@지만…」
+		CALL HTMLPRINTW(@"「그런 일 말해…, 후회해도 지\@ FAV_RATING ? 등 없어요# 선\@%SYMBOL%」")
 		CALL FADE_TO_CLEARLINE(15, @"「%STRING%」")
 		RETURN 1
 	ENDIF
 
-	;COM8, 気持ちよくして
-	IF IS_NOWCOMNAME("気持ち良くして") && TFLAG:REACT派生 < 1
-		PRINTFORMW 「%STRING%、元気になったと思ったらそれ\@ FAV_RATING ? な訳 # ですか \@？」
+	;COM8, 기분 좋게 해
+	IF IS_NOWCOMNAME("기분 좋게 해") && TFLAG:REACT파생 < 1
+		PRINTFORMW 「%STRING%, 건강하게 되었다고 생각하면 그것\@ FAV_RATING ? 인 이유# 입니까\@？」
 		{
-		CALL HTMLPRINTW(@"「尤も…、%MSTR%に言われるまでもなく、最初からそのつもり\@ 
-		FAV_RATING ? だけど # ですけど \@%SYMBOL%」")
+		CALL HTMLPRINTW(@"「무엇보다…,%MSTR%에 말해질 것도 없이, 최초부터 그럴 생각\@ 
+		FAV_RATING ? 이지만# 이지만\@%SYMBOL%」")
 		}
 		RETURN 1
 	ENDIF
 ENDIF
 
-;REACT90_1, 道具のせいであまり休めなかった
+;REACT90_1, 도구의 탓으로 너무 쉬게 하지 않았다
 ;=========================================
-IF TFLAG:ACT派生 == 1
-	;相思相愛
+IF TFLAG:ACT파생 == 1
+	;상사상애
 	IF FAV_RATING
-		PRINTFORML 「やだ、ごめんなさい。落ち着かなかった？」
-		PRINTFORMW 「…って、今更言うのはちょっと白々しいかな」
-	;その他
+		PRINTFORML 「싫다, 미안해요. 침착하지 않았어?」
+		PRINTFORMW 「… 읏, 이제 와서 말하는 것은 조금 속이 빤할까」
+	;그 외
 	ELSE
-		PRINTFORML 「気が付かなくてごめんなさい。落ち着かなかったですか？」
-		PRINTFORMW 「って、今頃言っても遅いですよね」
+		PRINTFORML 「깨닫지 않아서 미안해요. 침착하지 않았던 것입니까?」
+		PRINTFORMW 「읏, 지금쯤 말해도 늦지요」
 	ENDIF
 	CALL FADE_TO_CLEARLINE(15, @"「%STRING%」")
 	RETURN 1
 ENDIF
 
-;REACT90_2, 勝手に自慰をし始めた
+;REACT90_2, 마음대로 자위를하기 시작했다
 ;===============================
-IF TFLAG:ACT派生 == 2
-	;調教対象の自慰中毒Lv6以上
-	IF ABL:MASTER:自慰中毒 > 6
+IF TFLAG:ACT파생 == 2
+	;조교 대상의 자위 중독 Lv6 이상
+	IF ABL:MASTER:자위중독 > 6
 		SELECTCASE RANDREACT(2, 40)
 			CASE 0
 				PRINTFORMW 「…………」
 				{
-				PRINTFORMW 「いまさら何を言っても無駄だと思\@ 
-				FAV_RATING ? うけど # いますけど\@、敢えて言わせて\@ 
-				!FAV_RATING ? ください # \@…」
+				PRINTFORMW 「이제 와서 무슨 말을 해도 쓸데없다면 사\@ 
+				FAV_RATING ? 지만# 있습니다만\@, 감히 말하게 해\@ 
+				!FAV_RATING ? 주세요# \@…」
 				}
 				{
 				CALL HTMLPRINTW(@"「%HTMLFONT(@"<b>いい加減にし\@ FAV_RATING 
-				? なさいよ%RAND_SPLIT("っ/")% # てください \@！</b>", , ,)%」")
+				? 하세요%RAND_SPLIT("/")% # 라고주세요 \@！</b>", , ,)%」")
 				}
 			CASE 1
-				PRINTFORMW 「どうせ言ってもやめる気はないんで\@ FAV_RATING ? しょ # すよね \@？」
+				PRINTFORMW 「어차피 말해도 그만둘 생각은 없어서\@ FAV_RATING ? 실마리# 군요\@？」
 				{
-				PRINTFORMW 「\@ FAV_RATING ? もうっ！ # \@本当にどうしようもない人\@ 
-				FAV_RATING ? %RAND_SPLIT("ね/")%… # ですね… \@」
+				PRINTFORMW 「\@ FAV_RATING ? 이제(벌써)!# \@정말로 어쩔 수 없는 사람\@ 
+				FAV_RATING ? %RAND_SPLIT("군요/")%… # 군요…\@」
 				}
 		ENDSELECT
 		RETURN 1
 	ENDIF
 
-	;調教対象の自慰中毒Lv3以上
-	IF ABL:MASTER:自慰中毒 > 3
-		PRINTFORMW 「私とするより自分でする方がいい\@ FAV_RATING ? の # んですか \@！？」
+	;조교 대상의 자위 중독 Lv3 이상
+	IF ABL:MASTER:자위중독 > 3
+		PRINTFORMW 「나로 하는 것보다 스스로 하는 편이 좋다\@ FAV_RATING ? 의# 응입니까\@！？」
 		{
-		PRINTFORMW 「それに…、そんな事\@ FAV_RATING 
-		? してちゃ休憩にならないでしょ！ 
-		# をしていては、休憩になりません… \@」
+		PRINTFORMW 「게다가…, 그런 일\@ FAV_RATING 
+		? 하고 있어서는 휴게가 되지 않지요!
+		# 를 하고 있어서는, 휴게가 되지 않습니다…\@」
 		}
 		RETURN 1
 	ENDIF
 
-	;その他
+	;그 외
 	SELECTCASE RANDREACT(2, 60)
 		CASE 0
-			PRINTFORMW 「それ\@ FAV_RATING ? じゃ # では\@休憩にな\@ FAV_RATING ? らないでしょう # りませんよね \@？」
-			PRINTFORMW 「本当に困った人\@ FAV_RATING ? ね # ですね\@…」
+			PRINTFORMW 「그것\@ FAV_RATING ? 다# 에서는\@휴게에\@ FAV_RATING ? 등 없을 것입니다# 선이군요\@？」
+			PRINTFORMW 「정말로 곤란한 사람\@ FAV_RATING ? 군요# 군요\@…」
 		CASE 1
-			CALL FADEIN(15, @"「は？ %MSTR%…、いったい何を……」")
-			PRINTFORMW 「そんな事して良いなんて、言った覚えは\@ FAV_RATING ? ないんですけどー！？ # ありませんけど… \@」
+			CALL FADEIN(15, @"「하?%MSTR%…, 도대체 무엇을……」")
+			PRINTFORMW 「그런 일 해도 좋다니, 말한 기억은\@ FAV_RATING ? 없습니다만―!?# 없지만…\@」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 
 ;///////////////////////////////////////////
-;REACT91, 栄養剤を飲ませる・個別リアクション
+;REACT91, 영양제를 먹이는·개별 리액션
 ;///////////////////////////////////////////
 [SKIPSTART]
-想定されるCOM…
-	会話系反応
-		COM:沈黙する/気弱く応答する/無愛想に応答する/愛想よく応答する/強気に応答する/皮肉を言う/もっとハードにして/許しを乞う/気持ち良くして
-	奉仕系反応
-		COM:拒否する
+상정되는 COM…
+	회화계 반응
+		COM:침묵한다/심약구응답한다/무뚝뚝하게 응답한다/붙임성 좋게 응답한다/강하게 응답한다/빈정거린다/좀 더 하드하게 해/허가를 청한다/기분 좋게 해
+	봉사계 반응
+		COM:거부한다
 
-・地の文はTFLAG:ACT派生で分岐
+·지문은 TFLAG:ACT 파생으로 분기
 [SKIPEND]
-@KOJO_MALE_REACT_K39_91 ;TFLAG:ACT派生(0=栄養剤を飲んだ/1=栄養剤を捨てた)
+@KOJO_MALE_REACT_K39_91 ;TFLAG:ACT 파생(0=영양제를 마신/1=영양제를 버렸다)
 #DIM  DYNAMIC FAV_RATING
 #DIMS DYNAMIC SYMBOL
 #DIMS DYNAMIC STRING
 #DIMS DYNAMIC MSTR
 #DIMS DYNAMIC YOU
 #DIMS DYNAMIC TGT
-FAV_RATING = GET_KFLAG_K39("相思相愛")
+FAV_RATING = GET_KFLAG_K39("상사상애")
 SYMBOL    '= HTML_PS_K39()
-STRING    '= RAND_SPLIT("ふふ/うふ/ふふっ/うふっ/くすっ/クスクス") + "…"
+STRING    '= RAND_SPLIT("후후/우대신/후후/우대신/키득/킥킥") + "…"
 MSTR      '= CNAME(MASTER, TARGET)
 YOU       '= CALLNAME:MASTER
 TGT       '= CALLNAME:TARGET
 
-;栄養剤とかいう謎ドリンク――
-;飲むと回復するという以外特に設定もないので好きな様に扱えばいいかと
+;영양제라든가 하는 수수께끼 드링크─
+;마시면 회복한다고 하는 이외 특히 설정도 없기 때문에 좋을대로 취급하면 좋을까
 
-;REACT91_0, 栄養剤を飲んだ
+;REACT91_0, 영양제를 마셨다
 ;=========================
-IF !TFLAG:ACT派生
-	;積極的に従った
-	IF IS_COMGRONAME("平然と従う/積極的従う/受け入れる") && TFLAG:REACT負荷 < 2
+IF !TFLAG:ACT파생
+	;적극적으로 따랐다
+	IF IS_COMGRONAME("태연하게 따른다/적극적 따른다/받아들인다") && TFLAG:REACT부하 < 2
 		SELECTCASE RANDREACT(3, 0)
 			CASE 0
-				PRINTFORMW 「%STRING%、そんなに美味しかった\@ !FAV_RATING ? ですか # \@？」
+				PRINTFORMW 「%STRING%, 그렇게 맛있었다\@ !FAV_RATING ? 입니까# \@？」
 			CASE 1
-				CALL HTMLPRINTW(@"「%STRING%、気に入ってもらえたみたい\@ !FAV_RATING ? です # \@ね%SYMBOL%」")
+				CALL HTMLPRINTW(@"「%STRING%, 마음에 들어 받을 수 있던 것 같다\@ !FAV_RATING ? 입니다# \@군요%SYMBOL%」")
 			CASE 2
-				PRINTFORMW 「厄ルトをどうやって作っているの\@ FAV_RATING ? かって # か、ですか \@？」
-				PRINTL 「それは――
+				PRINTFORMW 「액르트를 어떻게 만들고 있어\@ FAV_RATING ? 사# 인가, 입니까\@？」
+				PRINTL 「그것은―
 				IF RAND:3
-					CALL FADEIN(8, "　　　　　ひ")
-					CALL FADEIN(8, "　　　　　　み")
-					CALL FADEIN(8, "　　　　　　　つ")
-					CALL HTMLPRINTW(@"　　　　　　　　　――\@ FAV_RATING ? よ # です\@%SYMBOL%」")
+					CALL FADEIN(8, "　　　　　히")
+					CALL FADEIN(8, "　　　　　　보고")
+					CALL FADEIN(8, "　　　　　　　개")
+					CALL HTMLPRINTW(@"　　　　　　　　　――\@ FAV_RATING ? 야# 입니다\@%SYMBOL%」")
 				ELSE
-					PRINTFORML 「――知らない方が良い\@ FAV_RATING ? わ # と思います\@。きっと%MSTR%は……」
-					PRINTFORMW 「聞いた事を後悔する\@ FAV_RATING ? と思うから # でしょうから \@」
+					PRINTFORML 「-모르는 것이 좋다\@ FAV_RATING ? 원# 라고 생각합니다\@. 반드시%MSTR%는……」
+					PRINTFORMW 「(들)물은 일을 후회한다\@ FAV_RATING ? 라고 생각하기 때문에# 일테니까\@」
 				ENDIF
 				CALL FADE_TO_CLEARLINE(15, @"「%STRING%」")
 				{
 				PRINTFORMDW \@ FIRSTREACT(0) 
-				? %TGT%は結局、%YOU%に厄ルトの秘密を教えてくれなかった 
-				# %RAND_SPLIT(@"%TGT%にまたしても、厄ルトの秘密をはぐらかされてしまった/" + 
-				"結局のところ、%TGT%は%YOU%に厄ルトの秘密を教える気はなさそうだ…")% \@…
+				? %TGT%는 결국,%YOU%에 액르트의 비밀을 가르쳐 주지 않았다
+				# %RAND_SPLIT(@"%TGT%에 또다시, 액르트의 비밀을 얼버무려져 버린/" + 
+				"결국,%TGT%는%YOU%에 액르트의 비밀을 가르칠 생각은 없는 것 같다…")% \@…
 				}
 		ENDSELECT
-	;その他
+	;그 외
 	ELSE
-		PRINTFORMW 「\@ FAV_RATING ? なんかそれ…、嫌々飲んでない？ # %MSTR%の口には合わなかったみたいですね… \@」
+		PRINTFORMW 「\@ FAV_RATING ? 는 그것…, 마지못해서 마시지 않아?# %MSTR%의 입에는 맞지 않았던 것 같네요…\@」
 	ENDIF
 	RETURN 1
 ENDIF
 
-;REACT91_1, 栄養剤を捨てた
+;REACT91_1, 영양제를 버렸다
 ;=========================
-IF TFLAG:ACT派生 == 1
+IF TFLAG:ACT파생 == 1
 	{
 	PRINTFORMW 「\@ FAV_RATING 
-	? %RAND_SPLIT("酷い…、折角作ったのに…/ちょ、ちょっと！ もったいない事しないでよ！")% 
-	# %RAND_SPLIT("そんな勿体無い事、やめてください/随分ひどい事をするんですね")%… \@」
+	? %RAND_SPLIT("심한…, 모처럼 만들었는데…/조, 조금! 아까운 것 하지 말아요!")% 
+	# %RAND_SPLIT("그렇게 과분한 일, 그만두어 주세요/상당히 심한 일을 하는군요")%… \@」
 	}
 	RETURN 1
 ENDIF
 
 
 ;///////////////////////////////////
-;REACT92, 治療する・個別リアクション
+;REACT92, 치료하는·개별 리액션
 ;///////////////////////////////////
 [SKIPSTART]
-想定されるCOM…
-	会話系反応
-		COM:沈黙する/気弱く応答する/無愛想に応答する/愛想よく応答する/
-		強気に応答する/皮肉を言う/もっとハードにして/許しを乞う/気持ち良くして
-	奉仕系反応
-		COM:暴れる
+상정되는 COM…
+	회화계 반응
+		COM:침묵한다/심약구응답한다/무뚝뚝하게 응답한다/붙임성 좋게 응답한다/
+		강하게 응답한다/빈정거린다/좀 더 하드하게 해/허가를 청한다/기분 좋게 해
+	봉사계 반응
+		COM:날뛴다
 
-・地の文はTFLAG:ACT派生で分岐
+·지문은 TFLAG:ACT 파생으로 분기
 [SKIPEND]
-@KOJO_MALE_REACT_K39_92 ;TFLAG:ACT派生(0=体の隅々まで撫で回して治療した/1=暴れたため治療できなかった)
+@KOJO_MALE_REACT_K39_92 ;TFLAG:ACT 파생(0=몸의 구석구석까지 더듬어 치료한/1=날뛰었기 때문에 치료 할 수 없었다)
 
-;REACT92_0, 体の隅々まで撫で回して治療した
+;REACT92_0, 몸의 구석구석까지 더듬어 치료했다
 ;=========================================
-IF !TFLAG:ACT派生
-	;好意好感度で派生
-	IF GET_KFLAG_K39("相思相愛")
-		CALL HTMLPRINTW(@"「これでも一応神様なんだから、まぁ%RAND_SPLIT("これ位の事/このくらい")%はね？ ふふ%HTML_PS_K39()%」")
-		PRINTFORMDW そう言い放った%CALLNAME:TARGET%の表情は、どこか得意げだ…
+IF !TFLAG:ACT파생
+	;호의 호감도로 파생
+	IF GET_KFLAG_K39("상사상애")
+		CALL HTMLPRINTW(@"「이것이라도 일단 신인 것이니까, 아무튼%RAND_SPLIT("이 정도의 일/이 정도")%는요? 후후%HTML_PS_K39()%」")
+		PRINTFORMDW 그렇게 단언했다%CALLNAME:TARGET%의 표정은, 어딘가 자랑스럽다…
 	ELSE
-		PRINTFORMW 「どうです？ 少しは回復できたでしょうか」
+		PRINTFORMW 「어떻습니까? 조금은 회복할 수 있던 것입니까」
 	ENDIF
 	RETURN 1
 ENDIF
 
-;REACT92_1, 暴れたため治療できなかった
+;REACT92_1, 날뛰었기 때문에 치료 할 수 없었다
 ;=====================================
-IF TFLAG:ACT派生 == 1
-	IF GET_KFLAG_K39("相思相愛")
-		PRINTFORMW 「%RAND_SPLIT("私を困らせて、さぞや楽しいんでしょうね…/そうやって、暴れる元気はあるのね……")%」
-		PRINTFORMDW そう言い放つ%CALLNAME:TARGET%の背後に、黒く禍々しいオーラが漂う…
+IF TFLAG:ACT파생 == 1
+	IF GET_KFLAG_K39("상사상애")
+		PRINTFORMW 「%RAND_SPLIT("나를 곤란하게 해, 필시 즐겁겠지요…/그렇게, 날뛰는 건강은 있는 거네……")%」
+		PRINTFORMDW 그렇게 단언한다%CALLNAME:TARGET%의 배후에, 검고 불길한 오라가 감돈다…
 	ELSE
-		PRINTFORML 「――困りましたね。私に治療されるのがそんなに嫌ですか？」
-		PRINTFORMW 「それとも私、信用されていないんでしょうか……」
+		PRINTFORML 「-곤란하군요. 나에게 치료되는 것이 그렇게 싫습니까?」
+		PRINTFORMW 「그렇지 않으면 나, 신용되어 있지 않을까요……」
 	ENDIF 
 	RETURN 1
 ENDIF

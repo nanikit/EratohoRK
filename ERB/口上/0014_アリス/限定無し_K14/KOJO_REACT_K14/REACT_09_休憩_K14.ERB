@@ -1,369 +1,369 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;	アリス口上 休憩系個別リアクション口上ファイル
+;	앨리스 구상 휴게계 개별 리액션 구상 파일
 ;
-;		休憩系リアクション口上をまとめたファイル
+;		휴게계 리액션 구상을 정리한 파일
 ;
 ;Version		Reason
-;1.71			@口上記入チェック仕様に
-;1.67修正1		栄養剤を飲ませるで現行仕様のREACT分類に対応できていなかったのを修正
-;1.65			TFLAG:REACT負荷 < 2の場合COMに流れるように
-;1.62			SELECTCOMをIS_NOWCOMNAMEに変更
-;1.60			ACT分類単体ファイルとして独立
+;1. 71			@구상 기입 체크 사양에
+;1. 67 수정 1		영양제를 먹이는 것으로 현행 사양의 REACT 분류에 대응 되어 있지 않았던 것을 수정
+;1. 65			TFLAG:REACT 부하 < 2의 경우 COM에 흐르도록(듯이)
+;1. 62			SELECTCOM를 IS_NOWCOMNAME로 변경
+;1. 60			ACT 분류 단체 파일로서 독립
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-;────────────────────────────────────
-;休憩系
-;────────────────────────────────────
+;─
+;휴게계
+;─
 
 ;*************************************************
-;REACT90, 休ませる・個別リアクション
+;REACT90, 쉬게 하는·개별 리액션
 ;*************************************************
 ;=================================================
 @KOJO_REACT_K14_90
 ;=================================================
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;REACT90_0, 普通に休んだ
+;REACT90_0, 보통으로 쉬었다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:ACT派生 == 0
+IF 구상기입체크(100) && TFLAG:ACT파생 == 0
 	;=================================================
-	;沈黙する
+	;침묵한다
 	;=================================================
-	IF 口上記入チェック(100) && IS_NOWCOMNAME("沈黙する") && TFLAG:REACT負荷 < 2
-		PRINTFORMW 「なに黙ってるのよ。可愛くないわね…」
+	IF 구상기입체크(100) && IS_NOWCOMNAME("침묵한다") && TFLAG:REACT부하 < 2
+		PRINTFORMW 「뭐 입다물고 있는거야. 사랑스럽지 않네요…」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;気弱く応答する
+	;심약구응답한다
 	;=================================================
-	IF 口上記入チェック(100) && IS_NOWCOMNAME("気弱く応答する") && TFLAG:REACT負荷 < 2 && TFLAG:REACT派生 < 1
-		IF AFFECTION("相思相愛")
-			PRINTFORMW 「あまり元気がないわね…」
-			PRINTFORMW 「ねぇ、疲れちゃったの…？」
-		ELSEIF AFFECTION("溺愛")
-			PRINTFORMW 「まだ疲れが取れてないみたい…」
-			PRINTFORMW 「ねぇ、大丈夫…？」
-		ELSEIF AFFECTION("眷愛")
-			PRINTFORMW 「元気がないわね…？」
-		ELSEIF AFFECTION("嫌悪")
-			PRINTFORMW 「少しは回復したようね」
-			PRINTFORMW 「これでまた、心置きなく虐めてあげられるわ…♪」
-			PRINTFORMW 「ふふふふふ……」
+	IF 구상기입체크(100) && IS_NOWCOMNAME("심약구응답한다") && TFLAG:REACT부하 < 2 && TFLAG:REACT파생 < 1
+		IF AFFECTION("상사상애")
+			PRINTFORMW 「너무 기운이 없네요…」
+			PRINTFORMW 「저기, 지치게 되었어…?」
+		ELSEIF AFFECTION("몹시 사랑함")
+			PRINTFORMW 「아직 피로가 잡히지 않은 것 같다…」
+			PRINTFORMW 「저기, 괜찮아…?」
+		ELSEIF AFFECTION("권애")
+			PRINTFORMW 「기운이 없네요…?」
+		ELSEIF AFFECTION("혐오")
+			PRINTFORMW 「조금은 회복한듯 하네」
+			PRINTFORMW 「이것으로 또, 염려 없게 괴롭혀 줄 수 있어요…♪」
+			PRINTFORMW 「후후후후후……」
 		ELSE
-			PRINTFORMW 「体調でも悪いのかしら…？」
+			PRINTFORMW 「컨디션에서도 나쁜 것일까…?」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;無愛想に応答する
+	;무뚝뚝하게 응답한다
 	;=================================================
-	IF 口上記入チェック(100) && IS_NOWCOMNAME("無愛想に応答する") && TFLAG:REACT負荷 < 2
-		PRINTFORMW 「%RAND_SPLIT("本当に可愛くないわね/気に入らないわね。そういう態度")%…」
+	IF 구상기입체크(100) && IS_NOWCOMNAME("무뚝뚝하게 응답한다") && TFLAG:REACT부하 < 2
+		PRINTFORMW 「%RAND_SPLIT("정말로 사랑스럽지 않네요/마음에 들지 않네요. 그러한 태도")%…」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;愛想よく応答する
+	;붙임성 좋게 응답한다
 	;=================================================
-	IF 口上記入チェック(100) && IS_NOWCOMNAME("愛想よく応答する") && TFLAG:REACT負荷 < 2
-		IF AFFECTION("相思相愛")
-			PRINTFORMW 「すっかり元気そうね…？」
-			PRINTFORM 「さぁ、続きをしましょう。まだまだ愉しませてね
-		ELSEIF AFFECTION("溺愛")
-			PRINTFORMW 「どう？ ちゃんと回復できたかしら…？」
-			PRINTFORM 「ふふ… 元気になったみたいね。さぁ、続きをしましょう…
-		ELSEIF AFFECTION("眷愛")
-			PRINTFORMW 「ちゃんと回復できたかしら…？」
-			PRINTFORM 「さぁ、続きをしましょう…
+	IF 구상기입체크(100) && IS_NOWCOMNAME("붙임성 좋게 응답한다") && TFLAG:REACT부하 < 2
+		IF AFFECTION("상사상애")
+			PRINTFORMW 「완전히 건강한 것 같구나…?」
+			PRINTFORM 「자, 계속을 합시다. 아직도 즐겁게 해
+		ELSEIF AFFECTION("몹시 사랑함")
+			PRINTFORMW 「어때? 분명하게 회복할 수 있었을까…?」
+			PRINTFORM 「후후… 건강하게 된 것 같구나. 자, 계속을 합시다…
+		ELSEIF AFFECTION("권애")
+			PRINTFORMW 「분명하게 회복할 수 있었을까…?」
+			PRINTFORM 「자, 계속을 합시다…
 		ELSE
-			PRINTFORMW 「少しは休めたかしら？」
-			PRINTFORM 「じゃぁ続きを始めるわよ
+			PRINTFORMW 「조금은 쉬게 했을까?」
+			PRINTFORM 「그러면 계속을 시작해요
 		ENDIF
 		CALL PRINT_SYMBOL_K14
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;強気に応答する
+	;강하게 응답한다
 	;=================================================
-	IF 口上記入チェック(100) && IS_NOWCOMNAME("強気に応答する") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
+	IF 구상기입체크(100) && IS_NOWCOMNAME("강하게 응답한다") && TFLAG:REACT파생 < 1 && TFLAG:REACT부하 < 2
 		SELECTCASE RANDREACT(3, 0)
 			CASE 0
-				PRINTFORMW 「あぁそう。勝手にすればいいわ！」
+				PRINTFORMW 「아그렇게. 마음대로 하면 좋아요!」
 			CASE 1
-				PRINTFORMW 「こんな時だけ強気でも意味が無いと思うけどね？」
+				PRINTFORMW 「이런 때만 강해도 의미가 없다고 생각하지만 말야?」
 			CASE 2
-				PRINTFORMW 「そういう態度してると%RAND_SPLIT("張り倒す/痛い目にあわせる")%わよ……」
+				PRINTFORMW 「그러한 태도 하고 있으면%RAND_SPLIT("때려 누인다/아픈 꼴을 당하게 한다")%원이야……」
 		ENDSELECT
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;もっとハードにして
+	;좀 더 하드하게 해
 	;=================================================
-	IF 口上記入チェック(100) && IS_NOWCOMNAME("もっとハードにして") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
-		PRINTFORM 「あらあら、%RAND_SPLIT("可愛いこと言うじゃない/本当にいいのかしら")%
+	IF 구상기입체크(100) && IS_NOWCOMNAME("좀 더 하드하게 해") && TFLAG:REACT파생 < 1 && TFLAG:REACT부하 < 2
+		PRINTFORM 「아라아라,%RAND_SPLIT("사랑스러운 일 말하지 않다/정말로 좋은 것일까")%
 		CALL PRINT_SYMBOL_K14
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;気持ちよくして
+	;기분 좋게 해
 	;=================================================
-	IF 口上記入チェック(100) && IS_NOWCOMNAME("気持ち良くして") && TFLAG:REACT派生 < 1 && TFLAG:REACT負荷 < 2
-		PRINTFORMW 「うふっ、もう待ちきれないの？」
+	IF 구상기입체크(100) && IS_NOWCOMNAME("기분 좋게 해") && TFLAG:REACT파생 < 1 && TFLAG:REACT부하 < 2
+		PRINTFORMW 「우훗, 이제 기다릴 수 없는거야?」
 		RETURN 1
 	ENDIF
 	
-	;気付いたらCOMの方が充実してたんで、とりあえずoffっておく
+	;깨달으면 COM가 충실한 것으로, 우선 off는 둔다
 	;=================================================
-	;イかせて！
+	;가게 해!
 	;=================================================
-	;IF 口上記入チェック(0) && IS_NOWCOMNAME("イかせて！")
-	;	IF AFFECTION("相思相愛")
-	;		PRINTFORMW 「それはいいけど…」
-	;		PRINTFORMW 「とりあえずゆっくり休んだらどうなの？」
+	;IF 구상 기입 체크(0) && IS_NOWCOMNAME("가게 해!")
+	;	IF AFFECTION("상사상애")
+	;		PRINTFORMW 「그것은 좋지만…」
+	;		PRINTFORMW 「우선 천천히 쉬면 어때?」
 	;	ELSE
-	;		PRINTFORMW 「フフッ…休憩が終わるまで待てないの？」
+	;		PRINTFORMW 「후훅… 휴게가 끝날 때까지 기다릴 수 없는거야?」
 	;	ENDIF
 	;	RETURN 1
 	;ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;REACT90_1, 道具のせいであまり休めなかった
+;REACT90_1, 도구의 탓으로 너무 쉬게 하지 않았다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
-	PRINTFORMW 「あら、落ち着いて休めなかったかしら…？」
-	PRINTFORMW 「%RAND_SPLIT(@"ごめんなさいね/外したら%CNAME(MASTER, TARGET)%が機嫌を損ねると思ってね")%。 フフフ…」
+IF 구상기입체크(100) && TFLAG:ACT파생 == 1
+	PRINTFORMW 「아라, 침착해 쉬게 하지 않았을까…?」
+	PRINTFORMW 「%RAND_SPLIT(@"미안해요/제외하면%CNAME(MASTER, TARGET)%가기분을해친다고생각해")%. 후후후…」
 	RETURN 1
 ENDIF
 
-;勝手にオナニーするなに派生したら弾く
+;마음대로 자위 한데에 파생하면 연주한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;REACT90_2, 勝手に自慰をし始めた
+;REACT90_2, 마음대로 자위를하기 시작했다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:ACT派生 == 2
-	IF IS_NOWCOMNAME("自慰し始める") && TFLAG:REACT派生 < 1
+IF 구상기입체크(100) && TFLAG:ACT파생 == 2
+	IF IS_NOWCOMNAME("자위하기 시작한다") && TFLAG:REACT파생 < 1
 		SELECTCASE RANDREACT(2, 1)
 			CASE 0
-				PRINTFORMW 「そんな事してたら休憩にならないでしょう！」
-				PRINTFORMW 「……まったく。どうしようもないオナニー狂いの変態ね…」
+				PRINTFORMW 「그런 일 하고 있으면 휴게가 되지 않을 것입니다!」
+				PRINTFORMW 「…… 완전히. 어쩔 수 없는 자위 광의 변태군요…」
 			CASE 1
-				PRINTFORMW 「……猿と一緒ね」
-				PRINTFORMDW アリスは軽蔑しきった表情で%CALLNAME:MASTER%を見ている…
+				PRINTFORMW 「…… 원숭이와 함께네」
+				PRINTFORMDW 앨리스는 경멸해 버린 표정으로%CALLNAME:MASTER%를 보고 있다…
 		ENDSELECT
 	ENDIF
 	RETURN 1
 ENDIF
 
 ;*************************************************
-;REACT91, 栄養剤を飲ませる・個別リアクション
+;REACT91, 영양제를 먹이는·개별 리액션
 ;*************************************************
 ;=================================================
 @KOJO_REACT_K14_91
 ;=================================================
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;REACT91_1, 栄養剤を捨てた
+;REACT91_1, 영양제를 버렸다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
+IF 구상기입체크(100) && TFLAG:ACT파생 == 1
 	;=================================================
-	;KFLAG:TARGET:91が立っている場合
+	;KFLAG:TARGET:91이 서 있는 경우
 	;=================================================
-	IF 口上記入チェック(100) && GROUPMATCH(KFLAG:TARGET:91, 1, 2, 3) > 0
-		;人形達はALIGNMENT RIGHT
+	IF 구상기입체크(100) && GROUPMATCH(KFLAG:TARGET:91, 1, 2, 3) > 0
+		;인형들은 ALIGNMENT RIGHT
 		SELECTCASE KFLAG:TARGET:91
 			CASE 1
-				CALL FPRINTW("「ﾌｻﾞｹﾝﾅﾖ､ﾊﾞｶｼﾞｬﾈｰﾉ!」", COLOR2_K14("上海"), "RIGHT")
-				PRINTFORMDW %CALLNAME:MASTER%は上海に叱られた…
+				CALL FPRINTW("「후자켄나요, 바카쟈네이노!」", COLOR2_K14("샹하이"), "RIGHT")
+				PRINTFORMDW %CALLNAME:MASTER%는 샹하이에게 야단맞았다…
 			CASE 2
-				CALL FPRINTW("「ｵｼｵｷｻﾚﾙｿﾞ､ﾊﾞｶｼﾞｬﾈｰﾉ?」", COLOR2_K14("上海"), "RIGHT")
-				PRINTFORMDW %CALLNAME:MASTER%は蓬莱に叱られた…
+				CALL FPRINTW("「오시오키사레르조, 바카쟈네이노?」", COLOR2_K14("샹하이"), "RIGHT")
+				PRINTFORMDW %CALLNAME:MASTER%는 호라이에게 야단맞았다…
 			CASE 3
-				CALL FPRINTW("「ﾓｯﾀｲﾅｲﾀﾞﾛ､ﾊﾞｶｼﾞｬﾈｰﾉ」", COLOR2_K14("上海"), "RIGHT")
-				PRINTFORMDW %CALLNAME:MASTER%は\@ KFLAG:TARGET:92 == 1 ? 上海 # 蓬莱 \@に叱られた…
+				CALL FPRINTW("「못타이나이다로, 바카쟈네이노」", COLOR2_K14("샹하이"), "RIGHT")
+				PRINTFORMDW %CALLNAME:MASTER%는\@ KFLAG:TARGET:92 == 1 ? 샹하이# 호라이\@에게 야단맞았다…
 		ENDSELECT
 		RETURN 1
 	ENDIF
 	
 	;-------------------------
-	;その他
+	;그 외
 	;-------------------------
-	IF AFFECTION("相思相愛") && PERCENT(60)
-		PRINTFORMW 「こら、子供みたいな事はやめなさいよ！」
-		SIF TALENT:MASTER:小柄
-			PRINTFORMW 「……って、子供に言っても仕方無いわね…」
+	IF AFFECTION("상사상애") && PERCENT(60)
+		PRINTFORMW 「이봐, 아이같은 일은 그만두세요!」
+		SIF TALENT:MASTER:작은체형
+			PRINTFORMW 「…… 읏, 아이에게 말해도 방법 없네요…」
 	ELSE
 		SELECTCASE RANDREACT(2, 7)
 			CASE 0
-				PRINTFORMW 「あら、行儀が悪いのね」
-				PRINTFORMW 「お仕置きするわよ…？」
+				PRINTFORMW 「아라, 예의범절이 나쁜거네」
+				PRINTFORMW 「벌 해요…?」
 			CASE 1
-				PRINTFORMW 「やってくれるわね…」
-				PRINTFORMW 「そんなに私を怒らせたいのかしら」
+				PRINTFORMW 「해 주어요…」
+				PRINTFORMW 「그렇게 나를 화나게 하고 싶은 것일까」
 		ENDSELECT
 	ENDIF
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;REACT91_0, 栄養剤を飲んだ
+;REACT91_0, 영양제를 마셨다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:ACT派生 == 0
-	;楽しくなってきた
+IF 구상기입체크(100) && TFLAG:ACT파생 == 0
+	;즐거워져 왔다
 	;=================================================
-	;KFLAG:TARGET:91が立っている場合
+	;KFLAG:TARGET:91이 서 있는 경우
 	;=================================================
-	IF 口上記入チェック(100) && GROUPMATCH(KFLAG:TARGET:91, 1, 2, 3) > 0
-		;人形達はALIGNMENT RIGHT
+	IF 구상기입체크(100) && GROUPMATCH(KFLAG:TARGET:91, 1, 2, 3) > 0
+		;인형들은 ALIGNMENT RIGHT
 		SELECTCASE KFLAG:TARGET:91
 			CASE 1
-				PRINTFORMW 「ちゃんと飲んでくれたみたいよ。上海？」
-				CALL FPRINTW("「＼ｼｬﾝﾊｰｲ／」", COLOR2_K14("上海"), "RIGHT")
-				PRINTFORMDW %CALLNAME%の問いかけに、上海は嬉しそうに応えた…
+				PRINTFORMW 「제대로 마셔 준 것 같아요. 샹하이?」
+				CALL FPRINTW("「＼살하이/」", COLOR2_K14("샹하이"), "RIGHT")
+				PRINTFORMDW %CALLNAME%의 질문에, 샹하이는 기쁜듯이 응했다…
 			CASE 2
-				PRINTFORMW 「全部飲んだのね。持っていった甲斐があったわね。蓬莱？」
-				CALL FPRINTW("「＼ﾎﾗｰｲ／」", COLOR2_K14("上海"), "RIGHT")
-				PRINTFORMDW %CALLNAME%の問いかけに、蓬莱は満足げに応えた…
+				PRINTFORMW 「전부 마신 거네. 가져 간 보람이 있었군요. 호라이?」
+				CALL FPRINTW("「＼호라이/」", COLOR2_K14("샹하이"), "RIGHT")
+				PRINTFORMDW %CALLNAME%의 질문에, 호라이는 만족스럽게 응했다…
 			CASE 3
-				PRINTFORM 「ふふ、綺麗に飲みきったわね。無駄にならなかったみたいよ？
-				PRINTFORMW 　\@ KFLAG:TARGET:92 == 1 ? 上海 # 蓬莱 \@」
-				CALL FPRINTW(@"「\@ KFLAG:TARGET:92 == 1 ? ＼ｼｬﾝﾊｰｲ／ # ＼ﾎﾗｰｲ／ \@」", COLOR2_K14("上海"), "RIGHT")
-				IF !TEQUIP:アイマスク
-					PRINTFORMD 扉の影から顔を覗かせ応えた\@ KFLAG:TARGET:92 == 1 ? 上海 # 蓬莱 \@の姿は
-					PRINTFORMDW どこか%RAND_SPLIT("嬉しげ/満足げ")%なものに、%CALLNAME:MASTER%には見えた…
+				PRINTFORM 「후후, 예쁘게 다 마셨군요. 쓸데없게 안 되었던 것 같아요?
+				PRINTFORMW 　\@ KFLAG:TARGET:92 == 1 ? 샹하이# 호라이\@」
+				CALL FPRINTW(@"「\@ KFLAG:TARGET:92 == 1 ? ＼살하이/ # ＼호라이/ \@」", COLOR2_K14("샹하이"), "RIGHT")
+				IF !TEQUIP:아이마스크
+					PRINTFORMD 문의 그림자로부터 얼굴을 들여다 보게 한 응했다\@ KFLAG:TARGET:92 == 1 ? 샹하이# 호라이\@의 모습은
+					PRINTFORMDW 어딘가%RAND_SPLIT("희 무성하고/만족")%인 것에,%CALLNAME:MASTER%에는 보였다…
 				ENDIF
 		ENDSELECT
-		;EDを経過している場合		コメントアウト@v1.71
-		;SIF KFLAG:(FLAG:ご主人様):102
-		;	PRINTFORMDW その感情豊かな様子は、もはや単なる人形以上のものに思えた…
+		;ED를 경과하고 있는 경우		comment out@v1. 71
+		;SIF KFLAG:(FLAG:주인님):102
+		;	PRINTFORMDW 그 감정 풍부한 모습은, 이미 단순한 인형 이상의 것에 생각되었다…
 		RETURN 1
 	ENDIF
 	
-	;負荷2は弾く
+	;부하 2는 연주한다
 	;=================================================
-	;REACT分類が平然と従う/積極的従う/受け入れる
+	;REACT 분류가 태연하게 따른다/적극적 따른다/받아들인다
 	;=================================================
-	IF 口上記入チェック(100) && IS_COMGRONAME("平然と従う/積極的従う/受け入れる") && TFLAG:REACT負荷 < 2
-		LOCALS:0 = %RAND_SPLIT("ふふっ/クスクス/うふふっ/くすくす/ふふ")%
-		LOCALS:1 = %RAND_SPLIT("あら/へぇ/ふ～ん")%
-		IF AFFECTION("相思相愛")
+	IF 구상기입체크(100) && IS_COMGRONAME("태연하게 따른다/적극적 따른다/받아들인다") && TFLAG:REACT부하 < 2
+		LOCALS:0 = %RAND_SPLIT("후후/킥킥/후후/킥킥/후후")%
+		LOCALS:1 = %RAND_SPLIT("어머나/에/흥")%
+		IF AFFECTION("상사상애")
 			SELECTCASE RANDREACT(3, 4)
 				CASE 0
-					PRINTFORMW 「腰に手を当てて飲むのって何か意味があるの…？」
-					PRINTFORM 「%LOCALS:0%…、面白いわね
+					PRINTFORMW 「허리에 손을 대어 마시는 것이라는거 뭔가 의미가 있는 거야…?」
+					PRINTFORM 「%LOCALS:0%…, 재미있네요
 				CASE 1
-					PRINTFORMW 「駆けつけ三杯ってなに…？」
-					PRINTFORM 「%LOCALS:0%…面白い事を言うのね
+					PRINTFORMW 「달려 들고 3배는 뭐…?」
+					PRINTFORM 「%LOCALS:0%… 재미있는 일을 말하는 거네
 				CASE 2
-					PRINTFORMW 「なに？　おかわりしたいの…？」
-					PRINTFORM 「それはいいけど…、鼻血が止まらなくなっても知らないから…
+					PRINTFORMW 「뭐?   더 먹고 싶은거야…?」
+					PRINTFORM 「그것은 좋지만…, 코피가 멈추지 않게 되어도 모르니까…
 			ENDSELECT
-			;PSで閉じる
+			;PS로 닫는다
 			CALL PRINT_SYMBOL_K14
-		ELSEIF AFFECTION("溺愛")
+		ELSEIF AFFECTION("몹시 사랑함")
 			SELECTCASE RANDREACT(3, 5)
 				CASE 0
-					PRINTFORM 「%LOCALS:0%、いい飲みっぷりね。　私も頑張って作った甲斐があったわ
+					PRINTFORM 「%LOCALS:0%, 좋은 먹는 모습이군요  나도 노력해 만든 보람이 있었어요
 					CALL PRINT_SYMBOL_K14
 				CASE 1
-					PRINTFORM 「%LOCALS:0%、一気に飲んだわね。気に入ってもらえたみたいで嬉しいわ
+					PRINTFORM 「%LOCALS:0%, 단번에 마셨군요. 마음에 들어 받을 수 있던 것 같고 기뻐요
 					CALL PRINT_SYMBOL_K14
 				CASE 2
-					PRINTFORMW 「どう？ 美味しかった…？」
-					PRINTFORMW 「%LOCALS:0%…この私が作ったんだから、美味しいのは当然よっ！」
+					PRINTFORMW 「어때? 맛있었어…?」
+					PRINTFORMW 「%LOCALS:0%… 이 내가 만든 것이니까, 맛있는 것은 당연해요!」
 			ENDSELECT
-		ELSEIF AFFECTION("眷愛")
+		ELSEIF AFFECTION("권애")
 			PRINTFORM 「%LOCALS:1%、
 			SELECTCASE RANDREACT(3, 6)
 				CASE 0
-					PRINTFORMW %CNAME(MASTER, TARGET)%の口に合ったみたいね…？」
+					PRINTFORMW %CNAME(MASTER, TARGET)%가 입맛에 맞은 것 같구나…?」
 				CASE 1
-					PRINTFORMW 気に入ったみたいね…？」
+					PRINTFORMW 마음에 든 것 같구나…?」
 				CASE 2
-					PRINTFORMW %CNAME(MASTER, TARGET)%こういうのが好きなのね…？」
+					PRINTFORMW %CNAME(MASTER, TARGET)%이런 것을 좋아하는…?」
 			ENDSELECT
 		ELSE
-			;2/3の確率で汎用処理
+			;2/3의 확률로 범용 처리
 			IF RAND:3
 				CALL PRINT_REACT_91_NO9_K14
-			;その他
+			;그 외
 			ELSE
-				PRINTFORMW 「%LOCALS:1%、もう飲んだの？ お気に召したようでなによりね…」
+				PRINTFORMW 「%LOCALS:1%, 벌써 마셨어? 마음에 드신 것 같아 무엇보다네…」
 			ENDIF
 		ENDIF
 		RETURN 1
 	ENDIF
 	
-	;負荷2は弾く
+	;부하 2는 연주한다
 	;=================================================
-	;その他のREACT分類
+	;그 외의 REACT 분류
 	;=================================================
-	IF 口上記入チェック(100) && !IS_COMGRONAME("平然と従う/積極的従う/受け入れる") && TFLAG:REACT負荷 < 2
-		IF AFFECTION("相思相愛")
+	IF 구상기입체크(100) && !IS_COMGRONAME("태연하게 따른다/적극적 따른다/받아들인다") && TFLAG:REACT부하 < 2
+		IF AFFECTION("상사상애")
 			SELECTCASE RANDREACT(3, 0)
 				CASE 0
-					PRINTFORMW 「ねぇ、本当は美味しくなかったのでしょう…？」
-					PRINTFORMW 「変に気を使われると、逆に傷つくんだけど…」
+					PRINTFORMW 「저기, 사실은 맛있지 않았던 것이지요…?」
+					PRINTFORMW 「이상하게 신경을 써지면, 반대로 다치지만…」
 				CASE 1
-					PRINTFORMW 「さぁ、\@ !TEQUIP:アイマスク ? ちゃんと私の目を見て。# \@正直に言いなさい……」
-					PRINTFORMW 「本当は不味かったんでしょ…？　ねぇ、そうでしょ！そうよね！？」
+					PRINTFORMW 「자,\@ !TEQUIP:아이마스크 ? 분명하게 나의 눈을 봐.# \@정직하게 말하세요……」
+					PRINTFORMW 「사실은 맛이 없었던 것이겠지…?   응, 그렇겠지! 그래요!?」
 				CASE 2
-					PRINTFORMW 「……で？　結局、%CNAME(MASTER, TARGET)%の言った事を簡単にまとめると…」
-					PRINTFORMW 「『不味かった』って事でいいのかしらねぇ…　フ　フ　フ……」
+					PRINTFORMW 「…… 그래서?   결국,%CNAME(MASTER, TARGET)%가 말한 일을 간단하게 정리하면…」
+					PRINTFORMW 「『맛이 없었다』라는 일로 좋은 것일까요…  후  후  후……」
 					PRINTL
-					PRINTFORMDW アリスにこってり絞られた%CALLNAME:MASTER%は、嘘が下手な自分を呪った…… 
+					PRINTFORMDW 앨리스에게 몹시 좁혀졌다%CALLNAME:MASTER%는, 거짓말이 서투른 자신을 저주했다……
 			ENDSELECT
-		ELSEIF AFFECTION("溺愛")
+		ELSEIF AFFECTION("몹시 사랑함")
 			SELECTCASE RANDREACT(3, 1)
 				CASE 0
-					PRINTFORMW 「なっ…なによっ、その気まずそうな態度…」
-					PRINTFORMW 「不味かったなら、はっきりそう言いなさいよ…！」
+					PRINTFORMW 「뭐… 뭐야, 그 어색한 것 같은 태도…」
+					PRINTFORMW 「맛이 없었다면, 분명히 그렇게 말하세요…!」
 				CASE 1
-					PRINTFORMW 「いいの。何も言わないで…」
-					PRINTFORMW 「顔を見れば、美味しくなかった事ぐらい分かるわよ…」
+					PRINTFORMW 「좋은거야. 아무것도 말하지 마…」
+					PRINTFORMW 「얼굴을 보면, 맛있지 않았던 것정도 알아요…」
 				CASE 2
-					PRINTFORMW 「美味しくなかったのね……」
-					PRINTFORMW 「本当はね、正直に言うとね…？　こうなるような予感は、ちょっとしてたのよ…♪」
+					PRINTFORMW 「맛있지 않았던 것이군요……」
+					PRINTFORMW 「사실은 말야, 정직하게 말하면 말이죠…?   이렇게 되는 것 같은 예감은, 조금 하고 있던거야…♪」
 			ENDSELECT
-		ELSEIF AFFECTION("眷愛")
+		ELSEIF AFFECTION("권애")
 			SELECTCASE RANDREACT(3, 2)
 				CASE 0
-					PRINTFORMW 「口に合わなかったみたいね…？」
+					PRINTFORMW 「입맛에 맞지 않았던 것 같구나…?」
 				CASE 1
-					PRINTFORMW 「好みに合わなかったかしら…？」
+					PRINTFORMW 「기호에 맞지 않았을까…?」
 				CASE 2
-					PRINTFORMW 「美味しくなかったみたいね…？」
+					PRINTFORMW 「맛있지 않았던 것 같구나…?」
 			ENDSELECT
-		ELSEIF AFFECTION("嫌悪")
+		ELSEIF AFFECTION("혐오")
 			IF RAND:3
 				SELECTCASE RANDREACT(3, 3)
 					CASE 0
-						PRINTFORMW 「あらあら、お気に召さなかったようねぇ」
-						PRINTFORMW 「ま、私にとってはどうでもいいのだけど…」
+						PRINTFORMW 「아라아라, 마음에 드시지 않았던 것 같구나」
+						PRINTFORMW 「뭐, 나에게 있어서는 아무래도 좋은 것이지만…」
 					CASE 1
-						PRINTFORMW 「ねぇ……この栄養剤が何から作られてるか、知りたくない…？」
-						PRINTFORMW 「ま、聞いたらリバースしちゃうかもだけれど…ね♪」
+						PRINTFORMW 「저기…… 이 영양제가 무엇으로부터 만들어지고 있는지, 알고 싶지 않아…?」
+						PRINTFORMW 「뭐, (들)물으면 리버스 해 버릴지도이지만… 말야♪」
 					CASE 2
-						PRINTFORMW 「あら、アレを飲んでまだ無事だなんて…」
-						PRINTFORMW 「%CNAME(MASTER, TARGET)%、案外見込みがあるかも…？　あははっ！」
+						PRINTFORMW 「아라, 저것을 마셔 아직 무사함 라고…」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%, 의외로 전망이 있을지도…?   아하하!」
 				ENDSELECT
-			;1/3の確率で汎用処理
+			;1/3의 확률로 범용 처리
 			ELSE
 				CALL PRINT_REACT_91_NO9_K14
 			ENDIF
 		ELSE
-			;2/3の確率で汎用処理
+			;2/3의 확률로 범용 처리
 			IF RAND:3
 				CALL PRINT_REACT_91_NO9_K14
 			ELSE
-				PRINTFORMW 「あまり気に入ってもらえなかったようで、残念ね」
-				PRINTFORMW 「ま、別にいいけど…」
+				PRINTFORMW 「그다지 마음에 들어 받을 수 없었던 것 같아, 유감이구나」
+				PRINTFORMW 「뭐, 별로 좋지만…」
 			ENDIF
 		ENDIF
 		RETURN 1

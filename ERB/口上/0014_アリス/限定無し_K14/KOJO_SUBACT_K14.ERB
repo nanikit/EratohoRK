@@ -1,136 +1,136 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;	アリス口上 追加アクション口上ファイル
+;	앨리스 구상 추가 액션 구상 파일
 ;
-;	調教者が調教指示以外に行う行動のファイル
+;	조교자가 조교 지시 이외에 실시하는 행동의 파일
 ;
 ;Version		Reason
-;1.71			@口上記入チェック仕様に
-;1.67			脱衣系を全面的に改修
+;1. 71			@구상 기입 체크 사양에
+;1. 67			탈의계를 전면적으로 개수
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
 ;========================================================================
-;調教アクション・コマンド口上
+;조교 액션·커맨드 구상
 ;========================================================================
 
-;────────────────────────────────────
-;脱衣アクション口上
-;────────────────────────────────────
-;・調教者アクションの前に強制脱衣や自主脱衣が発生したときに表示
-;・この口上の時点ではまだTEQUIPは更新されていない
-;・初回分岐は「初めて見た/見せた」とは限らない。
-;　ショップメニューで脱がせたことがあるかもしれないし、調教の流れで完全に脱がせずに露出だけしている場合もある。
-;　もしかすると助手だったときに見たことがあるかもしれない。そういう意味では簡易的なものである。
-;　厳密な意味での「初見」フラグを用意するかどうかは要望次第ということで。
+;─
+;탈의 액션 구상
+;─
+;·조교자 액션의 앞에 강제 탈의나 자주 탈의가 발생했을 때에 표시
+;·이 구상의 시점에서는 아직 TEQUIP는 갱신되어 있지 않다
+;·첫회 분기는 「처음 보았다/보였다」란 할 수 없다.
+;  숍 메뉴로 벗게 했던 적이 있을지도 모르고, 조교의 흐름으로 완전하게 벗게 하지 않고서 노출만 하고 있는 경우도 있다.
+;  어쩌면 조수였던 때에 본 적이 있을지도 모른다. 그러한 의미에서는 간이적인 것이다.
+;  엄밀한 의미에서의 「초견」플래그를 준비할지 어떨지는 요망하는 대로라고 하는 일로.
 ;-------------------------------------------------
 @KOJO_DATUI_K14
 ;-------------------------------------------------
-;関連変数…
-;強制脱衣：TFLAG:102　自主脱衣：TFLAG:103
-;=(-1, 強制脱衣に抵抗、1, 上着、2, 下半身上着、3, 上衣、4, 上半身全部、5, 下半身全部、
-;　6, アクセサリー、7, アクセサリー以外全て、8, 全裸まで、9, 下着だけ)
+;관련 변수…
+;강제 탈의:TFLAG:102  자주 탈의:TFLAG:103
+;=(-1, 강제 탈의에 저항, 1, 윗도리, 2, 하반신 윗도리, 3, 웃도리, 4, 상반신 전부, 5, 하반신 전부,
+;  6, 액세서리, 7, 액세서리 이외 모두, 8, 전라까지, 9, 속옷만)
 ;-------------------------------------------------
-;見直すついでにちょっと梃入れしてみる
-;考えてみると、調教内では毎度必ず出てくる箇所なんで相応に注力すべきなのかも知れない
+;다시 보는 김에 조금 정 넣고 해 본다
+;생각해 보면, 조교내에서는 매번 반드시 나오는 개소이니까 상응하게 주력 해야 할지도 모른다
 ;-------------------------------------------------
-;単に@KOJO_DATUI_KXで呼び出すとか、システム側が投げやりすぎる感がある
-;ARGで分けるなり、関数分けするなり、本体側が枠組みをきちんと整えるべきなのかも知れない
-;とかいいながら、中々手が付かないのが現状な訳なんですが
-;せめてフラグ類の関数化、GET_DATUI(TFLAG:自主脱衣) == "まんまんうｐ"みたいなのはやるべきなのかもｗ
+;단지@KOJO_DATUI_KX로 호출한다든가, 시스템측이 너무 무책임한 감이 있다
+;ARG로 나누든지, 함수 나누고 하든지, 본체측이 골조를 제대로 정돈해야 하는 것인지도 모른다
+;라든지 좋으면서, 꽤 손이 붙지 않는 것이 현상인 이유입니다만
+;적어도 플래그류의 함수화, GET_DATUI(TFLAG:자주 탈의) == "만p"같은 것은 해야 하는 것인지도w
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;強制脱衣に抵抗された FIRSTDATUI(0)
+;강제 탈의에 저항된 FIRSTDATUI(0)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:強制脱衣 < 0
+IF 구상기입체크(100) && TFLAG:강제탈의 < 0
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTDATUI(0)
-		PRINTFORMW 「なによ、逆らうつもり？ まぁ%RAND_SPLIT("いいわ/でも")%…」
-		PRINTFORMW 「抵抗するなら無理やり脱がせるまでよ」
+	IF 구상기입체크(100) && FIRSTDATUI(0)
+		PRINTFORMW 「뭐야, 거역할 생각? 아무튼%RAND_SPLIT("좋아요/그렇지만")%…」
+		PRINTFORMW 「저항한다면 억지로 벗게 할 때까지」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;自分は脱いだ
+	;자신은 벗었다
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:自主脱衣
+	IF 구상기입체크(100) && TFLAG:자주탈의
 		SELECTCASE RANDDATUI(3, 0)
 			CASE 0
-				PRINTFORMW 「仕様の無い人ね…」
+				PRINTFORMW 「사양이 없는 사람이네…」
 			CASE 1
-				PRINTFORMW 「やれやれ……。面倒なひとね」
+				PRINTFORMW 「아휴……. 귀찮은 사람」
 			CASE 2
-				PRINTFORMW 「へぇ、そう。勝手にすれば？」
+				PRINTFORMW 「헤에, 그렇게. 마음대로 하면?」
 		ENDSELECT
-		PRINTFORMW 「ま、私は脱がさせてもらうけど」
+		PRINTFORMW 「뭐, 나는 벗기게 해 받지만」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------
-	;その他
+	;그 외
 	;-------------------------
-	;調教者BASE:苛立ち派生
+	;조교자 BASE:초조 파생
 	SELECTCASE TENSION(TARGET, 7)
-		CASE "高い"
-			PRINTFORMW 「またそうやって逆らうのね」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%…、私を苛立たせる才能があるわ……」
-		CASE "一般"
-			PRINTFORMW 「……面倒な人ね」
-			PRINTFORMW 「私に無理やり裸に剥かれるのがお望み？」
-		CASE "低い"
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%、もしかすると…」
-			PRINTFORMW 「着たままするのが、好きだったりするのかしら…？」
+		CASE "높다"
+			PRINTFORMW 「또 그렇게 거역하는 거네」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%…, 나를 초조하게 하는 재능이 있어요……」
+		CASE "일반"
+			PRINTFORMW 「…… 귀찮은 사람이네」
+			PRINTFORMW 「나에게 억지로 알몸에 벗겨지는 것이 소망?」
+		CASE "낮다"
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%, 어쩌면…」
+			PRINTFORMW 「입은 채로 하는 것이, 좋아했다거나 할까…?」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;二人とも何か脱いだ FIRSTDATUI(1)
+;두 사람 모두 뭔가 벗은 FIRSTDATUI(1)
 ;------------------------------------------------
-;・主にセックス系行動の予備動作で発生する
+;·주로 섹스계 행동의 예비 동작으로 발생한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:強制脱衣 > 0 && TFLAG:自主脱衣 && !IS_NOWASSIACTNAME(, "脱衣")
+IF 구상기입체크(100) && TFLAG:강제탈의 > 0 && TFLAG:자주탈의 && !IS_NOWASSIACTNAME(, "탈의")
 	;=================================================
-	;調教者が[情欲]かつ全裸になった
+	;조교자가[정욕]또한 전라가 되었다
 	;=================================================
-	IF 口上記入チェック(100) && T_COND("情欲") && ZENRACHECK(0)
-		PRINTFORMW 「こんなもの、もう必要ないわ！」
-		PRINTFORM 「さぁ、生まれたままの姿で愉しみましょう…
+	IF 구상기입체크(100) && T_COND("정욕") && ZENRACHECK(0)
+		PRINTFORMW 「이런 것, 이제(벌써) 필요없어요!」
+		PRINTFORM 「자, 태어난 채로의 모습으로 즐깁시다…
 		CALL PRINT_SYMBOL_K14
 		RETURN 1
 	ENDIF
 	
 	[SKIPSTART]
 	;=================================================
-	;調教者が調教対象を溺愛
+	;조교자가 조교 대상을 몹시 사랑함
 	;=================================================
-	IF 口上記入チェック(0) && AFFECTION("溺愛")
-		PRINTFORMW 「さぁ、脱いで脱いで」
-		PRINTFORM 「ふふ…、思いっきり愉しみましょう…
+	IF 구상 기입 체크(0) && AFFECTION("몹시 사랑함")
+		PRINTFORMW 「자, 벗고 벗어」
+		PRINTFORM 「후후…, 마음껏 즐깁시다…
 		CALL PRINT_SYMBOL_K14
 		RETURN 1
 	ENDIF
 	[SKIPEND]
 	
 	;-------------------------
-	;その他
+	;그 외
 	;-------------------------
-	;調教者BASE:満足派生
+	;조교자 BASE:만족 파생
 	SELECTCASE TENSION(TARGET, 8)
-		CASE "高い"
-			PRINTFORMW 「やっぱりこうでなくちゃね」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の体温を感じたいし。ま、私の身体は…」
-			PRINTFORM 「ちょっとひんやりするかもだけど。ね…
+		CASE "높다"
+			PRINTFORMW 「역시 이러하지 않으면 말야」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 체온을 느끼고 싶고. 뭐, 나의 신체는…」
+			PRINTFORM 「조금 썰렁 할지도이지만. 저기…
 			CALL PRINT_SYMBOL_K14
-		CASE "一般"
-			PRINTFORMW 「着たままするのも悪くないけど…」
-			PRINTFORMW 「やっぱり邪魔よね？ ふふ…」
-		CASE "低い"
-			PRINTFORMW 「準備はいいかしら…？」
-			PRINTFORM 「じゃぁ、早速始め\@ AFFECTION("溺愛") ? ましょう # るわよ \@
-			IF AFFECTION("溺愛")
+		CASE "일반"
+			PRINTFORMW 「입은 채로 하는 것도 나쁘지 않지만…」
+			PRINTFORMW 「역시 방해군요? 후후…」
+		CASE "낮다"
+			PRINTFORMW 「준비는 좋을까…?」
+			PRINTFORM 「그러면, 조속히 초\@ AFFECTION("몹시 사랑함") ? 짊어진다# 원이야\@
+			IF AFFECTION("몹시 사랑함")
 				CALL PRINT_SYMBOL_K14
 			ELSE
 				PRINTW 」
@@ -140,173 +140,173 @@ IF 口上記入チェック(100) && TFLAG:強制脱衣 > 0 && TFLAG:自主脱衣
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;自主脱衣・アクセサリーのみ FIRSTDATUI(2)
+;자주 탈의·액세서리만 FIRSTDATUI(2)
 ;------------------------------------------------
-;・主に靴下。他には手袋や袖など
+;·주로 양말. 그 밖에 장갑이나 소매 따위
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:自主脱衣 == 6 && !IS_NOWASSIACTNAME(, "脱衣") && !TEQUIP:アイマスク
+IF 구상기입체크(100) && TFLAG:자주탈의 == 6 && !IS_NOWASSIACTNAME(, "탈의") && !TEQUIP:아이마스크
 	;=================================================
-	;全裸になった（脱ぐ前は靴下以外裸とかそういう感じ）
+	;전라가 되었다(벗기 전은 양말 이외 알몸이라든지 그러한 느낌)
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:自主脱衣 && ZENRACHECK(0)
+	IF 구상기입체크(100) && TFLAG:자주탈의 && ZENRACHECK(0)
 		SELECTCASE RANDDATUI(2, 2)
 			CASE 0
-				PRINTFORMW 「ねぇ、見て頂戴。私の裸、どうかしら…？」
+				PRINTFORMW 「저기, 봐 줘. 나의 알몸, 어떨까…?」
 			CASE 1
-				PRINTFORMW 「裸に靴下とかの方が\@ AFFECTION("相思相愛") ? 良かった？ # %CNAME(MASTER, TARGET)%の好みだったかしら \@」
-				PRINTFORM 「まぁでも…、もう脱いじゃったものは仕方無いわよね
+				PRINTFORMW 「알몸에 양말이라든지(분)편이\@ AFFECTION("상사상애") ? 좋았어?# %CNAME(MASTER, TARGET)%의 기호였을까\@」
+				PRINTFORM 「뭐 그렇지만…, 이제 벗어 버린 것은 방법 없네요
 				CALL PRINT_SYMBOL_K14
 		ENDSELECT
 		RETURN 1
 	ENDIF
 	
-	;その他
-	PRINTFORMW 「もう%RAND_SPLIT("余計/こん")%なものは要らないわね」
+	;그 외
+	PRINTFORMW 「이제(벌써)%RAND_SPLIT("여분/안녕")%인 것은 필요하지 않네요」
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;自主脱衣・まんまんうｐ FIRSTDATUI(3)
+;자주 탈의·만p FIRSTDATUI(3)
 ;------------------------------------------------
-;・今回の脱衣で性器が見えるようになった場合に表示
-;・ぱんつ見せを経由せず一気に脱ぐ場合あり
+;·이번 탈의로 성기가 보이게 되었을 경우에 표시
+;·팬티 보이고를 경유하지 않고 단번에 벗는 경우 있어
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:自主脱衣 && P_DATUICHECK(0) == 3 && !IS_NOWASSIACTNAME(, "脱衣") && !TEQUIP:アイマスク
+IF 구상기입체크(100) && TFLAG:자주탈의 && P_DATUICHECK(0) == 3 && !IS_NOWASSIACTNAME(, "탈의") && !TEQUIP:아이마스크
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && TALENT:TARGET:ご主人様 && FIRSTDATUI(3)
-		PRINTFORMW 「どう？ 私の誰にも見せた事のない部分よ」
-		PRINTFORMW 「その意味に気づかない程、%CNAME(MASTER, TARGET)%が馬鹿じゃなければ良いんだけど、ね」
+	IF 구상기입체크(100) && TALENT:TARGET:주인님 && FIRSTDATUI(3)
+		PRINTFORMW 「어때? 나의 누구에게도 보인 일이 없는 부분이야」
+		PRINTFORMW 「그 의미를 눈치채지 않을 정도(수록),%CNAME(MASTER, TARGET)%가 바보가 아니면 좋지만, 말야」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ちんこうｐ
+	;응 이렇게 p
 	;=================================================
-	IF 口上記入チェック(100) && PENIS(TARGET)
+	IF 구상기입체크(100) && PENIS(TARGET)
 		SELECTCASE RANDDATUI(2, 3)
 			CASE 0
-				PRINTFORMW 「ほら、見て頂戴……」
-				PRINTFORMW 「これで%CNAME(MASTER, TARGET)%を虐めたくて、もうこんなになっちゃってるの」
+				PRINTFORMW 「이봐요, 봐 줘……」
+				PRINTFORMW 「이것으로%CNAME(MASTER, TARGET)%를 괴롭히고 싶어서, 이제 이렇게 되어 버리고 있어」
 			CASE 1
-				PRINTFORMW 「さぁ、良く見ておきなさい」
-				PRINTFORM 「コレで%CNAME(MASTER, TARGET)%がどうされちゃうのか、想像しながら。ね…
+				PRINTFORMW 「자, 자주(잘) 봐 두세요」
+				PRINTFORM 「이것으로%CNAME(MASTER, TARGET)%가 어떻게 하셔 버리는지, 상상하면서. 저기…
 				CALL PRINT_SYMBOL_K14
 		ENDSELECT
-		;フェードアウト
-		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ AFFECTION("相思相愛") ? ふふふ # フフフ \@…」")
+		;페이드 아웃
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ AFFECTION("상사상애") ? 후후후# 후후후\@…」")
 		CLEARLINE 1
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;すでに胸が見えてる
+	;벌써 가슴이 보이고 있다
 	;=================================================
-	IF 口上記入チェック(100) && B_DATUICHECK(0) == 1
-		PRINTFORMW 「そんな目で見られたら…」
-		PRINTFORM 「こっちも見せない訳にはいかないわね…
+	IF 구상기입체크(100) && B_DATUICHECK(0) == 1
+		PRINTFORMW 「그런 눈으로 볼 수 있으면…」
+		PRINTFORM 「여기도 보이지 않을 수는 없네요…
 		CALL PRINT_SYMBOL_K14
 		RETURN 1
 	ENDIF
 	
-	;その他
-	PRINTFORMW 「ほら、遠慮しないで」
-	PRINTFORM 「もっと良く見ていいのよ…
+	;그 외
+	PRINTFORMW 「이봐요, 사양하지 말아줘」
+	PRINTFORM 「좀 더 자주(잘) 봐도 좋은거야…
 	CALL PRINT_SYMBOL_K14
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;自主脱衣・おっぱいうｐ FIRSTDATUI(4)
+;자주 탈의·말하는 p FIRSTDATUI(4)
 ;------------------------------------------------
-;・今回の脱衣でおっぱいが見えるようになった場合に表示
-;・ブラ見せを経由せず一気に脱ぐ場合あり
+;·이번 탈의로 젖가슴이 보이게 되었을 경우에 표시
+;·브라 보이고를 경유하지 않고 단번에 벗는 경우 있어
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:自主脱衣 && B_DATUICHECK(0) == 3 && !IS_NOWASSIACTNAME(, "脱衣") && !TEQUIP:アイマスク
+IF 구상기입체크(100) && TFLAG:자주탈의 && B_DATUICHECK(0) == 3 && !IS_NOWASSIACTNAME(, "탈의") && !TEQUIP:아이마스크
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && TALENT:TARGET:ご主人様 && !TALENT:巨乳 && FIRSTDATUI(4)
-		PRINTFORMW 「大きいってほどじゃないけど、形には自身があるのよ…？」
-		PRINTFORMW 「あら、遠慮する事ないわ。もっとよく見ていいわよ」
-		PRINTFORMW 「私のこんな姿を見られる事に、感謝しながらねっ！」
-		PRINTFORMDW %CALLNAME%は得意そうに、そう言い放った…
+	IF 구상기입체크(100) && TALENT:TARGET:주인님 && !TALENT:거유 && FIRSTDATUI(4)
+		PRINTFORMW 「크다고만큼이 아니지만, 형태에는 자신이 있는거야…?」
+		PRINTFORMW 「아라, 사양하는 일 없어요. 좀 더 잘 봐도 좋아요」
+		PRINTFORMW 「나의 이런 모습을 볼 수 있는 일에, 감사하면서!」
+		PRINTFORMDW %CALLNAME%는 자신있는 것 같게, 그렇게 단언했다…
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;すでに性器が見えてる
+	;벌써 성기가 보이고 있다
 	;=================================================
-	IF 口上記入チェック(50) && P_DATUICHECK(0) == 1
-		PRINTFORM 「さぁ、お待ちかねのおっぱいよ…
+	IF 구상기입체크(50) && P_DATUICHECK(0) == 1
+		PRINTFORM 「자, 학수 고대의 젖가슴이야…
 		CALL PRINT_SYMBOL_K14
-		PRINTFORMW 「\@ TALENT:MASTER:オトコ ? ホント、男っておっぱいが好きよね # ねぇ、私の胸…、どうかしら \@？」
+		PRINTFORMW 「\@ TALENT:MASTER:남자 ? 정말, 남자는 젖가슴을 좋아하네요# 응, 나의 가슴…, 어떨까\@？」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;調教内初回
+	;조교내 첫회
 	;=================================================
-	IF 口上記入チェック(100) && ONCEDATUI(4)
+	IF 구상기입체크(100) && ONCEDATUI(4)
 		IF 0
-		ELSEIF TALENT:巨乳
-			PRINTFORM 「\@ TALENT:MASTER:小柄 ? 目を輝かせちゃって可愛らしいわ # 目つきがイヤラシイわ \@…
+		ELSEIF TALENT:거유
+			PRINTFORM 「\@ TALENT:MASTER:작은체형 ? 눈을 빛내 버려 사랑스러워요# 눈초리가 추잡해요\@…
 			CALL PRINT_SYMBOL_K14
-			PRINTFORMW 「大きなおっぱいが好きな人って、子供っぽいところあるわよねぇ」
-			SIF TALENT:MASTER:小柄
-				PRINTFORMW 「って%CNAME(MASTER, TARGET)%…、まだ子供だったわよね。ふふ…」
-		ELSEIF TALENT:貧乳
-			PRINTFORMW 「小さな胸が好きとか、ホント%CNAME(MASTER, TARGET)%も変わり者よね？」
-			PRINTFORMW 「ほら、これが見たかったんでしょう？」
+			PRINTFORMW 「큰 젖가슴을 좋아하는 사람은, 아이 같은 곳 있네요」
+			SIF TALENT:MASTER:작은체형
+				PRINTFORMW 「라고%CNAME(MASTER, TARGET)%…, 아직 아이였네요. 후후…」
+		ELSEIF TALENT:빈유
+			PRINTFORMW 「작은 가슴을 좋아한다던가 , 정말%CNAME(MASTER, TARGET)%도 괴짜군요?」
+			PRINTFORMW 「이봐요, 이것을 보고 싶었던 것이지요?」
 		ELSE
-			PRINTFORMW 「もじもじしてないで、どうせならもっと堂々と見れば？」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%が何を考えてるかなんて、とっくにお見通しよ」
+			PRINTFORMW 「머뭇머뭇 하지 않고, 어차피라면 좀 더 당당히 보면?」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%가 무엇을 생각하고 있을까 라고, 벌써 꿰뚫어 보심이야」
 			SIF !RAND:3
-				PRINTFORMW 「見られたからって減るものじゃないし、ね」
+				PRINTFORMW 「보여졌다고 줄어드는 것이 아니기도 하고,」
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;自主脱衣・ぱんつ見せ FIRSTDATUI(5)
+;자주 탈의·팬티 보이고 FIRSTDATUI(5)
 ;------------------------------------------------
-;・今回の脱衣でパンティ（キャラによってドロワーズ・トランクス）が見えるようになった場合に表示
-;・下半身下着の無いキャラは書く必要なし
+;·이번 탈의로 팬티(캐릭터에 의해 드로워즈·트렁크스)가 보이게 되었을 경우에 표시
+;·하반신 속옷이 없는 캐릭터는 쓰는 필요없음
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:自主脱衣 && P_DATUICHECK(0) == 2 && !IS_NOWASSIACTNAME(, "脱衣") && !TEQUIP:アイマスク
+IF 구상기입체크(100) && TFLAG:자주탈의 && P_DATUICHECK(0) == 2 && !IS_NOWASSIACTNAME(, "탈의") && !TEQUIP:아이마스크
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && TALENT:TARGET:ご主人様 && FIRSTDATUI(5)
-		PRINTFORMW 「どう？ これ\@ KFLAG:(FLAG:ご主人様):300 == 2 ? も # 、 \@私のお手製なのよ」
-		PRINTFORMW 「人によっては下着姿の方が好きだったりするらしいけど…」
-		PRINTFORMW 「%CNAME(MASTER, TARGET)%の場合はどうなのかしら。ねぇ？」
-		KFLAG:(FLAG:ご主人様):300 = 1
+	IF 구상기입체크(100) && TALENT:TARGET:주인님 && FIRSTDATUI(5)
+		PRINTFORMW 「어때? 이것\@ KFLAG:(FLAG:주인님):300 == 2 ? 도# 、 \@나의 수제인 것이야」
+		PRINTFORMW 「사람에 따라서는 속옷 모습을 좋아했다거나 하는 것 같지만…」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%의 경우는 어떨까. 저기?」
+		KFLAG:(FLAG:주인님):300 = 1
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;調教内初回
+	;조교내 첫회
 	;=================================================
-	IF 口上記入チェック(100) && ONCEDATUI(5)
-		;2/3で真
+	IF 구상기입체크(100) && ONCEDATUI(5)
+		;2/3로 진
 		IF RAND:3
-			PRINTFORMW 「ねぇ、どうかしら？」
-			PRINTFORM 「今回は、
+			PRINTFORMW 「저기, 어떨까?」
+			PRINTFORM 「이번은,
 			CALL WHICH_LINGERIE(COLOR2_K14("ALICE"))
-			PRINTFORMW にしてみたんだけど」
-			PRINTFORMW 「ほら、どうなの！？ 何か%RAND_SPLIT("気の利いたほめ言葉/感想")%のひとつくらい、%RAND_SPLIT("言いなさいよっ！/言えない訳？")%」
+			PRINTFORMW 로 해 보았지만」
+			PRINTFORMW 「이봐요, 어때!? 무엇인가%RAND_SPLIT("센스 있은 칭찬말/감상")%의 하나 정도,%RAND_SPLIT("말하세요! /말할 수 없는 것?")%」
 		;1/3
 		ELSE
-			PRINTFORMW 「ねぇ、良く見て…」
-			PRINTFORMW 「もう%RANDTEXT_K14("滲みになってる", "少し濡れちゃってる")%の、分かるかしら？」
-			;1/3で真
+			PRINTFORMW 「저기, 자주(잘) 봐…」
+			PRINTFORMW 「이제(벌써)%RANDTEXT_K14("스며드가 되어 있다", "조금 젖어 버리고 있다")%의, 알까?」
+			;1/3로 진
 			IF !RAND:3
-				PRINTFORM 「%CNAME(MASTER, TARGET)%を虐める事考えると、こうなっちゃうのよね…
+				PRINTFORM 「%CNAME(MASTER, TARGET)%를 괴롭히는 일 생각하면, 이렇게 되어 버리는거네요…
 				CALL PRINT_SYMBOL_K14
-				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「フフ…」")
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「후후…」")
 				CLEARLINE 1
 			ENDIF
 		ENDIF
@@ -315,124 +315,124 @@ IF 口上記入チェック(100) && TFLAG:自主脱衣 && P_DATUICHECK(0) == 2 &
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;自主脱衣・ブラ見せ FIRSTDATUI(6)
+;자주 탈의·브라 보이고 FIRSTDATUI(6)
 ;------------------------------------------------
-;・今回の脱衣でブラ（キャラによってスポーツブラ・サラシ）が見えるようになった場合に表示
-;・上半身下着の無いキャラは書く必要なし
+;·이번 탈의로 브라(캐릭터에 의해 스포트브라·사라시)가 보이게 되었을 경우에 표시
+;·상반신 속옷이 없는 캐릭터는 쓰는 필요없음
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:自主脱衣 && B_DATUICHECK(0) == 2 && !IS_NOWASSIACTNAME(, "脱衣") && !TEQUIP:アイマスク
+IF 구상기입체크(100) && TFLAG:자주탈의 && B_DATUICHECK(0) == 2 && !IS_NOWASSIACTNAME(, "탈의") && !TEQUIP:아이마스크
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && TALENT:TARGET:ご主人様 && FIRSTDATUI(6)
-		PRINTFORMW 「ほら、なかなか可愛いブラでしょ？ これ\@ KFLAG:(FLAG:ご主人様):300 == 1 ? も # 、 \@私の手作りなの」
-		IF TALENT:MASTER:オトコ
-			PRINTFORMW 「男から見て、こういう可愛らしい感じのってどうなのかしら？」
+	IF 구상기입체크(100) && TALENT:TARGET:주인님 && FIRSTDATUI(6)
+		PRINTFORMW 「이봐요, 꽤 사랑스러운 브라겠지? 이것\@ KFLAG:(FLAG:주인님):300 == 1 ? 도# 、 \@나의 손수만들기야」
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「남자로부터 봐, 이런 사랑스러운 느낌 올라 어떨까?」
 		ELSE
-			PRINTFORMW 「そのうち%CNAME(MASTER, TARGET)%にもお揃いのを作ってあげてもいいわ」
-			SIF TALENT:MASTER:小柄
-				PRINTFORMW 「でも、%CNAME(MASTER, TARGET)%にはまだちょっと早いかしらね？」
+			PRINTFORMW 「그 중%CNAME(MASTER, TARGET)%에도 갖춤의 것을 만들어 주어도 괜찮아요」
+			SIF TALENT:MASTER:작은체형
+				PRINTFORMW 「그렇지만,%CNAME(MASTER, TARGET)%에는 아직 조금 빠를까요?」
 		ENDIF
-		KFLAG:(FLAG:ご主人様):300 = 2
+		KFLAG:(FLAG:주인님):300 = 2
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;調教内初回
+	;조교내 첫회
 	;=================================================
-	IF 口上記入チェック(100) && ONCEDATUI(6)
-		;昼夜あるから今日はってのは厳密に言うとアレ
-		PRINTFORM 「どう？ \@ DAY ? 今夜 # 今日 \@は
+	IF 구상기입체크(100) && ONCEDATUI(6)
+		;밤낮 있기 때문에 오늘 붙이는 것은 엄밀하게 말한다고 저것
+		PRINTFORM 「어때?\@ DAY ? 오늘 밤# 오늘\@는
 		CALL WHICH_LINGERIE(COLOR2_K14("ALICE"))
-		PRINTFORMW ブラにしてみたの」
+		PRINTFORMW 브라로 해 보았어」
 		SELECTCASE TENSION(TARGET, 8)
-			CASE "高い"
-				PRINTFORMW 「これ、割と自信作なんだけど…って」
-				PRINTFORMW 「ほら、何ぼけーっとしてるのよ？ 褒めるなら今のうちよ！」
-			CASE "一般"
-				PRINTFORMW 「気に入って貰えたかしら。っていうか…」
-				PRINTFORMW 「黙ってないで、なにか言いなさいよ」
-			CASE "低い"
-				PRINTFORMW 「…何黙ってるのよ。何か言うこと、あるでしょう？」
+			CASE "높다"
+				PRINTFORMW 「이것, 생각보다는 자신작인 것이지만… 은」
+				PRINTFORMW 「이봐요, 얼마나─로 하고 있는거야? 칭찬한다면 지금 가운데야!」
+			CASE "일반"
+				PRINTFORMW 「마음에 들어 받을 수 있었을까. 라고 할까…」
+				PRINTFORMW 「입다물지 말고, 뭔가 말하세요」
+			CASE "낮다"
+				PRINTFORMW 「… 무엇 입다물고 있는거야. 뭔가 말하는 일, 있을까요?」
 		ENDSELECT
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;自主脱衣・全裸に FIRSTDATUI(7)・RANDDATUI(8) ～ (11)
+;자주 탈의·전라에 FIRSTDATUI(7)·RANDDATUI(8) ~ (11)
 ;------------------------------------------------
-;・「全裸まで脱いだ」だけではなく、「今脱いだので全裸になった」という意味
-;・「上着しか残っていない状態で上着を脱いだ」なども含まれる
+;·「전라까지 벗었다」만이 아니고, 「지금 벗었으므로 전라가 되었다」라고 하는 의미
+;·「윗도리 밖에 남지 않은 상태로 윗도리를 벗었다」등도 포함된다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:自主脱衣 && ZENRACHECK(0) && !IS_NOWASSIACTNAME(, "脱衣")
-	;相思相愛
-	IF AFFECTION("相思相愛") && !TEQUIP:アイマスク
-		PRINTFORMW 「ねぇ、私を見て…私の裸、綺麗かしら…？」
+IF 구상기입체크(100) && TFLAG:자주탈의 && ZENRACHECK(0) && !IS_NOWASSIACTNAME(, "탈의")
+	;상사상애
+	IF AFFECTION("상사상애") && !TEQUIP:아이마스크
+		PRINTFORMW 「저기, 나를 봐… 나의 알몸, 예쁠까…?」
 	ELSE
-		PRINTFORMW 「さぁ、準備はOKってとこかしらね」
+		PRINTFORMW 「자, 준비는 OK라는 곳일까요」
 	RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;強制脱衣・アクセサリーのみ FIRSTDATUI(8)
+;강제 탈의·액세서리만 FIRSTDATUI(8)
 ;------------------------------------------------
-;・主に靴下。他には手袋や袖など
-;・脱がしたうちに入らない！となりがちなのでこれだけは部位別テンプレを用意
+;·주로 양말. 그 밖에 장갑이나 소매 따위
+;·벗긴 중에 접어들지 않는다! 되기 십상인 것으로 이것만은 부위별 텐프레를 준비
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:強制脱衣 == 6
+IF 구상기입체크(100) && TFLAG:강제탈의 == 6
 	;=================================================
-	;全裸になった
+	;전라가 되었다
 	;=================================================
-	IF 口上記入チェック(100) && ZENRACHECK(1)
-		PRINTFORMW 「さてと、これでもう隠すものはないわね」
-		PRINTFORMW 「ほら、隠さないで。手を後ろにして、私によく見せ%RAND_SPLIT("なさい/るのよ")%」
+	IF 구상기입체크(100) && ZENRACHECK(1)
+		PRINTFORMW 「그럼, 이것으로 이제(벌써) 숨기는 것은 없네요」
+		PRINTFORMW 「이봐요, 숨기지 마. 손을 뒤로 해, 나에게 자주(잘) 보이고%RAND_SPLIT("없음 있고/의 것")%」
 		PRINTL
-		;調教対象がオトコ
-		IF TALENT:MASTER:オトコ
-			IF TALENT:MASTER:小柄
+		;조교 대상이 남자
+		IF TALENT:MASTER:남자
+			IF TALENT:MASTER:작은체형
 				SELECTCASE RANDDATUI(2, 8)
 					CASE 0
-						PRINTFORMW 「こうしてみると流石に幼いけれど…%CNAME(MASTER, TARGET)%、悪くないわ…」
-						PRINTFORMW 「これは将来が楽しみね？ うふっ…」
+						PRINTFORMW 「이렇게 해 보면 과연 어리지만…%CNAME(MASTER, TARGET)%, 나쁘지 않아요…」
+						PRINTFORMW 「이것은 장래가 기다려지구나? 우훗…」
 					CASE 1
-						PRINTFORMW 「どう見ても男っていうより、まだ男の子って感じよねぇ」
-						PRINTFORMW 「でもまぁ…、%CNAME(MASTER, TARGET)%、そう悪くないわよ？」
+						PRINTFORMW 「어떻게 봐도 남자라고 하는 것보다, 아직 사내 아이라는 느낌이지요」
+						PRINTFORMW 「그렇지만 아무튼…,%CNAME(MASTER, TARGET)%, 그렇게 나쁘지 않아요?」
 				ENDSELECT
 			ELSE
 				SELECTCASE RANDDATUI(2, 9)
 					CASE 0
-						PRINTFORM 「ま、女に裸に剥かれた男の心境は判らないんだけどね…
+						PRINTFORM 「뭐, 녀에 알몸에 벗겨진 남자의 심경은 모르지만 말야…
 						CALL PRINT_SYMBOL_K14
 					CASE 1
-						PRINTFORMW 「大の男が裸に剥かれて、恥ずかしそうにモジモジし%RAND_SPLIT("ちゃって/てる姿")%…」
-						PRINTFORMW 「ちょっと堪らないわね？ フフフ…」
+						PRINTFORMW 「대단한 남자가 알몸에 벗겨져, 부끄러운 듯이 머뭇머뭇 해%RAND_SPLIT("는/비치는 모습")%…」
+						PRINTFORMW 「조금 견딜 수 없네요? 후후후…」
 				ENDSELECT
 			ENDIF
-		;その他
+		;그 외
 		ELSE
-			IF TALENT:MASTER:小柄
+			IF TALENT:MASTER:작은체형
 				SELECTCASE RANDDATUI(2, 10)
 					CASE 0
-						PRINTFORMW 「ふふ…、ホント可愛らしいわね。%CNAME(MASTER, TARGET)%…」
-						PRINTFORM 「ま、正直…小さな女の子相手に私、何してるのかって思わないでもないけれど
+						PRINTFORMW 「후후…, 정말 사랑스럽네요.%CNAME(MASTER, TARGET)%…」
+						PRINTFORM 「뭐, 정직… 작은 여자 아이 상대에게 나, 뭐 하고 있는지라고 생각하지 않는 것도 아니지만
 						CALL PRINT_SYMBOL_K14
 					CASE 1
-						PRINTFORMW 「そうねぇ…、腰回りとか、まだ少女とも呼べない感じよねぇ」
-						PRINTFORMW 「私の小さい頃に、少し似てる気がしないでもないわ」
-						PRINTFORMW 「将来が楽しみね？ ふふ…」
+						PRINTFORMW 「그렇구나…, 허리 둘레라든지, 아직 소녀라고도 부를 수 없는 느낌이지요」
+						PRINTFORMW 「나의 어렸을 적에, 조금 닮아있는 생각이 들지 않는 것도 아니에요」
+						PRINTFORMW 「장래가 기다려지구나? 후후…」
 				ENDSELECT
 			ELSE
 				SELECTCASE RANDDATUI(2, 11)
 					CASE 0
-						PRINTFORMW 「恥ずかしがらず、背筋を伸ばしなさい。その方が見栄えがするわ」
-						PRINTFORMW 「私程ではないけど%CNAME(MASTER, TARGET)%の裸…、なかなか綺麗だしね？」
+						PRINTFORMW 「부끄러워하지 않고, 등골을 펴세요. 그 쪽이 볼품이 해요」
+						PRINTFORMW 「나 정도는 아니지만%CNAME(MASTER, TARGET)%의 알몸…, 꽤 예쁘니까?」
 					CASE 1
-						PRINTFORMW 「そうやって恥ずかしがってる%CNAME(MASTER, TARGET)%の姿見ると、ちょっとゾクゾクしちゃうわね」
-						;TALENT:サドよりALIで見た方がより効率的な気はするので
-						PRINTFORMW 「思いっきり\@ ALI(0) ? 可愛がってあげたく # 虐めたく \@なっちゃうわ」
-						CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? うふふ # ウフフ \@…」")
+						PRINTFORMW 「그렇게 부끄러워하고 있다%CNAME(MASTER, TARGET)%의 모습 보면, 조금 오슬오슬 해 버려요」
+						;TALENT:새디즘보다 ALI로 본 (분)편이 보다 효율적인 생각은 들므로
+						PRINTFORMW 「마음껏\@ ALI(0) ? 귀여워해 주고 싶고# 괴롭히고 싶고\@되어 버려요」
+						CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ ALI(0) ? 후후# 우후후\@…」")
 						CLEARLINE 1
 				ENDSELECT
 			ENDIF
@@ -441,273 +441,273 @@ IF 口上記入チェック(100) && TFLAG:強制脱衣 == 6
 	ENDIF
 	
 	;-------------------------
-	;その他
+	;그 외
 	;-------------------------
-	PRINTFORMW 「さぁ、%RAND_SPLIT("余計/邪魔")%なものは外して頂戴」
+	PRINTFORMW 「자,%RAND_SPLIT("여분/방해")%인 것은 제외해 줘」
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;強制脱衣・ちんこ見せろ FIRSTDATUI(9)
+;강제 탈의·고추 보여라 FIRSTDATUI(9)
 ;------------------------------------------------
-;・今回の脱衣で男性器が見えるようになった場合に表示
-;・ぱんつ見せろを経由せず一気に脱がせる場合あり
+;·이번 탈의로 남성기가 보이게 되었을 경우에 표시
+;·팬티 보여라를 경유하지 않고 단번에 벗게 하는 경우 있어
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:強制脱衣 && P_DATUICHECK(1) == 3 && PENIS(MASTER)
+IF 구상기입체크(100) && TFLAG:강제탈의 && P_DATUICHECK(1) == 3 && PENIS(MASTER)
 	;-----------------------------------
-	;RETURN挟まず、終端まで一連の処理
+	;RETURN 사이에 두지 않고, 종단까지 일련의 처리
 	;-----------------------------------
-	;優しく脱がす（好感度1000以上・アライメント正）
-	IF AFFECTION("眷愛") && ALI(0)
-		PRINTFORM 「ほら、脱がせてあげるから、%RAND_SPLIT("大人しく/じっと")%してて%RAND_SPLIT("頂戴/")%
+	;상냥하게 벗긴다(호감도 1000이상·아라이먼트정)
+	IF AFFECTION("권애") && ALI(0)
+		PRINTFORM 「이봐요, 벗게 해 주기 때문에,%RAND_SPLIT("얌전하고/가만히")%하고 있어%RAND_SPLIT("줘/")%
 		CALL PRINT_SYMBOL_K14
 		PRINTL
 	ENDIF
-	PRINTFORM 「あら、
-	;調教対象勃起度派生
-	SELECTCASE TCVAR:MASTER:勃起度
+	PRINTFORM 「아라,
+	;조교 대상 발기도 파생
+	SELECTCASE TCVAR:MASTER:발기도
 		CASE IS > 1500
-			PRINTFORMW もう%RAND_SPLIT("ギンギン/はちきれそう")%になってるわね…」
+			PRINTFORMW 이제(벌써)%RAND_SPLIT("끙끙/터질 것 같다")%가 되어 있어요…」
 		CASE IS > 1000
-			PRINTFORMW もうこんなに%RAND_SPLIT("膨らませ/しちゃっ")%て…」
+			PRINTFORMW 이제 이렇게%RAND_SPLIT("부풀리고/해")%라고…」
 		CASEELSE
-			PRINTFORMW 縮こまっちゃって%RAND_SPLIT("元気が/見栄えがし")%ないわね…？」
+			PRINTFORMW 움츠러들어 버려%RAND_SPLIT("건강이/볼품이 해")%없네요…?」
 	ENDSELECT
-	;調教対象の勃起度が一定以上
-	IF TCVAR:MASTER:勃起度 >= 1000
+	;조교 대상의 발기도가 일정 이상
+	IF TCVAR:MASTER:발기도 >= 1000
 		SELECTCASE RANDDATUI(2, 9)
 			CASE 0
-				PRINTFORM 「私に脱がされて、興奮しちゃったのかしら…
+				PRINTFORM 「나에게 벗겨져, 흥분해 버렸을까…
 				CALL PRINT_SYMBOL_K14
 			CASE 1
-				PRINTFORMW 「ちょっと気が早いんじゃない？」
+				PRINTFORMW 「조금 성질이 급한 것이 아니야?」
 		ENDSELECT
-	;その他
+	;그 외
 	ELSE
-		PRINTFORMW 「ま、それはそれで中々可愛らしいわよ。\@ TALENT:MASTER:オトコ ? 男としては傷付くかもだけど # 別に貶している訳じゃないからね？ \@」
+		PRINTFORMW 「뭐, 그건 그걸로 꽤 사랑스러워요.\@ TALENT:MASTER:남자 ? 남으로서는 손상될지도이지만# 별로 폄하하고 있는 것이 아니니까?\@」
 	ENDIF
-	;フェードアウト
-	CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ AFFECTION("眷愛") ? ふふふ # フフフ \@…」")
+	;페이드 아웃
+	CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ AFFECTION("권애") ? 후후후# 후후후\@…」")
 	CLEARLINE 1
-	;終端でのみRETURN
+	;종단에서만 RETURN
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;強制脱衣・まんまん見せろ FIRSTDATUI(10)
+;강제 탈의·그대로응 보여라 FIRSTDATUI(10)
 ;------------------------------------------------
-;・今回の脱衣で女性器が見えるようになった場合に表示
-;・ぱんつ見せろを経由せず一気に脱がせる場合あり
+;·이번 탈의로 여성기가 보이게 되었을 경우에 표시
+;·팬티 보여라를 경유하지 않고 단번에 벗게 하는 경우 있어
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:強制脱衣 && P_DATUICHECK(1) == 3 && !TALENT:MASTER:オトコ
+IF 구상기입체크(100) && TFLAG:강제탈의 && P_DATUICHECK(1) == 3 && !TALENT:MASTER:남자
 	;-----------------------------------
-	;RETURN挟まず、終端まで一連の処理
+	;RETURN 사이에 두지 않고, 종단까지 일련의 처리
 	;-----------------------------------
-	;優しく脱がす（好感度1000以上・アライメント正）
-	IF AFFECTION("眷愛") && ALI(0)
-		PRINTFORMW 「ほら、脱がせてあげるから%RAND_SPLIT("大人しく/じっと")%してなさい」
-		PRINTFORMW 「足を上げて貰えるかしら？ そう、いいわよ…」
+	;상냥하게 벗긴다(호감도 1000이상·아라이먼트정)
+	IF AFFECTION("권애") && ALI(0)
+		PRINTFORMW 「이봐요, 벗게 해 주기 때문에%RAND_SPLIT("얌전하고/가만히")%해 주세요」
+		PRINTFORMW 「다리를 올려 받을 수 있을까? 그래, 좋아요…」
 		PRINTL
 	ENDIF
-	PRINTFORM 「さて、ご開帳…
+	PRINTFORM 「그런데, 개장…
 	CALL PRINT_SYMBOL_K14
 	SELECTCASE MOIST_K14(MASTER)
-		CASE "高い"
-			PRINTFORMW 「なによ、もうこんなに濡らしちゃって。%RAND_SPLIT("はしたない/イヤラシイ")%%RAND_SPLIT("娘/わ")%ね？」
-		CASE "一般"
-			PRINTFORMW 「ふふ、%RAND_SPLIT("もう/少し")%濡れてきてる%RAND_SPLIT("みたい/わ")%ね」
-		CASE "低い"
-			PRINTFORMW 「あら、まだお湿りが足りないようね？」
+		CASE "높다"
+			PRINTFORMW 「뭐야, 이제 이렇게 적셔 버려.%RAND_SPLIT("상스럽다/추잡함")%%RAND_SPLIT("아가씨/와")%군요?」
+		CASE "일반"
+			PRINTFORMW 「후후,%RAND_SPLIT("이제(벌써)/조금")%젖어 오고 있다%RAND_SPLIT("보고 싶다/와")%군요」
+		CASE "낮다"
+			PRINTFORMW 「아라, 아직 가랑비가 부족하게?」
 	ENDSELECT
-	PRINTFORMW 「さ%RAND_SPLIT("ぁ/て")%、今回はどうやって\@ ALI(0) ? 可愛がって # 虐めて \@あげようかしら」
-	;フェードイン
-	CALL FADEIN(13, "「…愉しみ、ね」")
-	;フェードアウト
-	CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%RAND_SPLIT("ウフフ/うふふ")%…」")
+	PRINTFORMW 「%RAND_SPLIT("/라고")%, 이번은 어떻게\@ ALI(0) ? 귀여워해# 괴롭혀\@줄까」
+	;페이드 인
+	CALL FADEIN(13, "「… 기다려지, 구나」")
+	;페이드 아웃
+	CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%RAND_SPLIT("우후후/우후후")%…」")
 	CLEARLINE 1
-	;終端でRETURN
+	;종단으로 RETURN
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;強制脱衣・おっぱい見せろ FIRSTDATUI(11)
+;강제 탈의·젖가슴 보여라 FIRSTDATUI(11)
 ;------------------------------------------------
-;・今回の脱衣でおっぱいが見えるようになった場合に表示
-;・ブラ見せろを経由せず一気に脱がせる場合あり
-;・調教対象がオトコだと表示しないので、オトコ限定口上では書く必要が無い
+;·이번 탈의로 젖가슴이 보이게 되었을 경우에 표시
+;·브라 보여라를 경유하지 않고 단번에 벗게 하는 경우 있어
+;·조교 대상이 남자라고 표시하지 않기 때문에, 남자 한정 구상에서는 쓸 필요가 없다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:強制脱衣 && B_DATUICHECK(1) == 3 && !TALENT:MASTER:オトコ
-	LOCALS = \@ FIRSTDATUI(11) ? こうしてみると、ホント # いつ見ても本当に \@
-	PRINTFORM 「さぁ、%CNAME(MASTER, TARGET)%のおっぱい見せて頂戴…
+IF 구상기입체크(100) && TFLAG:강제탈의 && B_DATUICHECK(1) == 3 && !TALENT:MASTER:남자
+	LOCALS = \@ FIRSTDATUI(11) ? 이렇게 해 보면, 정말# 언제 봐도 정말로\@
+	PRINTFORM 「자,%CNAME(MASTER, TARGET)%의 젖가슴 보여 줘…
 	CALL PRINT_SYMBOL_K14
 	IF 0
-	;調教対象が巨乳
-	ELSEIF TALENT:MASTER:巨乳
-		PRINTFORML 「%LOCALS%大きいわ%RAND_SPLIT("ね？/…")%」
+	;조교 대상이 거유
+	ELSEIF TALENT:MASTER:거유
+		PRINTFORML 「%LOCALS%커요%RAND_SPLIT("군요? /…")%」
 		IF 0
-		;調教者が巨乳
-		ELSEIF TALENT:巨乳
-			PRINTFORMW 「%RAND_SPLIT("ま、大きさじゃ私も負けてないけど/とは言っても、私と同じくらいかしらね")%」
+		;조교자가 거유
+		ELSEIF TALENT:거유
+			PRINTFORMW 「%RAND_SPLIT("뭐, 크기는 나도 지지 않지만/라고는 말해도, 나와 같은 정도일까요")%」
 			SIF !RAND:3
-				PRINTFORMW 「でも、ここまでになると肩がこるのよねぇ」
-		;調教者が貧乳
-		ELSEIF TALENT:貧乳
-			PRINTFORMW 「%RAND_SPLIT("あら、なによ。勝ち誇ったような顔しちゃって…/別にそれを羨みはしないけど。言っとくけど、これは負け惜しみじゃないから…")%」
-		;並
+				PRINTFORMW 「그렇지만, 여기까지가 되면 어깨의 것이군요」
+		;조교자가 빈유
+		ELSEIF TALENT:빈유
+			PRINTFORMW 「%RAND_SPLIT("어머나, 뭐야. 우쭐거린 것 같은 얼굴 해 버려…/별로 그것을 시샘은 하지 않지만. 말해 두지만, 이것은 억지가 아니니까…")%」
+		;보통
 		ELSE
-			PRINTFORMW 「%RAND_SPLIT("私も魔力で大きくしてみようかしら？/でも、大切なのは形と感度よ。別に僻んでる訳じゃないけど")%」
+			PRINTFORMW 「%RAND_SPLIT("나도 마력으로 크게 해 볼까? /그렇지만, 중요한 것은 형태와 감도야. 따로 비뚤어지고 있는 것이 아니지만")%」
 		ENDIF
-	;調教対象が貧乳
-	ELSEIF TALENT:MASTER:貧乳
-		PRINTFORML 「%LOCALS%可愛らしいわ%RAND_SPLIT("ね/")%」
+	;조교 대상이 빈유
+	ELSEIF TALENT:MASTER:빈유
+		PRINTFORML 「%LOCALS%사랑스러워요%RAND_SPLIT("군요/")%」
 		IF 0
-		;調教者が巨乳
-		ELSEIF TALENT:巨乳
-			PRINTFORMW 「%RAND_SPLIT("あ、別に他意はないわよ？ 素直に可愛らしいと思ってね/あら、嫌味に聞こえたのなら謝るわ")%」
-			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ふふふ…」")
+		;조교자가 거유
+		ELSEIF TALENT:거유
+			PRINTFORMW 「%RAND_SPLIT("아, 별로 타의는 없어요? 솔직하게 사랑스럽다고 생각해/아라, 불쾌하게 들린 것이라면 사과해요")%」
+			CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「후후후…」")
 			CLEARLINE 1
-		;調教者が貧乳
-		ELSEIF TALENT:貧乳
-			PRINTFORMW 「%RAND_SPLIT("このくらいだと楽でいいわよね？ 色々と/二人でお揃いって感じよね。ふふ…")%」
-		;並
+		;조교자가 빈유
+		ELSEIF TALENT:빈유
+			PRINTFORMW 「%RAND_SPLIT("이 정도라면 편하고 좋네요? 다양하게/둘이서 갖춤이라는 느낌이지요. 후후…")%」
+		;보통
 		ELSE
-			PRINTFORMW 「%RAND_SPLIT(@"無駄に大きければ良いってものでもないし。%CNAME(MASTER, TARGET)%には良く似合ってると覆うわよ？/ま、可愛らしさじゃ私も負けてないけど。それにちょっとだけ%CNAME(MASTER, TARGET)%のより大きいし、ね。ふふ…")%」
+			PRINTFORMW 「%RAND_SPLIT(@"쓸데없게 크면 좋다는 것도 아니고.%CNAME(MASTER, TARGET)%에는 자주(잘) 어울리고 있으면 가려요? /뭐, 사랑스러움은 나도 지지 않지만. 거기에 조금%CNAME(MASTER, TARGET)%의 것보다 크기도 하고,. 후후…")%」
 		ENDIF
-	;並
+	;보통
 	ELSE
-		PRINTFORML 「%LOCALS%綺麗な%RAND_SPLIT("形/胸")%ね」
+		PRINTFORML 「%LOCALS%예쁜%RAND_SPLIT("형/가슴")%군요」
 		IF 0
-		;調教者が巨乳
-		ELSEIF TALENT:巨乳
-			PRINTFORMW 「%RAND_SPLIT("ま、私のくらい大きいともっと良かったけどね？/大き過ぎると感度が悪くなるし、私、元に戻そうかしら")%」
-		;調教者が貧乳
-		ELSEIF TALENT:貧乳
-			PRINTFORMW 「%RAND_SPLIT("それに私のより大きいし生意気…あ、これは冗談よ？ 元に戻せば済む話だし、ね/まぁでも、感度の良さじゃ負けてないつもりだけどね！")%」
-		;並
+		;조교자가 거유
+		ELSEIF TALENT:거유
+			PRINTFORMW 「%RAND_SPLIT("뭐, 나의 것 정도 크면 좀 더 좋았지만 말야? /너무 크면 감도가 나빠지고, 나, 원래에 되돌릴까")%」
+		;조교자가 빈유
+		ELSEIF TALENT:빈유
+			PRINTFORMW 「%RAND_SPLIT("거기에 나의 것보다 크고 거만함… 아, 이것은 농담이야? 원래에 되돌리면 끝나는 이야기이고,/뭐 그렇지만, 감도의 좋은 점은 지지 않을 생각이지만 말야!")%」
+		;보통
 		ELSE
-			PRINTFORMW 「%RAND_SPLIT("と言っても…私ほどではないけど/やっぱりこのくらいが一番いいわよね")%。ふふ…」
+			PRINTFORMW 「%RAND_SPLIT("라고 말해도… 나만큼은 아니지만/역시 이 정도가 제일 좋네요")%. 후후…」
 		ENDIF
 	ENDIF
-	;おっぱい系を真面目にやると、ホント面倒すぎる
+	;젖가슴계를 성실하게 하면, 정말 너무 귀찮다
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;強制脱衣・ぱんつ見せろ FIRSTDATUI(12)
+;강제 탈의·팬티 보여라 FIRSTDATUI(12)
 ;------------------------------------------------
-;・今回の脱衣で下半身下着が見えるようになった場合に表示
-;・調教対象が下半身下着の無いキャラ限定の口上であれば書く必要がない
+;·이번 탈의로 하반신 속옷이 보이게 되었을 경우에 표시
+;·조교 대상이 하반신 속옷이 없는 캐릭터 한정의 구상이면 쓸 필요가 없다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:強制脱衣 && P_DATUICHECK(1) == 2
-	;共通で処理したい部分があったんで、枠を分けずにまとめてしまったという。分けた方が見た目スッキリするんだけど
-	PRINTFORMW 「%RAND_SPLIT("ふふ/フフ")%…良い格好。ま、他人には見せられないわよねぇ？ こんな\@ TALENT:MASTER:オトコ ? %RAND_SPLIT("情けない/無様な")% # %RAND_SPLIT("はしたない/ふしだらな")% \@下着姿」
-	;調教対象がオトコ
-	IF TALENT:MASTER:オトコ
-		PRINTFORMW 「ほら！ もじもじするのは止めて、男らしく堂々としていなさい。みっともない」
-	;その他
+IF 구상기입체크(100) && TFLAG:강제탈의 && P_DATUICHECK(1) == 2
+	;공통으로 처리하고 싶은 부분이 있던 것으로, 테두리를 나누지 않고 정리해 버렸다고 한다. 나눈 (분)편이 겉모습 깨끗이 하지만
+	PRINTFORMW 「%RAND_SPLIT("후후/후후")%… 좋은 모습. 뭐, 타인에게는 보여지지 않네요? 이런\@ TALENT:MASTER:남자 ? %RAND_SPLIT("한심하다/보기 흉한")% # %RAND_SPLIT("상스럽다/단정치못한")% \@속옷 모습」
+	;조교 대상이 남자
+	IF TALENT:MASTER:남자
+		PRINTFORMW 「이봐요! 머뭇머뭇 하는 것은 멈추어, 남자답게 당당해 있으세요. 보기 흉하다」
+	;그 외
 	ELSE
-		PRINTFORM 「恥ずかしそうに俯いてる姿も%RAND_SPLIT("可愛いわね？/堪らないわね…")%　\@ ALI(0) ? ちょっと # もっと \@意地悪したくなっちゃうわ
+		PRINTFORM 「부끄러운 듯이 숙이고 있는 모습도%RAND_SPLIT("사랑스럽네요? /견딜 수 없네요…")%　\@ ALI(0) ? 조금# 좀 더\@심술쟁이하고 싶어져 버려요
 		CALL PRINT_SYMBOL_K14
 	ENDIF
-	;調教対象にペニスあり
+	;조교 대상으로 페니스 있어
 	IF PENIS(MASTER)
-		;調教対象勃起度派生
-		SELECTCASE TCVAR:MASTER:勃起度
+		;조교 대상 발기도 파생
+		SELECTCASE TCVAR:MASTER:발기도
 			CASE IS > 1500
-				PRINTFORMW 「って%CNAME(MASTER, TARGET)%…、もうそんなに大きくしちゃって……」
-				PRINTFORMW 「一体何を期待してそんなにしちゃってる訳？ ほら、正直に言ってみなさいよ\@ TENSION(TARGET, 8) == "高い" ? っ！ # \@」
+				PRINTFORMW 「라고%CNAME(MASTER, TARGET)%…, 벌써 그렇게 크게 해 버려……」
+				PRINTFORMW 「도대체 무엇을 기대해 그렇게 해 버리고 있는 것? 이봐요, 정직하게 말해 보세요\@ TENSION(TARGET, 8) == "높다" ?!# \@」
 			CASE IS > 1000
-				PRINTFORMW 「あら？ %CNAME(MASTER, TARGET)%、そこに何を隠しているのかしら。そして…」
-				PRINTFORMW 「その中身を、この私にどうして欲しいの？ ほら、ちゃんと答えなさいよ\@ TENSION(TARGET, 8) == "高い" ? ！ # \@」
+				PRINTFORMW 「아라?%CNAME(MASTER, TARGET)%, 거기에 무엇을 숨기고 있을까. 그리고…」
+				PRINTFORMW 「그 내용을, 이 나에게 어떻게 해 주었으면 한거야? 이봐요, 분명하게 대답하세요\@ TENSION(TARGET, 8) == "높다" ? ！ # \@」
 			CASEELSE
-				PRINTFORMW 「何よ、元気ないわね？ お粗末過ぎて%RAND_SPLIT("泣けてく/涙が出")%るわ」
-				PRINTFORMW 「%RAND_SPLIT("これは少し、躾けなおす必要があるかしらね？/まぁいいわ。これからしっかり仕込んであげるから…")%」
+				PRINTFORMW 「뭐야, 기운이 없네요? 너무 허술해%RAND_SPLIT("눈물이 나와 간다/눈물이 출")%원」
+				PRINTFORMW 「%RAND_SPLIT("이것은 조금, 다시 예의범절을 가르칠 필요가 있을까요? /뭐 좋아요. 지금부터 확실히 가르쳐 주기 때문에…")%」
 		ENDSELECT
-	;調教対象にペニス無し
+	;조교 대상으로 페니스 없음
 	ELSE
-		;調教対象潤滑派生
+		;조교 대상 윤활 파생
 		SELECTCASE MOIST_K14(MASTER)
-			CASE "高い"
-				PRINTFORMW 「…って。あらあら、お漏らししたみたいになってるじゃない」
-				PRINTFORMW 「疼いちゃって辛いんでしょう？ 私に%RAND_SPLIT("メチャメチャにし/虐め/かき回し")%て欲しいんでしょう？」
-				PRINTFORMW 「さぁ、正直に言ってごらんなさい…」
-			CASE "一般"
-				PRINTFORMW 「ん？ %CNAME(MASTER, TARGET)%…、もう濡れちゃってる%RAND_SPLIT("訳/のね")%？」
-				PRINTFORMW 「これから私にされる事%RAND_SPLIT("考え/期待し")%て、そんなにしちゃってるんでしょう」
-				PRINTFORMW 「ねぇ、そうなんでしょう？ そうなのよね？ 私の目を見て、ちゃんと答えなさい…」
-			CASE "低い"
-				PRINTFORMW 「あら？ まだ濡れてないのね。%RAND_SPLIT("ツマラナイ/つまらない/面白くない")%わ」
-				PRINTFORMW 「%RAND_SPLIT(@"もしかして%CNAME(MASTER, TARGET)%…、濡れにくかったりするのかしら？/この程度じゃ%CNAME(MASTER, TARGET)%…、まだ興奮しないのかしら？ 面倒な事ね")%」
+			CASE "높다"
+				PRINTFORMW 「… 은. 아라아라, 흘림 한 것 같이 되어 있지 않아」
+				PRINTFORMW 「쑤셔 버려 괴롭겠지요? 나에게%RAND_SPLIT("엉망진창으로 해/책망해라/휘저어")%라고 갖고 싶겠지요?」
+				PRINTFORMW 「자, 정직하게 말해 보세요…」
+			CASE "일반"
+				PRINTFORMW 「응?%CNAME(MASTER, TARGET)%…, 벌써 젖어 버리고 있다%RAND_SPLIT("(뜻)이유/의")%？」
+				PRINTFORMW 「지금부터 나로 되는 일%RAND_SPLIT("생각/기대해")%라고, 그렇게 해 버리고 있겠지요」
+				PRINTFORMW 「저기, 그렇겠지요? 그런 것이군요? 나의 눈을 봐, 분명하게 대답하세요…」
+			CASE "낮다"
+				PRINTFORMW 「아라? 아직 젖지 않은거네.%RAND_SPLIT("재미없다/시시하다/재미있지 않다")%원」
+				PRINTFORMW 「%RAND_SPLIT(@"혹시%CNAME(MASTER, TARGET)%…, 젖기 어렵거나 할까? /이 정도다%CNAME(MASTER, TARGET)%…, 아직 흥분하지 않는 것일까? 귀찮은 일이군요")%」
 		ENDSELECT
 	ENDIF
-	;1/3の確率で表示する
+	;1/3의 확률로 표시한다
 	IF !RAND:3
-		;フェードアウト
-		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%RAND_SPLIT("クスクス/くすくす/フフフ/ウフフ")%…」")
-		;行削除
+		;페이드 아웃
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%RAND_SPLIT("킥킥/킥킥/후후후/우후후")%…」")
+		;행 삭제
 		CLEARLINE 1
 	ENDIF
-	;終端でのみRETURN
+	;종단에서만 RETURN
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;強制脱衣・ブラ見せろ FIRSTDATUI(13)
+;강제 탈의·브라 보여라 FIRSTDATUI(13)
 ;------------------------------------------------
-;・今回の脱衣でブラ上半身下着が見えるようになった場合に表示
-;・調教対象がオトコだと表示しないので、オトコ限定口上では書く必要が無い
-;・調教対象が上半身下着の無いキャラ限定の口上であれば書く必要がない
+;·이번 탈의로 브라 상반신 속옷이 보이게 되었을 경우에 표시
+;·조교 대상이 남자라고 표시하지 않기 때문에, 남자 한정 구상에서는 쓸 필요가 없다
+;·조교 대상이 상반신 속옷이 없는 캐릭터 한정의 구상이면 쓸 필요가 없다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:強制脱衣 && B_DATUICHECK(1) == 2 && !TALENT:MASTER:オトコ
-	;ここの構造ならAUTOORDERに統合していいのかも知れない
+IF 구상기입체크(100) && TFLAG:강제탈의 && B_DATUICHECK(1) == 2 && !TALENT:MASTER:남자
+	;여기의 구조라면 AUTOORDER에 통합해도 좋은 것인지도 모른다
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && TALENT:TARGET:ご主人様 && FIRSTDATUI(13)
-		PRINTFORMW 「あら、可愛らしい下着ね？ %CNAME(MASTER, TARGET)%、良い趣味してるわ」
-		PRINTFORMW 「ただそうね…、もう少し\@ TALENT:MASTER:小柄 ? 可愛い # 大人っぽい \@感じの方が似合うかも」
-		PRINTFORMW 「そのうち、私が誂えてあげてもいいわ。%CNAME(MASTER, TARGET)%がいい子にしてたら、ね」
-		KFLAG:(FLAG:ご主人様):310 = 1
+	IF 구상기입체크(100) && TALENT:TARGET:주인님 && FIRSTDATUI(13)
+		PRINTFORMW 「아라, 사랑스러운 속옷이군요?%CNAME(MASTER, TARGET)%, 좋은 취미 하고 있어요」
+		PRINTFORMW 「단지 그렇게…, 좀 더\@ TALENT:MASTER:작은체형 ? 사랑스럽다# 어른스럽다\@느낌이 어울릴지도」
+		PRINTFORMW 「그 중에서 내가 맞추어 주어도 괜찮아요.%CNAME(MASTER, TARGET)%가 좋은 아이로 하고 있으, 면요」
+		KFLAG:(FLAG:주인님):310 = 1
 		RETURN 1
 	ENDIF
 	
 	;-------------------------
-	;その他
+	;그 외
 	;-------------------------
-	;AUTOORDER使い切ったら汎用に
+	;AUTOORDER 다 사용하면 범용에
 	SELECTCASE ORDERDATUI(13)
 		CASE 0
 			IF 0
-			ELSEIF TALENT:MASTER:巨乳
-				PRINTFORMW 「%RAND_SPLIT("ちょっと/いつ見ても")%窮屈そうね？」
-				PRINTFORMW 「もう少しゆとりのあるサイズにしてもいいかも知れないわ」
-			ELSEIF TALENT:MASTER:貧乳
-				PRINTFORMW 「カップもアンダーもちょっと緩い感じね。それだと形が崩れちゃうかも」
-				PRINTFORMW 「大きさに関わらず、サイズの合ったものにしないとね？」
+			ELSEIF TALENT:MASTER:거유
+				PRINTFORMW 「%RAND_SPLIT("조금/언제 봐도")%거북한 것 같구나?」
+				PRINTFORMW 「좀 더 여유가 있는 사이즈로 해도 괜찮을지도 몰라요」
+			ELSEIF TALENT:MASTER:빈유
+				PRINTFORMW 「컵도 언더도 조금 느슨한 느낌이군요. 그것이라면 형태가 무너져 버릴지도」
+				PRINTFORMW 「크기에 관련되지 않고, 사이즈가 맞은 것으로 하지 않으면?」
 			ELSE
-				PRINTFORMW 「ふふ、良く似合ってるわ。ただ、そうね…」
-				PRINTFORMW 「サイズは変化していくから、それに合わせていかないとね」
-				PRINTFORMW 「それが美しさを保つ秘訣よ。良く覚えておいて」
+				PRINTFORMW 「후후, 자주(잘) 어울리고 있어요. 다만, 그렇구나…」
+				PRINTFORMW 「사이즈는 변화해 나가기 때문에, 거기에 맞추어 가지 않으면」
+				PRINTFORMW 「그것이 아름다움을 유지하는 비결이야. 자주(잘) 기억해 둬」
 			ENDIF
 		CASE 1
-			PRINTFORMW 「うん、悪くないわね。ただ、やっぱり%CNAME(MASTER, TARGET)%の場合、\@ TALENT:MASTER:巨乳 ? フル # %RANDTEXT_K14("1/2", "3/4")% \@カップの方がいいのかも」
-			PRINTFORMW 「ちょっと考えておいてあげるわ」
+			PRINTFORMW 「응, 나쁘지 않네요. 다만, 역시%CNAME(MASTER, TARGET)%의 경우,\@ TALENT:MASTER:거유 ? 풀# %RANDTEXT_K14("1/2", "3/4")% \@컵이 좋은 것인지도」
+			PRINTFORMW 「조금 생각해 두어 주어요」
 		CASE 2
-			PRINTFORMW 「あら、なかなか良い感じね？ サイズ的にもぴったりみたいだし」
-			PRINTFORMW 「あとはそうね。間違ったつけ方はバストラインを崩すから、着用方法も大切よ」
-			PRINTFORMW 「例えばまず…、上体を90度に倒して、胸をカップの中に収めてて、それからそれから…」
-			PRINTFORMDW 唐突に始まった%CALLNAME%による着用講座は、その後暫くの間続いた…
-		;汎用処理
+			PRINTFORMW 「아라, 꽤 좋은 느낌이군요? 사이즈적으로도 딱 같고」
+			PRINTFORMW 「그리고는 그렇구나. 잘못한 붙이는 방법은 버스트 라인을 무너뜨리기 때문에, 착용 방법도 중요해요」
+			PRINTFORMW 「예를 들면 우선…, 상체를 90도에 넘어뜨려, 가슴을 컵안에 거두고 있어, 그리고 그리고…」
+			PRINTFORMDW 당돌하게 시작되었다%CALLNAME%에 의한 착용 강좌는, 그 후 잠시의 사이 계속되었다…
+		;범용 처리
 		CASEELSE
 			SELECTCASE RANDDATUI(2, 13)
 				CASE 0
-					PRINTFORMW 「私の言いつけを守って、しっかり付けてるようね？ %RAND_SPLIT("良い事/何より")%だわ」
-					PRINTFORM 「そうね、今度
+					PRINTFORMW 「나의 명령을 지켜, 확실히 붙이고 있는 것 같구나?%RAND_SPLIT("좋은 일/무엇보다")%예요」
+					PRINTFORM 「그렇구나, 이번
 					CALL WHICH_LINGERIE(COLOR2_K14("ALICE"))
-					PRINTFORMW やつ試してみる？」
+					PRINTFORMW 녀석 시험해 봐?」
 				CASE 1
-					PRINTFORMW 「\@ ALI(0) ? ふふ # フフ \@、可愛い。とっても良く似合ってるわ」
-					PRINTFORM 「脱が%RAND_SPLIT("す/しちゃう")%のが勿体無いくらいに、ね…
+					PRINTFORMW 「\@ ALI(0) ? 후후# 후후\@, 사랑스럽다. 매우 자주(잘) 어울리고 있어요」
+					PRINTFORM 「탈이%RAND_SPLIT("/해 버린다")%의 것이 과분할 정도로 말이야,…
 					CALL PRINT_SYMBOL_K14
 			ENDSELECT
 	ENDSELECT
@@ -715,199 +715,199 @@ IF 口上記入チェック(100) && TFLAG:強制脱衣 && B_DATUICHECK(1) == 2 &
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;強制脱衣・全裸に FIRSTDATUI(14)
+;강제 탈의·전라에 FIRSTDATUI(14)
 ;------------------------------------------------
-;・「全裸まで剥いだ」だけではなく、「今剥いだので全裸になった」という意味
-;・「上着しか残っていない状態で上着を剥いだ」なども含まれる
-;・「おっぱい見せろ」～「ぱんつ見せろ」を書いた場合は記入する必要はない（上層の分岐に食われてここまで落ちてこない為）
+;·「전라까지 벗겼다」만이 아니고, 「지금 벗겼으므로 전라가 되었다」라고 하는 의미
+;·「윗도리 밖에 남지 않은 상태로 윗도리를 벗겼다」등도 포함된다
+;·「젖가슴 보여라」~ 「팬티 보여라」를 썼을 경우는 기입할 필요는 없다(상층의 분기에 먹혀져 여기까지 떨어져 오지 않기 때문에)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:強制脱衣 && ZENRACHECK(1)
-	PRINTFORMW 「…%RAND_SPLIT("さて、/")%これで全部ね。\@ ALI(0) ? ふふ # フフ \@、%RAND_SPLIT("いい/悪くない")%眺めだわ」
-	PRINTFORMW 「さぁ、今回も思いっきり\@ ALI(0) ? 虐めて # 可愛がって \@あげる」
-	PRINTFORM 「楽しみにしてて…
+IF 구상기입체크(100) && TFLAG:강제탈의 && ZENRACHECK(1)
+	PRINTFORMW 「…%RAND_SPLIT("그런데,/")%이것으로 전부군요.\@ ALI(0) ? 후후# 후후\@、%RAND_SPLIT("좋다/나쁘지 않다")%경치예요」
+	PRINTFORMW 「자, 이번도 마음껏\@ ALI(0) ? 괴롭혀# 귀여워해\@준다」
+	PRINTFORM 「기대하고 있어…
 	CALL PRINT_SYMBOL_K14
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;自主脱衣・何か脱いだ FIRSTDATUI(15)
+;자주 탈의·뭔가 벗은 FIRSTDATUI(15)
 ;------------------------------------------------
-;・自慰・奉仕系の予備動作になりやすい
+;·자위·봉사계의 예비 동작이 되기 쉽다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ここまでの調教者の自主脱衣条件にヒットしない場合、この箇所が補完する
+;여기까지의 조교자의 자주 탈의 조건에 히트 하지 않는 경우, 이 개소가 보완한다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && TFLAG:自主脱衣 && !IS_NOWASSIACTNAME(, "脱衣") && !TEQUIP:アイマスク
-	PRINTFORMW 「\@ T_COND("情欲") ? 邪魔ね、こんなの # ふふん、見たければ見てもいいわよ。ほら… \@」
-	PRINTFORMDW %CALLNAME%はそう言うと、\@ T_COND("情欲") ? 勢いよく着衣を脱ぎ捨てた # 挑発するかのように、ゆっくりと扇情的に着衣を脱いでいく \@…
+IF 구상기입체크(100) && TFLAG:자주탈의 && !IS_NOWASSIACTNAME(, "탈의") && !TEQUIP:아이마스크
+	PRINTFORMW 「\@ T_COND("정욕") ? 방해군요, 이런 건# 후후응, 보고 싶으면 봐도 괜찮아요. 이봐요…\@」
+	PRINTFORMDW %CALLNAME%는 그렇게 말하면,\@ T_COND("정욕") ? 힘차게 착의를 벗어 던졌다# 도발하는것 같이, 천천히 선정적으로 착의를 벗어 간다\@…
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;強制脱衣・何か剥いだ FIRSTDATUI(16)
+;강제 탈의·뭔가 벗긴 FIRSTDATUI(16)
 ;------------------------------------------------
-;・愛撫系の予備動作になりやすい
+;·애무계의 예비 동작이 되기 쉽다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ここまでの強制脱衣条件にヒットしない場合、この箇所が補完する
+;여기까지의 강제 탈의 조건에 히트 하지 않는 경우, 이 개소가 보완한다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && TFLAG:強制脱衣
-	PRINTFORMW 「さぁ、余計なものは脱いでもらうわよ」
-	PRINTFORMW 「大人しくして%RAND_SPLIT("なさい/頂戴")%……」
+IF 구상기입체크(100) && TFLAG:강제탈의
+	PRINTFORMW 「자, 불필요한 것은 벗어 받아요」
+	PRINTFORMW 「얌전하게 해%RAND_SPLIT("없음 있고/줘")%……」
 	RETURN 1
 ENDIF
 
 
 ;========================================================================
-;追加アクション口上
+;추가 액션 구상
 ;========================================================================
-;・調教者が追加行動を取ったときに汎用的に表示
-;・書く場合、アクション口上の後に続けて違和感のない形で書かれることが望ましい
+;·조교자가 추가 행동을 취했을 때에 범용적으로 표시
+;·쓰는 경우, 액션 구상의 뒤로 이어 위화감이 없는 형태로 쓰여지는 것이 바람직함
 ;-------------------------------------------------
-;いずれ手入れしないと、な箇所
+;머지않아 손질 하지 않으면, 개소
 ;-------------------------------------------------
 
-;────────────────────────────────────
-;EXTRA1, Ｃ愛撫
-;────────────────────────────────────
-;・追加で愛撫または手淫を行う
-;・調教対象にペニスがない場合は愛撫、ある場合は手淫
+;─
+;EXTRA1, C애무
+;─
+;·추가로 애무 또는 자위를 실시한다
+;·조교 대상으로 페니스가 없는 경우는 애무, 어느 경우는 자위
 ;-------------------------------------------------
 @KOJO_ACT_EXTRA_K14_1
 ;-------------------------------------------------
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;EXTRA1_0, 愛撫する
+;EXTRA1_0, 애무한다
 ;-------------------------------------------------
-;・調教対象にペニスがない場合
+;·조교 대상으로 페니스가 없는 경우
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && !PENIS(MASTER)
+IF 구상기입체크(100) && !PENIS(MASTER)
 	SELECTCASE RANDACTEX(2, 0)
 		CASE 0
-			PRINTFORMW 「直接触れないで、周りをクニクニされるのも良いでしょ…？」
-			PRINTFORMW 「焦らされて嬲られるのが、癖になっちゃうかもね…？ フフフ…」
+			PRINTFORMW 「직접 접하지 말고, 주위를 만지작만지작 되는 것도 좋지요…?」
+			PRINTFORMW 「초조해 해져 희롱해지는 것이, 버릇이 되어 버릴지도 몰라…? 후후후…」
 		CASEELSE
-			PRINTFORMW 「こんなに膨らませちゃって、弄って欲しかったのかしら」
-			PRINTFORMW 「ほら、皮を剥かないで嬲られるの、気持ちいいでしょう？」
+			PRINTFORMW 「이렇게 부풀려 버려, 만지작거리기를 원했을까」
+			PRINTFORMW 「이봐요, 가죽을 벗기지 않고 희롱해지는 것, 기분이 좋을 것입니다?」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;EXTRA1_1, 手淫する
+;EXTRA1_1, 자위 한다
 ;-------------------------------------------------
-;・調教対象にペニスがある場合
+;·조교 대상으로 페니스가 있는 경우
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && PENIS(MASTER)
+IF 구상기입체크(100) && PENIS(MASTER)
 	SELECTCASE RANDACTEX(2, 1)
 		CASE 0
-			PRINTFORMW 「フフ…手の中でどんどん熱くなってくる…」
-			PRINTFORM 「雁首の後ろもグニグニしてあげるわ…
+			PRINTFORMW 「후후… 손안으로 자꾸자꾸 뜨거워져 온다…」
+			PRINTFORM 「대통의 뒤도 슥슥 해 주어요…
 			CALL PRINT_SYMBOL_K14
 		CASEELSE
-			PRINTFORMW 「ほら、シゴいて欲しかったんでしょう？　ねぇ、どうなの？」
-			PRINTFORMW 「正直に言わないと止めるわよ？　ウフフ…」
+			PRINTFORMW 「이봐요, 훑기를 원했던 것이지요?   응, 어때?」
+			PRINTFORMW 「정직하게 말하지 않으면 멈추어요?   우후후…」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
-;────────────────────────────────────
-;EXTRA2, Ｖ愛撫
-;────────────────────────────────────
-;・追加でヴァッジ愛撫を行う
-;・調教対象がオトコの場合発生しない
-;・調教対象が処女の場合は発生しない
+;─
+;EXTRA2, V애무
+;─
+;·추가로 바지 애무를 실시한다
+;·조교 대상이 남자의 경우 발생하지 않는다
+;·조교 대상이 처녀의 경우는 발생하지 않는다
 ;-------------------------------------------------
 @KOJO_ACT_EXTRA_K14_2
 ;-------------------------------------------------
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	SELECTCASE RANDACTEX(2, 0)
 		CASE 0
-			PRINTFORMW 「フフ…指が締め付けられるわね」
-			PRINTFORM 「ほら、天井のザラザラも擦ってあげるわ…
+			PRINTFORMW 「후후… 손가락이 단단히 조일 수 있어요」
+			PRINTFORM 「이봐요, 천정의 거슬거슬도 비비어 주어요…
 		CASEELSE
-			PRINTFORMW 「ほら、ココ？　それともこうかしら？」
-			PRINTFORM 「ウフフ、健気に指を締め付けてきて可愛らしいわね
+			PRINTFORMW 「이봐요, 코코?   그렇지 않으면 이러한가?」
+			PRINTFORM 「우후후, 기특하게 손가락을 단단히 조여 와 사랑스럽네요
 	ENDSELECT
 	CALL PRINT_SYMBOL_K14
 	RETURN 1
 ENDIF
 
-;────────────────────────────────────
-;EXTRA3, Ａ愛撫
-;────────────────────────────────────
-;・追加でアナル愛撫を行う
+;─
+;EXTRA3, A애무
+;─
+;·추가로 애널 애무를 실시한다
 ;-------------------------------------------------
 @KOJO_ACT_EXTRA_K14_3
 ;-------------------------------------------------
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	SELECTCASE RANDACTEX(2, 0)
 		CASE 0
-			PRINTFORMW 「ほら、指が2本入ったわよ」
-			PRINTFORM 「ぐいぐい締め付けちゃって… 貪欲なのね
+			PRINTFORMW 「이봐요, 손가락이 2개 들어갔어요」
+			PRINTFORM 「쭉쭉 단단히 조여 버려… 탐욕인 거네
 			CALL PRINT_SYMBOL_K14
 		CASEELSE
-			PRINTFORMW 「弄る度にビクビクしちゃって…」
-			PRINTFORMW 「随分敏感なおしりね？　ウフフ…」
+			PRINTFORMW 「만지작거릴 때에 움찔움찔 해 버려…」
+			PRINTFORMW 「상당히 민감한 엉덩이군요?   우후후…」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
-;────────────────────────────────────
-;EXTRA4, Ｂ愛撫
-;────────────────────────────────────
-;・追加で乳首責めを行う
+;─
+;EXTRA4, B애무
+;─
+;·추가로 유두 고문을 실시한다
 ;-------------------------------------------------
 @KOJO_ACT_EXTRA_K14_4
 ;-------------------------------------------------
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	SELECTCASE RANDACTEX(2, 0)
 		CASE 0
-			PRINTFORMW 「ほら、乳首の周りを嬲られると、もどかしくて堪らないでしょう…？」
+			PRINTFORMW 「이봐요, 유두의 주위를 희롱해지면, 안타까워서 견딜 수 없을 것입니다…?」
 		CASEELSE
-			PRINTFORMW 「もう乳首が立ってるわね？　期待してるの？」
-			PRINTFORMW 「じゃ、お望み通り乳首も虐めてあげるわ。ウフフ…」
+			PRINTFORMW 「이제(벌써) 유두가 서 있어요?   기대하고 있는 거야?」
+			PRINTFORMW 「그러면, 소망 대로 유두도 괴롭혀 주어요. 우후후…」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
-;────────────────────────────────────
-;媚薬等使用口上
-;────────────────────────────────────
-;・調教者が媚薬やローションを使用したときに汎用的に表示
-;・「アクション口上」で記入チェックを=2とした場合は表示されない
-;・書く場合、アクション口上の後に続けて違和感のない形で書かれることが望ましい
+;─
+;미약등 사용 구상
+;─
+;·조교자가 미약이나 로션을 사용했을 때에 범용적으로 표시
+;·「액션 구상」으로 기입 체크를=2로 했을 경우는 표시되지 않는다
+;·쓰는 경우, 액션 구상의 뒤로 이어 위화감이 없는 형태로 쓰여지는 것이 바람직함
 ;-------------------------------------------------
 @KOJO_USE_K14
 ;-------------------------------------------------
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ローション/媚薬同時使用
+;로션/미약동시 사용
 ;------------------------------------------------
-;・主に性交系コマンドから発生する
+;·주로 성교계 커맨드로부터 발생한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && GETBIT(TFLAG:媚薬等使用口上, 0) && GETBIT(TFLAG:媚薬等使用口上, 1)
-	PRINTFORMW 「目が潤んで、顔は上気しちゃって…」
-	PRINTFORMW 「発情しちゃったかしら…？」
-	PRINTFORMW 「ローションもヌルヌルして良い感じでしょ…？」
+IF 구상기입체크(100) && GETBIT(TFLAG:미약등사용구상, 0) && GETBIT(TFLAG:미약등사용구상, 1)
+	PRINTFORMW 「눈이 물기를 띠어, 얼굴은 상기 해 버려…」
+	PRINTFORMW 「발정해 버렸을까…?」
+	PRINTFORMW 「로션도 미끈미끈 해도 좋은 느낌이겠지…?」
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ローション使用
+;로션 사용
 ;------------------------------------------------
-;・玩具・性交系コマンド等から発生する
+;·완구·성교계 커맨드등으로부터 발생한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && GETBIT(TFLAG:媚薬等使用口上, 0)
-	PRINTFORMW 「このヌルヌルが癖になるのよね…」
-	PRINTFORM 「さぁ、思いっきり愉しむわよ
+IF 구상기입체크(100) && GETBIT(TFLAG:미약등사용구상, 0)
+	PRINTFORMW 「이 미끈미끈이 버릇이 되는거네요…」
+	PRINTFORM 「자, 마음껏 즐겨요
 	CALL PRINT_SYMBOL_K14
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;媚薬使用
+;미약사용
 ;------------------------------------------------
-;・愛撫系コマンド等から発生する
-;・キスで発生した場合は口移しとなるため、そのケースはキスのアクション口上内で処理するほうがよい
+;·애무계 커맨드등으로부터 발생한다
+;·키스로 발생했을 경우는 입으로 옮김이 되기 (위해)때문에, 그 케이스는 키스의 액션 구상내에서 처리하는 편이 좋다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;IF 口上記入チェック(100) && GETBIT(TFLAG:媚薬等使用口上, 1)
+;IF 구상 기입 체크(100) && GETBIT(TFLAG:미약등 사용 구상, 1)
 ;ENDIF

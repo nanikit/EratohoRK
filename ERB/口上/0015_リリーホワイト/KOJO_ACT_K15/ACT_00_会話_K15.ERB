@@ -1,709 +1,709 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;	[リリーホワイト]口上 会話系アクション口上ファイル
+;	[릴리 화이트]구상 회화계 액션 구상 파일
 ;
-;	会話系アクション口上をまとめたファイル
+;	회화계 액션 구상을 정리한 파일
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
 ;========================================================================
-;会話系 ACT0～9
+;회화계 ACT0~9
 ;========================================================================
-;・TFLAG:ACT(0=今の気分を聞く/1=自分への気持ちを聞く/2=性についての話をする/3=優しく慰める/4=厳しく脅す/5=衣装の変更を要求する/6=合意を求める/7=お仕置きと宣言する/8=怒鳴る/9=不気味に笑う)
-;・TFLAG:ACT分類 == 0に該当
-;・ACT9, 不気味に笑うは異常系ACT分類から派生する場合がある
-;・汎用リアクションにおいてはMENUMATCH(TFLAG:ACT, "会話")で拾う事が可能
+;·TFLAG:ACT(0=지금의 기분을 (듣)묻는다/1=자신에게로의 기분을 (듣)묻는다/2=성에 대한 이야기를 한다/3=상냥하게 위로한다/4=엄격하게 위협한다/5=의상의 변경을 요구한다/6=합의를 요구한다/7=벌이라고 선언한다/8=고함친다/9=기분 나쁘게 웃는다)
+;·TFLAG:ACT 분류 == 0에 해당
+;·ACT9, 기분 나쁘게 웃고는 이상계 ACT 분류로부터 파생하는 경우가 있다
+;·범용 리액션에 대해서는 MENUMATCH(TFLAG:ACT, "회화")로 줍는 것이 가능
 ;-------------------------------------------------
-;・戻り値(RESULT)について
-;・システム側では口上側のRESULT(終端のRETURN 1など)によって口上が表示されたのか否か、
-;・また箇所毎の特有の挙動(媚薬等口上をスキップなど)を制御しています
-;・@口上記入チェックの場合代入処理を省略できますが、RESULT値は口上側で決めうちする必要があります
-;・特別な理由がない限り、テンプレとしてはRETURN 1を記述しておきます
+;·반환값(RESULT)에 대해
+;·시스템측에서는 구상측의 RESULT(종단의 RETURN 1 등)에 의해 구상이 표시되었는지 아닌지,
+;·또 개소 마다의 특유의 거동(미약등 구상을 스킵 따위)을 제어하고 있습니다
+;·@구상 기입 체크의 경우 대입 처리를 생략 할 수 있습니다만, RESULT치는 구상측에서 결정하고 쳐 할 필요가 있습니다
+;·특별한 이유가 없는 한, 텐프레로서는 RETURN 1을 기술해 둡니다
 ;-------------------------------------------------
-;────────────────────────────────────
-;ACT0, 今の気分を聞く
-;────────────────────────────────────
-;・今の気分について聞いてくる
-;・調教対象の反応に応じてREACT以降でACT派生への代入が行われる
-;・ターン方針が"異常"なら発生しない
+;─
+;ACT0, 지금의 기분을 (듣)묻는다
+;─
+;·지금의 기분에 대해 들어 온다
+;·조교 대상의 반응에 응해 REACT 이후에 ACT 파생에의 대입을 한다
+;·턴 방침이 "이상"이라면 발생하지 않는다
 ;-------------------------------------------------
 @KOJO_ACT_K15_0
-;口上独自内部処理
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
 ;-------------------------------------------------
-;関数@TARGET_DESCRIPTIONによってTEQUIP(性交中/調教対象Ｃ使用/性交奉仕中/自慰中 & 2)
-;@EQUIPACTION_DESCRIPTIONによってTEQUIP(顔面騎乗/顔面騎乗アナル/自慰中)で地の文は変化する可能性がある
-;全て埋める必要はないので、その他・条件なしを最初に埋めた上で、あとは好みで分岐を増減してください
+;함수@TARGET_DESCRIPTION에 의해 TEQUIP(성교중/조교 대상 C사용/성교 봉사중/자위중 & 2)
+;@EQUIPACTION_DESCRIPTION에 의해 TEQUIP(안면 승마/안면 승마 애널/자위중)으로 지문은 변화할 가능성이 있다
+;모두 묻을 필요는 없기 때문에, 그 외·조건 없음을 최초로 묻은 다음, 뒤는 기호로 분기를 증감해 주세요
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT0, 今の気分を聞く
+;ACT0, 지금의 기분을 (듣)묻는다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTACT(0)
-		PRINTFORMW 「えっと……リリーと少しお話しましょう？」
-		PRINTFORMW 「リリーに%CNAME(MASTER, TARGET)%のこと、色々教えて欲しいです」
-		PRINTFORMW 「%CNAME(MASTER, TARGET)%の嫌がることはしたくありませんから……ね？」
-		PRINTFORMW 「%CNAME(MASTER, TARGET)%の気持ち、聞かせてください」
+	IF 구상기입체크(100) && FIRSTACT(0)
+		PRINTFORMW 「엣또…… 릴리와 조금 이야기 합시다?」
+		PRINTFORMW 「릴리에%CNAME(MASTER, TARGET)%의 일, 여러가지 가르쳐 주셨으면 합니다」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%가 싫어하는 것은 하고 싶지 않으…… 니까?」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%의 기분, 들려주세요」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;性交奉仕系で膣内射精の後
+	;성교 봉사계로 질내 사정의 뒤
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 2
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 2
 		IF FAVOR(0, 2000)
-			PRINTFORM 「おまんこの中、ざーめんでいっぱい出されちゃいました
+			PRINTFORM 「보지안, 자리─째응으로 가득 나와 버렸습니다
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「ふふっ♪　妖精相手にこんなに出して、イケナイおちんちんですね♪」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%も気持ち良かったですか？」
+			PRINTFORMW 「후훗♪  요정 상대에게 이렇게 내, 안 되는 자지군요♪」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%도 기분 좋았던 것입니까?」
 		ELSE
-			PRINTFORMW 「んぅ♪　たくさんびゅーびゅーしたのに、おちんちんカチカチですね
+			PRINTFORMW 「응우♪  싶고 응--했는데, 자지 딱딱이군요
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「リリーのお・ま・ん・こ♪　そんなに良かったんですか？」
+			PRINTFORMW 「릴리의 보·지♪  그렇게 좋았던 것입니까?」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;性交系で膣内射精の後
+	;성교계로 질내 사정의 뒤
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 1
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 1
 		IF FAVOR(0, 2000)
-			PRINTFORM 「ひゃふ、ふぁあ♪　いっぱい射精しちゃったぁ……
+			PRINTFORM 「, 후아아♪  가득 사정해 버렸다아……
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「気持ち良しゅぎて、おまんこの中にびゅーびゅーするの癖になっちゃいます♪」
-			PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%のおまんこも……もっとリリーに犯されたいですか？」
+			PRINTFORMW 「기분 좋다라고, 보지안--하는 것 버릇이 되어 버립니다♪」
+			PRINTFORMW 「저기,%CNAME(MASTER, TARGET)%의 보지도…… 좀 더 릴리에 범해지고 싶습니까?」
 		ELSE
-			PRINTFORM 「んはぁ♪　中出しえっち気持ちぃれすっ
+			PRINTFORM 「응하아♪  질내사정 엣치기분
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「んぅ♪　%CNAME(MASTER, TARGET)%の赤ちゃんのお部屋、リリーのせーえきでいっぱいですね♪」
-			PRINTFORMW 「いっぱいびゅーびゅーされちゃって、どんな気分なんですか？」
+			PRINTFORMW 「응우♪  %CNAME(MASTER, TARGET)%의 아기의 방, 릴리의 정액으로 가득이군요♪」
+			PRINTFORMW 「--되어 버려, 어떤 기분입니까?」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;イきそう
+	;갈 것 같다
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
-		;イきそうなのを我慢している
-		IF TCVAR:MASTER:イきそう > 5
-			PRINTFORM 「イきそうな%CNAME(MASTER, TARGET)%の顔……可愛いです
+	IF 구상기입체크(100) && TCVAR:MASTER:갈것같다
+		;갈 것 같은 것을 참고 있다
+		IF TCVAR:MASTER:갈것같다 > 5
+			PRINTFORM 「갈 것 같은%CNAME(MASTER, TARGET)%의 얼굴…… 사랑스럽습니다
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORM 「ぴくぴくって震えて、もう我慢できませんもんね
+			PRINTFORM 「쫑긋쫑긋은 떨려, 이제 참을 수 없습니다인 거네요
 			CALL HEARTCB
 			PRINTW 」
 			PRINTL  
-			PRINTFORMDW %CALLNAME:MASTER%は悦波から逃れようと、いやらしく腰をくねらせて絶頂を堪えている
-			PRINTFORMDW %CALLNAME:MASTER%の姿にリリーは満足げに微笑み、身体をピタリと密着させてきた
+			PRINTFORMDW %CALLNAME:MASTER%는 열파로부터 피하려고, 추잡하게 허리를 구불거리게 할 수 있어 절정을 참고 있다
+			PRINTFORMDW %CALLNAME:MASTER%의 모습에 릴리는 만족스럽게 미소지어, 신체를 꼭 밀착시켜 왔다
 			PRINTL  
-			PRINTFORMW 「かわいい……ふふっ……ねぇ、どうして欲しいですか」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の気持ちが知りたいの……ほら、えっちなっおねだりしてください♪」
+			PRINTFORMW 「사랑스럽다…… 후훗…… 응, 어째서 갖고 싶습니까」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 기분을 알고 싶은 것…… 이봐요, 엣치한 졸라대 주세요♪」
 		ELSE
 			IF FAVOR(0, 2000)
 				IF RAND:2 == 0
-					PRINTFORM 「あれぇ？　もうイきそうなんですかぁ
+					PRINTFORM 「저것?   이제(벌써) 갈 것 같습니까
 					CALL HEARTCB
 					PRINTW 」
-					PRINTFORM 「ふふっ……%CNAME(MASTER, TARGET)%の切ない顔、ぞくぞくしますね」
+					PRINTFORM 「후훗……%CNAME(MASTER, TARGET)%의 안타까운 얼굴, 오슬오슬 하네요」
 					PRINTL  
-					PRINTFORMDW 絶頂の気配を感じ取ったのか、リリーが催促するような視線を向けてくる
+					PRINTFORMDW 절정의 기색을 감지했는지, 릴리가 재촉 하는 것 같은 시선을 향하여 온다
 					PRINTL  
-					PRINTFORMW 「イクときはどうするんでしたっけ？　ふふっ♪」
-					PRINTFORMW 「お・ね・だ・り しましょうねっ♪」
+					PRINTFORMW 「갈 때는 어떻게 하는 것이었던가요?   후후♪」
+					PRINTFORMW 「졸·라·댐 해요♪」
 				ELSE
-					PRINTFORMW 「もう我慢できなくなっちゃったかな……ふふっ」
-					PRINTFORM 「一番気持ちいいタイミングで、思いっ切りイっちゃいましょうね
+					PRINTFORMW 「이제 인내 할 수 없게 되어 버렸는지…… 후훗」
+					PRINTFORM 「제일 기분이 좋은 타이밍으로, 마음껏 가 버려요
 					CALL HEARTCB
 					PRINTW 」
 					PRINTL  
-					PRINTFORMDW 絶頂の気配を感じ取ったのか、リリーが催促するような視線を向けてくる
+					PRINTFORMDW 절정의 기색을 감지했는지, 릴리가 재촉 하는 것 같은 시선을 향하여 온다
 					PRINTL  
-					PRINTFORM 「%CNAME(MASTER, TARGET)%の中の精、全部吐き出しちゃいましょうっ
+					PRINTFORM 「%CNAME(MASTER, TARGET)%안의정령, 전부 토해내 버립시다
 					CALL HEARTCB
 					PRINTW 」
 				ENDIF
 			ELSE
-				PRINTFORMW 「あれ、もうイっちゃいそうですね」
-				PRINTFORMW 「リリーに精を捧げるの癖になっっちゃったんですか？ ふふっ♪」
-				PRINTFORMW 「ねぇ、リリーに見られてイっちゃうの、そんなに気持ちぃですか？」
+				PRINTFORMW 「저것, 이제(벌써) 가 버릴 것 같네요」
+				PRINTFORMW 「릴리에 정령을 바치는 것 버릇이 되어 버린 것입니까? 후훗♪」
+				PRINTFORMW 「저기, 릴리에 보여져 가 버리는 것, 그렇게 기분입니까?」
 			ENDIF
 		ENDIF
 		RETURN 1
 	ENDIF
 
 	;-------------------------------------------------
-	;その調教の最初のアクション
+	;그 조교의 최초의 액션
 	;=================================================
-	IF 口上記入チェック(100) && ONCEACT(0)
+	IF 구상기입체크(100) && ONCEACT(0)
 		IF FAVOR(0, 2000)
-			;調教者が自慰中
-			IF GETBIT(TEQUIP:自慰中, 1)
-				PRINTFORMDW 手を伸ばせば届く位置で、リリーは自身の陰核を捏ね回し、ろれつの乱れた妖しい声で謡う……
+			;조교자가 자위중
+			IF GETBIT(TEQUIP:자위중, 1)
+				PRINTFORMDW 손을 뻗으면 닿는 위치에서, 릴리는 자신의 음핵을 뭉그러뜨려, 말투가 흐트러진 요염한 소리로 읊는다……
 				PRINTL  
-				PRINTFORM 「りりーのこと見てっ♪ おまた弄って感じひゃうっあっ
+				PRINTFORM 「-의 일 봣♪또 만지작거리는 느낌아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「ひぅっ♪……んっ、えっちな子でごめんなひゃぅっ
+				PRINTFORM 「히웃♪…… 읏, 엣치한 아이로 면허인 히
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「れもっ、きらわにゃいで……りりーをみてっこーふんしてっ
+				PRINTFORM 「도, 기라있고로……-를 봐 개─분햇
 				CALL HEARTCB
 				PRINTFORMW 」
-			;通常
+			;통상
 			ELSE
-				PRINTFORMW 「ほら、リリーのお顔ちゃんと見てください♪」
+				PRINTFORMW 「이봐요, 릴리의 얼굴짱이라고 봐 주세요♪」
 				PRINTL  
-				PRINTFORMDW 上体をピタリと寄せて、リリーが潤んだ瞳で見つめてくる
-				PRINTFORMDW 長い髪から漂う甘い香りに、否が応にも身体が反応してしまう
+				PRINTFORMDW 상체를 꼭 대어, 릴리가 물기를 띤 눈동자로 응시해 온다
+				PRINTFORMDW 긴 머리카락으로부터 감도는 달콤한 향기에, 좋든 싫든 신체가 반응해 버린다
 				PRINTL  
-				PRINTFORMW 「これから%CNAME(MASTER, TARGET)%はリリーにいっぱい搾精されちゃうんですよね」
-				PRINTFORM 「ふふっ♪　想像したらリリーもドキドキしてきちゃいました
+				PRINTFORMW 「지금부터%CNAME(MASTER, TARGET)%는 릴리에 가득 착정 되어 버립니다」
+				PRINTFORM 「후훗♪  상상하면 릴리도 두근두근 해 와 버렸습니다
 				CALL HEARTCB
 				PRINTW 」
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%はどうですか？　聞かせてほしいな♪」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%는 어떻습니까?   듣고 싶구나♪」
 			ENDIF
 		ELSE
-			;調教者が自慰中
-			IF GETBIT(TEQUIP:自慰中, 1)
-				PRINTFORMDW リリーは火照った肌から玉の汗を浮かべ、%CALLNAME:MASTER%に潤んだ瞳を向けた……
+			;조교자가 자위중
+			IF GETBIT(TEQUIP:자위중, 1)
+				PRINTFORMDW 릴리는 달아오른 피부로부터 구슬땀을 띄워,%CALLNAME:MASTER%에 물기를 띤 눈동자를 향했다……
 				PRINTL  
-				PRINTFORM 「おなにー見て……おくも、もっろ見てくらさい
+				PRINTFORM 「오나니─봐…… 두는 것도, 봐 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「りりーね……とってもえっちで、はしたない……んゅ、はぁ
+				PRINTFORM 「-군요…… 매우 엣치해, 상스러운……, 하아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「れもっ、きらわないで……りりーをみてっこーふんしてっ
+				PRINTFORM 「도, 싫어하지 말고……-를 봐 개─분햇
 				CALL HEARTCB
 				PRINTFORMW 」
-			;通常
+			;통상
 			ELSE
-				PRINTFORMW 「リリーに%CNAME(MASTER, TARGET)%のこと、もっと色々教えて欲しいです」
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%の嫌がることはしたくありませんから……ね？」
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%の気持ち、リリーに聞かせてください」
+				PRINTFORMW 「릴리에%CNAME(MASTER, TARGET)%의 일, 좀 더 여러가지 가르쳐 주셨으면 합니다」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%가 싫어하는 것은 하고 싶지 않으…… 니까?」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%의 기분, 릴리에 들려주세요」
 			ENDIF
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;調教者が自慰中
+	;조교자가 자위중
 	;=================================================
-	IF 口上記入チェック(100) && GETBIT(TEQUIP:自慰中, 1)
-		;相互自慰
-		IF GETBIT(TEQUIP:自慰中, 0)
+	IF 구상기입체크(100) && GETBIT(TEQUIP:자위중, 1)
+		;상호 자위
+		IF GETBIT(TEQUIP:자위중, 0)
 			IF RAND:2 == 0
-				PRINTFORM 「オナニー見せっこして……%CNAME(MASTER, TARGET)%に見られてぇっ、んくっ、あぅ
+				PRINTFORM 「자위 서로 보여주기 해……%CNAME(MASTER, TARGET)%로 보여져엇, 응쿳, 아우
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「りりーのおまめさんもっ、んっ、いつもより敏感になっひゃあっ
+				PRINTFORM 「-의 째씨도, 읏, 평소보다 민감하게 아
 				CALL HEARTCB
 				PRINTFORMW 」
 				PRINTL  
-				PRINTFORMDW リリーは充血した蕾を捏ね回し、淫蕩な表情で自慰に耽っている……
-				PRINTFORMDW 外気に晒されたサーモンピンクの肉壁が恥ずかし気にヒクヒクと蠢いている……
+				PRINTFORMDW 릴리는 충혈한 꽃봉오리를 뭉그러뜨려, 음탕한 표정으로 자위에 빠지고 있다……
+				PRINTFORMDW 바깥 공기에 노출된 연어 핑크의 육벽이 부끄러운 기분에 흠칫흠칫 꿈틀거리고 있다……
 				PRINTL  
-				PRINTFORM 「ふふっ♪　りりーたちっ……ヘンタイさんになっちゃったね
+				PRINTFORM 「후훗♪  -들…… 변태씨가 되어 버렸군요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「はぁ、ん……ねぇっ、%CNAME(MASTER, TARGET)%もこーふん、シてますか
+				PRINTFORM 「하아, 응…… 응,%CNAME(MASTER, TARGET)%도 개─응, 시인가
 				CALL HEARTCB
 				PRINTFORMW 」
 			ELSE
-				PRINTFORM 「んぅっ♪　見られてするのっ、きもちーね
+				PRINTFORM 「응웃♪  볼 수 있고 하는거야, 기분─군요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「ほら……すりすりってするよ♪……っんはぁ
+				PRINTFORM 「이봐요…… 부비부비은 하는♪…… 읏응하아
 				CALL HEARTCB
 				PRINTFORMW 」
 				PRINTL  
-				PRINTFORMDW リリーは突起に触れた指先を小刻みに動かし、かすれた吐息を零して痴悦に浸っていた……
-				PRINTFORMDW %CALLNAME:MASTER%はリリーの痴態に誘われる様に、羞恥と悦楽の中で夢中で自分を慰めた……
+				PRINTFORMDW 릴리는 돌기에 접한 손가락끝을 조금씩 움직여, 스친 한숨을 흘려 치열에 잠겨 있었다……
+				PRINTFORMDW %CALLNAME:MASTER%는 릴리의 치태에 이끌리는 것처럼, 수치와 열락 중(안)에서 열중해 자신을 위로했다……
 				PRINTL  
-				PRINTFORM 「%CNAME(MASTER, TARGET)%に見られるのっすごい
+				PRINTFORM 「%CNAME(MASTER, TARGET)%로 보여지는 것 굉장함
 				CALL HEARTCB
-				PRINTFORM  んっ、癖になっひゃいそぅれす
+				PRINTFORM  응, 버릇에 있을 것 같습니다
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「れぇ、%CNAME(MASTER, TARGET)%もぉ……っはぁ♪　こーふんっ、ひてる？」
+				PRINTFORMW 「,%CNAME(MASTER, TARGET)%도…… 는♪  개─응, 히 비쳐?」
 			ENDIF
-		;調教者自慰見せつけ中
+		;조교자 자위 과시하고 안
 		ELSE
 			IF RAND:2 == 0
-				PRINTFORMDW 細い指先がスリットの土手に添えられると『にちゅっ』と音を立てて陰唇が開かれる
-				PRINTFORMDW ピンクサーモンの美しい雌粘膜からは粘つく愛液がとめどなく湧き出ている……
-				PRINTFORMDW ……リリーは尚も陰核を捏ね回し、ろれつの乱れた妖しい声で謡う……
+				PRINTFORMDW 가는 손가락끝이 슬릿의 제방에 더해지면 『』라고 소리를 내 음순이 열린다
+				PRINTFORMDW 핑크 연어의 아름다운 암컷 점막으로부터는 끈적거리는 애액이 끝 없게 솟아 올라 나와 있다……
+				PRINTFORMDW …… 릴리는 상도 음핵을 뭉그러뜨려, 말투가 흐트러진 요염한 소리로 읊는다……
 				PRINTL  
-				PRINTFORM 「りりーのこと見てっ♪ おまた弄って感じひゃうっあっ
+				PRINTFORM 「-의 일 봣♪또 만지작거리는 느낌아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「ひぅっ♪……んっ、えっちな子でごめんなひゃぅっ
+				PRINTFORM 「히웃♪…… 읏, 엣치한 아이로 면허인 히
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「%CNAME(MASTER, TARGET)%も……りりーをみてっこーふんしてっ
+				PRINTFORM 「%CNAME(MASTER, TARGET)%도……-를 봐 개─분햇
 				CALL HEARTCB
 				PRINTFORMW 」
 			ELSE
-				PRINTFORMDW リリーは火照った肌から玉の汗を浮かべ、%CALLNAME:MASTER%に潤んだ瞳を向けた……
-				PRINTFORMDW 『ごぽり』と濃密な愛液が零れ、ゆっくりと肉付きのよい太ももを伝い落ちた……
+				PRINTFORMDW 릴리는 달아오른 피부로부터 구슬땀을 띄워,%CALLNAME:MASTER%에 물기를 띤 눈동자를 향했다……
+				PRINTFORMDW 『』라고 진한 애액이 흘러넘쳐, 천천히 살집의 좋은 허벅지를 타 떨어졌다……
 				PRINTL  
-				PRINTFORM 「おなにー見て……おくも、もっろ見てくらさい
+				PRINTFORM 「오나니─봐…… 두는 것도, 봐 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「りりーね……とってもえっちで、はしたない……んゅ、はぁ
+				PRINTFORM 「-군요…… 매우 엣치해, 상스러운……, 하아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「%CNAME(MASTER, TARGET)%は……こんなっ、りりーがごしゅいんさまれもぉ
+				PRINTFORM 「%CNAME(MASTER, TARGET)%는…… 이런, -가 오종도
 				CALL HEARTCB
-				PRINTFORMW んくっ、いいれすか？」
+				PRINTFORMW 응구, 좋습니까?」
 			ENDIF
 		ENDIF
 		RETURN 1
 	ENDIF
 
 	;-------------------------------------------------
-	;勃起
+	;발기
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:勃起度 >= 1000
+	IF 구상기입체크(100) && TCVAR:MASTER:발기도 >= 1000
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「あっ……おちんちんカチコチですね」
-			PRINTFORMW 「興奮しちゃったんですか？　ふふっ♪」
+			PRINTFORMW 「앗…… 자지 째깍째깍이군요」
+			PRINTFORMW 「흥분해 버린 것입니까?   후후♪」
 			PRINTL  
-			PRINTFORMDW 羞恥を煽る可愛らしい声に、いきり立った陰茎が“ビクン”と跳ねて応える
-			PRINTFORMDW 浅黒く醜悪な肉竿が更なる快楽を期待して、また一段硬度をあげた
+			PRINTFORMDW 수치를 부추기는 사랑스러운 소리에, 격분한 음경이 "흠칫"라고 뛰어 응한다
+			PRINTFORMDW 거무스름하고 추악한 육봉이 한층 더 쾌락을 기대하고, 또 일단 경도를 주었다
 			PRINTL  
-			PRINTFORMW 「こんなにおっきさせて……いったい何を考えてるんでしょうねぇ♪」
+			PRINTFORMW 「이렇게 크기키라고…… 도대체 무엇을 생각하고 있겠지요♪」
 		ELSE
-			PRINTFORMW 「おちんちん勃起しちゃいましたね」
-			PRINTFORMW 「イカ臭い匂いでくらくらしちゃいます……ふふっ♪」
+			PRINTFORMW 「자지 발기해 버렸어요」
+			PRINTFORMW 「오징어 냄새나는 냄새로 어찔어찔 해 버립니다…… 후훗♪」
 			PRINTL  
-			PRINTFORMW 「ねぇ、こんなに勃起させて何を期待してるんですか？」
+			PRINTFORMW 「저기, 이렇게 발기시켜 무엇을 기대하고 있습니까?」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;萎えた
+	;쇠약해졌다
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:勃起度 < TCVAR:MASTER:前の勃起度
-		;射精後（膣以外、フェラ・手コキ・パイズリとか？）
-		IF TCVAR:MASTER:射精後経過ターン == 1
+	IF 구상기입체크(100) && TCVAR:MASTER:발기도 < TCVAR:MASTER:전의발기도
+		;사정 후(질 이외, 페라·손 애무·파이즈리라든지?)
+		IF TCVAR:MASTER:사정후경과턴 == 1
 			IF FAVOR(0, 1500)
 				IF RAND:2 == 0
-					PRINTFORM 「んぅ♪　せーえきあったかぁい
+					PRINTFORM 「응우♪  정액 있었는지있고
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%の『気持ちイイ』って気持ち、リリーにも伝わってきたよ♪」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%의 『기분이 좋다』라는 기분, 릴리에도 전해져 왔어♪」
 					PRINTL  
-					PRINTFORMDL リリーのさらさらの長い艶髪から漂う甘い香りに情欲を刺激され
-					PRINTFORMDW %CALLNAME:MASTER%は萎えたはずの陰茎に再び血流が集まっていくのを感じた
+					PRINTFORMDL 릴리의 졸졸의 긴 염발로부터 감도는 달콤한 향기에 정욕이 자극되고
+					PRINTFORMDW %CALLNAME:MASTER%는 쇠약해졌음이 분명한 음경에 다시 혈류가 모여 가는 것을 느꼈다
 					PRINTL  
-					PRINTFORMW 「ふふっ♪　ねぇ、次はどんな風にぴゅっぴゅしたいですか？」
+					PRINTFORMW 「후훗♪  응, 다음은 어떤 바람하고 싶습니까?」
 				ELSE
-					PRINTFORMW 「上手にせーえきぴゅっぴゅできましたね♪　えらいえらいっ♪」
+					PRINTFORMW 「능숙하게 키─네할 수 있었어요♪  대단한 대단하닷♪」
 					PRINTL  
-					PRINTFORMDL リリーのさらさらの長い艶髪から漂う甘い香りに情欲を刺激され
-					PRINTFORMDW %CALLNAME:MASTER%は萎えたはずの陰茎に再び血流が集まっていくのを感じた
+					PRINTFORMDL 릴리의 졸졸의 긴 염발로부터 감도는 달콤한 향기에 정욕이 자극되고
+					PRINTFORMDW %CALLNAME:MASTER%는 쇠약해졌음이 분명한 음경에 다시 혈류가 모여 가는 것을 느꼈다
 					PRINTL  
-					PRINTFORMW 「ねぇ、次はどんなことしてみたい？」
-					PRINTFORM 「リリーのとっておきのテクでメロメロにしてあげるね
+					PRINTFORMW 「저기, 다음은 어떤 일 해 보고 싶은이야?」
+					PRINTFORM 「릴리의 소중히 간직함의 테크닉으로 헤롱헤롱해 주네요
 					CALL HEARTCB
 					PRINTFORMW 」
 				ENDIF
 			ELSE
-				PRINTFORMW 「上手にせーえきぴゅっぴゅできましたね♪　ふふっ♪」
+				PRINTFORMW 「능숙하게 키─네할 수 있었어요♪  후후♪」
 				PRINTL  
-				PRINTFORMDL リリーのさらさらの長い艶髪から漂う甘い香りに情欲を刺激され
-				PRINTFORMDW %CALLNAME:MASTER%は萎えたはずの陰茎に再び血流が集まっていくのを感じた
+				PRINTFORMDL 릴리의 졸졸의 긴 염발로부터 감도는 달콤한 향기에 정욕이 자극되고
+				PRINTFORMDW %CALLNAME:MASTER%는 쇠약해졌음이 분명한 음경에 다시 혈류가 모여 가는 것을 느꼈다
 				PRINTL  
-				PRINTFORMW 「ねぇ、次はどんなことをしてみたいですか？」
+				PRINTFORMW 「저기, 다음은 어떤 일을 해 보고 싶습니까?」
 			ENDIF
-		;単純に萎えた（羞恥、加虐、罵倒系から？）
+		;단순하게 쇠약해졌다(수치, 가학, 매도계로부터?)
 		ELSE
-			PRINTFORMW 「あぅ……おちんちん、元気無くなっちゃいました」
-			PRINTFORMW 「リリー、もしかして無理させちゃいましたか？」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%が元気ないと、リリーも寂しいです……」
+			PRINTFORMW 「아우…… 자지, 기운이 없게 되어 버렸습니다」
+			PRINTFORMW 「릴리, 혹시 무리시켜 버렸습니까?」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%가 기운이 없으면, 릴리도 외롭습니다……」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;一般
+	;일반
 	;=================================================
-	IF 口上記入チェック(100)
-		;顔面騎乗系
-		IF TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
-			PRINTFORMW 「んっ……あ、ぁ、すごく上手ですよ♪」
-			PRINTFORMW 「もっと押し付けた方が舐め易いんでしょうか？」
+	IF 구상기입체크(100)
+		;안면 승마계
+		IF TRUECHECK(TEQUIP:안면승마, TEQUIP:안면승마애널) > 0
+			PRINTFORMW 「읏…… 아, 아, 굉장히 능숙해요♪」
+			PRINTFORMW 「좀 더 강압한 (분)편이 빨고 쉬울까요?」
 			PRINTL  
-			PRINTFORMDW リリーは決して苦しくない程度に腰を浮かし、柔らかな尻たぶで%CALLNAME:MASTER%の顔面を圧迫している
-			PRINTFORMDW %CALLNAME:MASTER%が恥穴へ奉仕をすると、リリーは可愛らしい声を上げて白磁の太ももをピクピクと震わせる……
+			PRINTFORMDW 릴리는 결코 괴롭지 않은 정도로 허리를 띄워, 부드러운 엉덩이살로%CALLNAME:MASTER%의 안면을 압박하고 있다
+			PRINTFORMDW %CALLNAME:MASTER%가 치혈에 봉사를 하면, 릴리는 사랑스러운 소리를 높여 백자의 허벅지를 쫑긋쫑긋 진동시킨다……
 			PRINTL  
-			PRINTFORMW 「……ねぇ、リリーのお尻に敷かれて、あんっ♪ もうっ♪」
-			PRINTFORMW 「リリーのあそこ、ぺろぺろするってどんな気分なんですか？」
+			PRINTFORMW 「…… 저기, 릴리의 엉덩이에 깔려, 아읏♪이제(벌써) ♪」
+			PRINTFORMW 「릴리의 저기, 날름날름 한다 라고 어떤 기분입니까?」
 		ELSE
 			IF FAVOR(0, 2000)
-				PRINTFORMW 「ほら、リリーのお顔ちゃんと見て、少しお話しましょう？」
+				PRINTFORMW 「이봐요, 릴리의 얼굴짱이라고 봐, 조금 이야기 합시다?」
 				PRINTL  
-				PRINTFORMDW 上体をピタリと寄せて、リリーが潤んだ瞳で見つめてくる
+				PRINTFORMDW 상체를 꼭 대어, 릴리가 물기를 띤 눈동자로 응시해 온다
 				PRINTL  
-				PRINTFORMW 「……ねぇ、%CNAME(MASTER, TARGET)%も興奮してますか？　ドキドキしてますか？」
-				PRINTFORMW 「……それとも、やっぱりまだ不安ですか？」
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%の気持ち、リリーに教えてほしいな」
+				PRINTFORMW 「…… 저기,%CNAME(MASTER, TARGET)%도 흥분하고 있습니까?   두근두근 하고 있습니까?」
+				PRINTFORMW 「…… 그렇지 않으면, 역시 아직 불안합니까?」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%의 기분, 릴리에 가르치기를 원하는데」
 			ELSE
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%の事、もっと聞かせてください」
-				PRINTFORMW 「何を考えているのか……どんな気分なのか……」
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%の嫌がることはしたくありませんから……ね？」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%의 일, 좀 더 들려주세요」
+				PRINTFORMW 「무엇을 생각하고 있는지…… 어떤 기분인 것인가……」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%가 싫어하는 것은 하고 싶지 않으…… 니까?」
 			ENDIF
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;ACT1, 自分への気持ちを聞く
-;────────────────────────────────────
-;・自分のことをどう思うか聞く
-;・調教対象の反応に応じてREACT以降でACT派生への代入が行われる
-;・ターン方針が"異常"なら発生しない
-;・話題『好意』が既出となり、以後、同一調教中では抑制される
+;─
+;ACT1, 자신에게로의 기분을 (듣)묻는다
+;─
+;·자신의 일을 어떻게 생각할까 (듣)묻는다
+;·조교 대상의 반응에 응해 REACT 이후에 ACT 파생에의 대입을 한다
+;·턴 방침이 "이상"이라면 발생하지 않는다
+;·화제 『호의』가 기출이 되어, 이후, 동일 조교중에서는 억제된다
 ;-------------------------------------------------
 @KOJO_ACT_K15_1
 ;-------------------------------------------------
-;関数@TARGET_DESCRIPTIONによってTEQUIP(性交中/調教対象Ｃ使用/性交奉仕中/自慰中 & 2)
-;@EQUIPACTION_DESCRIPTIONによってTEQUIP(顔面騎乗/顔面騎乗アナル/自慰中)で地の文は変化する可能性がある
-;全て埋める必要はないので、その他・条件なしを最初に埋めた上で、あとは好みで分岐を増減してください
+;함수@TARGET_DESCRIPTION에 의해 TEQUIP(성교중/조교 대상 C사용/성교 봉사중/자위중 & 2)
+;@EQUIPACTION_DESCRIPTION에 의해 TEQUIP(안면 승마/안면 승마 애널/자위중)으로 지문은 변화할 가능성이 있다
+;모두 묻을 필요는 없기 때문에, 그 외·조건 없음을 최초로 묻은 다음, 뒤는 기호로 분기를 증감해 주세요
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT1, 自分への気持ちを聞く
+;ACT1, 자신에게로의 기분을 (듣)묻는다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;口上独自内部処理
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
-;記入チェック（=0, 非表示、1, 表示、2, 表示して媚薬等口上をスキップ）
+;기입 체크(=0, 비표시, 1, 표시, 2, 표시해 미약등 구상을 스킵)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTACT(0)
-		PRINTFORMW 「あの、ですね……えっと……」
-		PRINTFORMW 「リリーの事……どう思いますか？」
-		PRINTFORMW 「%CNAME(MASTER, TARGET)%の気持ち……聞かせてください」
+	IF 구상기입체크(100) && FIRSTACT(0)
+		PRINTFORMW 「저, 군요…… 엣또……」
+		PRINTFORMW 「릴리의 일…… 어떻게 생각합니까?」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%의 기분…… 들려주세요」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;性交奉仕系で膣内射精の後
+	;성교 봉사계로 질내 사정의 뒤
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 2
-		PRINTFORM 「んっ、はぁっ♪　いっぱいびゅーゆーされちゃいましたぁ
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 2
+		PRINTFORM 「읏, 하앗♪  --되어 버렸습니다아
 		CALL HEARTCB
 		PRINTFORMW 」
-		PRINTFORMW 「ねぇ、リリーのおまんこの感触どうでしたか？」
+		PRINTFORMW 「저기, 릴리의 보지의 감촉 어땠습니까?」
 		PRINTL  
-		PRINTFORMDW リリーはかすれた熱い吐息を吐き出し、縋る様に身体を押し付けてくる
+		PRINTFORMDW 릴리는 스친 뜨거운 한숨을 토해내, 매달리는 것처럼 신체를 강압해 온다
 		PRINTL  
-		PRINTFORMW 「ほらぁ♪　おちんちんみたいに、素直になってください♪」
+		PRINTFORMW 「이봐요♪  자지같이, 솔직해져 주세요♪」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;性交系で膣内射精の後
+	;성교계로 질내 사정의 뒤
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 1
-		PRINTFORMW 「んぅうっ♪　おまんこのナカぁ、あっついです♪」
-		PRINTFORMW 「どうですか？　リリーのこと、もっと好きになっちゃいましたか？」
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 1
+		PRINTFORMW 「응우웃♪  보지의 나카, 뜨겁습니다♪」
+		PRINTFORMW 「어떻습니까?   릴리의 일, 좀 더 좋아하게 되어 버렸습니까?」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;イきそう
+	;갈 것 같다
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
-		;イきそうなのを我慢している
-		IF TCVAR:MASTER:イきそう > 5
-			PRINTFORMW 「ふふっ……気持ちイイですねっ」
-			PRINTFORMW 「ねぇ、我慢しなくていいんですよ♪」
+	IF 구상기입체크(100) && TCVAR:MASTER:갈것같다
+		;갈 것 같은 것을 참고 있다
+		IF TCVAR:MASTER:갈것같다 > 5
+			PRINTFORMW 「후훗…… 기분이 좋네요」
+			PRINTFORMW 「저기, 참지 않아도 괜찮아요♪」
 			PRINTL  
-			PRINTFORMDW %CALLNAME:MASTER%は絶頂が近いことを見透かされ、羞恥で全身がぶるりと震えてしまう
+			PRINTFORMDW %CALLNAME:MASTER%는 절정이 가까운 일을 간파해져 수치로 전신이 브르르 떨려 버린다
 			PRINTL  
-			PRINTFORMW 「ご主人様に上手におねだりしてくださいねっ♪」
+			PRINTFORMW 「주인님에 능숙하게 졸라대 주세요♪」
 		ELSE
-			PRINTFORMW 「ふふっ、もうイきそうですか？」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%がその気なら、もっともっと気持ち良くしてあげられますよ」
-			PRINTFORMW 「ほらぁ……くちゅくちゅ～って♪ あははっ」
-			PRINTFORMW 「リリーにおねだりして、気持ちよぉ～くイってくださいね♪」
+			PRINTFORMW 「후훗, 이제(벌써) 갈 것 같습니까?」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%가 그 기분이라면, 좀더 좀더 기분 좋게 해 줄 수 있어요」
+			PRINTFORMW 「이봐요…… 질척질척~는♪아하핫」
+			PRINTFORMW 「릴리에 졸라대, 기분 좋게 가 주세요♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 
 	;-------------------------------------------------
-	;その調教の最初のアクション
+	;그 조교의 최초의 액션
 	;=================================================
-	IF 口上記入チェック(100) && ONCEACT(0)
-		;調教者が自慰中
-		IF GETBIT(TEQUIP:自慰中, 1)
-			;相互自慰
-			IF GETBIT(TEQUIP:自慰中, 0)
-				PRINTFORM 「んぅっ♪　見られてするのっ、きもちーね
+	IF 구상기입체크(100) && ONCEACT(0)
+		;조교자가 자위중
+		IF GETBIT(TEQUIP:자위중, 1)
+			;상호 자위
+			IF GETBIT(TEQUIP:자위중, 0)
+				PRINTFORM 「응웃♪  볼 수 있고 하는거야, 기분─군요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「もっとくちゅくちゅすりゅのみててね♪……っんはぁ
+				PRINTFORM 「좀 더 질척질척 마셔라고라고♪…… 읏응하아
 				CALL HEARTCB
 				PRINTFORMW 」
 				PRINTL  
-				PRINTFORMDW リリーは突起に触れた指先を小刻みに動かし、かすれた吐息を零して痴悦に浸っていた……
-				PRINTFORMDW %CALLNAME:MASTER%はリリーの痴態に誘われる様に、羞恥と悦楽の中で夢中で自分を慰めた……
+				PRINTFORMDW 릴리는 돌기에 접한 손가락끝을 조금씩 움직여, 스친 한숨을 흘려 치열에 잠겨 있었다……
+				PRINTFORMDW %CALLNAME:MASTER%는 릴리의 치태에 이끌리는 것처럼, 수치와 열락 중(안)에서 열중해 자신을 위로했다……
 				PRINTL  
-				PRINTFORM 「%CNAME(MASTER, TARGET)%に見られるのっすごい
+				PRINTFORM 「%CNAME(MASTER, TARGET)%로 보여지는 것 굉장함
 				CALL HEARTCB
-				PRINTFORM  んっ、癖になっひゃいそぅれす
+				PRINTFORM  응, 버릇에 있을 것 같습니다
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「はぁっ、んくっ、%CNAME(MASTER, TARGET)%は……えっちな子はお嫌いですか？」
-				PRINTFORM 「はしたない子でもっん
+				PRINTFORMW 「하앗, 응쿳,%CNAME(MASTER, TARGET)%는…… 엣치한 아이는 싫습니까?」
+				PRINTFORM 「상스러운 아이라도 응
 				CALL HEARTCB
-				PRINTFORMW イイれひゅか？」
+				PRINTFORMW 필요할 수 있는 인가?」
 			ELSE
-				PRINTFORMDW 細い指先がスリットの土手に添えられると『にちゅっ』と音を立てて陰唇が開かれる
-				PRINTFORMDW ピンクサーモンの美しい雌粘膜からは粘つく愛液がとめどなく湧き出ている……
-				PRINTFORMDW ……リリーは尚も陰核を捏ね回し、ろれつの乱れた妖しい声で謡う……
+				PRINTFORMDW 가는 손가락끝이 슬릿의 제방에 더해지면 『』라고 소리를 내 음순이 열린다
+				PRINTFORMDW 핑크 연어의 아름다운 암컷 점막으로부터는 끈적거리는 애액이 끝 없게 솟아 올라 나와 있다……
+				PRINTFORMDW …… 릴리는 상도 음핵을 뭉그러뜨려, 말투가 흐트러진 요염한 소리로 읊는다……
 				PRINTL  
-				PRINTFORM 「りりーのおまめさんっ♪ %CNAME(MASTER, TARGET)%の視線で感じちゃぁっあっ
+				PRINTFORM 「-의 째씨♪%CNAME(MASTER, TARGET)%의 시선으로 느껴아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「手止まらなひぅっ♪……んっ、えっちな子でごめんなひゃぅっ
+				PRINTFORM 「손 멈추고히♪…… 읏, 엣치한 아이로 면허인 히
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「うくっ、はしたない子れもっ、いーでひゅか
+				PRINTFORM 「우쿳, 상스러운 아이도, 인가
 				CALL HEARTCB
 				PRINTFORMW 」
 			ENDIF
-		;通常
+		;통상
 		ELSE
 			IF FAVOR(3000, 3000)
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%はリリーの事、どう思ってるんですか？」
-				PRINTFORM 「ちゃんと言葉で、%CNAME(MASTER, TARGET)%の口から聞きたいな……
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%는 릴리의 일, 어떻게 생각하고 있습니까?」
+				PRINTFORM 「분명하게 말로,%CNAME(MASTER, TARGET)%의 입으로부터 (듣)묻고 싶구나……
 				CALL HEARTCB
 				PRINTFORMW 」
 			ELSEIF FAVOR(0, 2000)
-				PRINTFORMW 「リリーと%CNAME(MASTER, TARGET)%は……どんな関係なんでしょう」
-				PRINTFORMW 「ご主人様と奴隷でしょうか？　それとも、もっと違う……ふふっ♪」
-				PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%はどう思いますか？」
+				PRINTFORMW 「릴리와%CNAME(MASTER, TARGET)%는…… 어떤 관계인 것이지요」
+				PRINTFORMW 「주인님과 노예입니까?   그렇지 않으면, 좀 더 다르다…… 후훗♪」
+				PRINTFORMW 「저기,%CNAME(MASTER, TARGET)%는 어떻게 생각합니까?」
 			ELSE
-				PRINTFORMW 「リリーのことどう思ってるんでしょう？」
-				PRINTFORMW 「気持ち良くしてくれる優しいご主人様？　それとも恐怖の対象？」
-				PRINTFORMW 「……まさか、鬱憤晴らす対象とか思ってませんよね？」
+				PRINTFORMW 「릴리어떻게 생각하고 있겠지요?」
+				PRINTFORMW 「기분 좋게 해 주는 상냥한 주인님?   그렇지 않으면 공포의 대상?」
+				PRINTFORMW 「…… 설마, 울분 푸는 대상이라든지 생각하고 있지 않네요?」
 			ENDIF
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;調教者が自慰中
+	;조교자가 자위중
 	;=================================================
-	IF 口上記入チェック(100) && GETBIT(TEQUIP:自慰中, 1)
-		;相互自慰
-		IF GETBIT(TEQUIP:自慰中, 0)
+	IF 구상기입체크(100) && GETBIT(TEQUIP:자위중, 1)
+		;상호 자위
+		IF GETBIT(TEQUIP:자위중, 0)
 			IF RAND:2 == 0
-				PRINTFORM 「おまめさんいじめるの……%CNAME(MASTER, TARGET)%に見られてぇっ、んくっ、あぅ
+				PRINTFORM 「째씨 괴롭혀……%CNAME(MASTER, TARGET)%로 보여져엇, 응쿳, 아우
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「りりーもっ、んっ、いつもより敏感になっひゃあっ
+				PRINTFORM 「-도, 읏, 평소보다 민감하게 아
 				CALL HEARTCB
 				PRINTFORMW 」
 				PRINTL  
-				PRINTFORMDW リリーは充血した蕾を捏ね回し、淫蕩な表情で自慰に耽っている……
-				PRINTFORMDW 外気に晒されたサーモンピンクの肉壁が恥ずかし気にヒクヒクと蠢いている……
+				PRINTFORMDW 릴리는 충혈한 꽃봉오리를 뭉그러뜨려, 음탕한 표정으로 자위에 빠지고 있다……
+				PRINTFORMDW 바깥 공기에 노출된 연어 핑크의 육벽이 부끄러운 기분에 흠칫흠칫 꿈틀거리고 있다……
 				PRINTL  
-				PRINTFORM 「ふふっ♪　りりーたちっ……ヘンタイさんになっちゃったね
+				PRINTFORM 「후훗♪  -들…… 변태씨가 되어 버렸군요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「はぁ、ねぇっ♪……ヘンタイなリリーでもっ、一緒にいてくれまひゅぁ
+				PRINTFORM 「하아, 저기 읏♪…… 변태인 릴리에서도, 함께 있어 줘
 				CALL HEARTCB
 				PRINTFORMW 」
 			ELSE
-				PRINTFORM 「んぅっ♪　見られてするのっ、きもちーね
+				PRINTFORM 「응웃♪  볼 수 있고 하는거야, 기분─군요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「ほら……もっとナカもみて♪……っんはぁ
+				PRINTFORM 「이봐요…… 좀 더 나카도 봐♪…… 읏응하아
 				CALL HEARTCB
 				PRINTFORMW 」
 				PRINTL  
-				PRINTFORMDW リリーは突起に触れた指先を小刻みに動かし、かすれた吐息を零して痴悦に浸っていた……
-				PRINTFORMDW %CALLNAME:MASTER%はリリーの痴態に誘われる様に、羞恥と悦楽の中で夢中で自分を慰めた……
+				PRINTFORMDW 릴리는 돌기에 접한 손가락끝을 조금씩 움직여, 스친 한숨을 흘려 치열에 잠겨 있었다……
+				PRINTFORMDW %CALLNAME:MASTER%는 릴리의 치태에 이끌리는 것처럼, 수치와 열락 중(안)에서 열중해 자신을 위로했다……
 				PRINTL  
-				PRINTFORM 「%CNAME(MASTER, TARGET)%に見られるのっすごい
+				PRINTFORM 「%CNAME(MASTER, TARGET)%로 보여지는 것 굉장함
 				CALL HEARTCB
-				PRINTFORM  んっ、癖になっひゃいそぅれす
+				PRINTFORM  응, 버릇에 있을 것 같습니다
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「はぁっ、んくっ、%CNAME(MASTER, TARGET)%は……えっちな子はお嫌いですか？」
-				PRINTFORM 「はしたない子でもっん
+				PRINTFORMW 「하앗, 응쿳,%CNAME(MASTER, TARGET)%는…… 엣치한 아이는 싫습니까?」
+				PRINTFORM 「상스러운 아이라도 응
 				CALL HEARTCB
-				PRINTFORMW イイでひゅか？」
+				PRINTFORMW 인가?」
 			ENDIF
-		;調教者自慰見せつけ中
+		;조교자 자위 과시하고 안
 		ELSE
 			IF RAND:2 == 0
-				PRINTFORMDW 細い指先がスリットの土手に添えられると『にちゅっ』と音を立てて陰唇が開かれる
-				PRINTFORMDW ピンクサーモンの美しい雌粘膜からは粘つく愛液がとめどなく湧き出ている……
-				PRINTFORMDW ……リリーは尚も陰核を捏ね回し、ろれつの乱れた妖しい声で謡う……
+				PRINTFORMDW 가는 손가락끝이 슬릿의 제방에 더해지면 『』라고 소리를 내 음순이 열린다
+				PRINTFORMDW 핑크 연어의 아름다운 암컷 점막으로부터는 끈적거리는 애액이 끝 없게 솟아 올라 나와 있다……
+				PRINTFORMDW …… 릴리는 상도 음핵을 뭉그러뜨려, 말투가 흐트러진 요염한 소리로 읊는다……
 				PRINTL  
-				PRINTFORM 「りりーっ♪ %CNAME(MASTER, TARGET)%の視線で感じちゃぁっあっ
+				PRINTFORM 「♪%CNAME(MASTER, TARGET)%의 시선으로 느껴아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「手止まらなひぅっ♪……んっ、えっちな子でごめんなひゃぅっ
+				PRINTFORM 「손 멈추고히♪…… 읏, 엣치한 아이로 면허인 히
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「はしたない子れもっ、いーでひゅか
+				PRINTFORM 「상스러운 아이도, 인가
 				CALL HEARTCB
 				PRINTFORMW 」
 			ELSE
-				PRINTFORMDW リリーは火照った肌から玉の汗を浮かべ、%CALLNAME:MASTER%に潤んだ瞳を向けた……
-				PRINTFORMDW 『ごぽり』と濃密な愛液が零れ、ゆっくりと肉付きのよい太ももを伝い落ちた……
+				PRINTFORMDW 릴리는 달아오른 피부로부터 구슬땀을 띄워,%CALLNAME:MASTER%에 물기를 띤 눈동자를 향했다……
+				PRINTFORMDW 『』라고 진한 애액이 흘러넘쳐, 천천히 살집의 좋은 허벅지를 타 떨어졌다……
 				PRINTL  
-				PRINTFORM 「おなにー見て……おまたのおく、もっろ見てくらさい
+				PRINTFORM 「오나니─봐…… 다음 두는, 봐 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「りりーね……とってもえっちで、はしたない……んゅ、はぁ
+				PRINTFORM 「-군요…… 매우 엣치해, 상스러운……, 하아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「%CNAME(MASTER, TARGET)%は……こんなっ、りりーがごしゅいんさまれもぉ
+				PRINTFORM 「%CNAME(MASTER, TARGET)%는…… 이런, -가 오종도
 				CALL HEARTCB
-				PRINTFORMW んくっ、いいれすか？」
+				PRINTFORMW 응구, 좋습니까?」
 			ENDIF
 		ENDIF
 		RETURN 1
 	ENDIF
 
 	;-------------------------------------------------
-	;調教者に顔面騎乗or顔面騎乗アナル中
+	;조교자에게 안면 승마 or안면 승마 애널중
 	;-------------------------------------------------	
-	IF 口上記入チェック(100) && TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+	IF 구상기입체크(100) && TRUECHECK(TEQUIP:안면승마, TEQUIP:안면승마애널) > 0
 		IF RAND:2 == 0
-			PRINTFORMDW リリーは決して苦しくない程度に腰を浮かし、柔らかな尻たぶで%CALLNAME:MASTER%の顔面を圧迫している
-			PRINTFORMDW %CALLNAME:MASTER%が恥穴へ奉仕をすると、リリーは可愛らしい声を上げて白磁の太ももをピクピクと震わせる……
+			PRINTFORMDW 릴리는 결코 괴롭지 않은 정도로 허리를 띄워, 부드러운 엉덩이살로%CALLNAME:MASTER%의 안면을 압박하고 있다
+			PRINTFORMDW %CALLNAME:MASTER%가 치혈에 봉사를 하면, 릴리는 사랑스러운 소리를 높여 백자의 허벅지를 쫑긋쫑긋 진동시킨다……
 			PRINTL  
-			PRINTFORM 「ひぅ、ぁ、あっ……
+			PRINTFORM 「히우, 아, 앗……
 			CALL HEARTCB
-			PRINTFORM  中にっ、挿入って……あぅ、んっ、気持ちいいです
+			PRINTFORM  중에, 삽입해…… 아우, 읏, 기분이 좋습니다
 			CALL HEARTCB
 			PRINTFORMW 」
-			PRINTFORMW 「癖になっちゃいひゅ、んっ♪ リリーのあそこ、どうですか？」
+			PRINTFORMW 「버릇이 되고는 있고, 읏♪릴리의 저기, 어떻습니까?」
 		ELSE
-			PRINTFORMW 「んっ……あ、ぁ、すごく上手ですよ♪」
-			PRINTFORMW 「もっと押し付けた方が舐め易いんでしょうか？」
+			PRINTFORMW 「읏…… 아, 아, 굉장히 능숙해요♪」
+			PRINTFORMW 「좀 더 강압한 (분)편이 빨고 쉬울까요?」
 			PRINTL  
-			PRINTFORMDW 柔らかなヒップに顔面を包まれ、%CALLNAME:MASTER%は口元に押し付けられた恥穴に舌で奉仕をしている
-			PRINTFORMDW リリーは決して苦しくない程度に腰を浮かし、%CALLNAME:MASTER%が奉仕し易い位置へと腰をくねらせる
-			PRINTFORMDW 舌先を尖らせ中を舐ると、リリーが白磁の太ももがキュウと締まり、顔面への圧迫感が一層強くなる……
+			PRINTFORMDW 부드러운 히프에 안면을 휩싸여,%CALLNAME:MASTER%는 입가에 강압된 치혈에 혀로 봉사를 하고 있다
+			PRINTFORMDW 릴리는 결코 괴롭지 않은 정도로 허리를 띄워,%CALLNAME:MASTER%가 봉사하기 쉬운 위치로 허리를 구불거리게 할 수 있다
+			PRINTFORMDW 혀끝을 날카롭게 할 수 있는 안을 빨면, 릴리가 백자의 허벅지가 큐우와 꼭 죄여, 안면에의 압박감이 한층 강해진다……
 			PRINTL  
-			PRINTFORMW 「……ねぇ、リリーのお尻に敷かれて、あんっ♪ もうっ♪」
-			PRINTFORMW 「ねぇ、リリーのあそこ♪ 美味しいですか？」
+			PRINTFORMW 「…… 저기, 릴리의 엉덩이에 깔려, 아읏♪이제(벌써) ♪」
+			PRINTFORMW 「저기, 릴리의 저기♪맛있습니까?」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;勃起
+	;발기
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:勃起度 >= 1000
-		PRINTFORMW 「おちんちん、ビンビンにおっきしちゃったね」
-		PRINTFORMW 「恥ずかしいところ、ぜーんぶ丸見えですよ♪」
+	IF 구상기입체크(100) && TCVAR:MASTER:발기도 >= 1000
+		PRINTFORMW 「자지, 펄떡펄떡 기사라고 끝냈군요」
+		PRINTFORMW 「부끄러운 곳, 전부 뻔히 보임이예요♪」
 		PRINTL  
-		PRINTFORMDW 嬉しそうなリリーの声に羞恥心を煽られ、ペニスは更に硬く屹立してしまう
-		PRINTFORMDW ねっとりとしたリリーの視線が、亀頭から陰嚢へと舐めるように移動していく
+		PRINTFORMDW 기쁜 듯한 릴리의 소리에 수치심을 부추겨져 페니스는 더욱 딱딱하고 흘립 해 버린다
+		PRINTFORMDW 끈적한 릴리의 시선이, 귀두로부터 음낭으로 빨도록(듯이) 이동해 나간다
 		PRINTL  
-		PRINTFORMW 「もしかして、リリーに見られて興奮しちゃったんですか？　ふふっ♪」
-		PRINTFORMW 「……だったら、とっても嬉しいなぁ♪」
+		PRINTFORMW 「혹시, 릴리에 보여져 흥분해 버린 것입니까?   후후♪」
+		PRINTFORMW 「…… 이라면, 매우 기쁘구나♪」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;萎えた
+	;쇠약해졌다
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:勃起度 < TCVAR:MASTER:前の勃起度
-		PRINTFORMW 「ふふっ♪ びゅーびゅーして疲れちゃいましたか？」
+	IF 구상기입체크(100) && TCVAR:MASTER:발기도 < TCVAR:MASTER:전의발기도
+		PRINTFORMW 「후훗♪--해 지치게 되었습니까?」
 		PRINTL  
-		PRINTFORMDW 小さくなった陰茎を労るように、リリーが優しく微笑んだ
+		PRINTFORMDW 작아진 음경을 돌보도록(듯이), 릴리가 상냥하게 미소지었다
 		PRINTL  
-		PRINTFORMW 「お休みついでに%CNAME(MASTER, TARGET)%の気持ちが聞きたくなっちゃいました♪」
-		PRINTFORMW 「%CNAME(MASTER, TARGET)%にとって、リリーはどんな存在なんでしょうか」
+		PRINTFORMW 「휴가하는 김에%CNAME(MASTER, TARGET)%의 기분을 (듣)묻고 싶어져 버렸습니다♪」
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%에 있어, 릴리는 어떤 존재인 것입니까」
 		RETURN 1
 	ENDIF
 	
-	;ここを最初に書きましょう
+	;여기를 최초로 씁시다
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%はリリーの事、どう思ってるんですか？」
-			PRINTFORMW 「怖いご主人様？　それともえっちな妖精さんかな？　ふふっ♪」
-			PRINTFORMW 「聞きたいな……%CNAME(MASTER, TARGET)%の気持ち……いっぱい聞かせて」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%는 릴리의 일, 어떻게 생각하고 있습니까?」
+			PRINTFORMW 「무서운 주인님?   그렇지 않으면 엣치한 요정씨일까?   후후♪」
+			PRINTFORMW 「(듣)묻고 싶구나……%CNAME(MASTER, TARGET)%의 기분…… 가득 들려줘」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「リリーと%CNAME(MASTER, TARGET)%は……どんな関係なんでしょうか？」
-			PRINTFORMW 「ご主人様と奴隷？　それとも……ふふっ♪」
-			PRINTFORMW 「ねぇ、%CNAME(MASTER, TARGET)%はどう思いますか？」
+			PRINTFORMW 「릴리와%CNAME(MASTER, TARGET)%는…… 어떤 관계인 것입니까?」
+			PRINTFORMW 「주인님과 노예?   그렇지 않으면…… 후훗♪」
+			PRINTFORMW 「저기,%CNAME(MASTER, TARGET)%는 어떻게 생각합니까?」
 		ELSE
-			PRINTFORMW 「リリーの事、どう思いますか？」
-			PRINTFORMW 「リリーはちゃんと%CNAME(MASTER, TARGET)%のごしゅじんさま出来てるでしょうか」
-			PRINTFORMW 「聞きたいなぁ……%CNAME(MASTER, TARGET)%の気持ち。　じっくりと……ね♪」
+			PRINTFORMW 「릴리의 일, 어떻게 생각합니까?」
+			PRINTFORMW 「릴리는 분명하게%CNAME(MASTER, TARGET)%의 주인님 되어있을까요」
+			PRINTFORMW 「(듣)묻고 싶구나……%CNAME(MASTER, TARGET)%의 기분  차분히……♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;ACT2, 性についての話をする
-;────────────────────────────────────
-;・調教者が性についての知識を語り始める
-;・TFLAG:お仕置きフラグが立っていると発生しない
-;・ターン方針が"異常"だと発生しない
-;・調教者に性知識が無いと発生しない
-;・話題『知識』が既出となり、以後、同一調教内では抑制される
+;─
+;ACT2, 성에 대한 이야기를 한다
+;─
+;·조교자가 성에 대한 지식을 말하기 시작한다
+;·TFLAG:벌플래그가 서 있으면 발생하지 않는다
+;·턴 방침이 "이상"이라면 발생하지 않는다
+;·조교자에게 성 지식이 없으면 발생하지 않는다
+;·화제 『지식』이 기출이 되어, 이후, 동일 조교내에서는 억제된다
 ;-------------------------------------------------
 @KOJO_ACT_K15_2
 ;-------------------------------------------------
-;関数@TARGET_DESCRIPTIONによってTEQUIP(性交中/調教対象Ｃ使用/性交奉仕中/自慰中 & 2)
-;@EQUIPACTION_DESCRIPTIONによってTEQUIP(顔面騎乗/顔面騎乗アナル/自慰中)で地の文は変化する可能性がある
-;全て埋める必要はないので、その他・条件なしを最初に埋めた上で、あとは好みで分岐を増減してください
+;함수@TARGET_DESCRIPTION에 의해 TEQUIP(성교중/조교 대상 C사용/성교 봉사중/자위중 & 2)
+;@EQUIPACTION_DESCRIPTION에 의해 TEQUIP(안면 승마/안면 승마 애널/자위중)으로 지문은 변화할 가능성이 있다
+;모두 묻을 필요는 없기 때문에, 그 외·조건 없음을 최초로 묻은 다음, 뒤는 기호로 분기를 증감해 주세요
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT2, 性についての話をする
-;口上独自内部処理
+;ACT2, 성에 대한 이야기를 한다
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTACT(0)
-		PRINTFORMW 「%CNAME(MASTER, TARGET)%の大好きなお勉強の時間ですよ♪」
-		PRINTFORMW 「女の子の感じるところとか、%CNAME(MASTER, TARGET)%の大好きな『あそこ』のこととか……」
-		PRINTFORM 「リリーの身体で詳しくなっちゃいましょうねっ
+	IF 구상기입체크(100) && FIRSTACT(0)
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%의 정말 좋아하는 공부의 시간이에요♪」
+		PRINTFORMW 「여자 아이가 느끼는 곳이라든지,%CNAME(MASTER, TARGET)%의 정말 좋아하는 『저기』의 일이라든지……」
+		PRINTFORM 「릴리의 신체로 자세하게 되어 버려요
 		CALL HEARTCB
 		PRINTFORMW 」
-		IF TALENT:MASTER:童貞 == 1
+		IF TALENT:MASTER:동정 == 1
 			PRINTL  
-			PRINTFORMW 「ちゃーんとサボらずお勉強できたら……」
-			PRINTFORM 「ごほーびにリリーが%CNAME(MASTER, TARGET)%の童貞、もらってあげますねっ
+			PRINTFORMW 「분명하게 게으름 피우지 않고 공부할 수 있으면……」
+			PRINTFORM 「-에 릴리가%CNAME(MASTER, TARGET)%의 동정, 받아 주네요
 			CALL HEARTCB
 			PRINTFORMW 」
 		ENDIF
@@ -711,28 +711,28 @@ IF 口上記入チェック(100)
 	ENDIF
 
 	;-------------------------------------------------
-	;性交奉仕系で膣内射精の後　リリーが射精される
+	;성교 봉사계로 질내 사정의 뒤  릴리가 사정된다
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 2
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 2
 		IF RAND:3 == 0
-			PRINTFORMW 「ふふっ♪　いっぱいお射精できたねっ♪」
-			PRINTFORM 「もっと乱暴にしてくれても、リリーは大丈夫ですよ
+			PRINTFORMW 「후훗♪  가득 사정할 수 있었다♪」
+			PRINTFORM 「좀 더 난폭하게 해 주어도, 릴리는 괜찮아요
 			CALL HEART
 			PRINTW 」
 		ELSEIF RAND:2 == 0
-			PRINTFORMW 「ナカで出したら赤ちゃん出来ちゃうんですよ、知ってました？　ふふっ♪」
-			PRINTFORMW 「あれ？　でも人間と妖精でも出来るんでしょうか……むむむ……」
+			PRINTFORMW 「나카로 내면 아기 생겨 버립니다, 알고 있었습니까?   후후♪」
+			PRINTFORMW 「어?   에서도 인간과 요정에서도 할 수 있는 것입니까…… 무무무……」
 			PRINTL  
-			PRINTFORMDW リリーは腕を組み、何やら難しい顔をしている……
-			PRINTFORMDW そして、いかにも『ひらめいた』といった具合に無邪気な笑顔を向けてきた
+			PRINTFORMDW 릴리는 팔짱을 껴, 뭔가 어려운 얼굴을 하고 있다……
+			PRINTFORMDW 그리고, 그야말로 『번쩍였다』라고 한 상태에 순진한 웃는 얼굴을 향하여 왔다
 			PRINTL  
-			PRINTFORM 「もっといっぱいお射精したら、わかるかもしれませんね
+			PRINTFORM 「좀 더 가득 사정하면, 알지도 모르네요
 			CALL HEARTCB
 			PRINTW 」
 		ELSE
-			PRINTFORMW 「もう……リリーの子宮は赤ちゃんのためのお部屋であって、
-			PRINTFORMW 　%CNAME(MASTER, TARGET)%のザーメンタンクじゃないんですよ？　ふふっ♪」
-			PRINTFORM 「勘違いしちゃうくらい、リリーのおまんこ気持ち良かったんですね
+			PRINTFORMW 「이제(벌써)…… 릴리의 자궁은 아기를 위한 방에서 만나며,
+			PRINTFORMW 　%CNAME(MASTER, TARGET)%의 정액 탱크가 아니에요?   후후♪」
+			PRINTFORM 「착각 해 버릴 정도로, 릴리의 보지 기분 좋았던 것이군요
 			CALL HEARTCB
 			PRINTW 」
 		ENDIF
@@ -740,28 +740,28 @@ IF 口上記入チェック(100)
 	ENDIF
 	
 	;-------------------------------------------------
-	;性交系で膣内射精の後　リリーが射精する
-	;記入チェック
+	;성교계로 질내 사정의 뒤  릴리가 사정한다
+	;기입 체크
 	;-------------------------------------------------
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 1
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 1
 		IF RAND:3 == 0
-			PRINTFORM 「あははっ♪　いっぱい中出しされて気持ち良かったですねっ
+			PRINTFORM 「아하핫♪  가득 질내사정되어 기분 좋았던 것이군요
 			CALL HEART
 			PRINTW 」
-			PRINTFORMW 「妖精ザーメンなら人間も孕んじゃうのに……ね♪」
-			PRINTFORMW 「あれ、もしかして忘れてました？　ふふっ♪」
+			PRINTFORMW 「요정 정액이라면 인간도 임신해 버리는…… 데♪」
+			PRINTFORMW 「저것, 혹시 잊고 있었습니까?   후후♪」
 		ELSEIF RAND:2 == 0
-			PRINTFORMW 「女の子が生まれたら、%CNAME(MASTER, TARGET)%と一緒に親子丼……」
-			PRINTFORMW 「男の子だったら、%CNAME(MASTER, TARGET)%を挟んでサンドウィッチがいいなぁ……♪」
-			PRINTFORM 「そうなるまで何年待つのかって？　くすっ
+			PRINTFORMW 「여자 아이가 태어나면,%CNAME(MASTER, TARGET)%와 함께 오야코동……」
+			PRINTFORMW 「사내 아이라면,%CNAME(MASTER, TARGET)%를 사이에 두어 샌드위치가 좋구나……♪」
+			PRINTFORM 「그렇게 될 때까지 몇년 기다리는지라는?   키득
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「妖精の新陳代謝力とリリーの魔力供給を考えれば、１５日で十分、だよ」
-			PRINTFORMW 「なんなら、“ハツカネズミ”と競争してみますか？」
+			PRINTFORMW 「요정의 신진대사력과 릴리의 마력 공급을 생각하면, 15일로 충분해,」
+			PRINTFORMW 「뭣하면, "생쥐"라고 경쟁해 봅니까?」
 		ELSE
-			PRINTFORMW 「膣内射精から受精、着床まで数時間……」
-			PRINTFORMW 「でも卵子が溺れるほどに、子宮をザーメンタンクにしちゃえば……ふふっ」
-			PRINTFORM 「受精はインスタント、だよねぇ
+			PRINTFORMW 「질내 사정으로부터 수정, 착상까지 수시간……」
+			PRINTFORMW 「그렇지만 난자가 빠질 정도로, 자궁을 정액 탱크로 해 버리면…… 후훗」
+			PRINTFORM 「수정은 인스턴트, 지요
 			CALL HEARTCB
 			PRINTW 」
 		ENDIF
@@ -769,20 +769,20 @@ IF 口上記入チェック(100)
 	ENDIF
 	
 	;-------------------------------------------------
-	;イきそう
+	;갈 것 같다
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
-		;イきそうなのを我慢している
-		IF TCVAR:MASTER:イきそう > 5
-			PRINTFORMW 「おちんちんガチガチでもう我慢できないね♪」
-			PRINTFORMW 「ほら♪　次はどうなるのかわかりますか？」
-			PRINTFORM 「イカ臭いザーメンびゅーびゅーして、イっちゃうんですよ
+	IF 구상기입체크(100) && TCVAR:MASTER:갈것같다
+		;갈 것 같은 것을 참고 있다
+		IF TCVAR:MASTER:갈것같다 > 5
+			PRINTFORMW 「자지 딱딱해 이제 인내 할 수 없다♪」
+			PRINTFORMW 「이봐요♪  다음은 어떻게 되는지 압니까?」
+			PRINTFORM 「오징어 냄새나는 정액--해, 가 버립니다
 			CALL HEARTCB
 			PRINTFORMW 」
 		ELSE
-			PRINTFORMW 「おちんちんガチガチだね♪」
-			PRINTFORMW 「リリーに搾精されちゃうよ？　もう我慢できないね♪」
-			PRINTFORM 「ほらぁ♪　イカ臭いザーメンびゅーびゅーしてイっちゃえっ
+			PRINTFORMW 「자지 딱딱이구나♪」
+			PRINTFORMW 「릴리에 착정 되어 버려?   이제 인내 할 수 없다♪」
+			PRINTFORM 「이봐요♪  오징어 냄새나는 정액--해 가 버려랏
 			CALL HEARTCB
 			PRINTFORMW 」
 		ENDIF
@@ -790,64 +790,64 @@ IF 口上記入チェック(100)
 	ENDIF
 	
 	;-------------------------------------------------
-	;その調教の最初のアクション
+	;그 조교의 최초의 액션
 	;=================================================
-	IF 口上記入チェック(100) && ONCEACT(0)
-		PRINTFORMW 「えっちなお勉強の時間ですよ♪」
-		PRINTFORMW 「男の子と女の子のえっちなヒミツ」
-		PRINTFORM 「リリーと一緒にお勉強して、詳しくなっちゃいましょうねっ
+	IF 구상기입체크(100) && ONCEACT(0)
+		PRINTFORMW 「엣치한 공부의 시간이에요♪」
+		PRINTFORMW 「사내 아이와 여자 아이의 엣치한 비밀」
+		PRINTFORM 「릴리와 함께 공부해, 자세하게 되어 버려요
 		CALL HEARTCB
 		PRINTFORMW 」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;勃起
+	;발기
 	;=================================================
-	IF 口上記入チェック(80) && TCVAR:MASTER:勃起度 >= 1000
-		IF AFFECTION("相思相愛")
-			PRINTFORMW 「カリ首の凸凹って『他人の精液を掻き出す為』にあるんですって！」
-			PRINTFORMW 「乱交前提なんて……人間のオスってとってもエッチな進化をしてると思いませんか？」
-			PRINTFORM 「もちろん『膣壁により強い快楽を与える為』って理由もあるみたいですけどねっ
+	IF 구상기입체크(80) && TCVAR:MASTER:발기도 >= 1000
+		IF AFFECTION("상사상애")
+			PRINTFORMW 「칼리목의 요철은 『타인의 정액을 긁어내기 때문에(위해)』에 있습니다 라고!」
+			PRINTFORMW 「난교 전제는…… 인간의 오스는 매우 엣치한 진화를 하고 있다고 생각하지 않습니까?」
+			PRINTFORM 「물론 『질벽에 의해 강한 쾌락을 주기 때문에(위해)』라는 이유도 있는 것 같지만
 			CALL HEARTCB
 			PRINTFORMW 」
 		ELSE
-			PRINTFORMW 「『Ｓ』と『Ｍ』って人によって色んな解釈がありますよね」
-			PRINTFORMW 「言葉通りの 『サディスト』と『マゾヒスト』……」
-			PRINTFORMW 「奉仕の解釈によっては 『サービス』と『満足』……」
-			PRINTFORMW 「それに 『スレイブ』と『マスター』……」
+			PRINTFORMW 「『S』와 『M』라는 사람에 따라서 여러 가지 해석이 있군요」
+			PRINTFORMW 「말대로의 『새디스트』와 『마조히스트』……」
+			PRINTFORMW 「봉사의 해석에 따라서는 『서비스』와 『만족』……」
+			PRINTFORMW 「거기에 『스레이브』와 『마스터』……」
 			PRINTL  
-			PRINTFORMW 「まぁ……考え方は色々ですが、大切なのは二人が『パートナー』だって事だって思うんです」
-			PRINTFORMW 「リリー達はどうなんでしょう、ちゃんと『パートナー』になれてるんでしょうか？」
+			PRINTFORMW 「뭐…… 사고방식은 다양합니다만, 중요한 것은 두 명이 『파트너』라는 일이라도 생각합니다」
+			PRINTFORMW 「릴리들은 어떻습니까, 분명하게 『파트너』가 있는 것입니까?」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;萎えた
+	;쇠약해졌다
 	;=================================================
-	IF 口上記入チェック(0) && TCVAR:MASTER:勃起度 < TCVAR:MASTER:前の勃起度
+	IF 구상기입체크(0) && TCVAR:MASTER:발기도 < TCVAR:MASTER:전의발기도
 		PRINTFORMW 
 		PRINTFORMW 
 		RETURN 1
 	ENDIF
 	
-	;ここを最初に書きましょう
+	;여기를 최초로 씁시다
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF RAND:2 == 0
-			PRINTFORM 「えっちなお勉強しましょうか
+			PRINTFORM 「엣치한 공부할까요
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「どうしたら気持ちよくリリーに搾精してもらえるのか、ね♪」
-			PRINTFORMW 「しっかりお勉強して、たっぷり吐精出来るようになりましょうね♪」
+			PRINTFORMW 「어떻게 하면 기분 좋게 릴리에 착정 해 줄 수 있는 걸, 까요♪」
+			PRINTFORMW 「확실히 공부해, 충분히 토정 할 수 있게 되어요♪」
 		ELSE
-			PRINTFORMW 「リリーにいじめられて興奮しちゃう人のことを何て言うか知ってますか？」
-			PRINTFORMW 「わからないなら教えてあげますから、ちゃんと覚えてくださいね」
-			PRINTFORMW 「『ロリコン』『ドＭ』『ヘンタイ』……つまり%CNAME(MASTER, TARGET)%のことですねー、ふふっ♪」
-			PRINTFORM 「安心してください♪ リリーはそんな%CNAME(MASTER, TARGET)%が大好きですから
+			PRINTFORMW 「릴리에 괴롭혀져 흥분해 버리는 사람의 일을 뭐라고 말할까 알고 있습니까?」
+			PRINTFORMW 「모르면 가르쳐 주기 때문에, 분명하게 기억해 주세요」
+			PRINTFORMW 「『로리콘』 『드 M』 『변태』…… 즉%CNAME(MASTER, TARGET)%의 일이군요─, 후훗♪」
+			PRINTFORM 「안심해 주세요♪릴리는 그런%CNAME(MASTER, TARGET)%를 아주 좋아하기 때문에
 			CALL HEARTCB
 			PRINTW 」
 		ENDIF
@@ -855,134 +855,134 @@ IF 口上記入チェック(100)
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;ACT3, 優しく慰める
-;────────────────────────────────────
-;・調教者が優しい言葉で慰めてくる
-;・TFLAG:お仕置きフラグが立っていると発生しない
-;・ターン方針が"ハード", "異常"だと発生しない
-;・話題『慰め』が既出となり、以後、同一調教内では抑制される
+;─
+;ACT3, 상냥하게 위로한다
+;─
+;·조교자가 상냥한 말로 위로해 온다
+;·TFLAG:벌플래그가 서 있으면 발생하지 않는다
+;·턴 방침이 "하드", "이상"이라면 발생하지 않는다
+;·화제 『위로하고』가 기출이 되어, 이후, 동일 조교내에서는 억제된다
 ;-------------------------------------------------
 @KOJO_ACT_K15_3
-;口上独自内部処理
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
 ;-------------------------------------------------
-;関数@TARGET_DESCRIPTIONによってTEQUIP(性交中/調教対象Ｃ使用/性交奉仕中/自慰中 & 2)
-;@EQUIPACTION_DESCRIPTIONによってTEQUIP(顔面騎乗/顔面騎乗アナル/自慰中)で地の文は変化する可能性がある
-;全て埋める必要はないので、その他・条件なしを最初に埋めた上で、あとは好みで分岐を増減してください
+;함수@TARGET_DESCRIPTION에 의해 TEQUIP(성교중/조교 대상 C사용/성교 봉사중/자위중 & 2)
+;@EQUIPACTION_DESCRIPTION에 의해 TEQUIP(안면 승마/안면 승마 애널/자위중)으로 지문은 변화할 가능성이 있다
+;모두 묻을 필요는 없기 때문에, 그 외·조건 없음을 최초로 묻은 다음, 뒤는 기호로 분기를 증감해 주세요
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT3, 優しく慰める
+;ACT3, 상냥하게 위로한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;-------------------------------------------------
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTACT(0)
-		PRINTFORMW 「人間が妖精に調教されるのは、やっぱり辛いんでしょうか……」
-		PRINTFORMW 「ごめんなさい、せめて%CNAME(MASTER, TARGET)%が気持ちよくなれるように頑張りますね」
+	IF 구상기입체크(100) && FIRSTACT(0)
+		PRINTFORMW 「인간이 요정에 조교되는 것은, 역시 괴로울까요……」
+		PRINTFORMW 「미안해요, 적어도%CNAME(MASTER, TARGET)%를 기분 좋게 될 수 있도록(듯이) 노력하네요」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;性交奉仕系で膣内射精の後
+	;성교 봉사계로 질내 사정의 뒤
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 2
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 2
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「リリーのおまんこ、%CNAME(MASTER, TARGET)%のせーえきでいっぱいだね……♪」
-			PRINTFORM 「ふふっ♪　もっともっと、好きなだけリリーの中でびゅーびゅーしていいですよ
+			PRINTFORMW 「릴리의 보지,%CNAME(MASTER, TARGET)%태우고─역에서 가득하다……♪」
+			PRINTFORM 「후훗♪  좀더 좀더, 좋아할 뿐(만큼) 릴리안--해도 좋아요
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORM 「リリーをママにしちゃうくらい……ね？ パパ
+			PRINTFORM 「릴리를 마마로 해 버릴 정도로……? 파파
 			CALL HEARTCB
 			PRINTW 」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORM 「んっ、はぁ♪　中出しごほーしせっくす気持ち良かったね」
+			PRINTFORM 「읏, 하아♪  질내사정 오─해 섹스 기분 좋았지요」
 			CALL HEARTCB
 			PRINTW 」
-			PRINTFORMW 「リリーの膣内でまだビクビクしるよ……ふふっ♪」
-			PRINTFORM 「ごほーびに、いい子いい子してあげますね
+			PRINTFORMW 「릴리의 질내에서 아직 움찔움찔 알아…… 후훗♪」
+			PRINTFORM 「-에, 좋은 아이 좋은 아이 해 주네요
 			CALL HEARTCB
 			PRINTW 」
 		ELSE
-			PRINTFORMW 「リリーのちっちゃなアソコ、きゅっきゅして気持ち良かったですか？　ふふっ」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%はロリコンさんだから、リリーと生ハメしたらお射精我慢できないもんねー♪」
-			PRINTFORMW 「ね、可愛いリリーのヘンタイさん♪」
+			PRINTFORMW 「릴리의 작은 저기, 해 기분 좋았던 것입니까?   후후」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%는 로리콘씨이니까, 릴리와 생 하메 하면 사정 인내 할 수 없는 거네─♪」
+			PRINTFORMW 「저기, 사랑스러운 릴리의 변태씨♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;性交系で膣内射精の後
+	;성교계로 질내 사정의 뒤
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 1
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 1
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「妖精ザーメンいっぱい注ぎ込まれちゃったねー♪」
-			PRINTFORMW 「リリーの赤ちゃん孕むの楽しみですね♪」
-			PRINTFORMW 「安心してください、%CNAME(MASTER, TARGET)%も赤ちゃんもリリーがちゃんと面倒見ますから♪」
+			PRINTFORMW 「요정 정액 가득 쏟아져 버렸군요―♪」
+			PRINTFORMW 「릴리의 아기 임신하는 것 즐거움이군요♪」
+			PRINTFORMW 「안심해 주세요,%CNAME(MASTER, TARGET)%도 아기도 릴리가 분명하게 돌볼테니까♪」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の膣内、リリーのザーメンでいっぱいだね♪」
-			PRINTFORMW 「ほらぁ、ザーメンもっと塗り込んであげるっ」
-			PRINTFORMW 「せーえきの臭い取れなくなっちゃうくらいにね♪」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 질내, 릴리의 정액으로 가득하다♪」
+			PRINTFORMW 「이봐요, 정액 좀 더 발라 준닷」
+			PRINTFORMW 「정액의 냄새나 잡히지 않게 되어 버릴 정도로 말이야♪」
 		ELSE
-			PRINTFORMW 「リリーにいっぱい中出しされちゃったね♪」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%のおまんこしゅごいの♪　びゅーびゅーするの癖になっちゃいそうです♪」
+			PRINTFORMW 「릴리에 가득 질내사정되어 버렸군요♪」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 보지 굉장한 것♪  --하는 것 버릇이 되어 버릴 것 같습니다♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;イきそう
+	;갈 것 같다
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
-		;イきそうなのを我慢している
-		IF TCVAR:MASTER:イきそう > 5
-			PRINTFORMW 「もうイきそうなんだね、とっても辛そうです……ふふっ♪」
-			PRINTFORMW 「リリーに見られて興奮しちゃうなんて、ヘンタイさんなんですね♪」
+	IF 구상기입체크(100) && TCVAR:MASTER:갈것같다
+		;갈 것 같은 것을 참고 있다
+		IF TCVAR:MASTER:갈것같다 > 5
+			PRINTFORMW 「이제(벌써) 갈 것 같네, 매우 괴로운 것 같습니다…… 후훗♪」
+			PRINTFORMW 「릴리에 보여져 흥분해 버리다니 변태씨이군요♪」
 			PRINTL  
-			PRINTFORMW 「安心してください、リリーはヘンタイさんな%CNAME(MASTER, TARGET)%が大好きですから」
-			PRINTFORM 「だから 情けなく腰振って、好きなだけ射精してくださいねっ
+			PRINTFORMW 「안심해 주세요, 릴리는 변태씨인%CNAME(MASTER, TARGET)%를 아주 좋아하기 때문에」
+			PRINTFORM 「그러니까 한심하고 허리 흔들어, 좋아할 뿐(만큼) 사정해 주세요
 			CALL HEARTCB
 			PRINTFORMW 」
 		ELSE
-			PRINTFORMW 「おちんちん気持ち良いね♪ 我慢なんてしなくていいんだよ♪」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の一番気持ち良い時に、思いっ切りお射精しちゃおう♪」
-			PRINTFORMW 「ほらぁ♪ びゅーっびゅーっ！ ぶびゅるるぅー！　あははっ♪」
+			PRINTFORMW 「자지 기분 좋다♪인내 같은거 하지 않아도 괜찮아♪」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 제일 기분 좋을 때에, 마음껏 사정해 버리자♪」
+			PRINTFORMW 「이봐요♪븃븃! 부뷰루루우─!   아하하♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;調教対象が自慰中
+	;조교 대상이 자위중
 	;=================================================
-	IF 口上記入チェック(100) && GETBIT(TEQUIP:自慰中, 0)
-		;相互自慰
-		IF GETBIT(TEQUIP:自慰中, 1)
+	IF 구상기입체크(100) && GETBIT(TEQUIP:자위중, 0)
+		;상호 자위
+		IF GETBIT(TEQUIP:자위중, 1)
 			IF RAND:2 == 0
-				PRINTFORM 「オナニー見せっこして……%CNAME(MASTER, TARGET)%もこーふんしてるの？　んっ
+				PRINTFORM 「자위 서로 보여주기 해……%CNAME(MASTER, TARGET)%도 개─분하고 있는 거야?   응
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「りりーもねっ……すごくドキドキしてるよ♪」
-				PRINTFORMW 「ふたりともっヘンタイさんになっちゃったね
+				PRINTFORMW 「-도…… 굉장히 두근두근 하고 있다♪」
+				PRINTFORMW 「두사람 모두 변태씨가 되어 버렸군요
 				CALL HEARTCB
 				PRINTFORMW 」
 			ELSE
-				PRINTFORMW 「んぅっ♪　見られてするのっ、きもちーですか？」
-				PRINTFORMW 「リリーもおんなじ、オナニーみられて感じちゃってます♪」
-				PRINTFORM 「だから……リリーにはきもちーの隠さなくていいからね
+				PRINTFORMW 「응웃♪  볼 수 있고 하는거야, 기분─입니까?」
+				PRINTFORMW 「릴리도 같음, 자위 보여지고 느껴 버리고 있습니다♪」
+				PRINTFORM 「그러니까…… 릴리에는 기분─가 숨기지 않아도 괜찮으니까
 				CALL HEARTCB
 				PRINTFORMW 」
 			ENDIF
 		ELSE
 			IF RAND:2 == 0
-				PRINTFORMW 「見られてするのっ、きもちーですか？」
-				PRINTFORMW 「リリーもおんなじ、とっても気持ち良いよね」
-				PRINTFORM 「だから……リリーにはきもちーの隠さなくていいからね
+				PRINTFORMW 「보여지고 하는거야, 기분─입니까?」
+				PRINTFORMW 「릴리도 같음, 매우 기분 좋네요」
+				PRINTFORM 「그러니까…… 릴리에는 기분─가 숨기지 않아도 괜찮으니까
 				CALL HEARTCB
 				PRINTFORMW 」
 			ELSE
-				PRINTFORMW 「そ、そんなに擦って痛くないんでしょうか……？」
-				PRINTFORM 「もし痛くなったらリリーが治してあげますから、いつでもイってくださいね
+				PRINTFORMW 「그, 그렇게 비비어 아프지 않을까요……?」
+				PRINTFORM 「만약 아파지면 릴리가 치료해 주기 때문에, 언제라도 가 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
 			ENDIF
@@ -991,20 +991,20 @@ IF 口上記入チェック(100)
 	ENDIF
 
 	;-------------------------------------------------
-	;勃起
+	;발기
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:勃起度 >= 1000
+	IF 구상기입체크(100) && TCVAR:MASTER:발기도 >= 1000
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「わぁ！ 上手におっきできましたね♪」
-			PRINTFORMW 「ドロドロの精でパンパンに膨らんで、とっても辛そうです……ふふっ♪」
-			PRINTFORMW 「これ、思いっきりびゅーびゅーしたら凄く気持ち良いんだろうねー？」
-			PRINTFORMW 「くすっ……楽しみですね♪」
+			PRINTFORMW 「와아! 능숙하게 나무 할 수 있었어요♪」
+			PRINTFORMW 「질척질척의 정령으로 팡팡 부풀어 올라, 매우 괴로운 것 같습니다…… 후훗♪」
+			PRINTFORMW 「이것, 마음껏 --하면 굉장히 기분 좋겠지―?」
+			PRINTFORMW 「키득…… 즐거움이군요♪」
 		ELSE
-			PRINTFORMW 「おちんちんガチガチですねー」
-			PRINTFORMW 「リリーに見られて感じちゃったんでしょうか」
+			PRINTFORMW 「자지 딱딱이군요─」
+			PRINTFORMW 「릴리에 보여지고 느껴 버린 것입니까」
 			PRINTL  
-			PRINTFORMW 「……ふふっ♪　安心してくださいね♪
-			PRINTFORM 「露出狂のヘンタイさんでも、リリーがちゃーんとお世話してあげますからね
+			PRINTFORMW 「…… 후훗♪  안심해 주세요♪
+			PRINTFORM 「노출광의 변태씨라도, 릴리가 분명하게 돌봐 주니까요
 			CALL HEARTCB
 			PRINTFORMW 」
 		ENDIF
@@ -1012,213 +1012,213 @@ IF 口上記入チェック(100)
 	ENDIF
 	
 	;-------------------------------------------------
-	;萎えた
+	;쇠약해졌다
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:勃起度 < TCVAR:MASTER:前の勃起度
-		;射精後（膣以外、フェラ・手コキ・パイズリとか？）
-		IF TCVAR:MASTER:射精後経過ターン == 1
+	IF 구상기입체크(100) && TCVAR:MASTER:발기도 < TCVAR:MASTER:전의발기도
+		;사정 후(질 이외, 페라·손 애무·파이즈리라든지?)
+		IF TCVAR:MASTER:사정후경과턴 == 1
 			IF RAND:2 == 0
-				PRINTFORM 「リリーの為にいっぱいぴゅっぴゅしてくれたんだね
+				PRINTFORM 「릴리이기 때문에에 해 준 것이구나
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「大丈夫ですよ……リリーがすぐに大きくしてあげますから♪」
+				PRINTFORMW 「괜찮아요…… 릴리가 곧바로 크게 해 줄테니까♪」
 			ELSE
-				PRINTFORM 「ふふっ♪　上手にせーえきぴゅっぴゅできましたねー
+				PRINTFORM 「후훗♪  능숙하게 키─네할 수 있었어요―
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「おちんちんも小さくなって……ふふっ、なんだか可愛いです♪」
+				PRINTFORMW 「자지도 작아져…… 후훗, 왠지 사랑스럽습니다♪」
 			ENDIF
-		;異常、加虐とかで萎えた？もしくは調教初期
+		;이상, 가학등으로 쇠약해졌어? 혹은 조교 초기
 		ELSE
 			IF FAVOR(0, 2000)
-				PRINTFORMW 「おちんちん、萎えちゃったの？」
-				PRINTFORMW 「大丈夫ですよ……リリーがすぐに大きくしてあげますね♪」
+				PRINTFORMW 「자지, 쇠약해져 버렸어?」
+				PRINTFORMW 「괜찮아요…… 릴리가 곧바로 크게 해 주네요♪」
 			ELSE
-				PRINTFORMW 「おちんちん、縮んじゃいました？」
-				PRINTFORMW 「でもこれはこれで……小さくてぷにぷにしてて可愛いです♪」
+				PRINTFORMW 「자지, 줄어들어 버렸습니까?」
+				PRINTFORMW 「그렇지만 이것은 이것대로…… 작고 말랑말랑 하고 있어 사랑스럽습니다♪」
 			ENDIF
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;その調教の最初のアクション
+	;그 조교의 최초의 액션
 	;=================================================
-	IF 口上記入チェック(100) && ONCEACT(0)
+	IF 구상기입체크(100) && ONCEACT(0)
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「リリーに甘えたくなっちゃいました？ ふふっ♪」
-			PRINTFORM 「いいですよ♪ ほらおいで
+			PRINTFORMW 「릴리에 응석부리고 싶어져 버렸습니까? 후훗♪」
+			PRINTFORM 「좋아요♪이봐요 와
 			CALL HEARTCB
 			PRINTFORMW 」
-			PRINTFORMW 「いつも頑張ってるもんね……ぎゅーってしてあげます♪」
+			PRINTFORMW 「언제나 노력하고 있는 것…… 꽉 해 줍니다♪」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「ほら♪ リリーがぎゅーってしてあげます……んぅ……」
-			PRINTFORMW 「ちゃんと抱きしめてるから、力を抜いていいんだよ」
+			PRINTFORMW 「이봐요♪릴리라고 해 주는…… 우……」
+			PRINTFORMW 「분명하게 껴안고 있기 때문에, 힘을 빼도 좋아」
 			PRINTL  
-			PRINTFORMDW 幼子をあやすような慈愛に満ちた声でリリーが囁く
-			PRINTFORMDW ふわりと漂う甘い香りが全身の緊張を解きほぐしていく……
+			PRINTFORMDW 어린 아이를 어르는 것 같은 자애로 가득 찬 소리로 릴리가 속삭인다
+			PRINTFORMDW 살짝 감도는 달콤한 향기가 전신의 긴장을 풀어 간다……
 			PRINTL  
-			PRINTFORMW 「リリーのことだけを見て……快感に身をまかせて……」
-			PRINTFORMW 「頭も身体も、ふわふわとろとろにしちゃおうね♪」
+			PRINTFORMW 「릴리의 일만을 봐…… 쾌감에 몸을 맡겨……」
+			PRINTFORMW 「머리나 신체도, 둥실둥실 녹진녹진해 버리자♪」
 		ELSE
-			PRINTFORMW 「優しく抱きしめてあげるね♪　おいで♪」
-			PRINTFORMW 「怖がらないで身をまかせて……そしたらもっと気持ちよくしてあげる……」
+			PRINTFORMW 「상냥하게 껴안아 주네요♪  오며♪」
+			PRINTFORMW 「무서워하지 말고 몸을 맡겨…… 그렇게 하면 좀 더 기분 좋게 해 준다……」
 		ENDIF
 		RETURN 1
 	ENDIF
 
 	;=================================================
-	;顔面騎乗中
+	;안면 승마중
 	;=================================================
-	IF 口上記入チェック(100) && TRUECHECK(TEQUIP:顔面騎乗, TEQUIP:顔面騎乗アナル) > 0
+	IF 구상기입체크(100) && TRUECHECK(TEQUIP:안면승마, TEQUIP:안면승마애널) > 0
 		IF RAND:2 == 0
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%のお顔、とっても座り心地がいいですよ♪」
-			PRINTFORM 「ぅあっ、ひゃんっ♪　ごほーしも上手ですし、んぅっ、ずっと座ってたいくらい
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 얼굴, 매우 안정감이 좋아요♪」
+			PRINTFORM 「우앗, 햐읏♪  오─하지도 능숙하고, 응웃, 쭉 앉아 싶을 정도
 			CALL HEARTCB
 			PRINTFORMW 」
-			PRINTFORMW 「ねぇ、このままリリー専用の椅子になっちゃいますか？　ふふっ♪」
+			PRINTFORMW 「저기, 이대로 릴리 전용의 의자가 되어 버립니까?   후후♪」
 		ELSE
-			PRINTFORMW 「ごほーし上手な%CNAME(MASTER, TARGET)%に、少しだけごほーびあげますね♪」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の大好きなお尻を使って……うんしょっ♪」
+			PRINTFORMW 「오─해 능숙한%CNAME(MASTER, TARGET)%에, 약간 -주네요♪」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 정말 좋아하는 엉덩이를 사용해…… 영차♪」
 			PRINTL  
-			PRINTFORMW リリーは%CNAME(MASTER, TARGET)%の口に秘所を押し付けたまま、%CNAME(MASTER, TARGET)%の上で四つん這いの様な姿勢になる
-			PRINTFORMW 小ぶりだが形のよい、白く柔らかな尻たぶが『ふっ』と浮き上がり、そして……
+			PRINTFORMW 릴리는%CNAME(MASTER, TARGET)%의 입에 비밀스런 장소를 강압한 채로,%CNAME(MASTER, TARGET)% 위에서 네발로 엎드림의 같은 자세가 된다
+			PRINTFORMW 좀 작지만 형태의 좋은, 희고 부드러운 엉덩이살이 『훗』이라고 떠올라, 그리고……
 			PRINTL  
-			PRINTFORM 「いきますよ～♪　ぱふぱふ
+			PRINTFORM 「가요~♪  파후파후
 			CALL HEARTCB
-			PRINTFORM ぱふぱふ
+			PRINTFORM 파후파후
 			CALL HEARTCB
 			PRINTFORMW 」
-			PRINTFORM 「ぱふぱふっ
+			PRINTFORM 「파후파후
 			CALL HEARTCB
-			PRINTFORM ぱふぱふっ
+			PRINTFORM 파후파후
 			CALL HEARTCB
-			PRINTFORM ぱふぱふっ
+			PRINTFORM 파후파후
 			CALL HEARTCB
 			PRINTFORMW 」
 			PRINTL  
-			PRINTFORM 「どうです？　元気になりましたか
+			PRINTFORM 「어떻습니까?  건강하게 되었습니까
 			CALL HEARTCB
 			PRINTFORMW 」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
-	;ここを最初に書きましょう
+	;여기를 최초로 씁시다
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「ほら♪ リリーがぎゅーってしてあげます……」
-			PRINTFORMW 「ちゃんと抱きしめてるから、安心していいんだよ？」
-			PRINTFORMW 「赤ちゃんがママに甘えるみたいにして……%CNAME(MASTER, TARGET)%の全部、受け止めてあげる♪」
+			PRINTFORMW 「이봐요♪릴리라고 해 줍니다……」
+			PRINTFORMW 「분명하게 껴안고 있기 때문에, 안심해도 좋아?」
+			PRINTFORMW 「아기가 마마에게 응석부리는 것 같이 해……%CNAME(MASTER, TARGET)%의 전부, 받아 들여 준다♪」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「ぎゅーって抱きしめてあげるね♪」
-			PRINTFORMW 「怖がらないで身をまかせて……そしたらもっと気持ちよくしてあげる……」
-			PRINTFORMW 「……くすっ♪　まるで大きな赤ちゃんみたいだね♪」
+			PRINTFORMW 「라고 껴안아 주네요♪」
+			PRINTFORMW 「무서워하지 말고 몸을 맡겨…… 그렇게 하면 좀 더 기분 좋게 해 준다……」
+			PRINTFORMW 「…… 키득♪  마치 큰 아기같다♪」
 		ELSE
-			PRINTFORMW 「優しく抱きしめてあげますね」
-			PRINTFORMW 「ほら、おいで♪……ふふっ、可愛いなぁ♪」
+			PRINTFORMW 「상냥하게 껴안아 주네요」
+			PRINTFORMW 「이봐요, 와♪…… 후훗, 사랑스럽구나♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;ACT4, 厳しく脅す
-;────────────────────────────────────
-;・厳しい言葉で脅す
-;・TFLAG:お仕置きフラグが立っていると発生しない
-;・ターン方針が"ソフト", "異常"だと発生しない
-;・話題『脅す』が既出となり、以後、同一調教内では抑制される
+;─
+;ACT4, 엄격하게 위협한다
+;─
+;·어려운 말로 위협한다
+;·TFLAG:벌플래그가 서 있으면 발생하지 않는다
+;·턴 방침이 "소프트", "이상"이라면 발생하지 않는다
+;·화제 『위협한다』가 기출이 되어, 이후, 동일 조교내에서는 억제된다
 ;-------------------------------------------------
 @KOJO_ACT_K15_4
-;口上独自内部処理
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
 ;-------------------------------------------------
-;関数@TARGET_DESCRIPTIONによってTEQUIP(性交中/調教対象Ｃ使用/性交奉仕中/自慰中 & 2)で地の文は変化する可能性がある
-;その他・条件なしを最初に埋めた上で、あとは好みで分岐を増減してください
+;함수@TARGET_DESCRIPTION에 의해 TEQUIP(성교중/조교 대상 C사용/성교 봉사중/자위중 & 2)로 지문은 변화할 가능성이 있다
+;그 외·조건 없음을 최초로 묻은 다음, 뒤는 기호로 분기를 증감해 주세요
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT4, 厳しく脅す
+;ACT4, 엄격하게 위협한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(0) && FIRSTACT(0)
+	IF 구상기입체크(0) && FIRSTACT(0)
 		PRINTFORMW 
 		RETURN 1
 	ENDIF
 	
-	;PENIS(TARGET)/!PENIS(TARGET)/TEQUIP:調教者ペニスバンド等で分岐してもよい
+	;PENIS(TARGET)/! PENIS(TARGET) /TEQUIP:조교자 페니스 밴드등으로 분기 해도 괜찮다
 	;=================================================
-	;性交中
+	;성교중
 	;=================================================
-	IF 口上記入チェック(0) && TEQUIP:性交中
-		;体位による派生
-		SELECTCASE TEQUIP:性交中
-			;正常位				体重を預けて%CALLNAME:MASTER%の膣内に埋め
+	IF 구상기입체크(0) && TEQUIP:성교중
+		;체위에 의한 파생
+		SELECTCASE TEQUIP:성교중
+			;정상위				체중을 맡겨 %CALLNAME:MASTER%의 질내에 묻고
 			CASE 1
 				PRINTFORMW 
-			;後背位				背後から%CALLNAME:MASTER%の膣内に埋め
+			;후배위				배후로부터 %CALLNAME:MASTER%의 질내에 묻고
 			CASE 2
 				PRINTFORMW 
-			;騎乗位				%CALLNAME:MASTER%の雌穴に根元まで咥え込まれ
+			;승마위				%CALLNAME:MASTER%의 암컷 구멍에 근원까지 물어지고
 			CASE 3
 				PRINTFORMW 
-			;対面座位			密着した%CALLNAME:MASTER%の膣に愛撫され
+			;대면좌위			밀착한 %CALLNAME:MASTER%의 질에 애무되고
 			CASE 4
 				PRINTFORMW 
-			;背面座位			%CALLNAME:MASTER%に挿入し背を抱き締め
+			;배면좌위			%CALLNAME:MASTER%에 삽입해 등을 껴안고
 			CASE 5
 				PRINTFORMW 
-			;アナルセックス		%CALLNAME:MASTER%の肛門に埋め
+			;애널 섹스		%CALLNAME:MASTER%의 항문에 묻고
 			CASE 6
 				PRINTFORMW 
 		ENDSELECT
 		RETURN 1
 	ENDIF
 	
-	;調教対象のＣへの愛撫が行われている状況。TEQUIP管理なので可能性は割りとある
+	;조교 대상의 C에의 애무를 하고 있는 상황. TEQUIP 관리인 것으로 가능성은 비교적 있다
 	;=================================================
-	;調教対象Ｃ使用
+	;조교 대상 C사용
 	;=================================================
-	IF 口上記入チェック(0) && GROUPMATCH(TEQUIP:調教対象Ｃ使用, 1, 2)
-		;手淫・愛撫継続中
-		IF TEQUIP:調教対象Ｃ使用 == 1
+	IF 구상기입체크(0) && GROUPMATCH(TEQUIP:조교대상C사용, 1, 2)
+		;자위·애무 계속중
+		IF TEQUIP:조교대상C사용 == 1
 			PRINTFORMW 
-		;フェラ・クンニ継続中
+		;페라·쿤닐링구스 계속중
 		ELSE
 			PRINTFORMW 
 		ENDIF
 		RETURN 1
 	ENDIF
 	
-	;PENIS(MASTER)/!PENIS(MASTER)/TEQUIP:ペニスバンド等で分岐してもよい
+	;PENIS(MASTER)/! PENIS(MASTER) /TEQUIP:페니스 밴드등으로 분기 해도 괜찮다
 	;=================================================
-	;性交奉仕中
+	;성교 봉사중
 	;=================================================
-	IF 口上記入チェック(0) && TEQUIP:性交奉仕中
-		;体位による派生
-		SELECTCASE TEQUIP:性交奉仕中
-			;正常位させる				大きく開いた股の間に迎え入れ
+	IF 구상기입체크(0) && TEQUIP:성교봉사중
+		;체위에 의한 파생
+		SELECTCASE TEQUIP:성교봉사중
+			;정상위 시킨다				크게 벌어진 가랑이의 사이에 맞아들이고
 			CASE 1
 				PRINTFORMW 
-			;後背位させる				背後から膣内に挿入され
+			;후배위 시킨다				배후로부터 질내에 삽입되고
 			CASE 2
 				PRINTFORMW 
-			;逆レイプ					ぬるぬるの膣できゅうきゅうと絞り上げ
+			;역강간					미끈미끈의 질로 큐우큐우 짜내고
 			CASE 3
 				PRINTFORMW 
-			;対面座位させる				体を密着させて膣奥に歓迎し
+			;대면좌위 시킨다				체를 밀착시켜 질 안쪽으로 환영해
 			CASE 4
 				PRINTFORMW 
-			;背面座位させる				背を預けて堪能し
+			;배면좌위 시킨다				등을 맡겨 만끽해
 			CASE 5
 				PRINTFORMW 
-			;アナルセックスさせる		腸液にぬめる肛門で締め付け
+			;애널 섹스 시킨다		장액에 미끌거리는 항문으로 억압
 			CASE 6
 				PRINTFORMW 
 		ENDSELECT
@@ -1226,54 +1226,54 @@ IF 口上記入チェック(100)
 	ENDIF
 	
 	;=================================================
-	;調教者が自慰中
+	;조교자가 자위중
 	;=================================================
-	IF 口上記入チェック(0) && GETBIT(TEQUIP:自慰中, 1)
-		;調教者がペニスバンド身に付けている
-		IF TEQUIP:調教者ペニスバンド
+	IF 구상기입체크(0) && GETBIT(TEQUIP:자위중, 1)
+		;조교자가 페니스 밴드 몸에 걸치고 있다
+		IF TEQUIP:조교자페니스밴드
 			PRINTFORMW
-		;その他
+		;그 외
 		ELSE
 			PRINTFORMW
 		ENDIF
 		RETURN 1
 	ENDIF
 	
-	;ここを最初に書きましょう
+	;여기를 최초로 씁시다
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF FAVOR(0, 2000)
-			IF MARK:反抗刻印 >= 7 && RAND:2
-				PRINTFORMW 「もう……反抗的な態度は めっ！ ですよ？」
-				PRINTFORMW 「リリーを怒らせるとどうなるか……わかってますよね」
-				PRINTFORMW 「……後で泣いて謝っても遅いんですからね……ふふっ♪」
+			IF MARK:반항각인 >= 7 && RAND:2
+				PRINTFORMW 「이제(벌써)…… 반항적인 태도는 째! (이에)예요?」
+				PRINTFORMW 「릴리를 화나게 하면 어떻게 될까…… 알고 있군요」
+				PRINTFORMW 「…… 다음에 울어 사과해도 늦으니까…… 후훗♪」
 			ELSE
-				PRINTFORMW 「ちゃんと言うこと聞かないと めっ！ ですよ？」
-				PRINTFORMW 「……優しく言ってもわかりませんか？」
-				PRINTFORMW 「あんまり聞き分けがないと、壊れるくらい激しくしちゃうからね？」
-				PRINTFORMW 「リリーを怒らせると怖いんだから……ふふっ♪」
+				PRINTFORMW 「분명하게 하는 일 (듣)묻지 않으면 째! (이에)예요?」
+				PRINTFORMW 「…… 상냥하게 말해도 모릅니까?」
+				PRINTFORMW 「그다지 구별이 없으면, 망가질 정도로 격렬하게 해 버리니까요?」
+				PRINTFORMW 「릴리를 화나게 하면 무섭기 때문에…… 후훗♪」
 			ENDIF
-		ELSEIF MARK:反抗刻印 == 10 && RAND:4 == 0
-			PRINTFORMW 「……もしかして、リリーが優しくしてるからって調子に乗ってません？」
-			PRINTFORMW 「ただ痛いだけの方法で、精を搾り取ることだってできるんですからね」
-			PRINTFORMW 「……あぁ。でも%CNAME(MASTER, TARGET)%はドＭだから、痛くされても悦んじゃうんでしょうか」
-			PRINTFORMW 「……ほんと、救い様のない変態ですね」
-		ELSEIF MARK:反抗刻印 >= 7 && RAND:3 == 0
-			PRINTFORMW 「奴隷って立場、勘違いしてませんか？」
-			PRINTFORMW 「リリーを怒らせたらどうなるか……おバカな%CNAME(MASTER, TARGET)%でもわかると思ったんですけどね」
-			PRINTFORMW 「……壊れちゃっても知らないんだからね」
-		ELSEIF MARK:反抗刻印 >= 4 && RAND:2
-			PRINTFORMW 「もしかして、リリーのことを怒らせようとか考えてません？」
-			PRINTFORMW 「鞭で叩いて従順にさせることだってできるんですからね」
-			PRINTFORMW 「優しくしてるうちに、言うこと聞いた方がいいですよ？」
+		ELSEIF MARK:반항각인 == 10 && RAND:4 == 0
+			PRINTFORMW 「…… 혹시, 릴리가 상냥하게 하고 있기 때문은 우쭐해지고 있지 않습니까?」
+			PRINTFORMW 「다만 아픈 것뿐 방법으로, 정령을 짜내는 것이라도 할 수 있기 때문에」
+			PRINTFORMW 「…… 아아. 그렇지만%CNAME(MASTER, TARGET)%는 드 M이니까, 아프게 여겨져도 기뻐해 버리는 것입니까」
+			PRINTFORMW 「…… 정말, 구할 길 없는 변태군요」
+		ELSEIF MARK:반항각인 >= 7 && RAND:3 == 0
+			PRINTFORMW 「노예는 입장, 착각 하고 있지 않습니까?」
+			PRINTFORMW 「릴리를 화나게 하면 어떻게 될까…… 바보 같은%CNAME(MASTER, TARGET)%에서도 안다고 생각한 것이지만 말이죠」
+			PRINTFORMW 「…… 망가져 버려도 모르기 때문에」
+		ELSEIF MARK:반항각인 >= 4 && RAND:2
+			PRINTFORMW 「혹시, 릴리의 일을 화나게 해야지라든가 생각하고 있지 않습니까?」
+			PRINTFORMW 「채찍으로 두드려 온순하게 시키는 것이라도 할 수 있기 때문에」
+			PRINTFORMW 「상냥하게 하고 있는 동안에, 말하는 일 (듣)묻는 것이 좋아요?」
 		ELSE
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%がその気なら、%CNAME(MASTER, TARGET)%の一番嫌がる方法で搾精してもいいんですよ？」
-			PRINTFORMW 「そうですね、例えば……」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%가 그 기분이라면,%CNAME(MASTER, TARGET)%의 제일 싫어하는 방법으로 착정 해도 돼요?」
+			PRINTFORMW 「그렇네요, 예를 들면……」
 			PRINTL  
-			PRINTFORMW 「リリーは一切調教に関わらず、ホフゴブリンさんに%CNAME(MASTER, TARGET)%の搾精をお願いする……とか？ ふふっ♪」
-			PRINTFORM 「顔は怖いですが、仕事はとっても丁寧なので安心してください
+			PRINTFORMW 「릴리는 일절 조교에 관련되지 않고, 호후고브린씨에게%CNAME(MASTER, TARGET)%의 착정을 부탁하는…… 이라든지? 후훗♪」
+			PRINTFORM 「얼굴은 무섭습니다만, 일은 매우 정중한 것으로 안심해 주세요
 			CALL HEARTCB
 			PRINTFORMW 」
 		ENDIF
@@ -1281,205 +1281,205 @@ IF 口上記入チェック(100)
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;ACT5, 衣装の変更を要求する
-;────────────────────────────────────
-;・調教者が衣装の変更を要求してくる
-;・調教対象の反応に応じて、何枚脱ぐか、あるいは脱がないのかにREACT以降で派生する
-;・TFLAG:ACT派生(0=服を脱ぐように命令/1=服を着るように命令)
-;・TEQUIP:押し倒し中には発生しない
-;・TEQUIP:縄が真になっていると発生しない
+;─
+;ACT5, 의상의 변경을 요구한다
+;─
+;·조교자가 의상의 변경을 요구해 온다
+;·조교 대상의 반응에 응해, 몇매 벗든가, 혹은 벗지 않는 것인지에 REACT 이후에 파생한다
+;·TFLAG:ACT 파생(0=옷을 벗도록(듯이) 명령/1=옷을 입도록(듯이) 명령)
+;·TEQUIP:밀어 넘어뜨리기중에는 발생하지 않는다
+;·TEQUIP:줄이 실로 되어 있으면 발생하지 않는다
 ;-------------------------------------------------
 @KOJO_ACT_K15_5
-;口上独自内部処理
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
 ;-------------------------------------------------
-;地の文は"%CALLNAME:TARGET%は%CALLNAME:MASTER%に服を脱いでと命令した…"となっており、これが変化する事はない
+;지문은"%CALLNAME:TARGET%는 %CALLNAME:MASTER%에 옷을 벗어라고 명령했다…"되고 있어 이것이 변화하는 일은 없다
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT5_0, 服を脱ぐように命令
+;ACT5_0, 옷을 벗도록(듯이) 명령
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && !TFLAG:ACT派生
+IF 구상기입체크(100) && !TFLAG:ACT파생
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(0) && FIRSTACT(0)
+	IF 구상기입체크(0) && FIRSTACT(0)
 		PRINTFORMW 
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;その調教の最初のアクション
+	;그 조교의 최초의 액션
 	;=================================================
-	IF 口上記入チェック(100) && ONCEACT(0)
+	IF 구상기입체크(100) && ONCEACT(0)
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「それじゃあお洋服脱ぎ脱ぎしましょうね♪」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の恥ずかしいところ、ぜーんぶリリーに見せて欲しいな♪」
+			PRINTFORMW 「그러면 양복 벗어 해요♪」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 부끄러운 곳, 전부 릴리에 보였으면 좋구나♪」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「ほら、脱いでください♪」
-			PRINTFORMW 「裸の方が気持ち良いですよー♪」
+			PRINTFORMW 「이봐요, 벗어 주세요♪」
+			PRINTFORMW 「알몸이 기분 좋아요♪」
 		ELSE
-			PRINTFORMW 「ほらほらっ、お洋服脱いじゃいましょうか」
-			PRINTFORMW 「これから調教されるのにそんなの邪魔ですもんね♪」
+			PRINTFORMW 「이봐요 이봐요, 양복 벗어 버릴까요」
+			PRINTFORMW 「지금부터 조교되는데 그런 것 방해이지요♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;勃起
+	;발기
 	;=================================================
-	IF 口上記入チェック(100) && TCVAR:MASTER:勃起度 >= 1000
+	IF 구상기입체크(100) && TCVAR:MASTER:발기도 >= 1000
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「おちんちん、おっきしちゃったね♪」
-			PRINTFORMW 「隠したってだーめっ！　テント張ってるからバレバレだよ♪」
-			PRINTFORMW 「ほらほら脱いでっ♪　リリーに勃起ちんちん見せて欲しいな♪」
+			PRINTFORMW 「자지, 기사라고 끝냈군요♪」
+			PRINTFORMW 「숨겨도 안됏!   텐트 치고 있기 때문에 들키고 들키고야♪」
+			PRINTFORMW 「이봐요 이봐요 벗엇♪  릴리에 발기 자지 보였으면 좋구나♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
-	;ここを最初に書きましょう
+	;여기를 최초로 씁시다
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「ね、裸になっちゃおうか♪」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の恥ずかしいところ、リリーがぜーんぶ見てあげる♪」
+			PRINTFORMW 「저기, 알몸이 되어 버릴까♪」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 부끄러운 곳, 릴리가 전부 봐 준다♪」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「ほら、お洋服脱ぎ脱ぎしましょうねー♪」
-			PRINTFORMW 「裸でぎゅーってするの好きなんです♪　ふふっ♪」
+			PRINTFORMW 「이봐요, 양복 벗어 해요―♪」
+			PRINTFORMW 「알몸라고 하는 것 좋아합니다♪  후후♪」
 		ELSE
-			PRINTFORMW 「ほら、お洋服脱いじゃいましょうね♪」
+			PRINTFORMW 「이봐요, 양복 벗어 버려요♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;ACT5_1, 服を着るように命令
-;────────────────────────────────────
+;─
+;ACT5_1, 옷을 입도록(듯이) 명령
+;─
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT5_1, 服を着るように命令
+;ACT5_1, 옷을 입도록(듯이) 명령
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:ACT派生 == 1
-	IF TALENT:TARGET:着衣プレイ好き == 1
-		PRINTFORMW 「ねぇ、これ着てみて欲しいな♪」
-		PRINTFORMW 「リリーと着衣エッチ……しちゃおうか♪」
-		PRINTFORMW 「いっぱい汚してあげますね♪」
+IF 구상기입체크(100) && TFLAG:ACT파생 == 1
+	IF TALENT:TARGET:착의플레이선호 == 1
+		PRINTFORMW 「저기, 이것 입어 보았으면 좋구나♪」
+		PRINTFORMW 「릴리와 착의 엣치…… 해 버릴까♪」
+		PRINTFORMW 「가득 더럽혀 주네요♪」
 		RETURN 1
 	ELSEIF FAVOR(3000, 3000)
-		PRINTFORMW 「お洋服着ましょうねー」
-		PRINTFORMW 「ほら、リリーが着せてあげますねっ♪」
+		PRINTFORMW 「양복 입어요―」
+		PRINTFORMW 「이봐요, 릴리가 덮어 씌워 주네요♪」
 	ELSEIF FAVOR(0, 2000)
-		PRINTFORMW 「裸だと風邪ひいちゃいますもんね？」
-		PRINTFORMW 「はい、お着替えしましょうねー♪」
+		PRINTFORMW 「알몸이라고 감기 걸려 버리는 걸?」
+		PRINTFORMW 「네, 갈아입어요―♪」
 	ELSE
-		PRINTFORMW 「お洋服、着ましょうか」
+		PRINTFORMW 「양복, 입을까요」
 	ENDIF
 	RETURN 1
 ENDIF
 
-;────────────────────────────────────
-;ACT6, 合意を求める
-;────────────────────────────────────
-;・初めてを貰ってもいいかと聞く
-;・初めて＝処女or童貞(両方の場合もある)
-;・既に合意を得ている場合は発生しない
-;・調教対象が処女でも童貞でもない場合は発生しない
-;・TFLAG:お仕置きフラグが立っていると発生しない
-;・ターン方針が"異常"だと発生しない
-;・話題『合意』が既出となり、以後、同一調教内では抑制される
+;─
+;ACT6, 합의를 요구한다
+;─
+;·처음을 받아도 괜찮을까 (듣)묻는다
+;·처음=처녀 or동정(양쪽 모두의 경우도 있다)
+;·이미 합의를 얻고 있는 경우는 발생하지 않는다
+;·조교 대상이 처녀도 동정도 아닌 경우는 발생하지 않는다
+;·TFLAG:벌플래그가 서 있으면 발생하지 않는다
+;·턴 방침이 "이상"이라면 발생하지 않는다
+;·화제 『합의』가 기출이 되어, 이후, 동일 조교내에서는 억제된다
 ;-------------------------------------------------
 @KOJO_ACT_K15_6
-;口上独自内部処理
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
 ;-------------------------------------------------
-;関数@TARGET_DESCRIPTIONでTEQUIP(性交中/調教対象Ｃ使用/性交奉仕中/自慰中 & 2)で地の文は変化する
-;あとは好みで分岐を増減してください
+;함수@TARGET_DESCRIPTION로 TEQUIP(성교중/조교 대상 C사용/성교 봉사중/자위중 & 2)로 지문은 변화한다
+;후는 기호로 분기를 증감해 주세요
 ;-------------------------------------------------
 ;-------------------------------------------------
-;・調教対象が女の子の場合
+;·조교 대상이 여자 아이의 경우
 ;-------------------------------------------------
-IF 口上記入チェック(100) && !PENIS(MASTER)
+IF 구상기입체크(100) && !PENIS(MASTER)
 	;-------------------------------------------------
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTACT(0)
+	IF 구상기입체크(100) && FIRSTACT(0)
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「あの……その……%CNAME(MASTER, TARGET)%に大切な話があるの」
-			PRINTFORMW 「リリーね……%CNAME(MASTER, TARGET)%の全部が欲しくなっちゃいました」
-			PRINTFORMW 「痛みも、苦しみも、喜びも、悲しみも……そして純潔も」
+			PRINTFORMW 「저…… 그……%CNAME(MASTER, TARGET)%에 중요한 이야기가 있어」
+			PRINTFORMW 「릴리군요……%CNAME(MASTER, TARGET)%의 전부를 갖고 싶어져 버렸습니다」
+			PRINTFORMW 「아픔도, 괴로움도, 기쁨도, 슬픔도…… 그리고 순결도」
 			PRINTL  
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の一番深いところに、リリーを刻み付けたい……忘れられないように……」
-			PRINTFORMW 「ねぇ……リリーを、%CNAME(MASTER, TARGET)%の初めての人にして……」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 제일 깊은 곳에, 릴리를 조각하고 싶은…… 잊을 수 없도록……」
+			PRINTFORMW 「저기…… 릴리를,%CNAME(MASTER, TARGET)%의 처음의 인으로 해……」
 		ELSE
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の初めて……リリーに捧げて欲しいの」
-			PRINTFORMW 「もっと深いところで、%CNAME(MASTER, TARGET)%と一つになりたいから……」
-			PRINTFORMW 「あの……ダメですか？」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 처음으로…… 릴리에 바쳤으면 좋은거야」
+			PRINTFORMW 「좀 더 깊은 곳으로,%CNAME(MASTER, TARGET)%와 하나가 되고 싶으니까……」
+			PRINTFORMW 「저…… 안됩니까?」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「あの……この前の話、覚えてますか？」
-			PRINTFORMW 「……もう一度、聞きますね」
-			PRINTFORMW 「リリーを……%CNAME(MASTER, TARGET)%の初めての人にして欲しいんです」
+			PRINTFORMW 「저…… 일전에의 이야기, 기억하고 있습니까?」
+			PRINTFORMW 「…… 한번 더, (듣)묻네요」
+			PRINTFORMW 「릴리를……%CNAME(MASTER, TARGET)%의 처음의 인으로 했으면 좋습니다」
 			PRINTL  
-			PRINTFORMW 「あの……やっぱりダメでしょうか」
+			PRINTFORMW 「저…… 역시 안될까요」
 		ELSE
-			PRINTFORMW 「この前は断られちゃいましたけど……どうでしょうか」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の純潔……リリーにいただけませんか」
-			PRINTFORMW 「できるだけ痛くないようにしますから……ダメ？」
+			PRINTFORMW 「일전에는 거절당해 버렸습니다만…… 어떨까요」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 순결…… 릴리로부터 받을 수 있지 않습니까」
+			PRINTFORMW 「가능한 한 아프지 않도록 하기 때문에…… 안돼?」
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 	
 ;-------------------------------------------------
-;・調教対象がふたなりの場合
+;·조교 대상이 후타나리의 경우
 ;-------------------------------------------------
-IF 口上記入チェック(100) && TALENT:MASTER:ふたなり
+IF 구상기입체크(100) && TALENT:MASTER:후타나리
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTACT(0)
+	IF 구상기입체크(100) && FIRSTACT(0)
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「リリーね……%CNAME(MASTER, TARGET)%の全部が欲しくなっちゃいました」
-			PRINTFORMW 「ねぇ……%CNAME(MASTER, TARGET)%の初めて、リリーに捧げてみませんか？」
+			PRINTFORMW 「릴리군요……%CNAME(MASTER, TARGET)%의 전부를 갖고 싶어져 버렸습니다」
+			PRINTFORMW 「저기……%CNAME(MASTER, TARGET)%의 처음으로, 릴리에 바쳐 보지 않겠습니까?」
 		ELSE
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の初めて……リリーに捧げて欲しいの」
-			PRINTFORMW 「もっと深いところで、%CNAME(MASTER, TARGET)%と一つになりたいから……」
-			PRINTFORMW 「あの……ダメですか？」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 처음으로…… 릴리에 바쳤으면 좋은거야」
+			PRINTFORMW 「좀 더 깊은 곳으로,%CNAME(MASTER, TARGET)%와 하나가 되고 싶으니까……」
+			PRINTFORMW 「저…… 안됩니까?」
 		ENDIF
-		;処女かつ童貞
-		IF TALENT:MASTER:処女 && TALENT:MASTER:童貞
+		;처녀 또한 동정
+		IF TALENT:MASTER:처녀 && TALENT:MASTER:동정
 			IF FAVOR(0, 2000)
 				PRINTL  
-				PRINTFORMW 「……どっちの初めて、ですか？」
-				PRINTFORM 「えっと……両方……欲しいです
+				PRINTFORMW 「…… 어느 쪽의 처음으로, 입니까?」
+				PRINTFORM 「엣또…… 양쪽 모두…… 갖고 싶습니다
 				CALL HEARTCB
 				PRINTW 」
 			ELSE
 				PRINTL  
-				PRINTFORMW 「どっち……って顔してますね……」
-				PRINTFORMW 「うーんと……」
-				PRINTFORM 「……処女と童貞、どっちもです
+				PRINTFORMW 「어느 쪽…… 은 얼굴 하고 있네요……」
+				PRINTFORMW 「음……」
+				PRINTFORM 「…… 처녀와 동정, 어느 쪽도입니다
 				CALL HEARTCB
 				PRINTW 」
 			ENDIF
 		[SKIPSTART]
-		このような場合にはコメントアウトを@/L
-		;処女
-		ELSEIF TALENT:MASTER:処女
+		이러한 경우에는 comment out를@/L
+		;처녀
+		ELSEIF TALENT:MASTER:처녀
 			PRINTFORMW 
 			PRINTFORMW 
-		;童貞
+		;동정
 		ELSE
 			PRINTFORMW 
 			PRINTFORMW 
@@ -1489,327 +1489,327 @@ IF 口上記入チェック(100) && TALENT:MASTER:ふたなり
 	ENDIF
 	
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
-		PRINTFORMW 「あの……この前の話、覚えてますか？」
-		PRINTFORMW 「……もう一度、聞きますね」
-		PRINTFORMW 「リリーを……%CNAME(MASTER, TARGET)%の初めての人にして欲しいんです」
+	IF 구상기입체크(100)
+		PRINTFORMW 「저…… 일전에의 이야기, 기억하고 있습니까?」
+		PRINTFORMW 「…… 한번 더, (듣)묻네요」
+		PRINTFORMW 「릴리를……%CNAME(MASTER, TARGET)%의 처음의 인으로 했으면 좋습니다」
 		PRINTL  
-		PRINTFORMW 「あの……やっぱりダメでしょうか」
+		PRINTFORMW 「저…… 역시 안될까요」
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;-------------------------------------------------
-;・調教対象がオトコの場合
+;·조교 대상이 남자의 경우
 ;-------------------------------------------------
-IF 口上記入チェック(100) && TALENT:MASTER:オトコ
+IF 구상기입체크(100) && TALENT:MASTER:남자
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTACT(0)
+	IF 구상기입체크(100) && FIRSTACT(0)
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「あの……その……%CNAME(MASTER, TARGET)%に大切な話があるの」
-			PRINTFORMW 「リリーね……%CNAME(MASTER, TARGET)%の全部が欲しくなっちゃいました」
-			PRINTFORMW 「もっと深く%CNAME(MASTER, TARGET)%と繋がって、二人が一つになっちゃうくらい……」
+			PRINTFORMW 「저…… 그……%CNAME(MASTER, TARGET)%에 중요한 이야기가 있어」
+			PRINTFORMW 「릴리군요……%CNAME(MASTER, TARGET)%의 전부를 갖고 싶어져 버렸습니다」
+			PRINTFORMW 「좀 더 깊고%CNAME(MASTER, TARGET)%와 연결되어, 두 명이 1개가 되어 버릴 정도……」
 			PRINTL  
-			PRINTFORMW 「リリーの中に%CNAME(MASTER, TARGET)%を刻み付けて欲しいの……忘れないように……」
-			PRINTFORMW 「ねぇ……リリーを、%CNAME(MASTER, TARGET)%の初めての人にして？」
+			PRINTFORMW 「릴리안에%CNAME(MASTER, TARGET)%를 조각했으면 좋은 것…… 잊지 않도록……」
+			PRINTFORMW 「저기…… 릴리를,%CNAME(MASTER, TARGET)%의 처음의 인으로 해?」
 		ELSE
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の童貞を……リリーに捧げて欲しいの」
-			PRINTFORMW 「もっと深いところで、%CNAME(MASTER, TARGET)%と一つになりたいから……」
-			PRINTFORMW 「あの……ダメですか？」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 동정을…… 릴리에 바쳤으면 좋은거야」
+			PRINTFORMW 「좀 더 깊은 곳으로,%CNAME(MASTER, TARGET)%와 하나가 되고 싶으니까……」
+			PRINTFORMW 「저…… 안됩니까?」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「あの……この前の話、覚えてますか？」
-			PRINTFORMW 「……もう一度、聞きますね」
-			PRINTFORMW 「リリーを……%CNAME(MASTER, TARGET)%の初めての人にして欲しいんです」
+			PRINTFORMW 「저…… 일전에의 이야기, 기억하고 있습니까?」
+			PRINTFORMW 「…… 한번 더, (듣)묻네요」
+			PRINTFORMW 「릴리를……%CNAME(MASTER, TARGET)%의 처음의 인으로 했으면 좋습니다」
 			PRINTL  
-			PRINTFORMW 「あの……やっぱりダメでしょうか」
+			PRINTFORMW 「저…… 역시 안될까요」
 			RETURN 1
 		ELSE
-			PRINTFORMW 「この前は断られちゃいましたけど……どうでしょうか」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%の童貞……リリーにいただけませんか」
-			PRINTFORMW 「忘れられないくらい、気持ち良くしてあげますから……ダメ？」
+			PRINTFORMW 「일전에는 거절당해 버렸습니다만…… 어떨까요」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%의 동정…… 릴리로부터 받을 수 있지 않습니까」
+			PRINTFORMW 「잊을 수 없을 정도, 기분 좋게 해 주기 때문에…… 안돼?」
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;ACT7, お仕置きと宣言する
-;────────────────────────────────────
-;・これからお仕置きすると言い出す
-;・このACTが発生している時点でTFLAG:お仕置きフラグは立っている
-;・ターン方針が"ソフト", "異常"だと発生しない
-;・TEQUIP:押し倒し中時には発生しない
+;─
+;ACT7, 벌이라고 선언한다
+;─
+;·지금부터 벌 한다고 말하기 시작한다
+;·이 ACT가 발생하고 있는 시점에서 TFLAG:벌플래그는 서 있다
+;·턴 방침이 "소프트", "이상"이라면 발생하지 않는다
+;·TEQUIP:밀어 넘어뜨리기중시에는 발생하지 않는다
 ;-------------------------------------------------
 @KOJO_ACT_K15_7
-;口上独自内部処理
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
 ;-------------------------------------------------
-;ここでは地の文の変化はない。分岐の増減はお好みで
+;여기에서는 지문의 변화는 없다. 분기의 증감은 기호로
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT7, お仕置きと宣言する
+;ACT7, 벌이라고 선언한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;-------------------------------------------------
-	;小分岐
+	;소분기
 	;-------------------------------------------------
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTACT(0)
-		PRINTFORMW 「言うこと聞かない子はどうなるか、教えてあげますね？」
-		PRINTFORMW 「……そうです、『オシオキ』ですよ」
-		PRINTFORMW 「せめて可愛く鳴いて、リリーを楽しませてくださいね？」
+	IF 구상기입체크(100) && FIRSTACT(0)
+		PRINTFORMW 「말하는 일 (듣)묻지 않는 아이는 어떻게 되는지, 가르쳐 주네요?」
+		PRINTFORMW 「…… 그렇습니다, 『벌』이예요」
+		PRINTFORMW 「적어도 사랑스럽게 울어, 릴리를 즐겁게 해 주세요?」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;前COMが「無愛想に応答する/強気に応答する/嫌がる/暴れる/拒否する」のいずれか
+	;전COM가 「무뚝뚝하게 응답한다/강하게 응답한다/싫어한다/날뛴다/거부한다」의 언젠가
 	;=================================================
-	IF 口上記入チェック(100) && IS_PREVCOMNAME("無愛想に応答する/強気に応答する/嫌がる/暴れる/拒否する")
-			PRINTFORMW 「強気な%CNAME(MASTER, TARGET)%に素直になってもらうはどうしたらいいんでしょう……」
-			PRINTFORMW 「やっぱり『痛み』が一番いいんでしょうか？」
-			PRINTFORMW 「まぁ、やってみればわかりますもんね」
+	IF 구상기입체크(100) && IS_PREVCOMNAME("무뚝뚝하게 응답한다/강하게 응답한다/싫어한다/날뛴다/거부한다")
+			PRINTFORMW 「강한%CNAME(MASTER, TARGET)%에 솔직해져 받고는 어떻게 하면 좋겠지요……」
+			PRINTFORMW 「역시 『아픔』이 제일 좋을까요?」
+			PRINTFORMW 「뭐, 해 보면 아는 걸」
 			;	IF RAND:2 == 0
-					;スパンキングに続く
-					TCVAR:行動予約 = 60
+					;스팽킹에 계속된다
+					TCVAR:행동예약 = 60
 					WAIT
 			;	ELSE
-					;に続く
-			;		TCVAR:行動予約 = 7
+					;에 계속된다
+			;		TCVAR:행동 예약 = 7
 			;		WAIT
 			;	ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;前COMが「気持ち良くして」（この恥知らず！）
+	;전COM가 「기분 좋게 해」(이 철면피!)
 	;=================================================
-	IF 口上記入チェック(100) && IS_PREVCOMNAME("気持ち良くして")
-			PRINTFORMW 「恥知らずな豚さんには何をしてもらいましょう……」
-			PRINTFORMW 「豚さんはなんでも喜びそうですし……んー、難しいですねぇ」
-		;に続く
-	;	TCVAR:行動予約 = 7
+	IF 구상기입체크(100) && IS_PREVCOMNAME("기분 좋게 해")
+			PRINTFORMW 「철면피인 돼지씨에게는 무엇을 해 받읍시다……」
+			PRINTFORMW 「돼지씨는 뭐든지 기뻐할 것 같고…… 응─, 어렵네요」
+		;에 계속된다
+	;	TCVAR:행동 예약 = 7
 	;	WAIT
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;前COMが「もっとハードにして」（この豚め！）
+	;전COM가 「좀 더 하드하게 해」(이 돼지째!)
 	;=================================================
-	IF 口上記入チェック(0) && IS_PREVCOMNAME("もっとハードにして")
+	IF 구상기입체크(0) && IS_PREVCOMNAME("좀 더 하드하게 해")
 			PRINTFORMW 「」
-		;に続く
-	;	TCVAR:行動予約 = 7
+		;에 계속된다
+	;	TCVAR:행동 예약 = 7
 	;	WAIT
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;前COMが「許しを乞う」（許してもらえませんでした）
+	;전COM가 「허가를 청한다」(허락해 받을 수 없었습니다)
 	;=================================================
-	IF 口上記入チェック(100) && IS_PREVCOMNAME("許しを乞う")
-			PRINTFORMW 「そういえば、リリーに許して欲しいんでしたっけ？　ふふっ」
-			PRINTFORMW 「不安そうな顔しなくても、許すに決まってるじゃないですか」
+	IF 구상기입체크(100) && IS_PREVCOMNAME("허가를 청한다")
+			PRINTFORMW 「그렇게 말하면, 릴리에 허락했으면 좋았던가요?   후후」
+			PRINTFORMW 「불안한 듯한 얼굴 하지 않아도, 허락하는 것으로 정해져 있지 않습니까」
 			PRINTL  
-			PRINTFORMDW リリーは子供をあやすような優しい声色で%CALLNAME:MASTER%に微笑みかける
+			PRINTFORMDW 릴리는 아이를 어르는 것 같은 상냥한 음색으로%CALLNAME:MASTER%에 미소짓는다
 			PRINTL  
-			PRINTFORMW 「でも、それは『オシオキ』が済んでからですよっ♪」
-		;スパンキングに続く
-		TCVAR:行動予約 = 60
+			PRINTFORMW 「그렇지만, 그것은 『벌』이 끝나고 나서예요♪」
+		;스팽킹에 계속된다
+		TCVAR:행동예약 = 60
 		WAIT
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;前COMが「自慰し始める」（人の話を聞け！）
+	;전COM가 「자위하기 시작한다」(사람의 이야기를 들어라!)
 	;=================================================
-	IF 口上記入チェック(100) && IS_PREVCOMNAME("自慰し始める")
-			PRINTFORMW 「リリーがしてあげるって言ってるのに自分ではじめちゃうんですか！？」
-			PRINTFORMW 「んもーっ！　信じられないですっ！」
-		;に続く
-	;	TCVAR:行動予約 = 7
+	IF 구상기입체크(100) && IS_PREVCOMNAME("자위하기 시작한다")
+			PRINTFORMW 「릴리가 해 준다 라고 하고 있는데 스스로 시작해 버립니까!?」
+			PRINTFORMW 「응도!   믿을 수 없습니닷!」
+		;에 계속된다
+	;	TCVAR:행동 예약 = 7
 	;	WAIT
 		RETURN 1
 	ENDIF
 	
-	;ここを最初に書きましょう
+	;여기를 최초로 씁시다
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF FAVOR(0, 2000)
-			PRINTFORMW 「あははっ♪　そんなにオシオキして欲しんですか？」
-			PRINTFORMW 「いいですよー♪　ほら、おいで♪」
-			PRINTFORM 「ドＭの豚さんでも泣いちゃうくらい激しいの、シテあげますっ
+			PRINTFORMW 「아하핫♪  그렇게 벌 해 바라지 않습니까?」
+			PRINTFORMW 「좋아요♪  이봐요, 오며♪」
+			PRINTFORM 「드 M의 돼지씨라도 울어 버릴 정도로 격렬한 것, 시테 줍니닷
 			CALL HEARTCB
 			PRINTFORMW 」
 			IF RAND:2 == 0
-				;Aフィストに続く
-				TCVAR:行動予約 = 71
+				;A피스트에 계속된다
+				TCVAR:행동예약 = 71
 				WAIT
 			ELSE
 				PRINTL  
 			ENDIF
 		ELSE
-			IF TALENT:サド
-				PRINTFORMW 「もう、言うことを聞かない子はオシオキって言いましたよね？」
-				PRINTFORMW 「まさか、痛いの大好きな豚さんなんですか？」
-				PRINTFORMW 「はぁ……ほら、激しくいじめてあげますから、ちゃんとリリーを楽しませてくださいね？」
+			IF TALENT:새디즘
+				PRINTFORMW 「이제(벌써), 말하는 일을 (듣)묻지 않는 아이는 벌이라고 말했군요?」
+				PRINTFORMW 「설마, 아픈 것 정말 좋아하는 돼지씨입니까?」
+				PRINTFORMW 「하아…… 이봐요, 격렬하게 괴롭혀 주기 때문에, 분명하게 릴리를 즐겁게 해 주세요?」
 			ELSE
-				PRINTFORMW 「もう、言うことを聞かない子はオシオキって言いましたよね？」
-				PRINTFORMW 「まさか、痛いの大好きな豚さんなんですか？」
-				PRINTFORMW 「はぁ……ほら、激しくいじめてあげますから、ちゃんとリリーを楽しませてくださいね？」
+				PRINTFORMW 「이제(벌써), 말하는 일을 (듣)묻지 않는 아이는 벌이라고 말했군요?」
+				PRINTFORMW 「설마, 아픈 것 정말 좋아하는 돼지씨입니까?」
+				PRINTFORMW 「하아…… 이봐요, 격렬하게 괴롭혀 주기 때문에, 분명하게 릴리를 즐겁게 해 주세요?」
 			ENDIF
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;ACT8, 怒鳴る
-;────────────────────────────────────
-;・大声で怒鳴る
-;・ターン方針が"ソフト", "ノーマル"では発生しない
-;・TFLAG:お仕置きフラグに関わらず、発生する可能性がある（お仕置き中にさらに怒鳴る可能性等）
+;─
+;ACT8, 고함친다
+;─
+;·큰 소리로 고함친다
+;·턴 방침이 "소프트", "노멀"에서는 발생하지 않는다
+;·TFLAG:벌플래그에 관련되지 않고, 발생할 가능성이 있다(벌중에 한층 더 고함칠 가능성등)
 ;-------------------------------------------------
 @KOJO_ACT_K15_8
-;口上独自内部処理
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
 ;-------------------------------------------------
-;地の文は"%CALLNAME:TARGET%は%CALLNAME:MASTER%を大声で怒鳴った…"のみで派生はない
+;지문은"%CALLNAME:TARGET%는 %CALLNAME:MASTER%를 큰 소리로 고함쳤다…"만으로 파생은 없다
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT8, 怒鳴る
+;ACT8, 고함친다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(0) && FIRSTACT(0)
+	IF 구상기입체크(0) && FIRSTACT(0)
 		PRINTFORMW 
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;調教内初回
+	;조교내 첫회
 	;=================================================
-	IF 口上記入チェック(0) && ONCEACT(0)
+	IF 구상기입체크(0) && ONCEACT(0)
 		PRINTFORMW 
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;前COMが「無愛想に応答する/強気に応答する/嫌がる/暴れる/拒否する」のいずれか
+	;전COM가 「무뚝뚝하게 응답한다/강하게 응답한다/싫어한다/날뛴다/거부한다」의 언젠가
 	;=================================================
-	IF 口上記入チェック(0) && IS_PREVCOMNAME("無愛想に応答する/強気に応答する/嫌がる/暴れる/拒否する")
+	IF 구상기입체크(0) && IS_PREVCOMNAME("무뚝뚝하게 응답한다/강하게 응답한다/싫어한다/날뛴다/거부한다")
 		PRINTFORMW 
 		RETURN 1
 	ENDIF
 	
-	;ここを最初に書きましょう
+	;여기를 최초로 씁시다
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
-		PRINTFORMW 「もう……めっ、ですよ！」
-		PRINTFORMW 「リリー、今とっても怒ってるんですから！」
+	IF 구상기입체크(100)
+		PRINTFORMW 「이제(벌써)…… 째, 예요!」
+		PRINTFORMW 「릴리, 지금 매우 화나 있으니까!」
 		RETURN 1
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;ACT9, 不気味に笑う
-;────────────────────────────────────
-;・不気味な微笑を浮かべる
-;・異常系から発生する場合もある
-;・今日の方針が"イチャイチャ"だと発生しない
-;・話題『嗤う』が既出となり、以後、同一調教内では抑制される
+;─
+;ACT9, 기분 나쁘게 웃는다
+;─
+;·기분 나쁜 미소를 띄운다
+;·이상계로부터 발생하는 경우도 있다
+;·오늘의 방침이 "러브러브"라면 발생하지 않는다
+;·화제 『비웃는다』가 기출이 되어, 이후, 동일 조교내에서는 억제된다
 ;-------------------------------------------------
 @KOJO_ACT_K15_9
-;口上独自内部処理
+;구상 독자 내부 처리
 CALL DECIDEACTCHECK_K15
 ;-------------------------------------------------
-;関数@TARGET_DESCRIPTIONによってTEQUIP(性交中/調教対象Ｃ使用/性交奉仕中/自慰中 & 2)で地の文は変化する
-;その他・条件なしを最初に埋めた上で、あとは好みで分岐を増減してください
+;함수@TARGET_DESCRIPTION에 의해 TEQUIP(성교중/조교 대상 C사용/성교 봉사중/자위중 & 2)로 지문은 변화한다
+;그 외·조건 없음을 최초로 묻은 다음, 뒤는 기호로 분기를 증감해 주세요
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ACT9, 不気味に笑う
+;ACT9, 기분 나쁘게 웃는다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(0) && FIRSTACT(0)
+	IF 구상기입체크(0) && FIRSTACT(0)
 		PRINTFORMW 
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;アイマスク装着中
+	;아이마스크 장착중
 	;=================================================
-	IF 口上記入チェック(100) && TEQUIP:アイマスク
-		PRINTFORMW 「目隠ししてると不安？　ねぇ、これから何されちゃうんでしょうね？」
-		PRINTFORMW 「ふっ、くふふっ♪　なんだかおかしいですね♪」
+	IF 구상기입체크(100) && TEQUIP:아이마스크
+		PRINTFORMW 「눈가리개 하고 있으면 불안?   응, 지금부터 무엇 되어 버리겠지요?」
+		PRINTFORMW 「훗, 크후훗♪  어쩐지 이상하네요♪」
 		PRINTL  
-		PRINTFORMDW 普段の可愛らしい声色とは明らかに違う……
-		PRINTFORMDW どこか狂気を孕んだ笑声が%CALLNAME:MASTER%の不安を掻き立てた……
+		PRINTFORMDW 평상시의 사랑스러운 음색과는 분명하게 다르다……
+		PRINTFORMDW 어딘가 광기를 임신한 웃음 소리가%CALLNAME:MASTER%의 불안을 일으켰다……
 		PRINTL  
-		PRINTFORMW 「ふふっ、ごめんね？　さぁ、調教に戻りましょうね♪」
+		PRINTFORMW 「후훗, 미안해요?   , 조교하러 돌아와요♪」
 		RETURN 1
 	ENDIF
 	
 	;-------------------------------------------------
-	;異常系から発生
+	;이상계로부터 발생
 	;=================================================
-	IF 口上記入チェック(0) && TFLAG:ACT分類 == 7
+	IF 구상기입체크(0) && TFLAG:ACT분류 == 7
 		PRINTFORMW 
 		PRINTFORMW 
 		RETURN 1
 	ENDIF
 
-	;ここを最初に書きましょう
+	;여기를 최초로 씁시다
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF FAVOR(0, 2000)
 			IF RAND:3 == 0
-				PRINTFORMW 「ふっ、んふふっ♪」
+				PRINTFORMW 「훗, 응후훗♪」
 				PRINTL  
-				PRINTFORMDW とっておきの悪戯を思いついた幼い子供のように、
-				PRINTFORMDW リリーは興奮が隠し切れないといった様子で笑っている
+				PRINTFORMDW 소중히 간직함의 못된 장난을 생각해 낸 어린 아이와 같이,
+				PRINTFORMDW 릴리는 흥분이 숨기지 못할이라고 하는 모습으로 웃고 있다
 				PRINTL  
-				PRINTFORMW 「ねぇっ♪　これから何をされちゃうかわかりますか？　うふふっ♪」
-				PRINTFORM 「想像した？　それじゃ答え合わせ、シましょうね
+				PRINTFORMW 「저기 읏♪  지금부터 무엇을 되어 버릴까 압니까?   후후♪」
+				PRINTFORM 「상상했어?   그러면 채점, 시짊어지는군
 				CALL HEARTCB
 				PRINTFORMW 」
 			ELSEIF RAND:2 == 0
-				PRINTFORMW 「ねぇ、リリーとっても楽しいイタズラを思いついたんです♪　ふふっ♪」
+				PRINTFORMW 「저기, 릴리 매우 즐거운 장난을 생각해 낸 것입니다♪  후후♪」
 				PRINTL  
-				PRINTFORMDW 普段の可愛らしい声色とは明らかに違う……
-				PRINTFORMDW どこか狂気を孕んだ笑声が%CALLNAME:MASTER%の不安を掻き立てた……
+				PRINTFORMDW 평상시의 사랑스러운 음색과는 분명하게 다르다……
+				PRINTFORMDW 어딘가 광기를 임신한 웃음 소리가%CALLNAME:MASTER%의 불안을 일으켰다……
 				PRINTL  
-				PRINTFORMW 「くすっ♪　ふふっ、ごめんね？　想像したら楽しくなっちゃった♪」
-				PRINTFORMW 「……想像以上の反応したら、ごほーびあげるね♪」
+				PRINTFORMW 「키득♪  후후, 미안해요?   상상하면 즐거워져 버렸다♪」
+				PRINTFORMW 「…… 상상 이상의 반응하면, -주네요♪」
 			ENDIF
 		ELSE
-			PRINTFORMW 「くすくすっ♪」
-			PRINTFORMW 「イタズラを考える時って、なんだかとってもドキドキしますね♪」
-			PRINTFORMW 「ふふふっ……」
+			PRINTFORMW 「킥킥♪」
+			PRINTFORMW 「장난을 생각할 때는, 뭔가 매우 두근두근 하네요♪」
+			PRINTFORMW 「후후훗……」
 		ENDIF
 		RETURN 1
 	ENDIF

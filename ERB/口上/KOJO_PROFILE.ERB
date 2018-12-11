@@ -1,101 +1,101 @@
 ﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-;口上プロファイル表示
+;구상 프로파일 표시
 ;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 @KOJO_PROFILE(ARG)
 #DIMS DEFONT, 1
 #DIM LCOUNT, 1
-;フォント保存
+;폰트 보존
 DEFONT = %GETFONT()%
 DRAWLINE
 PRINTL 
-;てぬき
+;나무
 LOCAL =STRLENS(@"　%" "*(STRLENS(CSVCSTR(ARG, 10, 0))/2)%%" "*(STRLENS(CSVCSTR(ARG, 11, 0))/2)%%CSVCSTR(ARG, 12, 0)%")/2
-PRINTFORML 　%"―"*(LOCAL/2-1)%調教者名%"―"*(LOCAL/2-1)%
+PRINTFORML 　%"―"*(LOCAL/2-1)%조교자명%"―"*(LOCAL/2-1)%
 PRINTL 
-;肩書きはHG教科書体
-SIF CHKFONT("HG教科書体")
-SETFONT "HG教科書体"
+;직함은 HG교과서체
+SIF CHKFONT("HG교과서체")
+SETFONT "HG교과서체"
 PRINTFORML %" "*MAX(4, (((STRLENS(@"　%"―"*(LOCAL+2)%　")/2+2)-STRLENS(CSVCSTR(ARG, 10, 0)))/2))%%CSVCSTR(ARG, 10, 0)%
-;名前は元フォント
+;이름은 원폰트
 SETFONT DEFONT
 PRINTFORML %" "*((STRLENS(@"　%"―"*(LOCAL+2)%　")-STRLENS(CSVCSTR(ARG, 11, 0)))/2)%%CSVCSTR(ARG, 11, 0)%
-;ローマ字読みはＭＳ 明朝（TimesNewRomanは等幅じゃなかった…）
-SIF CHKFONT("ＭＳ 明朝")
-	SETFONT "ＭＳ 明朝"
+;로마자 읽기는 MS 내일 아침(TimesNewRoman는 등폭이 아니었다…)
+SIF CHKFONT("MS 내일 아침")
+	SETFONT "MS 내일 아침"
 PRINTFORML 　　%" "*(STRLENS(CSVCSTR(ARG, 10, 0))/2)%%" "*(STRLENS(CSVCSTR(ARG, 11, 0))/2)%%CSVCSTR(ARG, 12, 0)%
 SETFONT DEFONT
 PRINTL 
 PRINTFORML 　%"―"*(LOCAL+2)%
 PRINTL 
-PRINTL 　―――――調教者口上データ―――――
+PRINTL   -조교자 구상 데이터─
 PRINTL 
 VARSET RESULT
 VARSET RESULTS
 TRYCALLFORM KOJO_K{ARG}
-PRINTFORML 　　一般口上　　：\@ RESULT ? あり # なし \@
-PRINTFORM 　　立場指定口上：
-;ご主人様判定
+PRINTFORML 　　일반 구상　　:\@ RESULT ? 있어# 없음\@
+PRINTFORM 　　입장 지정 구상:
+;주인님 판정
 SIF STRFIND(RESULTS, @"/MS/") >= 0
-	PRINT [ご主人様] 
-;非ご主人様判定
+	PRINT [주인님] 
+;비남편님 판정
 SIF STRFIND(RESULTS, @"/AS/") >= 0
-	PRINT [非ご主人様]
-;なんもなし
+	PRINT [비남편님]
+;도 없음
 SIF STRFIND(RESULTS, @"/MS/") < 0 && STRFIND(RESULTS, @"/AS/") < 0
-	PRINT なし
+	PRINT 없음
 PRINTL 
 
-PRINTFORM 　　対象指定口上：
-;男あなた判定
+PRINTFORM 　　대상 지정 구상:
+;남 당신 판정
 SIF STRFIND(RESULTS, @"/MALEYOU/") >= 0
-	PRINT [あなた(オトコ)] 
-;女あなた判定
+	PRINT [당신(남자)] 
+;녀 당신 판정
 SIF STRFIND(RESULTS, @"/FEMALEYOU/") >= 0
-	PRINT [あなた(女性)] 
-;ふたなりあなた判定
+	PRINT [당신(여성)] 
+;후타나리 당신 판정
 SIF STRFIND(RESULTS, @"/TWINYOU/") >= 0
-	PRINT [あなた(ふたなり)] 
-;ちんこ付きあなた判定
+	PRINT [당신(후타나리)] 
+;고추 첨부 당신 판정
 SIF STRFIND(RESULTS, @"/PENISYOU/") >= 0
-	PRINT [あなた(ペニスあり)] 
-;キャラ一致判定
+	PRINT [당신(페니스 있어)] 
+;캐릭터 일치 판정
 IF STRFIND(RESULTS, @"/K") >= 0
-	FOR LCOUNT, 0, FLAG:Cha総数
+	FOR LCOUNT, 0, FLAG:Cha총수
 		SIF STRFIND(RESULTS, @"/K{LCOUNT}/") >= 0
 			PRINTFORM [%CSVCALLNAME(LCOUNT, 0)%]
 	NEXT
 ENDIF
-;男判定
+;남 판정
 SIF STRFIND(RESULTS, @"/MALE/") >= 0
-	PRINT [オトコ] 
-;女判定
+	PRINT [남자] 
+;녀 판정
 SIF  STRFIND(RESULTS, @"/FEMALE/") >= 0
-	PRINT [女性] 
-;ふたなり判定
+	PRINT [여성] 
+;후타나리 판정
 SIF STRFIND(RESULTS, @"/TWIN/") >= 0
-	PRINT [ふたなり] 
-;ちんこ付き判定
+	PRINT [후타나리] 
+;고추 첨부 판정
 SIF STRFIND(RESULTS, @"/PENIS/") >= 0
-	PRINT [ペニスあり] 
-;なんもなし
+	PRINT [페니스 있어] 
+;도 없음
 SIF REPLACE(REPLACE(REPLACE(RESULTS, "MS", ""), "AS", ""), "/", "") == ""
-	PRINT なし
+	PRINT 없음
 PRINTL 
-PRINTFORML 　　口上作者名　：\@ RESULTS:1 == "" ? なし # %RESULTS:1% \@
+PRINTFORML 　　구상 작자명  :\@ RESULTS:1 == "" ? 없음# %RESULTS:1% \@
 PRINTL 
 PRINTL 　――――――――――――――――――
 PRINTL 
-PRINTW 　あらすじ――
+PRINTW   개요―
 PRINTL 
 CALL KOJO_DIGEST(ARG)
 SIF !RESULT
-	PRINTW 　　　　　　　　　　　――未定義です。本編をご覧ください。
+	PRINTW 　　　　　　　　　　　-미정도리입니다. 본편을 봐 주세요.
 PRINTL 
 PRINTL 　――――――――――――――――――
 PRINTL 
-PRINTW 　注意事項――
+PRINTW   주의 사항─
 PRINTL 
 CALL KOJO_ATTENTION(ARG)
 SIF !RESULT
-	PRINTW 　　　　　　　　　　　――特にありません。
+	PRINTW 　　　　　　　　　　　-특별히 없습니다.
 PRINTL 

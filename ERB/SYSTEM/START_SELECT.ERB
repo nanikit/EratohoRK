@@ -1,94 +1,94 @@
 ﻿
-;────────────────────────────────────
-;エキストラモードの主人公の選択
-;────────────────────────────────────
+;─
+;엑스트라 모드의 주인공의 선택
+;─
 @START_CHARA_SELECT
 
-;選択肢を呼び出す
+;선택지를 호출한다
 LOCALS = 
-LOCALS += "<識別>START_CHARA_SELECT_M"
-LOCALS += "<対象>登場可"
-LOCALS += "<上部>START_CHARA_SHOW_M"
-LOCALS += "<条件>START_CHARA_REQU_M"
-LOCALS += "<選択>START_CHARA_CHOI_M"
-LOCALS += "<取消>キャンセル不可"
-LOCALS += "<項目>名前/二つ名"
+LOCALS += "<식별>START_CHARA_SELECT_M"
+LOCALS += "<대상>등장가능"
+LOCALS += "<상부>START_CHARA_SHOW_M"
+LOCALS += "<조건>START_CHARA_REQU_M"
+LOCALS += "<선택>START_CHARA_CHOI_M"
+LOCALS += "<취소>캔슬 불가"
+LOCALS += "<항목>이름/이명"
 CALL SELECT_CHARA_LIST(LOCALS)
 
 IF RESULT == 0
-	PRINTW 主人公を「あなた」に設定します
-	;「あなた」を追加
+	PRINTW 주인공을 「당신」로 설정합니다
+	;「당신」를 추가
 	ADDCHARA 0
-	;主人公を設定
+	;주인공을 설정
 	MASTER = CHARANUM - 1
-	;SANDBOXならゆかりんにお呼ばれ
-	IF FLAG:モード == 1
+	;SANDBOX라면 연고응에 초대
+	IF FLAG:모드 == 1
 		PRINTL 
 		CALL CHARA_MAKER
-	;そうでなければ主人公設定
+	;그렇지 않으면 주인공 설정
 	ELSE
 		CALL MASTER_CUSTOM
-		;主人公のゲージをセットアップ、MASTERCUSTOM.ERBに格納
+		;주인공의 게이지를 셋업, MASTERCUSTOM.ERB에 격납
 		CALL BASE_MASTER_SETUP
 	ENDIF
 ELSE
-	;キャラクターを追加
+	;캐릭터를 추가
 	ADDCHARA RESULT
-	;主人公を設定
+	;주인공을 설정
 	MASTER = CHARANUM - 1
-	;登場フラグを0にしておく
+	;등장 플래그를 0으로 해 둔다
 	FLAG:(RESULT + 99) = 0
-	PRINTFORMW 主人公を「%NAME:MASTER%」に設定します
-	;主人公のゲージをセットアップ、MASTERCUSTOM.ERBに格納
+	PRINTFORMW 주인공을 「%NAME:MASTER%」로 설정합니다
+	;주인공의 게이지를 셋업, MASTERCUSTOM.ERB에 격납
 	CALL BASE_MASTER_SETUP
 ENDIF
-;衣装設定がまだない場合、ここで設定する
+;의상 설정이 아직 없는 경우, 여기서 설정한다
 CALL CLOTHES_SETUP(MASTER)
 
-;────────────────────────────────────
-;最初の調教者の選択
-;────────────────────────────────────
+;─
+;최초의 조교자의 선택
+;─
 @START_CHARA_SELECT_T
 $TRAINER_REROLL
-;選択肢を呼び出す
+;선택지를 호출한다
 LOCALS = 
-LOCALS += "<識別>START_CHARA_SELECT_T"
-LOCALS += "<対象>登場可"
-LOCALS += "<上部>START_CHARA_SHOW_T"
-LOCALS += "<条件>START_CHARA_REQU_T"
-LOCALS += "<口上>調教者"
-LOCALS += "<選択>START_CHARA_CHOI_T"
-LOCALS += "<取消>キャンセル不可"
-LOCALS += "<項目>名前/二つ名"
+LOCALS += "<식별>START_CHARA_SELECT_T"
+LOCALS += "<대상>등장가능"
+LOCALS += "<상부>START_CHARA_SHOW_T"
+LOCALS += "<조건>START_CHARA_REQU_T"
+LOCALS += "<구상>조교자"
+LOCALS += "<선택>START_CHARA_CHOI_T"
+LOCALS += "<취소>캔슬 불가"
+LOCALS += "<항목>이름/이명"
 CALL SELECT_CHARA_LIST(LOCALS)
 LOCAL = RESULT
 CALL KOJO_PROFILE(RESULT)
-CALL PRINT_DIALOG(@"このキャラでよろしいですか？", 1, 1, 1)
-CALL PRINT_CHOICE(, "はい", 1, "いいえ", 2, )
+CALL PRINT_DIALOG(@"이 캐릭터로 좋습니까?", 1, 1, 1)
+CALL PRINT_CHOICE(, "네", 1, "아니오", 2, )
 SIF RESULT == 2
 	GOTO TRAINER_REROLL
 
 IF LOCAL == 0
-	PRINTW 調教者を「あなた」に設定します
-	;「あなた」を追加
+	PRINTW 조교자를 「당신」로 설정합니다
+	;「당신」를 추가
 	ADDCHARA 0
-	;調教者を設定
+	;조교자를 설정
 	TARGET = CHARANUM - 1
 ELSE
-	;キャラクターを追加
+	;캐릭터를 추가
 	ADDCHARA LOCAL
-	;調教者を設定
+	;조교자를 설정
 	TARGET = CHARANUM - 1
-	;登場フラグを0にしておく
+	;등장 플래그를 0으로 해 둔다
 	FLAG:(LOCAL + 99) = 0
-	PRINTFORMW 調教者を「%NAME:TARGET%」に設定します
+	PRINTFORMW 조교자를 「%NAME:TARGET%」로 설정합니다
 ENDIF
-;口上のコンフィグ設定	関数名変更@revkoishi(14/05/22)
+;구상의 콘피그 설정 함수명 변경@revkoishi(14/05/22)
 CALL KOJO_CONFIG_SET(TARGET)
 
-;────────────────────────────────────
-;エキストラモードのキャラクター選択(選択肢)
-;────────────────────────────────────
+;─
+;엑스트라 모드의 캐릭터 선택(선택지)
+;─
 @START_CHARA_SHOW_M
 CALL START_CHARA_SHOW(0)
 @START_CHARA_SHOW_T
@@ -96,21 +96,21 @@ CALL START_CHARA_SHOW(1)
 @START_CHARA_SHOW(ARG)
 
 IF ARG == 0
-	PRINTL ★★調教されるキャラを選択してください★★
+	PRINTL ★★조교되는 캐릭터를 선택해 주세요★★
 ELSE
-	PRINTL ★★調教するキャラを選択してください★★
+	PRINTL ★★조교하는 캐릭터를 선택해 주세요★★
 ENDIF
 
-;「あなた」は特別扱い
+;「당신」는 특별 취급
 IF ARG == 0
-	PRINT 　[0]「あなた」
-	IF FLAG:モード == 1
-		PRINTL ※キャラメイキングに進みます
+	PRINT   [0]「당신」
+	IF FLAG:모드 == 1
+		PRINTL ※캐릭터 메이킹에 진행됩니다
 	ELSE
-		PRINTL ※細かいパラメーターを設定できます
+		PRINTL ※세세한 파라미터를 설정할 수 있습니다
 	ENDIF
 ELSEIF NO:MASTER != 0
-	PRINTL 　[0]「あなた」にします
+	PRINTL   [0]「당신」로 합니다
 ENDIF
 
 @START_CHARA_REQU_M(ARG)
@@ -119,19 +119,19 @@ SIF FLAG:(ARG + 99) == 0
 RETURN ARG == 0 ? 0 # 1
 
 @START_CHARA_REQU_T(ARG, ARGS)
-;ARGS = "口上ありのみ", "制限なし"
+;ARGS = "구상 있는 보고", "제한 없음"
 IF ARGS != ""
-	LOCAL = ARGS == "口上ありのみ" ? 1 # 0
+	LOCAL = ARGS == "구상 있는 보고" ? 1 # 0
 	RETURN RESULT
 ENDIF
-;登場フラグが立っていれば表示
+;등장 플래그가 서 있으면 표시
 IF FLAG:(ARG + 99) > 0
-	;口上があるかをチェック
+	;구상이 있는지를 체크
 	CALL KOJO_CHECK(MASTER, ARG)
-	;口上があればいつでも表示
+	;구상이 있으면 언제라도 표시
 	SIF RESULT
 		RETURN 1
-	;口上のないキャラを表示しない
+	;구상이 없는 캐릭터를 표시하지 않는다
 	RETURN KOJOOFF
 ENDIF
 RETURN 0
@@ -143,28 +143,28 @@ RETURN RESULT
 CALL START_CHARA_CHOI(ARGS, 1)
 RETURN RESULT
 @START_CHARA_CHOI(ARGS, ARG)
-;追加選択肢
+;추가 선택지
 IF ARGS == "-1"
-	PRINTBUTTON @"%"　[R]ランダム", 25, LEFT%", "R"
+	PRINTBUTTON @"%"  [R]랜덤", 25, LEFT%", "R"
 	SIF ARG
-		PRINTBUTTON @"%"　[S]口上" + \@ KOJOOFF ? ありのみ # 無し込み \@, 25, LEFT%", "S"
+		PRINTBUTTON @"%"  [S]구상" + \@ KOJOOFF ? 있는보고 # 없음포함 \@, 25, LEFT%", "S"
 	PRINTL 
-;主人公「あなた」
+;주인공 「당신」
 ELSEIF ARGS == "0" && (ARG == 0 || NO:MASTER != 0)
 	RESULTS = 0
 	RETURN 0
-;ランダム選択時
+;랜덤 선택시
 ELSEIF ARGS == "R"
-	;選択肢リストから一人選ぶ(あなた除く)
+	;선택지 리스트로부터 한사람 선택한다(당신 제외함)
 	LOCAL = RAND:FINDELEMENT(CHARA_LIST, -1)
 	LOCAL = CHARA_LIST:LOCAL
-	PRINTFORML 「%CSVNAME(LOCAL)%」でよろしいですか？
-	CALL PRINT_CHOICE(, "はい", 1, "いいえ", 2, )
+	PRINTFORML 「%CSVNAME(LOCAL)%」로 좋습니까?
+	CALL PRINT_CHOICE(, "네", 1, "아니오", 2, )
 	SIF RESULT == 2
 		RETURN -1
 	RESULTS = {LOCAL}
 	RETURN 0
-;口上チェック選択
+;구상 체크 선택
 ELSEIF ARGS == "S" && ARG
 	KOJOOFF = !KOJOOFF
 	RETURN -1

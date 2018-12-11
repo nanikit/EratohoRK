@@ -1,101 +1,101 @@
-﻿;────────────────────────────────────
-;040,拒否する（反抗、お仕置きポイント）
-;────────────────────────────────────
+﻿;─
+;040, 거부한다(반항, 벌포인트)
+;─
 @COM40
-;反抗SOURCE増加
-IF CFLAG:MASTER:調教レベル < 10
-	SOURCE:MASTER:反抗 += 250 + MARK:屈服刻印 * (10 - CFLAG:MASTER:調教レベル) * 20
+;반항 SOURCE 증가
+IF CFLAG:MASTER:조교레벨 < 10
+	SOURCE:MASTER:반항 += 250 + MARK:굴복각인 * (10 - CFLAG:MASTER:조교레벨) * 20
 ELSE
-	SOURCE:MASTER:反抗 += 200
+	SOURCE:MASTER:반항 += 200
 ENDIF
-;お仕置きポイント加算
-TFLAG:お仕置きポイント += BASE:苛立ち / 100 + MARK:反抗刻印 + 1
-;COM分類
-CALL SET_COMGRO("拒否")
-;COM印象
-CALL SET_COMIMP("悪印象大")
-;依存度変化
+;벌포인트 가산
+TFLAG:벌포인트 += BASE:초조 / 100 + MARK:반항각인 + 1
+;COM 분류
+CALL SET_COMGRO("거부")
+;COM 인상
+CALL SET_COMIMP("악인상대")
+;의존도 변화
 CALL ADD_DEPEND(-2, -4)
 RETURN 1
 
 
-;────────────────────────────────────
-;041,消極的やる（屈従、消極的従う、お仕置きポイント）
-;────────────────────────────────────
+;─
+;041, 소극적 한다(굴종, 소극적 따르는, 벌포인트)
+;─
 @COM41
-;屈従SOURCE増加
-SOURCE:MASTER:屈従 += 100 + CFLAG:MASTER:調教レベル * (50 + GET_ABL(MASTER, "従順")) * (50 + GET_ABL(MASTER, "奉仕精神") * 2) * MARK:屈服刻印 / 100
-;消極判定
-LOCAL = (BASE:苛立ち / 150 + BASE:興味 / 150 - CFLAG:アライメント / 10) * (11 - MARK:屈服刻印) / 10 + RAND:3
+;굴종 SOURCE 증가
+SOURCE:MASTER:굴종 += 100 + CFLAG:MASTER:조교레벨 * (50 + GET_ABL(MASTER, "순종")) * (50 + GET_ABL(MASTER, "봉사 정신") * 2) * MARK:굴복각인 / 100
+;소극 판정
+LOCAL = (BASE:초조 / 150 + BASE:흥미 / 150 - CFLAG:아라이먼트 / 10) * (11 - MARK:굴복각인) / 10 + RAND:3
 IF LOCAL > 0
-	;お仕置きポイント加算
-	TFLAG:お仕置きポイント += LOCAL
-	;派生：消極的なのが気に入らない
-	TFLAG:REACT派生 = 1
-	;COM印象
-	CALL SET_COMIMP("悪印象小")
-	;依存度変化
+	;벌포인트 가산
+	TFLAG:벌포인트 += LOCAL
+	;파생:소극적인의가 마음에 들지 않는다
+	TFLAG:REACT파생 = 1
+	;COM 인상
+	CALL SET_COMIMP("악인상소")
+	;의존도 변화
 	CALL ADD_DEPEND(-5, 0)
 ELSE
-	;派生：消極的だけどいいか
-	TFLAG:REACT派生 = 0
-	;COM印象
-	CALL SET_COMIMP("好印象小")
-	;依存度変化
+	;파생:소극적이지만 좋은가
+	TFLAG:REACT파생 = 0
+	;COM 인상
+	CALL SET_COMIMP("좋은 인상소")
+	;의존도 변화
 	CALL ADD_DEPEND(-3, +2)
 ENDIF
-;COM分類
-CALL SET_COMGRO("消極的従う")
+;COM 분류
+CALL SET_COMGRO("소극적 따른다")
 RETURN 1
 
 
-;────────────────────────────────────
-;042,積極的やる（達成、積極的従う）
-;────────────────────────────────────
+;─
+;042, 적극적 한다(달성, 적극적 따른다)
+;─
 @COM42
-;達成SOURCE増加
-SOURCE:MASTER:達成 += (CFLAG:MASTER:調教レベル + 5) * (GET_ABL(MASTER, "奉仕精神") + 50) + (GET_ABL(MASTER, "技巧") + 50) * 20 / 100
-;COM分類
-CALL SET_COMGRO("積極的従う")
-;COM印象
-CALL SET_COMIMP("好印象大")
-;我慢フラグ解消
-TCVAR:MASTER:我慢 = 0
-;依存度変化
+;달성 SOURCE 증가
+SOURCE:MASTER:달성 += (CFLAG:MASTER:조교레벨 + 5) * (GET_ABL(MASTER, "봉사 정신") + 50) + (GET_ABL(MASTER, "기교") + 50) * 20 / 100
+;COM 분류
+CALL SET_COMGRO("적극적 따른다")
+;COM 인상
+CALL SET_COMIMP("좋은 인상대")
+;인내 플래그 해소
+TCVAR:MASTER:인내 = 0
+;의존도 변화
 CALL ADD_DEPEND(+4, +2)
 RETURN 1
 
 
-;────────────────────────────────────
-;043,愛情を込めてやる（達成、悦楽、積極的従う）
-;────────────────────────────────────
+;─
+;043, 애정을 담아 준다(달성, 열락, 적극적 따른다)
+;─
 @COM43
-;達成、悦楽SOURCE増加
-SOURCE:MASTER:達成 += (CFLAG:M好意 + 500) * (GET_ABL(MASTER, "奉仕精神") + 10) * (GET_ABL(MASTER, "技巧") + 10) / 10000
-SOURCE:MASTER:悦楽 += (CFLAG:M好意 + 100) * (GET_TRAINLV(TARGET) + 10) / 50
-;COM分類
-CALL SET_COMGRO("積極的従う")
-;COM印象
-CALL SET_COMIMP("好印象大")
-;我慢フラグ解消
-TCVAR:MASTER:我慢 = 0
-;依存度変化
+;달성, 열락 SOURCE 증가
+SOURCE:MASTER:달성 += (CFLAG:M호의 + 500) * (GET_ABL(MASTER, "봉사 정신") + 10) * (GET_ABL(MASTER, "기교") + 10) / 10000
+SOURCE:MASTER:열락 += (CFLAG:M호의 + 100) * (GET_TRAINLV(TARGET) + 10) / 50
+;COM 분류
+CALL SET_COMGRO("적극적 따른다")
+;COM 인상
+CALL SET_COMIMP("좋은 인상대")
+;인내 플래그 해소
+TCVAR:MASTER:인내 = 0
+;의존도 변화
 CALL ADD_DEPEND(+6, +10)
 RETURN 1
 
 
-;────────────────────────────────────
-;044,平然とやる（達成、平然と従う）
-;────────────────────────────────────
+;─
+;044, 태연하게 한다(달성, 태연하게 따른다)
+;─
 @COM44
-;達成SOURCE増加
-SOURCE:MASTER:達成 += (CFLAG:MASTER:調教レベル + 5) * (GET_ABL(MASTER, "奉仕精神") + 50) + (GET_ABL(MASTER, "技巧") + 50) * 20 / 120
-;COM分類
-CALL SET_COMGRO("平然と従う")
-;COM印象
-CALL SET_COMIMP("好印象小")
-;我慢フラグ解消
-TCVAR:MASTER:我慢 = 0
-;依存度変化
+;달성 SOURCE 증가
+SOURCE:MASTER:달성 += (CFLAG:MASTER:조교레벨 + 5) * (GET_ABL(MASTER, "봉사 정신") + 50) + (GET_ABL(MASTER, "기교") + 50) * 20 / 120
+;COM 분류
+CALL SET_COMGRO("태연하게 따른다")
+;COM 인상
+CALL SET_COMIMP("좋은 인상소")
+;인내 플래그 해소
+TCVAR:MASTER:인내 = 0
+;의존도 변화
 CALL ADD_DEPEND(+2, -2)
 RETURN 1

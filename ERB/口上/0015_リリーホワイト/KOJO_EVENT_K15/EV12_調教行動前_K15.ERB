@@ -1,159 +1,159 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;	[リリーホワイト]口上 調教者行動前イベント口上ファイル
+;	[릴리 화이트]구상 조교자 행동 전이벤트 구상 파일
 ;
-;	調教者行動前イベント口上をまとめたファイル
+;	조교자 행동 전이벤트 구상을 정리한 파일
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
 ;========================================================================
-;EV12, 調教者行動前口上
+;EV12, 조교자 행동 서두
 ;========================================================================
-;・TRAIN_PROCCES.ERB内、@TRAIN_CANCELから呼び出される
-;・口上主のパラメータ表示の直後に表示。調教指示は既に決定されている
-;・調教中止宣言の差し替えや、調教ターン開始前にご主人様から一言、のように書くことも可能
-;・午前、午後の調教開始ではなく、調教ターンの開始前には毎回呼び出される箇所
-;・その為もあって、調教中止時と経過時間0以外の箇所はIF 口上記入チェック(25)等として確率表示する事を推奨
-;・調教中止時にのみ地の文が存在する
-;・文章表示後に本体側のDRAWLINE処理あり
+;·TRAIN_PROCCES.ERB내, @TRAIN_CANCEL로부터 불려 간다
+;·구상주의 파라미터 표시의 직후에 표시. 조교 지시는 이미 결정되고 있다
+;·조교 중지 선언의 교환이나, 조교 턴 개시전에 주인님으로부터 한 마디, 와 같이 쓰는 일도 가능
+;·오전, 오후의 조교 개시는 아니고, 조교 턴의 개시전에는 매회 불려 가는 개소
+;·그 때문에도 있어, 조교 중지시와 경과시간 0이외의 개소는 IF 구상 기입 체크(25) 등으로서 확률 표시하는 일을 추천
+;·조교 중지시에게만 지문이 존재한다
+;·문장 표시 후에 본체측의 DRAWLINE 처리 있어
 ;-------------------------------------------------
-;FIRSTEVENT(0)～や、FIRSTEVENT(10)～などとして枠毎に割り当てていますが
-;FIRSTEVENT/ONCEEVENT/RANDEVENT/ORDEREVENTは事実上無限にイベント番号を増やせるので
-;必要に応じて任意に割り当てて下さい
+;FIRSTEVENT(0)~나, FIRSTEVENT(10)~등으로 해서 테두리마다 할당하고 있습니다만
+;FIRSTEVENT/ONCEEVENT/RANDEVENT/ORDEREVENT는 사실상 무한하게 이벤트 번호를 늘릴 수 있으므로
+;필요에 따라서 임의에 할당해 주세요
 ;-------------------------------------------------
 @KOJO_EVENT_K15_12(ARG)
 ;-------------------------------------------------
-;引数内訳…
-;ARG(0=調教可/1=口上主の疲労で中止/2=調教対象の疲労で中止/3=ご褒美による中止)
+;인수 내역…
+;ARG(0=조교가능/1=구상주의 피로로 중지/2=조교 대상의 피로로 중지/3= 포상에 의한 중지)
 ;-------------------------------------------------
 
-;────────────────────────────────────
-;調教中止 ARG:1 ARG:2 ARG:3 FIRSTEVENT(0)～
-;────────────────────────────────────
-;・疲労、もしくはご褒美による調教中止の場合の口上
-;・記入チェック=1の場合は口上表示後本体側でPRINTLの空行が入る
-;・記入チェックを=2にすると、地の文を表示しない
-;・というかRESULT > 2で判定されるので2以上なら同じ挙動になりますが一応非推奨ということで
+;─
+;조교 중지 ARG:1 ARG:2 ARG:3 FIRSTEVENT(0)~
+;─
+;·피로, 혹은 포상에 의한 조교 중지의 경우의 구상
+;·기입 체크=1의 경우는 구상 표시 후 본체측에서 PRINTL의 공행이 들어간다
+;·기입 체크를=2로 하면, 지문을 표시하지 않는다
+;·이라고 할까 RESULT > 2로 판정되므로 2이상이라면 같은 거동이 됩니다만 일단 비추천이라고 하는 일로
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ご褒美による中止
-;RESULT値（1, 口上の後に地の文を表示(非推奨)、2, 口上のみ表示）
+;포상에 의한 중지
+;RESULT치(1, 구상의 뒤로 지문을 표시(비추천), 2, 구상만 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 3
-	;記入チェックを2以下にした場合は以下の地の文が表示される。表示タイミングは口上表示の後
-	;%CALLNAME:TARGET%は今日の調教を中止し、
-	;%CALLNAME:MASTER%とまったりとした時間を過ごした…
-	PRINTFORMW 「おいで……優しくなでなでして癒してあげますねっ♪」
+IF 구상기입체크(100) && ARG == 3
+	;기입 체크를 2 이하로 했을 경우는 이하의 지문이 표시된다. 표시 타이밍은 구상 표시의 뒤
+	;%CALLNAME:TARGET%는 오늘의 조교를 중지해,
+	;%CALLNAME:MASTER%멈추거나로 한 시간을 보냈다…
+	PRINTFORMW 「와…… 상냥하고 스윽스윽 해 달래 주네요♪」
 	RETURN 2
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教者の疲労による中止
-;RESULT値（1, 口上の後に地の文を表示(非推奨)、2, 口上のみ表示）
+;조교자의 피로에 의한 중지
+;RESULT치(1, 구상의 뒤로 지문을 표시(비추천), 2, 구상만 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 1
-	;記入チェックを2以下にした場合は以下の地の文が表示される。表示タイミングは口上表示の後
-	;調教の時間が来たが、入ってきた%CALLNAME:TARGET%はなにやら疲れている様子で、
-	;今回は休みだと言って出ていった…
-	PRINTFORMW 「んぅ……ほらぁ……抱き枕さんの寝る場所はこっちですよ？」
+IF 구상기입체크(100) && ARG == 1
+	;기입 체크를 2 이하로 했을 경우는 이하의 지문이 표시된다. 표시 타이밍은 구상 표시의 뒤
+	;조교의 시간이 왔지만, 들어 온 %CALLNAME:TARGET%는 어쩐지 피곤한 모습으로,
+	;이번은 휴일이라고 말해 나갔다…
+	PRINTFORMW 「응우…… 이봐요…… 껴안는 베게씨의 자는 장소는 여기예요?」
 	RETURN 2
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教対象の疲労による中止
-;RESULT値（1, 口上の後に地の文を表示(非推奨)、2, 口上のみ表示）
+;조교 대상의 피로에 의한 중지
+;RESULT치(1, 구상의 뒤로 지문을 표시(비추천), 2, 구상만 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG == 2
-	;記入チェックを2以下にした場合は以下の地の文が表示される。表示タイミングは口上表示の後
-	;調教の時間が来たが、%CALLNAME:TARGET%は酷い様子の%CALLNAME:MASTER%を見てしばらく考えると、
-	;今回は休んでいいと言って出ていった…
-	PRINTFORMW 「リリーがちゃんとお世話しますから、%CNAME(MASTER)%はゆっくり体を休めてくださいね」
-	PRINTFORMW 「……あっ、変な意味じゃないので安心していいですからねっ」
+IF 구상기입체크(100) && ARG == 2
+	;기입 체크를 2 이하로 했을 경우는 이하의 지문이 표시된다. 표시 타이밍은 구상 표시의 뒤
+	;조교의 시간이 왔지만, %CALLNAME:TARGET%는 심한 모습의 %CALLNAME:MASTER%를 봐 당분간 생각하면,
+	;이번은 쉬어도 좋다고 말해 나갔다…
+	PRINTFORMW 「릴리가 분명하게 돌보기 때문에,%CNAME(MASTER)%는 천천히 몸을 쉬게 해 주세요」
+	PRINTFORMW 「…… 앗, 이상한 의미가 아니기 때문에 안심해도 좋으니까」
 	RETURN 2
 ENDIF
 
 ;-------------------------------------------------
-;・以下、ARG:0(調教可)相当
-;・TRAIN_PROCCES.ERB内、@BEFORE_ACTから呼び出される
-;・この時点でACTはすでに決定しているがACT派生の決定はなされていない
-;・NOWEXのリセットはなされていない
-;・これらの箇所を抜けた後にACT開始になる
-;・分岐の増減は自由にできますが、優先度には注意しましょう
+;·이하, ARG:0(조교가능) 상당
+;·TRAIN_PROCCES.ERB내, @BEFORE_ACT로부터 불려 간다
+;·이 시점에서 ACT는 벌써 결정하고 있지만 ACT 파생의 결정은 이루어지지 않았다
+;·NOWEX의 리셋트는 되지 않았다
+;·이것들의 개소를 빠진 뒤로 ACT 개시가 된다
+;·분기의 증감은 자유롭게 할 수 있습니다만, 우선도에는 주의합시다
 ;-------------------------------------------------
 
-;────────────────────────────────────
-;調教開始直後 FIRSTEVENT(10)～
-;────────────────────────────────────
-;・経過時間が0である場合に表示される
-;・その回の調教開始直後に一度きりで、以後その調教中には表示されない
-;・この箇所を抜けた後にACT開始になる
+;─
+;조교 개시 직후 FIRSTEVENT(10)~
+;─
+;·경과시간이 0인 경우에 표시된다
+;·그 회의 조교 개시 직후에 한 번만으로, 이후 그 조교중에는 표시되지 않는다
+;·이 개소를 빠진 뒤로 ACT 개시가 된다
 ;-------------------------------------------------
-;　ここでIS_POLICY("今日", "お仕置き")等で今日の方針を喋らせる事も可能だったりしますが
-;　EVENT17, 本日の方針口上と被る可能性があります
+;  여기서 IS_POLICY("오늘", "벌") 등으로 오늘의 방침을 말하게 하는 일도 가능했다거나 합니다만
+;  EVENT17, 오늘의 방침 구상과 입을 가능성이 있습니다
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教開始直後
+;조교 개시 직후
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && !TFLAG:経過時間
+IF 구상기입체크(100) && !TFLAG:경과시간
 	;=================================================
-	;調教者が少し疲れている
+	;조교자가 조금 피곤함
 	;=================================================
-	IF 口上記入チェック(100) && CFLAG:消耗 > 2
-		PRINTFORMW 「リリーね、今日はちょっとお疲れ気味なので…」
-		PRINTFORMW 「休憩を入れながら、ゆっくり楽しみましょうね♪」
+	IF 구상기입체크(100) && CFLAG:소모 > 2
+		PRINTFORMW 「릴리군요, 오늘은 조금 지칠 기미인 것으로…」
+		PRINTFORMW 「휴게를 넣으면서, 천천히 즐겨요♪」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ARG:3の分岐を書いた場合は不要な箇所
-	;ご褒美による調教中止の場合
+	;ARG:3의 분기를 썼을 경우는 불필요한 개소
+	;포상에 의한 조교 중지의 경우
 	;=================================================
-	;ARG:1の分岐を書いた場合は不要な箇所
-	;調教対象の疲労による中止
+	;ARG:1의 분기를 썼을 경우는 불필요한 개소
+	;조교 대상의 피로에 의한 중지
 	;=================================================
 	
 	;=================================================
-	;調教対象が少し疲れている
+	;조교 대상이 조금 피곤함
 	;=================================================
-	IF 口上記入チェック(100) && CFLAG:MASTER:消耗 > 2
-		PRINTFORM 「疲れてる時の方が%RAND_SPLIT("あま～い/美味しい/濃厚な")%精が出るらしいですね……ふふっ
+	IF 구상기입체크(100) && CFLAG:MASTER:소모 > 2
+		PRINTFORM 「지쳐있는 때가%RAND_SPLIT("달콤하다/맛있다/농후한")%힘쓰는 것 같네요…… 후훗
 		CALL HEARTCB
 		PRINTFORMW 」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ご主人様妊娠中！！（必要なら調教完了グループにコピペ）
+	;주인님 임신중!! (필요하면 조교 완료 그룹에 코피페)
 	;=================================================
-	IF 口上記入チェック(100) && TALENT:TARGET:妊娠 == 1
+	IF 구상기입체크(100) && TALENT:TARGET:임신 == 1
 		SELECTCASE RANDEVENT(5, 21)
 			CASE 0
-				PRINTFORMW 「えっとね、赤ちゃんの分も含めて濃厚な精が二人分必要なんですけど……」
-				PRINTFORMW 「……その様子なら心配は必要なさそうですね…えへへっ♪」
-				PRINTFORM 「それじゃ、リリーとボテ腹セックス……愉しみましょうかっ
+				PRINTFORMW 「글쎄요, 아기의 몫도 포함해 농후한 정령이 두 명분 필요합니다만……」
+				PRINTFORMW 「…… 그 모습이라면 걱정은 필요없는 것 같네요… 에헤헷♪」
+				PRINTFORM 「그러면, 릴리와 보테배섹스…… 즐길까요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORMW 「胎教には適度な運動が必要なんですって」
-				PRINTFORMW 「折角ですし、%CNAME(MASTER)%と一緒に楽しめるのがいいかなって思うんです…えへへっ」
-				PRINTFORM 「ほら、ぎゅってして……しっかり頑張ってくださいね、パパ
+				PRINTFORMW 「태교에는 적당한 운동이 필요합니다 라고」
+				PRINTFORMW 「모처럼이고,%CNAME(MASTER)%와 함께 즐길 수 있는 것이 좋을까 하고 생각합니다… 에헤헷」
+				PRINTFORM 「이봐요, 꽉 해…… 확실히 노력해 주세요, 파파
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「お腹をぽんぽんするとね、同じ場所を赤ちゃんが蹴り返してくれるんです……えへへ♪」
-				PRINTFORMW 「それでね……リリー、えっちなことを思い付いたんですけど……」
-				PRINTFORM 「%CNAME(MASTER)%のおちんちんで、子宮口をコンコンされたら……どうなっちゃうんだろうなって
+				PRINTFORMW 「배를 팡팡 하면 말이죠, 같은 장소를 아기가 차 돌려줍니다…… 에헤헤♪」
+				PRINTFORMW 「그래서 말야…… 릴리, 엣치한 일을 생각난 것이지만……」
+				PRINTFORM 「%CNAME(MASTER)%의 자지로, 자궁입구를 콩콩 되면…… 어떻게 되어 버릴 것이다 라고
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「あの……リリーの身体、綺麗ですか？　うふふっ♪」
-				PRINTFORMW 「%CNAME(MASTER)%のザーメンで孕んだえっちな身体……」
-				PRINTFORM 「た～っぷり堪能してくださいね
+				PRINTFORMW 「저…… 릴리의 신체, 예쁩니까?   후후♪」
+				PRINTFORMW 「%CNAME(MASTER)%의 정액으로 임신한 엣치한 신체……」
+				PRINTFORM 「충분히 만끽해 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 4
-				PRINTFORMW 「赤ちゃんが居るからって、焦らしちゃイヤですよ？」
-				PRINTFORM 「リリーを孕ませた時みたいに、壊れちゃうくらい愛してくださいね
+				PRINTFORMW 「아기가 있기 때문에 라고, 초조하게 해서는 싫어요?」
+				PRINTFORM 「릴리를 임신하게 했을 때 같이, 망가져 버릴 정도로 사랑해 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
@@ -161,100 +161,100 @@ IF 口上記入チェック(100) && !TFLAG:経過時間
 	ENDIF
 
 	;=================================================
-	;調教対象への好感度1000以上
+	;조교 대상에의 호감도 1000이상
 	;=================================================
-	IF 口上記入チェック(100) && AFFECTION("眷愛")
+	IF 구상기입체크(100) && AFFECTION("권애")
 		SELECTCASE RANDEVENT(5, 22)
 			CASE 0
-				PRINTFORMW 「リリーの身体で、たっぷり気持ち良くなってくださいねっ♪」
+				PRINTFORMW 「릴리의 신체로, 충분히 기분 좋아져 주세요♪」
 			CASE 1
-				PRINTFORMW 「%CNAME(MASTER)%っ♪」
-				PRINTFORM 「お口でします？　お胸でします？　そ れ と も……
+				PRINTFORMW 「%CNAME(MASTER)%♪」
+				PRINTFORM 「입으로 합니까?   가슴으로 합니까?   그렇지 않으면……
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「ねぇ、いったい今どこを見てたんですか？　うふふっ♪」
+				PRINTFORMW 「저기, 도대체 지금 어디를 보고 있던 것입니까?   후후♪」
 			CASE 2
-				PRINTFORMW 「ほら、もっと近くにおいで？」
-				PRINTFORMW 「……ふふっ……いい子いい子♪」
-				PRINTFORM 「今日もたっぷり可愛がってあげますね
+				PRINTFORMW 「이봐요, 좀 더 근처에 와?」
+				PRINTFORMW 「…… 후훗…… 좋은 아이 좋은 아이♪」
+				PRINTFORM 「오늘도 충분히 귀여워해 주네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「始める前から\@ TALENT:MASTER:オトコ ? おちんちん勃起させ # おまんこ濡らし \@ちゃってるんですか？」
-				PRINTFORMW 「まったく、えっちな奴隷さんですね……ふふ♪」
-				PRINTFORM 「いいよ……期待以上の事、してあげるっ
+				PRINTFORMW 「시작하는 전부터\@ TALENT:MASTER:남자 ? 자지 발기시키고# 보지 적셔\@비칩니까?」
+				PRINTFORMW 「완전히, 엣치한 노예씨군요…… 후후♪」
+				PRINTFORM 「좋아…… 기대 이상의 일, 해 준닷
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 4
-				PRINTFORMW 「リリーのドキドキ、ちゃんと伝わってますか？」
-				PRINTFORMW 「ほら、わからないなら……触って確かめてくださいね♪」
+				PRINTFORMW 「릴리의 두근두근, 분명하게 전해지고 있습니까?」
+				PRINTFORMW 「이봐요, 모르면…… 손대어 확인해 주세요♪」
 		ENDSELECT
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		SELECTCASE RANDEVENT(5, 23)
 			CASE 0
-				PRINTFORMW 「やっぱり、こういうのには抵抗がありますか？」
-				PRINTFORMW 「うーん…ほら、あんまり難しく考えないで…」
-				PRINTFORMW 「リリーとえっちな遊びを楽しみましょうっ♪」
+				PRINTFORMW 「역시, 이런 것에는 저항이 있습니까?」
+				PRINTFORMW 「응… 이봐요, 너무 어렵게 생각하지 마…」
+				PRINTFORMW 「릴리와 엣치한 놀이를 즐깁시다♪」
 			CASE 1
-				PRINTFORMW 「おいで…リリーと一緒に遊びましょう♪」
+				PRINTFORMW 「와… 릴리와 함께 놉시다♪」
 			CASE 2
-				PRINTFORMW 「さて、今日は何から始めましょうか……」
-				PRINTFORMW 「う～ん、迷いますね……」
+				PRINTFORMW 「그런데, 오늘은 무엇으로부터 시작할까요……」
+				PRINTFORMW 「응, 헤매네요……」
 			CASE 3
-				PRINTFORMW 「むぅ……やっぱりまだ緊張しちゃってますね……」
-				PRINTFORMW 「ほら、怖い事はしませんから」
-				PRINTFORMW 「ゆっくり、慣れていきましょうね♪」
+				PRINTFORMW 「므우…… 역시 아직 긴장해 버리고 있네요……」
+				PRINTFORMW 「이봐요, 무서운 일은 하지 않기 때문에」
+				PRINTFORMW 「천천히, 익숙해져 가요♪」
 			CASE 4
-				PRINTFORMW 「それじゃ、始めましょうか」
-				PRINTFORMW 「可愛い反応、期待してますよっ♪」
+				PRINTFORMW 「그러면, 시작할까요」
+				PRINTFORMW 「사랑스러운 반응, 기대하고 있어요♪」
 		ENDSELECT
 		RETURN 1
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;お仕置き FIRSTEVENT(20)～
-;────────────────────────────────────
-;・TFLAG:お仕置きフラグが立っている場合に表示される箇所
-;・お仕置きフラグが立っていても、加虐系以外のACTになる場合がある
+;─
+;벌FIRSTEVENT(20)~
+;─
+;·TFLAG:벌플래그가 서 있는 경우에 표시되는 개소
+;·벌플래그가 서 있어도, 가학계 이외의 ACT가 되는 경우가 있다
 ;-------------------------------------------------
-;加虐系ACT、派生する事により加虐系に含まれる可能性のあるイラマチオ
-;衣装の変更を要求する/不気味に笑う/アナルバイブ/後背位/アナルセックス/自慰/野外プレイ/放尿/足舐め強制
-;異常系ACT/性交奉仕系ACT
-;上記のACT以外はTFLAG:お仕置きフラグによってACT_ABLEで規制される(0616版時点)
+;가학계 ACT, 파생하는 일에 의해 가학계에 포함될 가능성이 있는 이라마치오
+;의상의 변경을 요구한다/기분 나쁘게 웃는다/애널 바이브/후배위/애널 섹스/자위/야외 플레이/방뇨/다리 빨고 강제
+;이상계 ACT/성교 봉사계 ACT
+;상기의 ACT 이외는 TFLAG:벌플래그에 의해 ACT_ABLE로 규제된다(0616판 시점)
 ;-------------------------------------------------
 ;-------------------------------------------------
-;・一回の調教で一回のみ表示される
+;·1회의 조교로 1회만 표시된다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;お仕置き開始 
+;벌개시
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:お仕置きフラグ && ONCEEVENT(20)
+IF 구상기입체크(100) && TFLAG:벌플래그 && ONCEEVENT(20)
 	;=================================================
-	;前回ACTがお仕置き宣言
+	;전회 ACT가 벌선언
 	;=================================================
-	IF 口上記入チェック(100) && IS_PREVACTNAME("お仕置きと宣言する")
-		PRINTFORM 「さてと……%CNAME(MASTER)%、覚悟してねっ
+	IF 구상기입체크(100) && IS_PREVACTNAME("벌이라고 선언한다")
+		PRINTFORM 「그럼……%CNAME(MASTER)%, 각오 해
 		CALL HEARTCB
 		PRINTFORMW 」
-		SIF ABL:MASTER:マゾっ気 > 4
-			PRINTFORMW 「マゾ豚さんの%CNAME(MASTER)%に、本気の悲鳴を思い出させてあげますっ！」
+		SIF ABL:MASTER:마조끼 > 4
+			PRINTFORMW 「마조돼지씨의%CNAME(MASTER)%에, 진심의 비명을 생각나게 해 줍니닷!」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
-		PRINTFORMW 「楽しい楽しいオシオキの時間ですよっ♪」
-		;SIFはSingle IFなのでSIF HOGEの後の(コメント行を除く)一行分にしか使えません@/L
-		IF ABL:MASTER:マゾっ気 > 4
-			PRINTFORM 「痛いと思いますけど、それがいいんですよね？　マゾ豚さんっ
+	IF 구상기입체크(100)
+		PRINTFORMW 「즐거운 즐거운 벌의 시간이에요♪」
+		;SIF는 Single IF인 것으로 SIF HOGE의 뒤의(코멘트행을 제외함) 일행분에 밖에 사용할 수 없습니다@/L
+		IF ABL:MASTER:마조끼 > 4
+			PRINTFORM 「아프다고 생각합니다만, 그것이 좋지요?   마조돼지씨
 			CALL HEARTCB
 			PRINTFORMW 」
 		ENDIF
@@ -263,38 +263,38 @@ IF 口上記入チェック(100) && TFLAG:お仕置きフラグ && ONCEEVENT(20)
 ENDIF
 
 ;-------------------------------------------------
-;お仕置き開始以外を処理する箇所
+;벌개시 이외를 처리하는 개소
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;お仕置き中
-;口上記入チェック(確率％, 入力した数字の確率で口上を表示)
+;벌중
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TFLAG:お仕置きフラグ
+IF 구상기입체크(100) && TFLAG:벌플래그
 	;=================================================
-	;前回ACTがお仕置き宣言かつ今回ACTが加虐系
+	;전회 ACT가 벌선언 한편 이번 ACT가 가학계
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "加虐") && IS_PREVACTNAME("お仕置きと宣言する")
-		PRINTFORMW 「ちゃんと可愛い声で鳴けたら、後でなでなでしてあげますからねっ♪」
-		SIF ABL:MASTER:マゾっ気 > 4
-			PRINTFORMW 「%CNAME(MASTER)%ならそんなの余裕かな？　ふふっ♪」
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "가학") && IS_PREVACTNAME("벌이라고 선언한다")
+		PRINTFORMW 「분명하게 사랑스러운 소리로 울 수 있으면, 다음에 스윽스윽 해 주니까요♪」
+		SIF ABL:MASTER:마조끼 > 4
+			PRINTFORMW 「%CNAME(MASTER)%라면 그런 것 여유일까?   후후♪」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;前回ACTがお仕置き宣言
+	;전회 ACT가 벌선언
 	;=================================================
-	IF 口上記入チェック(0) && IS_PREVACTNAME("お仕置きと宣言する")
+	IF 구상기입체크(0) && IS_PREVACTNAME("벌이라고 선언한다")
 		PRINTFORMW 
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(50)
-		PRINTFORMW 「ちょっと激しくしますけど、%CNAME(MASTER)%なら大丈夫ですよねっ♪」
-		;SIFではなくIFで@/L
-		IF ABL:MASTER:マゾっ気 > 4
-			PRINTFORM 「もしこんなのでイっちゃたら、正真正銘の『豚さん』ですねっ
+	IF 구상기입체크(50)
+		PRINTFORMW 「조금 격렬하게 합니다만,%CNAME(MASTER)%라면 괜찮네요♪」
+		;SIF는 아니고 IF로@/L
+		IF ABL:MASTER:마조끼 > 4
+			PRINTFORM 「만약 이런 것으로 가 버리면, 정진정명의 『돼지씨』군요
 			CALL HEARTCB
 			PRINTFORMW 」
 		ENDIF
@@ -302,262 +302,262 @@ IF 口上記入チェック(100) && TFLAG:お仕置きフラグ
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;膣内、腸内射精直後 FIRSTEVENT(30)～
-;────────────────────────────────────
-;NOWEX:射精ないしNOWEX:MASTER:射精で射精種の参照も可能だったりしますが
-;EVENT20, 絶頂口上に同種の分岐がると被る可能性もあります
+;─
+;질내, 장내 사정 직후 FIRSTEVENT(30)~
+;─
+;NOWEX:사정내지 NOWEX:MASTER:사정으로 사정종의 참조도 가능했다거나 합니다만
+;EVENT20, 절정 구상에 동종의 분기와 입을 가능성도 있습니다
 ;-------------------------------------------------
-;関連変数…
+;관련 변수…
 ;
-;TFLAG:前回中出し(1=Ｖ性交/2=Ｖ性交奉仕/3=Ｖ性交(空射)/4=Ｖ性交奉仕(空射)/5=Ａ性交/6=Ａ性交奉仕/7=Ａ性交(空射)/8=Ａ性交奉仕(空射)
-;NOWEX:射精(1=空射精/2=射精/3=大量射精/4=射精(早漏)/5=A責射精)
+;TFLAG:전회 질내사정(1=V성교/2=V성교 봉사/3=V성교(하늘 쏘아 맞히고)/4=V성교 봉사(하늘 쏘아 맞히고)/5=A성교/6=A성교 봉사/7=A성교(하늘 쏘아 맞히고)/8=A성교 봉사(하늘 쏘아 맞히고)
+;NOWEX:사정(1=하늘 사정/2=사정/3=대량 사정/4=사정(조루)/5=A책사정)
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;膣内射精直後(調教対象→調教者)
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;질내 사정 직후(조교 대상→조교자)
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 2, 4) > 0
+IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 4) > 0
 	;=================================================
-	;性交奉仕系ACTに続く場合
-	;前回中出し→性交続行
+	;성교 봉사계 ACT에 계속되는 경우
+	;전회 질내사정→성교 속행
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:抜かず
-		;今日の方針が子作り
-		IF IS_POLICY("今日", "子作り")
-			;調教対象射精種派生
-			SELECTCASE TCVAR:MASTER:前回ターン射精
-				;空射精
+	IF 구상기입체크(100) && TFLAG:뽑지않고
+		;오늘의 방침이 아이 만들기
+		IF IS_POLICY("오늘", "자 만들기")
+			;조교 대상 사정종 파생
+			SELECTCASE TCVAR:MASTER:전회턴사정
+				;하늘 사정
 				CASE 1
-					PRINTFORMDW 　%RAND_SPLIT("射精を伴わない/射精限界を超えた/ドライオーガズムの")%強烈な%RAND_SPLIT("快楽/絶頂/悦楽/快感")%が%RAND_SPLIT("肉棒/剛直")%をビクビクを震わせ、子種を求める幼い膣内を乱暴に掻き回した…
-					PRINTFORM 「%RAND_SPLIT("ひぃあっ！！　んっ、空打ちらぁ/んっんうぅ/あっひあ゛あ゛っ/ひぃんっ")%
+					PRINTFORMDW 　%RAND_SPLIT("사정을 수반하지 않는다/사정 한계를 넘었다/드라이 오르가즘의")%강렬한%RAND_SPLIT("쾌락/절정/열락/쾌감")%가%RAND_SPLIT("육봉/강직")%를 움찔움찔을 진동시켜 자식을 요구하는 어린 질내를 난폭하게 휘저었다…
+					PRINTFORM 「%RAND_SPLIT("히아!!   응, 하늘 치는 것등//아히아″아″/히이읏")%
 					CALL HEARTCB
-					PRINTFORM 　えへぇ……タマタマも…あたまも…空っぽになっちゃっらね
-					CALL HEARTCB
-					PRINTFORMW 」
-					PRINTFORMW 「らめれすよ？　今日はっ…あかひゃんつくぅって言ったのに……」
-					PRINTFORM 「ほんろ…だらしなぃ子なんえすからぁ
+					PRINTFORM   네에…… 타마타마도… 머리도… 텅 비게 되어 등이군요
 					CALL HEARTCB
 					PRINTFORMW 」
-				;大量射精
+					PRINTFORMW 「야?   오늘은… 아나 응 붙는 라고 말했는데……」
+					PRINTFORM 「… 야무지지 못한 아이인 로부터
+					CALL HEARTCB
+					PRINTFORMW 」
+				;대량 사정
 				CASE 3
 					IF RAND:2 == 0
-						PRINTFORM 「%RAND_SPLIT("濃厚ザーメン/あかひゃんの素/ドロドロせーえき")%いっぱい%RAND_SPLIT("ぴゅっぴゅされてぇ/注がれちゃってぇ")%……りりーの%RAND_SPLIT("おにゃか/おまんこ/あかひゃんのおへや")%…%RAND_SPLIT("たぷたぷれすよ/溺れひゃいそう/あったかぁい")%
+						PRINTFORM 「%RAND_SPLIT("농후 정액/아나 응의 소/질척질척 정액")%가득%RAND_SPLIT("되어/따라져 버려")%……-의%RAND_SPLIT("인가/보지/아나 응의 방")%…%RAND_SPLIT("출렁출렁야/닉좋을 것 같다/있었는지있고")%
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「まだ、残ってますよね
+						PRINTFORM 「아직, 남아 있군요
 						CALL HEARTCB
-						PRINTFORM 　りりーが孕むくらい……%CNAME(MASTER)%の%RAND_SPLIT("種で/愛で/あかひゃんの素で/")%ぜんぶで満たしてくらさい
+						PRINTFORM   -가 임신할 정도……%CNAME(MASTER)%의%RAND_SPLIT("종으로/사랑으로/아나 응의 소로/")%전부 채워 주세요
 						CALL HEARTCB
 						PRINTFORMW 」
 					ELSE
-						PRINTFORM 「%RAND_SPLIT("いっぱい出されちゃったぁ/大量射精だいすきぃ/んっくぅん")%
+						PRINTFORM 「%RAND_SPLIT("가득 나와 버렸다/대량 사정 너무 좋아 있고/읏쿠응")%
 						CALL HEARTCB
-						PRINTFORM 　%CNAME(MASTER)%のザーメンタンクにされちゃった気分ですぅ……えへへっ
-						CALL HEARTCB
-						PRINTFORMW 」
-						PRINTFORM 「ねぇ…もっとちょーだいっ
-						CALL HEARTCB
-						PRINTFORM 　%CNAME(MASTER)%の匂いが染み着いて、消えなくなるくらい
+						PRINTFORM 　%CNAME(MASTER)%의 정액 탱크로 되어 버린 기분입니다아…… 에헤헷
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「もっともっと
+						PRINTFORM 「저기… 좀 더 줘
 						CALL HEARTCB
-						PRINTFORM 　リリーの%RAND_SPLIT("赤ちゃん袋/おまんこ/妖精おまんこ/ロリまんこ")%に種付けしゃせーしてくださいっ
+						PRINTFORM 　%CNAME(MASTER)%의 냄새가 스며들고 도착해, 사라지지 않게 될 정도
+						CALL HEARTCB
+						PRINTFORMW 」
+						PRINTFORM 「좀더 좀더
+						CALL HEARTCB
+						PRINTFORM   릴리의%RAND_SPLIT("아기 봉투/보지/요정 보지/로리 보지")%에 교배 감사할 수 있다─해 주세욧
 						CALL HEARTCB
 						PRINTFORMW 」
 					ENDIF
-				;早漏
+				;조루
 				CASE 4
 					IF RAND:2 == 0
-						PRINTFORM 「今日は子作りえっちなんですから、%RAND_SPLIT("早くっても/早漏さんでも")%大丈夫ですよっ
+						PRINTFORM 「오늘은 아이 만들어 엣치하니까,%RAND_SPLIT("빨리라고 해도/조루씨라도")%괜찮아요
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「それに%RAND_SPLIT("イったばっかりなのにとっても硬くて/全然萎えずにおまんこぐいぐいって押し広げてて")%……ロリコンちんぽ、リリーを孕ます気満々ですねっ
+						PRINTFORM 「거기에%RAND_SPLIT("갔던 바로 직후인데 있어서도 딱딱해서/전혀 쇠약해지지 않고 보지 쭉쭉은 펴넓히고 있어")%…… 로리콘 자지, 릴리를 임신하게 할 생각 만만하네요
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「おいで
+						PRINTFORM 「와
 						CALL HEARTCB
-						PRINTFORM 　このまま何度も何度も%RAND_SPLIT("射精して/ぴゅっぴゅして")%、リリーの%RAND_SPLIT("子宮を/赤ちゃんのお部屋を/おまんこ")%%RAND_SPLIT("いっぱいに/満た")%してくださいねっ
+						PRINTFORM   이대로 몇번이나 몇번이나%RAND_SPLIT("사정해/해")%, 릴리의%RAND_SPLIT("자궁을/아기의 방을/보지")%%RAND_SPLIT("가득/만")%해 주세요
 						CALL HEARTCB
 						PRINTFORMW 」
 					ELSE
-						PRINTFORM 「%RAND_SPLIT("こんなに早くイっちゃうなんて/早漏ザーメン注がれちゃいましたぁ/ロリコンザーメンに汚されちゃいましたぁ")%……%CNAME(MASTER)%ったら、こーふんし過ぎですよっ
+						PRINTFORM 「%RAND_SPLIT("이렇게 빨리 가 버리다니/조루 정액 따라져 버렸습니다/로리콘 정액에 더럽혀져 버렸습니다아")%……%CNAME(MASTER)%도 참, 개─너무 분합니다
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「でも嬉しいな……我慢できないくらい、リリーで感じてくれたって事ですもんねっ
+						PRINTFORM 「그렇지만 기쁘구나…… 인내 할 수 없을 정도, 릴리로 느껴 주었다는 일이지요
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「ほらっ、おいで
+						PRINTFORM 「이봐요, 와
 						CALL HEARTCB
-						PRINTFORM 　ロリコンさんのドロドロザーメン、%RAND_SPLIT("リリーの妖精まんこに/卵子が溺れるくらい/おまんこ孕むくらい/赤ちゃんのお部屋に")%たっぷり注いでくださいね
+						PRINTFORM   로리콘씨의 질척질척 정액,%RAND_SPLIT("릴리의 요정 보지에/난자가 빠질 정도/보지 임신할 정도/아기의 방에")%충분히 따라 주세요
 						CALL HEARTCB
 						PRINTFORMW 」
 					ENDIF
-				;前立腺射精
+				;전립선 사정
 				CASE 5
-					PRINTFORM 「%RAND_SPLIT("トコロテン射精/おしりアクメ")%しながらリリーに中出しまでしちゃうなんて……器用なヘンタイさんっ
+					PRINTFORM 「%RAND_SPLIT("우무 사정/엉덩이 절정")%하면서 릴리에 질내사정까지 해 버리다는…… 요령 있는 변태씨
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「ほら
+					PRINTFORM 「이봐요
 					CALL HEARTCB
-					PRINTFORM 　今度はお尻なんかじゃなくて、ちゃんとリリーの%RAND_SPLIT("膣内/おまんこ/身体")%でイってくださいよ
-					CALL HEARTCB
-					PRINTFORMW 」
-					PRINTFORM 「えっちなひだひだを感じながら、%RAND_SPLIT("一番奥に届くように/おちんちん一番奥にくっつけて")%……%RAND_SPLIT("びゅるるるぅぅ/びゅっびゅー")%って射精してくださいね
+					PRINTFORM   이번은 엉덩이 따위가 아니고, 분명하게 릴리의%RAND_SPLIT("질내/보지/신체")%로 가 주세요
 					CALL HEARTCB
 					PRINTFORMW 」
-				;その他
+					PRINTFORM 「엣치한 주름들을 느끼면서,%RAND_SPLIT("가장 안쪽에 닿도록(듯이)/자지 가장 안쪽에 붙여")%……%RAND_SPLIT("/븃뷰─")%는 사정해 주세요
+					CALL HEARTCB
+					PRINTFORMW 」
+				;그 외
 				CASEELSE
 					IF RAND:2 == 0
-						PRINTFORM 「リリーのおまんこで上手にぴゅっぴゅできましたね
+						PRINTFORM 「릴리의 보지로 능숙함할 수 있었어요
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「まだ妊娠してないのに、%RAND_SPLIT("中出しザーメン/おっきなおちんちん")%でお腹ぽっこりしちゃってます……
+						PRINTFORM 「아직 임신하고 있지 않는데,%RAND_SPLIT("질내사정 정액/큰 자지")%로 배 볼록 해 버리고 있습니다……
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「リリーを孕ませてくれるんだよね？　それじゃ…抜かずに何発できるか、挑戦してみよっか
+						PRINTFORM 「릴리를 임신하게 해 주는거네요?   그러면… 뽑지 않고 몇 발 할 수 있는지, 도전해 볼까
 						CALL HEARTCB
 						PRINTFORMW 」
 					ELSE
-						PRINTFORM 「えへへっ
+						PRINTFORM 「에헤헷
 						CALL HEARTCB
-						PRINTFORM 　子作りえっちって、なんだかこーふんしちゃうね
+						PRINTFORM   자 만들어 엣치하다는 것은, 뭔가 개─분해 버리네요
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「ほらほらっ、一発や二発の中出しじゃリリーは満足しませんからねっ
+						PRINTFORM 「이봐요 이봐요, 일발이나 2발의 질내사정은 릴리는 만족하지 않기 때문에
 						CALL HEARTCB
 						PRINTFORMW 」
 					ENDIF
 			ENDSELECT
 		;-------------------------------------------------
-		;子作りでない場合
+		;자 만들기가 아닌 경우
 		ELSE
-			;調教対象射精種派生
-			SELECTCASE TCVAR:MASTER:前回ターン射精
-				;空射精
+			;조교 대상 사정종 파생
+			SELECTCASE TCVAR:MASTER:전회턴사정
+				;하늘 사정
 				CASE 1
-					PRINTFORMDW 　%RAND_SPLIT("射精を伴わない/射精限界を超えた/ドライオーガズムの")%強烈な%RAND_SPLIT("快楽/絶頂/悦楽/快感")%が%RAND_SPLIT("肉棒/剛直")%をビクビクと震わせ、子種を求める幼い膣内を乱暴に掻き回した…
-					PRINTFORM 「%RAND_SPLIT("んうぅんっ/ひぃんっ")%
+					PRINTFORMDW 　%RAND_SPLIT("사정을 수반하지 않는다/사정 한계를 넘었다/드라이 오르가즘의")%강렬한%RAND_SPLIT("쾌락/절정/열락/쾌감")%가%RAND_SPLIT("육봉/강직")%를 움찔움찔 진동시켜 자식을 요구하는 어린 질내를 난폭하게 휘저었다…
+					PRINTFORM 「%RAND_SPLIT("응/히이읏")%
 					CALL HEARTCB
-					PRINTFORM 　えへぇ……タマタマも…あたまも…空っぽになっひゃっらね
-					CALL HEARTCB
-					PRINTFORMW 」
-					PRINTFORM 「ほんろ…だらしなぃ子なんえすからぁ
+					PRINTFORM   네에…… 타마타마도… 머리도… 텅 비게 등이군요
 					CALL HEARTCB
 					PRINTFORMW 」
-				;大量射精
+					PRINTFORM 「… 야무지지 못한 아이인 로부터
+					CALL HEARTCB
+					PRINTFORMW 」
+				;대량 사정
 				CASE 3
 					IF RAND:2 == 0
-						PRINTFORM 「%CNAME(MASTER)%の%RAND_SPLIT("濃厚ザーメン/あかひゃんの素/ドロドロせーえき")%で……りりーの%RAND_SPLIT("おにゃか/おまんこ/あかひゃんのおへや")%、%RAND_SPLIT("たぷたぷれすよ/溺れひゃいそう/とろとろれす")%
+						PRINTFORM 「%CNAME(MASTER)%의%RAND_SPLIT("농후 정액/아나 응의 소/질척질척 정액")%로……-의%RAND_SPLIT("인가/보지/아나 응의 방")%、%RAND_SPLIT("출렁출렁야/닉좋을 것 같다/")%
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「こんなにいっぱい中出しされたら
+						PRINTFORM 「이렇게 가득 질내사정되면
 						CALL HEARTCB
-						PRINTFORM 　りりー、赤ちゃんできちゃいますよぉ
+						PRINTFORM   ―, 아기 생겨 버려요
 						CALL HEARTCB
 						PRINTFORMW 」
 					ELSE
-						PRINTFORM 「%RAND_SPLIT("いっぱい出されちゃったぁ/大量射精しゅごいれす/んっくぅん")%
+						PRINTFORM 「%RAND_SPLIT("가득 나와 버렸다/대량 사정처/읏쿠응")%
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「ねぇ……リリーに%CNAME(MASTER)%の匂いが染み着いて、消えなくなるくらい……
+						PRINTFORM 「저기…… 릴리에%CNAME(MASTER)%의 냄새가 스며들고 도착해, 사라지지 않게 될 정도……
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「もっともっと
+						PRINTFORM 「좀더 좀더
 						CALL HEARTCB
-						PRINTFORM 　いっぱいしゃせーしてくださいねっ
+						PRINTFORM   가득 감사할 수 있다─해 주세요
 						CALL HEARTCB
 						PRINTFORMW 」
 					ENDIF
-				;早漏
+				;조루
 				CASE 4
 					IF RAND:2 == 0
-						PRINTFORM 「入れてすぐイっちゃうなんて……早漏さんも可愛いですっ
+						PRINTFORM 「넣자마자 가 버리다는…… 조루씨도 사랑스럽습니닷
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「それにイったばっかりなのにとっても硬くて……%RAND_SPLIT("まだまだ射精できそうですし/ロリコンさんの早漏ちんぽ、癖になっちゃいそうです")%
+						PRINTFORM 「거기에 갔던 바로 직후인데 있어서도 딱딱해서……%RAND_SPLIT("아직도 사정할 수 있을 것 같고/로리콘씨의 조루 자지, 버릇이 되어 버릴 것 같습니다")%
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「このまま何度も何度も%RAND_SPLIT("射精/ぴゅっぴゅして")%、リリーの%RAND_SPLIT("淫乱まんこ/ロリまんこ/おまんこ")%%RAND_SPLIT("いっぱいにして/満足させて")%くださいねっ
+						PRINTFORM 「이대로 몇번이나 몇번이나%RAND_SPLIT("사정/해")%, 릴리의%RAND_SPLIT("음란 보지/로리 보지/보지")%%RAND_SPLIT("가득 해/만족시켜")%주세요
 						CALL HEARTCB
 						PRINTFORMW 」
 					ELSE
-						PRINTFORM 「%RAND_SPLIT("こんなに早くイっちゃうなんて/早漏ザーメン注がれちゃいましたぁ/ロリコンザーメンに汚されちゃいましたぁ")%……%CNAME(MASTER)%ったら、こーふんし過ぎですよっ
+						PRINTFORM 「%RAND_SPLIT("이렇게 빨리 가 버리다니/조루 정액 따라져 버렸습니다/로리콘 정액에 더럽혀져 버렸습니다아")%……%CNAME(MASTER)%도 참, 개─너무 분합니다
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「ほんと、仕方のない子ですね
+						PRINTFORM 「정말, 어쩔 수 없는 아이군요
 						CALL HEARTCB
-						PRINTFORM 　ロリコンさんのドロドロザーメン、%RAND_SPLIT("リリーの妖精/リリーのキツキツ/リリーのお")%まんこでた～っぷり搾り取ってあげますね
+						PRINTFORM   로리콘씨의 질척질척 정액,%RAND_SPLIT("릴리의 요정/릴리의 바둥바둥/릴리의")%보지로 충분히 짜내 주네요
 						CALL HEARTCB
 						PRINTFORMW 」
 					ENDIF
-				;前立腺射精
+				;전립선 사정
 				CASE 5
-					PRINTFORM 「%RAND_SPLIT("トコロテン射精/おしりアクメ")%しながらリリーに中出しまでしちゃうなんて……器用なヘンタイさんっ
+					PRINTFORM 「%RAND_SPLIT("우무 사정/엉덩이 절정")%하면서 릴리에 질내사정까지 해 버리다는…… 요령 있는 변태씨
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「ほら
+					PRINTFORM 「이봐요
 					CALL HEARTCB
-					PRINTFORM 　今度はお尻なんかじゃなくて、ちゃんとリリーの%RAND_SPLIT("膣内/おまんこ/身体")%でイってくださいよ
+					PRINTFORM   이번은 엉덩이 따위가 아니고, 분명하게 릴리의%RAND_SPLIT("질내/보지/신체")%로 가 주세요
 					CALL HEARTCB
 					PRINTFORMW 」
-				;その他
+				;그 외
 				CASEELSE
 					IF RAND:2 == 0
-						PRINTFORM 「リリーのおまんこで上手にぴゅっぴゅできましたね
+						PRINTFORM 「릴리의 보지로 능숙함할 수 있었어요
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「まだまだ抜いてあげませんよ
+						PRINTFORM 「아직도 뽑아 주지 않아요
 						CALL HEARTCB
-						PRINTFORM 　抜かずに何発できるか、挑戦してみようね
+						PRINTFORM   뽑지 않고 몇 발 할 수 있는지, 도전해 보자
 						CALL HEARTCB
 						PRINTFORMW 」
 					ELSE
-						PRINTFORM 「えへへっ
+						PRINTFORM 「에헤헷
 						CALL HEARTCB
-						PRINTFORM 　%CNAME(MASTER)%に中出しされちゃうなんて、なんだかこーふんしちゃいます
+						PRINTFORM 　%CNAME(MASTER)%에 질내사정되어 버리다니 뭔가 개─분해 버립니다
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「ほらほらっ、もう一回ですよ
+						PRINTFORM 「이봐요 이봐요, 다시 한번이에요
 						CALL HEARTCB
-						PRINTFORM 　一発や二発の中出しじゃリリーは満足しませんからねっ
+						PRINTFORM   일발이나 2발의 질내사정은 릴리는 만족하지 않기 때문에
 						CALL HEARTCB
 						PRINTFORMW 」
 					ENDIF
 			ENDSELECT
 		ENDIF
 
-		;中出し後更に性交共通地の文
+		;질내사정 후 더욱 성교 공통 지문
 		IF RAND:3 == 0
-			PRINTFORMDW 　リリーは%RAND_SPLIT("射精した/イった")%ばかりの剛直を深く咥え込んだまま、ゆっくりと搾精運動を再開した…
+			PRINTFORMDW   릴리는%RAND_SPLIT("사정했다/갔다")%뿐인 강직을 깊게 문 채로, 천천히 착정운동을 재개했다…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW 　%RAND_SPLIT("膣奥に吐き出された精/生中出しの快感")%にすっかり発情したリリーは、%CALLNAME:MASTER%の子種を求めて%RAND_SPLIT("いやらしく腰をくねらせた/はしたない声を漏らした/子猫の様に甘えてきた")%…
+			PRINTFORMDW 　%RAND_SPLIT("질 안쪽으로 토해내진 정령/생 질내사정의 쾌감")%에 완전히 발정한 릴리는,%CALLNAME:MASTER%의 자식을 요구해%RAND_SPLIT("추잡하게 허리를 구불거리게 할 수 있었다/상스러운 소리를 흘렸다/새끼 고양이와 같이 응석부려 왔다")%…
 		ELSE
-			PRINTFORMDW 　リリーは膣内の精液が溢れ出さないよう%RAND_SPLIT("子宮口にぐりぐりと亀頭を押し付け/ピタリと腰を密着させ")%、痴悦に蕩けきった笑顔で更なる射精をねだった…
+			PRINTFORMDW   릴리는 질내의 정액이 흘러넘치기 시작하지 않게%RAND_SPLIT("자궁입구에 동글동글 귀두를 강압하고/꼭 허리를 밀착시키고")%, 치열에 다 녹은 웃는 얼굴로 한층 더 사정을 졸랐다…
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;膣内空射精→性交以外のコマンド
+	;질내 하늘 사정→성교 이외의 커맨드
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 4
-		PRINTFORMDW 　%RAND_SPLIT("射精を伴わない/射精限界を超えた/ドライオーガズムの")%強烈な%RAND_SPLIT("快楽/絶頂/悦楽/快感")%が%RAND_SPLIT("肉棒/剛直")%をビクビクと震わせ、子種を求める幼い膣内を乱暴に掻き回した…
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 4
+		PRINTFORMDW 　%RAND_SPLIT("사정을 수반하지 않는다/사정 한계를 넘었다/드라이 오르가즘의")%강렬한%RAND_SPLIT("쾌락/절정/열락/쾌감")%가%RAND_SPLIT("육봉/강직")%를 움찔움찔 진동시켜 자식을 요구하는 어린 질내를 난폭하게 휘저었다…
 		SELECTCASE RANDEVENT(2, 24)
 			CASE 0
-				PRINTFORM 「タマタマ空っぽなのに、おまんこで思いっ切り搾り取っちゃいましたぁ
+				PRINTFORM 「타마타마 텅 빈데, 보지로 마음껏 짜내 버렸습니다아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「%CNAME(MASTER)%の肉バイブ、とっても気持ち良かったですよ
+				PRINTFORM 「%CNAME(MASTER)%의 고기 바이브, 매우 기분 좋았던 것이에요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORM 「もうザーメン空っぽみたいですねぇ
+				PRINTFORM 「이제(벌써) 정액 텅텅같네요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「射精出来ないのにイかされちゃうって、どんな気分なんですか？」
-				PRINTFORM 「なんて……頭が真っ白になるくらいの快感、リリーのおまんこにもしっかり伝わってきましたよ
+				PRINTFORMW 「사정 할 수 없는데 가게 되어 버린다고, 어떤 기분입니까?」
+				PRINTFORM 「…… 머리가 새하얗게 될 정도의 쾌감, 릴리의 보지에도 확실히 전해져 왔어요
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
@@ -565,73 +565,73 @@ IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 2, 4) > 0
 	ENDIF
 	
 	;-------------------------
-	;その他（膣内射精→性交以外のコマンド）
+	;그 외(질내 사정→성교 이외의 커맨드)
 	;-------------------------
-	;調教対象射精種派生
-	SELECTCASE NOWEX:MASTER:射精
-		;大量射精
+	;조교 대상 사정종 파생
+	SELECTCASE NOWEX:MASTER:사정
+		;대량 사정
 		CASE 3
 			SELECTCASE RANDEVENT(2, 25)
 				CASE 0
-					PRINTFORM 「お腹たぷたぷになっちゃいました……えへへ
+					PRINTFORM 「배 출렁출렁이 되어 버렸습니다…… 에헤헤
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「それじゃ、今度はおまんこ以外の場所で搾っちゃおうかな
+					PRINTFORM 「그러면, 이번은 보지 이외의 장소에서 짜 버릴까
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「いっぱい注がれちゃったぁ
+					PRINTFORM 「가득 따라져 버렸다아
 					CALL HEARTCB
-					PRINTFORM 　こんなに出るなんて、リリーもビックリですよ
+					PRINTFORM   이렇게 나오다니 릴리도 놀라요
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「もっともっと、ぴゅっぴゅさせてあげますね
+					PRINTFORM 「좀더 좀더, 시켜 주네요
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
-		;射精(早漏)
+		;사정(조루)
 		CASE 4
 			SELECTCASE RANDEVENT(2, 26)
 				CASE 0
-					PRINTFORM 「早漏おちんぽ、イっちゃいましたね
+					PRINTFORM 「조루 자지, 가 버렸어요
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「リリーのおまんこは、%CNAME(MASTER)%には刺激が強かったみたいですね
+					PRINTFORM 「릴리의 보지는,%CNAME(MASTER)%에는 자극이 강했던 것 같네요
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「挿入れる前から暴発寸前でしたもんねっ
+					PRINTFORM 「삽입할 수 있는 전부터 폭발 직전이었습니다인 거네요
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「でも、こんなに早くイっちゃうなんて……ダメダメですよっ
+					PRINTFORM 「그렇지만, 이렇게 빨리 가 버리다는…… 안돼 안됩니다
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
-		;A責射精
+		;A책사정
 		CASE 5
-			PRINTFORM 「えっちしながらでもトコロテン射精って出来るなんて……器用な子
+			PRINTFORM 「엣치하면서라도 우무 사정은 할 수 있다는…… 요령 있는 아이
 			CALL HEARTCB
 			PRINTFORMW 」
-			PRINTFORM 「いつも『ビクビクっ！びゅびゅぅぅー！』なのに、今のは『ふるふる…じわぁ…』って感じでしたねっ
+			PRINTFORM 「언제나 『움찔움찔! 뷰뷰우─!』인데, 지금 것은 『흔들흔들… 글자원…』라는 느낌이었지요
 			CALL HEARTCB
 			PRINTFORMW 」
-		;その他
+		;그 외
 		CASEELSE
 			SELECTCASE RANDEVENT(2, 27)
 				CASE 0
-					PRINTFORM 「せーえき……あったかぁい
+					PRINTFORM 「정액…… 있었는지있고
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「中出しえっち……気持ちよかったですね
+					PRINTFORM 「질내사정 엣치…… 기분 좋았던 것이군요
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「えへへっ
+					PRINTFORM 「에헤헷
 					CALL HEARTCB
-					PRINTFORM 　中出しせっくす、気持ち良かったね
+					PRINTFORM   질내사정 섹스, 기분 좋았지요
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「今度はおまんこ以外でも、ぴゅっぴゅさせてあげますね
+					PRINTFORM 「이번은 보지 이외에도, 시켜 주네요
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
@@ -640,47 +640,47 @@ IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 2, 4) > 0
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;腸内射精直後(調教対象→調教者)
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;장내 사정 직후(조교 대상→조교자)
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 6, 8)
+IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 6, 8)
 	;=================================================
-	;空射精
+	;하늘 사정
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 8
-		PRINTFORMDW 　%RAND_SPLIT("射精を伴わない/射精限界を超えた")%強烈な%RAND_SPLIT("快楽/絶頂/悦楽/快感")%が%RAND_SPLIT("肉棒/剛直")%をビクビクと震わせ、子種を求める幼い膣内を乱暴に掻き回した…
-		PRINTFORM 「%RAND_SPLIT("ひぃあっ！！　んっ、空打ちらぁ/んっんうぅ/あっひあ゛あ゛っ/ひぃんっ")%
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 8
+		PRINTFORMDW 　%RAND_SPLIT("사정을 수반하지 않는다/사정 한계를 넘었다")%강렬한%RAND_SPLIT("쾌락/절정/열락/쾌감")%가%RAND_SPLIT("육봉/강직")%를 움찔움찔 진동시켜 자식을 요구하는 어린 질내를 난폭하게 휘저었다…
+		PRINTFORM 「%RAND_SPLIT("히아!!   응, 하늘 치는 것등//아히아″아″/히이읏")%
 		CALL HEARTCB
-		PRINTFORM 　ザーメンじゃないのがっピュクピュク～っておしりにぃ
+		PRINTFORM   정액이 아닌 것이 퓨크퓨크~는 엉덩이에
 		CALL HEARTCB
 		PRINTFORMW 」
-		PRINTFORM 「いまの
+		PRINTFORM 「지금의
 		CALL HEARTCB
-		PRINTFORM 　とってもすごかったれすね
+		PRINTFORM   매우 처나 축 늘어차고 무릎
 		CALL HEARTCB
 		PRINTFORMW 」
 		RETURN 1
 	ENDIF
 		
 	;=================================================
-	;空射精以外
+	;하늘 사정 이외
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		SELECTCASE RANDEVENT(2, 28)
 			CASE 0
-				PRINTFORM 「おしりの中にぴゅっぴゅされちゃいましたぁ
+				PRINTFORM 「엉덩이안되어 버렸습니다아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「これぇ…んぅ、癖になっちゃいそうです
+				PRINTFORM 「이거어… 응우, 버릇이 되어 버릴 것 같습니다
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORM 「えへへっ
+				PRINTFORM 「에헤헷
 				CALL HEARTCB
-				PRINTFORM 　おしりでいっぱい搾り取っちゃいました
+				PRINTFORM   엉덩이로 가득 짜내 버렸습니다
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「快楽の為だけのせっくすなんて……こーふんしちゃいますね
+				PRINTFORM 「쾌락을 위해서(때문에)만의 섹스는…… 개─분해 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
@@ -689,56 +689,56 @@ IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 6, 8)
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;性交系（調教者→調教対象）
+;성교계(조교자→조교 대상)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;膣内射精直後(調教者→調教対象)
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;질내 사정 직후(조교자→조교 대상)
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(90) && GROUPMATCH(TFLAG:前回中出し, 1, 3)
+IF 구상기입체크(90) && GROUPMATCH(TFLAG:전회질내사정, 1, 3)
 	;=================================================
-	;空射精
+	;하늘 사정
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 3
-		PRINTFORM 「あ゛っ、あぁ
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 3
+		PRINTFORM 「아″, 아아
 		CALL HEARTCB
 		PRINTFORMW 」
-		PRINTFORM 「もう……限界れしゅ
+		PRINTFORM 「이제…… 한계종류
 		CALL HEARTCB
 		PRINTFORMW 」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;空射精以外
+	;하늘 사정 이외
 	;=================================================
-	IF 口上記入チェック(100)
-		SELECTCASE NOWEX:射精
-			;大量射精
+	IF 구상기입체크(100)
+		SELECTCASE NOWEX:사정
+			;대량 사정
 			CASE 3
-				PRINTFORM 「すごく、いっぱい射精できた気がします
+				PRINTFORM 「굉장히, 가득 사정할 수 있던 것 같습니다
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「びゅっびゅ、びゅるるるぅって……射精がずぅっと止まらないの
+				PRINTFORM 「븃뷰, 는…… 사정이 쭉 멈추지 않는거야
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「%CNAME(MASTER)%のおまんこ……最高ですよ
+				PRINTFORM 「%CNAME(MASTER)%의 보지…… 최고예요
 				CALL HEARTCB
 				PRINTFORMW 」
-			;その他
+			;그 외
 			CASEELSE
 				SELECTCASE RANDEVENT(2, 29)
 					CASE 0
-						PRINTFORM 「ザーメン搾り取られちゃいましたぁ
+						PRINTFORM 「정액 짜내져 버렸습니다아
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「んっ……まだ、もっと中出しせっくすしましょうね
+						PRINTFORM 「읏…… 아직, 좀 더 질내사정 섹스 해요
 						CALL HEARTCB
 						PRINTFORMW 」
 					CASE 1
-						PRINTFORM 「おまんこの中、妖精ザーメンいっぱい射精しちゃいましたぁ
+						PRINTFORM 「보지안, 요정 정액 가득 사정해 버렸습니다아
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「このまま注ぎ続けて、リリー専用のオナホールにしてあげますね
+						PRINTFORM 「계속 이대로 따라, 릴리 전용의 오나홀로 해 주네요
 						CALL HEARTCB
 						PRINTFORMW 」
 				ENDSELECT
@@ -748,40 +748,40 @@ IF 口上記入チェック(90) && GROUPMATCH(TFLAG:前回中出し, 1, 3)
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;腸内射精直後(調教者→調教対象)
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;장내 사정 직후(조교자→조교 대상)
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 5, 7)
+IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 5, 7)
 	;=================================================
-	;空射精
+	;하늘 사정
 	;=================================================
-	IF 口上記入チェック(100) && TFLAG:前回中出し == 7
-		PRINTFORM 「あっ…はぁ…はぁん
+	IF 구상기입체크(100) && TFLAG:전회질내사정 == 7
+		PRINTFORM 「앗… 하아… 하앙
 		CALL HEARTCB
 		PRINTFORMW 」
-		PRINTFORM 「もうっ…空っぽにゃのに…おしりしゅごいれすぅ
+		PRINTFORM 「이제(벌써) … 텅텅의 것에… 엉덩이 굉장합니다
 		CALL HEARTCB
 		PRINTFORMW 」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;空射精以外
+	;하늘 사정 이외
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		SELECTCASE RANDEVENT(2, 30)
 			CASE 0
-				PRINTFORM 「可愛い反応
+				PRINTFORM 「사랑스러운 반응
 				CALL HEARTCB
-				PRINTFORM 　おしりに射精した瞬間の、%CNAME(MASTER)%のはしたない声……最高でしたよ
+				PRINTFORM   엉덩이에 사정한 순간의,%CNAME(MASTER)%의 상스러운 소리…… 최고였어요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORMW 「あはぁっ♪　ちゃんとリリーの精液……味わってますか？」
-				PRINTFORM 「リリーみたいな女の子に後ろの穴を犯されて、感じちゃったんですよね
+				PRINTFORMW 「아하앗♪  분명하게 릴리의 정액…… 맛보고 있습니까?」
+				PRINTFORM 「릴리 같은 여자 아이에게 뒤의 구멍을 범해져, 느껴 버린 것이군요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「ほら…いい子にできたら、もっともっと激しく犯してあげますね
+				PRINTFORM 「이봐요… 좋은 아이가 할 수 있으면, 좀더 좀더 격렬하게 범해 주네요
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
@@ -790,74 +790,74 @@ IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 5, 7)
 ENDIF
 
 
-;────────────────────────────────────
-;性交中・性交奉仕中 FIRSTEVENT(40)～
-;────────────────────────────────────
-;関連変数…
-;TEQUIP:性交中(調教者が調教対象に挿入中) (1=正常位/2=後背位/3=騎乗位/4=対面座位/5=背面座位/6=アナルセックス)
-;TEQUIP:性交奉仕中(調教対象が調教者に挿入中) 内容は上記のものと同じ
+;─
+;성교중·성교 봉사중 FIRSTEVENT(40)~
+;─
+;관련 변수…
+;TEQUIP:성교중(조교자가 조교 대상으로 삽입중) (1=정상위/2=후배위/3=승마위/4=대면좌위/5=배면좌위/6=애널 섹스)
+;TEQUIP:성교 봉사중(조교 대상이 조교자에게 삽입중) 내용은 상기의 것과 같음
 ;
-;関連関数…
-;V_SEX (=TARGET, TEQUIP:性交中 < 6/=MASTER, TEQUIP:性交奉仕中 < 6)と同義
-;A_SEX (=TARGET, TEQUIP:性交中 == 6/MASTER, TEQUIP:性交奉仕中 == 6)と同義
+;관련 함수…
+;V_SEX (=TARGET, TEQUIP:성교중 < 6/=MASTER, TEQUIP:성교 봉사중 < 6)와 동의
+;A_SEX (=TARGET, TEQUIP:성교중 == 6/MASTER, TEQUIP:성교 봉사중 == 6)와 동의
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;性交中(調教者→調教対象)
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;성교중(조교자→조교 대상)
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(40) && TEQUIP:性交中 && MENUMATCH(TFLAG:ACT, "性交")
+IF 구상기입체크(40) && TEQUIP:성교중 && MENUMATCH(TFLAG:ACT, "성교")
 	;=================================================
-	;ペニスバンド使用
+	;페니스 밴드 사용
 	;=================================================
-	IF 口上記入チェック(100) && !PENIS(TARGET) && TEQUIP:調教者ペニスバンド
-		;アナルセックス中
+	IF 구상기입체크(100) && !PENIS(TARGET) && TEQUIP:조교자페니스밴드
+		;애널 섹스중
 		IF A_SEX()
-			;「続けて腰を振る」に続く
-			IF TEQUIP:性交中 == POSITION(TFLAG:ACT)
-				PRINTFORMW 「%RAND_SPLIT("あはは/ほら/おしりで感じちゃってるんだぁ")%っ♪　この%RAND_SPLIT("ディルド/オモチャ/ペニスバンド")%凄いでしょう♪」
-				PRINTFORMW 「射精はできないけど……その代わり、%RAND_SPLIT("リリーが飽きるまで/お尻の穴がバカになっちゃうくらい")%ガンガン%RAND_SPLIT("犯して/突いて/掘って")%あげるねっ♪」
-			;その他
+			;「계속해 허리를 흔든다」에 계속된다
+			IF TEQUIP:성교중 == POSITION(TFLAG:ACT)
+				PRINTFORMW 「%RAND_SPLIT("아하하/이봐요/엉덩이로 느껴 버리고 있다아")%♪  이%RAND_SPLIT("딜도/장난감/페니스 밴드")%굉장한 것입니다♪」
+				PRINTFORMW 「사정은 할 수 없지만…… 그 대신해,%RAND_SPLIT("릴리가 질릴 때까지/엉덩이의 구멍이 바보가 되어 버릴 정도")%땅땅%RAND_SPLIT("범해/찔러/파")%준다♪」
+			;그 외
 			ELSE
-				PRINTFORMW 「%RAND_SPLIT("えっちな声で喘いじ/ビクビク震えち")%ゃって……%RAND_SPLIT("おしり/うんち/後ろ")%の穴、そんなに気持ちいの？」
-				PRINTFORM 「%RAND_SPLIT("極太のディルドを/ペニスバンドを/偽物のおちんちん")%咥え込んで、%RAND_SPLIT("ご主人様/リリー/小さな女の子")%に犯されて感じちゃってるんだぁ
+				PRINTFORMW 「%RAND_SPLIT("엣치한 소리로 천유지/움찔움찔 흔들림")%는……%RAND_SPLIT("엉덩이/똥/뒤")%의 구멍, 그렇게 기분 있고의?」
+				PRINTFORM 「%RAND_SPLIT("극태의 딜도를/페니스 밴드를/가짜의 자지")%물어,%RAND_SPLIT("주인님/릴리/작은 여자 아이")%에 범해지고 느껴 버리고 있다아
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「%RAND_SPLIT("最高/いい")%ですよ、%CNAME(MASTER)%の%RAND_SPLIT("情けない/はしたない")%姿……もっとリリーに見せてくださいね
+				PRINTFORM 「%RAND_SPLIT("최고/좋다")%예요,%CNAME(MASTER)%의%RAND_SPLIT("한심하다/상스럽다")%모습…… 좀 더 릴리에 보여 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
 			ENDIF
-		;その他の膣性交系
+		;그 외의 질성교계
 		ELSE
-			;「続けて腰を振る」に続く
-			IF TEQUIP:性交中 == POSITION(TFLAG:ACT)
-				PRINTFORMW 「%RAND_SPLIT("もう終わりだって思いました？　/")%まだまだ抜いてあげませんよ♪」
-				PRINTFORMW 「折角%CNAME(MASTER)%の為に手に入れた%RAND_SPLIT("ディルド/ペニスバンド/偽物のおちんちん")%なんですから……」
-				PRINTFORM 「いーっぱい使わなきゃ勿体ないですよねっ
+			;「계속해 허리를 흔든다」에 계속된다
+			IF TEQUIP:성교중 == POSITION(TFLAG:ACT)
+				PRINTFORMW 「%RAND_SPLIT("벌써 끝이라도 생각했습니까?   /")%아직도 뽑아 주지 않아요♪」
+				PRINTFORMW 「모처럼%CNAME(MASTER)%를 위해서(때문에) 손에 넣었다%RAND_SPLIT("딜도/페니스 밴드/가짜의 자지")%이니까……」
+				PRINTFORM 「가득 사용하지 않으면 아깝지요
 				CALL HEARTCB
 				PRINTFORMW 」
-			;その他
+			;그 외
 			ELSE
 				SELECTCASE RANDEVENT(3, 31)
 					CASE 0
-						PRINTFORM 「%RAND_SPLIT("うふふ/あはは")%っ♪　%CNAME(MASTER)%の%RAND_SPLIT("おまんこ/子宮")%がザーメン欲しがって吸い付いてきますよっ
+						PRINTFORM 「%RAND_SPLIT("후후/아하하")%♪  %CNAME(MASTER)%의%RAND_SPLIT("보지/자궁")%가 정액 갖고 싶어해 달라붙어 와요
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORMW 「でも、これ本物じゃなくて%RAND_SPLIT("ディルド/ペニスバンド/偽物のおちんちん")%なんですよねぇ……」
-						PRINTFORM 「いつか、%CNAME(MASTER)%が望むなら……本物のおちんちんでリリーの赤ちゃん孕ませてあげますからね
+						PRINTFORMW 「그렇지만, 이것 진짜가 아니고%RAND_SPLIT("딜도/페니스 밴드/가짜의 자지")%이예요……」
+						PRINTFORM 「언젠가,%CNAME(MASTER)%가 바란다면…… 진짜의 자지로 릴리의 아기 임신하게 해 주니까요
 						CALL HEARTCB
 						PRINTFORMW 」
 					CASE 1
-						PRINTFORMW 「どうですか？　こ%RAND_SPLIT("のディルド/のペニスバンド/のおちんちん/れ")%凄いでしょう♪」
-						PRINTFORM 「%RAND_SPLIT("イボもカリも自由自在/硬くて、太くて/生ちんぽじゃ届かない場所をゴリュゴリュってして")%……しかも絶対に萎えないオモチャのおちんちん、たっぷり味わってくださいねっ
+						PRINTFORMW 「어떻습니까?   와%RAND_SPLIT("의 딜도/의 페니스 밴드/의 자지/")%굉장한 것입니다♪」
+						PRINTFORM 「%RAND_SPLIT("돌기도 칼리도 자유자재/딱딱하고, 굵어서/생 자지는 닿지 않는 장소를 고류고류는 해")%…… 게다가 절대로 쇠약해지지 않는 장난감의 자지, 충분히 맛봐 주세요
 						CALL HEARTCB
 						PRINTFORMW 」
 					CASE 2
-						PRINTFORMW 「バイブとペニスバンドの違いってわかりますか？」
-						PRINTFORMW 「ふふっ♪　今したばっかりじゃないですか♪」
-						PRINTFORM 「愛撫でも自慰でもない……深く繋がる『セックス』ができるって事ですよ
+						PRINTFORMW 「바이브와 페니스 밴드의 차이는 압니까?」
+						PRINTFORMW 「후훗♪  지금 한지 얼마 안됨이 아닙니까♪」
+						PRINTFORM 「애무도 자위도 아닌…… 깊게 연결되는 『섹스』가 할 수 있다는 일이에요
 						CALL HEARTCB
 						PRINTFORMW 」
-						PRINTFORM 「ほら、リリーのおちんちんに奥まで貫かれてるの、感じるでしょう
+						PRINTFORM 「이봐요, 릴리의 자지에 안쪽까지 관철해지고 있는 것, 느끼겠지요
 						CALL HEARTCB
 						PRINTFORMW 」
 				ENDSELECT
@@ -867,54 +867,54 @@ IF 口上記入チェック(40) && TEQUIP:性交中 && MENUMATCH(TFLAG:ACT, "性
 	ENDIF
 	
 	;=================================================
-	;アナルセックス(Ａ性交)
+	;애널 섹스(A성교)
 	;=================================================
-	IF 口上記入チェック(100) && A_SEX()
-		;「続けて腰を振る」に続く
-		IF TEQUIP:性交中 == POSITION(TFLAG:ACT)
+	IF 구상기입체크(100) && A_SEX()
+		;「계속해 허리를 흔든다」에 계속된다
+		IF TEQUIP:성교중 == POSITION(TFLAG:ACT)
 			SELECTCASE RANDEVENT(3, 32)
 				CASE 0
-					PRINTFORM 「%RAND_SPLIT("あはぁっ/いいよっ/これ最高ですぅ")%
+					PRINTFORM 「%RAND_SPLIT("아는/좋아/이것 최고입니다아")%
 					CALL HEARTCB
-					PRINTFORM 　%RAND_SPLIT("おしり/アナル")%すごく%RAND_SPLIT("締め付けて/吸い付いて")%きますよっ
+					PRINTFORM 　%RAND_SPLIT("엉덩이/애널")%굉장히%RAND_SPLIT("단단히 조여/달라붙어")%와요
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%CNAME(MASTER)%に%RAND_SPLIT("妖精ザーメン/リリーのせーえき")%全部搾り取られちゃうよぉっ
+					PRINTFORM 「%CNAME(MASTER)%에%RAND_SPLIT("요정 정액/릴리의 정액")%전부 짜내져 버린다
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「ねぇ、%CNAME(MASTER)%の大切な%RAND_SPLIT("おしりの穴/うんちの穴")%……壊しちゃおっか
+					PRINTFORM 「저기,%CNAME(MASTER)%의 중요한%RAND_SPLIT("엉덩이의 구멍/응 치노구멍")%…… 부수어 버릴까
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("肛内粘膜/腸壁")%が捲れ上がっちゃうくらい激しくして……%RAND_SPLIT("真っ赤/綺麗")%な%RAND_SPLIT("薔薇の花/アナルローズ")%、咲かせちゃうんですっ
+					PRINTFORM 「%RAND_SPLIT("항내 점막/장벽")%가 걷어올려 버릴 정도로 격렬하게 해……%RAND_SPLIT("빨강/예쁘다")%인%RAND_SPLIT("장미꽃/애널 로즈")%, 피게 해 버립니닷
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「ほら、いきますよ？　%RAND_SPLIT("かわいく/はしたなく")%喘いで、早くリリーを満足させてくださいねっ
+					PRINTFORM 「이봐요, 가요?   %RAND_SPLIT("귀엽고/상스럽고")%허덕여, 빨리 릴리를 만족시켜 주세요
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 2
-					PRINTFORM 「ほらぁ……リリーの%RAND_SPLIT("生/お/ふたなり")%ちんぽ、ちゃんと味わってますかぁ
+					PRINTFORM 「이봐요…… 릴리의%RAND_SPLIT("생//후타나리")%자지, 분명하게 맛보고 있습니까
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORMW 「これ、%CNAME(MASTER)%が願ったんですもんね～？」
-					PRINTFORM 「『リリー様に%RAND_SPLIT("デカマラ/デカチンポ/ぶっといおちんぽ")%生やして、%RAND_SPLIT("激しく/気絶するまで/ガンガン")%犯されたい』って
+					PRINTFORMW 「이것,%CNAME(MASTER)%가 바란 것이지요~?」
+					PRINTFORM 「『릴리님에게%RAND_SPLIT("왕자지/왕자지/물어 자지")%길러,%RAND_SPLIT("격렬하고/기절할 때까지/땅땅")%범해지고 싶다』는
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「願いの責任は……取らなきゃダメですよねっ
+					PRINTFORM 「소원의 책임은…… 취하지 않으면 안됩니다
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
-		;その他
+		;그 외
 		ELSE
 			SELECTCASE RANDEVENT(2, 33)
 				CASE 0
-					PRINTFORMW 「リリーのおちんちん、%CNAME(MASTER)%のお尻に入っちゃいましたぁ……」
-					PRINTFORMW 「ほら、ちゃーんとおしゃぶりして……リリーを気持ち良くしてくださいねっ♪」
+					PRINTFORMW 「릴리의 자지,%CNAME(MASTER)%의 엉덩이에 들어와 버렸습니다아……」
+					PRINTFORMW 「이봐요, 분명하게 빨아…… 릴리를 기분 좋게 해 주세요♪」
 				CASE 1
-					PRINTFORM 「どうでしゅか～？　おしちえっち、きもちいでしゅね～
+					PRINTFORM 「어떻게로 주가~?   7엣치, 기분 있고로 종류군요~
 					CALL HEARTCB
-					PRINTFORMW 　あははっ♪」
-					PRINTFORM 「%RAND_SPLIT("脳みそ/腰/おしりの穴/うんちの穴")%が快感で蕩けちゃうくらい、たっぷり%RAND_SPLIT("ハメハメ/パコパコ/犯")%してあげましゅね
+					PRINTFORMW   아하하♪」
+					PRINTFORM 「%RAND_SPLIT("뇌수/요/엉덩이의 구멍/응 치노구멍")%가 쾌감으로 녹아 버릴 정도로, 충분히%RAND_SPLIT("하메하메/파코 파코/범")%해 종류군요
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
@@ -923,40 +923,40 @@ IF 口上記入チェック(40) && TEQUIP:性交中 && MENUMATCH(TFLAG:ACT, "性
 	ENDIF
 	
 	;=================================================
-	;その他の性交系(Ｖ性交)
+	;그 외의 성교계(V성교)
 	;=================================================
-	IF 口上記入チェック(100) && V_SEX()
-		;「続けて腰を振る」に続く
-		IF TEQUIP:性交中 == POSITION(TFLAG:ACT)
+	IF 구상기입체크(100) && V_SEX()
+		;「계속해 허리를 흔든다」에 계속된다
+		IF TEQUIP:성교중 == POSITION(TFLAG:ACT)
 			SELECTCASE RANDEVENT(2, 34)
 				CASE 0
-					PRINTFORM 「おちんぽ抜いて欲しいの？……だ～めっ
+					PRINTFORM 「자지 뽑았으면 좋은거야? …… 안됏
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%CNAME(MASTER)%のおまんこが、%RAND_SPLIT("おちんぽ/リリー")%のカタチを覚えるまで%RAND_SPLIT("ずっとハメハメするんです/抜いてあげませんよ")%っ
+					PRINTFORM 「%CNAME(MASTER)%의 보지가,%RAND_SPLIT("자지/릴리")%의 모양을 기억할 때까지%RAND_SPLIT("쭉 하메하메 합니다/뽑아 주지 않아요")%
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「%RAND_SPLIT("あはぁっ/いいよっ/んはぁ")%
+					PRINTFORM 「%RAND_SPLIT("아는/좋아/응하아")%
 					CALL HEARTCB
-					PRINTFORM 　えっちな腰使い、だんだん%RAND_SPLIT("様になって/上手になって/慣れて")%きましたね
+					PRINTFORM   엣치한 허리사용, 점점%RAND_SPLIT("님이 되어/능숙하게 되어/익숙해져")%왔어요
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("リリーの赤ちゃん孕むつもりで/リリーのザーメン搾り取るつもりで/忘れないうちに")%……もう一回、シてみようね
+					PRINTFORM 「%RAND_SPLIT("릴리의 아기 임신할 생각으로/릴리의 정액 짜낼 생각으로/잊지 않는 동안에")%…… 다시 한번, 시라고 보자
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
-		;その他
+		;그 외
 		ELSE
 			SELECTCASE RANDEVENT(2, 35)
 				CASE 0
-					PRINTFORMW 「%CNAME(MASTER)%のおまんこ、使う度にどんどん具合が良くなっていきますよっ♪」
-					PRINTFORM 「もうすっかり、リリーの%RAND_SPLIT("ザーメン/精液/おちんちん/ふたなりちんぽ")%の味を覚えちゃいましたね
+					PRINTFORMW 「%CNAME(MASTER)%의 보지, 사용할 때에 자꾸자꾸 상태가 좋아져 가요♪」
+					PRINTFORM 「이제(벌써) 완전히, 릴리의%RAND_SPLIT("정액/정액/자지/후타나리 자지")%의 맛을 기억해 버렸어요
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORMW 「%RAND_SPLIT("おまんこ/膣内")%とろとろになっちゃいましたねっ♪」
-					PRINTFORM 「%RAND_SPLIT("にゅるにゅる～って/ねっとり/ざらざらした/プリプリのえっちな")%粘膜が絡みついてきてっ、たまんないです
+					PRINTFORMW 「%RAND_SPLIT("보지/질내")%녹진녹진이 되어 버렸어요♪」
+					PRINTFORM 「%RAND_SPLIT("미끄덩미끄덩~는/끈적/거슬거슬 했다/탱탱의 엣치한")%점막이 휘감겨 와, 견딜 수 없습니다
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
@@ -966,48 +966,48 @@ IF 口上記入チェック(40) && TEQUIP:性交中 && MENUMATCH(TFLAG:ACT, "性
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;性交奉仕中(調教対象→調教者)
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;성교 봉사중(조교 대상→조교자)
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(30) && TEQUIP:性交奉仕中 && MENUMATCH(TFLAG:ACT, "性奉")
+IF 구상기입체크(30) && TEQUIP:성교봉사중 && MENUMATCH(TFLAG:ACT, "성 봉")
 	;=================================================
-	;アナルセックス(Ａ性交奉仕)
+	;애널 섹스(A성교 봉사)
 	;=================================================
-	IF 口上記入チェック(100) && A_SEX(MASTER)
-		;「続けて腰を振る」に続く
-		IF TEQUIP:性交中 == POSITION(TFLAG:ACT)
+	IF 구상기입체크(100) && A_SEX(MASTER)
+		;「계속해 허리를 흔든다」에 계속된다
+		IF TEQUIP:성교중 == POSITION(TFLAG:ACT)
 			SELECTCASE RANDEVENT(2, 36)
 				CASE 0
-					PRINTFORM 「おひりぃ…いいっ%RAND_SPLIT("あはぁっ/いいよっ/んはぁ")%
+					PRINTFORM 「… 좋앗%RAND_SPLIT("아는/좋아/응하아")%
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("おひりでイっちゃいますっ/とめちゃっいやっ/あっ…んぅうっ")%！　もっと奥までおちんぽくらさい
+					PRINTFORM 「%RAND_SPLIT("로 가 버리는/세우면 아니/앗… 응우웃")%!   좀 더 안쪽까지 자지 주세요
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「うひろからぁ、子宮こんこんぅっ♪　おっ…%RAND_SPLIT("ああ゛っ/イっ/ん゛ぐぅ")%
+					PRINTFORM 「로부터, 자궁 콩콩 ♪  …%RAND_SPLIT("아″/이/응″")%
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("もっろ激しくぅ/おひりしゅごい/これダメ")%っ！　おかしくなっひゃ――ッッ
+					PRINTFORM 「%RAND_SPLIT("격렬하고/굉장하다/이것 안돼")%!   이상하고
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
-		;その他
+		;그 외
 		ELSE
 			SELECTCASE RANDEVENT(2, 37)
 				CASE 0
-					PRINTFORM 「%RAND_SPLIT("んぅ…あっ/はひっ…すごっ/ああぁ…ん゛んぅっ/えへへっ")%…%RAND_SPLIT("リリーの恥ずかしい/後ろの/うんちの/おしりの")%穴が、%RAND_SPLIT("奥まで犯されちゃって/おちんちんのカタチになちゃって/広がっちゃい")%ますぅ
+					PRINTFORM 「%RAND_SPLIT("응… 아/하힛…/아아아… 응″응/에헤헷")%…%RAND_SPLIT("릴리의 부끄럽다/뒤의/응 치노/엉덩이의")%구멍이,%RAND_SPLIT("안쪽까지 범해져 버려/자지의 모양는/퍼져버릴")%
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("イケナイところに当たって/えっちに使う場所じゃないのに/ごりゅごりゅって/おちんぽ入れる場所じゃないのに")%……これ、えっちな声…我慢できなくなっちゃいます
+					PRINTFORM 「%RAND_SPLIT("안 되는 곳에 해당되어/엣치하게 사용하는 장소가 아닌데/는/자지 넣는 장소가 아닌데")%…… 이것, 엣치한 소리… 인내 할 수 없게 되어 버립니다
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「%RAND_SPLIT("あんっ…んぅ/んくっ…はぁ/ぃぃょ…ぁんっ/えへへっ")%…どうかな？　リリーの%RAND_SPLIT("恥ずかしい/後ろの/うんちの/おしりの")%穴、気持ちいでしょ
+					PRINTFORM 「%RAND_SPLIT("팥고물… 응/응쿳… 후~/야…/에헤헷")%… 어떨까?   릴리의%RAND_SPLIT("부끄럽다/뒤의/응 치노/엉덩이의")%구멍, 기분 있고겠지
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORMW 「%RAND_SPLIT("奥までおちんぽ突き込んで、/目茶苦茶に犯して/遠慮しないで/こっちなら")%好きなだけ%RAND_SPLIT("ぴゅっぴゅ/腸内出し/射精")%していいからね……」
-					PRINTFORM 「%CNAME(MASTER)%の%RAND_SPLIT("赤ちゃん汁/ドロドロザーメン/くっさいせーえき")%、%RAND_SPLIT("たくさん飲ませて/いっぱい出して/お腹いっぱいゴクゴクさせて")%くださいね
+					PRINTFORMW 「%RAND_SPLIT("안쪽까지 자지 돌진해,/터무니없게 범해/사양하지 말아줘/여기라면")%를 좋아하는 뿐%RAND_SPLIT("/장우치데 해/사정")%해도 좋으니까……」
+					PRINTFORM 「%CNAME(MASTER)%의%RAND_SPLIT("아기 국물/질척질척 정액/냄새나는 정액")%、%RAND_SPLIT("많이 먹여/가득 내/배 가득 꿀꺽꿀꺽 시켜")%주세요
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
@@ -1016,45 +1016,45 @@ IF 口上記入チェック(30) && TEQUIP:性交奉仕中 && MENUMATCH(TFLAG:ACT
 	ENDIF
 	
 	;=================================================
-	;その他性交奉仕系(Ｖ性交奉仕)
+	;그 외 성교 봉사계(V성교 봉사)
 	;=================================================
-	IF 口上記入チェック(100) && V_SEX(MASTER)
-		;「続けて腰を振る」に続く
-		IF TEQUIP:性交中 == POSITION(TFLAG:ACT)
+	IF 구상기입체크(100) && V_SEX(MASTER)
+		;「계속해 허리를 흔든다」에 계속된다
+		IF TEQUIP:성교중 == POSITION(TFLAG:ACT)
 			SELECTCASE RANDEVENT(2, 38)
 				CASE 0
-					PRINTFORM 「%RAND_SPLIT("生ハメせっくす/生えっちぃ/ああぁっ")%…いいっ%RAND_SPLIT("あはぁっ/いいよっ/んはぁ")%
+					PRINTFORM 「%RAND_SPLIT("생 하메 섹스/생 엣치/아아앗")%… 좋앗%RAND_SPLIT("아는/좋아/응하아")%
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("おまんこイっちゃいますっ/とめちゃっいやっ/頭おかしくなっひゃぅうっ")%！　もっと奥までおちんぽくらさい
+					PRINTFORM 「%RAND_SPLIT("보지 가 버리는/세우면 아니/머리 이상하고 우우")%!   좀 더 안쪽까지 자지 주세요
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「%RAND_SPLIT("いちばん奥にとろいへっ/ちんぽが子宮口キスしてまひっ/おまんこいじめにゃん゛あ゛っ")%！？　おっ…%RAND_SPLIT("ああ゛っ/イっ/ん゛ぐぅ")%
+					PRINTFORM 「%RAND_SPLIT("가장 안쪽에 약한에/자지가 자궁입구 키스 해 마비/보지 이지메응″아″")%!?   …%RAND_SPLIT("아″/이/응″")%
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("あっあっ/イッひゃんっ/リリーらめっ")%…%RAND_SPLIT("もっろ激しくぅ/おちんちんしゅごい/これダメ")%っ！　%RAND_SPLIT("あたま/おまんこ/気もちくへ")%おかしくなっひゃ――ッッ
+					PRINTFORM 「%RAND_SPLIT("아아/익응/릴리등째")%…%RAND_SPLIT("격렬하고/자지 굉장하다/이것 안돼")%!   %RAND_SPLIT("머리/보지/기분구에")%이상하고
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
-		;その他
+		;그 외
 		ELSE
 			SELECTCASE RANDEVENT(2, 39)
 				CASE 0
-					PRINTFORM 「%RAND_SPLIT("んぅ…あっ/はひっ…すごっ/ああぁ…ん゛んぅっ/えへへっ")%…リリーの%RAND_SPLIT("恥ずかしい穴ぁ/ロリまんこ/おまんこが/妖精まんこっ/一番大切な場所が")%、%RAND_SPLIT("奥まで犯されちゃって/おちんちんのカタチになちゃって/おちんちんの味覚えさせられちゃい")%ますぅ
+					PRINTFORM 「%RAND_SPLIT("응… 아/하힛…/아아아… 응″응/에헤헷")%… 릴리의%RAND_SPLIT("부끄러운 구멍/로리 보지/보지가/요정 보지/제일 중요한 장소가")%、%RAND_SPLIT("안쪽까지 범해져 버려/자지의 모양는/자지의 미각네 당해져버릴")%
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("気持ちいとこに当たってぇ/赤ひゃんできちゃうかもしれないのに/ごりゅごりゅって/リリーがご主人様にゃのに/ヘンタイちんぽハメハメされて")%……あぅ…えっちな声…我慢できにゃいれす
+					PRINTFORM 「%RAND_SPLIT("기분 사촌에 해당되어/빨강응 가능하게 될지도 모르는데/는/릴리가 주인님에는의에/변태 자지 하메하메 되어")%…… 아우… 엣치한 소리… 인내 성과
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「%RAND_SPLIT("あんっ…んぅ/んくっ…はぁ/ぃぃょ…ぁんっ/えへへっ")%…どうかな？　リリーの%RAND_SPLIT("お/妖精/ぐちょ濡れ/ロリ")%まんこ、気持ちいでしょ
+					PRINTFORM 「%RAND_SPLIT("팥고물… 응/응쿳… 후~/야…/에헤헷")%… 어떨까?   릴리의%RAND_SPLIT("/요정/젖고/로리")%보지, 기분 있고겠지
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("もっと奥までおちんぽ突き込んで、/おちんぽで目茶苦茶に犯して/遠慮なんてしないで、/子宮口に先っぽくっつけて、")%好きなだけ%RAND_SPLIT("ぴゅっぴゅして/膣内出しして/気持ち良くなって/孕ませ射精して")%いいからね
+					PRINTFORM 「%RAND_SPLIT("좀 더 안쪽까지 자지 돌진해,/자지로 터무니없게 범해/사양 같은거 하지 않고,/자궁입구에 끝 쪽 붙여,")%를 좋아하는 뿐%RAND_SPLIT("해/질내사정 해/기분 좋아져/임신하게 한 사정해")%좋으니까
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%CNAME(MASTER)%の%RAND_SPLIT("赤ちゃん汁/おちんぽザーメン/ドロドロせーえき")%、リリーに%RAND_SPLIT("たくさん飲ませて/いっぱい出して/お腹いっぱいゴクゴクさせて")%くださいね
+					PRINTFORM 「%CNAME(MASTER)%의%RAND_SPLIT("아기 국물/자지 정액/질척질척 정액")%, 릴리에%RAND_SPLIT("많이 먹여/가득 내/배 가득 꿀꺽꿀꺽 시켜")%주세요
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
@@ -1063,82 +1063,82 @@ IF 口上記入チェック(30) && TEQUIP:性交奉仕中 && MENUMATCH(TFLAG:ACT
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;絶頂した直後 FIRSTEVENT(50)～
-;────────────────────────────────────
-;・調教者、調教対象が絶頂した場合に表示される口上
-;・個別の部位別絶頂を拾いたいなら、IF 口上記入チェック(0) && NOWEX:Ｃ絶頂等の分岐を追加してください
-;・射精種はNOWEX:射精/NOWEX:MASTER:射精で参照する事が可能です
+;─
+;절정 한 직후 FIRSTEVENT(50)~
+;─
+;·조교자, 조교 대상이 절정 했을 경우에 표시되는 구상
+;·개별의 부위별 절정을 줍고 싶으면, IF 구상 기입 체크(0) && NOWEX:C절정등의 분기를 추가해 주세요
+;·사정종은 NOWEX:사정 /NOWEX:MASTER:사정으로 참조하는 것이 가능합니다
 ;-------------------------------------------------
-;関連変数…
-;NOWEX:射精(1=空射精/2=射精/3=大量射精/4=射精(早漏)/5=A責射精)
+;관련 변수…
+;NOWEX:사정(1=하늘 사정/2=사정/3=대량 사정/4=사정(조루)/5=A책사정)
 ;
-;関連関数…
-;TRUECHECK 真になるものがいくつあるかを返す
+;관련 함수…
+;TRUECHECK 실로 되는 것이 몇개 있을까를 돌려준다
 ;-------------------------------------------------
-;調教者/対象共に膣肛射精は上で拾ってる
-;→あなた（愛撫・道具・羞恥（自慰）・加虐？
-;→リリー（奉仕・羞恥）
+;조교자/대상 모두 질항사정은 위에서 줍고 있다
+;→당신(애무·도구·수치(자위)·가학?
+;→릴리(봉사·수치)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教者が絶頂した直後
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;조교자가 절정 한 직후
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && TRUECHECK(NOWEX:Ｃ絶頂, NOWEX:Ｖ絶頂, NOWEX:Ａ絶頂, NOWEX:Ｂ絶頂) > 0
+IF 구상기입체크(100) && TRUECHECK(NOWEX:C절정, NOWEX:V절정, NOWEX:A절정, NOWEX:B절정) > 0
 	;=================================================
-	;Ｃ絶頂初回
+	;C절정 첫회
 	;=================================================
-	IF 口上記入チェック(100) && NOWEX:Ｃ絶頂 && FIRSTEVENT(50)
-		PRINTFORMW 「んっ…あっ…あ……あぁ……」
-		PRINTFORM 「%CNAME(MASTER)%が見てるのに……リリー…お豆さんで…イっちゃいましたぁ
+	IF 구상기입체크(100) && NOWEX:C절정 && FIRSTEVENT(50)
+		PRINTFORMW 「읏… 아… 아…… 아아……」
+		PRINTFORM 「%CNAME(MASTER)%가 보고 있는데…… 릴리… 콩씨로… 가 버렸습니다아
 		CALL HEARTCB
 		PRINTFORMW 」
-		PRINTFORM 「人前でイったのなんて…初めて…れす…
+		PRINTFORM 「남의 앞에서 간 것은… 처음으로……
 		CALL HEARTCB
 		PRINTFORMW 」
-		PRINTFORMDW リリーは羞恥による高揚感に戸惑いながらも、絶頂の余韻に浸っている…
+		PRINTFORMDW 릴리는 수치에 의한 고양감에 당황하면서도, 절정의 여운에 잠겨 있다…
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;自慰見せつけ絶頂
+	;자위 과시하고 절정
 	;=================================================
-	IF 口上記入チェック(70) && MENUMATCH(TFLAG:ACT, "羞恥")
-		IF IS_NOWACTNAME("自慰みせつけ")
-			;射精
-			IF NOWEX:射精
-				PRINTFORM 「リリーのふたなりおちんぽおなにー……ちゃんと、見ててくれましたかぁ
+	IF 구상기입체크(70) && MENUMATCH(TFLAG:ACT, "수치")
+		IF IS_NOWACTNAME("자위 과시하고")
+			;사정
+			IF NOWEX:사정
+				PRINTFORM 「릴리의 후타나리 자지 오나니―…… 분명하게, 보고 있어 주었습니까
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「男の人みたいに…真っ白いせーえき、びゅるるぅ～～
+				PRINTFORM 「남자같이… 새하얀 정액, 뷰루루우~
 				CALL HEARTCB
-				PRINTFORMW ってするの……」
-				PRINTFORM 「これぇ……最高に、気持ちいれすぅ
+				PRINTFORMW 는 해……」
+				PRINTFORM 「이거어…… 최고로, 기분
 				CALL HEARTCB
 				PRINTFORMW 」
-			;ノーマル
+			;노멀
 			ELSE
-				;調教済み以降
+				;조교 끝나 이후
 				IF FAVOR(1000, 0)
-					PRINTFORM 「%RAND_SPLIT("イっちゃった/はしたないリリーのオナニー")%…ひゃんと、見ててくらましたかぁ
+					PRINTFORM 「%RAND_SPLIT("가 버렸다/상스러운 릴리의 자위")%… 응과 보고 있어 감추었는지
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORMW 「%CNAME(MASTER)%%RAND_SPLIT("を想って/にされてるの想像して")%…お猿さんみたいにオナニーして……」
-					PRINTFORM 「リリーの%RAND_SPLIT("恥ずかしいとこ/おまんこの中まで/えっちなとこが")%…%RAND_SPLIT("全部/")%丸見えのオナニー……これ、きもちいぃ
+					PRINTFORMW 「%CNAME(MASTER)%%RAND_SPLIT("를 생각해/로 되고 있는 것 상상해")%… 원숭이씨같이 자위 해……」
+					PRINTFORM 「릴리의%RAND_SPLIT("부끄러우면 와/보지안까지/엣치한 곳이")%…%RAND_SPLIT("전부/")%뻔히 보임의 자위…… 이것, 기분 좋다
 					CALL HEARTCB
 					PRINTFORMW 」
-				;反感は消えたくらい
+				;반감은 사라진 정도
 				ELSEIF FAVOR(200, 0)
-					PRINTFORMW 「リリーが%RAND_SPLIT("ひとり/オナニー")%でイクの見て……こーふんしてるの？」
-					PRINTFORMW 「えへへっ♪……%RAND_SPLIT("ほら/いいよ")%、もっとよく見て……」
-					PRINTFORM 「見られてこーふんしちゃう、%RAND_SPLIT("はしたない/いんらんな/えっちな")%リリーのヘンタイオナニーショー……愉しんでくださいね
+					PRINTFORMW 「릴리가%RAND_SPLIT("혼자/자위")%로 가는 것 봐…… 개─분하고 있는 거야?」
+					PRINTFORMW 「에헤헷♪……%RAND_SPLIT("이봐요/좋아")%, 좀 더 잘 봐……」
+					PRINTFORM 「보여져 개─분해 버리는,%RAND_SPLIT("상스럽다/있는들 응인/엣치한")%릴리의 헨타이오나니쇼…… 즐겨 주세요
 					CALL HEARTCB
 					PRINTFORMW 」
-				;調教初期、あなたは怯えてる
+				;조교 초기, 당신은 무서워하고 있다
 				ELSE
-					PRINTFORM 「%CNAME(MASTER)%の%RAND_SPLIT("その目/視線/目の前で")%……%RAND_SPLIT("あ/ん/ひん")%っ
+					PRINTFORM 「%CNAME(MASTER)%의%RAND_SPLIT("그 눈/시선/눈앞에서")%……%RAND_SPLIT("아/응/힝")%
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「%RAND_SPLIT("だめな/いけない事な/こんなに恥ずかしい")%のに…見られてイクの…しゅきぃ
+					PRINTFORM 「%RAND_SPLIT("안된/안 되는 것인/이렇게 부끄럽다")%의 것에… 보여져 가는 것… 수기 있고
 					CALL HEARTCB
 					PRINTFORMW 」
 				ENDIF
@@ -1147,83 +1147,83 @@ IF 口上記入チェック(100) && TRUECHECK(NOWEX:Ｃ絶頂, NOWEX:Ｖ絶頂, 
 		RETURN 1
 	ENDIF
 	
-	;↓奉仕系？
+	;↓봉사계?
 	;=================================================
-	;深くイった
+	;깊게 갔다
 	;=================================================
-	IF 口上記入チェック(100) && (NOWEX:Ｃ絶頂 + NOWEX:Ｖ絶頂 + NOWEX:Ａ絶頂 + NOWEX:Ｂ絶頂) > 1
-		;多重絶頂
-		IF TRUECHECK(NOWEX:Ｃ絶頂, NOWEX:Ｖ絶頂, NOWEX:Ａ絶頂, NOWEX:Ｂ絶頂) > 1
+	IF 구상기입체크(100) && (NOWEX:C절정 + NOWEX:V절정 + NOWEX:A절정 + NOWEX:B절정) > 1
+		;다중 절정
+		IF TRUECHECK(NOWEX:C절정, NOWEX:V절정, NOWEX:A절정, NOWEX:B절정) > 1
 			SELECTCASE RANDEVENT(2, 40)
 				CASE 0
-					PRINTFORMW 「%RAND_SPLIT("ァ…っはぁ/んっ…あぁ")%…%RAND_SPLIT("全身びりびりって/色んなとこ…イかされちゃった")%……」
-					PRINTFORM 「%RAND_SPLIT("これ/きもちいの/こんなの")%…すごすぎです……
+					PRINTFORMW 「%RAND_SPLIT("… 는/읏… 아아")%…%RAND_SPLIT("전신 찌릿찌릿은/여러 가지 곳… 가게 되어 버렸다")%……」
+					PRINTFORM 「%RAND_SPLIT("이것/기분 있고의/이런 건")%… 너무 대단합니다……
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORMW 「あたま…%RAND_SPLIT("変になっちゃいそうです/真っ白になっちゃいました/びりびりって痺れて")%……」
-					PRINTFORM 「もっとリリーに……%RAND_SPLIT("恥ずかしい/きもちい")%こと、%RAND_SPLIT("教えてください/してください")%……
+					PRINTFORMW 「머리…%RAND_SPLIT("이상하게 되어 버릴 것 같습니다/새하얗게 되어 버렸습니다/찌릿찌릿은 저려")%……」
+					PRINTFORM 「좀 더 릴리에……%RAND_SPLIT("부끄럽다/기분 있고")%일,%RAND_SPLIT("가르쳐 주세요/해 주세요")%……
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
-		;強絶頂
+		;강절정
 		ELSE
 			SELECTCASE RANDEVENT(2, 41)
 				CASE 0
-					PRINTFORM 「いつもより……%RAND_SPLIT("すごいれす/すごい/イっちゃいました")%……
+					PRINTFORM 「평소보다……%RAND_SPLIT("처/굉장하다/가 버렸습니다")%……
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORMW 「%RAND_SPLIT("う…はぁ/あ゛…ひっ/ひへっ…あはぁ")%……こんなのされたら……」
-					PRINTFORM 「リリー…もっと%RAND_SPLIT("はしたない/えっちな/いんらんな/悪い")%子になちゃいます……
+					PRINTFORMW 「%RAND_SPLIT("… 후~/아″… 히/히에… 아하아")%…… 이런 건 되면……」
+					PRINTFORM 「릴리… 좀 더%RAND_SPLIT("상스럽다/엣치한/있는들 응인/나쁘다")%자 있습니다……
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
 		ENDIF
-		;地の文
+		;지문
 		IF RAND:3 == 0
-			PRINTFORMDW 限界まで%RAND_SPLIT("快楽/悦楽/快感")%を%RAND_SPLIT("注ぎ/教え")%込まれた%RAND_SPLIT("瑞々しく幼い肢体/幼くも淫乱な身体")%は、その余韻だけで%RAND_SPLIT("何度も/小波の様な")%絶頂を繰り返している…
+			PRINTFORMDW 한계까지%RAND_SPLIT("쾌락/열락/쾌감")%를%RAND_SPLIT("따라/가르침")%붐비어졌다%RAND_SPLIT("신선하고 어린 지체/어리게도 음란한 신체")%는, 그 여운만으로%RAND_SPLIT("몇번이나/잔 물결과 같은")%절정을 반복하고 있다…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW %RAND_SPLIT("強烈/全身を貫く様")%な%RAND_SPLIT("絶頂/オルガズム")%の余韻に浸りながら、リリーは小波の様に%RAND_SPLIT("幼い/未成熟な/小さな")%肢体を震わせている…
+			PRINTFORMDW %RAND_SPLIT("강열/전신을 관철하는 모양")%인%RAND_SPLIT("절정/오르가즘")%의 여운에 잠기면서, 릴리는 잔 물결과 같이%RAND_SPLIT("어리다/미성숙인/작은")%지체를 진동시키고 있다…
 		ELSE
-			PRINTFORMDW リリーは%RAND_SPLIT("上半身を仰け反らして悶えながら/ただ体をピクピクと痙攣させ/全身に珠の様な汗を浮かべながら")%、%RAND_SPLIT("甘美な/強烈な/深い")%絶頂の余韻に浸っている…
+			PRINTFORMDW 릴리는%RAND_SPLIT("상반신을 뒤로 젖히게 해 몸부림치면서/다만 몸을 쫑긋쫑긋 경련시키고/전신에 구슬과 같은 땀을 띄우면서")%、%RAND_SPLIT("감미로운/강렬한/깊다")%절정의 여운에 잠겨 있다…
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;調教者射精
+	;조교자 사정
 	;=================================================
-	IF 口上記入チェック(100) && NOWEX:射精
-		SELECTCASE NOWEX:射精
-			;空射精
+	IF 구상기입체크(100) && NOWEX:사정
+		SELECTCASE NOWEX:사정
+			;하늘 사정
 			CASE 1
-				PRINTFORMW 「も……タマタマ空っぽなのに……」
-				PRINTFORM 「おちんちん……潮吹きしちゃったぁ
+				PRINTFORMW 「도…… 타마타마 텅 빈데……」
+				PRINTFORM 「자지…… 물총 해 버렸다아
 				CALL HEARTCB
 				PRINTFORMW 」
-			;大量射精
+			;대량 사정
 			CASE 3
 				IF RAND:2 == 0
-					PRINTFORMW 「%RAND_SPLIT("あは/んは/ひぃ/あっ")%…あ…腰……%RAND_SPLIT("抜けちゃいそう/奥がじんじんします/びゅるるぅって")%……」
-					PRINTFORM 「リリーの%RAND_SPLIT("ふたなりザーメン/赤ちゃんの素/えっちなお汁")%……いっぱい搾り取られちゃいましたぁ
+					PRINTFORMW 「%RAND_SPLIT("아는/응은/히/앗")%… 아… 허리……%RAND_SPLIT("빠지고 할 것 같다/안쪽이 지릿지릿 합니다/는")%……」
+					PRINTFORM 「릴리의%RAND_SPLIT("후타나리 정액/아기의 소/엣치한 국물")%…… 가득 짜내져 버렸습니다아
 					CALL HEARTCB
 					PRINTFORMW 」
 				ELSE
-					PRINTFORM 「たくさん射精しちゃいました……%RAND_SPLIT("ふぇへ…あぅ/きもひいぃ/んぅ")%…
+					PRINTFORM 「많이 사정해 버렸습니다……%RAND_SPLIT("에… 만난다/간히 좋다/응우")%…
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORMW 「こんなの続けたら……すぐにタマタマ空っぽになっちゃいます……」
+					PRINTFORMW 「이런 것 계속하면…… 곧바로 타마타마 텅 비게 되어 버립니다……」
 				ENDIF
-			;その他
+			;그 외
 			CASEELSE
 				SELECTCASE RANDEVENT(2, 42)
 					CASE 0
-						PRINTFORMW 「%RAND_SPLIT("はぁ…はぁ/ぴゅっぴゅって/ぴゅるるって")%…イっちゃいました…」
-						PRINTFORMW 「%RAND_SPLIT("おちんぽ射精/ふたなりちんぽ")%……気持ちいい……」
+						PRINTFORMW 「%RAND_SPLIT("후~… 후~/는/는")%… 가 버렸습니다…」
+						PRINTFORMW 「%RAND_SPLIT("자지 사정/후타나리 자지")%…… 기분이 좋다……」
 					CASE 1
-						PRINTFORMW 「おちんちんでイクの……%RAND_SPLIT("すきぃ/癖になっちゃう/さいこうですぅ")%……」
-						PRINTFORM 「今度は%CNAME(MASTER)%にも……%RAND_SPLIT("えへへぇ/ね/イって欲しいなぁ")%
+						PRINTFORMW 「자지로 가……%RAND_SPLIT("비어 있고/버릇이 되어 버린다/최고입니다아")%……」
+						PRINTFORM 「이번은%CNAME(MASTER)%에도……%RAND_SPLIT("네에에/그런데/갔으면 좋구나")%
 						CALL HEARTCB
 						PRINTFORMW 」
 				ENDSELECT
@@ -1232,18 +1232,18 @@ IF 口上記入チェック(100) && TRUECHECK(NOWEX:Ｃ絶頂, NOWEX:Ｖ絶頂, 
 	ENDIF
 	
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		SELECTCASE RANDEVENT(2, 43)
 			CASE 0
-				PRINTFORMW 「%RAND_SPLIT("えっちな声出して/はしたない格好で/イキ顔見られて")%……イっちゃいましたぁ……」
-				PRINTFORM 「もっとリリーと……えっちなこと、しましょうね……
+				PRINTFORMW 「%RAND_SPLIT("엣치한 소리 내/상스러운 모습으로/가는 얼굴 볼 수 있어")%…… 가 버렸습니다아……」
+				PRINTFORM 「좀 더 릴리와…… 엣치한 일, 해요……
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORMW 「イっちゃう度に……リリーの身体、どんどん%RAND_SPLIT("敏感に/えっちに/とろとろに")%なって……」
-				PRINTFORM 「もっと%RAND_SPLIT("激しく/いっぱい/深く")%……イキたくなっちゃうんですよね……
+				PRINTFORMW 「가 버릴 때에…… 릴리의 신체, 자꾸자꾸%RAND_SPLIT("민감하게/엣치하게/녹진녹진")%되어……」
+				PRINTFORM 「좀 더%RAND_SPLIT("격렬하고/가득/깊고")%…… 가고 싶어져 버립니다……
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
@@ -1252,48 +1252,48 @@ IF 口上記入チェック(100) && TRUECHECK(NOWEX:Ｃ絶頂, NOWEX:Ｖ絶頂, 
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教対象が絶頂した直後
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;조교 대상이 절정 한 직후
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(70) && TRUECHECK(NOWEX:MASTER:Ｃ絶頂, NOWEX:MASTER:Ｖ絶頂, NOWEX:MASTER:Ａ絶頂, NOWEX:MASTER:Ｂ絶頂) > 0
+IF 구상기입체크(70) && TRUECHECK(NOWEX:MASTER:C절정, NOWEX:MASTER:V절정, NOWEX:MASTER:A절정, NOWEX:MASTER:B절정) > 0
 	;=================================================
-	;深くイかせた
+	;깊게 가게 했다
 	;=================================================
-	IF 口上記入チェック(100) && (NOWEX:MASTER:Ｃ絶頂 + NOWEX:MASTER:Ｖ絶頂 + NOWEX:MASTER:Ａ絶頂 + NOWEX:MASTER:Ｂ絶頂) > 1
-		;多重絶頂
-		IF TRUECHECK(NOWEX:MASTER:Ｃ絶頂, NOWEX:MASTER:Ｖ絶頂, NOWEX:MASTER:Ａ絶頂, NOWEX:MASTER:Ｂ絶頂) > 1
+	IF 구상기입체크(100) && (NOWEX:MASTER:C절정 + NOWEX:MASTER:V절정 + NOWEX:MASTER:A절정 + NOWEX:MASTER:B절정) > 1
+		;다중 절정
+		IF TRUECHECK(NOWEX:MASTER:C절정, NOWEX:MASTER:V절정, NOWEX:MASTER:A절정, NOWEX:MASTER:B절정) > 1
 			SELECTCASE RANDEVENT(2, 44)
 				CASE 0
-					PRINTFORMW 「%RAND_SPLIT("えっちな身体/凄いイキっぷり/ねぇ")%、全身性感帯になっちゃったみたいだね……」
-					PRINTFORM 「いくつも絶頂が%RAND_SPLIT("重なって/連鎖して")%……天国みたいな気持ち良さでしょう
+					PRINTFORMW 「%RAND_SPLIT("엣치한 신체/굉장한 이키/저기")%, 전신 성감대가 되어 버린 것 같다……」
+					PRINTFORM 「얼마든지 절정이%RAND_SPLIT("겹쳐/연쇄해")%…… 천국 같은 기분 좋음이지요
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORMW 「すごい%RAND_SPLIT("アヘ顔/イキっぷり/蕩け顔")%でしたねっ♪」
-					PRINTFORM 「全身%RAND_SPLIT("の性感を/くまなく")%撫でられて……同時にイかされちゃう気分はどうですか
+					PRINTFORMW 「굉장해%RAND_SPLIT("아헤얼굴/이키/녹고 얼굴")%였지요♪」
+					PRINTFORM 「전신%RAND_SPLIT("의 성감을/빠짐없이")%어루만질 수 있어…… 동시에 가게 되어 버리는 기분은 어떻습니까
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
-		;強絶頂
+		;강절정
 		ELSE
 			SELECTCASE RANDEVENT(3, 45)
 				CASE 0
-					PRINTFORMW 「まだ%RAND_SPLIT("絶頂から降りられない/気持ちいの収まらない")%んですか？　%RAND_SPLIT("うふふ/あはは/ふふ")%っ♪」
-					PRINTFORM 「リリーの前でそんな無防備にしたら……またイかされちゃいますよっ
+					PRINTFORMW 「아직%RAND_SPLIT("절정에서 내릴 수 없다/기분 있고가 들어가지 않는다")%응입니까?   %RAND_SPLIT("후후/아하하/후후")%♪」
+					PRINTFORM 「릴리의 앞에서 그런 무방비로 하면…… 또 가게 되어 버려요
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 1
-					PRINTFORM 「%RAND_SPLIT("濃っゆい/とろっとろの/とろ～り濃厚な")%精……頂いちゃいましたぁ
+					PRINTFORM 「%RAND_SPLIT("농해/의/~농후한")%정령…… 받아 버렸습니다아
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「やっぱり、%RAND_SPLIT("絶頂感が強い/オルガズムが深い")%ほど……甘くて美味しいのが搾れるんですねぇ
+					PRINTFORM 「역시,%RAND_SPLIT("절정감이 강하다/오르가즘이 깊다")%(정도)만큼…… 달콤하고 맛있는 것이 짤 수 있군요
 					CALL HEARTCB
 					PRINTFORMW 」
 				CASE 2
-					PRINTFORM 「%RAND_SPLIT("さっきの顔、すごくエッチでしたね/イったばっかりで敏感なところ……もっとシてあげましょうか/ふふっ……どんどん深くイケる様になってきましたね")%
+					PRINTFORM 「%RAND_SPLIT("조금 전의 얼굴, 굉장히 엣치했지요/갔던 바로 직후로 민감한 곳…… 좀 더 시라고 줄까요/후훗…… 자꾸자꾸 깊게 갈 수 있는 것처럼 되었어요")%
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「ほらほらっ♪　%RAND_SPLIT("もう一回イキますよっ/もっとエッチな事いっぱいしましょうっ")%
+					PRINTFORM 「이봐요 이봐요♪  %RAND_SPLIT("다시 한번 가요/좀 더 엣치한 일 가득 합시다")%
 					CALL HEARTCB
 					PRINTFORMW 」
 			ENDSELECT
@@ -1302,74 +1302,74 @@ IF 口上記入チェック(70) && TRUECHECK(NOWEX:MASTER:Ｃ絶頂, NOWEX:MASTE
 	ENDIF
 
 	;=================================================
-	;射精
+	;사정
 	;=================================================
-	IF 口上記入チェック(100) && NOWEX:MASTER:射精
-		SELECTCASE NOWEX:MASTER:射精
-			;空射精
+	IF 구상기입체크(100) && NOWEX:MASTER:사정
+		SELECTCASE NOWEX:MASTER:사정
+			;하늘 사정
 			CASE 1
-				PRINTFORM 「%RAND_SPLIT("タマタマ/せーえき")%空っぽになっちゃいましたねぇ
+				PRINTFORM 「%RAND_SPLIT("타마타마/정액")%텅 비게 되어 버렸어요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「%RAND_SPLIT("もっともっと搾ったら/脳が焼き切れるくらいの快感で")%……ほんとの天国に、イっちゃうかもしれませんね
+				PRINTFORM 「%RAND_SPLIT("좀더 좀더 짜면/뇌가 다 구울 수 있을 정도의 쾌감으로")%…… 정말의 천국에, 가 버릴지도 모르네요
 				CALL HEARTCB
 				PRINTFORMW 」
-			;大量射精
+			;대량 사정
 				CASE 3
-				PRINTFORM 「%RAND_SPLIT("ザーメン/せーえき/真っ白い孕ませ汁")%が%RAND_SPLIT("びゅーびゅー/びゅるるるぅぅ/ぶびゅるぅ")%って、まるで%RAND_SPLIT("噴水/水鉄砲")%みたいな勢いでしたねっ
+				PRINTFORM 「%RAND_SPLIT("정액/정액/새하얀 임신하게 한 국물")%가%RAND_SPLIT("-―//부뷰루우")%는, 마치%RAND_SPLIT("분수/물총")%같은 기세였지요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「ねぇ、もう%RAND_SPLIT("タマタマ/おちんちん/おちんぽ")%空っぽですか？　まだ残ってます？　%RAND_SPLIT("ふふ/えへへ/あは")%っ
+				PRINTFORM 「저기, 이제(벌써)%RAND_SPLIT("타마타마/자지/자지")%텅 빕니까?   아직 남아 있습니다?   %RAND_SPLIT("후후/네에에/아하")%
 				CALL HEARTCB
 				PRINTFORMW 」
-			;射精(早漏)
+			;사정(조루)
 			CASE 4
-				PRINTFORM 「%RAND_SPLIT("ヘンタイ/ロリコン/Ｍ豚")%さんの敏感%RAND_SPLIT("ちんぽ/おちんちん")%、%RAND_SPLIT("すぐイっちゃいました/相変わらず早漏さんです")%ね
+				PRINTFORM 「%RAND_SPLIT("변태/로리콘/M돼지")%씨의 민감%RAND_SPLIT("자지/자지")%、%RAND_SPLIT("곧 가 버렸습니다/변함 없이 조루씨입니다")%군요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「リリー%RAND_SPLIT("様/")%に早く精を捧げたいって、その%RAND_SPLIT("姿勢/気持ち")%は嬉しいんですけど……」
-				PRINTFORM 「%RAND_SPLIT("早さだけが取り柄の/情けない/薄くて少ない")%早漏ザーメンじゃ……リリーのお腹は膨れないんですよねぇ……%RAND_SPLIT("ふふ/えへへ/くすくす/あは")%っ
+				PRINTFORMW 「릴리%RAND_SPLIT("님/")%에 빨리 정령을 바치고 싶다고, 그%RAND_SPLIT("자세/기분")%는 기쁩니다만……」
+				PRINTFORM 「%RAND_SPLIT("빠름만이 쓸모의/한심하다/얇고 적다")%조루 정액은…… 릴리의 배는 부풀지 않지요……%RAND_SPLIT("후후/네에에/킥킥/아하")%
 				CALL HEARTCB
 				PRINTFORMW 」
-			;A責射精
+			;A책사정
 			CASE 5
 				IF FAVOR(1000, 1000)
-					PRINTFORMW 「いいなぁ……%CNAME(MASTER)%が羨ましいです……」
-					PRINTFORM 「大好きな%RAND_SPLIT("リリー/ご主人様")%に%RAND_SPLIT("お尻の穴/うんちの穴/前立腺")%ほじほじされて、トコロテン射精しちゃうなんて……%RAND_SPLIT("ふふ/えへへ/くすくす/あは")%っ
+					PRINTFORMW 「좋구나……%CNAME(MASTER)%가 부럽습니다……」
+					PRINTFORM 「정말 좋아하는%RAND_SPLIT("릴리/주인님")%에%RAND_SPLIT("엉덩이의 구멍/응 치노구멍/전립선")%부비부비 되어, 우무 사정해 버리다니……%RAND_SPLIT("후후/네에에/킥킥/아하")%
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「そんな恥ずかしい事、リリーには絶対真似できませんもん
+					PRINTFORM 「그렇게 부끄러운 일, 릴리에는 절대 흉내낼 수 없는 걸요
 					CALL HEARTCB
 					PRINTFORMW 」
 				ELSE
-					PRINTFORMW 「ふふっ……ちゃんと%RAND_SPLIT("お尻/前立腺/後ろの穴")%でもイケる様になりましたね～♪」
-					PRINTFORMW 「%RAND_SPLIT("『トコロテン』って言うんでしたっけ？　/")%えっちに貪欲な%CNAME(MASTER)%の身体、リリーは大好きですよっ♪」
+					PRINTFORMW 「후훗…… 분명하게%RAND_SPLIT("엉덩이/전립선/뒤의 구멍")%에서도 갈 수 있는 것처럼 되었어요~♪」
+					PRINTFORMW 「%RAND_SPLIT("『우무』라고 말하는 것이었던가요?   /")%엣치하게 탐욕인%CNAME(MASTER)%의 신체, 릴리는 정말 좋아해요♪」
 				ENDIF
-			;その他
+			;그 외
 			CASEELSE
 				IF FAVOR(100, 100)
 					SELECTCASE RANDEVENT(2, 46)
 						CASE 0
-							PRINTFORMW 「やっぱり射精してもらうと達成感がありますねっ♪」
-							PRINTFORMW 「『気持ちいい』って感情が%RAND_SPLIT("ドロドロの/えっちな")%お汁になって、先っぽからどぴゅって溢れ出して……」
-							PRINTFORMW 「%CNAME(MASTER)%も、またして欲しくてたまらないんでしょう？」
+							PRINTFORMW 「역시 사정해 받으면 달성감이 있네요♪」
+							PRINTFORMW 「『기분이 좋다』는 감정이%RAND_SPLIT("질척질척의/엣치한")%국물이 되어, 끝 쪽는 흘러넘치기 시작해……」
+							PRINTFORMW 「%CNAME(MASTER)%도, 또 해 주었으면 해서 견딜 수 없겠지요?」
 						CASE 1
-							PRINTFORMW 「%CNAME(MASTER)%の%RAND_SPLIT("えっちな/感じてる/はしたない")%声、いっぱい聞いちゃいましたっ♪」
-							PRINTFORM 「今度%RAND_SPLIT("イク/射精する/ぴゅっぴゅする")%時はちゃんとリリーの名前、呼んでくださいね
+							PRINTFORMW 「%CNAME(MASTER)%의%RAND_SPLIT("엣치한/느끼고 있다/상스럽다")%소리, 가득 (들)물어 버렸습니닷♪」
+							PRINTFORM 「이번%RAND_SPLIT("간다/사정한다/한다")%시는 분명하게 릴리의 이름, 불러 주세요
 							CALL HEARTCB
 							PRINTFORMW 」
 					ENDSELECT
 				ELSE
 					SELECTCASE RANDEVENT(2, 47)
 						CASE 0
-							PRINTFORMW 「%RAND_SPLIT("えへへ/くす")%っ…おちんちん、イっちゃいましたね♪」
-							PRINTFORM 「すんすん……%RAND_SPLIT("んっ、はぁ/はぁ、あ")%…%RAND_SPLIT("えっちな匂い/栗の花の香り")%でくらくらしちゃいます
+							PRINTFORMW 「%RAND_SPLIT("네에에/쿠스")%… 자지, 가 버렸어요♪」
+							PRINTFORM 「슝슝……%RAND_SPLIT("응, 후~/하아, 아")%…%RAND_SPLIT("엣치한 냄새/밤꽃의 향기")%로 어찔어찔 해 버립니다
 							CALL HEARTCB
 							PRINTFORMW 」
 						CASE 1
-							PRINTFORMW 「リリーに射精見られるの、やっぱり%RAND_SPLIT("恥ずかしい/嫌")%ですか？」
-							PRINTFORMW 「でも、これ%RAND_SPLIT("なら簡単に/が一番")%精を搾り取れますし……それに……」
-							PRINTFORM 「%RAND_SPLIT("せーえき/ザーメン/真っ白いえっちなお汁")%が%RAND_SPLIT("どぴゅ/ぴゅっぴゅ/びゅるるぅ/びゅー")%って出るの、%CNAME(MASTER)%も気持ちいいですよね
+							PRINTFORMW 「릴리에 사정 볼 수 있는 것, 역시%RAND_SPLIT("부끄럽다/싫어")%입니까?」
+							PRINTFORMW 「그렇지만, 이것%RAND_SPLIT("라면 간단하게/하지만 제일")%정령을 짜낼 수 있고…… 거기에……」
+							PRINTFORM 「%RAND_SPLIT("정액/정액/새하얀 엣치한 국물")%가%RAND_SPLIT("///뷰─")%는 나오는 것,%CNAME(MASTER)%도 기분이 좋지요
 							CALL HEARTCB
 							PRINTFORMW 」
 					ENDSELECT
@@ -1379,247 +1379,247 @@ IF 口上記入チェック(70) && TRUECHECK(NOWEX:MASTER:Ｃ絶頂, NOWEX:MASTE
 	ENDIF
 	
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		SELECTCASE RANDEVENT(2, 48)
 			CASE 0
-				PRINTFORMW 「可愛いイキ顔いっぱい見ちゃいましたっ」
-				PRINTFORMW 「今さら恥ずかしがっても、もう遅いですよっ♪」
+				PRINTFORMW 「사랑스러운 가는 얼굴 가득 봐 버렸습니닷」
+				PRINTFORMW 「이제 와서 부끄러워해도, 이미 늦어요♪」
 			CASE 1
-				PRINTFORMW 「もう、ぼーっとしてちゃダメですよ？」
-				PRINTFORMW 「今度はリリーを……気持ち良くしてくださいね♪」
+				PRINTFORMW 「이제(벌써), 멍─하니 하고 있어서는 안됩니다?」
+				PRINTFORMW 「이번은 릴리를…… 기분 좋게 해 주세요♪」
 		ENDSELECT
 		RETURN 1
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;調教方針変更 FIRSTEVENT(60)
-;────────────────────────────────────
-;・調教方針が変わったときに表示する
-;・あくまでも方針なので行動を細かく決定するものではない
+;─
+;조교 방침 변경 FIRSTEVENT(60)
+;─
+;·조교 방침이 바뀌었을 때에 표시한다
+;·어디까지나 방침인 것으로 행동을 세세하게 결정하는 것은 아니다
 ;-------------------------------------------------
-;関連変数…
-;TFLAG:ターン方針		このターンの調教方針(1=休憩/2=ソフト/3=ノーマル/4=ハード/5=異常)
-;TFLAG:前ターン方針		前ターンの調教方針(内容はターン方針と同じ)
+;관련 변수…
+;TFLAG:턴 방침		이 턴의 조교 방침(1=휴게/2=소프트/3=노멀/4=하드/5=이상)
+;TFLAG:전턴 방침		전턴의 조교 방침(내용은 턴 방침과 같음)
 ;
-;関連関数…
-;IS_POLICY	調教方針名称と合致すれば真を返す
+;관련 함수…
+;IS_POLICY	조교 방침 명칭과 합치하면 진을 돌려준다
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教方針変更
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;조교 방침 변경
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(30) && TFLAG:ターン方針 != TFLAG:前ターン方針
+IF 구상기입체크(30) && TFLAG:턴방침 != TFLAG:전턴방침
 	;=================================================
-	;ターン方針1:休憩（確実に体力回復行動になる）
+	;턴 방침 1:휴게(확실히 체력 회복 행동이 된다)
 	;=================================================
-	IF 口上記入チェック(100) && IS_POLICY("今", "休憩")
+	IF 구상기입체크(100) && IS_POLICY("지금", "휴게")
 		IF FAVOR(1000, 1000)
-			PRINTFORMW 「んぅ、疲れちゃいましたか？」
-			PRINTFORMW 「おいで…%RAND_SPLIT("リリーが優しく癒してあげますねっ♪/少し休憩にしましょうね")%」
+			PRINTFORMW 「응우, 지치게 되었습니까?」
+			PRINTFORMW 「와…%RAND_SPLIT("릴리가 상냥하게 달래 주네요♪/조금 휴게로 해요")%」
 		ELSEIF FAVOR(200, 200)
-			PRINTFORMW 「あっ、あのっ…%RAND_SPLIT("大丈夫ですか/リリーまた無茶させちゃいました")%？」
-			PRINTFORMW 「休憩にしますから、楽にしてていいですからね…」
+			PRINTFORMW 「저, 저…%RAND_SPLIT("괜찮습니까/릴리 또 당치 않음시켜 버렸습니다")%？」
+			PRINTFORMW 「휴게로 하기 때문에, 편하게 해도 좋으니까…」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ターン方針2:ソフト
+	;턴 방침 2:소프트
 	;=================================================
-	IF 口上記入チェック(100) && IS_POLICY("今", "ソフト")
-		PRINTFORMW 「おいで……大丈夫、痛い事はしませんから」
-		PRINTFORM 「優しく、感じさせてあげますね
+	IF 구상기입체크(100) && IS_POLICY("지금", "소프트")
+		PRINTFORMW 「와…… 괜찮아, 아픈 일은 하지 않기 때문에」
+		PRINTFORM 「상냥하고, 느끼게 해 주네요
 		CALL HEARTCB
 		PRINTFORMW 」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ターン方針3:ノーマル
+	;턴 방침 3:노멀
 	;=================================================
-	IF 口上記入チェック(100) && IS_POLICY("今", "ノーマル")
-		PRINTFORMW 「それじゃ、リリーと気持ちいい事……」
-		PRINTFORMW 「しましょうねっ♪」
+	IF 구상기입체크(100) && IS_POLICY("지금", "노멀")
+		PRINTFORMW 「그러면, 릴리와 기분이 좋은 일……」
+		PRINTFORMW 「해요♪」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ターン方針4:ハード
+	;턴 방침 4:하드
 	;=================================================
-	IF 口上記入チェック(100) && IS_POLICY("今", "ハード")
-		;調教対象のマゾっ気4以上＆確率三分の一（あってるかな？）
-		;☆目印
-		IF ABL:MASTER:マゾっ気 > 4 && !RAND:3
-			PRINTFORMW 「ちょっと%RAND_SPLIT("激しく/ハードに/強めに")%しますけど……」
-			PRINTFORMW 「%RAND_SPLIT("あなた/マゾ豚さん")%には『ごほーび』になっちゃうかもね♪」
+	IF 구상기입체크(100) && IS_POLICY("지금", "하드")
+		;조교 대상의 마조끼 4이상＆확률 3 분의 1(맞고 있을까나?)
+		;☆표적
+		IF ABL:MASTER:마조끼 > 4 && !RAND:3
+			PRINTFORMW 「조금%RAND_SPLIT("격렬하고/하드하게/조금 강하게")%합니다만……」
+			PRINTFORMW 「%RAND_SPLIT("당신/마조돼지씨")%에는 『-』가 되어 버릴지도 몰라♪」
 		ELSE
 			IF FAVOR(1000, 1000)
-				PRINTFORM 「リリー、%RAND_SPLIT("こーふんしてき/もっと激しくしたくなっ/あなたを虐めたくなっ")%ちゃいました
+				PRINTFORM 「릴리,%RAND_SPLIT("개─분해 나무/좀 더 격렬하게 하고 싶고/당신을 괴롭히고 싶고")%있었습니다
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「大丈夫、安心して%RAND_SPLIT("いいですからね/リリーに身を任せてくださいね")%……」
-				PRINTFORM 「%CNAME(MASTER)%の痛みも、苦しみも……リリーが%RAND_SPLIT("ぜ～んぶ/")%快感に変えてあげますからっ
+				PRINTFORMW 「괜찮아, 안심해%RAND_SPLIT("좋으니까/릴리에 몸을 맡겨 주세요")%……」
+				PRINTFORM 「%CNAME(MASTER)%의 아픔도, 괴로움도…… 릴리가%RAND_SPLIT("전부/")%쾌감으로 바꾸어 줄테니까
 				CALL HEARTCB
 				PRINTFORMW 」
 			ELSEIF FAVOR(500, 500)
-				PRINTFORMW 「ごめんなさい…リリー、%CNAME(MASTER)%を虐めたくなっちゃいました……」
-				PRINTFORM 「激しくしますから…可愛く喘いでくださいねっ
+				PRINTFORMW 「미안해요… 릴리,%CNAME(MASTER)%를 괴롭히고 싶어져 버렸습니다……」
+				PRINTFORM 「격렬하게 하기 때문에… 사랑스럽게 허덕여 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
 			ENDIF
 		ENDIF
-		;地の文
+		;지문
 		IF RAND:3 == 0
-			PRINTFORMDW リリーは%RAND_SPLIT("サディスティック/嗜虐的")%な%RAND_SPLIT("瞳で/微笑を浮かべ")%、ゆっくりとにじり寄ってきた…
+			PRINTFORMDW 릴리는%RAND_SPLIT("가학적/기학적")%인%RAND_SPLIT("눈동자로/미소를 띄우고")%, 천천히 다가왔다…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW リリーは%RAND_SPLIT("可愛らしい/まだ幼さの残る")%顔を淫蕩に歪ませ、%CALLNAME:MASTER%の精を求めてペロリと舌なめずりをした…
+			PRINTFORMDW 릴리는%RAND_SPLIT("사랑스럽다/아직 어림이 남는다")%얼굴을 음탕하게 비뚤어지게 해%CALLNAME:MASTER%의 정령을 요구해 낼름 입맛을 다심을 했다…
 		ELSE
-			PRINTFORMDW リリーは%RAND_SPLIT("蜜に濡れた太ももを擦り合わせ/興奮で息を荒げながら")%、%RAND_SPLIT("発情しきった獣の様な/情欲に染まった")%瞳で%CALLNAME:MASTER%を見つめている…
+			PRINTFORMDW 릴리는%RAND_SPLIT("밀에 젖은 허벅지를 맞대고 비비고/흥분으로 숨을 거칠게 하면서")%、%RAND_SPLIT("발정해 버린 짐승과 같은/정욕에 물들었다")%눈동자로%CALLNAME:MASTER%를 응시하고 있다…
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ターン方針5:異常
+	;턴 방침 5:이상
 	;=================================================
-	IF 口上記入チェック(100) && IS_POLICY("今", "異常")
-		PRINTFORM 「リリーね……とってもイイ事思い付いちゃいました
+	IF 구상기입체크(100) && IS_POLICY("지금", "이상")
+		PRINTFORM 「릴리군요…… 매우 좋은 일 생각나 버렸습니다
 		CALL HEARTCB
 		PRINTFORMW 」
-		PRINTFORMDW リリーはくつくつと愉し気に笑っている…
+		PRINTFORMDW 릴리는 쿡쿡 유 해 기분에 웃고 있다…
 		RETURN 1
 	ENDIF
 ENDIF
 
 
-;────────────────────────────────────
-;条件なし FIRSTEVENT(70)～
-;────────────────────────────────────
-;・ここまでの条件にヒットしなかった場合に表示される箇所
-;・BASEで小分岐を設けてありますが、任意の条件を追加する事もできます
+;─
+;조건 없음 FIRSTEVENT(70)~
+;─
+;·여기까지의 조건에 히트 하지 않았던 경우에 표시되는 개소
+;·BASE로 소분기를 마련해 있습니다만, 임의의 조건을 추가하는 일도 할 수 있습니다
 ;------------------------------------------------
-;関連変数…
-;BASE		(0, 体力/1, 気力/2, 射精/3, 母乳/4, 尿意/5, 理性/6, 興味/7, 苛立ち/8, 満足)
+;관련 변수…
+;BASE		(0, 체력/1, 기력/2, 사정/3, 모유/4, 소변욕/5, 이성/6, 흥미/7, 초조해/8, 만족)
 ;
-;関連関数…
-;TENSION	引数で指定したBASE値を表す(50%以上は高い、25%以上は一般、25%未満は低い)
+;관련 함수…
+;TENSION	인수로 지정한 BASE치를 나타낸다(50%이상은 높은,25%이상은 일반,25% 미만은 낮다)
 ;------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;条件なし
-;口上記入チェック（確率％, 入力した数字の確率で口上を表示）
+;조건 없음
+;구상 기입 체크(확률%, 입력한 숫자의 확률로 구상을 표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(30)
+IF 구상기입체크(30)
 	;=================================================
-	;満足50％以上
+	;만족 50%이상
 	;=================================================
-	IF 口上記入チェック(100) && TENSION(TARGET, 8) == "高い"
+	IF 구상기입체크(100) && TENSION(TARGET, 8) == "높다"
 		IF RAND:3 == 0
-			PRINTFORMW 「もうすっかりリリーの虜……かな？」
-			PRINTFORMW 「おいでっ、%RAND_SPLIT("いっぱい/たくさん")%%RAND_SPLIT("可愛がって/愛して")%あげますねっ♪」
+			PRINTFORMW 「이제(벌써) 완전히 릴리의 포로…… 일까?」
+			PRINTFORMW 「와,%RAND_SPLIT("가득/많이")%%RAND_SPLIT("귀여워해/사랑해")%주네요♪」
 		ELSEIF RAND:2 == 0
-			PRINTFORMW 「素直な子は大好きですよ……ふふっ」
-			PRINTFORMW 「もっとリリー%RAND_SPLIT("を楽しませてね/と気持ち良くなろうね")%っ♪」
+			PRINTFORMW 「솔직한 아이는 정말 좋아해요…… 후훗」
+			PRINTFORMW 「좀 더 릴리%RAND_SPLIT("를 즐겁게 해/(와)과 기분 좋아지자")%♪」
 		ELSE
-			PRINTFORMW 「素直なだけじゃなくて、もっと我儘言ってくれてもいいんですよ？」
-			PRINTFORMW 「最初はリリーもイラっとしちゃうかもしれませんけど……」
-			PRINTFORMW 「楽しくえっちする為には、そんな時間も必要ですよねっ♪」
+			PRINTFORMW 「솔직할 뿐(만큼)이 아니고, 좀 더 멋대로 말해 주어도 좋아요?」
+			PRINTFORMW 「처음은 릴리도 울컥해 버릴지도 모르지만……」
+			PRINTFORMW 「즐겁게 엣치하기 위해서는, 그런 시간도 필요하네요♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;母乳50％以上
-	;常に高い？
-	;40%の確立で表示
-	; && TALENT:TARGET:妊娠 == 1
+	;모유 50%이상
+	;항상 높아?
+	;40%의 확립으로 표시
+	; && TALENT:TARGET:임신 == 1
 	;=================================================
-	IF 口上記入チェック(40) && TENSION(TARGET, 3) == "高い" && TALENT:TARGET:母乳体質 == 1
-		PRINTFORMW 「はぁ…んっ、おっぱい張ってきちゃった……」
-		PRINTFORMW 「……%CNAME(MASTER)%もリリーのミルク、飲んでみますか？　ふふっ♪」
+	IF 구상기입체크(40) && TENSION(TARGET, 3) == "높다" && TALENT:TARGET:모유체질 == 1
+		PRINTFORMW 「하아… 읏, 젖가슴 펴 와 버렸다……」
+		PRINTFORMW 「……%CNAME(MASTER)%도 릴리의 밀크, 마셔 봅니까?   후후♪」
 		RETURN 1
 	ENDIF
 
-	;調教者の尿意は実装されていないので参照しても無駄になります@/L
+	;조교자의 소변욕은 실장되어 있지 않기 때문에 참조해도 쓸데없게 됩니다@/L
 	;=================================================
-	;尿意50％以上
+	;소변욕 50%이상
 	;=================================================
-	IF 口上記入チェック(0) && TENSION(TARGET, 4) == "高い"
-		PRINTFORMW 「……おしっこ…漏っちゃいそうです……はぁ…」
-		PRINTFORMW 「でも、聖水プレイは……流石に……あっ……っ」
+	IF 구상기입체크(0) && TENSION(TARGET, 4) == "높다"
+		PRINTFORMW 「…… 오줌… 새어 버릴 것 같습니다…… 하아…」
+		PRINTFORMW 「그렇지만, 성수 플레이는…… 과연…… 앗……」
 		RETURN 1
 	ENDIF
 
 	;=================================================
-	;理性25％以下
+	;이성 25% 이하
 	;=================================================
-	IF 口上記入チェック(100) && TENSION(TARGET, 5) == "低い"
-		PRINTFORMW 「はぁ…んぅ……あたま…%RAND_SPLIT("ぼーっとして/くらくらして")%…」
-		PRINTFORMW 「%CNAME(MASTER)%……リリー、もう自分を抑えられません……」
-		PRINTFORMW 「お願い…リリーを、%CNAME(MASTER)%で満たしてください……」
+	IF 구상기입체크(100) && TENSION(TARGET, 5) == "낮다"
+		PRINTFORMW 「하아… 응우…… 머리…%RAND_SPLIT("멍─하니 해/어찔어찔 해")%…」
+		PRINTFORMW 「%CNAME(MASTER)%…… 릴리, 이제 자신을 억제 당하지 않습니다……」
+		PRINTFORMW 「부탁… 릴리를,%CNAME(MASTER)%로 채워 주세요……」
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;興味25％以下
+	;흥미 25% 이하
 	;=================================================
-	IF 口上記入チェック(100) && TENSION(TARGET, 6) == "低い"
-		;調教関係
+	IF 구상기입체크(100) && TENSION(TARGET, 6) == "낮다"
+		;조교 관계
 		IF FAVOR(2000, 2000)
-			PRINTFORMW 「%RAND_SPLIT("快感に素直な/気持ちいいって")%反応だけじゃなくて、もっと反抗してくれてもいいんですよ？」
-			PRINTFORMW 「その方がリリーも試行錯誤して、新しいプレイを試せるかもしれませんし……ね？」
-		;調教関係
+			PRINTFORMW 「%RAND_SPLIT("쾌감에순수/기분이 좋다고")%반응 뿐이 아니고, 좀 더 반항해 주어도 괜찮아요?」
+			PRINTFORMW 「그 쪽이 릴리도 시행 착오 해, 새로운 플레이를 시험할 수 있을지도 모르고……?」
+		;조교 관계
 		ELSE
-			PRINTFORMW 「%RAND_SPLIT("消極的に従う/恥ずかしがったりする")%より、例えば悲鳴でも上げてくれた方が盛り上がるんですけど……」
-			PRINTFORMW 「まぁ、それも時と場合によりけりですけどね」
-			PRINTFORMW 「とりあえず、リリーはとっても退屈しちゃってますぅ……%RAND_SPLIT("あびゃ～/ふわぁ…ん…")%」
+			PRINTFORMW 「%RAND_SPLIT("소극적으로 따른다/부끄러워하거나 한다")%보다, 예를 들면 비명에서도 올려 준 (분)편이 분위기를 살립니다만……」
+			PRINTFORMW 「뭐, 그것도 때와 경우에 따라 다르지만 말이죠」
+			PRINTFORMW 「우선, 릴리는 매우 싫증해 버리고 있습니다아……%RAND_SPLIT("~/후와아… 응…")%」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;苛立ち50％以上
+	;초조 50%이상
 	;=================================================
-	IF 口上記入チェック(100) && TENSION(TARGET, 7) == "高い"
+	IF 구상기입체크(100) && TENSION(TARGET, 7) == "높다"
 		IF FAVOR(2000, 2000)
-			PRINTFORMW 「ほら、おいで？　身構えなくても大丈夫ですよ？」
-			PRINTFORM 「わがままな%CNAME(MASTER)%を、リリーが優しく矯正してあげますね
+			PRINTFORMW 「이봐요, 와?   준비하지 않아도 괜찮아요?」
+			PRINTFORM 「멋대로인%CNAME(MASTER)%를, 릴리가 상냥하게 교정 해 주네요
 			CALL HEARTCB
 			PRINTFORMW 」
-		;調教関係
+		;조교 관계
 		ELSE
-			PRINTFORMW 「%CNAME(MASTER)%ってリリーを怒らせるのが上手ですね……」
-			PRINTFORMW 「ちゃんとリリーの状態とか、調教内容とか考えて反応してくださいね？」
-			PRINTFORMW 「まぁ、%CNAME(MASTER)%の事ですから……」
-			PRINTFORMW 「リリーにお仕置きされたくて、わざと反抗的してるのかもしれませんけどね？　ふふっ♪」
+			PRINTFORMW 「%CNAME(MASTER)%는 릴리를 화나게 하는 것이 능숙하네요……」
+			PRINTFORMW 「분명하게 릴리 상태라든지, 조교 내용이라든지 생각해 반응해 주세요?」
+			PRINTFORMW 「뭐,%CNAME(MASTER)%의 일이기 때문에……」
+			PRINTFORMW 「릴리에 벌 되고 싶어서, 일부러 반항적 하고 있는지도 모르지만 말야?   후후♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;その他・条件なし
+	;그 외·조건 없음
 	;=================================================
-	IF 口上記入チェック(100)
+	IF 구상기입체크(100)
 		IF FAVOR(3000, 3000)
-			PRINTFORMW 「リリーともっと気持ちいい事しましょうね……えへへっ♪」
-			PRINTFORM 「心も身体も、快感でふわとろにしてあげますね
+			PRINTFORMW 「릴리와 좀 더 기분이 좋은 일 해요…… 에헤헷♪」
+			PRINTFORM 「마음도 신체도, 쾌감 나오고 후와와로 해 주네요
 			CALL HEARTCB
 			PRINTFORMW 」
 		ELSEIF FAVOR(0, 2000)
-			PRINTFORMW 「リリーの方が%CNAME(MASTER)%に溺れちゃってるかも……えへへっ♪」
-			PRINTFORM 「おいで……リリーの身体で、沢山気持ち良くしてあげますね
+			PRINTFORMW 「릴리가%CNAME(MASTER)%에 빠져 버리고 있을지도…… 에헤헷♪」
+			PRINTFORM 「와…… 릴리의 신체로, 많이 기분 좋게 해 주네요
 			CALL HEARTCB
 			PRINTFORMW 」
 		ELSEIF FAVOR(500, 500)
-			PRINTFORMW 「%CNAME(MASTER)%もだんだん慣れてきましたねっ」
-			PRINTFORMW 「リリーの魅力に気づいちゃいましたか？　えへへっ♪」
+			PRINTFORMW 「%CNAME(MASTER)%도 점점 익숙해져 왔어요」
+			PRINTFORMW 「릴리의 매력을 눈치채 버렸습니까?   네에에♪」
 		ELSE
-			PRINTFORMW 「辛かったら言ってくださいね？」
-			PRINTFORMW 「リリーが優しく、なでなでしてあげますからね♪」
+			PRINTFORMW 「괴로웠으면 말해 주세요?」
+			PRINTFORMW 「릴리가 상냥하고, 스윽스윽 해 주니까요♪」
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
-;メモ　RANDEVENT（21～48）
+;메모  RANDEVENT(21~48)

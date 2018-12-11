@@ -5,1103 +5,1103 @@
 #DIM PICK
 #DIM PROBABILITY
 
-;オート時は発生しない
-SIF FLAG:オートモード > 0
+;오토시는 발생하지 않는다
+SIF FLAG:오토모드 > 0
 	RETURN 0
-;２人いないと発生しない
+;2인 없으면 발생하지 않는다
 SIF CAPACITY() < 2
 	RETURN 0
 
-;キャラ番号参照用変数をリセット
+;캐릭터 번호 참조용 변수를 리셋트
 DAILY_TARGET    = -1
 DAILY_SUBTARGET = -1
 
-;反抗除去イベント
+;반항 제거 이벤트
 CONCILIATOR = -1
 FOR LCOUNT, 1, CHARANUM
-	IF CFLAG:LCOUNT:反発除去 && MARK:LCOUNT:反抗刻印
+	IF CFLAG:LCOUNT:반발제거 && MARK:LCOUNT:반항각인
 		CONCILIATOR = LCOUNT
 		BREAK
 	ENDIF
 NEXT
 
-;ASSIGNEE:0～3にキャラ登録番号を代入、候補がいなければ-1
+;ASSIGNEE:0~3에 캐릭터 등록 번호를 대입, 후보가 없으면-1
 VARSET ASSIGNEE, -1
 LCOUNT = 0
 WHILE LCOUNT < MIN(CAPACITY() - 1, VARSIZE("ASSIGNEE"))
 	PICK = 1 + RAND:(CHARANUM - 1)
-	;専用奴隷補正…SQR用の処理につきコメントアウト
-	;SIF CFLAG:MASTER:15 == 4 && RAND:3 && !CFLAG:PICK:302
+	;전용 노예 보정…SQR용의 처리에 대해 comment out
+	;SIF CFLAG:MASTER:15 == 4 && RAND:3 && ! CFLAG:PICK:302
 	;	CONTINUE
-	SIF CFLAG:PICK:一時退避 !| MATCH(PICK, ASSIGNEE)
+	SIF CFLAG:PICK:일시퇴피 !| MATCH(PICK, ASSIGNEE)
 		ASSIGNEE:(LCOUNT++) = PICK
 WEND
 SIF CONCILIATOR < 0 && ASSIGNEE:0 < 0
 	RETURN 0
 
-;日常(調教対象交流)
+;일상(조교 대상 교류)
 
-;大まかなイベント種別(イベントが増えてきたら選別方法を変える必要がある)
-;現在、スキンシップ67％、日常33％。
-;アライメント変動は未実装。
+;대범한 이벤트 종별(이벤트가 많아지면 선별 방법을 바꿀 필요가 있다)
+;현재, 스킨십 67%, 일상 33%.
+;아라이먼트 변동은 미실장.
 PROBABILITY = RAND:50
-;アライメント変動イベント（選択式にして、アライメント制御の一助としたい）
-;日常（調教道具補充なんかも入れたい）
-;スキンシップ（されたい）
-;介抱
+;아라이먼트 변동 이벤트(선택식으로 해, 아라이먼트 제어의 도움으로 하고 싶다)
+;일상(조교 도구 보충 따위도 넣고 싶다)
+;스킨십(되고 싶다)
+;간호
 
 RESULT = 0
 DRAWLINE
-;FLAG:13  1調教後　2精力0　3一回休み　4失神した）
-IF FLAG:日常制御 == 4
-	;介抱
+;FLAG:13  1 조교 후  2 정력 0  3한번휴식  4 실신했다)
+IF FLAG:일상제어 == 4
+	;간호
 	CALL DAILY_LIFE_NURSING
 ELSE
-	;屈服刻印*5％で実行（Reverseの屈服刻印は調教対象ではなく調教者毎に管理されます）
-	IF PERCENT(MARK:TARGET:屈服刻印 * 5)
-		;反抗除去
+	;굴복 각인*5%로 실행(Reverse의 굴복 각인은 조교 대상은 아니고 조교자 마다 관리됩니다)
+	IF PERCENT(MARK:TARGET:굴복각인 * 5)
+		;반항 제거
 		IF CONCILIATOR >= 0
 			TRYCALL DAILY_LIFE_4(CONCILIATOR)
-		;スキンシップ系
-		ELSEIF PROBABILITY < 33 && FLAG:日常
+		;스킨십계
+		ELSEIF PROBABILITY < 33 && FLAG:일상
 			TRYCALL DAILY_LIFE_1(ASSIGNEE:0, ASSIGNEE:1, ASSIGNEE:2, ASSIGNEE:3)
-		;日常系
-		ELSEIF PROBABILITY < 66 && FLAG:日常
+		;일상계
+		ELSEIF PROBABILITY < 66 && FLAG:일상
 			TRYCALL DAILY_LIFE_2(ASSIGNEE:0, ASSIGNEE:1, ASSIGNEE:2, ASSIGNEE:3)
-		;アライメント変動
+		;아라이먼트 변동
 		ELSE
 			TRYCALL DAILY_LIFE_3(ASSIGNEE:0, ASSIGNEE:1, ASSIGNEE:2, ASSIGNEE:3)
 		ENDIF
 	ENDIF
 ENDIF
 
-;日常(調教者等単独)
-;※現在は調教者限定。そのうち助手も
+;일상(조교자등 단독)
+;※현재는 조교자 한정. 그 중 조수도
 
-;現在SANDBOX限定機能
-SIF FLAG:モード != 1
+;현재 SANDBOX 한정 기능
+SIF FLAG:모드 != 1
 	RETURN RESULT
-;※介抱発生時には起こらない
-SIF FLAG:日常制御 == 4
+;※간호 발생시에는 일어나지 않는다
+SIF FLAG:일상제어 == 4
 	RETURN RESULT
 
-;能力上昇
+;능력 상승
 TRYCALL DAILY_LIFE_A(TARGET)
 RETURN RESULT
 
 
-;────────────────────────────────────
-;介抱
-;────────────────────────────────────
+;─
+;간호
+;─
 @DAILY_LIFE_NURSING(ARG, ARG:1)
 CALL WAIT3_ZWEI(-1)
-;疲労で調教中止になった場合
-IF BASE:MASTER:体力 + BASE:MASTER:気力 > 600
-	PRINTFORML %CALLNAME%は疲労困憊した%CALLNAME:MASTER%を寝室まで運んでくれた
+;피로로 조교 중지가 되었을 경우
+IF BASE:MASTER:체력 + BASE:MASTER:기력 > 600
+	PRINTFORML %CALLNAME%는 기진맥진 했다%CALLNAME:MASTER%를 침실까지 옮겨 주었다
 	CALL KOJO_EVENT(201, 1)
-	PRINTFORML その表情はどこか\@ TALENT:心根優しい || ALI(0) ? 心配げ # 不満げ \@なものに%CALLNAME:MASTER%には見えた…
-;失神で調教中止になった場合
+	PRINTFORML 그 표정은 어딘가\@ TALENT:상냥함 || ALI(0) ? 걱정# 불만\@인 것에%CALLNAME:MASTER%에는 보였다…
+;실신으로 조교 중지가 되었을 경우
 ELSE
-	PRINTFORML %CALLNAME:MASTER%が目を覚ますと\@ TALENT:心根優しい || ALI(0) ? 心配そうな顔をした # \@%CALLNAME:TARGET%と目が合った
+	PRINTFORML %CALLNAME:MASTER%가 눈을 뜨면\@ TALENT:상냥함 || ALI(0) ? 걱정일 것 같은 얼굴을 했다# \@%CALLNAME:TARGET%와 시선이 마주쳤다
 	CALL KOJO_EVENT(201, 0)
-	PRINTFORMW 調教中に意識を失った%CALLNAME:MASTER%を自分の寝室まで運び介抱してくれたらしい…
+	PRINTFORMW 조교중에 의식을 잃었다%CALLNAME:MASTER%를 자신의 침실까지 옮겨 간호해 준 것 같다…
 ENDIF
 RETURN 1
 
-;────────────────────────────────────
-;スキンシップ（各種の性経験が入ります）
-;────────────────────────────────────
-;@DAILY_LIFE_1_0～からランダムで選ぶ　RETURN 0されると再抽選、RETURN 1(0以外)で抽選から抜ける
+;─
+;스킨십(각종의 성 경험이 들어갑니다)
+;─
+;@DAILY_LIFE_1_0~로부터 랜덤으로 선택한다  RETURN 0되면 재추첨, RETURN 1( 0이외)으로 추첨으로부터 빠진다
 @DAILY_LIFE_1(ARG, ARG:1, ARG:2, ARG:3)
 #DIM LCOUNT
-;口上用に対象キャラの番号を入れる
+;구상용으로 대상 캐릭터의 번호를 넣는다
 DAILY_TARGET = ARG
-;10回試行する
+;10회시행한다
 FOR LCOUNT, 0, 10
 	LOCAL = RAND:10
 	RESULT = 0
-	;封印されていない場合
-	SIF STRFIND(CSTR:ARG:封印日常, @"/1_{LOCAL}/") == -1
+	;봉인되어 있지 않은 경우
+	SIF STRFIND(CSTR:ARG:봉인일상, @"/1_{LOCAL}/") == -1
 		TRYCALLFORM DAILY_LIFE_1_{LOCAL}(ARG, ARG:1, ARG:2, ARG:3)
 	SIF RESULT
 		RETURN RESULT
 NEXT
 RETURN 0
 
-;────────────────────────────────────
-;スキンシップ0
-;────────────────────────────────────
-;ARG～ARG:4は対象となるキャラの番号
+;─
+;스킨십 0
+;─
+;ARG~ARG:4는 대상이 되는 캐릭터의 번호
 @DAILY_LIFE_1_0(ARG, ARG:1, ARG:2, ARG:3)
-PRINTFORML 台所に立つ%CALLNAME:MASTER%は背後からの甘い吐息に気がつき振り返る
-PRINTFORMW …%CALLNAME:ARG%だ
-;調教対象がオトコの場合もしくは1/2の確率
-IF TALENT:MASTER:オトコ || !RAND:2
-	;202, 0-0（股間まさぐり）
+PRINTFORML 부엌에 선다%CALLNAME:MASTER%는 배후로부터의 달콤한 한숨을 깨달아 되돌아 본다
+PRINTFORMW …%CALLNAME:ARG%다
+;조교 대상이 남자의 경우 혹은 1/2의 확률
+IF TALENT:MASTER:남자 || !RAND:2
+	;202, 0-0(사타구니 만지작거려)
 	CALL KOJO_EVENT(202, 0, ARG)
-	PRINTFORMW %CALLNAME:ARG%は%CALLNAME:MASTER%の背中に体を密着させると股間をまさぐり始めた…
+	PRINTFORMW %CALLNAME:ARG%는%CALLNAME:MASTER%의 등에 몸을 밀착시키면 사타구니를 만지작거리기 시작했다…
 	LOCAL = 1
 ELSE
-	;202, 0-1（おっぱいまさぐり）
+	;202, 0-1(젖가슴 만지작거려)
 	CALL KOJO_EVENT(202, 1, ARG)
-	PRINTFORMW %CALLNAME:ARG%は背後から%CALLNAME:MASTER%を抱きしめて胸をもんできた…
+	PRINTFORMW %CALLNAME:ARG%는 배후로부터%CALLNAME:MASTER%를 껴안아 가슴도 할 수 있었다…
 	LOCAL = 2
 ENDIF
-;ARGの屈服刻印4以上かつ関連する刻印を取得済である場合
+;ARG의 굴복 각인 4이상 또한 관련하는 각인을 취득제인 경우
 {
-IF MARK:ARG:屈服刻印 > 4 && 
-	((PENIS(MASTER) && GETBITAND(CFLAG:ARG:刻印, 2, 3, 12, 19)) || 
-	(!PENIS(MASTER) && GETBITAND(CFLAG:ARG:刻印, 3, 6, 12, 15)))
+IF MARK:ARG:굴복각인 > 4 && 
+	((PENIS(MASTER) && GETBITAND(CFLAG:ARG:각인, 2, 3, 12, 19)) || 
+	(!PENIS(MASTER) && GETBITAND(CFLAG:ARG:각인, 3, 6, 12, 15)))
 }
-	PRINT [0] - 無視する　
-	PRINT [1] - 身をゆだねる
+	PRINT [0] - 무시한다  
+	PRINT [1] - 몸을 맡긴다
 	CALL INPUTINT(0, 1)
-;条件を満たさない場合はRESULTに0を入れる
+;조건을 채우지 않는 경우는 RESULT에 0을 넣는다
 ELSE
 	RESULT = 0
 ENDIF
 SELECTCASE RESULT
-	;無視する
+	;무시한다
 	CASE 0
-		;202, 0-2（無視したら諦めて出て行った）
+		;202, 0-2(무시하면 단념해 나갔다)
 		CALL KOJO_EVENT(202, 2, ARG)
-		PRINTFORMW %CALLNAME:ARG%はしつこく愛撫を続けたが%CALLNAME:MASTER%が無視を決め込むと諦めて出て行った…
-		;調教対象がオトコの場合。そうでない場合は1/2の確率
+		PRINTFORMW %CALLNAME:ARG%는 끈질기게 애무를 계속했지만%CALLNAME:MASTER%가 무시를 자처하면 단념해 나갔다…
+		;조교 대상이 남자의 경우. 그렇지 않은 경우는 1/2의 확률
 		IF LOCAL == 1
-			;MASTERの経験増加と内容の表示
-			EXP:MASTER:Ｃ経験 += 1
-			PRINTL Ｃ経験 +1
-			;ARGの経験増加と内容の表示
-			EXP:ARG:手淫経験 += 1 
-			PRINTFORML （%CALLNAME:ARG%）手淫経験 +1
-		;その他
+			;MASTER의 경험 증가와 내용의 표시
+			EXP:MASTER:C경험 += 1
+			PRINTL C경험 +1
+			;ARG의 경험 증가와 내용의 표시
+			EXP:ARG:수음경험 += 1 
+			PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+		;그 외
 		ELSE
-			;MASTERの経験増加と内容の表示
-			EXP:MASTER:Ｂ経験 += 1
-			PRINTL Ｂ経験 +1
-			;ARGの経験増加と内容の表示
-			EXP:ARG:手淫経験 += 1 
-			PRINTFORML （%CALLNAME:ARG%）手淫経験 +1
+			;MASTER의 경험 증가와 내용의 표시
+			EXP:MASTER:B경험 += 1
+			PRINTL B경험 +1
+			;ARG의 경험 증가와 내용의 표시
+			EXP:ARG:수음경험 += 1 
+			PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
 		ENDIF
-		;平時アライメントの減少。"平時ア"が"平時アライメント"であると見ただけで判る人がどれだけいるだろう？ 居るわけないわそんなもんｗ
-		CFLAG:ARG:平時ア -= 100
-		;平時アライメントが-999以下なら-999に調整
-		SIF CFLAG:ARG:平時ア < -999
-			CFLAG:ARG:平時ア = -999
-		;ムラムラ増加
-		CFLAG:ARG:むらむら += 1
-		PRINTFORML （%CALLNAME:ARG%）むらむら +1
-	;身をゆだねる
+		;평시 아라이먼트의 감소. "평시아"가 "평시 아라이먼트"이다고 본 것 뿐으로 아는 사람이 얼마나 있겠지? 있을 이유 없어요 그런 것w
+		CFLAG:ARG:평시아 -= 100
+		;평시 아라이먼트가-999 이하라면-999에 조정
+		SIF CFLAG:ARG:평시아 < -999
+			CFLAG:ARG:평시아 = -999
+		;불끈불끈 증가
+		CFLAG:ARG:불끈불끈 += 1
+		PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+	;몸을 맡긴다
 	CASE 1
-		;202 0-3（身をゆだねて"股間/おっぱい"でイかされ）
+		;2020-3(몸을 맡겨"사타구니/젖가슴"로 가게 되고)
 		CALL KOJO_EVENT(202, 2+LOCAL, ARG)
-		PRINTFORMW %CALLNAME:MASTER%が抵抗しないことを確認すると%CALLNAME:ARG%は淫蕩な笑みを浮かべて絶頂まで導いた…
-		;調教対象がオトコの場合、オトコ以外の場合は1/2の確率
+		PRINTFORMW %CALLNAME:MASTER%가 저항하지 않는 것을 확인하면%CALLNAME:ARG%는 음탕한 미소를 띄워 절정까지 이끌었다…
+		;조교 대상이 남자의 경우, 남자 이외의 경우는 1/2의 확률
 		IF LOCAL == 1
-			;調教対象にペニスあり
+			;조교 대상으로 페니스 있어
 			IF PENIS(MASTER)
-				;調教対象に下半身下着あり
-				IF TEQUIP:MASTER:下半身下着
+				;조교 대상으로 하반신 속옷 있어
+				IF TEQUIP:MASTER:하반신속옷
 					PRINTL 
-					;202, 0-5（ぱんつお着替えさせてくれました）
+					;202, 0-5(팬티갈아입게 해 주었습니다)
 					CALL KOJO_EVENT(202, 5, ARG)
-					PRINTFORML %CALLNAME:ARG%は精液でどろどろになった%CALLNAME:MASTER%の下着を脱がせると
-					PRINTFORMW 新しい下着を持ってきてくれました…
+					PRINTFORML %CALLNAME:ARG%는 정액으로 질척질척이 되었다%CALLNAME:MASTER%의 속옷을 벗게 하면
+					PRINTFORMW 새로운 속옷을 가져와 주었습니다…
 				ENDIF
-				;MASTERの経験増加と内容の表示
-				EXP:MASTER:Ｃ経験 += 5
-				PRINTL Ｃ経験 +5
-				EXP:MASTER:絶頂経験 += 1
-				PRINTL 絶頂経験 +1
-				EXP:MASTER:射精経験 += 1
-				PRINTL 射精経験 +1
-				;ARGの経験増加と内容の表示
-				EXP:ARG:精液経験 += 1 
-				PRINTFORML （%CALLNAME:ARG%）精液経験 +1
-				EXP:ARG:手淫経験 += 1 
-				PRINTFORML （%CALLNAME:ARG%）手淫経験 +1
-				EXP:ARG:イかせ経験 += 1
-				PRINTFORML （%CALLNAME:ARG%）イかせ経験 +1
-				BASE:MASTER:射精 -= 300
-				;MASTERの精力0の場合
-				SIF FLAG:日常制御 == 2
-					TCVAR:MASTER:空射精数 += 1
-			;調教対象にペニスなし
+				;MASTER의 경험 증가와 내용의 표시
+				EXP:MASTER:C경험 += 5
+				PRINTL C경험 +5
+				EXP:MASTER:절정경험 += 1
+				PRINTL 절정 경험 +1
+				EXP:MASTER:사정경험 += 1
+				PRINTL 사정 경험 +1
+				;ARG의 경험 증가와 내용의 표시
+				EXP:ARG:정액경험 += 1 
+				PRINTFORML （%CALLNAME:ARG%) 정액 경험 +1
+				EXP:ARG:수음경험 += 1 
+				PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+				EXP:ARG:가게한경험 += 1
+				PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+				BASE:MASTER:사정 -= 300
+				;MASTER의 정력 0의 경우
+				SIF FLAG:일상제어 == 2
+					TCVAR:MASTER:드라이사정수 += 1
+			;조교 대상으로 페니스 없음
 			ELSE
-				;調教対象に下半身下着あり
-				IF TEQUIP:MASTER:下半身下着
+				;조교 대상으로 하반신 속옷 있어
+				IF TEQUIP:MASTER:하반신속옷
 					PRINTL 
-					;202, 0-5（ぱんつお着替えさせてくれました）
+					;202, 0-5(팬티갈아입게 해 주었습니다)
 					CALL KOJO_EVENT(202, 5, ARG)
-					PRINTFORML %CALLNAME:ARG%は愛液でどろどろになった%CALLNAME:MASTER%の下着を脱がせると
-					PRINTFORMW 新しい下着を持ってきてくれました…
+					PRINTFORML %CALLNAME:ARG%는 애액으로 질척질척이 되었다%CALLNAME:MASTER%의 속옷을 벗게 하면
+					PRINTFORMW 새로운 속옷을 가져와 주었습니다…
 				ENDIF
-				;MASTERの経験増加と内容の表示
-				EXP:MASTER:Ｃ経験 += 5
-				PRINTL Ｃ経験 +5
-				EXP:MASTER:絶頂経験 += 1
-				PRINTL 絶頂経験 +1
-				;ARGの経験増加と内容の表示
-				EXP:ARG:手淫経験 += 1 
-				PRINTFORML （%CALLNAME:ARG%）手淫経験 +1
-				EXP:ARG:イかせ経験 += 1
-				PRINTFORML （%CALLNAME:ARG%）イかせ経験 +1
+				;MASTER의 경험 증가와 내용의 표시
+				EXP:MASTER:C경험 += 5
+				PRINTL C경험 +5
+				EXP:MASTER:절정경험 += 1
+				PRINTL 절정 경험 +1
+				;ARG의 경험 증가와 내용의 표시
+				EXP:ARG:수음경험 += 1 
+				PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+				EXP:ARG:가게한경험 += 1
+				PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
 			ENDIF
-		;その他
+		;그 외
 		ELSE
-			;MASTERの経験増加と内容の表示
-			EXP:MASTER:Ｂ経験 += 5
-			PRINTL Ｂ経験 +5
-			EXP:MASTER:絶頂経験 += 1
-			PRINTL 絶頂経験 +1
-			;ARGの経験増加と内容の表示
-			EXP:ARG:手淫経験 += 1 
-			PRINTFORML （%CALLNAME:ARG%）手淫経験 +1
-			EXP:ARG:イかせ経験 += 1
-			PRINTFORML （%CALLNAME:ARG%）イかせ経験 +1
+			;MASTER의 경험 증가와 내용의 표시
+			EXP:MASTER:B경험 += 5
+			PRINTL B경험 +5
+			EXP:MASTER:절정경험 += 1
+			PRINTL 절정 경험 +1
+			;ARG의 경험 증가와 내용의 표시
+			EXP:ARG:수음경험 += 1 
+			PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+			EXP:ARG:가게한경험 += 1
+			PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
 		ENDIF
-		;ムラムラ解消
-		CFLAG:ARG:むらむら = 0
+		;불끈불끈 해소
+		CFLAG:ARG:불끈불끈 = 0
 ENDSELECT
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;スキンシップ1
-;────────────────────────────────────
+;─
+;스킨십 1
+;─
 @DAILY_LIFE_1_1(ARG, ARG:1, ARG:2, ARG:3)
-;オトコは考えたくないがとりあえず排除
-SIF TALENT:ARG:オトコ
+;남자는 생각하고 싶지 않지만 우선 배제
+SIF TALENT:ARG:남자
 	RETURN 0
 
-PRINTFORMW 食堂で休憩していると%CALLNAME:ARG%がティーポットとお菓子を載せたお盆を持って来て隣に座った
-;203, 1-0（お紅茶いかが？）
+PRINTFORMW 식당에서 쉬고 있으면%CALLNAME:ARG%가 티폿트와 과자를 얹은 추석을 가지고 와 근처에 앉았다
+;203, 1-0(홍차 어떠세요?)
 CALL KOJO_EVENT(203, 0, ARG)
-PRINTFORML %CALLNAME:ARG%と紅茶を飲みながら談笑していると、次第に体の中心から情欲が滾ってきた…
-;203, 1-1（媚薬でむらむらおっぱい気になる）
+PRINTFORML %CALLNAME:ARG%와 홍차를 마시면서 담소하고 있으면, 점차 몸의 중심으로부터 정욕이 끓어올라 왔다…
+;203, 1-1(미약으로 불끈불끈 젖가슴 신경이 쓰인다)
 CALL KOJO_EVENT(203, 1, ARG)
-IF TALENT:ARG:巨乳
-	PRINTFORMW 隣りに座る%CALLNAME:ARG%の豊かな胸元から目が離せない
-;EQUIP:86ってなんだろう？
+IF TALENT:ARG:거유
+	PRINTFORMW 이웃에 앉는다%CALLNAME:ARG%의 풍부한 가슴팍으로부터 눈을 떼어 놓을 수 없다
+;EQUIP:86은 무엇일까?
 ;ELSEIF EQUIP:ARG:86 == 2
-;	PRINTFORMW 服の上からでもくっきりと分かる乳首のシルエットが気になってしまう
+;	PRINTFORMW 옷 위로부터라도 선명하게 아는 유두의 실루엣이 신경이 쓰여 버린다
 ELSE
-	PRINTFORMW 無防備にも服の隙間からチラチラと見える乳首に目が奪われる
+	PRINTFORMW 무방비에도 옷의 틈새로부터 힐끔힐끔 보이는 유두에 눈이 빼앗긴다
 ENDIF
 
-;屈服刻印4以上かつ関連する刻印を取得済みである場合
+;굴복 각인 4이상 또한 관련하는 각인을 취득이 끝난 상태인 경우
 {
-IF MARK:ARG:屈服刻印 > 4 && 
-	((PENIS(MASTER) && GETBITAND(CFLAG:ARG:刻印, 2, 3, 12, 19)) || 
-	(PENIS(MASTER) && GETBITAND(CFLAG:ARG:刻印, 3, 12)))
+IF MARK:ARG:굴복각인 > 4 && 
+	((PENIS(MASTER) && GETBITAND(CFLAG:ARG:각인, 2, 3, 12, 19)) || 
+	(PENIS(MASTER) && GETBITAND(CFLAG:ARG:각인, 3, 12)))
 }
-	;203, 1-2（おっぱい見せつけられました）
+	;203, 1-2(젖가슴 보게 되었습니다)
 	CALL KOJO_EVENT(203, 2, ARG)
 	{
-	PRINTFORMW 視線に気がついた%CALLNAME:ARG%は\@ TALENT:ARG:恥じらい || TALENT:ARG:清楚 
-		? 恥ずかしそうに # \@胸をはだけて%CALLNAME:MASTER%の目の前に差し出した…
+	PRINTFORMW 시선을 깨달았다%CALLNAME:ARG%는\@ TALENT:ARG:수줍음 || TALENT:ARG:청초 
+		? 부끄러운 듯이# \@가슴을 열어%CALLNAME:MASTER%의 눈앞에 내몄다…
 	}
-	PRINT [0] - 遠慮する　
-	PRINT [1] - いただきます
+	PRINT [0] - 사양한다  
+	PRINT [1] - 받습니다
 	CALL INPUTINT(0, 1)
 	SELECTCASE RESULT
-		;遠慮する
+		;사양한다
 		CASE 0
-			;203, 1-3（あわてて逃げました）
+			;203, 1-3(서둘러 도망쳤습니다)
 			CALL KOJO_EVENT(203, 3, ARG)
-			PRINTFORMW 一服もられたことに気がついた%CALLNAME:MASTER%はなんとか理由をつけて食堂から出ていきました
-			CFLAG:ARG:平時ア -= 100
-			SIF CFLAG:ARG:平時ア < -999
-				CFLAG:ARG:平時ア = -999
-			;ムラムラ増加
-			CFLAG:ARG:むらむら += 1
-			PRINTFORML （%CALLNAME:ARG%）むらむら +1
-			;WAITとRETURNは終端で
-		;いただきます
+			PRINTFORMW 휴식일을 깨달았다%CALLNAME:MASTER%는 어떻게든 이유를 붙여 식당으로부터 나갔습니다
+			CFLAG:ARG:평시아 -= 100
+			SIF CFLAG:ARG:평시아 < -999
+				CFLAG:ARG:평시아 = -999
+			;불끈불끈 증가
+			CFLAG:ARG:불끈불끈 += 1
+			PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+			;WAIT와 RETURN는 종단으로
+		;받습니다
 		CASE 1
-			;203, 1-4（むしゃぶりついてご奉仕したらご褒美にぱいずりorクンニでイかされちゃいました）
+			;203, 1-4(달라붙어 봉사하면 포상질질 끌어 or쿤닐링구스로 가게 되어 버렸습니다)
 			CALL KOJO_EVENT(203, 4, ARG)
-			PRINTFORML %CALLNAME:ARG%は夢中になって奉仕する%CALLNAME:MASTER%に満足すると
-			;調教対象にペニスがあればパイズリ
+			PRINTFORML %CALLNAME:ARG%는 열중해 봉사한다%CALLNAME:MASTER%에 만족하면
+			;조교 대상으로 페니스가 있으면 파이즈리
 			IF PENIS(MASTER)
-				PRINTFORMW ご褒美とばかりに唾液でヌルヌルになった胸\@TALENT:貧乳 ? でペニスをこすり # でペニスをはさみ\@、射精させた…
-				;MASTERの経験増加と内容の表示
-				EXP:MASTER:Ｃ経験 += 5
-				PRINTL Ｃ経験 +5
-				EXP:MASTER:絶頂経験 += 1
-				PRINTL 絶頂経験 +1
-				EXP:MASTER:射精経験 += 1
-				PRINTL 射精経験 +1
-				EXP:MASTER:口淫経験 += 1
-				PRINTL 口淫経験 +1
-				;ARGの経験増加と内容の表示
-				EXP:ARG:Ｂ経験 += 5
-				PRINTFORML （%CALLNAME:ARG%）Ｂ経験 +5
-				EXP:ARG:精液経験 += 1
-				PRINTFORML （%CALLNAME:ARG%）精液経験 +1
-				EXP:ARG:口淫経験 += 1
-				PRINTFORML （%CALLNAME:ARG%）口淫経験 +1
-				EXP:ARG:イかせ経験 += 1
-				PRINTFORML （%CALLNAME:ARG%）イかせ経験 +1
-				;BASE:射精が減少
-				BASE:MASTER:射精 -= 300
-				;精力ボーナス
-				SIF FLAG:日常制御 == 2
-					TCVAR:MASTER:空射精数 += 1
-			;調教対象にペニスなしの場合はクンニ
+				PRINTFORMW 포상이라는 듯이 타액으로 미끈미끈이 된 가슴\@TALENT:빈유 ? 로 페니스를 비비어# 로 페니스를 끼워\@, 사정시켰다…
+				;MASTER의 경험 증가와 내용의 표시
+				EXP:MASTER:C경험 += 5
+				PRINTL C경험 +5
+				EXP:MASTER:절정경험 += 1
+				PRINTL 절정 경험 +1
+				EXP:MASTER:사정경험 += 1
+				PRINTL 사정 경험 +1
+				EXP:MASTER:구음경험 += 1
+				PRINTL 구음경험 +1
+				;ARG의 경험 증가와 내용의 표시
+				EXP:ARG:B경험 += 5
+				PRINTFORML （%CALLNAME:ARG%) B경험 +5
+				EXP:ARG:정액경험 += 1
+				PRINTFORML （%CALLNAME:ARG%) 정액 경험 +1
+				EXP:ARG:구음경험 += 1
+				PRINTFORML （%CALLNAME:ARG%) 구음경험 +1
+				EXP:ARG:가게한경험 += 1
+				PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+				;BASE:사정이 감소
+				BASE:MASTER:사정 -= 300
+				;정력 보너스
+				SIF FLAG:일상제어 == 2
+					TCVAR:MASTER:드라이사정수 += 1
+			;조교 대상으로 페니스 없음의 경우는 쿤닐링구스
 			ELSE
-				PRINTFORMW ご褒美とばかりに愛液をあふれさせた%CALLNAME:MASTER%の秘所に舌を這わせ絶頂させた…
-				;MASTERの経験増加と内容の表示
-				EXP:MASTER:Ｃ経験 += 5
-				PRINTL Ｃ経験 +5
-				EXP:MASTER:絶頂経験 += 1
-				PRINTL 絶頂経験 +1
-				EXP:MASTER:口淫経験 += 1
-				PRINTL 口淫経験 +1
-				EXP:MASTER:奉仕快楽経験 += 1
-				PRINTL 奉仕快楽経験 +1
-				;ARGの経験増加と内容の表示
-				EXP:ARG:Ｂ経験 += 5
-				PRINTFORML （%CALLNAME:ARG%）Ｂ経験 +5
-				EXP:ARG:口淫経験 += 1 
-				PRINTFORML （%CALLNAME:ARG%）口淫経験 +1
-				EXP:ARG:イかせ経験 += 1
-				PRINTFORML （%CALLNAME:ARG%）イかせ経験 +1
+				PRINTFORMW 포상이라는 듯이 애액을 넘치게 했다%CALLNAME:MASTER%의 비밀스런 장소에 혀를 기게 한 절정 시켰다…
+				;MASTER의 경험 증가와 내용의 표시
+				EXP:MASTER:C경험 += 5
+				PRINTL C경험 +5
+				EXP:MASTER:절정경험 += 1
+				PRINTL 절정 경험 +1
+				EXP:MASTER:구음경험 += 1
+				PRINTL 구음경험 +1
+				EXP:MASTER:봉사쾌락경험 += 1
+				PRINTL 봉사 쾌락 경험 +1
+				;ARG의 경험 증가와 내용의 표시
+				EXP:ARG:B경험 += 5
+				PRINTFORML （%CALLNAME:ARG%) B경험 +5
+				EXP:ARG:구음경험 += 1 
+				PRINTFORML （%CALLNAME:ARG%) 구음경험 +1
+				EXP:ARG:가게한경험 += 1
+				PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
 			ENDIF
 			[SKIPSTART]
-			//これまではスキンシップによって刻印を取得したりしなかったりしていた
-			//そもそも日常で刻印の取得は望ましくないと考えるので封印する方向で。というか(基本的に)発生時点で弾くように
-			;勃起させた
-			SIF !GETBIT(CFLAG:ARG:刻印, 2) && PENIS(MASTER)
-				CALL DAILY_MARK_CHECK_GET("勃起")
-			;快Cを1000以上与えた
-			SIF !GETBIT(CFLAG:ARG:刻印, 3)
-				CALL DAILY_MARK_CHECK_GET("快Ｃ")
-			;C絶頂
-			SIF !GETBIT(CFLAG:ARG:刻印, 12)
-				CALL DAILY_MARK_CHECK_GET("Ｃ絶頂")
-			;射精
-			SIF !GETBIT(CFLAG:ARG:刻印, 19) && PENIS(MASTER)
-				CALL DAILY_MARK_CHECK_GET("射精")
+			//이것까지는 스킨십에 의해 각인을 취득하거나 하지 않았다거나 하고 있었다
+			//원래 일상으로 각인의 취득은 바람직하지 않다고 생각하므로 봉인할 방향으로. 라고 할까 (기본적으로) 발생시점으로써 연주하도록(듯이)
+			;발기시켰다
+			SIF ! GETBIT(CFLAG:ARG:각인, 2) && PENIS(MASTER)
+				CALL DAILY_MARK_CHECK_GET("발기")
+			;쾌C를 1000이상 주었다
+			SIF ! GETBIT(CFLAG:ARG:각인, 3)
+				CALL DAILY_MARK_CHECK_GET("쾌C")
+			;C절정
+			SIF ! GETBIT(CFLAG:ARG:각인, 12)
+				CALL DAILY_MARK_CHECK_GET("C절정")
+			;사정
+			SIF ! GETBIT(CFLAG:ARG:각인, 19) && PENIS(MASTER)
+				CALL DAILY_MARK_CHECK_GET("사정")
 			[SKIPEND]
-			;ムラムラをリセット
-			CFLAG:ARG:むらむら = 0
-			;何かあってもよさそうな気がしたけど蛇足な気もするので
-			;PRINTFORML （%CALLNAME:ARG%）スッキリ…
+			;불끈불끈을 리셋트
+			CFLAG:ARG:불끈불끈 = 0
+			;뭔가 있어도 좋은 것 같은 생각이 들었지만 사족인 생각도 들므로
+			;PRINTFORML (%CALLNAME:ARG%) 깨끗이…
 	ENDSELECT
-;条件を満たさない場合
+;조건을 채우지 않는 경우
 ELSE
-	;203, 1-3（あわてて逃げました）
+	;203, 1-3(서둘러 도망쳤습니다)
 	CALL KOJO_EVENT(203, 3, ARG)
-	PRINTFORMW 一服もられたことに気がついた%CALLNAME:MASTER%は会話をそうそうに切り上げ食堂から出ていきました
-	;ムラムラ増加
-	CFLAG:ARG:むらむら += 1
-	PRINTFORML （%CALLNAME:ARG%）むらむら +1
-	;WAITとRETURNは終端でまとめて実行するように
+	PRINTFORMW 휴식일을 깨달았다%CALLNAME:MASTER%는 회화를 서둘러 절상 식당으로부터 나갔습니다
+	;불끈불끈 증가
+	CFLAG:ARG:불끈불끈 += 1
+	PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+	;WAIT와 RETURN는 종단으로 정리해 실행하도록(듯이)
 ENDIF
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;スキンシップ2
-;────────────────────────────────────
+;─
+;스킨십 2
+;─
 @DAILY_LIFE_1_2(ARG, ARG:1, ARG:2, ARG:3)
-;【屈服:11】キスを未取得ならキャンセル
-SIF !GETBIT(CFLAG:ARG:刻印, 11)
+;【굴복:11】키스를 미취득이라면 캔슬
+SIF !GETBIT(CFLAG:ARG:각인, 11)
 	RETURN 0
-;204, 2-0（廊下でご主人様に呼び止められました）実際にはご主人様でない場合もあるのでアレなんですが、まぁ別にいいや感もあるので…
+;204, 2-0(복도에서 주인님에 불러 세울 수 있었습니다) 실제로는 주인님이 아닌 경우도 있는 것일 수 있는입니다만, 뭐 별로 좋아 감도 있으므로…
 CALL KOJO_EVENT(204, 0, ARG)
-PRINTFORMW %CALLNAME:MASTER%が廊下を歩いていると背後から%CALLNAME:ARG%に呼び止められた
+PRINTFORMW %CALLNAME:MASTER%가 복도를 걷고 있으면 배후로부터%CALLNAME:ARG%에 불러 세울 수 있었다
 {
-PRINTFORML %CALLNAME:ARG%はにこにこしながら%CALLNAME:MASTER%に近づくと、\@ TALENT:ARG:恥じらい || TALENT:ARG:清楚 
-	? 少しためらいながら # 不意に\@%CALLNAME:MASTER%の頭をつかんで
+PRINTFORML %CALLNAME:ARG%는 싱글벙글 하면서%CALLNAME:MASTER%에 가까워지면,\@ TALENT:ARG:수줍음 || TALENT:ARG:청초 
+	? 조금 주저하면서# 갑자기\@%CALLNAME:MASTER%의 머리를 잡아
 }
-;204, 2-1（いきなりちゅぅ）
+;204, 2-1(삶)
 CALL KOJO_EVENT(204, 1, ARG)
-PRINTFORMW 唇を奪った…
+PRINTFORMW 입술을 빼앗았다…
 PRINTL
-;204, 2-2（数分後満足してばいばい）
+;204, 2-2(몇분 후 만족해 바이바이)
 CALL KOJO_EVENT(204, 2, ARG)
-PRINTFORML %CALLNAME:ARG%は数分間%CALLNAME:MASTER%の口内を蹂躙すると満足したのか
-PRINTFORMW 放心する%CALLNAME:MASTER%を残して去っていった…
-;MASTERとARGの経験増加と内容の表示
-EXP:MASTER:キス経験 += 1
-EXP:ARG:キス経験 += 1 
-PRINTFORML （二人）キス経験 +1
-;ムラムラ解消
-CFLAG:ARG:むらむら = 0
+PRINTFORML %CALLNAME:ARG%는 몇 분간%CALLNAME:MASTER%의 입안을 유린하면 만족했는가
+PRINTFORMW 방심한다%CALLNAME:MASTER%를 남겨 떠나 갔다…
+;MASTER와 ARG의 경험 증가와 내용의 표시
+EXP:MASTER:키스경험 += 1
+EXP:ARG:키스경험 += 1 
+PRINTFORML (두 명) 키스 경험 +1
+;불끈불끈 해소
+CFLAG:ARG:불끈불끈 = 0
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;スキンシップ3
-;────────────────────────────────────
+;─
+;스킨십 3
+;─
 @DAILY_LIFE_1_3(ARG, ARG:1, ARG:2, ARG:3)
-;調教対象がオトコならキャンセル（オトコの場合でも乳首を責められる的なものがあっても良い気はするけど、とりあえずこのまま）
-SIF TALENT:MASTER:オトコ
+;조교 대상이 남자라면 캔슬(남자의 경우에서도 유두를 꾸짖을 수 있는적인 것이 있어도 좋은 생각은 들지만, 우선 이대로)
+SIF TALENT:MASTER:남자
 	RETURN 0
-;【屈服:6】で弾いても良い気もするけど、別にいいような気もしたのでなにもしない
+;【굴복:6】그리고 연주해도 좋은 생각도 들지만, 별로 좋은 것 같은 생각도 들었으므로 아무것도 하지 않는다
 
-;205, 3-0（いきなり背中から抱きつかれたなう）
+;205, 3-0(갑자기 등으로부터 껴안는동 쉬었군)
 CALL KOJO_EVENT(205, 0, ARG)
-PRINTFORMW %CALLNAME:MASTER%が廊下を歩いていると背後から%CALLNAME:ARG%に襲われた
-;205, 3-1（おっぱい揉まれてるなう）
+PRINTFORMW %CALLNAME:MASTER%가 복도를 걷고 있으면 배후로부터%CALLNAME:ARG%에 습격당했다
+;205, 3-1(유)
 CALL KOJO_EVENT(205, 1, ARG)
-IF TALENT:MASTER:貧乳
-	PRINTFORMW %CALLNAME:ARG%は%CALLNAME:MASTER%を後ろから抱きすくめ、平坦な胸をまさぐっている…
+IF TALENT:MASTER:빈유
+	PRINTFORMW %CALLNAME:ARG%는%CALLNAME:MASTER%를 뒤로부터 꽉 껴안아 평탄한 가슴을 만지작거리고 있다…
 ELSE
-	PRINTFORML %CALLNAME:ARG%は%CALLNAME:MASTER%を後ろから抱きすくめると、襟元に手を差し入れて
-	PRINTFORMW 胸を揉みだした…
+	PRINTFORML %CALLNAME:ARG%는%CALLNAME:MASTER%를 뒤로부터 꽉 껴안으면, 목 언저리에 손을 넣어
+	PRINTFORMW 가슴을 유 보기 시작했다…
 ENDIF
 PRINTL
-;205, 3-2（満足していなくなったお…）
+;205, 3-2(만족하지 않게 된…)
 CALL KOJO_EVENT(205, 2, ARG)
-PRINTFORML %CALLNAME:ARG%はひとしきり%CALLNAME:MASTER%の喘ぎ声を堪能すると
-PRINTFORMW 放心する%CALLNAME:MASTER%を残して去っていった…
-;MASTERとARGの経験増加と内容の表示
-EXP:MASTER:Ｂ経験 += 3
-PRINTL Ｂ経験 +3
-EXP:ARG:手淫経験 += 1 
-PRINTFORML （%CALLNAME:ARG%）手淫経験 +1
-CFLAG:ARG:むらむら = 0
+PRINTFORML %CALLNAME:ARG%는 한 바탕%CALLNAME:MASTER%의 허덕이는 소리를 즐기면
+PRINTFORMW 방심한다%CALLNAME:MASTER%를 남겨 떠나 갔다…
+;MASTER와 ARG의 경험 증가와 내용의 표시
+EXP:MASTER:B경험 += 3
+PRINTL B경험 +3
+EXP:ARG:수음경험 += 1 
+PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+CFLAG:ARG:불끈불끈 = 0
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;スキンシップ4
-;────────────────────────────────────
+;─
+;스킨십 4
+;─
 @DAILY_LIFE_1_4(ARG, ARG:1, ARG:2, ARG:3)
-;調教対象にペニスなしならキャンセル
+;조교 대상으로 페니스 없음이라면 캔슬
 SIF !PENIS(MASTER)
 	RETURN 0
-;屈服刻印5以下もしくは関連する刻印未取得の場合はキャンセル
-;屈服刻印 > 4とGETBITANDで記述を統一したいとこだったけど(面倒になって)やめ
-SIF MARK:ARG:屈服刻印 < 5 || !GETBITOR(CFLAG:ARG:刻印, 2, 3, 12, 19, 28)
+;굴복 각인 5 이하 혹은 관련하는 각인미취득의 경우는 캔슬
+;굴복 각인 > 4로 GETBITAND로 기술을 통일하고 싶은 곳이었지만(귀찮게 되어) 그만두고
+SIF MARK:ARG:굴복각인 < 5 || !GETBITOR(CFLAG:ARG:각인, 2, 3, 12, 19, 28)
 	RETURN 0
-;206, 4-0（お食事ご一緒いいかしら？）
+;206, 4-0(식사 함께 좋을까?)
 CALL KOJO_EVENT(206, 0, ARG)
-PRINTFORMW %CALLNAME:MASTER%が食事を取っていると%CALLNAME:ARG%が相席してもいいかと尋ねてきた
-PRINT [0] - 嫌な予感がする　
-PRINT [1] - 一緒に食べる
+PRINTFORMW %CALLNAME:MASTER%가 식사를 취하고 있으면%CALLNAME:ARG%가 합석해도 될까 물어 왔다
+PRINT [0] - 싫은 예감이 한다  
+PRINT [1] - 함께 먹는다
 CALL INPUTINT(0, 1)
 SELECTCASE RESULT
-	;嫌な予感がする
+	;싫은 예감이 한다
 	CASE 0
-		;206, 4-1（マッハで食って逃げました）
+		;206, 4-1(마하로 먹어 도망쳤습니다)
 		CALL KOJO_EVENT(206, 1, ARG)
-		PRINTFORMW %CALLNAME:MASTER%は残りの料理を猛烈な勢いで平らげるとそそくさと食堂から逃げ出した
-		CFLAG:ARG:平時ア -= 100
-		SIF CFLAG:ARG:平時ア < -999
-			CFLAG:ARG:平時ア = -999
-		;ムラムラ増加
-		CFLAG:ARG:むらむら += 1
-		PRINTFORML （%CALLNAME:ARG%）むらむら +1
-	;一緒に食べる
+		PRINTFORMW %CALLNAME:MASTER%는 나머지의 요리를 맹렬한 기세로 평정하면 허둥지둥 식당으로부터 도망치기 시작했다
+		CFLAG:ARG:평시아 -= 100
+		SIF CFLAG:ARG:평시아 < -999
+			CFLAG:ARG:평시아 = -999
+		;불끈불끈 증가
+		CFLAG:ARG:불끈불끈 += 1
+		PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+	;함께 먹는다
 	CASE 1
-		;206, 4-2（テーブルの下でしゃぶられてます）
+		;206, 4-2(테이블아래에서 빨아지고 있습니다)
 		CALL KOJO_EVENT(206, 2, ARG)
-		PRINTFORML %CALLNAME:MASTER%が快諾し料理を取り分けようとすると、%CALLNAME:ARG%は
-		PRINTFORMW テーブルの下に潜り込み手馴れた手つきで肉棒を取り出ししゃぶり始めた…
-		;206, 4-3（どくんどくん）
+		PRINTFORML %CALLNAME:MASTER%가 쾌락해 요리를 따로 나누려고 하면,%CALLNAME:ARG%는
+		PRINTFORMW 테이블아래에 기어들어 손에 익은 손놀림으로 육봉을 꺼내 빨기 시작했다…
+		;206, 4-3(두근두근)
 		CALL KOJO_EVENT(206, 3, ARG)
-		PRINTFORML あっという間に高められ%CALLNAME:ARG%の口内に射精するも、
-		PRINTFORMW 敏感になったペニスに吸付き次の射精を促してくる
-		;206, 4-4（倍プッシュだ）
+		PRINTFORML 눈 깜짝할 순간에 고째%CALLNAME:ARG%의 입안에 사정하는 것도,
+		PRINTFORMW 민감하게 된 페니스에 달라붙어 다음의 사정을 재촉해 온다
+		;206, 4-4(배푸쉬다)
 		CALL KOJO_EVENT(206, 4, ARG)
-		PRINTFORMW 結局、%CALLNAME:MASTER%が食事を終えるまで搾られ続けました…
-		;MASTERの経験増加と内容の表示
-		EXP:MASTER:Ｃ経験   += 10
-		PRINTL Ｃ経験 +10
-		EXP:MASTER:絶頂経験 += 3
-		PRINTL 絶頂経験 +3
-		EXP:MASTER:射精経験 += 3
-		PRINTL 射精経験 +3
-		;ARGの経験増加と内容の表示
-		EXP:ARG:精液経験   += 3
-		PRINTFORML （%CALLNAME:ARG%）精液経験 +3
-		EXP:ARG:口淫経験   += 3
-		PRINTFORML （%CALLNAME:ARG%）口淫経験 +3
-		EXP:ARG:イかせ経験 += 3
-		PRINTFORML （%CALLNAME:ARG%）イかせ経験 +3
-		;MASTERのBASE:射精が減少
-		BASE:MASTER:射精 -= 600
-		;精力ボーナス
-		SIF FLAG:日常制御 == 2
-			TCVAR:MASTER:空射精数 += 2
-		;ムラムラ解消
-		CFLAG:ARG:むらむら = 0
+		PRINTFORMW 결국,%CALLNAME:MASTER%가 식사를 끝낼 때까지 짜지고 계속했습니다…
+		;MASTER의 경험 증가와 내용의 표시
+		EXP:MASTER:C경험   += 10
+		PRINTL C경험 +10
+		EXP:MASTER:절정경험 += 3
+		PRINTL 절정 경험 +3
+		EXP:MASTER:사정경험 += 3
+		PRINTL 사정 경험 +3
+		;ARG의 경험 증가와 내용의 표시
+		EXP:ARG:정액경험   += 3
+		PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
+		EXP:ARG:구음경험   += 3
+		PRINTFORML （%CALLNAME:ARG%) 구음경험 +3
+		EXP:ARG:가게한경험 += 3
+		PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +3
+		;MASTER의 BASE:사정이 감소
+		BASE:MASTER:사정 -= 600
+		;정력 보너스
+		SIF FLAG:일상제어 == 2
+			TCVAR:MASTER:드라이사정수 += 2
+		;불끈불끈 해소
+		CFLAG:ARG:불끈불끈 = 0
 ENDSELECT
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;スキンシップ5
-;────────────────────────────────────
+;─
+;스킨십 5
+;─
 @DAILY_LIFE_1_5(ARG, ARG:1, ARG:2, ARG:3)
-;調教対象にペニスがなければキャンセル
+;조교 대상으로 페니스가 없으면 캔슬
 SIF !PENIS(MASTER)
 	RETURN 0
-;調教対象が童貞ならキャンセル
-SIF TALENT:MASTER:童貞
+;조교 대상이 동정이라면 캔슬
+SIF TALENT:MASTER:동정
 	RETURN 0
-;ARGがサド持ちならキャンセル
-SIF TALENT:ARG:サド
+;ARG가 새디즘 소유라면 캔슬
+SIF TALENT:ARG:새디즘
 	RETURN 0
 ;-------------------------------------------------
-;サド用の分岐を何か考えてもいいかもしれないとか考える
-;  クンニやリミングを強要されたり、TALENTやITEMを参照して(ペニバン等で)やられる展開も良い
-;    まぁ後で時間のある時に考えるということで(2014/11/24)
+;새디즘용의 분기를 뭔가 생각해도 좋을지도 모른다든가 생각한다
+;  쿤닐링구스나 리밍을 강요받거나 TALENT나 ITEM를 참조해(페니반등으로) 당하는 전개도 좋다
+;    아무튼 다음에 시간이 있을 때에 생각한다고 하는 일로(2014/11/24)
 ;-------------------------------------------------
-;屈服刻印が5以下ならキャンセル
-SIF MARK:ARG:屈服刻印 < 5
+;굴복 각인이 5 이하라면 캔슬
+SIF MARK:ARG:굴복각인 < 5
 	RETURN 0
-;これらの刻印を取得していない場合はキャンセル
-SIF !GETBITOR(CFLAG:ARG:刻印, 3, 12, 19)
+;이것들의 각인을 취득하고 있지 않는 경우는 캔슬
+SIF !GETBITOR(CFLAG:ARG:각인, 3, 12, 19)
 	RETURN 0
-;207, 5-0（お皿洗いを手伝ってくれるようです）
+;207, 5-0(접시닦이를 도와 주는 것 같습니다)
 CALL KOJO_EVENT(207, 0, ARG)
-PRINTFORML %CALLNAME:MASTER%が洗い物をしようとすると%CALLNAME:ARG%が皿を運んできてくれた
-PRINTFORMW …どうやら手伝ってくれるらしい
-PRINT [0] - 遠慮する　
-PRINT [1] - お願いする
+PRINTFORML %CALLNAME:MASTER%가 빨랫감을 하려고 하면%CALLNAME:ARG%가 접시를 옮겨 와 주었다
+PRINTFORMW … 아무래도 도와 주는 것 같다
+PRINT [0] - 사양한다  
+PRINT [1] - 부탁한다
 CALL INPUTINT(0, 1)
 SELECTCASE RESULT
-	;遠慮する
+	;사양한다
 	CASE 0
-		;207, 5-1（お断りします）
+		;207, 5-1(거절합니다)
 		CALL KOJO_EVENT(207, 1, ARG)
-		PRINTFORMW %CALLNAME:MASTER%は%CALLNAME:ARG%の申し出を丁寧に断り一人で洗い物を片付けた
-		CFLAG:ARG:むらむら += 1
-		PRINTFORML （%CALLNAME:ARG%）むらむら +1
-		;WAITとRETURNは終端でおこなう
-	;お願いする
+		PRINTFORMW %CALLNAME:MASTER%는%CALLNAME:ARG%의 의사표현을 정중하게 거절해 혼자서 빨랫감을 정리했다
+		CFLAG:ARG:불끈불끈 += 1
+		PRINTFORML （%CALLNAME:ARG%) 불끈불끈 +1
+		;WAIT와 RETURN는 종단으로 행한다
+	;부탁한다
 	CASE 1
-		;207, 5-2（一緒に頑張って終わらせました）
+		;207, 5-2(함께 노력해 끝냈습니다)
 		CALL KOJO_EVENT(207, 2, ARG)
-		PRINTFORML %CALLNAME:ARG%が手伝ってくれたおかげでいつもより早く終えることができた
-		PRINTFORM 最後の皿を棚にしまうと
-		;ARGが清楚、恥じらい、貞操観念、一線越えない、処女
-		IF TALENT:ARG:清楚 || TALENT:ARG:恥じらい || TALENT:ARG:貞操観念 || TALENT:ARG:一線越えない || TALENT:ARG:処女
-			PRINTFORMW %CALLNAME:ARG%が熱い視線を向けながら何か言いたげにらもじもじしている…
-			;207, 5-3（おくちにほしいなーオーラ）
+		PRINTFORML %CALLNAME:ARG%가 도와 준 덕분에 평소보다 빨리 끝낼 수가 있었다
+		PRINTFORM 마지막 접시를 선반에 넣으면
+		;ARG가 청초, 부끄러워해, 정조관념, 선을그음, 처녀
+		IF TALENT:ARG:청초 || TALENT:ARG:수줍음 || TALENT:ARG:정조관념 || TALENT:ARG:선을그음 || TALENT:ARG:처녀
+			PRINTFORMW %CALLNAME:ARG%가 뜨거운 시선을 향하면서 뭔가 말하고 싶은 듯이들 머뭇머뭇 하고 있다…
+			;207, 5-3(썩어에 가지고 싶은데─오라)
 			CALL KOJO_EVENT(207, 3, ARG)
-			PRINTFORML %CALLNAME:MASTER%が黙って頷くと%CALLNAME:ARG%は嬉々として跪き
-			PRINTFORMW 股間からペニスを取り出してしゃぶり始めた
-			;207, 5-4（おいしかったです）
+			PRINTFORML %CALLNAME:MASTER%가 입다물고 수긍하면%CALLNAME:ARG%는 희희낙락 해 무릎 꿇어
+			PRINTFORMW 사타구니로부터 페니스를 꺼내 빨기 시작했다
+			;207, 5-4(맛있었던 것입니다)
 			CALL KOJO_EVENT(207, 4, ARG)
-			PRINTFORML %CALLNAME:MASTER%が放った精液を美味しそうに飲み込むと
-			PRINTFORMW また手伝ってあげるねと言い残し去っていった…
-			;MASTERの経験増加と内容の表示
-			EXP:MASTER:Ｃ経験 += 5
-			PRINTL Ｃ経験 +5
-			EXP:MASTER:絶頂経験 += 1
-			PRINTL 絶頂経験 +1
-			EXP:MASTER:射精経験 += 1
-			PRINTL 射精経験 +1
-			;ARGの経験増加と内容の表示
-			EXP:ARG:精液経験 += 1 
-			PRINTFORML （%CALLNAME:ARG%）精液経験 +1
-			EXP:ARG:口淫経験 += 1 
-			PRINTFORML （%CALLNAME:ARG%）口淫経験 +1
-			EXP:ARG:イかせ経験 += 1
-			PRINTFORML （%CALLNAME:ARG%）イかせ経験 +1
-			BASE:MASTER:射精 -= 300
-			;口内射精
-			;SIF !GETBIT(CFLAG:ARG:刻印, 28)
-		;Ａセックスに派生
-		ELSEIF ABL:ARG:Ａ感覚 > 3 && RAND:(LIMIT(10 - ABL:ARG:Ａ感覚, 3, 10)) == 0
-			PRINTFORMW %CALLNAME:ARG%は当然のように労働の対価を要求してきた
-			;207, 5-5（お手伝いしたんだからお尻犯せよ）
+			PRINTFORML %CALLNAME:MASTER%가 발한 정액을 맛있을 것 같게 삼키면
+			PRINTFORMW 또 도와 주는군이라고 말하다가 남긴 떠나 갔다…
+			;MASTER의 경험 증가와 내용의 표시
+			EXP:MASTER:C경험 += 5
+			PRINTL C경험 +5
+			EXP:MASTER:절정경험 += 1
+			PRINTL 절정 경험 +1
+			EXP:MASTER:사정경험 += 1
+			PRINTL 사정 경험 +1
+			;ARG의 경험 증가와 내용의 표시
+			EXP:ARG:정액경험 += 1 
+			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +1
+			EXP:ARG:구음경험 += 1 
+			PRINTFORML （%CALLNAME:ARG%) 구음경험 +1
+			EXP:ARG:가게한경험 += 1
+			PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+			BASE:MASTER:사정 -= 300
+			;입안 사정
+			;SIF ! GETBIT(CFLAG:ARG:각인, 28)
+		;A섹스에 파생
+		ELSEIF ABL:ARG:A감각 > 3 && RAND:(LIMIT(10 - ABL:ARG:A감각, 3, 10)) == 0
+			PRINTFORMW %CALLNAME:ARG%는 당연히 노동의 대가를 요구해 왔다
+			;207, 5-5(도운 것이니까 엉덩이 범해)
 			CALL KOJO_EVENT(207, 5, ARG)
-			PRINTFORML %CALLNAME:ARG%は%CALLNAME:MASTER%のペニスを口に含んで準備を整えると
-			PRINTFORMW 立ったまま尻たぶを広げて期待に引くつくアヌスを見せつけている
+			PRINTFORML %CALLNAME:ARG%는%CALLNAME:MASTER%의 페니스를 입에 넣어 준비를 갖추면
+			PRINTFORMW 선 채로 엉덩이살을 벌려 기대에 당기는 붙는 아누스를 과시하고 있다
 			PRINTL
-			;207, 5-6（お尻でヤってしまいました）
+			;207, 5-6(엉덩이로 해 버렸습니다)
 			CALL KOJO_EVENT(207, 6, ARG)
-			PRINTFORML %CALLNAME:MASTER%は%CALLNAME:ARG%のアヌスの強烈な締め付けに
-			PRINTFORMW 為す術も無く、大量の精液を搾られてしまった…
-			;MASTERの経験増加と内容の表示
+			PRINTFORML %CALLNAME:MASTER%는%CALLNAME:ARG%의 아누스의 강렬한 억압에
+			PRINTFORMW 할 방법도 없고, 대량의 정액을 짜져 버렸다…
+			;MASTER의 경험 증가와 내용의 표시
 			;***************************
-			EXP:MASTER:Ｃ経験 += 5                          ;調教対象Ｃ経験
-			PRINTL Ｃ経験 +5
-			EXP:MASTER:性交経験 += 1                        ;調教対象性交経験
-			PRINTL 性交経験 +1
-			EXP:MASTER:絶頂経験 += 1                        ;調教対象絶頂経験
-			PRINTL 絶頂経験 +1
-			EXP:MASTER:射精経験 += 3                        ;調教対象射精経験
-			PRINTL 射精経験 +3
-			;ARGの経験増加と内容の表示
+			EXP:MASTER:C경험 += 5                          ;조교 대상 C경험
+			PRINTL C경험 +5
+			EXP:MASTER:성교경험 += 1                        ;조교 대상 성교 경험
+			PRINTL 성교 경험 +1
+			EXP:MASTER:절정경험 += 1                        ;조교 대상 절정 경험
+			PRINTL 절정 경험 +1
+			EXP:MASTER:사정경험 += 3                        ;조교 대상 사정 경험
+			PRINTL 사정 경험 +3
+			;ARG의 경험 증가와 내용의 표시
 			;***************************
-			EXP:ARG:Ａ経験 += 1                             ;ARGＡ経験
-			PRINTFORML （%CALLNAME:ARG%）Ａ経験 +1
-			EXP:ARG:性交経験 += 1                           ;ARG性交経験
-			PRINTFORML （%CALLNAME:ARG%）性交経験 +1
-			EXP:ARG:精液経験 += 3                           ;ARG精液経験
-			PRINTFORML （%CALLNAME:ARG%）精液経験 +3
-			EXP:ARG:イかせ経験 += 1                         ;ARGイかせ経験
-			PRINTFORML (%CALLNAME:ARG%)イかせ経験 +1
-			BASE:MASTER:射精 -= 500
+			EXP:ARG:A경험 += 1                             ;ARGA 경험
+			PRINTFORML （%CALLNAME:ARG%) A경험 +1
+			EXP:ARG:성교경험 += 1                           ;ARG 성교 경험
+			PRINTFORML （%CALLNAME:ARG%) 성교 경험 +1
+			EXP:ARG:정액경험 += 3                           ;ARG 정액 경험
+			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
+			EXP:ARG:가게한경험 += 1                         ;ARG 가게 한 경험
+			PRINTFORML (%CALLNAME:ARG%) 가게 한 경험 +1
+			BASE:MASTER:사정 -= 500
 			[SKIPSTART]
-			;性交
-			SIF !GETBIT(CFLAG:ARG:刻印, 30)
-			;腰をふる
-			SIF !GETBIT(CFLAG:ARG:刻印, 31)
-			;アナルセックス（攻め）
-			SIF !GETBIT(CFLAG:ARG:刻印, 47)
-			;アナルへ射精
-			SIF !GETBIT(CFLAG:ARG:刻印, 41)
+			;성교
+			SIF ! GETBIT(CFLAG:ARG:각인, 30)
+			;허리를 흔든다
+			SIF ! GETBIT(CFLAG:ARG:각인, 31)
+			;애널 섹스(공격)
+			SIF ! GETBIT(CFLAG:ARG:각인, 47)
+			;애널에 사정
+			SIF ! GETBIT(CFLAG:ARG:각인, 41)
 			[SKIPEND]
-		;Ｖセックスに派生
+		;V섹스에 파생
 		ELSE
-			PRINTFORMW %CALLNAME:ARG%は当然のように労働の対価を要求してきた
-			;207, 5-7（謝礼はまんまん銀行に突っ込んでくれ）
+			PRINTFORMW %CALLNAME:ARG%는 당연히 노동의 대가를 요구해 왔다
+			;207, 5-7(사례는 그대로응은행에 돌진해 줘)
 			CALL KOJO_EVENT(207, 7, ARG)
-			PRINTFORML %CALLNAME:ARG%は%CALLNAME:MASTER%のペニスを口に含んで準備を整えると
-			PRINTFORMW 濡れた秘所を左右に開き%CALLNAME:MASTER%のペニスを誘っている
+			PRINTFORML %CALLNAME:ARG%는%CALLNAME:MASTER%의 페니스를 입에 넣어 준비를 갖추면
+			PRINTFORMW 젖은 비밀스런 장소를 좌우에 열려%CALLNAME:MASTER%의 페니스를 권하고 있다
 			PRINTL
-			;207, 5-8（確かに受け取った）
+			;207, 5-8(확실히 받았다)
 			CALL KOJO_EVENT(207, 8, ARG)
-			PRINTFORML %CALLNAME:MASTER%は%CALLNAME:ARG%のもたらす快感に
-			PRINTFORMW 為す術も無く、大量の精液を搾られてしまった…
-			;MASTERの経験増加と内容の表示
+			PRINTFORML %CALLNAME:MASTER%는%CALLNAME:ARG%가 가져오는 쾌감에
+			PRINTFORMW 할 방법도 없고, 대량의 정액을 짜져 버렸다…
+			;MASTER의 경험 증가와 내용의 표시
 			;***************************
-			EXP:MASTER:Ｃ経験 += 5                          ;調教対象Ｃ経験
-			PRINTL Ｃ経験 +5
-			EXP:MASTER:性交経験 += 1                        ;調教対象性交経験
-			PRINTL 性交経験 +1
-			EXP:MASTER:絶頂経験 += 1                        ;調教対象絶頂経験
-			PRINTL 絶頂経験 +1
-			EXP:MASTER:射精経験 += 3                        ;調教対象射精経験
-			PRINTL 射精経験 +3
-			;ARGの経験増加と内容の表示
+			EXP:MASTER:C경험 += 5                          ;조교 대상 C경험
+			PRINTL C경험 +5
+			EXP:MASTER:성교경험 += 1                        ;조교 대상 성교 경험
+			PRINTL 성교 경험 +1
+			EXP:MASTER:절정경험 += 1                        ;조교 대상 절정 경험
+			PRINTL 절정 경험 +1
+			EXP:MASTER:사정경험 += 3                        ;조교 대상 사정 경험
+			PRINTL 사정 경험 +3
+			;ARG의 경험 증가와 내용의 표시
 			;***************************
-			EXP:ARG:Ｖ経験 += 1                             ;ARGＶ経験
-			PRINTFORML （%CALLNAME:ARG%）Ｖ経験 +1
-			EXP:ARG:性交経験 += 1                           ;ARG性交経験
-			PRINTFORML （%CALLNAME:ARG%）性交経験 +1
-			EXP:ARG:精液経験 += 3                           ;ARG精液経験
-			PRINTFORML （%CALLNAME:ARG%）精液経験 +3
-			EXP:ARG:イかせ経験 += 1                         ;ARGイかせ経験
-			PRINTFORML （%CALLNAME:ARG%）イかせ経験 +1
-			BASE:MASTER:射精 -= 500
+			EXP:ARG:V경험 += 1                             ;ARGV 경험
+			PRINTFORML （%CALLNAME:ARG%) V경험 +1
+			EXP:ARG:성교경험 += 1                           ;ARG 성교 경험
+			PRINTFORML （%CALLNAME:ARG%) 성교 경험 +1
+			EXP:ARG:정액경험 += 3                           ;ARG 정액 경험
+			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
+			EXP:ARG:가게한경험 += 1                         ;ARG 가게 한 경험
+			PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +1
+			BASE:MASTER:사정 -= 500
 			[SKIPSTART]
-			;性交
-			SIF !GETBIT(CFLAG:ARG:刻印, 30)
-			;腰をふる
-			SIF !GETBIT(CFLAG:ARG:刻印, 31)
-			;膣内射精
-			SIF !GETBIT(CFLAG:ARG:刻印, 25)
+			;성교
+			SIF ! GETBIT(CFLAG:ARG:각인, 30)
+			;허리를 흔든다
+			SIF ! GETBIT(CFLAG:ARG:각인, 31)
+			;질내 사정
+			SIF ! GETBIT(CFLAG:ARG:각인, 25)
 			[SKIPEND]
 		ENDIF
-		;精力ボーナス
-		SIF FLAG:日常制御 == 2
-			TCVAR:MASTER:空射精数 += 1
-		;ムラムラ解消
-		CFLAG:ARG:むらむら = 0
+		;정력 보너스
+		SIF FLAG:일상제어 == 2
+			TCVAR:MASTER:드라이사정수 += 1
+		;불끈불끈 해소
+		CFLAG:ARG:불끈불끈 = 0
 ENDSELECT
 WAIT
 RETURN 1
 
-;スキンシップ6
+;스킨십 6
 @DAILY_LIFE_1_6(ARG, ARG:1, ARG:2, ARG:3)
-;昼間ならキャンセル
+;낮이라면 캔슬
 SIF !TIME
 	RETURN 0
-;屈服刻印5以下ならキャンセル
-SIF MARK:ARG:屈服刻印 < 5
+;굴복 각인 5 이하라면 캔슬
+SIF MARK:ARG:굴복각인 < 5
 	RETURN 0
-;関連する刻印未取得時はキャンセル
+;관련하는 각인미취득시는 캔슬
 {
 SIF PENIS(MASTER) && 
-	(!GETBITOR(CFLAG:ARG:刻印, 2, 3, 12, 19, 20, 33, 49) || 
-	!PENIS(MASTER) && !GETBITOR(CFLAG:ARG:刻印, 3, 5, 6, 12, 14, 15, 37))
+	(!GETBITOR(CFLAG:ARG:각인, 2, 3, 12, 19, 20, 33, 49) || 
+	!PENIS(MASTER) && !GETBITOR(CFLAG:ARG:각인, 3, 5, 6, 12, 14, 15, 37))
 }
 	RETURN 0
-;208, 6-0（お風呂場強襲）
+;208, 6-0(목욕탕 강습)
 CALL KOJO_EVENT(208, 0, ARG)
-PRINTFORML %CALLNAME:MASTER%が風呂で体を洗っていると\@ TALENT:ARG:恥じらい || TALENT:ARG:清楚 ? タオルで体を隠した # 全裸の \@%CALLNAME:ARG%が入ってきた
-PRINTFORMW 背中を流してくれるそうだ
-;208, 6-1（背中を流します泡踊り）
+PRINTFORML %CALLNAME:MASTER%가 목욕탕에서 몸을 씻고 있으면\@ TALENT:ARG:수줍음 || TALENT:ARG:청초 ? 타올로 몸을 숨겼다# 전라의\@%CALLNAME:ARG%가 들어 왔다
+PRINTFORMW 등을 밀어 주는 것 같다
+;208, 6-1(등을 밉니다 거품 춤)
 CALL KOJO_EVENT(208, 1, ARG)
-PRINTFORML 嫌な予感を感じながらも%CALLNAME:MASTER%が背を向けると、%CALLNAME:ARG%は自分の体で
-PRINTFORMW 石鹸を泡立たせて、抱きついてきた…
+PRINTFORML 싫은 예감을 느끼면서도%CALLNAME:MASTER%가 등을 돌리면,%CALLNAME:ARG%는 자신의 몸으로
+PRINTFORMW 비누를 거품이 일게 해, 껴안아 왔다…
 PRINTL
-;調教対象にペニス有り
+;조교 대상으로 페니스 있어
 IF PENIS(MASTER)
-	PRINTFORMW %CALLNAME:ARG%は胸を%CALLNAME:MASTER%の背中にこすりつけながら、体の隅々を撫で回してくる
-	;208, 6-2（ちんこは触ってあげない）
+	PRINTFORMW %CALLNAME:ARG%는 가슴을%CALLNAME:MASTER%의 등에 문질러 바르면서, 몸의 구석구석을 더듬어 온다
+	;208, 6-2(고추는 손대어 주지 않는다)
 	CALL KOJO_EVENT(208, 2, ARG)
-	PRINTFORML その行為は次第にエスカレートしていき、\@ TALENT:MASTER:オトコ ? 陰嚢 # 秘唇 \@やアヌスにまで手を伸ばしてきたが、
-	PRINTFORMW %CALLNAME:MASTER%のペニスには一切手を触れようとしない
-	PRINT [0] - 耐える　
-	PRINT [1] - お願いする
+	PRINTFORML 그 행위는 점차 에스컬레이트해 가\@ TALENT:MASTER:남자 ? 음낭# 비순\@나 아누스에까지 손을 뻗어 왔지만,
+	PRINTFORMW %CALLNAME:MASTER%의 페니스에는 일절 손대려고 하지 않는다
+	PRINT [0] - 참는다  
+	PRINT [1] - 부탁한다
 	CALL INPUTINT(0, 1)
 	SELECTCASE RESULT
-		;耐える
+		;참는다
 		CASE 0
-			;208, 6-4（我慢してたら焦らすの面倒になったようです）
+			;208, 6-4(참고 초조하게 하는 것 귀찮게 된 것 같습니다)
 			CALL KOJO_EVENT(208, 4, ARG)
-			PRINTFORML %CALLNAME:MASTER%より先に限界が来たのか、%CALLNAME:ARG%は背中に抱きついたまま
-		;お願いする
+			PRINTFORML %CALLNAME:MASTER%보다 먼저 한계가 왔는지,%CALLNAME:ARG%는 등에 껴안은 채로
+		;부탁한다
 		CASE 1
-			;208, 6-3（イかせて！）
+			;208, 6-3(가게 해!)
 			CALL KOJO_EVENT(208, 3, ARG)
-			PRINTFORML %CALLNAME:MASTER%が泣きそうな声で懇願すると%CALLNAME:ARG%は背中に抱きついたまま
+			PRINTFORML %CALLNAME:MASTER%가 울 것 같은 소리로 간원 하면%CALLNAME:ARG%는 등에 껴안은 채로
 	ENDSELECT
-	PRINTFORMW ペニスを握り一気にしごき立てた…
-	;208, 6-5（どくんどくん）
+	PRINTFORMW 페니스를 잡아 단번에 훑어 내 세웠다…
+	;208, 6-5(두근두근)
 	CALL KOJO_EVENT(208, 5, ARG)
-	PRINTFORML 焦らしに焦らされた%CALLNAME:MASTER%のペニスはあっという間に昇天し
-	PRINTFORMW 壊れた蛇口のように精液をまき散らしている…
-	;MASTERの経験増加と内容の表示
-	EXP:MASTER:Ｃ経験 += 3
-	PRINTL Ｃ経験 +3
-	EXP:MASTER:絶頂経験 += 1
-	PRINTL 絶頂経験 +1
-	EXP:MASTER:射精経験 += 3
-	PRINTL 射精経験 +3
-	;ARGの経験増加と内容の表示
-	EXP:ARG:精液経験 += 3
-	PRINTFORML （%CALLNAME:ARG%）精液経験 +3
-	EXP:ARG:手淫経験 += 1 
-	PRINTFORML （%CALLNAME:ARG%）手淫経験 +1
-	EXP:ARG:イかせ経験 += 2
-	PRINTFORML （%CALLNAME:ARG%）イかせ経験 +2
-	BASE:MASTER:射精 -= 500
-	;精力ボーナス
-	SIF FLAG:日常制御 == 2
-		TCVAR:MASTER:空射精数 += 1
+	PRINTFORML 초조하게 함에 초조해 해졌다%CALLNAME:MASTER%의 페니스는 눈 깜짝할 순간에 승천 해
+	PRINTFORMW 망가진 수도꼭지와 같이 정액을 흩뿌리고 있다…
+	;MASTER의 경험 증가와 내용의 표시
+	EXP:MASTER:C경험 += 3
+	PRINTL C경험 +3
+	EXP:MASTER:절정경험 += 1
+	PRINTL 절정 경험 +1
+	EXP:MASTER:사정경험 += 3
+	PRINTL 사정 경험 +3
+	;ARG의 경험 증가와 내용의 표시
+	EXP:ARG:정액경험 += 3
+	PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
+	EXP:ARG:수음경험 += 1 
+	PRINTFORML （%CALLNAME:ARG%) 수음 경험 +1
+	EXP:ARG:가게한경험 += 2
+	PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +2
+	BASE:MASTER:사정 -= 500
+	;정력 보너스
+	SIF FLAG:일상제어 == 2
+		TCVAR:MASTER:드라이사정수 += 1
 	[SKIPSTART]
-	;焦らしプレイ
-	SIF !GETBIT(CFLAG:ARG:刻印, 33)
-	;イかせて！
-	SIF RESULT == 1 && !GETBIT(CFLAG:ARG:刻印, 49)
-	;大量射精
-	SIF !GETBIT(CFLAG:ARG:刻印, 20)
+	;초조하게 해 플레이
+	SIF ! GETBIT(CFLAG:ARG:각인, 33)
+	;가게 해!
+	SIF RESULT == 1 && ! GETBIT(CFLAG:ARG:각인, 49)
+	;대량 사정
+	SIF ! GETBIT(CFLAG:ARG:각인, 20)
 	[SKIPEND]
-;調教対象にペニス無し
+;조교 대상으로 페니스 없음
 ELSE
-	;208, 6-6（全身ぬるぬる気持ちいい？）
+	;208, 6-6(전신 미끈미끈 기분이 좋아?)
 	CALL KOJO_EVENT(208, 6, ARG)
-	PRINTFORMW %CALLNAME:ARG%は胸を%CALLNAME:MASTER%の背中にこすりつけながら、体の隅々を撫で回してくる
-	PRINTFORML その行為は次第にエスカレートしていき、アヌスや性器にまで指を潜り込ませてくる
-	;208, 6-7（びくんびくん）
+	PRINTFORMW %CALLNAME:ARG%는 가슴을%CALLNAME:MASTER%의 등에 문질러 바르면서, 몸의 구석구석을 더듬어 온다
+	PRINTFORML 그 행위는 점차 에스컬레이트해 가 아누스나 성기에까지 손가락을 기어들게 해 온다
+	;208, 6-7(움찔움찔)
 	CALL KOJO_EVENT(208, 7, ARG)
-	PRINTFORMW %CALLNAME:MASTER%は%CALLNAME:ARG%に抱きしめられたまま何度も絶頂させられた…
-	;MASTERの経験増加と内容の表示
-	EXP:MASTER:Ｃ経験 += 1
-	PRINTL Ｃ経験 +1
-	EXP:MASTER:Ａ経験 += 1
-	PRINTL Ａ経験 +1
-	EXP:MASTER:Ｂ経験 += 1
-	PRINTL Ｂ経験 +1
-	EXP:MASTER:絶頂経験 += 3
-	PRINTL 絶頂経験 +3
-	;ARGの経験増加と内容の表示
-	EXP:ARG:手淫経験 += 3 
-	PRINTFORML （%CALLNAME:ARG%）手淫経験 +3
-	EXP:ARG:イかせ経験 += 3
-	PRINTFORML （%CALLNAME:ARG%）イかせ経験 +3
-	;多重絶頂
-	;SIF !GETBIT(CFLAG:ARG:300, 37)
+	PRINTFORMW %CALLNAME:MASTER%는%CALLNAME:ARG%에 껴안겨진 채로 몇번이나 절정 당했다…
+	;MASTER의 경험 증가와 내용의 표시
+	EXP:MASTER:C경험 += 1
+	PRINTL C경험 +1
+	EXP:MASTER:A경험 += 1
+	PRINTL A경험 +1
+	EXP:MASTER:B경험 += 1
+	PRINTL B경험 +1
+	EXP:MASTER:절정경험 += 3
+	PRINTL 절정 경험 +3
+	;ARG의 경험 증가와 내용의 표시
+	EXP:ARG:수음경험 += 3 
+	PRINTFORML （%CALLNAME:ARG%) 수음 경험 +3
+	EXP:ARG:가게한경험 += 3
+	PRINTFORML （%CALLNAME:ARG%) 가게 한 경험 +3
+	;다중 절정
+	;SIF ! GETBIT(CFLAG:ARG:300, 37)
 ENDIF
-;ムラムラ解消
-CFLAG:ARG:むらむら = 0
+;불끈불끈 해소
+CFLAG:ARG:불끈불끈 = 0
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;スキンシップ7
-;────────────────────────────────────
+;─
+;스킨십 7
+;─
 @DAILY_LIFE_1_7(ARG, ARG:1, ARG:2, ARG:3)
-;バイブを所持していない場合はキャンセル
-SIF !ITEM:バイブ
+;바이브를 소지하고 있지 않는 경우는 캔슬
+SIF !ITEM:바이브
 	RETURN 0
-;調教対象にペニス無しの場合はキャンセル（ちんこの無い相手にフェラの練習はないだろｗ 的な感じで）
+;조교 대상으로 페니스 없음의 경우는 캔슬(고추가 없는 상대에게 페라의 연습은 없을 것이다 w 적인 느낌으로)
 SIF !PENIS(MASTER)
 	RETURN 0
-PRINTFORMW %CALLNAME:ARG%の部屋からなにやら水音が聞こえる
-;209, 7-0（バイブでフェラの練習）
+PRINTFORMW %CALLNAME:ARG%의 방으로부터 어쩐지 물소리가 들린다
+;209, 7-0(바이브로 페라의 연습)
 CALL KOJO_EVENT(209, 0, ARG)
-PRINTFORMW 半開きになった扉から中を伺うと真剣な顔をした%CALLNAME:ARG%が男性器に見立てたバイブに舌を這わせていた
+PRINTFORMW 반쯤 열려 있는 상태가 된 문으로부터 중을 방문하면 진지한 얼굴을 했다%CALLNAME:ARG%가 남성기에 진단한 바이브에 혀를 기게 하고 있었다
 PRINTL 
-;清楚・恥じらい
-IF TALENT:ARG:清楚 || TALENT:ARG:恥じらい
-	;209, 7-1（！　何見てるの！？）
+;청초·수줍음
+IF TALENT:ARG:청초 || TALENT:ARG:수줍음
+	;209, 7-1(!   무엇 보고 있어!?)
 	CALL KOJO_EVENT(209, 1, ARG)
-	PRINTFORML %CALLNAME:ARG%はしばらくの間行為に没頭していたが%CALLNAME:MASTER%の視線に気がつくと
-	PRINTFORMW 顔を真赤にして%CALLNAME:MASTER%を追い出した…
+	PRINTFORML %CALLNAME:ARG%는 당분간의 사이 행위에 몰두하고 있었지만%CALLNAME:MASTER%의 시선을 깨달으면
+	PRINTFORMW 얼굴을 진적으로 해%CALLNAME:MASTER%를 내쫓았다…
 ELSE
-	;209, 7-2（あら…試してみる？）
+	;209, 7-2(아라… 시험해 봐?)
 	CALL KOJO_EVENT(209, 2, ARG)
-	PRINTFORML %CALLNAME:ARG%はしばらくの間行為に没頭していたが%CALLNAME:MASTER%の視線に気がつくと
-	PRINTFORMW 口を卑猥な形にすぼめて誘惑してきた…
+	PRINTFORML %CALLNAME:ARG%는 당분간의 사이 행위에 몰두하고 있었지만%CALLNAME:MASTER%의 시선을 깨달으면
+	PRINTFORMW 구를 추잡한 형태에 움츠려 유혹해 왔다…
 ENDIF
-;ARGの経験増加と内容の表示
-EXP:ARG:口淫経験 += 3 
-PRINTFORML （%CALLNAME:ARG%）口淫経験 +3
+;ARG의 경험 증가와 내용의 표시
+EXP:ARG:구음경험 += 3 
+PRINTFORML （%CALLNAME:ARG%) 구음경험 +3
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;スキンシップ8
-;────────────────────────────────────
+;─
+;스킨십 8
+;─
 @DAILY_LIFE_1_8(ARG, ARG:1, ARG:2, ARG:3)
-;二人目が選択されていないならキャンセル
+;2인째가 선택되어 있지 않으면 캔슬
 SIF ARG:1 < 0
 	RETURN 0
-;昼ならキャンセル
+;낮이라면 캔슬
 SIF !TIME
 	RETURN 0
-;引数の百の位以降に２人目のキャラ名を入れる
+;인수의 백의 위 이후에 2인째의 캐릭터명을 넣는다
 LOCAL = ARG:1*100
-;口上用に２人目のキャラの登録番号を入れる
+;구상용으로 2인째의 캐릭터의 등록 번호를 넣는다
 DAILY_SUBTARGET = ARG:1
-;210, 8-0（二人でお風呂場強襲）
+;210, 8-0(둘이서 목욕탕 강습)
 CALL KOJO_EVENT(210, 0, ARG)
-PRINTFORML %CALLNAME:MASTER%が入浴していると%CALLNAME:ARG%と%CALLNAME:(ARG:1)%が入ってきた
-;210 8-1（二人で洗いっこ）
+PRINTFORML %CALLNAME:MASTER%가 입욕하고 있으면%CALLNAME:ARG%와%CALLNAME:(ARG:1)%가 들어 왔다
+;210 8-1(둘이서 씻어 와)
 CALL KOJO_EVENT(210, 1, ARG)
-PRINTFORMW 二人は%CALLNAME:MASTER%の目の前に魅力的な肢体を曝け出し、楽しそうに体を洗いあっている…
-;関連する刻印を取得している必要がある。ARG:1まで見るのは面倒なので忘れることに
+PRINTFORMW 두 명은%CALLNAME:MASTER%의 눈앞에 매력적인 지체를 드러내, 즐거운 듯이 몸을 서로 씻고…
+;관련하는 각인을 취득하고 있을 필요가 있다. ARG:1까지 보는 것은 귀찮은 것으로 잊는 일에
 {
-IF MARK:ARG:屈服刻印 > 4 && MARK:(ARG:1):屈服刻印 > 4 && 
-	((PENIS(MASTER) && GETBITAND(CFLAG:ARG:刻印, 1, 2, 3, 12, 19, 20)) || 
-	(!PENIS(MASTER) && GETBITAND(CFLAG:ARG:刻印, 1, 3, 6, 12, 15)))
+IF MARK:ARG:굴복각인 > 4 && MARK:(ARG:1):굴복각인 > 4 && 
+	((PENIS(MASTER) && GETBITAND(CFLAG:ARG:각인, 1, 2, 3, 12, 19, 20)) || 
+	(!PENIS(MASTER) && GETBITAND(CFLAG:ARG:각인, 1, 3, 6, 12, 15)))
 }
-	PRINT [0] - じっくり鑑賞する　
-	PRINT [1] - 混ぜてもらう
+	PRINT [0] - 차분히 감상한다  
+	PRINT [1] - 혼합해 받는다
 	CALL INPUTINT(0, 1)
-;条件から漏れたらRESULTに0を入れる
+;조건으로부터 빠지면 RESULT에 0을 넣는다
 ELSE
 	RESULT = 0
 ENDIF
 SELECTCASE RESULT
-	;じっくり鑑賞する
+	;차분히 감상한다
 	CASE 0
-		PRINTFORML %CALLNAME:MASTER%に見られていることに興奮するのか、二人の行為はどんどん大胆になっていく
-		;210 8-2（見られてエスカレート）
+		PRINTFORML %CALLNAME:MASTER%로 보여지고 있는 일에 흥분하는지, 두 명의 행위는 자꾸자꾸 대담하게 되어 간다
+		;210 8-2(보여져 에스컬레이트)
 		CALL KOJO_EVENT(210, 2, ARG)
-		PRINTFORM ソープでぬるぬるになった体を絡め合い、
-		IF TALENT:ARG:ふたなり && TALENT:(ARG:1):ふたなり
-			PRINTFORMW 二人のペニスから断続的に放出される白濁液が互いの体を飾ってゆく…
-		ELSEIF TALENT:ARG:ふたなり || TALENT:(ARG:1):ふたなり
-			PRINTFORMW 白濁液と愛液をお互いの体に塗りつけてゆく…
+		PRINTFORM 소프로 미끈미끈이 된 몸을 서로 걸어,
+		IF TALENT:ARG:후타나리 && TALENT:(ARG:1):후타나리
+			PRINTFORMW 두 명의 페니스로부터 단속적으로 방출되는 백탁액이 서로의 몸을 장식해 간다…
+		ELSEIF TALENT:ARG:후타나리 || TALENT:(ARG:1):후타나리
+			PRINTFORMW 백탁액과 애액을 서로의 몸에 발라 간다…
 		ELSE
-			PRINTFORMW 二人の秘所からは愛液がとめどなく溢れでている……
+			PRINTFORMW 두 명의 비밀스런 장소로부터는 애액이 끝 없게 흘러넘치고 나오고 있다……
 		ENDIF
 		PRINTL 
-		;210, 8-3（のぼせてしまいました）
+		;210, 8-3(올려 버렸습니다)
 		CALL KOJO_EVENT(210, 3, ARG)
-		PRINTFORMW %CALLNAME:MASTER%は浴槽から出るにでられずのぼせてしまった
-		;ARGの経験増加と内容の表示
-		EXP:ARG:Ｃ経験 += 3
-		PRINTFORML （%CALLNAME:ARG%）Ｃ経験 +3
-		EXP:ARG:Ｂ経験 += 3
-		PRINTFORML （%CALLNAME:ARG%）Ｂ経験 +3
-		EXP:ARG:絶頂経験 += 3
-		PRINTFORML （%CALLNAME:ARG%）絶頂経験 +3
-		IF TALENT:ARG:ふたなり
-			EXP:ARG:射精経験 += 3
-			PRINTFORML （%CALLNAME:ARG%）射精経験 +3
+		PRINTFORMW %CALLNAME:MASTER%는 욕조로부터 나오는 것에 나올 수 있지 못하고 올려 버렸다
+		;ARG의 경험 증가와 내용의 표시
+		EXP:ARG:C경험 += 3
+		PRINTFORML （%CALLNAME:ARG%) C경험 +3
+		EXP:ARG:B경험 += 3
+		PRINTFORML （%CALLNAME:ARG%) B경험 +3
+		EXP:ARG:절정경험 += 3
+		PRINTFORML （%CALLNAME:ARG%) 절정 경험 +3
+		IF TALENT:ARG:후타나리
+			EXP:ARG:사정경험 += 3
+			PRINTFORML （%CALLNAME:ARG%) 사정 경험 +3
 		ENDIF
-		IF TALENT:(ARG:1):ふたなり || TALENT:ARG:ふたなり
-			EXP:ARG:精液経験 += 3
-			PRINTFORML （%CALLNAME:ARG%）精液経験 +3
+		IF TALENT:(ARG:1):후타나리 || TALENT:ARG:후타나리
+			EXP:ARG:정액경험 += 3
+			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
 		ENDIF
 		PRINTL
-		;ARG:1の経験増加と内容の表示
-		EXP:(ARG:1):Ｃ経験 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%）Ｃ経験 +3
-		EXP:(ARG:1):Ｂ経験 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%）Ｂ経験 +3
-		EXP:(ARG:1):絶頂経験 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%）絶頂経験 +3
-		IF TALENT:(ARG:1):ふたなり
-			EXP:(ARG:1):射精経験 += 3
-			PRINTFORML （%CALLNAME:(ARG:1)%）射精経験 +3
+		;ARG:1의 경험 증가와 내용의 표시
+		EXP:(ARG:1):C경험 += 3
+		PRINTFORML （%CALLNAME:(ARG:1)%) C경험 +3
+		EXP:(ARG:1):B경험 += 3
+		PRINTFORML （%CALLNAME:(ARG:1)%) B경험 +3
+		EXP:(ARG:1):절정경험 += 3
+		PRINTFORML （%CALLNAME:(ARG:1)%) 절정 경험 +3
+		IF TALENT:(ARG:1):후타나리
+			EXP:(ARG:1):사정경험 += 3
+			PRINTFORML （%CALLNAME:(ARG:1)%) 사정 경험 +3
 		ENDIF
-		IF TALENT:ARG:ふたなり || TALENT:(ARG:1):ふたなり
-			EXP:(ARG:1):精液経験 += 3
-			PRINTFORML （%CALLNAME:(ARG:1)%）精液経験 +3
+		IF TALENT:ARG:후타나리 || TALENT:(ARG:1):후타나리
+			EXP:(ARG:1):정액경험 += 3
+			PRINTFORML （%CALLNAME:(ARG:1)%) 정액 경험 +3
 		ENDIF
-		;とりあえず二人で愉しんだのでムラムラ解消
-		CFLAG:ARG:むらむら = 0
-		CFLAG:(ARG:1):むらむら = 0
+		;우선 둘이서 즐겼으므로 불끈불끈 해소
+		CFLAG:ARG:불끈불끈 = 0
+		CFLAG:(ARG:1):불끈불끈 = 0
 		WAIT
 		RETURN 1
-	;混ぜてもらう
+	;혼합해 받는다
 	CASE 1
-		;210, 8-4（混ぜてもらってぬるぬるまっと）
+		;210, 8-4(혼합해 받아 와)
 		CALL KOJO_EVENT(210, 4, ARG)
-		PRINTFORML %CALLNAME:ARG%は魅了され息を荒らげている%CALLNAME:MASTER%の手をとると
-		PRINTFORMW マットの上に仰向けに寝かせ、その上に%CALLNAME:(ARG:1)%が大量のソープを塗りつけていく
-		;210, 8-5（二人でそーぷぷれい）
+		PRINTFORML %CALLNAME:ARG%는 매료되고 숨을 거칠게 하고 있다%CALLNAME:MASTER%의 손을 잡으면
+		PRINTFORMW 매트 위에 위로 향해 재워, 그 위에%CALLNAME:(ARG:1)%가 대량의 소프를 발라 간다
+		;210, 8-5(둘이서 -있고)
 		CALL KOJO_EVENT(210, 5, ARG)
 		IF PENIS(MASTER)
-			PRINTFORML 二人はすっかり準備の整った%CALLNAME:MASTER%に身を寄せ合うと体のあらゆる部分を
-			PRINTFORML すり寄せてきた
-			PRINTFORML 密着した体の隙間で放たれる精液が二人の欲情をさらに駆り立て、萎えるまもなく
-			PRINTFORMW 次の射精にいたってしまう…
-			PRINTFORMW %CALLNAME:MASTER%は二人が満足するまで何度も射精させられた…
+			PRINTFORML 두 명은 완전히 준비가 갖추어졌다%CALLNAME:MASTER%에 서로 몸을 의지하면 몸의 모든 부분을
+			PRINTFORML 갖다대 왔다
+			PRINTFORML 밀착한 몸의 틈새로 발해지는 정액이 두 명의 욕정을 한층 더 휘몰아, 쇠약해지는 곧
+			PRINTFORMW 다음의 사정에 있어도 끝낸다…
+			PRINTFORMW %CALLNAME:MASTER%는 두 명이 만족할 때까지 몇번이나 사정 당했다…
 		ELSE
-			PRINTFORMW %CALLNAME:MASTER%と二人はヌルヌルになった体を絡め合い、お互いに何度も絶頂を繰り返した…
+			PRINTFORMW %CALLNAME:MASTER%와 두 명은 미끈미끈이 된 몸을 서로 걸어, 서로 몇번이나 절정을 반복했다…
 		ENDIF
-		;MASTERの経験増加と内容の表示
-		EXP:MASTER:Ｃ経験 += 3
-		PRINTL Ｃ経験 +3
-		EXP:MASTER:Ｂ経験 += 3
-		PRINTL Ｂ経験 +3
-		EXP:MASTER:絶頂経験 += 3
-		PRINTL 絶頂経験 +3
+		;MASTER의 경험 증가와 내용의 표시
+		EXP:MASTER:C경험 += 3
+		PRINTL C경험 +3
+		EXP:MASTER:B경험 += 3
+		PRINTL B경험 +3
+		EXP:MASTER:절정경험 += 3
+		PRINTL 절정 경험 +3
 		IF PENIS(MASTER)
-			EXP:MASTER:射精経験 += 3
-			PRINTL 射精経験 +3
+			EXP:MASTER:사정경험 += 3
+			PRINTL 사정 경험 +3
 		ENDIF
 		IF PENIS(ARG) || PENIS(ARG:1) || PENIS(MASTER)
-			EXP:MASTER:精液経験 += 3
-			PRINTL 精液経験 +3
+			EXP:MASTER:정액경험 += 3
+			PRINTL 정액 경험 +3
 		ENDIF
 		PRINTL
-		;ARGの経験増加と内容の表示
-		EXP:ARG:Ｃ経験 += 3
-		PRINTFORML （%CALLNAME:ARG%）Ｃ経験 +3
-		EXP:ARG:Ｂ経験 += 3
-		PRINTFORML （%CALLNAME:ARG%）Ｂ経験 +3
-		EXP:ARG:絶頂経験 += 3
-		PRINTFORML （%CALLNAME:ARG%）絶頂経験 +3
-		IF TALENT:ARG:ふたなり
-			EXP:ARG:射精経験 += 3
-			PRINTFORML （%CALLNAME:ARG%）射精経験 +3
+		;ARG의 경험 증가와 내용의 표시
+		EXP:ARG:C경험 += 3
+		PRINTFORML （%CALLNAME:ARG%) C경험 +3
+		EXP:ARG:B경험 += 3
+		PRINTFORML （%CALLNAME:ARG%) B경험 +3
+		EXP:ARG:절정경험 += 3
+		PRINTFORML （%CALLNAME:ARG%) 절정 경험 +3
+		IF TALENT:ARG:후타나리
+			EXP:ARG:사정경험 += 3
+			PRINTFORML （%CALLNAME:ARG%) 사정 경험 +3
 		ENDIF
 		IF PENIS(ARG) || PENIS(ARG:1) || PENIS(MASTER)
-			EXP:ARG:精液経験 += 3
-			PRINTFORML （%CALLNAME:ARG%）精液経験 +3
+			EXP:ARG:정액경험 += 3
+			PRINTFORML （%CALLNAME:ARG%) 정액 경험 +3
 		ENDIF
 		PRINTL
-		;ARG:1の経験増加と内容の表示
-		EXP:(ARG:1):Ｃ経験 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%）Ｃ経験 +3
-		EXP:(ARG:1):Ｂ経験 += 3
-		PRINTFORML （%CALLNAME:(ARG:1)%）Ｂ経験 +3
-		EXP:(ARG:1):絶頂経験 += 3
-		PRINTFORML 絶頂経験 +3(%CALLNAME:(ARG:1)%)
-		IF TALENT:(ARG:1):ふたなり
-			EXP:(ARG:1):射精経験 += 3
-			PRINTFORML （%CALLNAME:(ARG:1)%）射精経験 +3
+		;ARG:1의 경험 증가와 내용의 표시
+		EXP:(ARG:1):C경험 += 3
+		PRINTFORML （%CALLNAME:(ARG:1)%) C경험 +3
+		EXP:(ARG:1):B경험 += 3
+		PRINTFORML （%CALLNAME:(ARG:1)%) B경험 +3
+		EXP:(ARG:1):절정경험 += 3
+		PRINTFORML 절정 경험 +3(%CALLNAME:(ARG:1)%)
+		IF TALENT:(ARG:1):후타나리
+			EXP:(ARG:1):사정경험 += 3
+			PRINTFORML （%CALLNAME:(ARG:1)%) 사정 경험 +3
 		ENDIF
 		IF PENIS(ARG) || PENIS(ARG:1) || PENIS(MASTER)
-			EXP:(ARG:1):精液経験 += 3
-			PRINTFORML （%CALLNAME:(ARG:1)%）精液経験 +3
+			EXP:(ARG:1):정액경험 += 3
+			PRINTFORML （%CALLNAME:(ARG:1)%) 정액 경험 +3
 		ENDIF
-		BASE:MASTER:射精 -= 900
-		CFLAG:ARG:むらむら     = 0
-		CFLAG:(ARG:1):むらむら = 0
+		BASE:MASTER:사정 -= 900
+		CFLAG:ARG:불끈불끈     = 0
+		CFLAG:(ARG:1):불끈불끈 = 0
 ENDSELECT
-;精力ボーナス
-SIF FLAG:日常制御 == 2
-	TCVAR:MASTER:空射精数 += 3
+;정력 보너스
+SIF FLAG:일상제어 == 2
+	TCVAR:MASTER:드라이사정수 += 3
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;スキンシップ9
-;────────────────────────────────────
+;─
+;스킨십 9
+;─
 @DAILY_LIFE_1_9(ARG, ARG:1, ARG:2, ARG:3)
-;昼ならキャンセル
+;낮이라면 캔슬
 SIF !TIME
 	RETURN 0
-PRINTFORML %CALLNAME:MASTER%が風呂から上がり着替えようとすると、ご丁寧に下着だけ抜き去られていた
-PRINTFORML 脱衣所を見渡しても代わりになりそうなものは見つからない
-PRINTFORMW %CALLNAME:MASTER%は仕方なしに、下着を着けずに直接服を着る事にした
-PRINTFORML ……すーすーする
+PRINTFORML %CALLNAME:MASTER%가 목욕탕으로부터 올라 갈아입으려고 하면, 정중하게 속옷만 앞질러지고 있었다
+PRINTFORML 탈의실을 바라봐도 대신에 될 것 같은 것은 발견되지 않는다
+PRINTFORMW %CALLNAME:MASTER%는 하는 수 없이, 속옷을 입지 않고 직접옷을 입는 일로 했다
+PRINTFORML …… 스으스으 한다
 PRINTL
-;211, 9-0（お風呂上りのーぱんえんかうんと）
+;211, 9-0(욕실 오름의─응인연(테)인가 아주)
 CALL KOJO_EVENT(211, 0, ARG)
-PRINTFORML 脱衣所を出ると、待ち構えていたかの様に%CALLNAME:ARG%が居た
-PRINTFORMW そそくさと前を通り過ぎようとすると、%CALLNAME:ARG%のねっとりとした視線が胸と股間に絡みつく
-;211, 9-1（ガン見されてます）
+PRINTFORML 탈의실을 나오면, 기다리고 있었던 것처럼%CALLNAME:ARG%가 있었다
+PRINTFORMW 허둥지둥 전을 통과하려고 하면,%CALLNAME:ARG%의 끈적한 시선이 가슴과 사타구니에 휘감긴다
+;211, 9-1(뚫어지게 보여지고 있습니다)
 CALL KOJO_EVENT(211, 1, ARG)
-PRINTFORML まるで服を透かし見られているような感覚に、羞恥で身体が熱くなる
-PRINTFORMW %CALLNAME:MASTER%は足早にその場から逃げ出した……
-;211, 9-2（風邪ひかないようにね）
+PRINTFORML 마치 옷을 틈새를 만들어 보여지고 있는 것 같은 감각에, 수치로 신체가 뜨거워진다
+PRINTFORMW %CALLNAME:MASTER%는 빠른 걸음에 그 자리로부터 도망치기 시작했다……
+;211, 9-2(감기 걸리지 않도록요)
 CALL KOJO_EVENT(211, 2, ARG)
-;何がしかの地の文があった方がいいだろうか？
+;얼마간의 지문이 있는 것이 좋을까?
 
 [SKIPSTART]
-//日常での刻印処理は粛清する方向で
-;裸にむかれた
-IF !GETBIT(CFLAG:ARG:300, 1)
-	PRINTFORML 屈服ポイント+1
-	CFLAG:ARG:屈服P1 += 1
-	SETBIT CFLAG:ARG:刻印 , 1
+//일상에서의 각인 처리는 숙청할 방향으로
+;알몸에 적합해졌다
+IF ! GETBIT(CFLAG:ARG:300, 1)
+	PRINTFORML 굴복 포인트+1
+	CFLAG:ARG:굴복 P1 += 1
+	SETBIT CFLAG:ARG:각인, 1
 ENDIF
 [SKIPEND]
 RETURN 1
 
-;────────────────────────────────────
-;日常（好感度上昇、その他ソフトな経験など）
-;────────────────────────────────────
+;─
+;일상(호감도 상승, 그 외 소프트인 경험 따위)
+;─
 @DAILY_LIFE_2(ARG, ARG:1, ARG:2, ARG:3)
 #DIM LCOUNT
-;口上用に対象キャラの番号を入れる
+;구상용으로 대상 캐릭터의 번호를 넣는다
 DAILY_TARGET = ARG
-;10回試行する
+;10회시행한다
 FOR LCOUNT, 0, 10
 	LOCAL = RAND:2
 	RESULT = 0
-	;封印されていない場合
-	SIF STRFIND(CSTR:ARG:封印日常, @"/2_{LOCAL}/") == -1
+	;봉인되어 있지 않은 경우
+	SIF STRFIND(CSTR:ARG:봉인일상, @"/2_{LOCAL}/") == -1
 		TRYCALLFORM DAILY_LIFE_2_{LOCAL}(ARG, ARG:1, ARG:2, ARG:3)
 	SIF RESULT
 		RETURN RESULT
 NEXT
 RETURN 0
 
-;────────────────────────────────────
-;日常0
-;────────────────────────────────────
+;─
+;일상 0
+;─
 @DAILY_LIFE_2_0(ARG, ARG:1, ARG:2, ARG:3)
-;212, 日常0-0（お茶はいかが？）
+;212, 일상 0-0(차는 어떠세요?)
 CALL KOJO_EVENT(212, 0, ARG)
-PRINTFORMW 食堂で休憩していると%CALLNAME:ARG%がティーポットとお菓子を載せたお盆を持って来て隣に座った
-;212, 日常0-1（楽しいお茶たいむでした）
+PRINTFORMW 식당에서 쉬고 있으면%CALLNAME:ARG%가 티폿트와 과자를 얹은 추석을 가지고 와 근처에 앉았다
+;212, 일상 0-1(즐거운 차였습니다)
 CALL KOJO_EVENT(212, 1, ARG)
-PRINTFORML %CALLNAME:MASTER%は%CALLNAME:ARG%と紅茶を飲みながら談笑し、楽しいひとときを過ごしました
-;MASTERとARGの経験増加と内容の表示
-EXP:MASTER:会話経験 += 5
-EXP:ARG:会話経験    += 5
-PRINTL （二人）会話経験 +5
-CFLAG:ARG:M好意 += 100
-CFLAG:ARG:好意  += 100
-PRINTL （二人）好感度上昇
+PRINTFORML %CALLNAME:MASTER%는%CALLNAME:ARG%와 홍차를 마시면서 담소해, 즐거운 한 때를 보냈습니다
+;MASTER와 ARG의 경험 증가와 내용의 표시
+EXP:MASTER:회화경험 += 5
+EXP:ARG:회화경험    += 5
+PRINTL (두 명) 회화 경험 +5
+CFLAG:ARG:M호의 += 100
+CFLAG:ARG:호의  += 100
+PRINTL (두 명) 호감도 상승
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;日常1
-;────────────────────────────────────
+;─
+;일상 1
+;─
 @DAILY_LIFE_2_1(ARG, ARG:1, ARG:2, ARG:3)
-;夜ならキャンセル
+;밤이라면 캔슬
 SIF TIME
 	RETURN 0
-;季節が夏か冬ならキャンセル
-SIF GROUPMATCH(FLAG:季節, 1, 3) > 0
+;계절이 여름이나 겨울이라면 캔슬
+SIF GROUPMATCH(FLAG:계절, 1, 3) > 0
 	RETURN 0
-;地の文→口上表示の順でないとどうにもならない感があるので、表示タイミングを変えてみる
-;	と思ったけどどうなんだろう感が無きにしもあらず
-PRINTFORMW 通りすがりに、庭の\@ TALENT:ARG:日光嫌い ? 日陰になっている # 日のあたる \@場所で%CALLNAME:ARG%を見つけた……
-;213, 1-0（お昼寝発見）
+;지문→구상 표시의 순서가 아니면 어쩔 도리가 없는 감이 있으므로, 표시 타이밍을 바꾸어 본다
+;	라고 생각했지만 감이 전혀 없는 것도 아니다
+PRINTFORMW 지나감에, 뜰의\@ TALENT:ARG:햇빛싫어함 ? 응달이 되어 있다# 일이 노출된다\@장소에서%CALLNAME:ARG%를 찾아냈다……
+;213, 1-0(낮잠 발견)
 CALL KOJO_EVENT(213, 0, ARG)
-PRINTFORML %CALLNAME:ARG%は毛布を敷いてその上で丸くなって眠っている
-;213, 1-1（ごゆっくりどうぞ）
+PRINTFORML %CALLNAME:ARG%는 모포를 깔아 그 위에서 둥글어져 자고 있다
+;213, 1-1(편하게 계세요)
 CALL KOJO_EVENT(213, 1, ARG)
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;アライメント変動
-;────────────────────────────────────
+;─
+;아라이먼트 변동
+;─
 @DAILY_LIFE_3_0(ARG)
 $SELECTER
 LOCAL = RAND:10
@@ -1110,29 +1110,29 @@ SIF !RESULT
 	GOTO SELECTER
 RETURN RESULT
 
-;────────────────────────────────────
-;反抗除去（反抗刻印を持った調教者のアライメントが高くなると発生）
-;────────────────────────────────────
+;─
+;반항 제거(반항 각인을 가진 조교자의 아라이먼트가 높아지면 발생)
+;─
 @DAILY_LIFE_4(ARG)
-;封印されていれば戻るが…これを封印する？
-SIF STRFIND(CSTR:ARG:封印日常, @"/4_0/") != -1
+;봉인되고 있으면 돌아오지만… 이것을 봉인해?
+SIF STRFIND(CSTR:ARG:봉인일상, @"/4_0/") != -1
 	RETURN 0
-;口上用に対象キャラの番号を入れる
+;구상용으로 대상 캐릭터의 번호를 넣는다
 DAILY_TARGET = ARG
-LOCAL = MARK:ARG:反抗刻印 > 10 - MARK:ARG:5 ? 10 - MARK:ARG:5 # MARK:ARG:反抗刻印 - 1
-MARK:ARG:反抗刻印 = LOCAL
-CFLAG:ARG:反発除去 = 0
-;214, 反抗除去（懐柔されたようです）
+LOCAL = MARK:ARG:반항각인 > 10 - MARK:ARG:5 ? 10 - MARK:ARG:5 # MARK:ARG:반항각인 - 1
+MARK:ARG:반항각인 = LOCAL
+CFLAG:ARG:반발제거 = 0
+;214, 반항 제거(회유 된 것 같습니다)
 CALL KOJO_EVENT(214, 0, ARG)
 PRINTL
-PRINTFORML %CALLNAME:ARG%に懐柔されたため%CALLNAME:MASTER%の反抗心が薄れました
-PRINTFORML 反抗刻印が{LOCAL}になりました
+PRINTFORML %CALLNAME:ARG%에 회유 되었기 때문에%CALLNAME:MASTER%의 반항심이 희미해졌습니다
+PRINTFORML 반항 각인이{LOCAL}가 되었습니다
 WAIT
 RETURN 1
 
-;────────────────────────────────────
-;能力上昇
-;────────────────────────────────────
+;─
+;능력 상승
+;─
 @DAILY_LIFE_A(ARG)
 #LOCALSIZE 10
 #LOCALSSIZE 10
@@ -1141,71 +1141,71 @@ RETURN 1
 #DIM LRES
 #DIM LTEMP
 
-;現在のイベント数
+;현재의 이벤트수
 LNUM = 1
 
-;LOCAL等初期化
+;LOCAL등 초기화
 VARSET LOCAL
 VARSET LOCALS
 
-;補正値読み出し
-SPLIT CSTR:日常能力上昇, "/", LOCALS
+;보정치 읽기
+SPLIT CSTR:일상능력상승, "/", LOCALS
 FOR LCOUNT, 0, LNUM
 	LOCAL:LCOUNT = TOINT(LOCALS:LCOUNT)
 NEXT
 
-;補正値計算処理
+;보정치 계산 처리
 
-;一括加算(10を加算)
+;일괄 가산(10을 가산)
 FOR LCOUNT, 0, LNUM
 	LOCAL:LCOUNT += 10
 NEXT
 
-;個別加算
-LOCAL:0 += (TALENT:ARG:回復遅い - TALENT:ARG:回復早い) * 5
+;개별 가산
+LOCAL:0 += (TALENT:ARG:회복느림 - TALENT:ARG:회복빠름) * 5
 
-;基準値設定(これを超えて初めて実行される)
-LTEMP = LNUM * 20 + (TALENT:ARG:受け身 - TALENT:ARG:献身的) * 5
+;기준치 설정(이것을 넘고 처음으로 실행된다)
+LTEMP = LNUM * 20 + (TALENT:ARG:수동 - TALENT:ARG:헌신적) * 5
 
-;補正値書き込み
-CSTR:日常能力上昇 = 
+;보정치 기입
+CSTR:일상능력상승 = 
 FOR LCOUNT, 0, LNUM
-	CSTR:日常能力上昇 += @"/{LOCAL:LCOUNT}"
+	CSTR:일상능력상승 += @"/{LOCAL:LCOUNT}"
 NEXT
-CSTR:日常能力上昇 = %SUBSTRING(CSTR:日常能力上昇, 1)%
+CSTR:일상능력상승 = %SUBSTRING(CSTR:일상능력상승, 1)%
 
-;補正値によって処理を選択
+;보정치에 의해 처리를 선택
 CALL DAILY_LIFE_A_0(ARG, LRES)
 
-;RESULTを返す
+;RESULT를 돌려준다
 RETURN RESULT
 
-;能力上昇処理
-;※ARGを切り替えることで対象者を変更できると思う
+;능력 상승 처리
+;※ARG를 바꾸는 것으로 대상자를 변경할 수 있다고 생각한다
 @DAILY_LIFE_A_0(ARG, ARG:1)
-;調教対象読心能力によって得られる情報量が変わる
+;조교 대상 독심술에 의해 얻을 수 있는 정보량이 바뀐다
 
 SELECTCASE ARG:1
-	;何もしなかった……
+	;아무것도 하지 않았다……
 	CASE -1
 		RETURN 0
-	;性知識向上
+	;성 지식 향상
 	CASE 0
-		SIF TALENT:MASTER:読心能力 == 2
-			PRINTFORML %CALLNAME:ARG%は本を読んで性知識の向上に努めたようだ……
-		LOCAL = RAND:MAX(3 + TALENT:ARG:習得早い - TALENT:ARG:習得遅い, 2)
-		EXP:ARG:性知識 += LOCAL
-		SIF TALENT:MASTER:読心能力 == 2
-			PRINTFORML （%CALLNAME:ARG%）性知識+{LOCAL}
+		SIF TALENT:MASTER:독심술 == 2
+			PRINTFORML %CALLNAME:ARG%는 책을 읽어 성 지식의 향상에 노력한 것 같다……
+		LOCAL = RAND:MAX(3 + TALENT:ARG:습득빠름 - TALENT:ARG:습득느림, 2)
+		EXP:ARG:성지식 += LOCAL
+		SIF TALENT:MASTER:독심술 == 2
+			PRINTFORML （%CALLNAME:ARG%) 성 지식+{LOCAL}
 ENDSELECT
-IF TALENT:MASTER:読心能力 == 1
-	PRINTFORML %CALLNAME:ARG%は見ていないうちに何かをしたようだ……
+IF TALENT:MASTER:독심술 == 1
+	PRINTFORML %CALLNAME:ARG%는 보지 않은 동안에 뭔가를 한 것 같다……
 ENDIF
-SIF ARG:1 >= 0 && TALENT:MASTER:読心能力 > 0
+SIF ARG:1 >= 0 && TALENT:MASTER:독심술 > 0
 	WAIT
 SIF ARG:1 >= 0
 	RETURN 1
 RETURN 0
 
 ;@DAILY_MARK_CHECK_GET(ARGS:0)
-	;日常イベントで刻印の処理するならこれあった方がよさそう。でも基本的にはやらない方向で
+	;일상 이벤트로 각인의 처리한다면 이것 있는 것이 좋은 것 같다. 그렇지만 기본적으로는 하지 않을 방향으로

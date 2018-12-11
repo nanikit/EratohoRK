@@ -1,158 +1,158 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;	[リリーホワイト]口上 調教開始イベント口上ファイル
+;	[릴리 화이트]구상 조교 개시 이벤트 구상 파일
 ;
-;	調教開始イベント口上をまとめたファイル
+;	조교 개시 이벤트 구상을 정리한 파일
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
 ;========================================================================
-;EV11, 調教開始口上
+;EV11, 조교 개시 구상
 ;========================================================================
-;・大抵の場合、口上作者がまず考えるのは"主人"としての口上と考えられるので
-;・@KOJO_MS_EVENTとして、TALENT:ご主人様である場合に限定してしまいます
-;・イベント関連は口上主の立場によって整合性が損なわれる可能性があるのでこのような処置にしました
-;・口上内の全ての箇所で口上関数による同様の排他処理は可能だったりします
+;·대체로의 경우, 구상 작자가 우선 생각하는 것은 "주인"으로서의 구상이라고 생각되므로
+;·@KOJO_MS_EVENT로서 TALENT:주인님인 경우로 한정해 버립니다
+;·이벤트 관련은 구상주의 입장에 의해 정합성이 손상될 가능성이 있으므로 이러한 처치로 했습니다
+;·구상내의 모든 개소에서 구상 함수에 의한 같은 배타적 연산은 가능했다거나 합니다
 ;-------------------------------------------------
-;　召喚され、調教を任される場合の口上を書くのであれば
-;　呼び出しを@KOJO_EVENT_KX1_11として排他を行わず、TALENT:ご主人様とその他で分岐を設ける
-;　EVENT1, OP(主人である場合にしか処理されない)でKFLAGへの代入を行い、分岐を設ける
-;　若しくは、@KOJO_AS_EVENT_KX1_11として別ファイルに切り分けてしまうと良いでしょう
+;  소환되어 조교를 맡겨지는 경우의 구상을 쓴다면
+;  호출을@KOJO_EVENT_KX1_11으로서 배타를 실시하지 않고, TALENT:주인님과 그 외로 분기를 마련한다
+;  EVENT1, OP(주인인 경우에 밖에 처리되지 않는다)로 KFLAG에의 대입을 실시해, 분기를 마련한다
+;  혹은, @KOJO_AS_EVENT_KX1_11으로서 별파일에 분리해 버리면 좋을 것입니다
 ;-------------------------------------------------
-;とりあえず分岐を設けてありますが、EVENT11枠内の分岐の増減は自由にできます
-;COMMON_GETTER_CHARA.ERB内、@AFFECTIONにはここに無いものも定義してあったりします
-;ただし、条件のゆるい分岐を上層にもってくると下位の分岐が全て死に口上になるので
-;優先度には十分に注意してください
+;우선 분기를 마련해 있습니다만, EVENT11범위내의 분기의 증감은 자유롭게 할 수 있습니다
+;COMMON_GETTER_CHARA.ERB내, @AFFECTION에는 여기에 없는 것도 정의되어 있거나 합니다
+;다만, 조건의 느슨한 분기를 상층에 가지고 오면 하위의 분기가 모두 공수상이 되므로
+;우선도에는 충분히 주의해 주세요
 ;-------------------------------------------------
 @KOJO_MS_EVENT_K15_11(ARG)
 ;-------------------------------------------------
-;引数内訳…
-;ARG=(0, 通常/1, 調教者の疲労による中止/2, 調教対象の疲労による中止)
+;인수 내역…
+;ARG=(0, 통상/1, 조교자의 피로에 의한 중지/2, 조교 대상의 피로에 의한 중지)
 ;-------------------------------------------------
 
-;────────────────────────────────────
-;調教初回・１０回目
-;────────────────────────────────────
-;・調教初回、及び10回目に表示される口上
-;・CFLAG:調教回数で回数は如何様にでも参照できますが、やりすぎると他の条件を食いつぶす可能性あり
+;─
+;조교 첫회·10회째
+;─
+;·조교 첫회, 및 10회째에 표시되는 구상
+;·CFLAG:조교 회수로 회수는 어떻게라도 참조할 수 있습니다만, 너무 하면 다른 조건을 탕진할 가능성 있어
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教初回
+;조교 첫회
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && CFLAG:調教回数 == 1
-	PRINTFORMW 「えっと……ふつつかものですが、どうぞ末永くよろしくお願いします」
-	PRINTFORMW 「リリーもこういうのは初めてなので、無茶させちゃう事もいっぱいあると思うんですけど……」
-	PRINTFORMW 「%CNAME(MASTER)%が気持ち良くなれるように、精一杯頑張りますねっ♪」
-	TALENT:着衣プレイ好き = 1
+IF 구상기입체크(100) && CFLAG:조교회수 == 1
+	PRINTFORMW 「엣또…… 무례한 것입니다만, 아무쪼록 오래도록 잘 부탁드립니다」
+	PRINTFORMW 「릴리도 이런 것은 처음인 것으로, 당치 않음시켜 버리는 일도 가득 있다고 생각합니다만……」
+	PRINTFORMW 「%CNAME(MASTER)%가 기분 좋아질 수 있도록(듯이), 힘껏 노력하네요♪」
+	TALENT:착의플레이선호 = 1
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教１０回目
+;조교 10회째
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && CFLAG:調教回数 == 10 && !ARG
-	PRINTFORMW 「今日で十回目の調教になりますけど……どうでしょう、少しは慣れましたか？」
-	PRINTFORMW 「……なんて、ちょっと酷なことを聞いちゃいましたね」
-	PRINTFORMW 「頑張って気持ち良くしてみせますから、協力よろしくお願いしますね♪」
+IF 구상기입체크(100) && CFLAG:조교회수 == 10 && !ARG
+	PRINTFORMW 「오늘로 10회째의 조교가 됩니다만…… 어떻습니까, 조금은 익숙해졌습니까?」
+	PRINTFORMW 「…… 은, 조금 가혹한 일을 (들)물어 버렸어요」
+	PRINTFORMW 「노력해 기분 좋게 해 보이기 때문에, 협력 잘 부탁드려요♪」
 	RETURN 1
 ENDIF
 
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教１００回目
+;조교 100회째
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && CFLAG:調教回数 == 100 && !ARG
+IF 구상기입체크(100) && CFLAG:조교회수 == 100 && !ARG
 	PRINTFORMDW ………
 	PRINTFORMDW ……
 	PRINTFORMDW …
 	PRINTL  
-	PRINTFORMDW %CALLNAME:MASTER%は怪しげな手帳を見つけた！
-	PRINTFORMDW 読みますか？
+	PRINTFORMDW %CALLNAME:MASTER%는 이상한 듯한 수첩을 찾아냈다!
+	PRINTFORMDW 읽습니까?
 	PRINTL  
 
-	;ここから選択↓
+	;여기로부터 선택↓
 	$INPUT_LOOP11
-	PRINTFORMDL [1]ぅん……
-	PRINTFORMDL [2]ぃゃぁ……
+	PRINTFORMDL [1]응……
+	PRINTFORMDL [2]……
 	INPUT
 	IF RESULT != 1 && RESULT != 2
 		GOTO INPUT_LOOP11
-	;手帳を読む
+	;수첩을 읽는다
 	ELSEIF RESULT == 1
-		PRINTFORMDW 　手帳はリリーの調教日記だった…
-		PRINTFORMDW 　%CALLNAME:MASTER%は好奇心に従いゆっくりとページを読み進めてゆく…
-		PRINTFORMDW 　手帳には一日の目標や調教内容、%CALLNAME:MASTER%の体調などの記録が細かに書かれており、
-		PRINTFORMDW 　その過激な内容に不釣り合いな可愛らしい文字が、なんともシュールな笑いを誘う…
-		PRINTFORMW 「あれ？　楽しそうに笑ってどうしたんですかっ♪　いったい何を読んで――――」
-		PRINTFORMDW 　リリーの絶叫が部屋中に響きわたる…
-		PRINTFORMDW 　%CALLNAME:MASTER%は首根っこを掴まれ、ズルズルと調教部屋へ連行されていった…
+		PRINTFORMDW   수첩은 릴리의 조교 일기였다…
+		PRINTFORMDW 　%CALLNAME:MASTER%는 호기심에 따라 천천히 페이지를 읽어 진행해 간다…
+		PRINTFORMDW   수첩에는 하루의 목표나 조교 내용,%CALLNAME:MASTER%의 컨디션 따위의 기록이 섬세하게 쓰여져 있어
+		PRINTFORMDW   그 과격한 내용에 어울리지 않은 사랑스러운 문자가, 뭐라고도 슈르인 웃음을 권한다…
+		PRINTFORMW 「어?   즐거운 듯이 웃어 어떻게 한 것입니까♪  도대체 무엇을 읽어―」
+		PRINTFORMDW   릴리의 절규가 방안에 울려 퍼진다…
+		PRINTFORMDW 　%CALLNAME:MASTER%는 목덜미를 잡아져 질질조교 방에 연행되어 갔다…
 		PRINTL  
 		PRINTFORMDW ………
 		PRINTL  
-		PRINTFORMDW 　涙目のリリーに引き擦られながら、%CALLNAME:MASTER%は調教初日の事を思い出していた…
-	;読まない
+		PRINTFORMDW   눈물고인 눈의 릴리에 당겨 비비어지면서,%CALLNAME:MASTER%는 조교 첫날의 일을 생각해 내고 있었다…
+	;읽지 않는다
 	ELSE
-		PRINTFORMDW 　手帳はリリーの調教日記だった、読まない方が賢明だろう…
-		PRINTFORMDW 　部屋の奥から、%CALLNAME:MASTER%を呼ぶリリーの元気な声が聴こえる…
-		PRINTFORMDW 　%CALLNAME:MASTER%は手帳を元の場所に戻し、リリーの待つ調教部屋へと向かった…
+		PRINTFORMDW   수첩은 릴리의 조교 일기였다, 읽지 않는 것이 현명할 것이다…
+		PRINTFORMDW   방의 안쪽으로부터,%CALLNAME:MASTER%를 부르는 릴리의 건강한 소리가 들린다…
+		PRINTFORMDW 　%CALLNAME:MASTER%는 수첩을 원의 장소에 되돌려, 릴리의 기다리는 조교 방으로 향했다…
 		PRINTL  
 		PRINTFORMDW ………
 		PRINTL  
-		PRINTFORMDW 　廊下を歩きながら、%CALLNAME:MASTER%は調教初日の事を思い出していた…
+		PRINTFORMDW   복도를 걸으면서,%CALLNAME:MASTER%는 조교 첫날의 일을 생각해 내고 있었다…
 	ENDIF
-	;↑選択ここまで
+	;↑선택 여기까지
 
 	PRINTL  
-	PRINTFORMDW 　白を基調としたローブから覗く淡雪のように白い肌…
-	PRINTFORMDW 　ふわふわのケープが未成熟な胸元を飾り、愛らしくも清麗な印象を受けた…
-	PRINTFORMDW 　スカートを握りしめた指の震える様がなんともいたいけで庇護欲求をくすぐられた…
-	PRINTFORMDW 　さらさらと揺れる艶髪に彩られた小さな顔は、緊張と興奮でほんのりと朱に染まっていた…
+	PRINTFORMDW   흰색을 기조로 한 로브로부터 들여다 보는 아와유키와 같이 흰 피부…
+	PRINTFORMDW   둥실둥실의 케이프가 미성숙인 가슴팍을 장식해, 사랑스럽게도 청려인 인상을 받았다…
+	PRINTFORMDW   스커트를 꽉 쥔 손가락의 떨리는 모양이 뭐라고도 가녀려 비호 욕구를 간지러워졌다…
+	PRINTFORMDW   졸졸 흔들리는 염발에 물들여진 작은 얼굴은, 긴장과 흥분으로 어렴풋이 주홍에 물들고 있었다…
 	PRINTL  
-	PRINTFORMW 『えっと……ふつつかものですが、どうぞ末永くよろしくお願いします』
-	PRINTFORMW 『リリーもこういうのは初めてなので、無茶させちゃう事もいっぱいあると思うんですけど……』
-	PRINTFORMW 『%CNAME(MASTER)%が気持ち良くなれるように、精一杯頑張りますねっ♪』
+	PRINTFORMW 『엣또…… 무례한 것입니다만, 아무쪼록 오래도록 잘 부탁드립니다』
+	PRINTFORMW 『릴리도 이런 것은 처음인 것으로, 당치 않음시켜 버리는 일도 가득 있다고 생각합니다만……』
+	PRINTFORMW 『%CNAME(MASTER)%가 기분 좋아질 수 있도록(듯이), 힘껏 노력하네요♪』
 	PRINTL  
 	PRINTFORMDW ………
 	PRINTFORMDW ……
 	PRINTFORMDW …
 	PRINTL  
-	PRINTFORMDW 手帳の今日のページには、女の子らしい丁寧な文字で『１００回目の記念日♪』と書かれていた
+	PRINTFORMDW 수첩의 오늘의 페이지에는, 여자 아이다운 정중한 문자로 『100회째의 기념일♪』이라고 쓰여져 있었다
 	RETURN 1
 ENDIF
 
-;────────────────────────────────────
-;調教中止 ARG:1 ARG:2
-;────────────────────────────────────
-;CFLAG:消耗 > 5もしくはCFLAG:MASTER:消耗 > 5を条件として呼び出される箇所
-;この条件から漏れた場合は通常の調教開始口上が呼ばれる
+;─
+;조교 중지 ARG:1 ARG:2
+;─
+;CFLAG:소모 > 5혹은 CFLAG:MASTER:소모 > 5를 조건으로서 불려 가는 개소
+;이 조건으로부터 빠졌을 경우는 통상의 조교 개시 구상이 불린다
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;疲労で調教が中止になる場合
+;피로로 조교가 중지가 되는 경우
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && ARG > 0
+IF 구상기입체크(100) && ARG > 0
 	;=================================================
-	;疲れているのは口上主(TARGET)
+	;피곤한 것은 구상주(TARGET)
 	;=================================================
-	IF 口上記入チェック(100) && ARG == 1
-		PRINTFORMW 「んぅ……あれ、もうそんな時間ですか……？」
-		PRINTFORMW 「……ふむふむ、リリーのお腹の時計は『まだ大丈夫』って言ってますし……ふぁあ…」
-		PRINTFORMW 「今日はお休みにして……ふたりでゴロゴロしませんか？」
+	IF 구상기입체크(100) && ARG == 1
+		PRINTFORMW 「응우…… 저것, 이제(벌써) 그런 시간입니까……?」
+		PRINTFORMW 「…… 흠흠, 릴리의 배의 시계는 『아직 괜찮아』라고 말하고…… 후아아…」
+		PRINTFORMW 「오늘은 휴가로 해…… 둘이서 뒹굴뒹굴 하지 않습니까?」
 		RETURN 1
 	ENDIF
 	;=================================================
-	;疲れているのは調教対象(MASTER)		%RAND_SPLIT("い/あ")%
+	;피곤한 것은 조교 대상(MASTER)		%RAND_SPLIT("있고/아")%
 	;=================================================
-	IF 口上記入チェック(100) && ARG == 2
+	IF 구상기입체크(100) && ARG == 2
 		IF RAND:2 == 0
-			PRINTFORMW 「%RAND_SPLIT("うーん……/大丈夫ですか？　")%かなりお疲れみたいですね」
-			PRINTFORMW 「リリーが無茶させちゃったからでしょうか……」
-			PRINTFORMW 「わかりました。　今日はもうお休みにしますから、ゆっくり寝ててくださいね」
+			PRINTFORMW 「%RAND_SPLIT("응……/괜찮습니까?   ")%꽤 지친 것 같네요」
+			PRINTFORMW 「릴리가 당치 않음시켜 버렸기 때문에입니까……」
+			PRINTFORMW 「알았습니다  오늘은 이제(벌써) 휴가로 하기 때문에, 천천히 자고 있어 주세요」
 		ELSE
-			PRINTFORMW 「あの……%RAND_SPLIT("ふらふらしてます/お顔真っ青です")%けど大丈夫ですか？」
-			PRINTFORMW 「……ほら、今日はもうお休みにしますから、ゆっくり寝ててくださいね」
-			PRINTFORMW 「ねぇ、何か食べたいものとか、リリーにして欲しい事ってありますか？」
-			PRINTFORMW 「…%RAND_SPLIT("膝枕/頭を撫でて欲しい")%…ですか？」
-			PRINTFORM 「いいですよ…ほら、おいで
+			PRINTFORMW 「저……%RAND_SPLIT("휘청휘청 하고 있습니다/얼굴 시퍼렇습니다")%지만 괜찮습니까?」
+			PRINTFORMW 「…… 이봐요, 오늘은 이제(벌써) 휴가로 하기 때문에, 천천히 자고 있어 주세요」
+			PRINTFORMW 「저기, 뭔가 먹고 싶은 것이라든지, 릴리로 해 주었으면 하는 일은 있습니까?」
+			PRINTFORMW 「…%RAND_SPLIT("무릎 베개/머리를 어루만졌으면 좋겠다")%… 입니까?」
+			PRINTFORM 「좋아요… 이봐요, 와
 			CALL HEARTCB
 			PRINTFORMW 」
 		ENDIF
@@ -160,104 +160,104 @@ IF 口上記入チェック(100) && ARG > 0
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;その他・好感度等による分岐
-;────────────────────────────────────
-;・現在のACTABLEやCOMABLEの仕様的に、進展度を測るには(事実上)好感度を基準にするしかないと思われる
-;・依存度は@COMで代入され参照できるのみで、本体側の挙動には何ら影響を与えていない
-;・今後の手入れ如何によっては使い道もあるかも？といったところ
+;─
+;그 외·호감도등에 의한 분기
+;─
+;·현재의 ACTABLE나 COMABLE의 사양적으로, 진전도를 측정하려면 (사실상) 호감도를 기준으로 할 수 밖에 없다고 생각된다
+;·의존도는@COM로 대입되고 참조할 수 있을 뿐으로, 본체측의 거동에는 아무런 영향을 주지 않았다
+;·향후의 손질 여하에 따라서는 용도도 있을지도? 그렇다고 하는 곳
 ;-------------------------------------------------
 
 ;-------------------------------------------------
-;・互いに好き合っている
+;·서로 서로 좋아하고 있다
 ;-------------------------------------------------
-;元々はEDが実装されていない時代に、仮のED枠として使われる事の多かった箇所
-;現状でもこの段階に至るには、それなりの日数と進展が必要になると思われます
+;원래는 ED가 실장되어 있지 않은 시대에, 가짜의 ED 범위로서 사용되는 일이 많았던 개소
+;현상에서도 이 단계에 이르려면, 그만한 일수와 진전이 필요하게 된다고 생각됩니다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;相思相愛（好意3000以上・好感度3000以上)
+;상사상애(호의 3000이상·호감도 3000이상)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && FAVOR(3000, 3000)
+IF 구상기입체크(100) && FAVOR(3000, 3000)
 	;=================================================
-	;相思相愛初回
-	;☆目印
+	;상사상애 첫회
+	;☆표적
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(0)
+	IF 구상기입체크(100) && FIRSTEVENT(0)
 		PRINTFORMDW ………
 		PRINTFORMDW ……
 		PRINTFORMDW …
 		PRINTL  
-		PRINTFORMW 「リリーの愛を受け入れてくれて…」
-		PRINTFORMW 「リリーを愛してくれて…」
-		PRINTFORMW 「本当に…ありがとうございます……うっく…ぐすっ…」
+		PRINTFORMW 「릴리의 사랑을 받아들여 줘…」
+		PRINTFORMW 「릴리를 사랑해 줘…」
+		PRINTFORMW 「정말로… 감사합니다…… 웃쿠… 흐흑…」
 		PRINTFORMDW 　
-		PRINTFORMW 「あれっ……こんなに嬉しくて、こんなにも幸せなのに…」
-		PRINTFORMW 「こんなに胸が苦しいのは……どうしてなんでしょうね…」
-		PRINTFORMW 「%CNAME(MASTER)%と両想いになって……それでね、リリーは世界で一番幸せな\@ TALENT:MASTER:オトコ ? お嫁さん # 旦那様 \@にって……」
-		PRINTFORMW 「それなのに……愛しい%CNAME(MASTER)%の、笑顔が、愛が…怖い……どうしてなんですか……？」
-		PRINTFORMW 「えへへっ……きっと、リリーは少しおかしくなっちゃったんですね……きっと、そうです……」
+		PRINTFORMW 「어랏…… 이렇게 기뻐서, 이렇게도 행복한데…」
+		PRINTFORMW 「이렇게 가슴이 괴로운 것은…… 어째서인 것이군요…」
+		PRINTFORMW 「%CNAME(MASTER)%와 서로 사모함이 되어…… 그래서 말야, 릴리는 세계에서 제일 행복한\@ TALENT:MASTER:남자 ? 신부# 서방님\@에는……」
+		PRINTFORMW 「그런데도…… 사랑스럽다%CNAME(MASTER)%의, 웃는 얼굴이, 사랑이… 무서운…… 어째서입니까……?」
+		PRINTFORMW 「에헤헷…… 반드시, 릴리는 조금 이상해져 버린 것이군요…… 반드시, 그렇습니다……」
 		PRINTFORMDW 　
-		PRINTFORMW 「お願い……リリーが逃げないように…ぎゅって、きつく抱きしめて……」
-		PRINTFORMW 「壊れちゃうくらい、リリーを犯して……%CNAME(MASTER)%の愛で、リリーの心を…満たしてください……」
+		PRINTFORMW 「부탁…… 릴리가 도망치지 않도록… 꽉, 힘들게 껴안아……」
+		PRINTFORMW 「망가져 버릴 정도로, 릴리를 범해……%CNAME(MASTER)%의 사랑으로, 릴리의 마음을… 채워 주세요……」
 		PRINTL  
-		;あなたに色々ブースト
-		TCVAR:MASTER:勃起度 = 1500
-		MAXBASE:MASTER:射精 += 1000
-		BASE:MASTER:射精 = MAXBASE:MASTER:射精
-		;正常位させる
-		TCVAR:行動予約 = 95
-		;リリーがイきそう
-		TCVAR:TARGET:イきそう = 1
+		;당신에게 여러가지 부스트
+		TCVAR:MASTER:발기도 = 1500
+		MAXBASE:MASTER:사정 += 1000
+		BASE:MASTER:사정 = MAXBASE:MASTER:사정
+		;정상위 시킨다
+		TCVAR:행동예약 = 95
+		;릴리가 갈 것 같다
+		TCVAR:TARGET:갈것같다 = 1
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ご主人様妊娠中！！（必要なら調教完了グループにコピペ）
+	;주인님 임신중!! (필요하면 조교 완료 그룹에 코피페)
 	;=================================================
-	IF 口上記入チェック(100) && TALENT:TARGET:妊娠 == 1
-		;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100) && TALENT:TARGET:임신 == 1
+		;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(3, 50)
 			CASE 0
-				PRINTFORM 「もう、遅いじゃないですか……%RAND_SPLIT("ずっと、待ってたんですよ/")%
+				PRINTFORM 「이제(벌써), 늦지 않습니까……%RAND_SPLIT("쭉, 기다리고 있던 것이에요/")%
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMDW 　%CALLNAME:MASTER%が部屋に入るなり、%RAND_SPLIT("腹の膨らんだ/マタニティードレスを着た")%リリーが%RAND_SPLIT("胸に飛び込んで/抱きついて")%きた…
-				PRINTFORM 「最近、身体が疼いて仕方ないんです……きっと赤ちゃんが『%RAND_SPLIT("栄養/ミルク/精")%』を欲しがってるんですね
+				PRINTFORMDW 　%CALLNAME:MASTER%가 방에 들어가든지,%RAND_SPLIT("배가 부풀어 올랐다/임신복을 입었다")%릴리가%RAND_SPLIT("가슴에 뛰어들어/껴안아")%왔다…
+				PRINTFORM 「최근, 신체가 쑤셔 어쩔 수 없습니다…… 반드시 아기가 『%RAND_SPLIT("영양/밀크/정령")%』를 갖고 싶어하는군요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「りりーねっ、もう待てませんっ
+				PRINTFORM 「-군요, 이제 기다릴 수 없습니다
 				CALL HEARTCB
-				PRINTFORM 　二人分、たっぷり可愛がってくださいね……%RAND_SPLIT("パパ/ダーリン/")%
+				PRINTFORM   두 명분, 충분히 귀여워해 주세요……%RAND_SPLIT("파파/달링/")%
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORMW 「あっ、もう準備はいいんですか？……んしょっ%RAND_SPLIT("と/")%」
-				PRINTFORMDW 　妊娠したリリーに代わり、最近は%CALLNAME:MASTER%が調教の準備をする事も増えてきた…
-				PRINTFORMDW 　道具の準備からベッドメイキング、休憩中のお菓子の準備など、簡単そうだが意外に気を遣う事が多い…
-				PRINTFORMDW 　%CALLNAME:MASTER%は身重のリリーを抱きかかえると、ガラス細工を扱うようにそっとベッドの上に寝かせた…
-				PRINTFORMW 「うんうん……ジェントルマンで大変よろしい♪　ふふっ♪」
-				PRINTFORM 「でも、二人分の栄養が必要なんですから……優しいえっちじゃ満足しませんからねっ
+				PRINTFORMW 「앗, 이제(벌써) 준비는 좋습니까? …… 영차%RAND_SPLIT("와/")%」
+				PRINTFORMDW   임신한 릴리에 대신해, 최근에는%CALLNAME:MASTER%가 조교의 준비를 하는 일도 많아졌다…
+				PRINTFORMDW   도구의 준비로부터 침대 메이킹, 휴게중의 과자의 준비 따위, 간단한 것 같지만 의외로 배려를 하는 것이 많다…
+				PRINTFORMDW 　%CALLNAME:MASTER%는 임신의 릴리를 껴안으면, 유리 세공을 취급하도록(듯이) 살그머니 침대 위에 재웠다…
+				PRINTFORMW 「응응…… 젠틀 맨으로 몹시 좋은♪  후후♪」
+				PRINTFORM 「그렇지만, 두 명 분의 영양이 필요하니까…… 상냥한 엣치하지 만족하지 않기 때문에
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「%CNAME(MASTER)%っ見て見てっ♪　このドレス可愛いでしょうっ♪」
-				PRINTFORMDW 　上等なマタニティードレスに身を包んだリリーが、バレリーナの様に華麗なターンを決める…
+				PRINTFORMW 「%CNAME(MASTER)%봐 봣♪  이 드레스 사랑스러울 것입니다♪」
+				PRINTFORMDW   훌륭한 임신복에 몸을 싼 릴리가, 발레리나와 같이 화려한 턴을 결정한다…
 					IF RAND:3 == 0
-						PRINTFORMDW 　細かなレースで彩られたシースルーのドレスは、リリーの背徳的な肢体をこの上なく淫靡に輝かせている…
-						PRINTFORMDW 　乳首や割れ目が丁度隠れるようなデザインが、着衣だからこそ味わえるエロスを十二分に堪能させてくれる…
+						PRINTFORMDW   섬세한 레이스로 물들여진 시 스루의 드레스는, 릴리의 배덕적인 지체를 이 이상 없게 음미롭게 빛내어지고 있다…
+						PRINTFORMDW   유두나 균열이 꼭 숨는 것 같은 디자인이, 착의이니까 맛볼 수 있는 에로스를 충분히 만끽되어 준다…
 					ELSEIF RAND:2 == 0
-						PRINTFORMDW 　ドレスと言うよりストールに近いデザインの薄布は、ヒラヒラと愉し気に揺れながら
-						PRINTFORMDW 　子を孕み肉付きの良くなったリリーの背徳的な肢体をあられもなく露出させている…
+						PRINTFORMDW   드레스라고 하는 것보다 stall에 가까운 디자인의 박포는, 팔랑팔랑유 해 기분에 흔들리면서
+						PRINTFORMDW   자를 잉 보고 살집이 좋아진 릴리의 배덕적인 지체를 단정치 못하게 노출시키고 있다…
 					ELSE
-						PRINTFORMDW 　膨らんだお腹を覆い隠すワンピース型のドレスは丈がかなり短く設計されており、
-						PRINTFORMDW 　リリーが動く度にぷっくりと膨らんだ割れ目がチラチラと顔を覗かせ、%CALLNAME:MASTER%の劣情を煽ってくる…
+						PRINTFORMDW   부풀어 오른 배를 덮어 가리는 원피스형의 드레스는 키가 꽤 짧게 설계되고 있어
+						PRINTFORMDW   릴리가 움직일 때에 볼록 부풀어 오른 균열이 힐끔힐끔 얼굴을 들여다 보게 해%CALLNAME:MASTER%의 열정을 부추겨 온다…
 					ENDIF
-				PRINTFORM 「おちんちん、%RAND_SPLIT("もう硬くなってますっ/ガッチガチだねっ/準備万端ですねっ")%
+				PRINTFORM 「자지,%RAND_SPLIT("이제(벌써) 딱딱해지고 있습니다/딱딱이구나/준비만단이군요")%
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「リリーのおまんこも……早く%CNAME(MASTER)%が欲しくてうずうずしてるのっ
+				PRINTFORM 「릴리의 보지도…… 빨리%CNAME(MASTER)%를 갖고 싶고 근질근질 하고 있다
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「濃厚なおちおんぽミルクっ♪　お腹いっぱいゴクゴクさせてくださいねっ
+				PRINTFORM 「농후한 누락밀크♪  배 가득 꿀꺽꿀꺽 시켜 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
@@ -265,112 +265,112 @@ IF 口上記入チェック(100) && FAVOR(3000, 3000)
 	ENDIF
 
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(100)
-	;\@ TALENT:MASTER:オトコ ? おちんちん # おまんこ \@
-		;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100)
+	;\@ TALENT:MASTER:남자? 자지 # 보지\@
+		;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(5, 51)
 			CASE 0
-				PRINTFORMW 「%RAND_SPLIT("優しく抱きしめ合う/恋人同士みたいな/夫婦みたいな")%普通のえっちも好きですけど……」
-				PRINTFORMW 「やっぱり、リリー達は『調教』の方が性に合ってるような気がしますねっ♪」
-				PRINTFORM 「動物みたいにお互いの精を貪り合って、最後の一滴まで搾り取られるような……濃密な時間
+				PRINTFORMW 「%RAND_SPLIT("서로 상냥하게 껴안는다/연인끼리 같은/부부 같은")%보통 엣치도 좋아하지만……」
+				PRINTFORMW 「역시, 릴리들은 『조교』(분)편이 성에 맞고 있는 것 같은 생각이 드네요♪」
+				PRINTFORM 「동물같이 서로의 정령을 서로 탐내, 마지막 한 방울까지 짜내지는 것 같은…… 진한 시간
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「おいでっ♪　今日もたっぷり%RAND_SPLIT("叫ばせて/虐めて/喘がせて/イかせて")%あげるねっ
+				PRINTFORM 「와♪  오늘도 충분히%RAND_SPLIT("외치게 해/괴롭혀/허덕이게 해/가게 해")%준다
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORMW 「ねぇ、ちゃんとオナニー我慢してきましたか？」
-				PRINTFORM 「%CNAME(MASTER)%の精はぜーんぶリリーのものなんだから……勝手に使っちゃダメですよ
+				PRINTFORMW 「저기, 분명하게 자위 참아 왔습니까?」
+				PRINTFORM 「%CNAME(MASTER)%의 정령은 전부 릴리의 것이니까…… 마음대로 사용해서는 안됩니다
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMDW 　リリーは甘い吐息を漏らしながら、%CALLNAME:MASTER%の\@ TALENT:MASTER:オトコ ? ペニスに # 秘所に \@指を這わせゆっくりと動かし始める…
-				PRINTFORMW 「ふふっ……ちょっと触っただけで簡単に\@ TALENT:MASTER:オトコ ? おっきし # 濡れ \@ちゃうなんて、本当に可愛いんだから」
-				PRINTFORM 「さぁ、調教を始めましょうか……精が尽きるまで、搾り取ってあげますねっ
+				PRINTFORMDW   릴리는 달콤한 한숨을 흘리면서,%CALLNAME:MASTER%의\@ TALENT:MASTER:남자 ? 페니스에# 비밀스런 장소에\@손가락을 기게 한 천천히 움직이기 시작한다…
+				PRINTFORMW 「후훗…… 조금 손댄 것 뿐으로 간단하게\@ TALENT:MASTER:남자 ? 기사# 젖고\@는, 정말로 사랑스럽기 때문에」
+				PRINTFORM 「자, 조교를 시작할까요…… 정령이 다할 때까지, 짜내 주네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORM 「もうっ、待ちくたびれちゃいましたよっ
+				PRINTFORM 「이제(벌써), 기다려 녹초가 되어 버렸어요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMW 「ねぇ、今日はどんなリリーに搾り取って欲しいですか？」
-				PRINTFORMW 「こわーい女王様？　%RAND_SPLIT("金髪ロリビッチプレイ/淫らな娼婦")%？　それとも%RAND_SPLIT("甘々な恋人/えっちなお嫁さん/無垢でか弱い妖精さん")%がいい？」
-				PRINTFORMDW 　あまりにも悩ましい質問に、%CALLNAME:MASTER%は頭を抱えて苦悩の呻きを上げて悩みに悩んだ…
-				PRINTFORMDW 　痺れを切らしたリリーはおもむろに%CALLNAME:MASTER%の顔をぐいと引き寄せると、%RAND_SPLIT("ねっとりと/理性を")%舐め溶かすような濃厚な口づけをした…
-				PRINTFORM 「んむ…ちゅぅ……はい、時間切れっ♪　%CALLNAME:MASTER%の\@ TALENT:MASTER:オトコ ? ドロドロザーメン # 精 \@はぜーんぶ%RAND_SPLIT("かわいい/お嫁さんの/淫乱/恋人の/甘えんぼ")%リリーが頂いちゃいますねっ
+				PRINTFORMW 「저기, 오늘은 어떤 릴리에 짜냈으면 좋습니까?」
+				PRINTFORMW 「무서운 여왕님?   %RAND_SPLIT("금발 로리빗치프레이/추잡한 창녀")%?   그렇지 않으면%RAND_SPLIT("달콤달콤 연인/엣치한 신부/무구하고 연약한 요정씨")%가 좋아?」
+				PRINTFORMDW   너무 괴로운 질문에,%CALLNAME:MASTER%는 머리를 움켜 쥐어 고뇌의 신음을 올려 고민에 고민했다…
+				PRINTFORMDW   인내심의 한계를 느낀 릴리는 조용히%CALLNAME:MASTER%의 얼굴을 생각과 끌어 들이면,%RAND_SPLIT("끈적와/이성을")%빨고 녹이는 것 같은 농후한 입맞춤을 했다…
+				PRINTFORM 「응무… 츄우…… 네, 마감 시간♪  %CALLNAME:MASTER%의\@ TALENT:MASTER:남자 ? 질척질척 정액# 정령\@는 전부%RAND_SPLIT("사랑스럽다/신부의/음란/연인의/응석쟁이")%릴리가 받아 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「ほら、ぼーっと立ってないで早くこっちに来てくださいっ♪」
-				PRINTFORM 「脳みそとろとろに蕩けちゃうくらい……濃厚なせっくす、しましょうね
+				PRINTFORMW 「이봐요, 멍─하니 서지 말고 빨리 여기에 와 주세욧♪」
+				PRINTFORM 「뇌수 녹진녹진 녹아 버릴 정도로…… 농후한 섹스, 해요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 4
-				;巨乳
-				IF TALENT:巨乳
-					PRINTFORMW 「%CNAME(MASTER)%っておっぱいが大きくてロリロリな女の子が好きなんですよね？」
-					PRINTFORM 「それならリリーは結構理想に近いと思うんですけど……どうでしょうか？　ふふっ
+				;거유
+				IF TALENT:거유
+					PRINTFORMW 「%CNAME(MASTER)%는 젖가슴이 커서 로리로리인 여자 아이가 좋아하네요?」
+					PRINTFORM 「그렇다면 릴리는 상당히 이상에 가깝다고 생각합니다만…… 어떨까요?   후후
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「ほら、リリーの%RAND_SPLIT("柔らか/ふわふわ/おっきな")%おっぱいなら……こんな事もできるんですよ
+					PRINTFORM 「이봐요, 릴리의%RAND_SPLIT("유등인가/둥실둥실/큰")%젖가슴이라면…… 이런 일도 할 수 있습니다
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORMDW 　%CALLNAME:MASTER%から集めた精を使って、リリーの胸はその華奢な肢体に不釣り合いな程たわわに実っていた…
-					PRINTFORMDW 　%RAND_SPLIT("たっぷりと重量感のある乳房/メロンの様に立派に育ったおっぱい/スイカの様に大きく育った淫乳/『どたぷん』といかにも柔らかそうな豊乳")%を両手で持ち上げ、%CALLNAME:MASTER%を誘うように乳首を口に含んで舐め回して見せた…
-					PRINTFORM 「んっ…ちゅむ……ほら、自分でおっぱいも吸える様になっちゃいました……えへへっ
+					PRINTFORMDW 　%CALLNAME:MASTER%로부터 모은 정령을 사용해, 릴리의 가슴은 그 가녀린 지체에 어울리지 않을 정도 휘어지게 여물고 있었다…
+					PRINTFORMDW 　%RAND_SPLIT("충분히 중량감이 있는 유방/멜론과 같이 훌륭하게 자란 젖가슴/수박과 같이 크게 자란 음유/『분』이라고 그야말로 부드러운 것 같은 풍유")%를 양손으로 들어 올려,%CALLNAME:MASTER%를 권하도록(듯이) 유두를 입에 넣어 핥아대 보였다…
+					PRINTFORM 「읏… 츄무…… 이봐요, 스스로 젖가슴도 들이마실 수 있는 것처럼 되어 버렸습니다…… 에헤헷
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「んしょ……どうぞ？　反対側のおっぱいは%CNAME(MASTER)%が自由にしていいですよ
+					PRINTFORM 「영차…… 받아 주세요?   반대측의 젖가슴은%CNAME(MASTER)%가 자유롭게 해도 좋아요
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「もちろん%CNAME(MASTER)%が望むなら……おっぱいだけじゃなくて、リリーのえっちな身体ぜーんぶ好きにしていいですからねっ
+					PRINTFORM 「물론%CNAME(MASTER)%가 바란다면…… 젖가슴만이 아니고, 릴리의 엣치한 신체 전부 마음대로 해도 좋으니까
 					CALL HEARTCB
 					PRINTFORMW 」
-				;普乳
+				;보유
 				ELSE
-					PRINTFORMW 「ふふっ、ゆっくり休めたみたいですね♪」
-					PRINTFORM 「\@ TALENT:MASTER:オトコ ? おちんちんもこんなに元気になっちゃって……ふふっ # アソコも準備万端……かな \@
+					PRINTFORMW 「후훗, 천천히 쉬게 한 것 같네요♪」
+					PRINTFORM 「\@ TALENT:MASTER:남자 ? 자지도 이렇게 건강하게 되어 버려…… 후훗# 저기도 준비만단…… 일까\@
 					CALL HEARTCB
 					PRINTFORMW 」
-					PRINTFORM 「おいで、今日もいっぱいリリーとえっちしましょうねっ
+					PRINTFORM 「와, 오늘도 가득 릴리와 엣치해요
 					CALL HEARTCB
 					PRINTFORMW 」
 				ENDIF
 		ENDSELECT
 		PRINTL  
 		IF RAND:4 == 0
-			PRINTFORMDW リリーは%RAND_SPLIT("甘える/子猫の/恋人の/娼婦の")%ような仕草で%CALLNAME:MASTER%をベッドに誘う…
+			PRINTFORMDW 릴리는%RAND_SPLIT("응석부린다/새끼 고양이의/연인의/창녀의")%같은 행동으로%CALLNAME:MASTER%를 침대로 이끈다…
 		ELSEIF RAND:3 == 0
-			PRINTFORMDW リリーから香る甘い発情香が%CALLNAME:MASTER%の%RAND_SPLIT("理性を溶かしていく/劣情を刺激する/性感を一気に高めていく")%…
+			PRINTFORMDW 릴리로부터 향기나는 달콤한 발정향기가%CALLNAME:MASTER%의%RAND_SPLIT("이성을 녹여 간다/열정을 자극한다/성감을 단번에 높여 간다")%…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW 今日も%CALLNAME:MASTER%は、%RAND_SPLIT("年端もいかない少女/この愛らしくも妖艶な妖精/愛しい春告精/可愛らしい幼な妻")%との淫らな行為に溺れてゆく……
+			PRINTFORMDW 오늘도%CALLNAME:MASTER%는,%RAND_SPLIT("어린아이의 연령의 정도도 가지 않은 소녀/이 사랑스럽게도 요염한 요정/사랑스러운 하루츠게정령/사랑스러운 어린 아내")%와의 추잡한 행위에 빠져 간다……
 		ELSE
-			PRINTFORMDW 庇護欲求を誘うリリーの%RAND_SPLIT("幼い/華奢な/未成熟な")%肢体が、%CALLNAME:MASTER%の精を求めて%RAND_SPLIT("淫蕩/淫靡/妖艶/艶美")%な輝きを放っている…
-			PRINTFORMDW リリーの愛を全てを受け入れた%CALLNAME:MASTER%は、誘われるまま禁忌に塗れた倒錯と愛欲の世界に堕ちてゆく…
+			PRINTFORMDW 비호 욕구를 권하는 릴리의%RAND_SPLIT("어리다/가녀린/미성숙인")%지체가,%CALLNAME:MASTER%의 정령을 요구해%RAND_SPLIT("음탕/음미/요염/염미")%인 빛을 발하고 있다…
+			PRINTFORMDW 릴리의 사랑을 모두를 받아들였다%CALLNAME:MASTER%는, 권해지는 대로 금기 투성이가 된 도착과 애욕의 세계에 떨어져 간다…
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教完了（好意2000以上）
-;・調教対象が口上主にもうメロメロ
+;조교 완료(호의 2000이상)
+;·조교 대상이 구상 주로 이제(벌써) 헤롱헤롱
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && FAVOR(2000, 2000)
+IF 구상기입체크(100) && FAVOR(2000, 2000)
 	;=================================================
-	;調教完了初回（好意2000以上）
-	;☆目印
+	;조교 완료 첫회(호의 2000이상)
+	;☆표적
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(10)
+	IF 구상기입체크(100) && FIRSTEVENT(10)
 		PRINTFORMDW ………
 		PRINTFORMDW ……
 		PRINTFORMDW …
 		PRINTL  
-		PRINTFORMW 「もうすっかりリリーの虜になっちゃいましたねっ♪」
-		PRINTFORMW 「実は、ちょっとお願いがあるんですが……」
-		PRINTFORMW 「精はもう十分過ぎるくらい頂いてますので…そのぅ……」
-		PRINTFORM 「今日は%CNAME(MASTER)%のいっぱいの愛で、リリーを満たして欲しいなって……ねっ、お願いします
+		PRINTFORMW 「이제(벌써) 완전히 릴리의 포로가 되어 버렸어요♪」
+		PRINTFORMW 「실은, 조금 부탁이 있습니다만……」
+		PRINTFORMW 「정령은 이제(벌써) 너무 충분할 정도로 받고 있기 때문에… 그……」
+		PRINTFORM 「오늘은%CNAME(MASTER)%의 가득한 사랑으로, 릴리를 채웠으면 좋다는……, 부탁합니다
 		CALL HEARTCB
 		PRINTFORMW 」
 		PRINTL  
@@ -379,95 +379,95 @@ IF 口上記入チェック(100) && FAVOR(2000, 2000)
 	ENDIF
 	
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(100)
-		;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100)
+		;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(6, 52)
 			CASE 0
-				PRINTFORMW 「おはようございますっ♪」
-				PRINTFORMW 「ねぇ、ちゃんとオナニー我慢してきましたか？」
-				PRINTFORMW 「%CNAME(MASTER)%の精はぜーんぶリリーのものなんですから……」
-				PRINTFORM 「勝手に無駄打ちしたら、許しませんからねっ
+				PRINTFORMW 「안녕하세욧♪」
+				PRINTFORMW 「저기, 분명하게 자위 참아 왔습니까?」
+				PRINTFORMW 「%CNAME(MASTER)%의 정령은 전부 릴리의 것이니까……」
+				PRINTFORM 「마음대로 헛됨 쳐 하면, 허락하지 않기 때문에
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORM 「もうっ、待ちくたびれちゃいましたよっ
+				PRINTFORM 「이제(벌써), 기다려 녹초가 되어 버렸어요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMDW 　リリーは%CALLNAME:MASTER%の顔をぐいと引き寄せると、%RAND_SPLIT("ねっとりと/理性を")%舐め溶かすような濃厚な口づけをした…
-				PRINTFORM 「んむ…ちゅぅ……ぷぁっ♪　急にごめんねっ、でももう我慢できないんですっ
+				PRINTFORMDW   릴리는%CALLNAME:MASTER%의 얼굴을 생각과 끌어 들이면,%RAND_SPLIT("끈적와/이성을")%빨고 녹이는 것 같은 농후한 입맞춤을 했다…
+				PRINTFORM 「응무… 츄우…… 푸앗♪  갑자기 미안해요, 그렇지만 이제 인내 할 수 없습니닷
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「早く%CNAME(MASTER)%の\@ TALENT:MASTER:オトコ ? ドロドロザーメン # えっちな精 \@お腹いっぱい飲ませてくださいっ
+				PRINTFORM 「빨리%CNAME(MASTER)%의\@ TALENT:MASTER:남자 ? 질척질척 정액# 엣치한 정령\@배 가득 먹여 주세욧
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「%RAND_SPLIT("おはようございますっ♪　ゆっくり休めましたか？/そんなに興奮しちゃって、恥ずかしい子ですねっ♪/可愛い子……食べちゃいたいくらいっ♪/おまたせっ♪/ほらっ、おいで……")%」
-				PRINTFORM 「今日もいっぱい%RAND_SPLIT("愛して/虐めて/可愛がって/イかせて/ちゅっちゅして")%あげますねっ
+				PRINTFORMW 「%RAND_SPLIT("안녕하세욧♪  천천히 쉬게 했습니까? /그렇게 흥분해 버려, 부끄러운 아이군요♪/사랑스러운 아이…… 먹어 버리고 싶을 정도♪/오래 기다리셨어요♪/이봐요, 와……")%」
+				PRINTFORM 「오늘도 가득%RAND_SPLIT("사랑해/괴롭혀/귀여워해/가게 해/해")%주네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「ロリコンって病気なんですよね？　病気なら、ちゃんと治さないとダメだと思うんですっ！」
-				PRINTFORMW 「おいで…%CNAME(MASTER)%が%RAND_SPLIT("他の女の子/リリー以外の子/他の小さな女の子")%で興奮しないように……」
-				PRINTFORM 「\@ TALENT:MASTER:オトコ ? タマタマ空っぽになるまでロリコンザーメンヌキヌキし # 腰が抜けるくらいイかせ \@てあげますねっ
+				PRINTFORMW 「로리콘은 병이예요?   병이라면, 분명하게 고치지 않으면 안된다고 생각합니닷!」
+				PRINTFORMW 「와…%CNAME(MASTER)%가%RAND_SPLIT("다른 여자 아이/릴리 이외의 아이/다른 작은 여자 아이")%로 흥분하지 않도록……」
+				PRINTFORM 「\@ TALENT:MASTER:남자 ? 타마타마 텅 비게 될 때까지 로리콘자멘누키누키 해# 넋을 잃을 정도로 행이나 키\@여(어) 주네요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「いいですか？　%CNAME(MASTER)%はリリーだけに興奮して…\@ TALENT:MASTER:オトコ ? ザーメンも精もぜーんぶリリーに捧げ # イク時もリリーを想ってイか \@なきゃダメですからねっ
+				PRINTFORM 「좋습니까?   %CNAME(MASTER)%는 릴리인 만큼 흥분해…\@ TALENT:MASTER:남자 ? 정액도 정령도 전부 릴리에 바치고# 갈 때도 릴리를 생각해 이인가\@없으면 안 되기 때문에
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 4
-				PRINTFORMW 「おいで…空っぽになるまで、%RAND_SPLIT("ぜーんぶ搾り取っちゃいますよっ♪/思いっ切り精を吐き出してね？")%」
-				PRINTFORM 「空っぽになった%CNAME(MASTER)%の身体%RAND_SPLIT("に、リリーの愛をいっぱい注いで/は、リリーのいっぱいの愛で満たして")%あげますからねっ
+				PRINTFORMW 「와… 텅 비게 될 때까지,%RAND_SPLIT("전부 짜내 버려요♪/마음껏 정령을 토해내?")%」
+				PRINTFORM 「텅 비게 되었다%CNAME(MASTER)%의 신체%RAND_SPLIT("에, 릴리의 사랑을 가득 따라/하, 릴리의 가득한 사랑으로 채워")%주니까요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 5
-				PRINTFORMW 「もうすっかりリリーの虜になっちゃいましたねっ♪」
-				PRINTFORMW 「実は、ちょっとお願いがあるんですが…精はもう十分過ぎるくらい頂いてますので…そのぅ……」
-				PRINTFORM 「今日は%CNAME(MASTER)%のいっぱいの愛で、リリーを満たして欲しいなって……ねっ、お願いします
+				PRINTFORMW 「이제(벌써) 완전히 릴리의 포로가 되어 버렸어요♪」
+				PRINTFORMW 「실은, 조금 부탁이 있습니다만… 정령은 이제(벌써) 너무 충분할 정도로 받고 있기 때문에… 그……」
+				PRINTFORM 「오늘은%CNAME(MASTER)%의 가득한 사랑으로, 릴리를 채웠으면 좋다는……, 부탁합니다
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
 		IF RAND:4 == 0
-			PRINTFORMDW リリーは%RAND_SPLIT("甘える/子猫の/恋人の/娼婦の")%ような仕草で%CALLNAME:MASTER%をベッドに誘う…
+			PRINTFORMDW 릴리는%RAND_SPLIT("응석부린다/새끼 고양이의/연인의/창녀의")%같은 행동으로%CALLNAME:MASTER%를 침대로 이끈다…
 		ELSEIF RAND:3 == 0
-			PRINTFORMDW リリーから香る甘い発情香が%CALLNAME:MASTER%の%RAND_SPLIT("理性を溶かしていく/劣情を刺激する/性感を一気に高めていく")%…
+			PRINTFORMDW 릴리로부터 향기나는 달콤한 발정향기가%CALLNAME:MASTER%의%RAND_SPLIT("이성을 녹여 간다/열정을 자극한다/성감을 단번에 높여 간다")%…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW %CALLNAME:MASTER%は%RAND_SPLIT("淫蕩/淫靡/妖艶/艶美")%に微笑む%RAND_SPLIT("愛らしくも妖艶な妖精/愛しい春告精/可愛らしい妖精")%との倒錯的な行為に期待し、\@ TALENT:MASTER:オトコ ? 先走りに亀頭を濡らした # 秘所から甘い蜜を垂らした \@…
+			PRINTFORMDW %CALLNAME:MASTER%는%RAND_SPLIT("음탕/음미/요염/염미")%에 미소짓는다%RAND_SPLIT("사랑스럽게도 요염한 요정/사랑스러운 하루츠게정령/사랑스러운 요정")%와의 도착적인 행위에 기대해,\@ TALENT:MASTER:남자 ? 앞질러 해에 귀두를 적셨다# 비밀스런 장소로부터 달콤한 밀을 늘어뜨렸다\@…
 		ELSE
-			PRINTFORMDW 庇護欲求を誘うリリーの%RAND_SPLIT("幼い/華奢な/未成熟な")%肢体が、%CALLNAME:MASTER%の精を求めて%RAND_SPLIT("淫蕩/淫靡/妖艶/艶美")%な輝きを放っている…
+			PRINTFORMDW 비호 욕구를 권하는 릴리의%RAND_SPLIT("어리다/가녀린/미성숙인")%지체가,%CALLNAME:MASTER%의 정령을 요구해%RAND_SPLIT("음탕/음미/요염/염미")%인 빛을 발하고 있다…
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;溺愛（好感度2000以上）
-;・調教者の方が調教対象にはまってしまい、深かったり倒錯した愛を注いでいる
+;몹시 사랑함(호감도 2000이상)
+;·조교자가 조교 대상에 빠져 버려, 깊기도 하고 도착 한 사랑을 따르고 있다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && FAVOR(0, 2000)
+IF 구상기입체크(100) && FAVOR(0, 2000)
 	;=================================================
-	;溺愛初回（好感度2000以上）
-	;☆目印
+	;몹시 사랑함 첫회(호감도 2000이상)
+	;☆표적
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(20)
+	IF 구상기입체크(100) && FIRSTEVENT(20)
 		PRINTFORMDW ………
 		PRINTFORMDW ……
 		PRINTFORMDW …
 		PRINTL  
-		PRINTFORMW 「ねぇねぇ、プラトニックラブってどう思いますか？」
-		PRINTFORMW 「リリーは好きな人の身も心も全部欲しくなっちゃうから……そんな関係、たぶん耐えられません……」
-		PRINTFORMW 「今だって……」
-		PRINTFORMDW 　リリーは口元をきゅっと結び、熱っぽく揺れる瞳で%CALLNAME:MASTER%を見つめる……
-		PRINTFORMW 「%CNAME(MASTER)%の『心』も……全部リリーに捧げてくれますか？」
-		PRINTFORMDW 　時計の秒針が進む度に、ゆっくりとリリーの顔が近付いてくる……
-		PRINTFORMDW 　吐息が焦らすように%CALLNAME:MASTER%の唇を撫で、甘い痺れが思考を鈍らせる……
-		PRINTFORMW 「……ふふっ♪」
-		PRINTFORMW 「リリーは『心』って言ったのに、%CNAME(MASTER)%ったらどこを硬くしてるんですか？」
-		PRINTFORMDW 　いつの間にか硬く勃起した\@ TALENT:MASTER:オトコ ? ペニスが # 乳頭が \@薄い布地を押し上げ、リリーに『身』を捧げようとはしたなく自己主張していた……
-		PRINTFORM 「いいですよ、『身も心も』ですもんね
+		PRINTFORMW 「있지있지, 정신적인 사랑은 어떻게 생각합니까?」
+		PRINTFORMW 「릴리는 좋아하는 사람의 몸도 마음도 전부 갖고 싶어져 버리기 때문에…… 그런 관계, 아마 견딜 수 있지 않습니다……」
+		PRINTFORMW 「지금이라도……」
+		PRINTFORMDW   릴리는 입가를 꽉 묶어, 열정적이게 흔들리는 눈동자로%CALLNAME:MASTER%를 응시한다……
+		PRINTFORMW 「%CNAME(MASTER)%의 『마음』도…… 전부 릴리에 바쳐 주겠습니까?」
+		PRINTFORMDW   시계의 초침이 진행될 때에, 천천히 릴리의 얼굴이 가까워져 온다……
+		PRINTFORMDW   한숨이 초조하게 하도록(듯이)%CALLNAME:MASTER%의 입술을 어루만져, 달콤한 저림을 사고를 무디어지게 할 수 있다……
+		PRINTFORMW 「…… 후훗♪」
+		PRINTFORMW 「릴리는 『마음』이라고 말했는데,%CNAME(MASTER)%도 참 어디를 딱딱하게 하고 있습니까?」
+		PRINTFORMDW   어느새인가 딱딱하게 발기했다\@ TALENT:MASTER:남자 ? 페니스가# 유두가\@얇은 천을 밀어 올려, 릴리에 『몸』을 바치려고 상스럽고 자기 주장하고 있었다……
+		PRINTFORM 「좋아요, 『몸도 마음도』지요
 		CALL HEARTCB
-		PRINTFORM ……おいで、今日もた～っぷりイかせてあげますね
+		PRINTFORM …… 와, 오늘도 충분히 가게 해 주네요
 		CALL HEARTCB
 		PRINTFORMW 」
 		PRINTL  
@@ -476,241 +476,241 @@ IF 口上記入チェック(100) && FAVOR(0, 2000)
 	ENDIF
 
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(100)
-	;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100)
+	;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(6, 53)
 			CASE 0
-				PRINTFORMW 「おはようございますっ♪」
-				PRINTFORMW 「ねぇ、ちゃんとオナニー我慢してきましたか？」
-				PRINTFORMW 「%CNAME(MASTER)%の精はぜーんぶリリーのものなんですから……」
-				PRINTFORM 「勝手に無駄打ちしたら、許しませんからねっ
+				PRINTFORMW 「안녕하세욧♪」
+				PRINTFORMW 「저기, 분명하게 자위 참아 왔습니까?」
+				PRINTFORMW 「%CNAME(MASTER)%의 정령은 전부 릴리의 것이니까……」
+				PRINTFORM 「마음대로 헛됨 쳐 하면, 허락하지 않기 때문에
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORM 「もうっ、待ちくたびれちゃいましたよっ
+				PRINTFORM 「이제(벌써), 기다려 녹초가 되어 버렸어요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMDW 　リリーは%CALLNAME:MASTER%の顔をぐいと引き寄せると、%RAND_SPLIT("ねっとりと/理性を")%舐め溶かすような濃厚な口づけをした…
-				PRINTFORMD 「んむ…ちゅぅ……ぷぁっ♪　急にごめんねっ、でももう我慢できないんですっ
+				PRINTFORMDW   릴리는%CALLNAME:MASTER%의 얼굴을 생각과 끌어 들이면,%RAND_SPLIT("끈적와/이성을")%빨고 녹이는 것 같은 농후한 입맞춤을 했다…
+				PRINTFORMD 「응무… 츄우…… 푸앗♪  갑자기 미안해요, 그렇지만 이제 인내 할 수 없습니닷
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「早く%CNAME(MASTER)%の\@ TALENT:MASTER:オトコ ? ドロドロザーメン # えっちな精 \@お腹いっぱい飲ませてくださいっ
+				PRINTFORM 「빨리%CNAME(MASTER)%의\@ TALENT:MASTER:남자 ? 질척질척 정액# 엣치한 정령\@배 가득 먹여 주세욧
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「%RAND_SPLIT("おはようございますっ♪　ゆっくり休めましたか？/そんなに興奮しちゃって、恥ずかしい子ですねっ♪/可愛い子……食べちゃいたいくらいっ♪/おまたせっ♪/ほらっ、おいで……")%」
-				PRINTFORM 「今日もいっぱい%RAND_SPLIT("愛して/虐めて/可愛がって/イかせて/ちゅっちゅして")%あげますねっ
+				PRINTFORMW 「%RAND_SPLIT("안녕하세욧♪  천천히 쉬게 했습니까? /그렇게 흥분해 버려, 부끄러운 아이군요♪/사랑스러운 아이…… 먹어 버리고 싶을 정도♪/오래 기다리셨어요♪/이봐요, 와……")%」
+				PRINTFORM 「오늘도 가득%RAND_SPLIT("사랑해/괴롭혀/귀여워해/가게 해/해")%주네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「ロリコンって病気なんですよね？　病気なら、ちゃんと治さないとダメだと思うんですっ！」
-				PRINTFORMW 「おいで…%CNAME(MASTER)%が%RAND_SPLIT("他の女の子/リリー以外の子/他の小さな女の子")%で興奮しないように……」
-				PRINTFORM 「\@ TALENT:MASTER:オトコ ? タマタマ空っぽになるまでロリコンザーメンヌキヌキし # 腰が抜けるくらいイかせ \@てあげますねっ
+				PRINTFORMW 「로리콘은 병이예요?   병이라면, 분명하게 고치지 않으면 안된다고 생각합니닷!」
+				PRINTFORMW 「와…%CNAME(MASTER)%가%RAND_SPLIT("다른 여자 아이/릴리 이외의 아이/다른 작은 여자 아이")%로 흥분하지 않도록……」
+				PRINTFORM 「\@ TALENT:MASTER:남자 ? 타마타마 텅 비게 될 때까지 로리콘자멘누키누키 해# 넋을 잃을 정도로 행이나 키\@여(어) 주네요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「いいですか？　%CNAME(MASTER)%はリリーだけに興奮して…\@ TALENT:MASTER:オトコ ? ザーメンも精もぜーんぶリリーに捧げ # イク時もリリーを想ってイか \@なきゃダメですからねっ
+				PRINTFORM 「좋습니까?   %CNAME(MASTER)%는 릴리인 만큼 흥분해…\@ TALENT:MASTER:남자 ? 정액도 정령도 전부 릴리에 바치고# 갈 때도 릴리를 생각해 이인가\@없으면 안 되기 때문에
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 4
-				PRINTFORMW 「おいで…空っぽになるまで、%RAND_SPLIT("ぜーんぶ搾り取っちゃいますよっ♪/思いっ切り精を吐き出してね？")%」
-				PRINTFORM 「空っぽになった%CNAME(MASTER)%の身体%RAND_SPLIT("に、リリーの愛をいっぱい注いで/は、リリーのいっぱいの愛で満たして")%あげますからねっ
+				PRINTFORMW 「와… 텅 비게 될 때까지,%RAND_SPLIT("전부 짜내 버려요♪/마음껏 정령을 토해내?")%」
+				PRINTFORM 「텅 비게 되었다%CNAME(MASTER)%의 신체%RAND_SPLIT("에, 릴리의 사랑을 가득 따라/하, 릴리의 가득한 사랑으로 채워")%주니까요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 5
-				PRINTFORMW 「%CNAME(MASTER)%っ♪　%CNAME(MASTER)%っ♪　大好きですよーっ♪」
-				PRINTFORM 「顔も、身体も、声も、匂いも……ぜーんぶっ
+				PRINTFORMW 「%CNAME(MASTER)%♪  %CNAME(MASTER)%♪  정말 좋아해요♪」
+				PRINTFORM 「얼굴도, 신체도, 소리도, 냄새도…… 전부
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「リリーのいっぱいの愛、%CNAME(MASTER)%にたーっぷり注いであげますねっ
+				PRINTFORM 「릴리의 가득한 사랑,%CNAME(MASTER)%에 충분히 따라 주네요
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
 		IF RAND:4 == 0
-			PRINTFORMDW リリーは%RAND_SPLIT("甘える/子猫の/恋人の/娼婦の")%ような仕草で%CALLNAME:MASTER%をベッドに誘う…
+			PRINTFORMDW 릴리는%RAND_SPLIT("응석부린다/새끼 고양이의/연인의/창녀의")%같은 행동으로%CALLNAME:MASTER%를 침대로 이끈다…
 		ELSEIF RAND:3 == 0
-			PRINTFORMDW リリーから香る甘い発情香が%CALLNAME:MASTER%の%RAND_SPLIT("理性を溶かしていく/劣情を刺激する/性感を一気に高めていく")%…
+			PRINTFORMDW 릴리로부터 향기나는 달콤한 발정향기가%CALLNAME:MASTER%의%RAND_SPLIT("이성을 녹여 간다/열정을 자극한다/성감을 단번에 높여 간다")%…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW %CALLNAME:MASTER%は%RAND_SPLIT("淫蕩/淫靡/妖艶/艶美")%に微笑む%RAND_SPLIT("愛らしくも妖艶な妖精/愛しい春告精/可愛らしい妖精")%との倒錯的な行為に期待し、\@ TALENT:MASTER:オトコ ? 先走りに亀頭を濡らした # 秘所から甘い蜜を垂らした \@…
+			PRINTFORMDW %CALLNAME:MASTER%는%RAND_SPLIT("음탕/음미/요염/염미")%에 미소짓는다%RAND_SPLIT("사랑스럽게도 요염한 요정/사랑스러운 하루츠게정령/사랑스러운 요정")%와의 도착적인 행위에 기대해,\@ TALENT:MASTER:남자 ? 앞질러 해에 귀두를 적셨다# 비밀스런 장소로부터 달콤한 밀을 늘어뜨렸다\@…
 		ELSE
-			PRINTFORMDW 庇護欲求を誘うリリーの%RAND_SPLIT("幼い/華奢な/未成熟な")%肢体が、%CALLNAME:MASTER%の精を求めて%RAND_SPLIT("淫蕩/淫靡/妖艶/艶美")%な輝きを放っている…
+			PRINTFORMDW 비호 욕구를 권하는 릴리의%RAND_SPLIT("어리다/가녀린/미성숙인")%지체가,%CALLNAME:MASTER%의 정령을 요구해%RAND_SPLIT("음탕/음미/요염/염미")%인 빛을 발하고 있다…
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教済み（好意1000以上
-;・調教対象が口上主に調教されるのを幸せに感じている
+;조교가 끝난 상태(호의 1000이상
+;·조교 대상이 구상 주로 조교되는 것을 행복하게 느끼고 있다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && FAVOR(1000, 0)
+IF 구상기입체크(100) && FAVOR(1000, 0)
 	;=================================================
-	;調教済み初回（好意1000以上）
-	;☆目印
+	;조교가 끝난 첫회(호의 1000이상)
+	;☆표적
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(30)
+	IF 구상기입체크(100) && FIRSTEVENT(30)
 		PRINTFORMDW ………
 		PRINTFORMDW ……
 		PRINTFORMDW …
 		PRINTL  
-		PRINTFORMW 「%CNAME(MASTER)%もだいぶ素直になってきましたねっ♪」
-		PRINTFORMW 「他の人なら気持ちいだけで満足なのかもしれませんけど……」
-		PRINTFORMDW 　リリーは%CALLNAME:MASTER%の頬に手を添え、脳が痺れるような甘い囁き声で語りかける…
-		PRINTFORMW 「%CNAME(MASTER)%はリリーの奴隷さんなんですから……」
-		PRINTFORM 「痛い事、怖い事でも感じられるような……リリーみたいなヘンタイさんにならなきゃダメですからね
+		PRINTFORMW 「%CNAME(MASTER)%도 많이 솔직해져 왔어요♪」
+		PRINTFORMW 「다른 사람이라면 기분 안을 수 있는으로 만족인지도 모르지만……」
+		PRINTFORMDW   릴리는%CALLNAME:MASTER%의 뺨에 손을 더해, 뇌가 저리는 것 같은 달콤한 속삭이는 소리로 말을 건다…
+		PRINTFORMW 「%CNAME(MASTER)%는 릴리의 노예씨이니까……」
+		PRINTFORM 「아픈 일, 무서운 일에서도 느껴지는 것 같은…… 릴리 같은 변태씨가 되지 않으면 안 되기 때문에
 		CALL HEARTCB
 		PRINTFORMW 」
 		PRINTL  
-		PRINTFORMDW 幼くも愛らしい妖精の淫蕩な微笑みが、%CALLNAME:MASTER%の心を倒錯と愛欲の世界に引きずり込んでゆく…
+		PRINTFORMDW 어리게도 사랑스러운 요정의 음탕한 미소가,%CALLNAME:MASTER%의 마음을 도착과 애욕의 세계에 끌어들여 간다…
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(100)
-	;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100)
+	;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(6, 54)
 			CASE 0
-				PRINTFORMW 「おはようございますっ♪」
-				PRINTFORMW 「ねぇ、ちゃんとオナニー我慢してきましたか？」
-				PRINTFORMW 「%CNAME(MASTER)%の精はぜーんぶリリーのものなんですから……」
-				PRINTFORM 「勝手に無駄打ちしたら、許しませんからねっ
+				PRINTFORMW 「안녕하세욧♪」
+				PRINTFORMW 「저기, 분명하게 자위 참아 왔습니까?」
+				PRINTFORMW 「%CNAME(MASTER)%의 정령은 전부 릴리의 것이니까……」
+				PRINTFORM 「마음대로 헛됨 쳐 하면, 허락하지 않기 때문에
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORM 「もうっ、待ちくたびれちゃいましたよっ
+				PRINTFORM 「이제(벌써), 기다려 녹초가 되어 버렸어요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORMDW 　リリーは%CALLNAME:MASTER%の顔をぐいと引き寄せると、%RAND_SPLIT("ねっとりと/理性を")%舐め溶かすような濃厚な口づけをした…
-				PRINTFORMD 「んむ…ちゅぅ……ぷぁっ♪　急にごめんねっ、でももう我慢できないんですっ
+				PRINTFORMDW   릴리는%CALLNAME:MASTER%의 얼굴을 생각과 끌어 들이면,%RAND_SPLIT("끈적와/이성을")%빨고 녹이는 것 같은 농후한 입맞춤을 했다…
+				PRINTFORMD 「응무… 츄우…… 푸앗♪  갑자기 미안해요, 그렇지만 이제 인내 할 수 없습니닷
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「早く%CNAME(MASTER)%の\@ TALENT:MASTER:オトコ ? ドロドロザーメン # えっちな精 \@お腹いっぱい飲ませてくださいっ
+				PRINTFORM 「빨리%CNAME(MASTER)%의\@ TALENT:MASTER:남자 ? 질척질척 정액# 엣치한 정령\@배 가득 먹여 주세욧
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「%RAND_SPLIT("おはようございますっ♪　ゆっくり休めましたか？/そんなに興奮しちゃって、恥ずかしい子ですねっ♪/可愛い子……食べちゃいたいくらいっ♪/おまたせっ♪/ほらっ、おいで……")%」
-				PRINTFORM 「今日もいっぱい%RAND_SPLIT("愛して/虐めて/可愛がって/イかせて/ちゅっちゅして")%あげますねっ
+				PRINTFORMW 「%RAND_SPLIT("안녕하세욧♪  천천히 쉬게 했습니까? /그렇게 흥분해 버려, 부끄러운 아이군요♪/사랑스러운 아이…… 먹어 버리고 싶을 정도♪/오래 기다리셨어요♪/이봐요, 와……")%」
+				PRINTFORM 「오늘도 가득%RAND_SPLIT("사랑해/괴롭혀/귀여워해/가게 해/해")%주네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「ロリコンって病気なんですよね？　病気なら、ちゃんと治さないとダメだと思うんですっ！」
-				PRINTFORMW 「おいで…%CNAME(MASTER)%が%RAND_SPLIT("他の女の子/リリー以外の子/他の小さな女の子")%で興奮しないように……」
-				PRINTFORM 「\@ TALENT:MASTER:オトコ ? タマタマ空っぽになるまでロリコンザーメンヌキヌキし # 腰が抜けるくらいイかせ \@てあげますねっ
+				PRINTFORMW 「로리콘은 병이예요?   병이라면, 분명하게 고치지 않으면 안된다고 생각합니닷!」
+				PRINTFORMW 「와…%CNAME(MASTER)%가%RAND_SPLIT("다른 여자 아이/릴리 이외의 아이/다른 작은 여자 아이")%로 흥분하지 않도록……」
+				PRINTFORM 「\@ TALENT:MASTER:남자 ? 타마타마 텅 비게 될 때까지 로리콘자멘누키누키 해# 넋을 잃을 정도로 행이나 키\@여(어) 주네요
 				CALL HEARTCB
 				PRINTFORMW 」
-				PRINTFORM 「いいですか？　%CNAME(MASTER)%はリリーだけに興奮して…\@ TALENT:MASTER:オトコ ? ザーメンも精もぜーんぶリリーに捧げ # イク時もリリーを想ってイか \@なきゃダメですからねっ
+				PRINTFORM 「좋습니까?   %CNAME(MASTER)%는 릴리인 만큼 흥분해…\@ TALENT:MASTER:남자 ? 정액도 정령도 전부 릴리에 바치고# 갈 때도 릴리를 생각해 이인가\@없으면 안 되기 때문에
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 4
-				PRINTFORMW 「おいで…空っぽになるまで、%RAND_SPLIT("ぜーんぶ搾り取っちゃいますよっ♪/思いっ切り精を吐き出してね？")%」
-				PRINTFORM 「空っぽになった%CNAME(MASTER)%の身体%RAND_SPLIT("に、リリーの愛をいっぱい注いで/は、リリーのいっぱいの愛で満たして")%あげますからねっ
+				PRINTFORMW 「와… 텅 비게 될 때까지,%RAND_SPLIT("전부 짜내 버려요♪/마음껏 정령을 토해내?")%」
+				PRINTFORM 「텅 비게 되었다%CNAME(MASTER)%의 신체%RAND_SPLIT("에, 릴리의 사랑을 가득 따라/하, 릴리의 가득한 사랑으로 채워")%주니까요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 5
-				PRINTFORMW 「%CNAME(MASTER)%もだいぶ素直になってきましたねっ♪」
-				PRINTFORMW 「他の人なら気持ちいだけで満足なのかもしれませんけど……」
-				PRINTFORMDW 　リリーは%CALLNAME:MASTER%の頬に手を添え、脳が痺れるような甘い囁き声で語りかける…
-				PRINTFORMW 「%CNAME(MASTER)%はリリーの奴隷さんなんですから……」
-				PRINTFORM 「痛い事、怖い事でも感じられるような……%RAND_SPLIT("最低のド変態/変態さん/えっちな子/リリーみたいなヘンタイさん")%にならなきゃダメですからね
+				PRINTFORMW 「%CNAME(MASTER)%도 많이 솔직해져 왔어요♪」
+				PRINTFORMW 「다른 사람이라면 기분 안을 수 있는으로 만족인지도 모르지만……」
+				PRINTFORMDW   릴리는%CALLNAME:MASTER%의 뺨에 손을 더해, 뇌가 저리는 것 같은 달콤한 속삭이는 소리로 말을 건다…
+				PRINTFORMW 「%CNAME(MASTER)%는 릴리의 노예씨이니까……」
+				PRINTFORM 「아픈 일, 무서운 일에서도 느껴지는 것 같은……%RAND_SPLIT("최저의 드 변태/변태씨/엣치한 아이/릴리 같은 변태씨")%가 되지 않으면 안 되기 때문에
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
 		IF RAND:4 == 0
-			PRINTFORMDW リリーは%RAND_SPLIT("甘える/子猫の/恋人の/娼婦の")%ような仕草で%CALLNAME:MASTER%をベッドに誘う…
+			PRINTFORMDW 릴리는%RAND_SPLIT("응석부린다/새끼 고양이의/연인의/창녀의")%같은 행동으로%CALLNAME:MASTER%를 침대로 이끈다…
 		ELSEIF RAND:3 == 0
-			PRINTFORMDW リリーから香る甘い発情香が%CALLNAME:MASTER%の%RAND_SPLIT("理性を溶かしていく/劣情を刺激する/性感を一気に高めていく")%…
+			PRINTFORMDW 릴리로부터 향기나는 달콤한 발정향기가%CALLNAME:MASTER%의%RAND_SPLIT("이성을 녹여 간다/열정을 자극한다/성감을 단번에 높여 간다")%…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW %CALLNAME:MASTER%は%RAND_SPLIT("淫蕩/淫靡/妖艶/艶美")%に微笑む%RAND_SPLIT("愛らしくも妖艶な妖精/愛しい春告精/可愛らしい妖精")%との倒錯的な行為に期待し、\@ TALENT:MASTER:オトコ ? 先走りに亀頭を濡らした # 秘所から甘い蜜を垂らした \@…
+			PRINTFORMDW %CALLNAME:MASTER%는%RAND_SPLIT("음탕/음미/요염/염미")%에 미소짓는다%RAND_SPLIT("사랑스럽게도 요염한 요정/사랑스러운 하루츠게정령/사랑스러운 요정")%와의 도착적인 행위에 기대해,\@ TALENT:MASTER:남자 ? 앞질러 해에 귀두를 적셨다# 비밀스런 장소로부터 달콤한 밀을 늘어뜨렸다\@…
 		ELSE
-			PRINTFORMDW 庇護欲求を誘うリリーの%RAND_SPLIT("幼い/華奢な/未成熟な")%肢体が、%CALLNAME:MASTER%の精を求めて%RAND_SPLIT("淫蕩/淫靡/妖艶/艶美")%な輝きを放っている…
+			PRINTFORMDW 비호 욕구를 권하는 릴리의%RAND_SPLIT("어리다/가녀린/미성숙인")%지체가,%CALLNAME:MASTER%의 정령을 요구해%RAND_SPLIT("음탕/음미/요염/염미")%인 빛을 발하고 있다…
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;目覚め（好意500以上）
-;・調教されるのもむしろ好きになってきたかも知れない…
+;눈을 뜸(호의 500이상)
+;·조교되는 것도 오히려 좋아하게 되었는지도 모른다…
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && FAVOR(500, 0)
+IF 구상기입체크(100) && FAVOR(500, 0)
 	;=================================================
-	;目覚め初回（好意500以上）
+	;눈을 뜨고 첫회(호의 500이상)
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(70)
+	IF 구상기입체크(100) && FIRSTEVENT(70)
 		PRINTFORMDW ………
 		PRINTFORMDW ……
 		PRINTFORMDW …
 		PRINTL  
-		PRINTFORMW 「おはようございます、今日はお寝坊さんでしたね」
-		PRINTFORMDW 　%CALLNAME:MASTER%が目を覚ますと、目の前に穏やかな笑みを湛えたリリーの顔があった…
-		PRINTFORMDW 　淡雪のように白い肌。さらさらと揺れる艶髪に彩られた小さな顔は、
-		PRINTFORMDW 　いまだに夢の中にいると錯覚させられるほど清麗な輝きを放っていた…
-		PRINTFORM 「かわいい寝顔、いっぱい堪能しちゃいました♪　えへへっ
+		PRINTFORMW 「안녕하세요, 오늘은 잠꾸러기였지요」
+		PRINTFORMDW 　%CALLNAME:MASTER%가 눈을 뜨면, 눈앞에 온화한 웃음을 띤 릴리의 얼굴이 있었다…
+		PRINTFORMDW   아와유키와 같이 흰 피부. 졸졸 흔들리는 염발에 물들여진 작은 얼굴은,
+		PRINTFORMDW   아직껏 꿈 속에 있으면 착각 당하는 만큼 청려인 빛을 발하고 있었다…
+		PRINTFORM 「사랑스러운 잠자는 얼굴, 가득 만끽해 버렸던♪  네에에
 		CALL HEARTCB
 		PRINTFORMW 」
-		PRINTFORM 「さてと、おねむかもしれませんが……起き抜けのドロッとした精、頂いちゃいますねっ
+		PRINTFORM 「그럼, 졸음일지도 모릅니다만…… 일어나자마자의 주륵한 정령, 받아 버리네요
 		CALL HEARTCB
 		PRINTFORMW 」
-		PRINTFORMDW 　リリーの可憐な薄紅色の唇が%CALLNAME:MASTER%の精を求めて艶美に歪む…
-		PRINTFORMDW 　現実感のない光景が理性を鈍らせ、%CALLNAME:MASTER%の心は倒錯と愛欲の世界に沈んでゆく…
+		PRINTFORMDW   릴리의 가련한 담홍색의 입술이%CALLNAME:MASTER%의 정령을 요구해 염미에 비뚤어진다…
+		PRINTFORMDW   현실감이 없는 광경이 이성을 무디어지게 해%CALLNAME:MASTER%의 마음은 도착과 애욕의 세계에 가라앉아 간다…
 		RETURN 1
 	ENDIF
 
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(100)
-	;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100)
+	;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(4, 58)
 			CASE 0
-				PRINTFORMW 「おはようございますっ♪　ゆっくり休めましたか？」
-				PRINTFORM 「それじゃあ、さっそく……%CNAME(MASTER)%の精、いただいちゃいますねっ
+				PRINTFORMW 「안녕하세욧♪  천천히 쉬게 했습니까?」
+				PRINTFORM 「그러면, 즉시……%CNAME(MASTER)%의 정령, 받아 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORMW 「ほら、おいで……調教の時間ですよっ」
-				PRINTFORMW 「%CNAME(MASTER)%も少し慣れてきたみたいですし……」
-				PRINTFORM 「いつもより%RAND_SPLIT("刺激的な事/エッチなイタズラ")%、しちゃいますねっ
+				PRINTFORMW 「이봐요, 와…… 조교의 시간이에요」
+				PRINTFORMW 「%CNAME(MASTER)%도 조금 익숙해져 온 것 같고……」
+				PRINTFORM 「평소보다%RAND_SPLIT("자극적인 사/엣치한 장난")%, 해 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「さてっ、今日は何をしましょうかっ♪」
-				PRINTFORMW 「小さなおててで扱いて欲しい？　それともあんよで踏み踏みして欲しいのかな？　ふふっ♪」
-				PRINTFORM 「恥ずかしがらなくていいからね……隠したってバレバレなんですから
+				PRINTFORMW 「그런데, 오늘은 무엇을 할까요♪」
+				PRINTFORMW 「작은 라고라고로 다뤘으면 좋아?   그렇지 않으면 발로 밟아해 주었으면 한 것인지?   후후♪」
+				PRINTFORM 「부끄러워하지 않아도 괜찮으니까…… 숨겨도 들키고 들키고이니까
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「最近はすっかり素直になりましたねっ♪」
-				PRINTFORMW 「%RAND_SPLIT("痛い事/怖い事")%とかはまだまだ難しそうですけど……」
-				PRINTFORM 「気持ちいい事なら大歓迎って感じでしょうか？　うふふっ
+				PRINTFORMW 「최근에는 완전히 솔직해졌어요♪」
+				PRINTFORMW 「%RAND_SPLIT("아픈 일/무서운 일")%라든지는 아직도 어려울 것 같지만……」
+				PRINTFORM 「기분이 좋은 일이라면 대환영이라는 느낌입니까?   후후
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
 		IF RAND:4 == 0
-			PRINTFORMDW リリーは%RAND_SPLIT("熱っぽく瞳を潤ませながら/あなたの情欲を誘うように/すっかり欲情しきった表情で")%、%RAND_SPLIT("柔らかな胸をぎゅっと押し付けてきた/スカートを捲り上げ白い下着を見せつけて来た/ベッドの上で手招きをした/ゆっくりとスカートを捲り上げていった/スカートの奥の純白の布地を見せつけて来た")%…
+			PRINTFORMDW 릴리는%RAND_SPLIT("열정적이게 눈동자를 물기를 띠게 하면서/당신의 정욕을 권하도록(듯이)/완전히 욕정해 버린 표정으로")%、%RAND_SPLIT("부드러운 가슴을 꽉 강압해 왔다/스커트를 걷어 올리고 흰 속옷을 과시해 왔다/침대 위에서 손짓함을 했다/천천히 스커트를 걷어 올려 갔다/스커트의 안쪽의 순백의 천을 과시해 왔다")%…
 		ELSEIF RAND:3 == 0
-			PRINTFORMDW %CALLNAME:MASTER%の精を求めて、%RAND_SPLIT("小さく愛らしい春告精/可愛らしい妖精")%が%RAND_SPLIT("調教開始を宣言した/淫靡な笑みを浮かべた/あなたの胸に飛び込んできた")%…
+			PRINTFORMDW %CALLNAME:MASTER%의 정령을 요구해,%RAND_SPLIT("작고 사랑스러운 하루츠게정령/사랑스러운 요정")%가%RAND_SPLIT("조교 개시를 선언했다/음미로운 미소를 띄웠다/당신의 가슴에 뛰어들어 왔다")%…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW %CALLNAME:MASTER%は%RAND_SPLIT("年端もいかない少女/この愛らしくも妖艶な妖精/愛しい春告精/可愛らしい妖精")%の誘惑に溺れ始めている…
+			PRINTFORMDW %CALLNAME:MASTER%는%RAND_SPLIT("어린아이의 연령의 정도도 가지 않은 소녀/이 사랑스럽게도 요염한 요정/사랑스러운 하루츠게정령/사랑스러운 요정")%의 유혹에 빠지기 시작하고 있다…
 		ELSE
-			PRINTFORMDW 揺れる艶髪から香る甘い匂いが、%CALLNAME:MASTER%の抵抗する意思を溶かしてゆく…
+			PRINTFORMDW 흔들리는 염발로부터 향기나는 달콤한 냄새가,%CALLNAME:MASTER%의 저항할 의사를 녹여 간다…
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;順応（好意100以上・好感度100以上）
-;・丁寧に調教を進められて、思ったより嫌じゃないかも…
+;순응(호의 100이상·호감도 100이상)
+;·정중하게 조교를 진행되어, 생각했던 것보다 싫지 않을지도…
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && FAVOR(100, 100)
+IF 구상기입체크(100) && FAVOR(100, 100)
 	;=================================================
-	;順応初回（好意100以上・好感度100以上）
+	;순응 첫회(호의 100이상·호감도 100이상)
 	;=================================================
-	IF 口上記入チェック(0) && FIRSTEVENT(80)
+	IF 구상기입체크(0) && FIRSTEVENT(80)
 		PRINTFORMDW ………
 		PRINTFORMDW ……
 		PRINTFORMDW …
@@ -719,214 +719,214 @@ IF 口上記入チェック(100) && FAVOR(100, 100)
 	ENDIF
 	
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(100)
-	;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100)
+	;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(4, 59)
 			CASE 0
-				PRINTFORMW 「おはようございますっ♪　ゆっくり休めましたか？」
-				PRINTFORM 「それじゃあ、さっそく……%CNAME(MASTER)%の精、いただいちゃいますねっ
+				PRINTFORMW 「안녕하세욧♪  천천히 쉬게 했습니까?」
+				PRINTFORM 「그러면, 즉시……%CNAME(MASTER)%의 정령, 받아 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORMW 「ほら、おいで……調教の時間ですよっ」
-				PRINTFORMW 「%CNAME(MASTER)%も少し慣れてきたみたいですし……」
-				PRINTFORM 「いつもより%RAND_SPLIT("刺激的な事/エッチなイタズラ")%、しちゃいますねっ
+				PRINTFORMW 「이봐요, 와…… 조교의 시간이에요」
+				PRINTFORMW 「%CNAME(MASTER)%도 조금 익숙해져 온 것 같고……」
+				PRINTFORM 「평소보다%RAND_SPLIT("자극적인 사/엣치한 장난")%, 해 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「さてっ、今日は何をしましょうかっ♪」
-				PRINTFORMW 「小さなおててで扱いて欲しい？　それともあんよで踏み踏みして欲しいのかな？　ふふっ♪」
-				PRINTFORM 「恥ずかしがらなくていいからね……隠したってバレバレなんですから
+				PRINTFORMW 「그런데, 오늘은 무엇을 할까요♪」
+				PRINTFORMW 「작은 라고라고로 다뤘으면 좋아?   그렇지 않으면 발로 밟아해 주었으면 한 것인지?   후후♪」
+				PRINTFORM 「부끄러워하지 않아도 괜찮으니까…… 숨겨도 들키고 들키고이니까
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「さてと、そろそろ調教を始めましょうか」
-				PRINTFORMW 「%RAND_SPLIT("痛い事/怖い事")%とかはまだまだ難しそうですけど……」
-				PRINTFORMW 「気持ちいい事なら、我慢出来そうですか？　ふふっ♪」
+				PRINTFORMW 「그럼, 슬슬 조교를 시작할까요」
+				PRINTFORMW 「%RAND_SPLIT("아픈 일/무서운 일")%라든지는 아직도 어려울 것 같지만……」
+				PRINTFORMW 「기분이 좋은 일이라면, 인내 할 수 있을 것 같습니까?   후후♪」
 		ENDSELECT
 		IF RAND:4 == 0
-			PRINTFORMDW リリーは%RAND_SPLIT("熱っぽく瞳を潤ませながら/あなたの情欲を誘うように/すっかり欲情しきった表情で")%、%RAND_SPLIT("柔らかな胸をぎゅっと押し付けてきた/スカートを捲り上げ白い下着を見せつけて来た/ベッドの上で手招きをした/ゆっくりとスカートを捲り上げていった/スカートの奥の純白の布地を見せつけて来た")%…
+			PRINTFORMDW 릴리는%RAND_SPLIT("열정적이게 눈동자를 물기를 띠게 하면서/당신의 정욕을 권하도록(듯이)/완전히 욕정해 버린 표정으로")%、%RAND_SPLIT("부드러운 가슴을 꽉 강압해 왔다/스커트를 걷어 올리고 흰 속옷을 과시해 왔다/침대 위에서 손짓함을 했다/천천히 스커트를 걷어 올려 갔다/스커트의 안쪽의 순백의 천을 과시해 왔다")%…
 		ELSEIF RAND:3 == 0
-			PRINTFORMDW %CALLNAME:MASTER%の精を求めて、%RAND_SPLIT("小さく愛らしい春告精/可愛らしい妖精")%が%RAND_SPLIT("調教開始を宣言した/淫靡な笑みを浮かべた/あなたの胸に飛び込んできた")%…
+			PRINTFORMDW %CALLNAME:MASTER%의 정령을 요구해,%RAND_SPLIT("작고 사랑스러운 하루츠게정령/사랑스러운 요정")%가%RAND_SPLIT("조교 개시를 선언했다/음미로운 미소를 띄웠다/당신의 가슴에 뛰어들어 왔다")%…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW %CALLNAME:MASTER%は%RAND_SPLIT("年端もいかない少女/この愛らしくも妖艶な妖精/愛しい春告精/可愛らしい妖精")%の誘惑に溺れ始めている…
+			PRINTFORMDW %CALLNAME:MASTER%는%RAND_SPLIT("어린아이의 연령의 정도도 가지 않은 소녀/이 사랑스럽게도 요염한 요정/사랑스러운 하루츠게정령/사랑스러운 요정")%의 유혹에 빠지기 시작하고 있다…
 		ELSE
-			PRINTFORMDW 揺れる艶髪から香る甘い匂いが、%CALLNAME:MASTER%の抵抗する意思を溶かしてゆく…
+			PRINTFORMDW 흔들리는 염발로부터 향기나는 달콤한 냄새가,%CALLNAME:MASTER%의 저항할 의사를 녹여 간다…
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;嫌悪（好意-100未満）
-;・調教者に対し嫌悪感を抱いている
+;혐오(호의-100 미만)
+;·조교자에 대해 혐오감을 안고 있다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && AFFECTION("嫌悪")
+IF 구상기입체크(100) && AFFECTION("혐오")
 	;=================================================
-	;嫌悪初回（好意-100未満）
+	;혐오 첫회(호의-100 미만)
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(40)
+	IF 구상기입체크(100) && FIRSTEVENT(40)
 		PRINTFORMDW ………
 		PRINTFORMDW ……
 		PRINTFORMDW …
 		PRINTL  
-		PRINTFORMDW 　調教を始めようとするリリーの手を、%CALLNAME:MASTER%は力強く振り払った…
-		PRINTFORMW 「痛っ……やりましたね……」
-		PRINTFORMW 「%CNAME(MASTER)%がその気なら、リリーも手加減してあげませんからねっ」
+		PRINTFORMDW   조교를 시작하려고 하는 릴리의 손을,%CALLNAME:MASTER%는 강력하게 뿌리쳤다…
+		PRINTFORMW 「아얏…… 했어요……」
+		PRINTFORMW 「%CNAME(MASTER)%가 그 기분이라면, 릴리도 손대중 해 주지 않기 때문에」
 		RETURN 1
 	ENDIF
 
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(100)
-	;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100)
+	;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(4, 55)
 			CASE 0
-				PRINTFORMW 「ほら、お顔を見せてください……身体の調子はどうですか？」
-				PRINTFORMW 「どこか痛むとか、気分が悪いとか……ふむ、大丈夫そうですね」
-				PRINTFORMW 「こんな風にリリーとするのは、%RAND_SPLIT("嫌/怖い/恥ずかしい")%かもしれないですけど……」
-				PRINTFORMW 「せめて、気持ち良くなってくださいね」
+				PRINTFORMW 「이봐요, 얼굴을 보여 주세요…… 신체의 상태는 어떻습니까?」
+				PRINTFORMW 「어딘가 아프다든가, 기분이 나쁘다든가…… 흠, 괜찮은 것 같네요」
+				PRINTFORMW 「이런 식으로 릴리로 하는 것은,%RAND_SPLIT("혐/무섭다/부끄럽다")%일지도 모르지만……」
+				PRINTFORMW 「적어도, 기분 좋아져 주세요」
 			CASE 1
-				PRINTFORMW 「こんな事されて、%CNAME(MASTER)%が%RAND_SPLIT("嫌がる/怖がる/恥ずかしがる/抵抗する")%気持ちも分かりますけど……」
-				PRINTFORMW 「%CNAME(MASTER)%の精の味を知っちゃったら、もう我慢なんてできませんっ！！」
-				PRINTFORMW 「%RAND_SPLIT("自分勝手で/我儘で/勝手な事言って")%ごめんね……もう、いいですか？」
-				PRINTFORM 「甘々な%CNAME(MASTER)%の精……頂いちゃいますねっ
+				PRINTFORMW 「이런 일 되어,%CNAME(MASTER)%가%RAND_SPLIT("싫어한다/무서워한다/부끄러워한다/저항한다")%기분도 압니다만……」
+				PRINTFORMW 「%CNAME(MASTER)%의 정령의 맛을 알아 버리면, 이제 인내는 할 수 없습니다!!」
+				PRINTFORMW 「%RAND_SPLIT("제멋대로여/멋대로여/제멋대로인 일 말해")%미안해요…… 이제(벌써), 좋습니까?」
+				PRINTFORM 「달콤달콤%CNAME(MASTER)%의 정령…… 받아 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「……最近%CNAME(MASTER)%を虐めたくて、泣かせたくて、一緒に居るとゾクゾクしちゃうんですよね」
-				PRINTFORMW 「%CNAME(MASTER)%のその目付き……態度がそうさせるんですよ？」
+				PRINTFORMW 「…… 최근%CNAME(MASTER)%를 괴롭히고 싶어서, 울리고 싶어서, 함께 있으면 오슬오슬 해 버립니다」
+				PRINTFORMW 「%CNAME(MASTER)%의 그 눈…… 태도가 그렇게 시킵니다?」
 				PRINTL  
-				PRINTFORMW 「そう、%CNAME(MASTER)%にも責任があるんですから……」
-				PRINTFORM 「この身体の疼き、ちゃんと鎮めて貰いますからね
+				PRINTFORMW 「그래,%CNAME(MASTER)%에도 책임이 있으니까……」
+				PRINTFORM 「이 신체의 쑤셔, 분명하게 진정시켜 받으니까요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「怖い顔……リリー、嫌われちゃったみたいですね……」
-				PRINTFORMW 「でもね、どんなに%CNAME(MASTER)%が%RAND_SPLIT("嫌がっても/暴れても")%、逃がしてあげる気はありませんから」
-				PRINTFORMW 「%RAND_SPLIT("意地っ張り/反抗的")%な%CNAME(MASTER)%の心、リリーが必ず屈服させてみせますね」
+				PRINTFORMW 「무서운 얼굴…… 릴리, 미움받아 버린 것 같네요……」
+				PRINTFORMW 「그렇지만 말야, 아무리%CNAME(MASTER)%가%RAND_SPLIT("싫어해도/날뛰어도")%, 놓쳐 줄 생각은 없기 때문에」
+				PRINTFORMW 「%RAND_SPLIT("억지/반항적")%인%CNAME(MASTER)%의 마음, 릴리가 반드시 굴복 시켜 보이네요」
 		ENDSELECT
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;反抗（好意0以下・反抗刻印Lv3以上）
-;・心を開かない奴隷に苛つくご主人様
+;반항(호의 0 이하·반항 각인 Lv3 이상)
+;·마음을 열지 않는 노예에게 초조해지는 주인님
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && AFFECTION("反抗")
+IF 구상기입체크(100) && AFFECTION("반항")
 	;=================================================
-	;反抗初回（好意0以下・反抗刻印Lv3以上）
+	;반항 첫회(호의 0 이하·반항 각인 Lv3 이상)
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(60)
+	IF 구상기입체크(100) && FIRSTEVENT(60)
 		PRINTFORMDW ………
 		PRINTFORMDW ……
 		PRINTFORMDW …
 		PRINTL  
-		PRINTFORMDW 　%CALLNAME:MASTER%は調教を受け入れることができず、リリーに対し反抗的な態度をとった
-		PRINTFORMW 「見た目が近くても、リリーは人間の女の子とは違いますからね」
-		PRINTFORMW 「生き方も、考え方も、%CNAME(MASTER)%には理解できない事もあると思います……でも……」
-		PRINTFORMDW 　リリーは一瞬寂しそうな表情をしたが、すぐにいつもの優しそうな笑顔に戻った…
-		PRINTFORMW 「そろそろ始めちゃいましょうか……言葉よりも、きっと多くを伝えられますからっ♪」
+		PRINTFORMDW 　%CALLNAME:MASTER%는 조교를 받아들이지 못하고, 릴리에 대해 반항적인 태도를 취했다
+		PRINTFORMW 「겉모습이 가까워도, 릴리는 인간의 여자 아이와는 다르니까요」
+		PRINTFORMW 「삶의 방법도, 사고방식도,%CNAME(MASTER)%에는 이해 할 수 없는 것도 있다고 생각합니다…… 그렇지만……」
+		PRINTFORMDW   릴리는 일순간 외로운 것 같은 표정을 했지만, 곧바로 평소의 상냥한 듯한 웃는 얼굴하러 돌아왔다…
+		PRINTFORMW 「슬슬 시작해 버릴까요…… 말보다, 반드시 많은 것을 전해질테니까♪」
 		PRINTFORMDW 
 		RETURN 1
 	ENDIF
 
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(100)
-	;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100)
+	;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(4, 57)
 			CASE 0
-				PRINTFORMW 「ほら、お顔を見せてください……身体の調子はどうですか？」
-				PRINTFORMW 「どこか痛むとか、気分が悪いとか……ふむ、大丈夫そうですね」
-				PRINTFORMW 「こんな風にリリーとするのは、%RAND_SPLIT("嫌/怖い/恥ずかしい")%かもしれないですけど……」
-				PRINTFORMW 「せめて、気持ち良くなってくださいね」
+				PRINTFORMW 「이봐요, 얼굴을 보여 주세요…… 신체의 상태는 어떻습니까?」
+				PRINTFORMW 「어딘가 아프다든가, 기분이 나쁘다든가…… 흠, 괜찮은 것 같네요」
+				PRINTFORMW 「이런 식으로 릴리로 하는 것은,%RAND_SPLIT("혐/무섭다/부끄럽다")%일지도 모르지만……」
+				PRINTFORMW 「적어도, 기분 좋아져 주세요」
 			CASE 1
-				PRINTFORMW 「こんな事されて、%CNAME(MASTER)%が%RAND_SPLIT("嫌がる/怖がる/恥ずかしがる/抵抗する")%気持ちも分かりますけど……」
-				PRINTFORMW 「%CNAME(MASTER)%の精の味を知っちゃったら、もう我慢なんてできませんっ！！」
-				PRINTFORMW 「%RAND_SPLIT("自分勝手で/我儘で/勝手な事言って")%ごめんね……もう、いいですか？」
-				PRINTFORM 「甘々な%CNAME(MASTER)%の精……頂いちゃいますねっ
+				PRINTFORMW 「이런 일 되어,%CNAME(MASTER)%가%RAND_SPLIT("싫어한다/무서워한다/부끄러워한다/저항한다")%기분도 압니다만……」
+				PRINTFORMW 「%CNAME(MASTER)%의 정령의 맛을 알아 버리면, 이제 인내는 할 수 없습니다!!」
+				PRINTFORMW 「%RAND_SPLIT("제멋대로여/멋대로여/제멋대로인 일 말해")%미안해요…… 이제(벌써), 좋습니까?」
+				PRINTFORM 「달콤달콤%CNAME(MASTER)%의 정령…… 받아 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「……最近%CNAME(MASTER)%を虐めたくて、泣かせたくて、一緒に居るとゾクゾクしちゃうんですよね」
-				PRINTFORMW 「%CNAME(MASTER)%のその目付き……態度がそうさせるんですよ？」
+				PRINTFORMW 「…… 최근%CNAME(MASTER)%를 괴롭히고 싶어서, 울리고 싶어서, 함께 있으면 오슬오슬 해 버립니다」
+				PRINTFORMW 「%CNAME(MASTER)%의 그 눈…… 태도가 그렇게 시킵니다?」
 				PRINTL  
-				PRINTFORMW 「そう、%CNAME(MASTER)%にも責任があるんですから……」
-				PRINTFORM 「この身体の疼き、ちゃんと鎮めて貰いますからね
+				PRINTFORMW 「그래,%CNAME(MASTER)%에도 책임이 있으니까……」
+				PRINTFORM 「이 신체의 쑤셔, 분명하게 진정시켜 받으니까요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「ねぇ、そんなに%RAND_SPLIT("ムッとしないで/意地を張らないで")%くださいよ……」
-				PRINTFORMW 「リリーもちょっとやり過ぎちゃったかもしないですけど……ねぇ、聞いてますか？」
-				PRINTFORMW 「むぅ……なかなか頑固者ですね。　仕方ないです、まずは身体から素直にさせてあげますね」
+				PRINTFORMW 「저기, 그렇게%RAND_SPLIT("불끈 하지 말아줘/고집을 부리지 마")%주세요……」
+				PRINTFORMW 「릴리도 조금 너무 해 버렸는지도 하지 않지만……, (듣)묻고 있습니까?」
+				PRINTFORMW 「므우…… 꽤 완고자군요  어쩔 수 없습니다, 우선은 신체로부터 솔직하게 시켜 주네요」
 		ENDSELECT
 		RETURN 1
 	ENDIF
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;恐怖（好意200未満・トラウマLv3以上）
-;・心に傷を作られ、ご主人様の姿を見るだけで怯えてしまう
-;・トラウマの種は「%ACTSTR(CFLAG:MASTER:8)%」で表示できる
-;　例）PRINTFORMW 「もう%ACTSTR(CFLAG:MASTER:トラウマ)%は嫌ですって？」
+;공포(호의 200 미만·트라우마 Lv3 이상)
+;·마음에 상처를 만들어져 주인님의 모습을 보는 것만으로 무서워해 버린다
+;·트라우마의 종은 「%ACTSTR(CFLAG:MASTER:8)%」로 표시할 수 있다
+;  예) PRINTFORMW 「이제(벌써)%ACTSTR(CFLAG:MASTER:트라우마)%는 싫습니다 라고?」
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && AFFECTION("恐怖")
+IF 구상기입체크(100) && AFFECTION("공포")
 	;=================================================
-	;恐怖初回（好意200未満・トラウマLv3以上）
+	;공포 첫회(호의 200 미만·트라우마 Lv3 이상)
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(50)
+	IF 구상기입체크(100) && FIRSTEVENT(50)
 		PRINTFORMDW ………
 		PRINTFORMDW ……
 		PRINTFORMDW …
 		PRINTL  
-		PRINTFORMDW 　リリーの姿を見た%CALLNAME:MASTER%は、反射的に小さく悲鳴をあげてしまう…
-		PRINTFORMW 「えっ、あれ？　あの……もしかして、リリーが怖いんですか？」
-		PRINTFORMW 「やっぱり昨日のアレがまずかったんでしょうか、それとも……むむむ……」
-		PRINTFORMW 「あの、大丈夫ですからね？　リリーも怖い事しないように気を付けますからっ！」
-		PRINTFORMW 「と言う事で……今日も元気に搾り取っちゃいますねっ♪」
-		PRINTFORMDW 　大丈夫じゃない、リリーの笑顔を見て%CALLNAME:MASTER%は直感的に理解してしまった…
+		PRINTFORMDW   릴리의 모습을 보았다%CALLNAME:MASTER%는, 반사적으로 작게 비명을 질러 버린다…
+		PRINTFORMW 「엣, 어?   그…… 혹시, 릴리가 무섭습니까?」
+		PRINTFORMW 「역시 어제의 저것이 맛이 없었던 것입니까, 그렇지 않으면…… 무무무……」
+		PRINTFORMW 「저, 괜찮기 때문에?   릴리도 무서운 일 하지 않게 조심할테니까!」
+		PRINTFORMW 「이런 일로…… 오늘도 건강하게 짜내 버리네요♪」
+		PRINTFORMDW   괜찮지 않아, 릴리의 웃는 얼굴을 봐%CALLNAME:MASTER%는 직감적으로 이해해 버렸다…
 		RETURN 1
 	ENDIF
 
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(100)
-	;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(100)
+	;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(4, 56)
 			CASE 0
-				PRINTFORMW 「ほら、お顔を見せてください……身体の調子はどうですか？」
-				PRINTFORMW 「どこか痛むとか、気分が悪いとか……ふむ、大丈夫そうですね」
-				PRINTFORMW 「こんな風にリリーとするのは、%RAND_SPLIT("嫌/怖い/恥ずかしい")%かもしれないですけど……」
-				PRINTFORMW 「せめて、気持ち良くなってくださいね」
+				PRINTFORMW 「이봐요, 얼굴을 보여 주세요…… 신체의 상태는 어떻습니까?」
+				PRINTFORMW 「어딘가 아프다든가, 기분이 나쁘다든가…… 흠, 괜찮은 것 같네요」
+				PRINTFORMW 「이런 식으로 릴리로 하는 것은,%RAND_SPLIT("혐/무섭다/부끄럽다")%일지도 모르지만……」
+				PRINTFORMW 「적어도, 기분 좋아져 주세요」
 			CASE 1
-				PRINTFORMW 「こんな事されて、%CNAME(MASTER)%が%RAND_SPLIT("嫌がる/怖がる/恥ずかしがる/抵抗する")%気持ちも分かりますけど……」
-				PRINTFORMW 「%CNAME(MASTER)%の精の味を知っちゃったら、もう我慢なんてできませんっ！！」
-				PRINTFORMW 「%RAND_SPLIT("自分勝手で/我儘で/勝手な事言って")%ごめんね……もう、いいですか？」
-				PRINTFORM 「甘々な%CNAME(MASTER)%の精……頂いちゃいますねっ
+				PRINTFORMW 「이런 일 되어,%CNAME(MASTER)%가%RAND_SPLIT("싫어한다/무서워한다/부끄러워한다/저항한다")%기분도 압니다만……」
+				PRINTFORMW 「%CNAME(MASTER)%의 정령의 맛을 알아 버리면, 이제 인내는 할 수 없습니다!!」
+				PRINTFORMW 「%RAND_SPLIT("제멋대로여/멋대로여/제멋대로인 일 말해")%미안해요…… 이제(벌써), 좋습니까?」
+				PRINTFORM 「달콤달콤%CNAME(MASTER)%의 정령…… 받아 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「……最近%CNAME(MASTER)%を虐めたくて、泣かせたくて、一緒に居るとゾクゾクしちゃうんですよね」
-				PRINTFORMW 「%CNAME(MASTER)%のその目付き……態度がそうさせるんですよ？」
+				PRINTFORMW 「…… 최근%CNAME(MASTER)%를 괴롭히고 싶어서, 울리고 싶어서, 함께 있으면 오슬오슬 해 버립니다」
+				PRINTFORMW 「%CNAME(MASTER)%의 그 눈…… 태도가 그렇게 시킵니다?」
 				PRINTL  
-				PRINTFORMW 「そう、%CNAME(MASTER)%にも責任があるんですから……」
-				PRINTFORM 「この身体の疼き、ちゃんと鎮めて貰いますからね
+				PRINTFORMW 「그래,%CNAME(MASTER)%에도 책임이 있으니까……」
+				PRINTFORM 「이 신체의 쑤셔, 분명하게 진정시켜 받으니까요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「あっ、あの……そんなに怖がらなくても大丈夫ですよ？」
-				PRINTFORMW 「リリーなんてほらっ、こんなですしっ！　どーですかっ！　全然怖くないでしょう！」
-				PRINTFORMDW 　誇らしげに自身の弱さを誇示するリリーを見て、%CALLNAME:MASTER%は思わずクスリと笑った…
-				PRINTFORMW 「ちょっとはリラックスできましたか？　ふふっ♪」
-				PRINTFORMW 「大丈夫、怖い事はしないように注意しますからね……」
-				PRINTFORM 「リリーに身を任せて、気持ち良くなって下さいね
+				PRINTFORMW 「저, 저…… 그렇게 무서워하지 않아도 괜찮아요?」
+				PRINTFORMW 「릴리는 이봐요, 이런 것이고!   어떻습니까!   전혀 두렵지 않을 것입니다!」
+				PRINTFORMDW   자랑스러운 듯이 자신의 약함을 과시하는 릴리를 봐,%CALLNAME:MASTER%는 무심코 쿡쿡 웃었다…
+				PRINTFORMW 「조금은 릴렉스 할 수 있었습니까?   후후♪」
+				PRINTFORMW 「괜찮아, 무서운 일은 하지 않게 주의하니까요……」
+				PRINTFORM 「릴리에 몸을 맡겨, 기분 좋아져 주세요
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
@@ -935,63 +935,63 @@ IF 口上記入チェック(100) && AFFECTION("恐怖")
 ENDIF
 
 ;-------------------------------------------------
-;・要するに、他の条件にヒットしなかった場合に落ちる箇所
-;・仮に他の分岐を全て放置した場合、この箇所だけ書いておけば何かは表示されるとか、そんな場所です
+;·요컨데, 다른 조건에 히트 하지 않았던 경우에 떨어지는 개소
+;·만일 다른 분기를 모두 방치했을 경우, 이 개소만 써 두면 뭔가는 표시된다든가, 그런 장소입니다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;序盤（条件なし）
-;上の分岐を全て埋めた場合
-;反抗～順応（好意100以上・好感度100以上）までの期間
+;초반(조건 없음)
+;상의 분기를 모두 묻었을 경우
+;반항~순응(호의 100이상·호감도 100이상)까지의 기간
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
+IF 구상기입체크(100)
 	;=================================================
-	;初回
-	;一回目口上（CFLAG:調教回数 == 1）で補完？
+	;첫회
+	;1회째 구상(CFLAG:조교 회수 == 1)으로 보완?
 	;=================================================
-	IF 口上記入チェック(0) && FIRSTEVENT(90)
+	IF 구상기입체크(0) && FIRSTEVENT(90)
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
-	IF 口上記入チェック(0)
-	;%RAND_SPLIT("い/あ")%
+	IF 구상기입체크(0)
+	;%RAND_SPLIT("있고/아")%
 		SELECTCASE RANDEVENT(5, 60)
 			CASE 0
-				PRINTFORMW 「%RAND_SPLIT("おはようございます、/あっ、あの……")%ゆっくり休めましたか？」
-				PRINTFORMW 「あっ、もちろんリリーは元気いっぱいですよっ♪」
-				PRINTFORM 「それじゃあ、さっそくですが……%CNAME(MASTER)%の精、いただいちゃいますねっ
+				PRINTFORMW 「%RAND_SPLIT("안녕하세요,/저, 저……")%천천히 쉬게 했습니까?」
+				PRINTFORMW 「앗, 물론 릴리는 활기가 가득이에요♪」
+				PRINTFORM 「그러면, 즉시입니다만……%CNAME(MASTER)%의 정령, 받아 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 1
-				PRINTFORMW 「あの……身体の調子はどうですか？」
-				PRINTFORMW 「どこか痛むとか、気分が悪いとか……よかった、大丈夫そうですね♪」
-				PRINTFORM 「リリーもまだ少し恥ずかしいんですけど……今日も%RAND_SPLIT("気持ちいい事/エッチなイタズラ")%、しちゃいますねっ
+				PRINTFORMW 「저…… 신체의 상태는 어떻습니까?」
+				PRINTFORMW 「어딘가 아프다든가, 기분이 나쁘다든가…… 좋았다, 괜찮은 것 같네요♪」
+				PRINTFORM 「릴리도 아직 조금 부끄럽습니다만…… 오늘도%RAND_SPLIT("기분이 좋은 일/엣치한 장난")%, 해 버리네요
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 2
-				PRINTFORMW 「調教の時間ですけど…どうでしょう、やっぱり%RAND_SPLIT("緊張してま/ドキドキしてま/少し怖いで")%すか？」
-				PRINTFORMW 「リリーもね、%CNAME(MASTER)%と同じです。　色々わからなくて、戸惑っちゃって……」
-				PRINTFORM 「色んな事を試しながら、一緒に%RAND_SPLIT("慣れていき/気持ち良くなり")%ましょうねっ
+				PRINTFORMW 「조교의 시간이지만… 어떻습니까, 역시%RAND_SPLIT("긴장/두근두근/조금 무섭고")%인가?」
+				PRINTFORMW 「릴리도 말야,%CNAME(MASTER)%와 같습니다  여러가지 몰라서, 당황해 버려……」
+				PRINTFORM 「여러 가지 일을 시험하면서, 함께%RAND_SPLIT("익숙해져 삶/기분 좋아져")%짊어진다
 				CALL HEARTCB
 				PRINTFORMW 」
 			CASE 3
-				PRINTFORMW 「%RAND_SPLIT("すっ、すみません/ごっ、ごめんなさい")%っ！！　寝坊しちゃいました！！」
-				PRINTFORMW 「すぐに準備するので、%CNAME(MASTER)%はベッドに座って待っててくださいねっ」
+				PRINTFORMW 「%RAND_SPLIT(", 미안합니다/미, 미안해요")%!!   늦잠자 버렸습니다!!」
+				PRINTFORMW 「곧바로 준비하므로,%CNAME(MASTER)%는 침대에 앉아 기다리고 있어 주세요」
 			CASE 4
-				PRINTFORMW 「%RAND_SPLIT("あっ、おはようございます/ふふっ")%……今日はお寝坊さんでしたね♪」
-				PRINTFORM 「もう準備はできてますから、さっそく始めちゃいましょうかっ
+				PRINTFORMW 「%RAND_SPLIT("아, 안녕하세요/후훗")%…… 오늘은 잠꾸러기였지요♪」
+				PRINTFORM 「이제(벌써) 준비는 되어 있기 때문에, 즉시 시작해 버릴까요
 				CALL HEARTCB
 				PRINTFORMW 」
 		ENDSELECT
 		IF RAND:3 == 0
-			PRINTFORMDW リリーは%RAND_SPLIT("恥ずかしそうに瞳を潤ませながら/羞恥で頬を染めながら/すっかり欲情しきった表情で")%、%RAND_SPLIT("柔らかな胸をぎゅっと押し付けてきた/スカートを捲り上げ白い下着を見せつけて来た/ベッドの上で手招きをした/誘うようにゆっくりとスカートを捲り上げていった/スカートの奥の純白の布地を見せつけて来た")%…
+			PRINTFORMDW 릴리는%RAND_SPLIT("부끄러운 듯이 눈동자를 물기를 띠게 하면서/수치로 뺨을 물들이면서/완전히 욕정해 버린 표정으로")%、%RAND_SPLIT("부드러운 가슴을 꽉 강압해 왔다/스커트를 걷어 올리고 흰 속옷을 과시해 왔다/침대 위에서 손짓함을 했다/권하도록(듯이) 천천히 스커트를 걷어 올려 갔다/스커트의 안쪽의 순백의 천을 과시해 왔다")%…
 		ELSEIF RAND:2 == 0
-			PRINTFORMDW %CALLNAME:MASTER%の精を求めて、%RAND_SPLIT("小さく愛らしい春告精/可愛らしい妖精")%が%RAND_SPLIT("調教開始を宣言した/淫靡な笑みを浮かべた/あなたの胸に飛び込んできた")%…
+			PRINTFORMDW %CALLNAME:MASTER%의 정령을 요구해,%RAND_SPLIT("작고 사랑스러운 하루츠게정령/사랑스러운 요정")%가%RAND_SPLIT("조교 개시를 선언했다/음미로운 미소를 띄웠다/당신의 가슴에 뛰어들어 왔다")%…
 		ELSE
-			PRINTFORMDW リリーは%RAND_SPLIT("穏やかな声色/少し緊張した面持ち/明るく元気な声色")%で%CALLNAME:MASTER%をベッドへ誘った…
+			PRINTFORMDW 릴리는%RAND_SPLIT("온화한 음색/조금 긴장한 표정/밝고 건강한 음색")%로%CALLNAME:MASTER%를 침대에 권했다…
 		ENDIF
 		RETURN 1
 	ENDIF
 ENDIF
-;メモ　RANDEVENT（50～60）
+;메모  RANDEVENT(50~60)

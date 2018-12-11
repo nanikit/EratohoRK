@@ -1,79 +1,79 @@
-﻿;────────────────────────────────────
-;一般追加行動 (Ｃ愛撫1/Ｖ愛撫2/Ａ愛撫3/Ｂ愛撫4)
-;────────────────────────────────────
+﻿;─
+;일반 추가 행동(C애무 1/V애무 2/A애무 3/B애무 4)
+;─
 @ACT_EXTRA_M0
-LOCAL:1 = (10 + ABL:MASTER:Ｃ感覚) * RAND:100
-LOCAL:2 = (10 + ABL:MASTER:Ｖ感覚) * RAND:100
-LOCAL:3 = (10 + ABL:MASTER:Ａ感覚) * RAND:100
-LOCAL:4 = (10 + ABL:MASTER:Ｂ感覚) * RAND:100
+LOCAL:1 = (10 + ABL:MASTER:C감각) * RAND:100
+LOCAL:2 = (10 + ABL:MASTER:V감각) * RAND:100
+LOCAL:3 = (10 + ABL:MASTER:A감각) * RAND:100
+LOCAL:4 = (10 + ABL:MASTER:B감각) * RAND:100
 
 FOR LOCAL:0, 1, 5
 	CALLFORM ACT_EXTRA_ABLE{LOCAL:0}
 	LOCAL:(LOCAL:0) = RESULT && LOCAL:(LOCAL:0) > -99 ? LOCAL:(LOCAL:0) # -99
 NEXT
 
-;TARGETの気力が低いと追加行動が実行出来なくなる処理
-;このタイミングで処理する理由
-;1.RAND要素があるため、実行判定には組み込めない
-;2.TFLAG:229決定後に行うと、MASTERの部位使用フラグを破壊してしまう
-SIF GET_ABL(TARGET, "技巧") * BASE:TARGET:気力 < RAND:200 * MAXBASE:TARGET:気力
+;TARGET의 기력이 낮으면 추가 행동을 실행 할 수 없게 되는 처리
+;이 타이밍에 처리하는 이유
+;1. RAND 요소가 있기 (위해)때문에, 실행 판정에는 짜넣을 수 없다
+;2. TFLAG:229 결정 후에 실시하면, MASTER의 부위 사용 플래그를 파괴해 버린다
+SIF GET_ABL(TARGET, "기교") * BASE:TARGET:기력 < RAND:200 * MAXBASE:TARGET:기력
 	LOCAL:1 = -99, -99, -99, -99
 
 SELECTCASE MAX(LOCAL:1, LOCAL:2, LOCAL:3, LOCAL:4)
 	CASE -99
-		TFLAG:追加行動 = 0
+		TFLAG:추가행동 = 0
 	CASE LOCAL:1
-		TFLAG:追加行動 = 1
-		TFLAG:Ｐ使用中 += 1
+		TFLAG:추가행동 = 1
+		TFLAG:P사용중 += 1
 	CASE LOCAL:2
-		TFLAG:追加行動 = 2
-		TFLAG:Ｖ使用中 += 1
+		TFLAG:추가행동 = 2
+		TFLAG:V사용중 += 1
 	CASE LOCAL:3
-		TFLAG:追加行動 = 3
-		TFLAG:Ａ使用中 += 1
+		TFLAG:추가행동 = 3
+		TFLAG:A사용중 += 1
 	CASE LOCAL:4
-		TFLAG:追加行動 = 4
-		TFLAG:胸使用中 += 1
+		TFLAG:추가행동 = 4
+		TFLAG:가슴사용중 += 1
 ENDSELECT
-RETURN TFLAG:追加行動
+RETURN TFLAG:추가행동
 
 
 @ACT_EXTRA_MESSAGE_M0
-SELECTCASE TFLAG:追加行動
+SELECTCASE TFLAG:추가행동
 	CASE 1
-		PRINTFORML さらに%CALLNAME:TARGET%は%CALLNAME:MASTER%の\@ PENIS(MASTER) ? 男性器を愛撫し # 体をまさぐり \@始めた…
-		SOURCE:MASTER:快Ｃ += 75 + ACT_FROM(TARGET, 1) * (2 + TALENT:器用な指先) / 8
-		TCVAR:MASTER:今回の勃起 += (100 + GET_ABL(TARGET, "技巧") + GET_ABL(TARGET, "愛撫") + TALENT:器用な指先 * 50) / 2
+		PRINTFORML 한층 더%CALLNAME:TARGET%는%CALLNAME:MASTER%의\@ PENIS(MASTER) ? 남성기를 애무해# 체를 만지작거려\@시작했다…
+		SOURCE:MASTER:쾌C += 75 + ACT_FROM(TARGET, 1) * (2 + TALENT:기묘한손가락) / 8
+		TCVAR:MASTER:이번발기 += (100 + GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 2
 	CASE 2
-		PRINTFORML さらに%CALLNAME:TARGET%は%CALLNAME:MASTER%の秘唇に指を挿入し、中をかき回した…
-		SOURCE:MASTER:快Ｖ +=  100 + ACT_FROM(TARGET, 2) * (2 + TALENT:器用な指先) / 4
-		;ふたなりはＶで前立腺刺激
-		SIF TALENT:MASTER:ふたなり
-			TCVAR:MASTER:前立腺刺激 += 1
-		TCVAR:MASTER:今回の勃起 += (GET_ABL(TARGET, "技巧") + GET_ABL(TARGET, "愛撫") + TALENT:器用な指先 * 50) / 4
+		PRINTFORML 한층 더%CALLNAME:TARGET%는%CALLNAME:MASTER%의 비순에 손가락을 삽입해, 안을 휘저었다…
+		SOURCE:MASTER:쾌V +=  100 + ACT_FROM(TARGET, 2) * (2 + TALENT:기묘한손가락) / 4
+		;후타나리는 V로 전립선 자극
+		SIF TALENT:MASTER:후타나리
+			TCVAR:MASTER:전립선자극 += 1
+		TCVAR:MASTER:이번발기 += (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 4
 	CASE 3
-		PRINTFORML さらに%CALLNAME:TARGET%は%CALLNAME:MASTER%のアヌスを愛撫し始めた…
-		SOURCE:MASTER:快Ａ += 60 + ACT_FROM(TARGET, 3) * (2 + TALENT:器用な指先) / 4
-		;オトコはＡで前立腺刺激
-		SIF TALENT:MASTER:オトコ
-			TCVAR:MASTER:前立腺刺激 += 1
-		TCVAR:MASTER:今回の勃起 += (100 + GET_ABL(MASTER, "Ａ感覚") + GET_ABL(MASTER, "マゾっ気") * GET_ABL(TARGET, "技巧") / 50) / 2
+		PRINTFORML 한층 더%CALLNAME:TARGET%는%CALLNAME:MASTER%의 아누스를 애무하기 시작했다…
+		SOURCE:MASTER:쾌A += 60 + ACT_FROM(TARGET, 3) * (2 + TALENT:기묘한손가락) / 4
+		;남자는 A로 전립선 자극
+		SIF TALENT:MASTER:남자
+			TCVAR:MASTER:전립선자극 += 1
+		TCVAR:MASTER:이번발기 += (100 + GET_ABL(MASTER, "A감각") + GET_ABL(MASTER, "마조끼") * GET_ABL(TARGET, "기교") / 50) / 2
 	CASE 4
-		PRINTFORML さらに%CALLNAME:TARGET%は%CALLNAME:MASTER%の乳首を愛撫し始めた…
-		SOURCE:MASTER:快Ｂ += 75 + ACT_FROM(TARGET, 4) * (2 + TALENT:器用な指先) / 6
-		TCVAR:MASTER:今回の勃起 += 40 + (GET_ABL(TARGET, "技巧") + GET_ABL(TARGET, "愛撫") + TALENT:器用な指先 * 50) / 6
+		PRINTFORML 한층 더%CALLNAME:TARGET%는%CALLNAME:MASTER%의 유두를 애무하기 시작했다…
+		SOURCE:MASTER:쾌B += 75 + ACT_FROM(TARGET, 4) * (2 + TALENT:기묘한손가락) / 6
+		TCVAR:MASTER:이번발기 += 40 + (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 6
 ENDSELECT
 
 
 ;-----------------------------------------------------------
-;一般追加行動 の実行判定
+;일반 추가 행동의 실행 판정
 ;-----------------------------------------------------------
 @ACTM_EXTRA_ABLE0
-;調教メニューが愛撫/道具以外
-SIF MENUMATCH(TFLAG:ACT, "愛撫") !| MENUMATCH(TFLAG:ACT, "道具")
+;조교 메뉴가 애무/도구 이외
+SIF MENUMATCH(TFLAG:ACT, "애무") !| MENUMATCH(TFLAG:ACT, "도구")
 	RETURN 0
-;調教行動が足コキする/押し倒すの場合は無理
-SIF IS_NOWACTNAME("足コキする/押し倒す")
+;조교 행동이 풋잡 한다/밀어 넘어뜨리는 것 경우는 무리
+SIF IS_NOWACTNAME("풋잡 한다/밀어 넘어뜨린다")
 	RETURN 0
 FOR LOCAL:0, 1, 5
 	CALLFORM ACT_EXTRA_ABLE{LOCAL:0}
@@ -83,82 +83,82 @@ NEXT
 RETURN 0
 
 ;-----------------------------------------------------------
-;Ｃ愛撫 の実行判定
+;C애무의 실행 판정
 ;-----------------------------------------------------------
 @ACT_EXTRA_ABLE1
-;Ｐが塞がっている(Ｐ挿入中/Ｐ使用中/性交奉仕中/オナホール/MASTERが助手に挿入中)
-SIF TFLAG:Ｐ挿入中 || TFLAG:Ｐ使用中 || TEQUIP:性交奉仕中 || TEQUIP:オナホール || TFLAG:助手に挿入中
+;P가 막히고 있다(P삽입중/P사용중/성교 봉사중/오나홀/MASTER가 조수에 삽입중)
+SIF TFLAG:P삽입중 || TFLAG:P사용중 || TEQUIP:성교봉사중 || TEQUIP:오나홀 || TFLAG:조수에삽입중
 	RETURN 0
 RETURN 1
 
 ;-----------------------------------------------------------
-;Ｖ愛撫 の実行判定
+;V애무의 실행 판정
 ;-----------------------------------------------------------
 @ACT_EXTRA_ABLE2
-;Ｖが塞がっている(Ｖ使用中/バイブ/Ｖ性交)
-SIF TFLAG:Ｖ使用中 || TEQUIP:バイブ || V_SEX() || TEQUIP:ペニスバンド
+;V가 막히고 있다(V사용중/바이브/V성교)
+SIF TFLAG:V사용중 || TEQUIP:바이브 || V_SEX() || TEQUIP:페니스밴드
 	RETURN 0
-;調教者に壁抜けがない
-IF !TALENT:壁抜け
-	;調教対象の下半身上着で妨害される
+;조교자에게 벽통과가 없다
+IF !TALENT:벽통과
+	;조교 대상의 하반신 윗도리로 방해된다
 	SIF CLOTHESTYPE(1, 1) == 2
 		RETURN 0
 ENDIF
-;MASTERが処女
-SIF TALENT:MASTER:処女
+;MASTER가 처녀
+SIF TALENT:MASTER:처녀
 	RETURN 0
-;MASTERがオトコ
-SIF TALENT:MASTER:オトコ
+;MASTER가 남자
+SIF TALENT:MASTER:남자
 	RETURN 0
 RETURN 1
 
 ;-----------------------------------------------------------
-;Ａ愛撫 の実行判定
+;A애무의 실행 판정
 ;-----------------------------------------------------------
 @ACT_EXTRA_ABLE3
-;Ａが塞がっている(Ａ使用中/アナルバイブ/アナルビーズ/浣腸器＋プラグ/Ａ性交)
-SIF TFLAG:Ａ使用中 || TEQUIP:アナルバイブ || TEQUIP:アナルビーズ || TEQUIP:浣腸器＋プラグ || TEQUIP:性交中 == 6 || TEQUIP:ペニスバンド
+;A가 막히고 있다(A사용중/애널 바이브/애널 비즈/관장기＋플러그/A성교)
+SIF TFLAG:A사용중 || TEQUIP:애널바이브 || TEQUIP:애널비즈 || TEQUIP:관장기＋플러그 || TEQUIP:성교중 == 6 || TEQUIP:페니스밴드
 	RETURN 0
-;調教者に壁抜けがない
-IF !TALENT:壁抜け
-	;調教対象の下半身上着で妨害される
+;조교자에게 벽통과가 없다
+IF !TALENT:벽통과
+	;조교 대상의 하반신 윗도리로 방해된다
 	SIF CLOTHESTYPE(1, 1) == 2
 		RETURN 0
-	;調教対象の下半身下着で強く妨害される
+	;조교 대상의 하반신 속옷으로 강하게 방해된다
 	SIF CLOTHESTYPE(1, 0)
 		RETURN 0
 ENDIF
-;性交奉仕中で、体勢的に無理な体位(後背位/騎乗位/対面座位/背面座位)
-SIF GROUPMATCH(TEQUIP:性交奉仕中, 2, 3, 4, 5) > 0
+;성교 봉사중에서, 몸의 자세적으로 무리한 체위(후배위/승마위/대면좌위/배면좌위)
+SIF GROUPMATCH(TEQUIP:성교봉사중, 2, 3, 4, 5) > 0
 	RETURN 0
-;ACTがパイズリ
-SIF IS_NOWACTNAME("パイズリする")
+;ACT가 파이즈리
+SIF IS_NOWACTNAME("파이즈리 한다")
 	RETURN 0
 RETURN 1
 
 ;-----------------------------------------------------------
-;Ｂ愛撫 の実行判定
+;B애무의 실행 판정
 ;-----------------------------------------------------------
 @ACT_EXTRA_ABLE4
-;Ｂが塞がっている(Ｂ使用中/ニプルキャップ)
-SIF TFLAG:胸使用中 || TEQUIP:ニプルキャップ
+;B가 막히고 있다(B사용중/니플캡)
+SIF TFLAG:가슴사용중 || TEQUIP:니플캡
 	RETURN 0
-;フェラ中などは無理
-SIF IS_NOWACTNAME("口で愛撫") || TEQUIP:調教対象Ｃ使用 == 2
+;페라중 따위는 무리
+SIF IS_NOWACTNAME("구에서 애무") || TEQUIP:조교대상C사용 == 2
 	RETURN 0
-;顔面騎乗中
-SIF TEQUIP:顔面騎乗 || TEQUIP:顔面騎乗アナル
+;안면 승마중
+SIF TEQUIP:안면승마 || TEQUIP:안면승마애널
 	RETURN 0
-;調教者に壁抜けがなく、調教対象がオトコ
-IF !TALENT:壁抜け && TALENT:MASTER:オトコ
-	;調教対象の上半身上着で妨害される
+;조교자에게 벽통과가 없고, 조교 대상이 남자
+IF !TALENT:벽통과 && TALENT:MASTER:남자
+	;조교 대상의 상반신 윗도리로 방해된다
 	SIF CLOTHESTYPE(1, 3) == 2
 		RETURN 0
-	;調教対象の上半身下着で妨害される
+	;조교 대상의 상반신 속옷으로 방해된다
 	SIF CLOTHESTYPE(1, 2) == 2
 		RETURN 0
 ENDIF
-;性交奉仕中で、体勢的に無理な体位(後背位/背面座位)
-SIF GROUPMATCH(TEQUIP:性交奉仕中, 2, 5) > 0
+;성교 봉사중에서, 몸의 자세적으로 무리한 체위(후배위/배면좌위)
+SIF GROUPMATCH(TEQUIP:성교봉사중, 2, 5) > 0
 	RETURN 0
 RETURN 1

@@ -1,175 +1,175 @@
 ﻿;==================================================
 ;
-;	汎用関数置き場＠参照編
-;		参照に用い、特定の数値や名称などを返すもの
-;		あるいは、状況に応じた接頭語などを返すもの
+;	범용 함수 두는 곳＠참조편
+;		참조에 이용해 특정의 수치나 명칭 따위를 돌려주는 것
+;		혹은, 상황에 따른 접두어 따위를 돌려주는 것
 ;
-;		口上向けのものもあったりなかったり。
+;		구상전용의 것도 있거나 않기도 하고.
 ;
 ;==================================================
 
 
 ;==================================================
 ;
-;	TALENT、その他キャラクター関連の参照
+;	TALENT, 그 외 캐릭터 관련의 참조
 ;
 ;==================================================
 
 ;-------------------------------------------------
-;キャラ間呼び名取得関数@CNAME
-;式中で使用する関数です。TARGETが引数0のキャラを呼ぶ呼び名を表示します。省略するとMASTER
-;引数1を入れるとTARGET以外からも参照できます。
-;頻繁に呼ばれるのでRESULTを保護します。
-;こんなゴツい処理を名前呼ぶたびに行う是非についてはとりあえず知らない。まあ重くなんてならないと信じる
+;캐릭터 사이 통칭 취득 함수@CNAME
+;식중에서 사용하는 함수입니다. TARGET가 인수 0의 캐릭터를 부르는 통칭을 표시합니다. 생략 하면 MASTER
+;인수 1을 넣으면 TARGET 이외로부터도 참조할 수 있습니다.
+;빈번하게 불리므로 RESULT를 보호합니다.
+;이런 완고한 처리를 이름 부를 때마다 실시하는 부디에 대해서는 우선 모른다. 뭐 무겁고 같은거 안 된다고 믿는다
 ;-------------------------------------------------
 @CNAME(ARG = -2, ARG:1 = -2)
 #FUNCTIONS
 #LOCALSIZE 1
 #LOCALSSIZE 1
 #DIM LCOUNT, 1
-#DIMS DYNAMIC 敬称対象, 100
-#DIMS DYNAMIC 敬称内訳, 100
-#DIMS DYNAMIC 呼び名対象, 100
-#DIMS DYNAMIC 呼び名内訳, 100
+#DIMS DYNAMIC 경칭대상, 100
+#DIMS DYNAMIC 경칭내역, 100
+#DIMS DYNAMIC 통칭대상, 100
+#DIMS DYNAMIC 통칭내역, 100
 
-;引数省略の処理
+;인수 생략의 처리
 ARG = ARG != -2 ? ARG # MASTER
 ARG:1 = ARG:1 != -2 ? ARG:1 # TARGET
 
-;基本敬称の処理
-SPLIT CSTR:(ARG:1):基本敬称, "/", 敬称対象, LOCAL
+;기본 경칭의 처리
+SPLIT CSTR:(ARG:1):기본경칭, "/", 경칭대상, LOCAL
 FOR LCOUNT, 0, LOCAL
-	敬称内訳:LCOUNT = %REPLACE(REPLACE(SUBSTRING(敬称対象:LCOUNT, STRFIND(敬称対象:LCOUNT, "_")+1), "名前", NAME:ARG), "呼び名", CALLNAME:ARG)%
-	敬称対象:LCOUNT = %SUBSTRING(敬称対象:LCOUNT,0, STRFIND(敬称対象:LCOUNT, "_")-1)%
+	경칭내역:LCOUNT = %REPLACE(REPLACE(SUBSTRING(경칭대상:LCOUNT, STRFIND(경칭대상:LCOUNT, "_")+1), "이름", NAME:ARG), "통칭", CALLNAME:ARG)%
+	경칭대상:LCOUNT = %SUBSTRING(경칭대상:LCOUNT,0, STRFIND(경칭대상:LCOUNT, "_")-1)%
 NEXT
 
-;呼び名の分類
-SPLIT CSTR:(ARG:1):呼び方リスト, "/", 呼び名対象, LOCAL
+;통칭의 분류
+SPLIT CSTR:(ARG:1):호칭목록, "/", 통칭대상, LOCAL
 FOR LCOUNT, 0, LOCAL
-	呼び名内訳:LCOUNT = %REPLACE(REPLACE(SUBSTRING(呼び名対象:LCOUNT, STRFIND(呼び名対象:LCOUNT, "_")+1), "名前", NAME:ARG), "呼び名", CALLNAME:ARG)%
-	呼び名対象:LCOUNT = %SUBSTRING(呼び名対象:LCOUNT,0, STRFIND(呼び名対象:LCOUNT, "_")-1)%
+	통칭내역:LCOUNT = %REPLACE(REPLACE(SUBSTRING(통칭대상:LCOUNT, STRFIND(통칭대상:LCOUNT, "_")+1), "이름", NAME:ARG), "통칭", CALLNAME:ARG)%
+	통칭대상:LCOUNT = %SUBSTRING(통칭대상:LCOUNT,0, STRFIND(통칭대상:LCOUNT, "_")-1)%
 NEXT
 
-;一時的にNAMEを入れる
+;일시적으로 NAME를 넣는다
 LOCALS = %NAME:ARG%
 $NAMELESS_LOOP
-;呼び名対象にいる場合
-IF MATCH(呼び名対象, LOCALS)
+;통칭 대상으로 있는 경우
+IF MATCH(통칭대상, LOCALS)
 	FOR LCOUNT, 0, 100
-		IF 呼び名対象:LCOUNT == LOCALS
-			LOCALS = %呼び名内訳:LCOUNT%
+		IF 통칭대상:LCOUNT == LOCALS
+			LOCALS = %통칭내역:LCOUNT%
 			BREAK
 		ENDIF
 	NEXT
-;大妖精・小悪魔の場合
-ELSEIF LOCALS == "大妖精" || LOCALS == "小悪魔"
-	;そのままでは呼べないのであなたにしてもう一度回す
-	LOCALS = あなた
+;대요정·소악마의 경우
+ELSEIF LOCALS == "대요정" || LOCALS == "소악마"
+	;그대로는 부를 수 없기 때문에 당신으로 해 한번 더 돌린다
+	LOCALS = 당신
 	GOTO NAMELESS_LOOP
-;基本敬称の処理
+;기본 경칭의 처리
 ELSE
-	;CALLNAMEにする
+	;CALLNAME로 한다
 	LOCALS = %CALLNAME:ARG%
-	;敬称対象検索
+	;경칭 대상 검색
 	FOR LCOUNT, 0, 100
-		SELECTCASE 敬称対象:LCOUNT
+		SELECTCASE 경칭대상:LCOUNT
 			CASE ""
 				BREAK
-			CASE "基本"
-				LOCALS = %敬称内訳:LCOUNT%
+			CASE "기본"
+				LOCALS = %경칭내역:LCOUNT%
 			CASEELSE
-				SIF TALENT:ARG:(敬称対象:LCOUNT)
-					LOCALS = %敬称内訳:LCOUNT%
+				SIF TALENT:ARG:(경칭대상:LCOUNT)
+					LOCALS = %경칭내역:LCOUNT%
 		ENDSELECT
 	NEXT
 ENDIF
-;RESULTを復元
+;RESULT를 복원
 RESULT = LOCAL
 RETURNF LOCALS
 
 ;-------------------------------------------------
-;ペニス判定関数@PENIS
-;式中で使用する関数です。ペニスがある場合1を返します
-;引数0は対象の登録番号。しょうもない中身
-;引数のキャラがいない場合0で返すようにしました
+;페니스 판정 함수@PENIS
+;식중에서 사용하는 함수입니다. 페니스가 있는 경우 1을 돌려줍니다
+;인수 0은 대상의 등록 번호. 시시한 내용
+;인수의 캐릭터가 없는 경우 0으로 돌려주도록(듯이)했습니다
 ;
-;↑の仕様は正直どうなんだろと思わなくもないけれど、とりあえず下限しか見てなかったので修正@revkoishi(14/04/20)
+;↑의 사양은 정직 어떻게이겠지라고 생각하지 않는 것도 아니지만, 우선 하한 밖에 보지 않았기 때문에 수정@revkoishi(14/04/20)
 ;-------------------------------------------------
 @PENIS(ARG)
 #FUNCTION
-RETURNF INRANGE(ARG, 0, CHARANUM - 1) ? TALENT:ARG:ふたなり || TALENT:ARG:オトコ # 0
-;RETURNF ARG < 0 ? 0 # TALENT:ARG:ふたなり || TALENT:ARG:オトコ
+RETURNF INRANGE(ARG, 0, CHARANUM - 1) ? TALENT:ARG:후타나리 || TALENT:ARG:남자 # 0
+;RETURNF ARG < 0? 0 # TALENT:ARG:후타나리 || TALENT:ARG:남자
 
 ;-------------------------------------------------
-;ペニスバンド判定関数@PENISBAND
-;式中で使用する関数です。ペニスバンド使用中1を返します
-;破棄予定
+;페니스 밴드 판정 함수@PENISBAND
+;식중에서 사용하는 함수입니다. 페니스 밴드 사용중 1을 돌려줍니다
+;파기 예정
 ;-------------------------------------------------
 @PENISBAND(ARG)
 #FUNCTION
-RETURNF !(TALENT:ARG:ふたなり || TALENT:ARG:オトコ) && ITEM:ペニスバンド
+RETURNF !(TALENT:ARG:후타나리 || TALENT:ARG:남자) && ITEM:페니스밴드
 
 ;-------------------------------------------------
-;アライメント判定関数@ALI
-;式中で使用する関数です。アライメントが引数以上なら真になります
-;引数0はアライメントの数値。0ならばアライメント正扱い
-;引数1を省略すればTARGET。指定すればそのキャラを見ます。(FLAG:ご主人様)と指定することでEV111等でも使えます
+;아라이먼트 판정 함수@ALI
+;식중에서 사용하는 함수입니다. 아라이먼트가 인수 이상이라면 실로 됩니다
+;인수 0은 아라이먼트의 수치. 0이라면 아라이먼트정취급
+;인수 1을 생략 하면 TARGET. 지정하면 그 캐릭터를 봅니다. (FLAG:주인님)와 지정하는 것으로 EV111등에서도 사용할 수 있습니다
 ;-------------------------------------------------
 @ALI(ARG, ARG:1 = -2)
 #FUNCTION
 SIF ARG:1 == -2
 	ARG:1 = TARGET
-RETURNF CFLAG:(ARG:1):アライメント >= ARG
+RETURNF CFLAG:(ARG:1):아라이먼트 >= ARG
 
 ;-------------------------------------------------
-;好感度判定関数@FAVOR
-;式中で使用する関数です。好感度が指定以上なら真になります。ただし、0にした場合は条件に含みません
-;引数0は調教対象から調教者、引数1は調教者から調教対象の好感度です
-;引数2を指定した場合、調教者の代わりにそのキャラ（主に助手）を見ます
+;호감도 판정 함수@FAVOR
+;식중에서 사용하는 함수입니다. 호감도가 지정 이상이라면 실로 됩니다. 다만, 0으로 했을 경우는 조건에 포함하지 않습니다
+;인수 0은 조교 대상으로부터 조교자, 인수 1은 조교자로부터 조교 대상의 호감도입니다
+;인수 2를 지정했을 경우, 조교자 대신에 그 캐릭터(주로 조수)를 봅니다
 ;-------------------------------------------------
 @FAVOR(ARG, ARG:1, ARG:2 = -2)
 #FUNCTION
 SIF ARG:2 == -2
 	ARG:2 = TARGET
-RETURNF (!ARG || CFLAG:(ARG:2):M好意 >= ARG) && (!ARG:1 || CFLAG:(ARG:2):好意 >= ARG:1)
+RETURNF (!ARG || CFLAG:(ARG:2):M호의 >= ARG) && (!ARG:1 || CFLAG:(ARG:2):호의 >= ARG:1)
 
 ;-------------------------------------------------
-;好感度参照関数@FAVOR2
-;式中で使用する関数です。好感度が指定以上なら真になります。ただし、省略(-123456)した場合は好感度の数値自体を返します
-;TARGET-ASSI間の好感度は存在しないため、引数にMASTERが含まれない場合は0で戻ります
+;호감도 참조 함수@FAVOR2
+;식중에서 사용하는 함수입니다. 호감도가 지정 이상이라면 실로 됩니다. 다만, 생략(-123456) 했을 경우는 호감도의 수치 자체를 돌려줍니다
+;TARGET-ASSI간의 호감도는 존재하지 않기 때문에, 인수에 MASTER가 포함되지 않는 경우는 0으로 돌아옵니다
 ;-------------------------------------------------
 @FAVOR2(ARG, ARG:1, ARG:2 = -123456)
 #FUNCTION
-;引数不適
+;인수 부적당
 SIF ARG < 0 || ARG:1 < 0 || !GROUPMATCH(MASTER, ARG, ARG:1)
 	RETURNF 0
-;閾値がある
+;반응을 일으키는 최소의 물리량이 있다
 IF ARG:2 != -123456
-	RETURNF ARG == MASTER ? CFLAG:(ARG:1):M好意 >= ARG:2 # CFLAG:ARG:好意 >= ARG:2
-;閾値がない
+	RETURNF ARG == MASTER ? CFLAG:(ARG:1):M호의 >= ARG:2 # CFLAG:ARG:호의 >= ARG:2
+;반응을 일으키는 최소의 물리량이 없다
 ELSE
-	RETURNF ARG == MASTER ? CFLAG:(ARG:1):M好意 # CFLAG:ARG:好意
+	RETURNF ARG == MASTER ? CFLAG:(ARG:1):M호의 # CFLAG:ARG:호의
 ENDIF
 
 ;-------------------------------------------------
-;ベース割合算出関数@BASERATIO
-;式中で使用する関数です。ベース値がMAXBASEの何％あるか返します
-;引数0は登録番号、引数1はベース番号、引数2を設定した場合はその％以上なら真を返します
+;베이스 비율 산출 함수@BASERATIO
+;식중에서 사용하는 함수입니다. 베이스치가 MAXBASE의 몇%있을까 돌려줍니다
+;인수 0은 등록 번호, 인수 1은 베이스 번호, 인수 2를 설정했을 경우는 그%이상이라면 진을 돌려줍니다
 ;-------------------------------------------------
 @BASERATIO(ARG:0, ARG:1, ARG:2)
 #FUNCTION
 RETURNF ARG:2 ? BASE:(ARG:0):(ARG:1) * 100 / MAXBASE:(ARG:0):(ARG:1) >= ARG:2 # BASE:(ARG:0):(ARG:1) * 100 / MAXBASE:(ARG:0):(ARG:1)
 
 ;-------------------------------------------------
-;素質検索関数@FINDTALENT
-;式中で使用する関数です。指定した素質をもつキャラを検索します。最初に見つかったキャラの登録番号を返します
-;居なかった場合、-1を返します
-;引数は文字列です。数値を使う場合はTALENTNAME:xxを引数にして呼んでください
+;소질 검색 함수@FINDTALENT
+;식중에서 사용하는 함수입니다. 지정한 소질을 가지는 캐릭터를 검색합니다. 최초로 발견된 캐릭터의 등록 번호를 돌려줍니다
+;없었던 경우, -1을 돌려줍니다
+;인수는 캐릭터 라인입니다. 수치를 사용하는 경우는 TALENTNAME:xx를 인수로 해 불러 주세요
 ;-------------------------------------------------
 @FINDTALENT(ARGS)
 #FUNCTION
 #LOCALSIZE 1
-;FINDCHARAが使いたい…けど真偽判定ができないのでFORを回す
+;FINDCHARA를 사용하고 싶은… 이지만 진위 판정을 할 수 없기 때문에 FOR를 돌린다
 FOR LOCAL, 0, CHARANUM
 	SIF TALENT:LOCAL:ARGS
 		RETURNF LOCAL
@@ -177,9 +177,9 @@ NEXT
 RETURNF -1
 
 ;-------------------------------------------------
-;助手番号検索関数@ASSISNO
-;助手の誰かが指定したキャラ番号なら、その助手の登録番号を返します。
-;いない場合、-1になります
+;조수 번호 검색 함수@ASSISNO
+;조수인 누군가가 지정한 캐릭터 번호라면, 그 조수의 등록 번호를 돌려줍니다.
+;없는 경우, -1이 됩니다
 ;-------------------------------------------------
 @ASSISNO(ARG)
 #FUNCTION
@@ -190,9 +190,9 @@ FOR LOCAL, 0, 4
 NEXT
 RETURNF -1
 ;-------------------------------------------------
-;助手素質検索関数@ASSISTALENT
-;助手の誰かが指定したTALENTを引数1の値以上で持っていれば、その助手の登録番号を返します。
-;いない場合、-1になります
+;조수 소질 검색 함수@ASSISTALENT
+;조수인 누군가가 지정한 TALENT를 인수 1의 값이상으로 가지고 있으면, 그 조수의 등록 번호를 돌려줍니다.
+;없는 경우, -1이 됩니다
 ;-------------------------------------------------
 @ASSISTALENT(ARG, ARG:1 = 1)
 #FUNCTION
@@ -204,9 +204,9 @@ NEXT
 RETURNF -1
 
 ;-------------------------------------------------
-;助手能力検索関数@ASSISABL
-;助手の誰かが指定したABLを引数1の値以上で持っていれば、その助手の登録番号を返します。
-;いない場合、-1になります
+;조수 능력 검색 함수@ASSISABL
+;조수인 누군가가 지정한 ABL를 인수 1의 값이상으로 가지고 있으면, 그 조수의 등록 번호를 돌려줍니다.
+;없는 경우, -1이 됩니다
 ;-------------------------------------------------
 @ASSISABL(ARG, ARG:1 = 1)
 #FUNCTION
@@ -218,13 +218,13 @@ NEXT
 RETURNF -1
 
 ;-------------------------------------------------
-;関数名:ASSIID
-;概　要:助手ID取得関数
-;引　数:なし
-;戻り値:ASSIとして扱われている助手のID(1～3)
-;備  考:式中関数
-;ASSIに入っているキャラ(＝口上主)が助手１か助手２か助手３かを判別する
-;助手口上で使うかも
+;함수명:ASSIID
+;개  카나메:조수 ID취득 함수
+;인  수:없음
+;반환값:ASSI로서 다루어지고 있는 조수의 ID(1~3)
+;비  고:식 나카노세키수
+;ASSI에 들어가 있는 캐릭터(=구상주)가 조수 1이나 조수 2나 조수 3인지를 판별한다
+;조수 구상으로 사용할지도
 ;-------------------------------------------------
 @ASSIID
 #FUNCTION
@@ -237,10 +237,10 @@ FOR LOCAL, 1, 4
 NEXT
 
 ;-------------------------------------------------
-;素質判定関数@GET_TALENT
-;引数のキャラがが指定したTALENTを持っていれば、TALENTの数値を返します。
-;いない場合、0になります
-;TALENTの指定は文字列で行いますが、番号でもできます。その場合""囲みで文字列として数字を入れること
+;소질 판정 함수@GET_TALENT
+;인수의 캐릭터가가 지정한 TALENT를 가지고 있으면, TALENT의 수치를 돌려줍니다.
+;없는 경우, 0이 됩니다
+;TALENT의 지정은 캐릭터 라인으로 실시합니다만, 번호에서도 할 수 있습니다. 그 경우""포위로 캐릭터 라인으로서 숫자를 넣는 것
 ;-------------------------------------------------
 @GET_TALENT(ARG, ARGS)
 #FUNCTION
@@ -254,266 +254,266 @@ RETURNF ARG >= 0 ? TALENT:(ASSI:1):LOCAL # 0
 
 
 ;-------------------------------------------------
-;関数名:ABL_TYPE
-;概　要:能力分類関数
-;引　数:ARG:0…ABL番号
-;戻り値:能力分類番号
-;       (0.非表示/1.基礎/2.感覚/3.性癖/4.中毒/5.調教/6.未分類)
-;備　考:式中関数
-;能力分類テーブル。能力の分類番号を返す
-;今のところ色分けにしか使っていない
+;함수명:ABL_TYPE
+;개  요점:능력 분류 함수
+;인  수:ARG:0…ABL 번호
+;반환값:능력 분류 번호
+;       (0. 비표시/1. 기초/2. 감각/3. 성벽/4. 중독/5. 조교/6. 미분류)
+;비  고:식 나카노세키수
+;능력 분류 테이블. 능력의 분류 번호를 돌려준다
+;현재 분류에 밖에 사용하지 않았다
 ;
-;新規作成@revkoishi(14/05/26)
+;신규 작성@revkoishi(14/05/26)
 ;-------------------------------------------------
 @ABL_TYPE(ARG:0)
 #FUNCTION
 SELECTCASE ARG:0
-	;0.非表示(表示させない能力) ※特別な理由が無い限りは不要な枠
+	;0. 비표시(표시시키지 않는 능력) ※특별한 이유가 없는 한은 불필요한 테두리
 	;CASE -1
 	;	RETURNF 0
-	;1.基礎
+	;1. 기초
 	CASE 0 TO 2
 		RETURNF 1
-	;2.感覚
+	;2. 감각
 	CASE 3 TO 6
 		RETURNF 2
-	;3.性癖
+	;3. 성벽
 	CASE 7 TO 11
 		RETURNF 3
-	;4.中毒
+	;4. 중독
 	CASE 12 TO 16
 		RETURNF 4
-	;5.調教
+	;5. 조교
 	CASE 20 TO 28
 		RETURNF 5
 ENDSELECT
-;6.未分類(これがあるのは望ましくない)
+;6. 미분류(이것이 있는 것은 바람직하지 않다)
 RETURNF 6
 
 
 ;-------------------------------------------------
-;関数名:EXP_TYPE
-;概　要:経験分類関数
-;引　数:ARG:0…EXP番号
-;戻り値:経験分類番号
-;       (0.非表示/1.快楽/2.絶頂/3.状況/4.能動/5.受動/6.異常/7.未分類)
-;備　考:式中関数
-;経験分類テーブル。経験の分類番号を返す
-;今のところ色分けにしか使っていない
+;함수명:EXP_TYPE
+;개  요점:경험 분류 함수
+;인  수:ARG:0…EXP 번호
+;반환값:경험 분류 번호
+;       (0. 비표시/1. 쾌락/2. 절정/3. 상황/4. 능동/5. 수동/6. 이상/7. 미분류)
+;비  고:식 나카노세키수
+;경험 분류 테이블. 경험의 분류 번호를 돌려준다
+;현재 분류에 밖에 사용하지 않았다
 ;
-;新規作成@revkoishi(14/05/26)
+;신규 작성@revkoishi(14/05/26)
 ;-------------------------------------------------
 @EXP_TYPE(ARG:0)
 #FUNCTION
 SELECTCASE ARG:0
-	;0.非表示(表示させない経験) ※特別な理由が無い限りは不要な枠
+	;0. 비표시(표시시키지 않는 경험) ※특별한 이유가 없는 한은 불필요한 테두리
 	;CASE -1
 	;	RETURNF 0
-	;1.快楽
+	;1. 쾌락
 	CASE 0 TO 3, 21, 30, 31
 		RETURNF 1
-	;2.絶頂
+	;2. 절정
 	CASE 4 TO 6, 14
 		RETURNF 2
-	;3.状況
+	;3. 상황
 	CASE 7, 20, 25, 26, 32, 40, 41
 		RETURNF 3
-	;4.能動
+	;4. 능동
 	CASE 8, 10, 22 TO 24, 63
 		RETURNF 4
-	;5.受動
+	;5. 수동
 	CASE 11 TO 13, 51, 60 TO 62
 		RETURNF 5
-	;6.異常
+	;6. 이상
 	CASE 50, 52, 53, 55
 		RETURNF 6
 ENDSELECT
-;7.未分類(これがあるのは望ましくない)
+;7. 미분류(이것이 있는 것은 바람직하지 않다)
 RETURNF 7
 
 
 ;-------------------------------------------------
-;関数名:GET_SEX
-;概　要:性別取得関数
-;引　数:ARG:0…キャラ登録番号
-;戻り値:性別を表す文字列
-;備　考:式中関数
+;함수명:GET_SEX
+;개  요점:성별 취득 함수
+;인  수:ARG:0… 캐릭터 등록 번호
+;반환값:성별을 나타내는 캐릭터 라인
+;비  고:식 나카노세키수
 ;
-;GET_TALENTNAMEを使用するように変更@revkoishi(14/04/28)
+;GET_TALENTNAME를 사용하도록(듯이) 변경@revkoishi(14/04/28)
 ;-------------------------------------------------
 @GET_SEX(ARG)
 #FUNCTIONS
-SIF TALENT:ARG:ふたなり
-	RETURNF GET_TALENTNAME(ARG, GETNUM(TALENT, "ふたなり"))
-RETURNF @"\@ TALENT:ARG:オトコ ? %GET_TALENTNAME(ARG, GETNUM(TALENT, "オトコ"))% # 女の子 \@"
+SIF TALENT:ARG:후타나리
+	RETURNF GET_TALENTNAME(ARG, GETNUM(TALENT, "후타나리"))
+RETURNF @"\@ TALENT:ARG:남자 ? %GET_TALENTNAME(ARG, GETNUM(TALENT, "남자"))% # 여자 아이\@"
 
 
 ;-------------------------------------------------
-;関数名:GET_TALENTNAME
-;概　要:素質名取得関数
-;引　数:ARG:0…キャラ登録番号
-;　　　:ARG:1…TALENT番号
-;戻り値:素質名
-;備　考:式中関数
-;素質の名前を返す。上位素質名の処理などを行う
+;함수명:GET_TALENTNAME
+;개  요점:소질 나토리 이득 함수
+;인  수:ARG:0… 캐릭터 등록 번호
+;　　　:ARG:1…TALENT 번호
+;반환값:소질명
+;비  고:식 나카노세키수
+;소질의 이름을 돌려준다. 상위 소질명의 처리 따위를 실시한다
 ;
-;日光嫌いと読心能力の処理を追加、SQR分をコメントアウト@revkoishi(14/04/20)
+;햇빛싫어함과 독심술의 처리를 추가, SQR분을 comment out@revkoishi(14/04/20)
 ;-------------------------------------------------
 @GET_TALENTNAME(ARG:0, ARG:1)
 #FUNCTIONS
 SELECTCASE ARG:1
-	;CASE 0		;処女/処女(再生)
-	;	RETURNF TALENTNAME:0 + \@ !INRANGE(TALENT:ARG:処女, 0, 1) ? (再生) # \@
-	;CASE 109	;巨乳/爆乳
-	;	RETURNF \@ TALENT:ARG:巨乳 == 2 ? 爆乳 # %TALENTNAME:109% \@
-	CASE 119	;日光嫌い/日光苦手
-		RETURNF "日光" + \@ TALENT:ARG:日光嫌い == 2 ? 苦手 # 嫌い \@
-	CASE 132	;(読心能力) 空気を読む程度の能力/心を読む程度の能力
-		RETURNF \@ TALENT:ARG:読心能力 == 2 ? 心 # 空気 \@ + "を読む程度の能力"
+	;CASE 0		;처녀/처녀(재생)
+	;	RETURNF TALENTNAME:0 + \@ ! INRANGE(TALENT:ARG:처녀, 0, 1) ? (재생) # \@
+	;CASE 109	;거유/폭유
+	;	RETURNF \@ TALENT:ARG:거유 == 2? 폭유 # %TALENTNAME:109% \@
+	CASE 119	;햇빛싫어함/일광 골칫거리
+		RETURNF "일광" + \@ TALENT:ARG:햇빛싫어함 == 2 ? 골칫거리 # 싫다 \@
+	CASE 132	;(독심술) 공기를 읽는 정도의 능력/마음을 읽는 정도의 능력
+		RETURNF \@ TALENT:ARG:독심술 == 2 ? 심 # 공기 \@ + "를 읽는 정도의 능력"
 ENDSELECT
 RETURNF TALENTNAME:(ARG:1)
 
 
 
 ;-------------------------------------------------
-;関数名:TALENT_TYPE
-;概　要:素質分類関数
-;引　数:ARG…TALENT番号
-;戻り値:素質分類番号
-;       (0.非表示/1.性別/2.性格/3.体質/4.技能/5.後天素質/6.種族特性/7.未分類)
-;備　考:式中関数
-;素質分類テーブル。素質の分類番号を返す
-;素質整頓表示に用いる
+;함수명:TALENT_TYPE
+;개  요점:소질 분류 함수
+;인  수:ARG…TALENT 번호
+;반환값:소질 분류 번호
+;       (0. 비표시/1. 성별/2. 성격/3. 체질/4. 기능/5. 후천 소질/6. 종족 특성/7. 미분류)
+;비  고:식 나카노세키수
+;소질 분류 테이블. 소질의 분류 번호를 돌려준다
+;소질 정돈 표시에 이용한다
 ;
-;輝針城分を追加、SQR分を削除、TALENT:220～222を暫定的に非表示に@revkoishi(14/04/20)
+;휘침성분을 추가, SQR분을 삭제, TALENT:220~222를 잠정적으로 비표시에@revkoishi(14/04/20)
 ;-------------------------------------------------
 @TALENT_TYPE(ARG)
 #FUNCTION
 SELECTCASE ARG
-	;0.非表示(表示させない素質) ※基本的にはSQR由来枠なので、特別な理由が無い限りは不要な枠
-	;CASE 220 TO 222	;TALENT:220～222にデータが入る問題が直ったのでコメントアウトで@revkoishi(14/05/19)
+	;0. 비표시(표시시키지 않는 소질) ※기본적으로는 SQR 유래범위인 것으로, 특별한 이유가 없는 한은 불필요한 테두리
+	;CASE 220 TO 222	;TALENT:220~222에 데이터가 들어가는 문제가 회복되었으므로 comment out로@revkoishi(14/05/19)
 	;	RETURNF 0
-	;1.性別
+	;1. 성별
 	CASE 0, 1, 121, 122
 		RETURNF 1
-	;2.性格
+	;2. 성격
 	CASE 10 TO 17, 20 TO 37, 63, 65, 80 TO 88, 90, 92, 93
 		RETURNF 2
-	;3.体質
+	;3. 체질
 	CASE 40 TO 43, 56, 60 TO 62, 64, 70, 71, 100 TO 114, 116, 118, 119, 123 TO 126
 		RETURNF 3
-	;4.技能
+	;4. 기능
 	CASE 50 TO 53, 55, 57 TO 59, 66, 91, 117, 130, 132, 133, 135
 		RETURNF 4
-	;5.後天素質
+	;5. 후천 소질
 	CASE 2, 3, 72 TO 79, 89, 131, 140
 		RETURNF 5
-	;6.種族特性
+	;6. 종족 특성
 	CASE 54, 115, 119, 134, 136 TO 138
 		RETURNF 6
 ENDSELECT
-;7.未分類(これがあるのは望ましくない)
+;7. 미분류(이것이 있는 것은 바람직하지 않다)
 RETURNF 7
 
 ;-------------------------------------------------
-;関数名:TALENT_TYPENAME
-;概　要:素質分類名取得関数
-;引　数:ARG…TALENT分類番号
-;戻り値:素質分類を表す文字列
-;       (0.非表示/1.性別/2.性格/3.体質/4.技能/5.後天素質/6.種族特性/7.未分類)
-;備　考:式中関数
-;素質の分類名を返す。素質整頓表示に用いる
+;함수명:TALENT_TYPENAME
+;개  요점:소질 분류 나토리 이득 함수
+;인  수:ARG…TALENT 분류 번호
+;반환값:소질 분류를 나타내는 캐릭터 라인
+;       (0. 비표시/1. 성별/2. 성격/3. 체질/4. 기능/5. 후천 소질/6. 종족 특성/7. 미분류)
+;비  고:식 나카노세키수
+;소질의 분류명을 돌려준다. 소질 정돈 표시에 이용한다
 ;-------------------------------------------------
 @TALENT_TYPENAME(ARG)
 #FUNCTIONS
 #LOCALSSIZE 10
 SIF !STRLENS(LOCALS)
-	SPLIT "非表示/性別/性格/体質/技能/後天素質/種族特性/未分類", "/", LOCALS, LOCAL
+	SPLIT "비표시/성별/성격/체질/기능/후천 소질/종족 특성/미분류", "/", LOCALS, LOCAL
 RETURNF LOCALS:ARG
 
 
 ;-------------------------------------------------
-;ご主人様修飾関数@TARGET_DESCRIPTION
-;式中で使用する関数です。TARGETがどのような状態かを描写します…とりあえず継続系にのみ対応
-;引数は語尾。「、」「ながら」「たまま」「て」「つつ」「た」等に対応
+;주인님 수식 함수@TARGET_DESCRIPTION
+;식중에서 사용하는 함수입니다. TARGET가 어떠한 상태인지를 묘사합니다… 우선 계속계에게만 대응
+;인수는 어미. 「,」 「(이)면서」 「」 「라고」 「개개」 「」등에 대응
 ;-------------------------------------------------
 @TARGET_DESCRIPTION(ARGS)
 #FUNCTIONS
 VARSET LOCALS
-;性交中(調教者挿入)
-IF TEQUIP:性交中
-	IF TEQUIP:調教者ペニスバンド
-		LOCALS += "身に着けた張り型を"
+;성교중(조교자 삽입)
+IF TEQUIP:성교중
+	IF TEQUIP:조교자페니스밴드
+		LOCALS += "몸에 댄 의욕형을"
 	ELSE
-		LOCALS += @"\@ TCVAR:TARGET:イきそう ? 今にもイきそうな # \@ペニスを"
+		LOCALS += @"\@ TCVAR:TARGET:갈것같다 ? 당장 갈 것 같은# \@페니스를"
 	ENDIF
-	;体位によって分岐
-	SELECTCASE TEQUIP:性交中
-		;正常位
+	;체위에 의해 분기
+	SELECTCASE TEQUIP:성교중
+		;정상위
 		CASE 1
-			LOCALS += @"体重を預けて%CALLNAME:MASTER%の膣内に埋め"
-		;後背位
+			LOCALS += @"체중을 맡겨%CALLNAME:MASTER%의 질내에 묻고"
+		;후배위
 		CASE 2
-			LOCALS += @"背後から%CALLNAME:MASTER%の膣内に埋め"
-		;騎乗位
+			LOCALS += @"배후로부터%CALLNAME:MASTER%의 질내에 묻고"
+		;승마위
 		CASE 3
-			LOCALS += @"%CALLNAME:MASTER%の雌穴に根元まで咥え込まれ"
-		;対面座位
+			LOCALS += @"%CALLNAME:MASTER%의 암컷 구멍에 근원까지 물어지고"
+		;대면좌위
 		CASE 4
-			LOCALS += @"密着した%CALLNAME:MASTER%の膣に愛撫され"
-		;背面座位
+			LOCALS += @"밀착했다%CALLNAME:MASTER%의 질에 애무되고"
+		;배면좌위
 		CASE 5
-			LOCALS += @"%CALLNAME:MASTER%に挿入し背を抱き締め"
-		;アナルセックス
+			LOCALS += @"%CALLNAME:MASTER%에 삽입해 등을 껴안고"
+		;애널 섹스
 		CASE 6
-			LOCALS += @"%CALLNAME:MASTER%の肛門に埋め"
+			LOCALS += @"%CALLNAME:MASTER%의 항문에 묻고"
 	ENDSELECT
-;手淫・愛撫継続中
-ELSEIF TEQUIP:調教対象Ｃ使用 == 1
-	LOCALS += @"\@ TCVAR:MASTER:イきそう ? 今にもイきそうな # \@"
-	LOCALS += @"%CALLNAME:MASTER%の\@ PENIS(MASTER) ? ペニス # \@"
+;자위·애무 계속중
+ELSEIF TEQUIP:조교대상C사용 == 1
+	LOCALS += @"\@ TCVAR:MASTER:갈것같다 ? 당장 갈 것 같은# \@"
+	LOCALS += @"%CALLNAME:MASTER%의\@ PENIS(MASTER) ? 페니스# \@"
 	SIF !PENIS(MASTER)
-		LOCALS += @"\@ TEQUIP:ペニスバンド ? 張り型 # クリトリス \@"
-	LOCALS += "を愛撫し"
-;フェラ・クンニ継続中
-ELSEIF TEQUIP:調教対象Ｃ使用 == 2
-	LOCALS += @"\@ TCVAR:MASTER:イきそう ? 今にもイきそうな # \@%CALLNAME:MASTER%の\@ PENIS(MASTER) ? ペニス # クリトリス \@を舐め"
-;性交中(調教対象挿入)
-ELSEIF TEQUIP:性交奉仕中
-	IF TEQUIP:ペニスバンド
-		LOCALS += @"%CALLNAME:MASTER%の身に着けた張り型を"
+		LOCALS += @"\@ TEQUIP:페니스밴드 ? 의욕형# 클리토리스\@"
+	LOCALS += "를 애무해"
+;페라·쿤닐링구스 계속중
+ELSEIF TEQUIP:조교대상C사용 == 2
+	LOCALS += @"\@ TCVAR:MASTER:갈것같다 ? 당장 갈 것 같은# \@%CALLNAME:MASTER%의\@ PENIS(MASTER) ? 페니스# 클리토리스\@를 빨고"
+;성교중(조교 대상 삽입)
+ELSEIF TEQUIP:성교봉사중
+	IF TEQUIP:페니스밴드
+		LOCALS += @"%CALLNAME:MASTER%의 몸에 댄 의욕형을"
 	ELSE
-		LOCALS += @"%CALLNAME:MASTER%の\@ TCVAR:MASTER:イきそう ? 今にもイきそうな # \@ペニスを"
+		LOCALS += @"%CALLNAME:MASTER%의\@ TCVAR:MASTER:갈것같다 ? 당장 갈 것 같은# \@페니스를"
 	ENDIF
-	;体位によって分岐
-	SELECTCASE TEQUIP:性交奉仕中
-		;正常位
+	;체위에 의해 분기
+	SELECTCASE TEQUIP:성교봉사중
+		;정상위
 		CASE 1
-			LOCALS += @"大きく開いた股の間に迎え入れ"
-		;後背位
+			LOCALS += @"크게 벌어진 가랑이의 사이에 맞아들이고"
+		;후배위
 		CASE 2
-			LOCALS += @"背後から膣内に挿入され"
-		;騎乗位
+			LOCALS += @"배후로부터 질내에 삽입되고"
+		;승마위
 		CASE 3
-			LOCALS += @"ぬるぬるの膣できゅうきゅうと絞り上げ"
-		;対面座位
+			LOCALS += @"미끈미끈의 질로 큐우큐우 짜내고"
+		;대면좌위
 		CASE 4
-			LOCALS += @"体を密着させて膣奥に歓迎し"
-		;背面座位
+			LOCALS += @"체를 밀착시켜 질 안쪽으로 환영해"
+		;배면좌위
 		CASE 5
-			LOCALS += @"背を預けて堪能し"
-		;アナルセックス
+			LOCALS += @"등을 맡겨 만끽해"
+		;애널 섹스
 		CASE 6
-			LOCALS += @"腸液にぬめる肛門で締め付け"
+			LOCALS += @"장액에 미끌거리는 항문으로 억압"
 	ENDSELECT
-;調教者自慰中
-ELSEIF GETBIT(TEQUIP:自慰中, 1)
-	IF TEQUIP:調教者ペニスバンド
-		LOCALS += "身に着けた張り型を"
+;조교자 자위중
+ELSEIF GETBIT(TEQUIP:자위중, 1)
+	IF TEQUIP:조교자페니스밴드
+		LOCALS += "몸에 댄 의욕형을"
 	ELSE
-		LOCALS += @"\@ TCVAR:TARGET:イきそう ? 今にもイきそうな # \@\@ PENIS(TARGET) ? ペニス # クリトリス \@を"
+		LOCALS += @"\@ TCVAR:TARGET:갈것같다 ? 당장 갈 것 같은# \@\@ PENIS(TARGET) ? 페니스# 클리토리스\@를"
 	ENDIF
-	LOCALS += "自ら愛撫するのを見せ付け"
+	LOCALS += "스스로 애무하는 것을 과시하고"
 ENDIF
 
 
@@ -522,15 +522,15 @@ SIF LOCALS != ""
 RETURNF LOCALS
 
 ;-------------------------------------------------
-;関数名:PENIS_DESCRIPTION
-;概　要:ペニス描写関数
-;引　数:なし
-;戻り値:ペニスの状態を表す文字列
-;備　考:式中関数
-;なんとなくコードが煩雑になりそうな予感がしたので関数可してみた
-;使用例
-;PRINTFORML %CALLNAME:MASTER%の%PENIS_DESCRIPTION()%ペニスが(以下略
-;現状の規模ならAUTO_SPLITでも十分だけど、拡張可能性と保守性を考えてSTRDATAにしてみる@revkoishi
+;함수명:PENIS_DESCRIPTION
+;개  요점:페니스 묘사 함수
+;인  수:없음
+;반환값:페니스 상태를 나타내는 캐릭터 라인
+;비  고:식 나카노세키수
+;어딘지 모르게 코드가 번잡하게 될 것 같은 예감이 했으므로 함수가능 해 보았다
+;사용예
+;PRINTFORML %CALLNAME:MASTER%의%PENIS_DESCRIPTION()%페니스가(이하 생략
+;현상의 규모라면 AUTO_SPLIT에서도 충분하지만, 확장 가능성과 보수성을 생각해 STRDATA로 해 본다@revkoishi
 ;-------------------------------------------------
 @PENIS_DESCRIPTION(ARG = -2)
 #FUNCTIONS
@@ -539,95 +539,95 @@ LOCALS:0 =
 ARG = ARG != -2 ? ARG # MASTER
 IF ARG == MASTER
 	SELECTCASE TFLAG:ACT
-		;愛撫系ACT
+		;애무계 ACT
 		CASE 10 TO 19
-			;萎えてる
-			IF TCVAR:MASTER:勃起度 < 1000
-				;射精直後
-				IF TCVAR:MASTER:射精後経過ターン == 1
+			;쇠약해지고 있다
+			IF TCVAR:MASTER:발기도 < 1000
+				;사정 직후
+				IF TCVAR:MASTER:사정후경과턴 == 1
 					STRDATA LOCALS:0
-						DATA イったばかりの
-						DATA イったばかりで敏感な
-						DATA 先程たっぷりと精を放った
+						DATA 간지 얼마 안된
+						DATA 갔던 바로 직후로 민감한
+						DATA 조금 전 충분히 정령을 발했다
 					ENDDATA
-				;その他
+				;그 외
 				ELSE
 					STRDATA LOCALS:0
-						DATA 萎えてしまった
-						DATA 萎びた
-						DATA ピクリともしない
+						DATA 쇠약해져 버렸다
+						DATA 시들었다
+						DATA 흠칫도 하지 않는다
 					ENDDATA
 				ENDIF
-			;勃起
+			;발기
 			ELSE
-				;射精直後
-				IF TCVAR:MASTER:射精後経過ターン == 1
+				;사정 직후
+				IF TCVAR:MASTER:사정후경과턴 == 1
 					STRDATA LOCALS:0
-						DATA ようやく射精が収まった
-						DATA 衰えを知らない
-						DATA 脈動が収まらない
+						DATA 간신히 사정이 수습되었다
+						DATA 쇠약을 모른다
+						DATA 맥동이 수습되지 않는다
 					ENDDATA
-				;勃起度の派生
-				ELSEIF TCVAR:MASTER:勃起度 >= 1500
+				;발기도의 파생
+				ELSEIF TCVAR:MASTER:발기도 >= 1500
 					STRDATA LOCALS:0
-						DATA はちきれんばかりに怒張した
-						DATA 反り返った
-						DATA 限界まで勃起した
+						DATA 터질듯이 노장 했다
+						DATA 뒤로 젖혔다
+						DATA 한계까지 발기했다
 					ENDDATA
 				ELSE
 					STRDATA LOCALS:0
-						DATA 怒張した
-						DATA 屹立した
-						DATA いきり立った
+						DATA 노장 했다
+						DATA 흘립 했다
+						DATA 격분했다
 					ENDDATA
 				ENDIF
 			ENDIF
 	ENDSELECT
 ELSE
-	SELECTCASE TCVAR:ARG:勃起
+	SELECTCASE TCVAR:ARG:발기
 		CASE 0
-			LOCALS:0 = まだ柔らかい
+			LOCALS:0 = 아직 부드럽다
 		CASE 1
-			LOCALS:0 = 徐々に硬度を増しつつある
+			LOCALS:0 = 서서히 경도를 더하고 있다
 		CASE 2
-			LOCALS:0 = 勃起した
+			LOCALS:0 = 발기했다
 		CASEELSE
-			LOCALS:0 = 反り返った
+			LOCALS:0 = 뒤로 젖혔다
 	ENDSELECT
 ENDIF
 RETURNF LOCALS:0
 
 
 ;-------------------------------------------------
-;関数名:PENIS_DESCRIPTION2
-;概　要:ペニス描写関数
-;引　数:なし
-;戻り値:ペニスの状態を表す文字列
-;備　考:式中関数
+;함수명:PENIS_DESCRIPTION2
+;개  요점:페니스 묘사 함수
+;인  수:없음
+;반환값:페니스 상태를 나타내는 캐릭터 라인
+;비  고:식 나카노세키수
 ;
-;TFLAG:166=エナジードレイン
-;被エナジードレイン中のペニスの状態というモロにSQR仕様関数なのでコメントアウト
-;関数定義だけ生きているのは現状で呼び出し箇所があるから手抜きという意味もあるのだけど、
-;そのうち誰かがエナジードレインするようになったら(あるいは他に利用方法あれば)
-;その時にまた考えましょうってことで@revkoishi(14/04/20)
+;TFLAG:166=에너지 드레인
+;피에너지 드레인중의 페니스 상태라고 하는 모로에 SQR 사양 함수인 것으로 comment out
+;함수 정의만 살아 있는 것은 현상으로 호출해 개소가 있기 때문에 부실이라고 하는 의미도 있는 것이지만,
+;그 중 누군가가 에너지 드레인 하게 되면(혹은 그 밖에 이용 방법 있으면)
+;그 때에 또 생각합시다라는 것으로@revkoishi(14/04/20)
 ;-------------------------------------------------
 @PENIS_DESCRIPTION2(ARG = -2)
 #FUNCTIONS
 #LOCALSSIZE 1
 [SKIPSTART]
-ARG = ARG != -2 ? ARG # MASTER
+ARG = ARG != -2? ARG # MASTER
 LOCALS:0 = 
 IF ARG == MASTER && TFLAG:166
-	IF BASE:MASTER:射精
+	IF BASE:MASTER:사정
 		STRDATA LOCALS:0
-			DATA イきっぱなしになった
-			DATA 射精を続ける
-			DATA 精液が垂れ流しになった
+			DATA 가고 있을 뿐이 되었다
+			DATA 사정을 계속한다
+			DATA 정액이 질질 흘림이 되었다
 		ENDDATA
 	ELSE
 		STRDATA LOCALS:0
-			DATA 空撃ちを続ける
-			DATA イきっぱなしになった
+			DATA 공격를 계속한다
+			DATA 가고 있을 뿐이 되었다
 		ENDDATA
 	ENDIF
 ENDIF
@@ -636,426 +636,426 @@ RETURNF LOCALS:0
 
 
 ;-------------------------------------------------
-;関数名:OPPAI_DESCRIPTION
-;概　要:言葉でなく心で理解しろ
-;引　数:ARG…キャラ登録番号
-;戻り値:夢
-;備　考:式中関数
-;使用例:%OPPAI_DESCRIPTION(TARGET)%
+;함수명:OPPAI_DESCRIPTION
+;개  요점:말이 아니고 마음으로 이해해라
+;인  수:ARG… 캐릭터 등록 번호
+;반환값:꿈
+;비  고:식 나카노세키수
+;사용예:%OPPAI_DESCRIPTION(TARGET)%
 ;-------------------------------------------------
 @OPPAI_DESCRIPTION(ARG = -2)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 ARG = ARG != -2 ? ARG # MASTER
-;SQR由来部分につきコメントアウト。爆乳は今後も無いと思われるが参考に残しておく@revkoishi(14/04/20)
-;SIF TALENT:ARG:巨乳 == 2	;爆乳
-;	RETURNF RAND_SPLIT("はちきれんばかりの胸/大迫力のバスト/たっぷりとした質感の胸")
-IF TALENT:ARG:巨乳	;巨乳
+;SQR 유래 부분에 대해 comment out. 폭유는 향후도 없다고 생각되지만 참고에 남겨 둔다@revkoishi(14/04/20)
+;SIF TALENT:ARG:거유 == 2	;폭유
+;	RETURNF RAND_SPLIT("터질듯한 가슴/대박력의 버스트/충분히로 한 질감의 가슴")
+IF TALENT:ARG:거유	;거유
 	STRDATA LOCALS:0
-		DATA 豊満な胸
-		DATA 自慢のバスト
-		DATA 魅力的な豊かな膨らみ
-		DATA 瑞々しく揺れる双丘
-		DATA たわわに揺れる果実
-		DATA 大きな乳房
-		DATA ふくよかな胸
-		DATA 弾力に富んだ豊かな胸
+		DATA 풍만한 가슴
+		DATA 자랑의 버스트
+		DATA 매력적인 풍부한 부푼 곳
+		DATA 신선하게 흔들리는 쌍구
+		DATA 휘어지게 흔들리는 과실
+		DATA 큰 유방
+		DATA 포근한 가슴
+		DATA 탄력이 풍부한 풍부한 가슴
 	ENDDATA
-ELSEIF TALENT:ARG:貧乳	;貧乳
+ELSEIF TALENT:ARG:빈유	;빈유
 	STRDATA LOCALS:0
-		DATA 控えめな胸
-		DATA 可愛らしい胸
-		DATA 可愛らしく勃起させた乳首
-		DATA 掌に収まりそうな愛らしい乳房
-		DATA 薄い乳房
-		DATA ささやかな膨らみ
+		DATA 소극적인 가슴
+		DATA 사랑스러운 가슴
+		DATA 사랑스럽게 발기시킨 유두
+		DATA 손바닥에 들어갈 것 같은 사랑스러운 유방
+		DATA 얇은 유방
+		DATA 자그마한 부푼 곳
 	ENDDATA
-ELSE					;並乳
+ELSE					;보통젖
 	STRDATA LOCALS:0
-		DATA 柔らかい胸
-		DATA 均整のとれた胸
-		DATA 綺麗な胸
-		DATA 瑞々しく張りのいい胸
-		DATA バランスのとれた美しい乳房
-		DATA 美しい曲線の双丘
-		DATA 形よく均整美を保った乳房
+		DATA 부드러운 가슴
+		DATA 균정을 취할 수 있던 가슴
+		DATA 예쁜 가슴
+		DATA 신선하고 붙은 좋은 가슴
+		DATA 밸런스를 잡힌 아름다운 유방
+		DATA 아름다운 곡선의 쌍구
+		DATA 형 좋게 균정미를 유지한 유방
 	ENDDATA
 ENDIF
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:VAGINA_DESCRIPTION
-;引　数:ARG…キャラ登録番号
-;戻り値:夢
-;備　考:式中関数
-;使用例:%VAGINA_DESCRIPTION(TARGET)%
+;함수명:VAGINA_DESCRIPTION
+;인  수:ARG… 캐릭터 등록 번호
+;반환값:꿈
+;비  고:식 나카노세키수
+;사용예:%VAGINA_DESCRIPTION(TARGET)%
 ;-------------------------------------------------
 @VAGINA_DESCRIPTION(ARG = -2)
 #FUNCTIONS
 #LOCALSSIZE 1
 ARG = ARG != -2 ? ARG # MASTER
-IF TALENT:ARG:小柄	;小柄体型
+IF TALENT:ARG:작은체형	;작은체형 체형
 	STRDATA LOCALS:0
-		DATA 幼いワレメ
-		DATA 幼い性器
-		DATA 未発達の縦スジ
+		DATA 어린 균열
+		DATA 어린 성기
+		DATA 미발달의 세로 스지
 	ENDDATA
-ELSE				;一般
+ELSE				;일반
 	STRDATA LOCALS:0
-		DATA 陰唇
-		DATA 女性器
-		DATA 秘唇
+		DATA 음순
+		DATA 여성기
+		DATA 비순
 	ENDDATA
 ENDIF
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:NIPPLE_DESCRIPTION
-;概　要:乳首描写関数
-;引　数:キャラ番号。省略すればMASTER
-;戻り値:文字列
-;備　考:式中関数
-;使用例:%CALLNAME:MASTER%の%NIPPLE_DESCRIPTION(MASTER)%乳首云々…
+;함수명:NIPPLE_DESCRIPTION
+;개  요점:유두 묘사 함수
+;인  수:캐릭터 번호. 생략 하면 MASTER
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수
+;사용예:%CALLNAME:MASTER%의%NIPPLE_DESCRIPTION(MASTER)%유두 운운…
 ;-------------------------------------------------
 @NIPPLE_DESCRIPTION(ARG = -2)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 ARG = ARG != -2 ? ARG # MASTER
-SELECTCASE PALAM:ARG:快Ｂ
+SELECTCASE PALAM:ARG:쾌B
 	CASE IS >= 8500
 		STRDATA LOCALS:0
-			DATA 絶頂への期待に震える
-			DATA ピーンと尖りきった
-			DATA ビクビクと震える
+			DATA 절정에의 기대에 떨린다
+			DATA 핀과 다 날카로워졌다
+			DATA 움찔움찔 떨린다
 		ENDDATA
 	CASE IS >= 4000
 		STRDATA LOCALS:0
-			DATA 膨らみきった
-			DATA 硬くしこった
-			DATA 弾けんばかりに膨らんだ
+			DATA 다 부풀어 올랐다
+			DATA 딱딱하게 응어리졌다
+			DATA 튈듯이 부풀어 올랐다
 		ENDDATA
 	CASEELSE
 		STRDATA LOCALS:0
-			DATA 微かに膨らんだ
-			DATA 僅かに膨らみを増しつつある
-			DATA 未だ柔らかい
+			DATA 희미하게 부풀어 올랐다
+			DATA 조금 부푼 곳을 늘리고 있다
+			DATA 아직도 부드럽다
 		ENDDATA
 ENDSELECT
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:CLITORIS_DESCRIPTION
-;概　要:Ｃ描写関数
-;引　数:キャラ番号。省略すればMASTER
-;戻り値:文字列
-;備　考:式中関数
-;使用例:%CALLNAME:MASTER%の%CLITORIS_DESCRIPTION(MASTER)%陰核云々…
+;함수명:CLITORIS_DESCRIPTION
+;개  요점:C묘사 함수
+;인  수:캐릭터 번호. 생략 하면 MASTER
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수
+;사용예:%CALLNAME:MASTER%의%CLITORIS_DESCRIPTION(MASTER)%음핵 운운…
 ;-------------------------------------------------
 @CLITORIS_DESCRIPTION(ARG = -2)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 ARG = ARG != -2 ? ARG # MASTER
-SELECTCASE PALAM:ARG:快Ｃ
+SELECTCASE PALAM:ARG:쾌C
 	CASE IS >= 8500
 		STRDATA LOCALS:0
-			DATA 絶頂への期待に震える
-			DATA ヒクヒクと脈打つ
+			DATA 절정에의 기대에 떨린다
+			DATA 흠칫흠칫 맥박친다
 		ENDDATA
 	CASE IS >= 4000
 		STRDATA LOCALS:0
-			DATA 膨らみきった
-			DATA 充血しきった
-			DATA 弾けんばかりに膨らんだ
+			DATA 다 부풀어 올랐다
+			DATA 충혈해 버렸다
+			DATA 튈듯이 부풀어 올랐다
 		ENDDATA
 	CASEELSE
 		STRDATA LOCALS:0
-			DATA 微かに膨らんだ
-			DATA 僅かに膨らみつつある
-			DATA ささやかに膨らんだ
+			DATA 희미하게 부풀어 올랐다
+			DATA 조금 부풀어 오르고 있다
+			DATA 자그마하게 부풀어 올랐다
 		ENDDATA
 ENDSELECT
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:WET_DESCRIPTION
-;概　要:Ｖ描写関数
-;引　数:キャラ番号。省略するとMASTER
-;戻り値:文字列
-;備　考:式中関数（v30601.001現在、MASTERのみ参照可能）
-;使用例:%WET_DESCRIPTION(MASTER)%女性器(ry
+;함수명:WET_DESCRIPTION
+;개  요점:V묘사 함수
+;인  수:캐릭터 번호. 생략 하면 MASTER
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수(v30601. 001 현재, MASTER만 참조 가능)
+;사용예:%WET_DESCRIPTION(MASTER)%여성기(ry
 ;-------------------------------------------------
 @WET_DESCRIPTION(ARG = -2)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 ARG = ARG != -2 ? ARG # MASTER
-SELECTCASE PALAM:ARG:潤滑
+SELECTCASE PALAM:ARG:윤활
 	CASE IS >= 1500
-		LOCALS:0 = "熱い蜜液の溢れ出す"
+		LOCALS:0 = "뜨거운 밀액의 흘러넘치기 시작한다"
 	CASE IS >= 1000
-		LOCALS:0 = "愛液の溢れ出す"
+		LOCALS:0 = "애액의 흘러넘치기 시작한다"
 	CASE IS >= 500
-		LOCALS:0 = "濡れそぼった"
+		LOCALS:0 = "흠뻑 젖었다"
 	CASEELSE
-		LOCALS:0 = "しっとりと湿った"
+		LOCALS:0 = "촉촉히 습기찼다"
 ENDSELECT
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:VAGINA_SMELL
-;概　要:性器の匂い描写関数
-;引　数:キャラ番号。省略するとMASTER
-;戻り値:文字列
-;備　考:式中関数（v30601.001現在、MASTERのみ参照可能）
-;使用例:%VAGINA_SMELL(MASTER)%を漂わせる(ry
+;함수명:VAGINA_SMELL
+;개  요점:성기의 냄새 묘사 함수
+;인  수:캐릭터 번호. 생략 하면 MASTER
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수(v30601. 001 현재, MASTER만 참조 가능)
+;사용예:%VAGINA_SMELL(MASTER)%를 감돌게 한다(ry
 ;-------------------------------------------------
 @VAGINA_SMELL(ARG = -2)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 ARG = ARG != -2 ? ARG # MASTER
-SELECTCASE PALAM:ARG:潤滑
+SELECTCASE PALAM:ARG:윤활
 	CASE IS >= 1000
-		LOCALS:0 = "濃厚な女の香り"
+		LOCALS:0 = "농후한 여자의 향기"
 	CASE IS >= 500
-		LOCALS:0 = "芳香な香り"
+		LOCALS:0 = "방향인 향기나"
 	CASEELSE
-		LOCALS:0 = "清らかな少女の香り"
+		LOCALS:0 = "맑고 깨끗한 소녀의 향기"
 ENDSELECT
 RETURNF LOCALS:0
-;eraWIZを見て作りたくなった
-;と言うか、限定無し口上向けにMASTERの体格とかで分岐作ってもいいのかも
-;小柄体型だと幼い扱いだしねぇ
+;eraWIZ를 봐 만들고 싶어졌다
+;라고 할까, 한정 없음 구상전용으로 MASTER의 체격등으로 분기 만들어도 괜찮은 것인지도
+;작은체형 체형이라면 어린 취급이고
 
 ;-------------------------------------------------
-;関数名:VAGINA_DESCRIPTION2
-;概　要:Ｖ描写関数
-;引　数:なし
-;戻り値:文字列
-;備　考:式中関数
-;使用例:%VAGINA_DESCRIPTION2(MASTER)%
+;함수명:VAGINA_DESCRIPTION2
+;개  요점:V묘사 함수
+;인  수:없음
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수
+;사용예:%VAGINA_DESCRIPTION2(MASTER)%
 ;-------------------------------------------------
 @VAGINA_DESCRIPTION2(ARG)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 STRDATA LOCALS:0
-	DATA 秘唇
-	DATA 秘裂
-	DATA 秘所
-	DATA 媚肉
-	DATA 花弁
+	DATA 비순
+	DATA 비밀의 틈
+	DATA 비밀스런 장소
+	DATA 미육
+	DATA 꽃잎
 ENDDATA
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:PANTY_DESCRIPTION
-;概　要:パンティ描写関数
-;引　数:なし
-;戻り値:文字列
-;備　考:式中関数（v30601.001現在、MASTERのみ参照可能）
-;使用例:%PANTY_DESCRIPTION(MASTER)%パンティ(ry
+;함수명:PANTY_DESCRIPTION
+;개  요점:팬티 묘사 함수
+;인  수:없음
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수(v30601. 001 현재, MASTER만 참조 가능)
+;사용예:%PANTY_DESCRIPTION(MASTER)%팬티(ry
 ;-------------------------------------------------
 @PANTY_DESCRIPTION(ARG = -2)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 ARG = ARG != -2 ? ARG # MASTER
-SELECTCASE PALAM:ARG:潤滑
+SELECTCASE PALAM:ARG:윤활
 	CASE IS >= 1500
-		LOCALS:0 = "熱い花蜜でドロドロに濡れた"
+		LOCALS:0 = "뜨거운 꿀로 질척질척 젖었다"
 	CASE IS >= 1000
-		LOCALS:0 = "蜜液でグッショリと濡れた"
+		LOCALS:0 = "밀액으로 흠뻑 젖었다"
 	CASE IS >= 500
-		LOCALS:0 = "花蜜で汚れた"
+		LOCALS:0 = "꿀로 더러워졌다"
 	CASEELSE
-		LOCALS:0 = "しとどに濡れた"
+		LOCALS:0 = "흠뻑에 젖었다"
 ENDSELECT
 RETURNF LOCALS:0
-;ドロワ穿いたキャラの可能性に気付いたけど、出力上は関係ないから別にいいね
+;드로와 입은 캐릭터의 가능성을 알아차렸지만, 출력상은 관계없기 때문에 별로 좋다
 
 ;-------------------------------------------------
-;関数名:DHARNESS_DESCRIPTION
-;概　要:ペニスバンド描写関数
-;引　数:ARG…キャラ登録番号
-;戻り値:文字列
-;備　考:式中関数
-;使用例:%DHARNESS_DESCRIPTION(TARGET)%
+;함수명:DHARNESS_DESCRIPTION
+;개  요점:페니스 밴드 묘사 함수
+;인  수:ARG… 캐릭터 등록 번호
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수
+;사용예:%DHARNESS_DESCRIPTION(TARGET)%
 ;-------------------------------------------------
 @DHARNESS_DESCRIPTION(ARG)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 STRDATA LOCALS:0
-	DATA 無機質な得物
-	DATA 無粋な玩具
-	DATA 偽りの剛直
-	DATA 紛い物の楔
+	DATA 무기질인 무기
+	DATA 멋없는 완구
+	DATA 거짓의 강직
+	DATA 유사품의 쐐기
 ENDDATA
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:ANUS_DESCRIPTION
-;概　要:アヌス描写関数
-;引　数:ARG…キャラ登録番号
-;戻り値:文字列
-;備　考:式中関数
-;使用例:%ANUS_DESCRIPTION(TARGET)%
+;함수명:ANUS_DESCRIPTION
+;개  요점:아누스 묘사 함수
+;인  수:ARG… 캐릭터 등록 번호
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수
+;사용예:%ANUS_DESCRIPTION(TARGET)%
 ;-------------------------------------------------
 @ANUS_DESCRIPTION(ARG)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 STRDATA LOCALS:0
-	DATA 不浄の花弁
-	DATA 不浄の穴
-	DATA 不浄の窄まり
-	DATA アヌス
-	DATA 谷間の蕾
-	DATA 禁断の肉穴
+	DATA 부정의 꽃잎
+	DATA 부정의 구멍
+	DATA 부정의 오므라짐
+	DATA 아누스
+	DATA 골짜기의 꽃봉오리
+	DATA 금단의 고기구멍
 ENDDATA
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:PLEASURE_DESCRIPTION
-;概　要:快楽状態描写関数
-;引　数:ARG…キャラ登録番号
-;戻り値:文字列
-;備　考:式中関数
-;使用例:%PLEASURE_DESCRIPTION(TARGET)%
+;함수명:PLEASURE_DESCRIPTION
+;개  요점:쾌락 상태 묘사 함수
+;인  수:ARG… 캐릭터 등록 번호
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수
+;사용예:%PLEASURE_DESCRIPTION(TARGET)%
 ;-------------------------------------------------
 @PLEASURE_DESCRIPTION(ARG)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 STRDATA LOCALS:0
-	DATA 身体をビクビクと震わせながら
-	DATA 全身をガクガクと震わせながら
-	DATA 首を左右に振りながら
-	DATA 手を唇にあてがい指を噛みながら
-	DATA 細い肩を震わせながら
+	DATA 신체를 움찔움찔 진동시키면서
+	DATA 전신을 삐걱삐걱 진동시키면서
+	DATA 목을 좌우에 흔들면서
+	DATA 손을 입술에 주어 손가락을 씹으면서
+	DATA 가는 어깨를 진동시키면서
 ENDDATA
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:Ｃ描写
-;概　要:ARGのＣ描写関数
-;戻り値:文字列
-;備　考:式中関数
-;使用例:%Ｃ描写(MASTER)%
+;함수명:C묘사
+;개  요점:ARG의 C묘사 함수
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수
+;사용예:%C묘사(MASTER)%
 ;-------------------------------------------------
-@Ｃ描写(ARG = -2)
+@C묘사(ARG = -2)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 ARG = ARG != -2 ? ARG # MASTER
 IF PENIS(ARG)
 	STRDATA LOCALS:0
-		DATA ペニス
-		DATA くさび
-		DATA 怒張
+		DATA 페니스
+		DATA 쐐기
+		DATA 노장
 	ENDDATA
 ELSE
 	STRDATA LOCALS:0
-		DATA クリトリス
-		DATA 陰核
-		DATA 肉芽
-		DATA 性感の急所
+		DATA 클리토리스
+		DATA 음핵
+		DATA 육아
+		DATA 성감의 급소
 	ENDDATA
 ENDIF
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:SEMEN_DESCRIPTION
-;概　要:SPERMではなくSEMENなんだよねっていう
-;引　数:ARG…キャラ登録番号
-;戻り値:文字列
-;備　考:式中関数
-;使用例:%SEMEN_DESCRIPTION(MASTER)%
+;함수명:SEMEN_DESCRIPTION
+;개  요점:SPERM는 아니고 SEMEN네요 하고 말한다
+;인  수:ARG… 캐릭터 등록 번호
+;반환값:캐릭터 라인
+;비  고:식 나카노세키수
+;사용예:%SEMEN_DESCRIPTION(MASTER)%
 ;-------------------------------------------------
 @SEMEN_DESCRIPTION(ARG)
 #FUNCTIONS
 #LOCALSSIZE 1
 LOCALS:0 = 
 STRDATA LOCALS:0
-	DATA 官能のトロミ
-	DATA 白い吐液
-	DATA 汚濁の液体
-	DATA 白い精
-	DATA 白濁液
-	DATA 青臭い粘液
+	DATA 관능의 트로미
+	DATA 흰 토액
+	DATA 오탁의 액체
+	DATA 흰 정령
+	DATA 백탁액
+	DATA 미숙한 점액
 ENDDATA
 RETURNF LOCALS:0
 
 ;-------------------------------------------------
-;関数名:AFFECTION
-;概　要:ARGS:0でMASTERとARG:0との好意、好感度を参照する
-;引　数:ARGS:0…文字列
-;引　数:ARG :0…キャラ番号。省略するとTARGET
+;함수명:AFFECTION
+;개  요점:ARGS:0으로 MASTER와 ARG:0과의 호의, 호감도를 참조한다
+;인  수:ARGS:0… 캐릭터 라인
+;인  수:ARG :0… 캐릭터 번호. 생략 하면 TARGET
 ;-------------------------------------------------
 @AFFECTION(ARGS:0, ARG:0 = -2)
 #FUNCTION
 ARG:0 = ARG:0 != -2 ? ARG:0 # TARGET
 SELECTCASE ARGS:0
 	CASE "INFINITE"
-		RETURNF FAVOR(10000, 10000, ARG:0) ;好意・好感度10000
-	CASE "相思相愛"
-		RETURNF FAVOR(3000, 3000, ARG:0) ;好意・好感度3000
-	CASE "盲愛"
-		RETURNF FAVOR(0, 3000, ARG:0) ;好感度3000
-	CASE "溺愛"
-		RETURNF FAVOR(0, 2000, ARG:0) ;好感度2000
-	CASE "眷愛"
-		RETURNF FAVOR(0, 1000, ARG:0) ;好感度1000
-	CASE "傀儡"
-		RETURNF FAVOR(2500, 0, ARG:0) ;好意2500
-	CASE "調教完了"
-		RETURNF FAVOR(2000, 0, ARG:0) ;好意2000
-	CASE "調教済み"
-		RETURNF FAVOR(1000, 0, ARG:0) ;好意1000
-	CASE "目覚め"
-		RETURNF FAVOR(500, 0, ARG:0) ;好意500
-	CASE "恐怖"
-		RETURNF !FAVOR(200, 0, ARG:0) && MARK:MASTER:トラウマ >= 3 ;好意200未満・トラウマLv3以上
-	CASE "順応"
-		RETURNF FAVOR(100, 100, ARG:0) ;好意・好感度100
-	CASE "興味"
-		RETURNF FAVOR(0, 500, ARG:0) ;好感度500
-	CASE "反抗"
-		RETURNF !FAVOR(1, 0, ARG:0) && MARK:(ARG:0):反抗刻印 >= 1 ;好意0以下・反抗刻印Lv1以上
-	CASE "暴君"
-		RETURNF !FAVOR(-100, 0, ARG:0) && FAVOR(0, 1000, ARG:0) ;好意-100・好感度1000
-	CASE "嫌悪"
-		RETURNF !FAVOR(-100, 0, ARG:0) ;好意-100
-	CASE "不倶戴天"
-		RETURNF !FAVOR(-500, 0, ARG:0) ;好意-500
-	CASE "天敵"
-		RETURNF !FAVOR(-1000, 0, ARG:0) ;好意-1000
+		RETURNF FAVOR(10000, 10000, ARG:0) ;호의·호감도 10000
+	CASE "상사상애"
+		RETURNF FAVOR(3000, 3000, ARG:0) ;호의·호감도 3000
+	CASE "맹목적으로 사랑"
+		RETURNF FAVOR(0, 3000, ARG:0) ;호감도 3000
+	CASE "몹시 사랑함"
+		RETURNF FAVOR(0, 2000, ARG:0) ;호감도 2000
+	CASE "권애"
+		RETURNF FAVOR(0, 1000, ARG:0) ;호감도 1000
+	CASE "괴뢰"
+		RETURNF FAVOR(2500, 0, ARG:0) ;호의 2500
+	CASE "조교 완료"
+		RETURNF FAVOR(2000, 0, ARG:0) ;호의 2000
+	CASE "조교가 끝난 상태"
+		RETURNF FAVOR(1000, 0, ARG:0) ;호의 1000
+	CASE "눈을 뜸"
+		RETURNF FAVOR(500, 0, ARG:0) ;호의 500
+	CASE "공포"
+		RETURNF !FAVOR(200, 0, ARG:0) && MARK:MASTER:트라우마 >= 3 ;호의 200 미만·트라우마 Lv3 이상
+	CASE "순응"
+		RETURNF FAVOR(100, 100, ARG:0) ;호의·호감도 100
+	CASE "흥미"
+		RETURNF FAVOR(0, 500, ARG:0) ;호감도 500
+	CASE "반항"
+		RETURNF !FAVOR(1, 0, ARG:0) && MARK:(ARG:0):반항각인 >= 1 ;호의 0 이하·반항 각인 Lv1 이상
+	CASE "폭군"
+		RETURNF !FAVOR(-100, 0, ARG:0) && FAVOR(0, 1000, ARG:0) ;호의-100·호감도 1000
+	CASE "혐오"
+		RETURNF !FAVOR(-100, 0, ARG:0) ;호의-100
+	CASE "불구대천"
+		RETURNF !FAVOR(-500, 0, ARG:0) ;호의-500
+	CASE "천적"
+		RETURNF !FAVOR(-1000, 0, ARG:0) ;호의-1000
 	CASEELSE
-		CALLF PRINT_ERRORMESSAGE(@"@AFFECTIONに無効な定義(%ARGS%)が渡されました")
+		CALLF PRINT_ERRORMESSAGE(@"@AFFECTION에 무효인 정의(%ARGS%)가 건네받았습니다")
 		RETURNF -1
 ENDSELECT
 
 ;--------------------------------------------------
-;相性検索関数@RELATION_QUERY
-;	引数0：対象のキャラ番号（登録番号ではない。手元に存在している必要はない）
-;	引数1：検索条件（0=指定しない, 1=手元にいないキャラのみ選ぶ, 2=手元にいるキャラのみ選ぶ）
-;対象キャラと全キャラとの相性を検索して、最も相性の良い相手を抽出します
+;궁합 검색 함수@RELATION_QUERY
+;	인수 0:대상의 캐릭터 번호(등록 번호는 아니다. 수중에 존재하고 있을 필요는 없다)
+;	인수 1:검색 조건(0=지정하지 않는, 1=수중에 없는 캐릭터만 선택하는, 2=수중에 있는 캐릭터만 선택한다)
+;대상 캐릭터와 전캐릭터와의 궁합을 검색해, 가장 궁합의 좋은 상대를 추출합니다
 ;--------------------------------------------------
-;戻り値一覧
-;	RESULT：発見されたキャラとの相性（0=発見不可, 1=対象への相性101～199, 2=対象への相性200以上）
-;	RESULT:1：発見したキャラのキャラ番号（発見不可の場合=-1）
-;	RESULT:2：発見したキャラの登録番号（手元にいない場合=-1）
-;	RESULTS：発見したキャラの呼び名
-;	RESULTS:1：発見したキャラの名前
+;반환값 일람
+;	RESULT:발견된 캐릭터와의 궁합(0=발견 불가, 1=대상에의 궁합 101~199, 2=대상에의 궁합 200이상)
+;	RESULT:1:발견한 캐릭터의 캐릭터 번호(발견 불가의 경우=-1)
+;	RESULT:2:발견한 캐릭터의 등록 번호(수중에 없는 경우=-1)
+;	RESULTS:발견한 캐릭터의 통칭
+;	RESULTS:1:발견한 캐릭터의 이름
 ;--------------------------------------------------
 @RELATION_QUERY(ARG, ARG:1)
 #DIM LCOUNT, 1
 #LOCALSIZE 7
-;検索対象の登録番号を抽出
+;검색 대상의 등록 번호를 추출
 LOCAL = GETCHARA(ARG, 1)
 LOCAL:6 = 0
 IF LOCAL == -1
@@ -1065,7 +1065,7 @@ IF LOCAL == -1
 ENDIF
 LOCAL:1 = -1
 IF ARG:1 == 2
-	;手元から検索
+	;수중으로부터 검색
 	FOR LCOUNT, 0, CHARANUM
 		LOCAL:2 = LOCAL:1 < 0 ? 100 # RELATION:LOCAL:(LOCAL:1)
 		LOCAL:3 = NO:LCOUNT < 0 || NO:LCOUNT >= VARSIZE("RELATION") ? 100 # RELATION:LOCAL:(NO:LCOUNT)
@@ -1073,19 +1073,19 @@ IF ARG:1 == 2
 			LOCAL:2 = 100
 		SIF LOCAL:3 == 0
 			LOCAL:3 = 100
-		;同値の場合ランダムで残す
-		;後に引いたほうが大きい場合それを保存
+		;동치의 경우 랜덤으로 남긴다
+		;뒤로 물러나는 편이 큰 경우 그것을 보존
 		SIF (LOCAL:2 == LOCAL:3 && RAND:2 && LOCAL:1 >= 0) || LOCAL:2 < LOCAL:3
 			LOCAL:1 = NO:LCOUNT
 	NEXT
 ELSE
-	;全体から検索
-	;相性を総検索しキャラ番号と相性値を抽出
+	;전체로부터 검색
+	;궁합을 총검색해 캐릭터 번호와 궁합치를 추출
 	FOR LCOUNT, 0, VARSIZE("RELATION")
-		;そもそもCSVがないなら見る必要なし
+		;원래 CSV가 없으면 보는 필요없음
 		SIF EXISTCSV(LCOUNT, 0)  == 0
 			CONTINUE
-		;キャラがいるか確認して、いるかつ検索条件=1なら次へ飛ぶ
+		;캐릭터가 있든가 확인해, 있을까 개검색 조건=1이라면 다음에 난다
 		SIF GETCHARA(LCOUNT, 1) != -1 && ARG:1 == 1
 			CONTINUE
 		LOCAL:2 = LOCAL:1 < 0 ? 100 # RELATION:LOCAL:(LOCAL:1)
@@ -1094,8 +1094,8 @@ ELSE
 			LOCAL:2 = 100
 		SIF LOCAL:3 == 0
 			LOCAL:3 = 100
-		;同値の場合ランダムで残す
-		;後に引いたほうが大きい場合それを保存
+		;동치의 경우 랜덤으로 남긴다
+		;뒤로 물러나는 편이 큰 경우 그것을 보존
 		SIF ((LOCAL:2 == LOCAL:3 && RAND:2 && LOCAL:1 >= 0) || LOCAL:2 < LOCAL:3) && LCOUNT < 149
 			LOCAL:1 = LCOUNT
 	NEXT
@@ -1103,7 +1103,7 @@ ENDIF
 SIF LOCAL:6
 	DELCHARA CHARANUM - 1
 
-;名前と登録番号を取得
+;이름과 등록 번호를 취득
 RESULT:1 = LOCAL:1
 IF LOCAL:1 >= 0
 	RESULT:2 = GETCHARA(LOCAL:1, 1)
@@ -1115,7 +1115,7 @@ IF LOCAL:1 >= 0
 		RESULTS:1 = %CSVNAME(LOCAL:1, 0)%
 	ENDIF
 ENDIF
-;数値に応じてRETURN
+;수치에 응해 RETURN
 SIF RELATION:LOCAL:(LOCAL:1) > 199
 	RETURN 2
 SIF RELATION:LOCAL:(LOCAL:1) > 100

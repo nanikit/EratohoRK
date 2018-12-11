@@ -1,1058 +1,1058 @@
 ﻿
-;eratohoR#私家改変 0004.6.1 用　興味補正パッチ より改変後導入
+;eratohoR#사가 개변 0004.6. 1용  흥미 보정 패치보다 개변 후 도입
 
-;調教者の選んだコマンドに対して、奴隷のコマンドで興味が増えたり減ったり
-;使用フラグ … CFLAG:400 ～ CFLAG:520 くらい(CFLAG:(400 + TFLAG:ACT)
-;ARG = 0:書き込み 1:読み出し(初期化)
+;조교자가 선택한 커맨드에 대해서, 노예의 커맨드로 흥미가 증가하거나 줄어들거나
+;사용 플래그… CFLAG:400 ~ CFLAG:520 정도(CFLAG:(400 + TFLAG:ACT)
+;ARG = 0:기입 1:읽기(초기화)
 @KYOMI_ADD(ARG)
 #LOCALSIZE 200
 #DIM LCOUNT
 #DIM LTEMP
 
 IF ARG == 1
-	;ACT長期補正値に加算
+	;ACT 장기 보정치에 가산
 	FOR LCOUNT, 0, 200
 		RESULT:LCOUNT += ABSQSI(LOCAL:LCOUNT)
 	NEXT
-	;LOCAL初期化
+	;LOCAL 초기화
 	VARSET LOCAL
-	;RESULT保持
+	;RESULT 보유
 	RETURN RESULT
 ENDIF
 
-;ACT範囲外(ACT非実行時に呼ばれた等)の場合脱出
+;ACT 범위외(ACT비실행시에 불린 등)의 경우 탈출
 SIF GET_NORMALACTNUM(TFLAG:ACT) < 0 || VARSIZE("LOCAL") <= GET_NORMALACTNUM(TFLAG:ACT)
 	RETURN 0
 
-;最終的に加算する興味値
+;최종적으로 가산하는 흥미치
 LTEMP = 0
 
-;暴れるなら常に興味-2
-SIF IS_COMGRONAME("暴れる/逃げる/拒否")
-	LTEMP -= CFLAG:MASTER:調教レベル < 10 ? 2 # 4
+;날뛴다면 항상 흥미-2
+SIF IS_COMGRONAME("날뛴다/도망친다/거부")
+	LTEMP -= CFLAG:MASTER:조교레벨 < 10 ? 2 # 4
 
-;嫌がるなら常に興味-1 // 暴れる扱いの時は弾くように
-SIF IS_NOWCOMNAME("嫌がる") && IS_COMGRONAME("消極的従う")
-	LTEMP -= CFLAG:MASTER:調教レベル < 10 ? 1 # 2
+;싫어한다면 항상 흥미-1 // 날뛰는 취급때는 연주하도록(듯이)
+SIF IS_NOWCOMNAME("싫어한다") && IS_COMGRONAME("소극적 따른다")
+	LTEMP -= CFLAG:MASTER:조교레벨 < 10 ? 1 # 2
 
-;調教者のプライドが高い場合、愛撫/性交系で貶されるとムキになる
+;조교자의 프라이드가 높은 경우, 애무/성교계로 폄하해지면 울컥하게 된다
 {
-SIF TALENT:プライド高い && IS_NOWCOMNAME("下手だと罵る") 
-&& (MENUMATCH(TFLAG:ACT, "愛撫") || MENUMATCH(TFLAG:ACT, "性交"))
+SIF TALENT:프라이드높음 && IS_NOWCOMNAME("서투르다고 매도한다") 
+&& (MENUMATCH(TFLAG:ACT, "애무") || MENUMATCH(TFLAG:ACT, "성교"))
 }
 	LTEMP += 2
 
-;特定状況での効果up
+;특정 상황에서의 효과 up
 {
-SIF IS_NOWCOMNAME("愛情を込めてやる") && 
-(MENUMATCH(TFLAG:ACT, "奉仕") || MENUMATCH(TFLAG:ACT, "性奉") || IS_NOWACTNAME("騎乗位"))
+SIF IS_NOWCOMNAME("애정을 담아 준다") && 
+(MENUMATCH(TFLAG:ACT, "봉사") || MENUMATCH(TFLAG:ACT, "성 봉") || IS_NOWACTNAME("승마위"))
 }
 	LTEMP += 3
 
-;サドは奴隷の悲鳴を喜ぶ
-SIF TALENT:サド && IS_NOWCOMNAME("悲鳴を上げる")
+;새디즘은 노예의 비명을 기뻐한다
+SIF TALENT:새디즘 && IS_NOWCOMNAME("비명을 올린다")
 	LTEMP += 2
 
 
 ;///////////
-;ACT毎の補正
+;ACT 마다의 보정
 ;///////////
 SELECTCASE GET_ACTNAME(TFLAG:ACT)
-	;ACT分類/会話系
+	;ACT 분류/회화계
 	;==============
-	CASE "今の気分を聞く"
-		SELECTCASE TFLAG:ACT派生
-			CASE 0 ;                                       歯切れ悪く質問に答えた
+	CASE "지금의 기분을 (듣)묻는다"
+		SELECTCASE TFLAG:ACT파생
+			CASE 0 ;                                       말씨 나쁘게 질문에 답했다
 				LTEMP -= 1
-			CASE 1 ;                               派生が勇気を出して強く当たった
+			CASE 1 ;                               파생이 용기를 내 강하게 맞았다
 				LTEMP -= 2
-			CASE 2 ;                             皮肉「今の気分は、と聞かれても」
+			CASE 2 ;                             야유 「지금의 기분은, 이라고 (들)묻어도」
 				LTEMP -= 1
-			CASE 3 ;                                 はっきりと今の気持ちを告げた
+			CASE 3 ;                                 분명히 지금의 기분을 고했다
 				LTEMP += 3
-			CASE 4 ;                                           まあまあ悪くはない
+			CASE 4 ;                                           그저 나쁘지는 않다
 				LTEMP += 1
-			CASE 5 ;                                         気持ち良いことしたい
+			CASE 5 ;                                         기분 좋은 일 하고 싶다
 				LTEMP += 2
 		ENDSELECT
-	CASE "自分への気持ちを聞く"
-		SELECTCASE TFLAG:ACT派生
-			CASE 0 ;                                 嫌いじゃない…かも知れない…
+	CASE "자신에게로의 기분을 (듣)묻는다"
+		SELECTCASE TFLAG:ACT파생
+			CASE 0 ;                                 싫지 않은… 일지도 모른다…
 				LTEMP += 1
-			CASE 1 ;                                     そんなことあるわけない！
+			CASE 1 ;                                     그런 일이 있을 이유 없다!
 				LTEMP -= 2
-			CASE 2 ;               皮肉「困るねぇ…好きじゃないといったら怒る？」
+			CASE 2 ;               야유 「곤란하네요… 좋아하지 않다고 말하면 화내?」
 				LTEMP -= 1
-			CASE 3 ;       もう酷いことしなければ、もっと好きになれるかもしれない
+			CASE 3 ;       이제(벌써) 심한 일 하지 않으면, 좀 더 좋아하게 될 수 있을지도 모른다
 				LTEMP += 1
-			CASE 4 ;                                       はっきりと好きと告げた
+			CASE 4 ;                                       분명히 좋아라고 고했다
 			 	LTEMP += 3
-			CASE 5 ;           もっとすごいことしてくれば、もっと好きになれるかも
+			CASE 5 ;           좀 더 굉장한 일 해 주면, 좀 더 좋아하게 될 수 있을지도
 				LTEMP += 2
 		ENDSELECT
-	CASE "性についての話をする"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "성에 대한 이야기를 한다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 2
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 3
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 1
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 1
 		ENDSELECT
-	CASE "優しく慰める"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "상냥하게 위로한다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 2
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 3
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 1
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 1
 		ENDSELECT
-	CASE "厳しく脅す"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "엄격하게 위협한다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP += 2
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP -= 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP -= 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 1
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP += 3
 		ENDSELECT
-	CASE "衣装の変更を要求する"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う", "受け入れる"
+	CASE "의상의 변경을 요구한다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다", "받아들인다"
 				LTEMP += 1
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
 			CASEELSE
-				LTEMP -= PALAM:MASTER:恥情 > PALAM:MASTER:反抗 ? 1 # 2
+				LTEMP -= PALAM:MASTER:치정 > PALAM:MASTER:반항 ? 1 # 2
 		ENDSELECT
-	CASE "合意を求める"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う" ;                              小さい声で了承
+	CASE "합의를 요구한다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다" ;                              작은 소리로 승낙
 				LTEMP += 1
-			CASE "平然と従う" ;                            好きにすればいい
+			CASE "태연하게 따른다" ;                            마음대로 하면 된다
 				LTEMP += 1
-			CASE "積極的従う" ;                        初めてを捧げてもいい
+			CASE "적극적 따른다" ;                        처음을 바쳐도 괜찮다
 				LTEMP += 3
-			CASE "受け入れる" ;気持ちよくしてくれるなら初めてをあげてもいい
+			CASE "받아들인다" ;기분 좋게 해 준다면 처음을 주어도 괜찮다
 				LTEMP += 2
-			CASEELSE          ;                                  合意しない
+			CASEELSE          ;                                  합의하지 않는다
 				LTEMP -= 2
 		ENDSELECT
-	CASE "お仕置きと宣言する"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "벌이라고 선언한다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP += 2
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP -= 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP -= 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 1
-			CASE "許しを乞う"
-				LTEMP += 3
-		ENDSELECT
-	CASE "怒鳴る"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
-				LTEMP += 2
-			CASE "平然と従う"
-				LTEMP -= 1
-			CASE "積極的従う"
-				LTEMP -= 2
-			CASE "受け入れる"
-				LTEMP += 1
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP += 3
 		ENDSELECT
-	CASE "不気味に笑う"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "고함친다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP += 2
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP -= 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP -= 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 1
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
+				LTEMP += 3
+		ENDSELECT
+	CASE "기분 나쁘게 웃는다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
+				LTEMP += 2
+			CASE "태연하게 따른다"
+				LTEMP -= 1
+			CASE "적극적 따른다"
+				LTEMP -= 2
+			CASE "받아들인다"
+				LTEMP += 1
+			CASE "허가를 청한다"
 				LTEMP += 3
 		ENDSELECT
 
-	;ACT分類/愛撫系
+	;ACT 분류/애무계
 	;==============
-	CASE "手で愛撫"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "손으로 애무"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "胸愛撫"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "가슴 애무"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "口で愛撫"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "구에서 애무"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "アナル愛撫"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "애널 애무"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "アナル舐め"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "애널 빨고"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "キス"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "키스"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 3
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 3
 		ENDSELECT
-	CASE "性器を擦り合う"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "성기를 서로 켠다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "パイズリする"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "파이즈리 한다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "足コキする"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "풋잡 한다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
-				IF TALENT:サド || TALENT:意地悪
+			CASE "허가를 청한다"
+				IF TALENT:새디즘 || TALENT:심술쟁이
 					LTEMP += 2
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "指挿入れ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "손가락 삽입해라"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
 
-	;ACT分類/道具系
+	;ACT 분류/도구계
 	;==============
-	CASE "ローター"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "로터"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "バイブ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "바이브"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "アナルバイブ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "애널 바이브"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "アナルビーズ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "애널 비즈"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "Ｃ愛撫道具"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "C애무 도구"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "ニプルキャップ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "니플캡"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
-	CASE "ペニスバンド"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "페니스 밴드"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う"
+			CASE "적극적 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
 		ENDSELECT
 
-	;ACT分類/愛撫系
+	;ACT 분류/애무계
 	;==============
-	CASE "押し倒す"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"                  ;      顔を背け黙り込んだ
+	CASE "밀어 넘어뜨린다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"                  ;      얼굴을 돌리고 입을 다물었다
 				LTEMP -= 1
-			CASE "積極的従う", "平然と従う"    ;      抵抗せず身を任せた
+			CASE "적극적 따른다", "태연하게 따른다"    ;      저항하지 않고 몸을 맡겼다
 				LTEMP += 2
-			CASE "受け入れる"                  ;          抵抗しなかった
+			CASE "받아들인다"                  ;          저항하지 않았다
 				LTEMP += 1
-			CASE "許しを乞う"                  ;押さえつけられ怯えている
+			CASE "허가를 청한다"                  ;억누를 수 있는 무서워하고 있다
 				LTEMP -= 2
 		ENDSELECT
 
-	;ACT分類/性交系
+	;ACT 분류/성교계
 	;==============
-	CASE "正常位"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "정상위"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
-				SIF IS_NOWCOMNAME("腰を振る")
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("허리를 흔든다")
 					LTEMP += 2
-				SIF IS_NOWCOMNAME("中に出して！")
+				SIF IS_NOWCOMNAME("중에 내!")
 					LTEMP += 3
-				SIF IS_NOWCOMNAME("中に出さないで！")
+				SIF IS_NOWCOMNAME("중에 내지 마!")
 					LTEMP += 1
-				;最低限+2は加算される
+				;최저한+2은 가산된다
 				LTEMP += 1
-			CASE "許しを乞う"
-				IF TALENT:サド
+			CASE "허가를 청한다"
+				IF TALENT:새디즘
 					LTEMP += 3
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "後背位"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "후배위"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
-				SIF IS_NOWCOMNAME("腰を振る")
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("허리를 흔든다")
 					LTEMP += 2
-				SIF IS_NOWCOMNAME("中に出して！")
+				SIF IS_NOWCOMNAME("중에 내!")
 					LTEMP += 3
-				SIF IS_NOWCOMNAME("中に出さないで！")
+				SIF IS_NOWCOMNAME("중에 내지 마!")
 					LTEMP += 1
-				;最低限+2は保証
+				;최저한+2은 보증
 				LTEMP += 1
-			CASE "許しを乞う"
-				IF TALENT:サド
+			CASE "허가를 청한다"
+				IF TALENT:새디즘
 					LTEMP += 4
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "騎乗位"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "승마위"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
-			CASE "受け入れる"
-				SIF IS_NOWCOMNAME("中に出して！")
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("중에 내!")
 					LTEMP += 3
-				SIF IS_NOWCOMNAME("中に出さないで！")
+				SIF IS_NOWCOMNAME("중에 내지 마!")
 					LTEMP += 1
-				;最低限+2は加算される
+				;최저한+2은 가산된다
 				LTEMP += 1
-			CASE "許しを乞う"
-				IF TALENT:サド
+			CASE "허가를 청한다"
+				IF TALENT:새디즘
 					LTEMP += 3
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "対面座位"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "대면좌위"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
-				SIF IS_NOWCOMNAME("腰を振る")
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("허리를 흔든다")
 					LTEMP += 2
-				SIF IS_NOWCOMNAME("中に出して！")
+				SIF IS_NOWCOMNAME("중에 내!")
 					LTEMP += 3
-				SIF IS_NOWCOMNAME("中に出さないで！")
+				SIF IS_NOWCOMNAME("중에 내지 마!")
 					LTEMP += 1
-				;最低限+2は加算される
+				;최저한+2은 가산된다
 				LTEMP += 1
-			CASE "許しを乞う"
-				IF TALENT:サド
+			CASE "허가를 청한다"
+				IF TALENT:새디즘
 					LTEMP += 3
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "背面座位"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "배면좌위"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
-				SIF IS_NOWCOMNAME("腰を振る")
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("허리를 흔든다")
 					LTEMP += 2
-				SIF IS_NOWCOMNAME("中に出して！")
+				SIF IS_NOWCOMNAME("중에 내!")
 					LTEMP += 3
-				SIF IS_NOWCOMNAME("中に出さないで！")
+				SIF IS_NOWCOMNAME("중에 내지 마!")
 					LTEMP += 1
-				;最低限+2は加算される
+				;최저한+2은 가산된다
 				LTEMP += 1
-			CASE "許しを乞う"
-				IF TALENT:サド
+			CASE "허가를 청한다"
+				IF TALENT:새디즘
 					LTEMP += 3
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "アナルセックス"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "消極的従う"
+	CASE "애널 섹스"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "積極的従う", "平然と従う"
-				LTEMP += TALENT:倒錯的 ? 2 # 1
-			CASE "受け入れる"
-				SIF IS_NOWCOMNAME("腰を振る")
-					LTEMP += TALENT:倒錯的 ? 3 # 2
-				SIF IS_NOWCOMNAME("中に出して！")
-					LTEMP += TALENT:倒錯的 ? 4 # 3
-				SIF IS_NOWCOMNAME("中に出さないで！")
-					LTEMP += TALENT:倒錯的 ? 2 # 1
-				;最低限+2は加算される
+			CASE "적극적 따른다", "태연하게 따른다"
+				LTEMP += TALENT:도착적 ? 2 # 1
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("허리를 흔든다")
+					LTEMP += TALENT:도착적 ? 3 # 2
+				SIF IS_NOWCOMNAME("중에 내!")
+					LTEMP += TALENT:도착적 ? 4 # 3
+				SIF IS_NOWCOMNAME("중에 내지 마!")
+					LTEMP += TALENT:도착적 ? 2 # 1
+				;최저한+2은 가산된다
 				LTEMP += 1
-			CASE "許しを乞う"
-				IF TALENT:サド
+			CASE "허가를 청한다"
+				IF TALENT:새디즘
 					LTEMP += 3
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
 
-	;ACT分類/羞恥系
+	;ACT 분류/수치계
 	;==============
-	CASE "自慰"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "受け入れる"
+	CASE "자위"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "받아들인다"
 				LTEMP += 2
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "消極的従う"
-				SIF IS_NOWCOMNAME("恥ずかしがる")
+			CASE "소극적 따른다"
+				SIF IS_NOWCOMNAME("부끄러워한다")
 					LTEMP += 3
 				LTEMP -= 1
-			;リアクションが拒絶
+			;리액션이 거절
 			CASEELSE
-				IF TALENT:意地悪
+				IF TALENT:심술쟁이
 					LTEMP += 1
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "秘貝開帳"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "비패개장"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 1
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
-			CASE "消極的従う"
-				SIF IS_NOWCOMNAME("恥ずかしがる")
+			CASE "소극적 따른다"
+				SIF IS_NOWCOMNAME("부끄러워한다")
 					LTEMP += 3
 				LTEMP -= 1
-			CASE "許しを乞う"
-				IF TALENT:意地悪
+			CASE "허가를 청한다"
+				IF TALENT:심술쟁이
 					LTEMP += 1
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "自慰みせつけ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる", "積極的従う"
+	CASE "자위 과시하고"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다", "적극적 따른다"
 				LTEMP += 2
-			CASE "平然と従う"
+			CASE "태연하게 따른다"
 				LTEMP += 1
-			CASE "消極的従う"
-				SIF IS_NOWCOMNAME("恥ずかしがる")
+			CASE "소극적 따른다"
+				SIF IS_NOWCOMNAME("부끄러워한다")
 					LTEMP += 3
 				LTEMP -= 1
-			CASE "許しを乞う"
-				IF TALENT:意地悪
+			CASE "허가를 청한다"
+				IF TALENT:심술쟁이
 					LTEMP += 1
 				ELSE
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "羞恥プレイ"
-		SIF IS_NOWCOMNAME("恥ずかしがる")
+	CASE "수치 플레이"
+		SIF IS_NOWCOMNAME("부끄러워한다")
 			LTEMP += 2
-	CASE "野外プレイ"
-		SIF IS_NOWCOMNAME("恥ずかしがる")
+	CASE "야외 플레이"
+		SIF IS_NOWCOMNAME("부끄러워한다")
 			LTEMP += 2
-	CASE "放尿"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "방뇨"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 1
-			CASE "平然と従う", "積極的従う"
+			CASE "태연하게 따른다", "적극적 따른다"
 				LTEMP += 2
-			CASE "消極的従う"
-				SIF IS_NOWCOMNAME("恥ずかしがる")
+			CASE "소극적 따른다"
+				SIF IS_NOWCOMNAME("부끄러워한다")
 					LTEMP += 3
 				LTEMP -= 1
-			;リアクションが拒絶
+			;리액션이 거절
 			CASEELSE
 				LTEMP -= 2
 		ENDSELECT
 
-	;ACT分類/奉仕系
+	;ACT 분류/봉사계
 	;==============
-	CASE "手で愛撫を強制"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "손으로 애무를 강제"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 2
-			CASE "消極的従う"
+			CASE "소극적 따른다"
 				LTEMP -= 1
-			CASE "暴れる", "拒否", "逃げる"
-				LTEMP -= IS_COMIMPNAME("悪印象大") ? 3 # 1
+			CASE "날뛴다", "거부", "도망친다"
+				LTEMP -= IS_COMIMPNAME("악인상대") ? 3 # 1
 		ENDSELECT
-	CASE "口で愛撫を強制"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "구에서 애무를 강제"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
+			CASE "허가를 청한다", "소극적 따른다"
 				LTEMP += 1
-			CASE "暴れる", "拒否", "逃げる"
-				LTEMP -= IS_COMIMPNAME("悪印象大") ? 3 # 1
+			CASE "날뛴다", "거부", "도망친다"
+				LTEMP -= IS_COMIMPNAME("악인상대") ? 3 # 1
 		ENDSELECT
-	CASE "パイズリ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "파이즈리"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
+			CASE "허가를 청한다", "소극적 따른다"
 				LTEMP += 1
-			CASE "暴れる", "拒否", "逃げる"
-				LTEMP -= IS_COMIMPNAME("悪印象大") ? 3 # 1
+			CASE "날뛴다", "거부", "도망친다"
+				LTEMP -= IS_COMIMPNAME("악인상대") ? 3 # 1
 		ENDSELECT
-	CASE "素股"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "가랑이"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
+			CASE "허가를 청한다", "소극적 따른다"
 				LTEMP += 1
-			CASE "暴れる", "拒否", "逃げる"
-				LTEMP -= IS_COMIMPNAME("悪印象大") ? 3 # 1
+			CASE "날뛴다", "거부", "도망친다"
+				LTEMP -= IS_COMIMPNAME("악인상대") ? 3 # 1
 		ENDSELECT
-	CASE "足舐め強制"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
-				;調教者がサド/プライド高いの場合は+1
-				SIF TALENT:サド || TALENT:プライド高い
+	CASE "다리 빨고 강제"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
+				;조교자가 새디즘/프라이드높음의 경우는+1
+				SIF TALENT:새디즘 || TALENT:프라이드높음
 					LTEMP += 1
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
+			CASE "허가를 청한다", "소극적 따른다"
 				LTEMP -= 1
-			CASE "暴れる", "拒否", "逃げる"
-				LTEMP -= IS_COMIMPNAME("悪印象大") ? 3 # 1
+			CASE "날뛴다", "거부", "도망친다"
+				LTEMP -= IS_COMIMPNAME("악인상대") ? 3 # 1
 		ENDSELECT
-	CASE "イラマチオ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "이라마치오"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
-				LTEMP += TALENT:サド ? 2 # 1
-			CASE "受け入れる"
+			CASE "허가를 청한다", "소극적 따른다"
+				LTEMP += TALENT:새디즘 ? 2 # 1
+			CASE "받아들인다"
 				LTEMP += 1
 		ENDSELECT
-	CASE "胸愛撫強制"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "가슴 애무 강제"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
+			CASE "허가를 청한다", "소극적 따른다"
 				LTEMP += 1
-			CASE "暴れる", "拒否", "逃げる"
+			CASE "날뛴다", "거부", "도망친다"
 				LTEMP -= 2
 		ENDSELECT
 
-	;ACT分類/加虐系
+	;ACT 분류/가학계
 	;==============
-	CASE "スパンキング"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "스팽킹"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
-				SIF TALENT:サド
+			CASE "허가를 청한다", "소극적 따른다"
+				SIF TALENT:새디즘
 					LTEMP += 2
-				SIF IS_NOWCOMNAME("悲鳴を上げる") || (IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT派生)
+				SIF IS_NOWCOMNAME("비명을 올린다") || (IS_NOWCOMNAME("아픔을 참는다") && TFLAG:REACT파생)
 					LTEMP += 1
 				LTEMP -= 1
 		ENDSELECT
-	CASE "鞭"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "채찍"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
-				SIF TALENT:サド
+			CASE "허가를 청한다", "소극적 따른다"
+				SIF TALENT:새디즘
 					LTEMP += 2
-				SIF IS_NOWCOMNAME("悲鳴を上げる") || (IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT派生)
+				SIF IS_NOWCOMNAME("비명을 올린다") || (IS_NOWCOMNAME("아픔을 참는다") && TFLAG:REACT파생)
 					LTEMP += 1
 				LTEMP -= 1
 		ENDSELECT
-	CASE "針"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "바늘"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
-				SIF TALENT:サド
+			CASE "허가를 청한다", "소극적 따른다"
+				SIF TALENT:새디즘
 					LTEMP += 2
-				SIF IS_NOWCOMNAME("悲鳴を上げる") || (IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT派生)
+				SIF IS_NOWCOMNAME("비명을 올린다") || (IS_NOWCOMNAME("아픔을 참는다") && TFLAG:REACT파생)
 					LTEMP += 1
 				LTEMP -= 1
 		ENDSELECT
-	CASE "縄"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "줄"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
-				SIF TALENT:サド
+			CASE "허가를 청한다", "소극적 따른다"
+				SIF TALENT:새디즘
 					LTEMP += 2
 				{
-				SIF IS_NOWCOMNAME("恥ずかしがる") || IS_NOWCOMNAME("悲鳴を上げる") 
-				|| (IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT派生)
+				SIF IS_NOWCOMNAME("부끄러워한다") || IS_NOWCOMNAME("비명을 올린다") 
+				|| (IS_NOWCOMNAME("아픔을 참는다") && TFLAG:REACT파생)
 				}
 					LTEMP += 1
 				LTEMP -= 1
 		ENDSELECT
-	CASE "アイマスク"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "아이마스크"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
-				SIF TALENT:サド
+			CASE "허가를 청한다", "소극적 따른다"
+				SIF TALENT:새디즘
 					LTEMP += 2
 				{
-				SIF IS_NOWCOMNAME("恥ずかしがる") || IS_NOWCOMNAME("悲鳴を上げる") 
-				|| (IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT派生)
+				SIF IS_NOWCOMNAME("부끄러워한다") || IS_NOWCOMNAME("비명을 올린다") 
+				|| (IS_NOWCOMNAME("아픔을 참는다") && TFLAG:REACT파생)
 				}
 					LTEMP += 1
 				LTEMP -= 1
 		ENDSELECT
-	CASE "ボールギャグ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "볼개그"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
-				SIF TALENT:サド
+			CASE "허가를 청한다", "소극적 따른다"
+				SIF TALENT:새디즘
 					LTEMP += 2
 				{
-				SIF IS_NOWCOMNAME("恥ずかしがる") || IS_NOWCOMNAME("悲鳴を上げる") 
-				|| (IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT派生)
+				SIF IS_NOWCOMNAME("부끄러워한다") || IS_NOWCOMNAME("비명을 올린다") 
+				|| (IS_NOWCOMNAME("아픔을 참는다") && TFLAG:REACT파생)
 				}
 					LTEMP += 1
 				LTEMP -= 1
 		ENDSELECT
-	CASE "罵倒"
-		SIF IS_COMGRONAME("積極的従う/平然と従う/受け入れる")
+	CASE "매도"
+		SIF IS_COMGRONAME("적극적 따른다/태연하게 따른다/받아들인다")
 			LTEMP += 1
-		SIF IS_COMGRONAME("許しを乞う/消極的従う")
+		SIF IS_COMGRONAME("허가를 청한다/소극적 따른다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("沈黙する")
+		SIF IS_NOWCOMNAME("침묵한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("怯える")
+		SIF IS_NOWCOMNAME("무서워한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("悲鳴を上げる")
+		SIF IS_NOWCOMNAME("비명을 올린다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("許しを乞う")
-			LTEMP += TALENT:サド || TALENT:意地悪 ? 2 # 0
-	CASE "三角木馬"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+		SIF IS_NOWCOMNAME("허가를 청한다")
+			LTEMP += TALENT:새디즘 || TALENT:심술쟁이 ? 2 # 0
+	CASE "삼각 목마"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
-				SIF TALENT:サド
+			CASE "허가를 청한다", "소극적 따른다"
+				SIF TALENT:새디즘
 					LTEMP += 2
-				SIF IS_NOWCOMNAME("悲鳴を上げる") || (IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT派生)
+				SIF IS_NOWCOMNAME("비명을 올린다") || (IS_NOWCOMNAME("아픔을 참는다") && TFLAG:REACT파생)
 					LTEMP += 1
 				LTEMP -= 1
 		ENDSELECT
-	CASE "浣腸セット"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "積極的従う", "平然と従う"
+	CASE "관장 세트"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "受け入れる"
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "許しを乞う", "消極的従う"
-				SIF TALENT:サド
+			CASE "허가를 청한다", "소극적 따른다"
+				SIF TALENT:새디즘
 					LTEMP += 2
-				SIF IS_NOWCOMNAME("悲鳴を上げる") || (IS_NOWCOMNAME("痛みを我慢する") && TFLAG:REACT派生)
+				SIF IS_NOWCOMNAME("비명을 올린다") || (IS_NOWCOMNAME("아픔을 참는다") && TFLAG:REACT파생)
 					LTEMP += 1
 				LTEMP -= 1
 		ENDSELECT
 
-	;ACT分類/異常系
+	;ACT 분류/이상계
 	;==============
-	CASE "フィストファック"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "피스트 성교"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "許しを乞う", "消極的従う"
+			CASE "허가를 청한다", "소극적 따른다"
 				LTEMP -= 1
 		ENDSELECT
-	CASE "アナルフィスト"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "애널 피스트"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "許しを乞う", "消極的従う"
+			CASE "허가를 청한다", "소극적 따른다"
 				LTEMP -= 1
 		ENDSELECT
-	CASE "両穴フィスト"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "양구멍 피스트"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 1
-			CASE "許しを乞う", "消極的従う"
+			CASE "허가를 청한다", "소극적 따른다"
 				LTEMP -= 1
 		ENDSELECT
-	CASE "放置プレイ"
-		SIF IS_NOWCOMNAME("沈黙する")
+	CASE "방치 플레이"
+		SIF IS_NOWCOMNAME("침묵한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("気弱く応答する")
+		SIF IS_NOWCOMNAME("심약구응답한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("無愛想に応答する")
+		SIF IS_NOWCOMNAME("무뚝뚝하게 응답한다")
 			LTEMP -= 2
-		SIF IS_NOWCOMNAME("愛想よく応答する")
+		SIF IS_NOWCOMNAME("붙임성 좋게 응답한다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("強気に応答する")
+		SIF IS_NOWCOMNAME("강하게 응답한다")
 			LTEMP -= 2
-		SIF IS_NOWCOMNAME("もっとハードにして")
+		SIF IS_NOWCOMNAME("좀 더 하드하게 해")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("許しを乞う")
+		SIF IS_NOWCOMNAME("허가를 청한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("気持ち良くして")
+		SIF IS_NOWCOMNAME("기분 좋게 해")
 			LTEMP += 1
-		SIF IS_NOWCOMNAME("悲鳴を上げる")
+		SIF IS_NOWCOMNAME("비명을 올린다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("怯える")
+		SIF IS_NOWCOMNAME("무서워한다")
 			LTEMP -= 2
-	CASE "公衆肉便器プレイ"
-		IF TFLAG:ACT派生 == 1
+	CASE "공중 육변기 플레이"
+		IF TFLAG:ACT파생 == 1
 			LTEMP -= 2
 		ELSE
-			IF !TFLAG:ACT派生
+			IF !TFLAG:ACT파생
 				LTEMP += 1
 			ELSE
-				LTEMP += TFLAG:ACT派生 == 2 ? 1 # 2
+				LTEMP += TFLAG:ACT파생 == 2 ? 1 # 2
 			ENDIF
 		ENDIF
-	CASE "ペニスバンド装着"
-		SIF IS_NOWCOMNAME("もっとハードにして")
+	CASE "페니스 밴드 장착"
+		SIF IS_NOWCOMNAME("좀 더 하드하게 해")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("許しを乞う")
+		SIF IS_NOWCOMNAME("허가를 청한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("気持ち良くして")
+		SIF IS_NOWCOMNAME("기분 좋게 해")
 			LTEMP += 1
-		SIF IS_NOWCOMNAME("悲鳴を上げる")
+		SIF IS_NOWCOMNAME("비명을 올린다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("怯える")
+		SIF IS_NOWCOMNAME("무서워한다")
 			LTEMP -= 2
 
-	;ACT分類/休憩系
+	;ACT 분류/휴게계
 	;==============
-	CASE "休ませる"
-		SIF IS_NOWCOMNAME("沈黙する")
+	CASE "쉬게 한다"
+		SIF IS_NOWCOMNAME("침묵한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("気弱く応答する")
+		SIF IS_NOWCOMNAME("심약구응답한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("無愛想に応答する")
+		SIF IS_NOWCOMNAME("무뚝뚝하게 응답한다")
 			LTEMP -= 2
-		SIF IS_NOWCOMNAME("愛想よく応答する")
+		SIF IS_NOWCOMNAME("붙임성 좋게 응답한다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("強気に応答する")
+		SIF IS_NOWCOMNAME("강하게 응답한다")
 			LTEMP -= 2
-		SIF IS_NOWCOMNAME("もっとハードにして")
+		SIF IS_NOWCOMNAME("좀 더 하드하게 해")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("許しを乞う")
+		SIF IS_NOWCOMNAME("허가를 청한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("気持ち良くして")
+		SIF IS_NOWCOMNAME("기분 좋게 해")
 			LTEMP += 1
-		SIF IS_NOWCOMNAME("悲鳴を上げる")
+		SIF IS_NOWCOMNAME("비명을 올린다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("怯える")
+		SIF IS_NOWCOMNAME("무서워한다")
 			LTEMP -= 2
-	CASE "栄養剤を飲ませる"
-		SIF IS_NOWCOMNAME("沈黙する")
+	CASE "영양제를 먹인다"
+		SIF IS_NOWCOMNAME("침묵한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("気弱く応答する")
+		SIF IS_NOWCOMNAME("심약구응답한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("無愛想に応答する")
+		SIF IS_NOWCOMNAME("무뚝뚝하게 응답한다")
 			LTEMP -= 2
-		SIF IS_NOWCOMNAME("愛想よく応答する")
+		SIF IS_NOWCOMNAME("붙임성 좋게 응답한다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("強気に応答する")
+		SIF IS_NOWCOMNAME("강하게 응답한다")
 			LTEMP -= 2
-		SIF IS_NOWCOMNAME("もっとハードにして")
+		SIF IS_NOWCOMNAME("좀 더 하드하게 해")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("許しを乞う")
+		SIF IS_NOWCOMNAME("허가를 청한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("気持ち良くして")
+		SIF IS_NOWCOMNAME("기분 좋게 해")
 			LTEMP += 1
-		SIF IS_NOWCOMNAME("悲鳴を上げる")
+		SIF IS_NOWCOMNAME("비명을 올린다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("怯える")
+		SIF IS_NOWCOMNAME("무서워한다")
 			LTEMP -= 2
-	CASE "治療する"
-		SIF IS_NOWCOMNAME("沈黙する")
+	CASE "치료한다"
+		SIF IS_NOWCOMNAME("침묵한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("気弱く応答する")
+		SIF IS_NOWCOMNAME("심약구응답한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("無愛想に応答する")
+		SIF IS_NOWCOMNAME("무뚝뚝하게 응답한다")
 			LTEMP -= 2
-		SIF IS_NOWCOMNAME("愛想よく応答する")
+		SIF IS_NOWCOMNAME("붙임성 좋게 응답한다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("強気に応答する")
+		SIF IS_NOWCOMNAME("강하게 응답한다")
 			LTEMP -= 2
-		SIF IS_NOWCOMNAME("もっとハードにして")
+		SIF IS_NOWCOMNAME("좀 더 하드하게 해")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("許しを乞う")
+		SIF IS_NOWCOMNAME("허가를 청한다")
 			LTEMP -= 1
-		SIF IS_NOWCOMNAME("気持ち良くして")
+		SIF IS_NOWCOMNAME("기분 좋게 해")
 			LTEMP += 1
-		SIF IS_NOWCOMNAME("悲鳴を上げる")
+		SIF IS_NOWCOMNAME("비명을 올린다")
 			LTEMP += 2
-		SIF IS_NOWCOMNAME("怯える")
+		SIF IS_NOWCOMNAME("무서워한다")
 			LTEMP -= 2
 
-	;ACT分類/性交奉仕系
+	;ACT 분류/성교 봉사계
 	;==================
-	CASE "正常位させる"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "정상위 시킨다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 1
-			CASE "消極的従う"
+			CASE "소극적 따른다"
 				LTEMP += 1
 		ENDSELECT
-	CASE "後背位させる"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "후배위 시킨다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 1
-			CASE "消極的従う"
+			CASE "소극적 따른다"
 				LTEMP += 1
 		ENDSELECT
-	CASE "対面座位させる"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "대면좌위 시킨다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 1
-			CASE "消極的従う"
+			CASE "소극적 따른다"
 				LTEMP += 1
 		ENDSELECT
-	CASE "背面座位させる"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "배면좌위 시킨다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 1
-			CASE "消極的従う"
+			CASE "소극적 따른다"
 				LTEMP += 1
 		ENDSELECT
-	CASE "アナルセックスさせる"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "애널 섹스 시킨다"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 2
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 3
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 1
-			CASE "消極的従う"
+			CASE "소극적 따른다"
 				LTEMP += 1
 		ENDSELECT
-	CASE "逆レイプ"
-		SELECTCASE COMGRONAME(TFLAG:REACT分類)
-			CASE "受け入れる"
+	CASE "역강간"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "받아들인다"
 				LTEMP += 3
-			CASE "積極的従う", "平然と従う"
+			CASE "적극적 따른다", "태연하게 따른다"
 				LTEMP += 2
-			CASE "許しを乞う"
+			CASE "허가를 청한다"
 				LTEMP -= 1
-			CASE "消極的従う"
+			CASE "소극적 따른다"
 				LTEMP += 1
 		ENDSELECT
 ENDSELECT
 
-;興味の加算
+;흥미의 가산
 LOCAL:GET_NORMALACTNUM(TFLAG:ACT) += LTEMP

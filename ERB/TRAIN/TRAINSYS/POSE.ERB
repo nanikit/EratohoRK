@@ -1,1495 +1,1495 @@
 ﻿[SKIPSTART]
-;────────────────────────────────────
-;MASTERの体勢
+;─
+;MASTER의 몸의 자세
 @MASTER_POSE
-;姿勢関連のTCVARを初期化する
-;eratohoぱ。等の実装と違って、前の姿勢を考慮はしない路線
-;　　だったのですが、メッセージ表示の上でのみ考慮することに変更
-;────────────────────────────────────
+;자세 관련의 TCVAR를 초기화한다
+;eratoho. 등의 실장과 달리, 전의 자세를 고려는 하지 않는 노선
+;　　였던 것입니다만, 메세지 표시 후에서만 고려하는 일로 변경
+;─
 
 ;-------------------------------------------------
-;ACT前姿勢変化処理
+;ACT 전자세 변화 처리
 ;-------------------------------------------------
 
-;強制脱衣が発生していれば姿勢を補正
-IF TFLAG:強制脱衣
-	;前回の姿勢によって補正
-	SELECTCASE TCVAR:MASTER:姿勢
-		;四つん這いは自由に戻す
+;강제 탈의가 발생하고 있으면 자세를 보정
+IF TFLAG:강제 탈의
+	;전회의 자세에 의해 보정
+	SELECTCASE TCVAR:MASTER:자세
+		;네발로 엎드림은 자유롭게 되돌린다
 		CASE 3
-			CALL SET_POSE(MASTER, "自由")
-		;膝立ちは座らせる
+			CALL SET_POSE(MASTER, "자유")
+		;무릎서기는 앉게 한다
 		CASE 10
-			CALL SET_POSE(MASTER, "座る")
+			CALL SET_POSE(MASTER, "앉는다")
 	ENDSELECT
-		;他は継続する
+		;외는 계속한다
 ENDIF
 
-;自主脱衣が発生していれば位置をリセット
-IF TFLAG:自主脱衣
-	CALL SET_POSE(TARGET, "自由", "無効", "無効")
+;자주 탈의가 발생하고 있으면 위치를 리셋트
+IF TFLAG:자주 탈의
+	CALL SET_POSE(TARGET, "자유", "무효", "무효")
 ENDIF
 
 ;-------------------------------------------------
-;ACT直前処理
+;ACT 직전 처리
 ;-------------------------------------------------
 
-;現在の位置情報を前回の位置へ格納
-TCVAR:MASTER:前回の姿勢 = TCVAR:MASTER:姿勢
-TCVAR:MASTER:前回の位置前後 = TCVAR:MASTER:位置前後
-TCVAR:MASTER:前回の位置上下 = TCVAR:MASTER:位置上下
+;현재의 위치 정보를 전회의 위치에 격납
+TCVAR:MASTER:전회의 자세 = TCVAR:MASTER:자세
+TCVAR:MASTER:전회의 위치 전후 = TCVAR:MASTER:위치 전후
+TCVAR:MASTER:전회의 위치 상하 = TCVAR:MASTER:위치 상하
 
-;一度初期化する
-CALL SET_POSE(MASTER, "自由")
-CALL SET_POSE(TARGET, "自由", "無効", "無効")
-TCVAR:MASTER:REACT姿勢変化 = 0
+;한 번 초기화한다
+CALL SET_POSE(MASTER, "자유")
+CALL SET_POSE(TARGET, "자유", "무효", "무효")
+TCVAR:MASTER:REACT 자세 변화 = 0
 
 ;-------------------------------------------------
-;ACT直前処理
+;ACT 직전 처리
 ;-------------------------------------------------
 
-;体力限界なら仰向け
-IF BASE:MASTER:体力 <= 0
-	CALL SET_POSE(MASTER, "仰向")
-	CALL CONDITION_POSE("体力", MASTER, "仰向")
+;체력 한계라면 위로 돌리고
+IF BASE:MASTER:체력 <= 0
+	CALL SET_POSE(MASTER, "앙향")
+	CALL CONDITION_POSE("체력", MASTER, "앙향")
 ENDIF
 
-;調教対象自慰中
-IF GETBIT(TEQUIP:自慰中, 0)
-	CALL SET_USE(MASTER, "Ｐ", MASTER, "手")
-	CALL CONDITION_USE("M自慰", MASTER, "Ｐ", MASTER, "手")
+;조교 대상 자위중
+IF GETBIT(TEQUIP:자위중, 0)
+	CALL SET_USE(MASTER, "P", MASTER, "손")
+	CALL CONDITION_USE("M자위", MASTER, "P", MASTER, "손")
 ENDIF
 
-;顔面騎乗中
-IF TEQUIP:顔面騎乗
-	CALL SET_USE(MASTER, "口", TARGET, "Ｖ")
-	CALL CONDITION_USE("TM顔面騎乗V", MASTER, "口", TARGET, "Ｖ")
-	CALL SET_POSE(MASTER, "仰向")
-	CALL CONDITION_POSE("TM顔面騎乗V", MASTER, "仰向")
+;안면 승마중
+IF TEQUIP:안면 승마
+	CALL SET_USE(MASTER, "입", TARGET, "V")
+	CALL CONDITION_USE("TM안면 승마 V", MASTER, "입", TARGET, "V")
+	CALL SET_POSE(MASTER, "앙향")
+	CALL CONDITION_POSE("TM안면 승마 V", MASTER, "앙향")
 ENDIF
-IF TEQUIP:顔面騎乗アナル
-	CALL SET_USE(MASTER, "口", TARGET, "Ａ")
-	CALL CONDITION_USE("TM顔面騎乗A", MASTER, "口", TARGET, "Ｖ")
-	CALL SET_POSE(MASTER, "仰向")
-	CALL CONDITION_POSE("TM顔面騎乗A", MASTER, "仰向")
-ENDIF
-
-;Ｃ愛撫
-IF TEQUIP:調教対象Ｃ使用 == 1
-	CALL SET_USE(MASTER, "Ｐ", TARGET, "手")
-	CALL CONDITION_USE("TM顔面騎乗A", MASTER, "Ｐ", TARGET, "手")
-ENDIF
-IF TEQUIP:調教対象Ｃ使用 == 2
-	CALL SET_USE(MASTER, "Ｐ", TARGET, "口")
-	CALL CONDITION_USE("TM顔面騎乗A", MASTER, "Ｐ", TARGET, "口")
+IF TEQUIP:안면 승마 애널
+	CALL SET_USE(MASTER, "입", TARGET, "A")
+	CALL CONDITION_USE("TM안면 승마 A", MASTER, "입", TARGET, "V")
+	CALL SET_POSE(MASTER, "앙향")
+	CALL CONDITION_POSE("TM안면 승마 A", MASTER, "앙향")
 ENDIF
 
-;ACTごとのPOSE情報を呼ぶ
-;※要修正
-;ACTごとにACTABLE、MESSAGE、POSEを収めたファイルにするとかいいと思う。まずは関数化から始めます
+;C애무
+IF TEQUIP:조교 대상 C사용 == 1
+	CALL SET_USE(MASTER, "P", TARGET, "손")
+	CALL CONDITION_USE("TM안면 승마 A", MASTER, "P", TARGET, "손")
+ENDIF
+IF TEQUIP:조교 대상 C사용 == 2
+	CALL SET_USE(MASTER, "P", TARGET, "입")
+	CALL CONDITION_USE("TM안면 승마 A", MASTER, "P", TARGET, "입")
+ENDIF
+
+;ACT마다의 POSE 정보를 부른다
+;※요점 수정
+;ACT 마다 ACTABLE, MESSAGE, POSE를 거둔 파일로 한다든가 좋다고 생각한다. 우선은 함수화로부터 시작합니다
 TRYCALLFORM MASTER_POSE_ACT{TFLAG:ACT}
 
-;とは言うけど関数化しないほうが設定しやすいんですよねここ…
-;以下姿勢の設定　ぱ。追加部分
+;라고는 말하지만 함수화하지 않는 편이 설정하기 쉽지요 여기…
+;이하 자세의 설정  . 추가 부분
 
-;顔面騎乗、押し倒しによる強制仰向け
-IF TEQUIP:顔面騎乗 || TEQUIP:顔面騎乗アナル || TEQUIP:押し倒し中 || IS_NOWACTNAME("押し倒す")
-	CALL SET_POSE(MASTER, "仰向")
-	SIF TEQUIP:顔面騎乗 || TEQUIP:顔面騎乗アナル
-		CALL SET_POSE(TARGET, "座る", "継続", "上位")
-	SIF TEQUIP:押し倒し中 || IS_NOWACTNAME("押し倒す")
-		CALL SET_POSE(TARGET, "座る", "対面", "上位")
-;性交・性奉系ACTは先に処理
-ELSEIF MENU(GET_ACTM(TFLAG:ACT)) == "性交" || MENU(GET_ACTM(TFLAG:ACT)) == "性奉"
-	;体位による設定
+;안면 승마, 밀어 넘어뜨리기에 의한 강제 위로 돌리고
+IF TEQUIP:안면 승마 || TEQUIP:안면 승마 애널 || TEQUIP:밀어 넘어뜨리기중 || IS_NOWACTNAME("밀어 넘어뜨린다")
+	CALL SET_POSE(MASTER, "앙향")
+	SIF TEQUIP:안면 승마 || TEQUIP:안면 승마 애널
+		CALL SET_POSE(TARGET, "앉는다", "계속", "상위")
+	SIF TEQUIP:밀어 넘어뜨리기중 || IS_NOWACTNAME("밀어 넘어뜨린다")
+		CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
+;성교·성 봉계 ACT는 먼저 처리
+ELSEIF MENU(GET_ACTM(TFLAG:ACT)) == "성교" || MENU(GET_ACTM(TFLAG:ACT)) == "성 봉"
+	;체위에 의한 설정
 	SELECTCASE TFLAG:ACT
-		;正常位
+		;정상위
 		CASE 30
-			CALL SET_POSE(MASTER, "仰向")
-			CALL SET_POSE(TARGET, "座る", "対面", "上位")
-		;後背位、アナルセックス
+			CALL SET_POSE(MASTER, "앙향")
+			CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
+		;후배위, 애널 섹스
 		CASE 31, 35
-			CALL SET_POSE(MASTER, "四這")
-			CALL SET_POSE(TARGET, "膝立", "背後", "無効")
-		;騎乗位
+			CALL SET_POSE(MASTER, "4저")
+			CALL SET_POSE(TARGET, "히자타테", "배후", "무효")
+		;승마위
 		CASE 32
-			CALL SET_POSE(MASTER, "膝立")
-			CALL SET_POSE(TARGET, "仰向", "無効", "下位")
-		;対面座位
+			CALL SET_POSE(MASTER, "히자타테")
+			CALL SET_POSE(TARGET, "앙향", "무효", "하위")
+		;대면좌위
 		CASE 33
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "座る", "対面", "無効")
-		;背面座位
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+		;배면좌위
 		CASE 34
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "座る", "背後", "無効")
-		;性交奉仕
-		;正常位
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앉는다", "배후", "무효")
+		;성교 봉사
+		;정상위
 		CASE 95
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "仰向", "対面", "下位")
-		;後背位、アナルセックス
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앙향", "대면", "하위")
+		;후배위, 애널 섹스
 		CASE 96, 99
-			CALL SET_POSE(MASTER, "膝立")
-			CALL SET_POSE(TARGET, "四這", "前面", "無効")
-		;騎乗位（逆レイプ）
+			CALL SET_POSE(MASTER, "히자타테")
+			CALL SET_POSE(TARGET, "4저", "전면", "무효")
+		;승마위(역강간)
 		CASE 103
-			CALL SET_POSE(MASTER, "仰向")
-			CALL SET_POSE(TARGET, "膝立", "無効", "上位")
-		;対面座位
+			CALL SET_POSE(MASTER, "앙향")
+			CALL SET_POSE(TARGET, "히자타테", "무효", "상위")
+		;대면좌위
 		CASE 97
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "座る", "対面", "無効")
-		;背面座位
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+		;배면좌위
 		CASE 98
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "座る", "前面", "無効")
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앉는다", "전면", "무효")
 	ENDSELECT
-;性交中
-ELSEIF TEQUIP:性交中
-	;体位による設定
-	SELECTCASE TEQUIP:性交中
-		;正常位
+;성교중
+ELSEIF TEQUIP:성교중
+	;체위에 의한 설정
+	SELECTCASE TEQUIP:성교중
+		;정상위
 		CASE 1
-			CALL SET_POSE(MASTER, "仰向")
-			CALL SET_POSE(TARGET, "座る", "対面", "上位")
-		;後背位、アナルセックス
+			CALL SET_POSE(MASTER, "앙향")
+			CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
+		;후배위, 애널 섹스
 		CASE 2, 6
-			CALL SET_POSE(MASTER, "四這")
-			CALL SET_POSE(TARGET, "膝立", "背後", "無効")
-		;騎乗位
+			CALL SET_POSE(MASTER, "4저")
+			CALL SET_POSE(TARGET, "히자타테", "배후", "무효")
+		;승마위
 		CASE 3
-			CALL SET_POSE(MASTER, "膝立")
-			CALL SET_POSE(TARGET, "仰向", "無効", "下位")
-		;対面座位
+			CALL SET_POSE(MASTER, "히자타테")
+			CALL SET_POSE(TARGET, "앙향", "무효", "하위")
+		;대면좌위
 		CASE 4
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "座る", "対面", "無効")
-		;背面座位
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+		;배면좌위
 		CASE 5
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "座る", "背後", "無効")
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앉는다", "배후", "무효")
 	ENDSELECT
-;性交奉仕中
-ELSEIF TEQUIP:性交奉仕中
-	;体位による設定
-	SELECTCASE TEQUIP:性交奉仕中
-		;正常位
+;성교 봉사중
+ELSEIF TEQUIP:성교 봉사중
+	;체위에 의한 설정
+	SELECTCASE TEQUIP:성교 봉사중
+		;정상위
 		CASE 1
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "仰向", "対面", "下位")
-		;後背位、アナルセックス
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앙향", "대면", "하위")
+		;후배위, 애널 섹스
 		CASE 2, 6
-			CALL SET_POSE(MASTER, "膝立")
-			CALL SET_POSE(TARGET, "四這", "前面", "無効")
-		;騎乗位（逆レイプ）
+			CALL SET_POSE(MASTER, "히자타테")
+			CALL SET_POSE(TARGET, "4저", "전면", "무효")
+		;승마위(역강간)
 		CASE 3
-			CALL SET_POSE(MASTER, "仰向")
-			CALL SET_POSE(TARGET, "膝立", "無効", "上位")
-		;対面座位
+			CALL SET_POSE(MASTER, "앙향")
+			CALL SET_POSE(TARGET, "히자타테", "무효", "상위")
+		;대면좌위
 		CASE 4
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "座る", "対面", "無効")
-		;背面座位
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+		;배면좌위
 		CASE 5
-			CALL SET_POSE(MASTER, "座る")
-			CALL SET_POSE(TARGET, "座る", "前面", "無効")
+			CALL SET_POSE(MASTER, "앉는다")
+			CALL SET_POSE(TARGET, "앉는다", "전면", "무효")
 	ENDSELECT
-;ACTごとの姿勢情報を代入
-;ただしCOM次第では変更になる（暴れるなど）
+;ACT마다의 자세 정보를 대입
+;다만 COM 나름으로는 변경이 된다(날뛴다 따위)
 ELSE
-	;ACT分類による設定
+	;ACT 분류에 의한 설정
 	SELECTCASE MENU(GET_ACTM(TFLAG:ACT))
-		CASE "愛撫", "道具"
-			;どこを愛撫しているか
+		CASE "애무", "도구"
+			;어디를 애무하고 있을까
 			SELECTCASE CARESS_SPOT(TARGET)
-				;Ａ
+				;A
 				CASE 3
-					;口でしている
+					;구로 하고 있다
 					IF MA_PLAYER(1) == 1
-						;すでに仰向けの場合（難易度高い気がするが）
-						IF TFLAG:仰向け
-							CALL SET_POSE(MASTER, "仰向")
-							CALL SET_POSE(TARGET, "四這", "無効", "上位")
-						;そうでなければ四つん這い
+						;벌써 위로 돌리고의 경우(난이도 높은 생각이 들지만)
+						IF TFLAG:위로 돌리고
+							CALL SET_POSE(MASTER, "앙향")
+							CALL SET_POSE(TARGET, "4저", "무효", "상위")
+						;그렇지 않으면 네발로 엎드림
 						ELSE
-							CALL SET_POSE(MASTER, "四這")
-							CALL SET_POSE(TARGET, "四這", "無効", "下位")
+							CALL SET_POSE(MASTER, "4저")
+							CALL SET_POSE(TARGET, "4저", "무효", "하위")
 						ENDIF
-					;手など
+					;손 따위
 					ELSE
-						;すでに仰向けの場合
-						IF TFLAG:仰向け
-							CALL SET_POSE(MASTER, "仰向")
-							CALL SET_POSE(TARGET, "膝立", "無効", "上位")
+						;벌써 위로 돌리고의 경우
+						IF TFLAG:위로 돌리고
+							CALL SET_POSE(MASTER, "앙향")
+							CALL SET_POSE(TARGET, "히자타테", "무효", "상위")
 						ELSE
-							;前回の姿勢によって補正
-							;口と違い、前後・上下の指定はありません
-							SELECTCASE TCVAR:MASTER:前回の姿勢
-								;起立・膝立ち
+							;전회의 자세에 의해 보정
+							;구와 달라, 전후·상하의 지정은 없습니다
+							SELECTCASE TCVAR:MASTER:전회의 자세
+								;기립·무릎서기
 								CASE 4, 10
-									;3/4で継続
+									;3/4로 계속
 									IF RAND:4
-										CALL SET_POSE(MASTER, "前回")
-										CALL SET_POSE(TARGET, "前回", "前回", "前回")
-									;そうでなければ四つん這い
+										CALL SET_POSE(MASTER, "전회")
+										CALL SET_POSE(TARGET, "전회", "전회", "전회")
+									;그렇지 않으면 네발로 엎드림
 									ELSE
-										CALL SET_POSE(MASTER, "四這")
-										CALL SET_POSE(TARGET, "膝立", "無効", "下位")
+										CALL SET_POSE(MASTER, "4저")
+										CALL SET_POSE(TARGET, "히자타테", "무효", "하위")
 									ENDIF
-								;座り
+								;안정도
 								CASE 2
-									;3/4で膝立ちに変化する
+									;3/4로 무릎서기에 변화한다
 									IF RAND:4
-										CALL SET_POSE(MASTER, "膝立")
-									;そうでなければ四つん這い
+										CALL SET_POSE(MASTER, "히자타테")
+									;그렇지 않으면 네발로 엎드림
 									ELSE
-										CALL SET_POSE(MASTER, "四這")
-										CALL SET_POSE(TARGET, "膝立", "無効", "下位")
+										CALL SET_POSE(MASTER, "4저")
+										CALL SET_POSE(TARGET, "히자타테", "무효", "하위")
 									ENDIF
-								;それ以外は四つん這い
+								;그 이외는 네발로 엎드림
 								CASEELSE
-									CALL SET_POSE(MASTER, "四這")
-									CALL SET_POSE(TARGET, "膝立", "無効", "下位")
+									CALL SET_POSE(MASTER, "4저")
+									CALL SET_POSE(TARGET, "히자타테", "무효", "하위")
 							ENDSELECT
 						ENDIF
 					ENDIF
-				;Ｃ、Ｖ
+				;C, V
 				CASE 1, 2
-					;性器同士でしている
+					;성기끼리로 하고 있다
 					IF GROUPMATCH(MC_PLAYER(1), 3, 8) || GROUPMATCH(MV_PLAYER(1), 3, 8)
-						;すでに仰向けの場合
-						IF TFLAG:仰向け
-							CALL SET_POSE(MASTER, "仰向")
-							CALL SET_POSE(TARGET, "座る", "対面", "上位")
-						;素股の場合、仰向けでなければ後背位準拠
+						;벌써 위로 돌리고의 경우
+						IF TFLAG:위로 돌리고
+							CALL SET_POSE(MASTER, "앙향")
+							CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
+						;가랑이의 경우, 위로 돌리고가 아니면 후배위 준거
 						ELSEIF PENIS(MASTER) && MC_PLAYER(1) == 8
-							CALL SET_POSE(MASTER, "膝立")
-							CALL SET_POSE(TARGET, "四這", "前面", "無効")
+							CALL SET_POSE(MASTER, "히자타테")
+							CALL SET_POSE(TARGET, "4저", "전면", "무효")
 						ELSE
-							;前回の姿勢によって補正
-							SELECTCASE TCVAR:MASTER:前回の姿勢
-								;仰向けは継続
+							;전회의 자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회의 자세
+								;위로 돌리고는 계속
 								CASE 1
-									CALL SET_POSE(MASTER, "仰向")
-									CALL SET_POSE(TARGET, "座る", "対面", "上位")
-								;それ以外
+									CALL SET_POSE(MASTER, "앙향")
+									CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
+								;그 이외
 								CASEELSE
-									;Ｃでイった直後は1/2で仰向けに変化する
-									IF NOWEX:MASTER:Ｃ絶頂 && RAND:2
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "座る", "対面", "上位")
-									;そうでなければ座り
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:C절정 && RAND:2
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
+									;그렇지 않으면 안정도
 									ELSE
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 									ENDIF
 							ENDSELECT
 						ENDIF
-					;胸でしている
+					;가슴으로 하고 있다
 					ELSEIF MC_PLAYER(1) == 6 || MV_PLAYER(1) == 6
-						;すでに仰向けの場合
-						IF TFLAG:仰向け
-							CALL SET_POSE(MASTER, "仰向")
-							CALL SET_POSE(TARGET, "座る", "対面", "上位")
+						;벌써 위로 돌리고의 경우
+						IF TFLAG:위로 돌리고
+							CALL SET_POSE(MASTER, "앙향")
+							CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
 						ELSE
-							;前回の姿勢によって補正
-							SELECTCASE TCVAR:MASTER:前回の姿勢
-								;仰向けは継続
+							;전회의 자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회의 자세
+								;위로 돌리고는 계속
 								CASE 1
-									CALL SET_POSE(MASTER, "仰向")
-									CALL SET_POSE(TARGET, "座る", "対面", "上位")
-								;それ以外
+									CALL SET_POSE(MASTER, "앙향")
+									CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
+								;그 이외
 								CASEELSE
-									;Ｃでイった直後は1/2で仰向けに変化する
-									IF NOWEX:MASTER:Ｃ絶頂 && RAND:2
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "座る", "対面", "上位")
-									;そうでなければ膝立ち
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:C절정 && RAND:2
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
+									;그렇지 않으면 무릎서기
 									ELSE
-										CALL SET_POSE(MASTER, "膝立")
-										CALL SET_POSE(TARGET, "仰向", "対面", "下位")
+										CALL SET_POSE(MASTER, "히자타테")
+										CALL SET_POSE(TARGET, "앙향", "대면", "하위")
 									ENDIF
 							ENDSELECT
 						ENDIF
-					;足でしている
+					;다리로 하고 있다
 					ELSEIF MC_PLAYER(1) == 7 || MV_PLAYER(1) == 7
-						;すでに仰向けの場合
-						IF TFLAG:仰向け
-							CALL SET_POSE(MASTER, "仰向")
-							CALL SET_POSE(TARGET, "起立", "対面", "無効")
+						;벌써 위로 돌리고의 경우
+						IF TFLAG:위로 돌리고
+							CALL SET_POSE(MASTER, "앙향")
+							CALL SET_POSE(TARGET, "기립", "대면", "무효")
 						ELSE
-							;前回の姿勢によって補正
-							SELECTCASE TCVAR:MASTER:前回の姿勢
-								;仰向けは継続
+							;전회의 자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회의 자세
+								;위로 돌리고는 계속
 								CASE 1
-									CALL SET_POSE(MASTER, "仰向")
-									CALL SET_POSE(TARGET, "起立", "対面", "無効")
-								;それ以外
+									CALL SET_POSE(MASTER, "앙향")
+									CALL SET_POSE(TARGET, "기립", "대면", "무효")
+								;그 이외
 								CASEELSE
-									;Ｃでイった直後は1/2で仰向けに変化する
-									IF NOWEX:MASTER:Ｃ絶頂 && RAND:2
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "起立", "対面", "無効")
-									;そうでなければ座り
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:C절정 && RAND:2
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "기립", "대면", "무효")
+									;그렇지 않으면 안정도
 									ELSE
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 									ENDIF
 							ENDSELECT
 						ENDIF
-					;口でしている
+					;구로 하고 있다
 					ELSEIF MC_PLAYER(1) == 1 || MV_PLAYER(1) == 1
-						;すでに仰向けの場合
-						IF TFLAG:仰向け
-							CALL SET_POSE(MASTER, "仰向")
-							;シックスナインは顔面騎乗に流れているはず
-							CALL SET_POSE(TARGET, "座る", "対面", "無効")
+						;벌써 위로 돌리고의 경우
+						IF TFLAG:위로 돌리고
+							CALL SET_POSE(MASTER, "앙향")
+							;식스나인은 안면 승마에 흐르고 있을 것
+							CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 						ELSE
-							;前回の姿勢によって補正
-							SELECTCASE TCVAR:MASTER:前回の姿勢
-								;仰向け
+							;전회의 자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회의 자세
+								;위로 돌리고
 								CASE 1
-									;イきそうなら3/4で座りに変化する
-									IF TCVAR:MASTER:イきそう && RAND:4
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;1/4で座りに変化する
-									ELSEIF !RAND:4
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ継続
+									;갈 것 같으면 3/4으로 안정도에 변화한다
+									IF TCVAR:MASTER:행그렇게 && RAND:4
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;1/4로 안정도에 변화한다
+									ELSEIF ! RAND:4
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 									ENDIF
-								;座り、自由
+								;앉아, 자유
 								CASE 2, 0
-									;イきそうなら3/4で膝立ちに変化する
-									IF TCVAR:MASTER:イきそう && RAND:4
-										CALL SET_POSE(MASTER, "膝立")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;Ｃでイった直後は1/2で仰向けに変化する
-									ELSEIF NOWEX:MASTER:Ｃ絶頂 && RAND:2
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ座り
+									;갈 것 같으면 3/4으로 무릎서기에 변화한다
+									IF TCVAR:MASTER:행그렇게 && RAND:4
+										CALL SET_POSE(MASTER, "히자타테")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									ELSEIF NOWEX:MASTER:C절정 && RAND:2
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 안정도
 									ELSE
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 									ENDIF
-								;四つん這い
+								;네발로 엎드림
 								CASE 3
-									;3/4で座りに変化する
+									;3/4로 안정도에 변화한다
 									IF RAND:4
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ仰向け
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 위로 돌리고
 									ELSE
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 									ENDIF
-								;起立
+								;기립
 								CASE 4
-									;Ｃでイった直後は膝立ちに変化する
-									IF NOWEX:MASTER:Ｃ絶頂
-										CALL SET_POSE(MASTER, "膝立")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ継続
+									;C로 간 직후는 무릎서기에 변화한다
+									IF NOWEX:MASTER:C절정
+										CALL SET_POSE(MASTER, "히자타테")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "起立")
-										CALL SET_POSE(TARGET, "膝立", "対面", "無効")
+										CALL SET_POSE(MASTER, "기립")
+										CALL SET_POSE(TARGET, "히자타테", "대면", "무효")
 									ENDIF
-								;膝立ち
+								;무릎서기
 								CASE 10
-									;Ｃでイった直後は座りに変化する
-									IF NOWEX:MASTER:Ｃ絶頂
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ継続
+									;C로 간 직후는 안정도에 변화한다
+									IF NOWEX:MASTER:C절정
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "膝立")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
+										CALL SET_POSE(MASTER, "히자타테")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 									ENDIF
 							ENDSELECT
 						ENDIF
-					;手・道具類など
+					;손·도구류 따위
 					ELSE
-						;すでに仰向けの場合
-						IF TFLAG:仰向け
-							CALL SET_POSE(MASTER, "仰向")
-							CALL SET_POSE(TARGET, "座る", "対面", "無効")
+						;벌써 위로 돌리고의 경우
+						IF TFLAG:위로 돌리고
+							CALL SET_POSE(MASTER, "앙향")
+							CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 						ELSE
-							;前回の姿勢によって補正
-							;口と違い、前後・上下の指定はありません
-							SELECTCASE TCVAR:MASTER:前回の姿勢
-								;仰向け
+							;전회의 자세에 의해 보정
+							;구와 달라, 전후·상하의 지정은 없습니다
+							SELECTCASE TCVAR:MASTER:전회의 자세
+								;위로 돌리고
 								CASE 1
-									;イきそうなら3/4で座りに変化する
-									IF TCVAR:MASTER:イきそう && RAND:4
-										CALL SET_POSE(MASTER, "座る")
-									;1/4で座りに変化する
-									ELSEIF !RAND:4
-										CALL SET_POSE(MASTER, "座る")
-									;そうでなければ継続
+									;갈 것 같으면 3/4으로 안정도에 변화한다
+									IF TCVAR:MASTER:행그렇게 && RAND:4
+										CALL SET_POSE(MASTER, "앉는다")
+									;1/4로 안정도에 변화한다
+									ELSEIF ! RAND:4
+										CALL SET_POSE(MASTER, "앉는다")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 									ENDIF
-								;座り、自由
+								;앉아, 자유
 								CASE 2, 0
-									;イきそうなら3/4で膝立ちに変化する
-									IF TCVAR:MASTER:イきそう && RAND:4
-										CALL SET_POSE(MASTER, "膝立")
-									;Ｃでイった直後は1/2で仰向けに変化する
-									ELSEIF NOWEX:MASTER:Ｃ絶頂 && RAND:2
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ座り
+									;갈 것 같으면 3/4으로 무릎서기에 변화한다
+									IF TCVAR:MASTER:행그렇게 && RAND:4
+										CALL SET_POSE(MASTER, "히자타테")
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
+									ELSEIF NOWEX:MASTER:C절정 && RAND:2
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 안정도
 									ELSE
-										CALL SET_POSE(MASTER, "座る")
+										CALL SET_POSE(MASTER, "앉는다")
 									ENDIF
-								;四つん這い
+								;네발로 엎드림
 								CASE 3
-									;位置が前でない場合、2/3で後ろから継続
-									IF TCVAR:MASTER:位置前後 != 1 && RAND:3
-										CALL SET_POSE(MASTER, "四這")
-										CALL SET_POSE(TARGET, "座る", "背後", "無効")
-									;そうでなければ座りに変化する
+									;위치가 전이 아닌 경우,2/3그리고 뒤로부터 계속
+									IF TCVAR:MASTER:위치 전후 != 1 && RAND:3
+										CALL SET_POSE(MASTER, "4저")
+										CALL SET_POSE(TARGET, "앉는다", "배후", "무효")
+									;그렇지 않으면 안정도에 변화한다
 									ELSE
-										CALL SET_POSE(MASTER, "座る")
+										CALL SET_POSE(MASTER, "앉는다")
 									ENDIF
-								;起立
+								;기립
 								CASE 4
-									;Ｃでイった直後は膝立ちに変化する
-									IF NOWEX:MASTER:Ｃ絶頂
-										CALL SET_POSE(MASTER, "膝立")
-									;そうでなければ継続
+									;C로 간 직후는 무릎서기에 변화한다
+									IF NOWEX:MASTER:C절정
+										CALL SET_POSE(MASTER, "히자타테")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "起立")
+										CALL SET_POSE(MASTER, "기립")
 									ENDIF
-								;膝立ち
+								;무릎서기
 								CASE 10
-									;Ｃでイった直後は座りに変化する
-									IF NOWEX:MASTER:Ｃ絶頂
-										CALL SET_POSE(MASTER, "座る")
-									;そうでなければ継続
+									;C로 간 직후는 안정도에 변화한다
+									IF NOWEX:MASTER:C절정
+										CALL SET_POSE(MASTER, "앉는다")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "膝立")
+										CALL SET_POSE(MASTER, "히자타테")
 									ENDIF
 							ENDSELECT
 						ENDIF
 					ENDIF
-				;Ｂ
+				;B
 				CASE 4
-					;口でしている、or 乳の揉み合い
+					;구로 하고 있는, or 젖의 몸싸움
 					IF MB_PLAYER(1) == 1 || TB_PLAYER(0) == 1
-						;すでに仰向けの場合
-						IF TFLAG:仰向け
-							CALL SET_POSE(MASTER, "仰向")
-							CALL SET_POSE(TARGET, "四這", "無効", "上位")
+						;벌써 위로 돌리고의 경우
+						IF TFLAG:위로 돌리고
+							CALL SET_POSE(MASTER, "앙향")
+							CALL SET_POSE(TARGET, "4저", "무효", "상위")
 						ELSE
-							;前回の姿勢によって補正
-							SELECTCASE TCVAR:MASTER:前回の姿勢
-								;仰向け
+							;전회의 자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회의 자세
+								;위로 돌리고
 								CASE 1
-									;1/4で座りに変化する
-									IF !RAND:4
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ継続
+									;1/4로 안정도에 변화한다
+									IF ! RAND:4
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "四這", "無効", "上位")
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "4저", "무효", "상위")
 									ENDIF
-								;座り、自由
+								;앉아, 자유
 								CASE 2, 0
-									;Ｂでイった直後は1/2で仰向けに変化する
-									IF NOWEX:MASTER:Ｂ絶頂 && RAND:2
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "四這", "無効", "上位")
-									;そうでなければ座り
+									;B로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:B절정 && RAND:2
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "4저", "무효", "상위")
+									;그렇지 않으면 안정도
 									ELSE
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 									ENDIF
-								;四つん這い
+								;네발로 엎드림
 								CASE 3
-									;3/4で座りに変化する
+									;3/4로 안정도에 변화한다
 									IF RAND:4
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ仰向け
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 위로 돌리고
 									ELSE
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "四這", "対面", "無効")
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "4저", "대면", "무효")
 									ENDIF
-								;起立
+								;기립
 								CASE 4
-									;Ｂでイった直後は膝立ちに変化する
-									IF NOWEX:MASTER:Ｂ絶頂
-										CALL SET_POSE(MASTER, "膝立")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ継続
+									;B로 간 직후는 무릎서기에 변화한다
+									IF NOWEX:MASTER:B절정
+										CALL SET_POSE(MASTER, "히자타테")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "起立")
-										CALL SET_POSE(TARGET, "膝立", "対面", "無効")
+										CALL SET_POSE(MASTER, "기립")
+										CALL SET_POSE(TARGET, "히자타테", "대면", "무효")
 									ENDIF
-								;膝立ち
+								;무릎서기
 								CASE 10
-									;Ｂでイった直後は座りに変化する
-									IF NOWEX:MASTER:Ｂ絶頂
-										CALL SET_POSE(MASTER, "座る")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
-									;そうでなければ継続
+									;B로 간 직후는 안정도에 변화한다
+									IF NOWEX:MASTER:B절정
+										CALL SET_POSE(MASTER, "앉는다")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "膝立")
-										CALL SET_POSE(TARGET, "座る", "対面", "無効")
+										CALL SET_POSE(MASTER, "히자타테")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 									ENDIF
 							ENDSELECT
 						ENDIF
-					;手など
+					;손 따위
 					ELSE
-						;すでに仰向けの場合
-						IF TFLAG:仰向け
-							CALL SET_POSE(MASTER, "仰向")
-							CALL SET_POSE(TARGET, "座る", "対面", "上位")
+						;벌써 위로 돌리고의 경우
+						IF TFLAG:위로 돌리고
+							CALL SET_POSE(MASTER, "앙향")
+							CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
 						ELSE
-							;前回の姿勢によって補正
-							;口と違い、前後・上下の指定はありません
-							SELECTCASE TCVAR:MASTER:前回の姿勢
-								;仰向け
+							;전회의 자세에 의해 보정
+							;구와 달라, 전후·상하의 지정은 없습니다
+							SELECTCASE TCVAR:MASTER:전회의 자세
+								;위로 돌리고
 								CASE 1
-									;1/4で座りに変化する
-									IF !RAND:4
-										CALL SET_POSE(MASTER, "座る")
-									;そうでなければ継続
+									;1/4로 안정도에 변화한다
+									IF ! RAND:4
+										CALL SET_POSE(MASTER, "앉는다")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "座る", "対面", "上位")
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
 									ENDIF
-								;座り、自由
+								;앉아, 자유
 								CASE 2, 0
-									;Ｂでイった直後は1/2で仰向けに変化する
-									IF NOWEX:MASTER:Ｃ絶頂 && RAND:2
-										CALL SET_POSE(MASTER, "仰向")
-										CALL SET_POSE(TARGET, "座る", "対面", "上位")
-									;そうでなければ座り
+									;B로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:C절정 && RAND:2
+										CALL SET_POSE(MASTER, "앙향")
+										CALL SET_POSE(TARGET, "앉는다", "대면", "상위")
+									;그렇지 않으면 안정도
 									ELSE
-										CALL SET_POSE(MASTER, "座る")
+										CALL SET_POSE(MASTER, "앉는다")
 									ENDIF
-								;四つん這い
+								;네발로 엎드림
 								CASE 3
-									;位置が前でない場合、2/3で後ろから継続
-									IF TCVAR:MASTER:位置前後 != 1 && RAND:3
-										CALL SET_POSE(MASTER, "四這")
-										CALL SET_POSE(TARGET, "座る", "背後", "無効")
-									;そうでなければ座りに変化する
+									;위치가 전이 아닌 경우,2/3그리고 뒤로부터 계속
+									IF TCVAR:MASTER:위치 전후 != 1 && RAND:3
+										CALL SET_POSE(MASTER, "4저")
+										CALL SET_POSE(TARGET, "앉는다", "배후", "무효")
+									;그렇지 않으면 안정도에 변화한다
 									ELSE
-										CALL SET_POSE(MASTER, "座る")
+										CALL SET_POSE(MASTER, "앉는다")
 									ENDIF
-								;起立
+								;기립
 								CASE 4
-									;Ｂでイった直後は膝立ちに変化する
-									IF NOWEX:MASTER:Ｂ絶頂
-										CALL SET_POSE(MASTER, "膝立")
-									;そうでなければ継続
+									;B로 간 직후는 무릎서기에 변화한다
+									IF NOWEX:MASTER:B절정
+										CALL SET_POSE(MASTER, "히자타테")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "起立")
+										CALL SET_POSE(MASTER, "기립")
 									ENDIF
-								;膝立ち
+								;무릎서기
 								CASE 10
-									;Ｂでイった直後は座りに変化する
-									IF NOWEX:MASTER:Ｂ絶頂
-										CALL SET_POSE(MASTER, "座る")
-									;そうでなければ継続
+									;B로 간 직후는 안정도에 변화한다
+									IF NOWEX:MASTER:B절정
+										CALL SET_POSE(MASTER, "앉는다")
+									;그렇지 않으면 계속
 									ELSE
-										CALL SET_POSE(MASTER, "膝立")
+										CALL SET_POSE(MASTER, "히자타테")
 									ENDIF
 							ENDSELECT
 						ENDIF
 					ENDIF
 			ENDSELECT
-		CASE "奉仕"
-			;すでに仰向けの場合（やりにくいと思うけど…）
-			IF TFLAG:仰向け
-				CALL SET_POSE(MASTER, "仰向")
-				CALL SET_POSE(TARGET, "座る", "無効", "上位")
+		CASE "봉사"
+			;벌써 위로 돌리고의 경우(하기 어렵다고 생각하지만…)
+			IF TFLAG:위로 돌리고
+				CALL SET_POSE(MASTER, "앙향")
+				CALL SET_POSE(TARGET, "앉는다", "무효", "상위")
 			ELSE
-				;前回の姿勢によって補正
-				SELECTCASE TCVAR:MASTER:前回の姿勢
-					;仰向け…下から触る
+				;전회의 자세에 의해 보정
+				SELECTCASE TCVAR:MASTER:전회의 자세
+					;위로 돌리고… 아래로부터 손댄다
 					CASE 1
-						CALL SET_POSE(MASTER, "仰向")
-						CALL SET_POSE(TARGET, "座る", "無効", "上位")
-					;他…座って前から
-					;手の場合、COMで積極的従うことで後ろに回ることがある
+						CALL SET_POSE(MASTER, "앙향")
+						CALL SET_POSE(TARGET, "앉는다", "무효", "상위")
+					;외… 앉아 전부터
+					;손의 경우, COM로 적극적 따르는 것으로 뒤로 도는 일이 있다
 					CASEELSE
-						CALL SET_POSE(MASTER, "座る")
-						CALL SET_POSE(TARGET, "座る", "対面", "無効")
+						CALL SET_POSE(MASTER, "앉는다")
+						CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
 				ENDSELECT
 			ENDIF
-		;その他
+		;그 외
 		CASEELSE
-			;すでに仰向けの場合
-			IF TFLAG:仰向け
-				CALL SET_POSE(MASTER, "仰向")
+			;벌써 위로 돌리고의 경우
+			IF TFLAG:위로 돌리고
+				CALL SET_POSE(MASTER, "앙향")
 			ELSE
-				;個別の設定
+				;개별의 설정
 				SELECTCASE TFLAG:ACT
-					;キス
+					;키스
 					CASE 15
-						;自由の場合座らせる
-						IF TCVAR:MASTER:前回の姿勢 == 0
-							CALL SET_POSE(MASTER, "座る")
+						;자유의 경우 앉게 한다
+						IF TCVAR:MASTER:전회의 자세 == 0
+							CALL SET_POSE(MASTER, "앉는다")
 						ELSE
-							CALL SET_POSE(MASTER, "前回")
+							CALL SET_POSE(MASTER, "전회")
 						ENDIF
-						;自由の場合前に
-						IF TCVAR:MASTER:前回の位置前後 == 0
-							CALL SET_POSE(TARGET, "前回", "対面", "前回")
+						;자유의 경우전에
+						IF TCVAR:MASTER:전회의 위치 전후 == 0
+							CALL SET_POSE(TARGET, "전회", "대면", "전회")
 						ELSE
-							CALL SET_POSE(TARGET, "前回", "前回", "前回")
+							CALL SET_POSE(TARGET, "전회", "전회", "전회")
 						ENDIF
-					;自慰、放尿
+					;자위, 방뇨
 					CASE 40, 45
-						;自由の場合座らせる
-						IF TCVAR:MASTER:前回の姿勢 == 0
-							CALL SET_POSE(MASTER, "座る")
+						;자유의 경우 앉게 한다
+						IF TCVAR:MASTER:전회의 자세 == 0
+							CALL SET_POSE(MASTER, "앉는다")
 						ELSE
-							CALL SET_POSE(MASTER, "前回")
+							CALL SET_POSE(MASTER, "전회")
 						ENDIF
-						CALL SET_POSE(TARGET, "前回", "前回", "前回")
-					;秘貝開帳
+						CALL SET_POSE(TARGET, "전회", "전회", "전회")
+					;비패개장
 					CASE 41
-						;座り対面
-						CALL SET_POSE(MASTER, "座る")
-						CALL SET_POSE(TARGET, "座る", "対面", "無効")
-					;自慰見せつけ、ペニスバンド装着
+						;안정도 대면
+						CALL SET_POSE(MASTER, "앉는다")
+						CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+					;자위 과시해, 페니스 밴드 장착
 					CASE 42, 75
-						;対面
-						CALL SET_POSE(TARGET, "座る", "対面", "無効")
-					;大鏡、野外プレイ、コスプレ、休憩、栄養剤
+						;대면
+						CALL SET_POSE(TARGET, "앉는다", "대면", "무효")
+					;대거울, 야외 플레이, 코스프레, 휴게, 영양제
 					CASE 43, 44, 46, 90, 91
-						;リセット
-						CALL SET_POSE(MASTER, "自由")
-						CALL SET_POSE(TARGET, "自由", "無効", "無効")
-					;放置プレイ、公衆便所プレイ
+						;리셋트
+						CALL SET_POSE(MASTER, "자유")
+						CALL SET_POSE(TARGET, "자유", "무효", "무효")
+					;방치 플레이, 공중 변소 플레이
 					CASE 45, 74
-						;位置リセット、姿勢1/2で自由、1/2で継続
-						CALL SET_POSE(MASTER, RAND:2 ? "自由" # "前回")
-						CALL SET_POSE(TARGET, "自由", "無効", "無効")
-					;スパンキング、鞭、フィスト類
+						;위치 리셋트, 자세 1/2로 자유,1/2그리고 계속
+						CALL SET_POSE(MASTER, RAND:2? "자유" # "전회")
+						CALL SET_POSE(TARGET, "자유", "무효", "무효")
+					;스팽킹, 채찍, 피스트류
 					CASE 60, 61, 70, 71, 72
-						;四つん這い・後ろ
-						CALL SET_POSE(MASTER, "四這")
-						CALL SET_POSE(TARGET, "起立", "背後", "無効")
-					;縄・目隠し・ボールギャグ、治療
+						;네발로 엎드림·뒤
+						CALL SET_POSE(MASTER, "4저")
+						CALL SET_POSE(TARGET, "기립", "배후", "무효")
+					;줄·눈가리개·볼개그, 치료
 					CASE 63, 64, 65, 92
-						;座り・後ろ
-						CALL SET_POSE(MASTER, "座る")
-						CALL SET_POSE(TARGET, "起立", "背後", "無効")
-					;三角木馬
+						;안정도·뒤
+						CALL SET_POSE(MASTER, "앉는다")
+						CALL SET_POSE(TARGET, "기립", "배후", "무효")
+					;삼각 목마
 					CASE 67
-						;膝立ち、位置リセット
-						CALL SET_POSE(MASTER, "膝立")
-						CALL SET_POSE(TARGET, "起立", "無効", "無効")
+						;무릎서기, 위치 리셋트
+						CALL SET_POSE(MASTER, "히자타테")
+						CALL SET_POSE(TARGET, "기립", "무효", "무효")
 				ENDSELECT
 			ENDIF
 	ENDSELECT
 ENDIF
 
-;フェラ継続中の場合、前後位置を前に固定
-SIF TEQUIP:調教対象Ｃ使用 == 2
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
+;페라 계속중의 경우, 전후 위치를 앞에 고정
+SIF TEQUIP:조교 대상 C사용 == 2
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
 
-;ここまでで自由姿勢だった場合
-IF !TCVAR:MASTER:姿勢
-	;性交中・Ｐ使用中・自慰中ならば前回の姿勢・位置を踏襲
-	IF TEQUIP:性交中 || TEQUIP:性交奉仕中 || TEQUIP:調教対象Ｃ使用 || GETBIT(TEQUIP:自慰中, 0)
-		CALL SET_POSE(MASTER, "前回")
-		CALL SET_POSE(TARGET, "前回", "前回", "前回")
+;여기까지로 자유 자세였던 경우
+IF ! TCVAR:MASTER:자세
+	;성교중·P사용중·자위중이라면 전회의 자세·위치를 답습
+	IF TEQUIP:성교중 || TEQUIP:성교 봉사중 || TEQUIP:조교 대상 C사용 || GETBIT(TEQUIP:자위중, 0)
+		CALL SET_POSE(MASTER, "전회")
+		CALL SET_POSE(TARGET, "전회", "전회", "전회")
 	ENDIF
 ENDIF
 
-;ここまでで自由前後位置だった場合
-IF !TCVAR:MASTER:位置前後 && !TCVAR:MASTER:位置上下
-	;愛撫系・道具系ACTならば前回の位置を踏襲
-	;前回が自由なら前と後ろにランダムで振る
+;여기까지로 자유 전후 위치였던 경우
+IF ! TCVAR:MASTER:위치 전후 && ! TCVAR:MASTER:위치 상하
+	;애무계·도구계 ACT라면 전회의 위치를 답습
+	;전회가 자유로우면 앞과 뒤로 랜덤으로 거절한다
 	IF GROUPMATCH(GET_ACTM(TFLAG:ACT), 1, 2)
-		IF RANGE(TCVAR:MASTER:位置前後, 1, 2)
-			CALL SET_POSE(TARGET, "継続", "継続", "前回")
+		IF RANGE(TCVAR:MASTER:위치 전후, 1, 2)
+			CALL SET_POSE(TARGET, "계속", "계속", "전회")
 		ELSE
-			CALL SET_POSE(TARGET, "継続", "継続", RAND:2 ? "対面" # "背後")
+			CALL SET_POSE(TARGET, "계속", "계속", RAND:2? "대면" # "배후")
 		ENDIF
 	ENDIF
 ENDIF
 
-;助手の性交をキャンセル
-IF TFLAG:Ｐ使用中 || TFLAG:Ｐ挿入中
-	TFLAG:助手に挿入中 = 0
-	TFLAG:助手連続交合 = 0
+;조수의 성교를 캔슬
+IF TFLAG:P사용중 || TFLAG:P삽입중
+	TFLAG:조수에 삽입중 = 0
+	TFLAG:조수 연속 교합 = 0
 ENDIF
 
 @MASTER_POSE_ASSI, ARG
-;助手行動
-;手淫
-IF TCVAR:ARG:助手ACT == 7
-	SIF TFLAG:仰向け
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
-;クンニ,フェラ
-ELSEIF TCVAR:ARG:助手ACT == 1
-	SIF TFLAG:仰向け
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
-;貝あわせ,素股
-ELSEIF TCVAR:ARG:助手ACT == 2
-	SIF TFLAG:仰向け
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
-;パイズリ
-ELSEIF TCVAR:ARG:助手ACT == 3
-	SIF TFLAG:仰向け
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
-;足コキ
-ELSEIF TCVAR:ARG:助手ACT == 4
-	SIF TFLAG:仰向け == 0
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
-;ローター, オナホール
-ELSEIF TCVAR:ARG:助手ACT == 5
-	TFLAG:Ｐ使用中 += 1
-;逆レイプ
-ELSEIF TCVAR:ARG:助手ACT == 6
-	SIF TFLAG:仰向け
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ挿入中 = 1
-;アナル愛撫
-ELSEIF TCVAR:ARG:助手ACT == 10
-	TFLAG:Ａ使用中 = 2
-;アナル舐め
-ELSEIF TCVAR:ARG:助手ACT == 11
-	TFLAG:Ａ使用中 = 2
-;アナルローター
-ELSEIF TCVAR:ARG:助手ACT == 12
-	TFLAG:Ａ使用中 = 2
-;アナルバイブ
-ELSEIF TCVAR:ARG:助手ACT == 13
-	TFLAG:Ａ使用中 = 2
-;胸愛撫
-ELSEIF TCVAR:ARG:助手ACT == 20
-	TFLAG:胸使用中 = 1
+;조수 행동
+;자위
+IF TCVAR:ARG:조수 ACT == 7
+	SIF TFLAG:위로 돌리고
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
+;쿤닐링구스, 페라
+ELSEIF TCVAR:ARG:조수 ACT == 1
+	SIF TFLAG:위로 돌리고
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
+;조개 대면시켜 가랑이
+ELSEIF TCVAR:ARG:조수 ACT == 2
+	SIF TFLAG:위로 돌리고
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
+;파이즈리
+ELSEIF TCVAR:ARG:조수 ACT == 3
+	SIF TFLAG:위로 돌리고
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
+;풋잡
+ELSEIF TCVAR:ARG:조수 ACT == 4
+	SIF TFLAG:위로 돌리고 == 0
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
+;로터, 오나홀
+ELSEIF TCVAR:ARG:조수 ACT == 5
+	TFLAG:P사용중 += 1
+;역강간
+ELSEIF TCVAR:ARG:조수 ACT == 6
+	SIF TFLAG:위로 돌리고
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P삽입중 = 1
+;애널 애무
+ELSEIF TCVAR:ARG:조수 ACT == 10
+	TFLAG:A사용중 = 2
+;애널 빨고
+ELSEIF TCVAR:ARG:조수 ACT == 11
+	TFLAG:A사용중 = 2
+;애널 로터
+ELSEIF TCVAR:ARG:조수 ACT == 12
+	TFLAG:A사용중 = 2
+;애널 바이브
+ELSEIF TCVAR:ARG:조수 ACT == 13
+	TFLAG:A사용중 = 2
+;가슴 애무
+ELSEIF TCVAR:ARG:조수 ACT == 20
+	TFLAG:가슴 사용중 = 1
 
-;乳首舐め
-ELSEIF TCVAR:ARG:助手ACT == 21
-	TFLAG:胸使用中 = 1
-;乳首ローター
-ELSEIF TCVAR:ARG:助手ACT == 22
-	TFLAG:胸使用中 = 1
-;指挿入
-ELSEIF TCVAR:ARG:助手ACT == 30
-	TFLAG:Ｖ使用中 = 2
-;バイブ
-ELSEIF TCVAR:ARG:助手ACT == 31
-	TFLAG:Ｖ使用中 = 2
-;性交
-ELSEIF TCVAR:ARG:助手ACT == 32
-	SIF TFLAG:仰向け
-		TFLAG:仰向け = 2
-	TFLAG:Ｖ使用中 = 1
-;キス
-ELSEIF TCVAR:ARG:助手ACT == 40
-	SIF TFLAG:仰向け
-		TFLAG:仰向け = 2
-	TFLAG:口使用中 += 1
-;顔面騎乗
-ELSEIF TCVAR:ARG:助手ACT == 41
-	SIF TFLAG:仰向け
-		TFLAG:仰向け = 2
-	TFLAG:口使用中 = 2
-;足を舐めさせる
-ELSEIF TCVAR:ARG:助手ACT == 42
-	TFLAG:口使用中 = 2
+;유두 빨고
+ELSEIF TCVAR:ARG:조수 ACT == 21
+	TFLAG:가슴 사용중 = 1
+;유두 로터
+ELSEIF TCVAR:ARG:조수 ACT == 22
+	TFLAG:가슴 사용중 = 1
+;손가락 삽입
+ELSEIF TCVAR:ARG:조수 ACT == 30
+	TFLAG:V사용중 = 2
+;바이브
+ELSEIF TCVAR:ARG:조수 ACT == 31
+	TFLAG:V사용중 = 2
+;성교
+ELSEIF TCVAR:ARG:조수 ACT == 32
+	SIF TFLAG:위로 돌리고
+		TFLAG:위로 돌리고 = 2
+	TFLAG:V사용중 = 1
+;키스
+ELSEIF TCVAR:ARG:조수 ACT == 40
+	SIF TFLAG:위로 돌리고
+		TFLAG:위로 돌리고 = 2
+	TFLAG:구 사용중 += 1
+;안면 승마
+ELSEIF TCVAR:ARG:조수 ACT == 41
+	SIF TFLAG:위로 돌리고
+		TFLAG:위로 돌리고 = 2
+	TFLAG:구 사용중 = 2
+;다리를 빨게 한다
+ELSEIF TCVAR:ARG:조수 ACT == 42
+	TFLAG:구 사용중 = 2
 ENDIF
 
 
-;────────────────────────────────────
-;ACTごとのPOSE情報。主にMASTERについて
-;現状MASTER側だけが情報を持っています。拡張性のためTCVARを利用
-;どれも、=0は情報なし・自由ということで。会話とかそんな感じです
+;─
+;ACT마다의 POSE 정보. 주로 MASTER에 대해
+;현상 MASTER측만이 정보를 가지고 있습니다. 확장성이기 때문에 TCVAR를 이용
+;모두, =0은 정보 없음·자유라고 하는 일로. 회화라든지 그런 느낌입니다
 ;
-;結局、口上くらいしかこれらを参照していませんが…そのうち役に立つ？
+;결국, 구상 정도 밖에 이것들을 참조하고 있지 않습니다만… 그 중 도움이 되어?
 ;
-;※要修正
-;＠TCVAR:MASTER:1（姿勢）
-;	姿勢情報を格納するらしい。TFLAG:仰向け（仰向け）はそのうちこちらに移植されるべきか？
-;	一応、現在はTFLAG:仰向け=2から１ターンでは起き上がれないという要素があるので残しつつこちらにも記録することに。
-;	ほとんどこのTCVARは参照されていませんが、ここでデータだけは入れておいてもいいよね。
-;	(0=自由 1=仰向け 2=座る 3=四つん這い 4=起立 10=膝立ち)
+;※요점 수정
+;＠TCVAR:MASTER:1(자세)
+;	자세 정보를 격납하는 것 같다. TFLAG:위로 돌리고(위로 돌리고)는 그 중 이쪽에 이식되어야 할 것인가?
+;	일단, 현재는 TFLAG:위로 돌리고=2에서 1 턴에서는 일어날 수 없다고 하는 요소가 있으므로 남기면서 이쪽에도 기록하는 일에.
+;	거의 이 TCVAR는 참조되고 있지 않습니다만, 여기서 데이터만은 넣어 두어도 괜찮지요.
+;	(0=자유 1=위로 돌리고 2=앉는 3=네발로 엎드림 4=기립 10=무릎서기)
 ;
-;＠TCVAR:MASTER:2（位置前後）
-;	MASTERとTARGETの前後位置情報だけ格納。現状MASTER側だけが持っています
-;	=0は自由
-;	=1で対面（Ｍ→←Ｔ）
-;	=2でMASTERの背後（Ｔ→Ｍ→）
-;	=3でMASTERが背後（Ｍ→Ｔ→）
+;＠TCVAR:MASTER:2(위치 전후)
+;	MASTER와 TARGET의 전후 위치 정보만 격납. 현상 MASTER측만이 가지고 있습니다
+;	=0은 자유
+;	=1으로 대면(M→←T)
+;	=2로 MASTER의 배후(T→M→)
+;	=3으로 MASTER가 배후(M→T→)
 ;
-;＠TCVAR:MASTER:3（位置上下）
-;	MASTERとTARGETの上下位置情報。現状MASTER側だけが持っています
-;	=1で正位（MASTERが組み敷かれている）
-;	=2で逆位（MASTERがTARGETを組み敷いている）
+;＠TCVAR:MASTER:3(위치 상하)
+;	MASTER와 TARGET의 상하 위치 정보. 현상 MASTER측만이 가지고 있습니다
+;	=1으로 정 정도(MASTER가 깔아눌러지고 있다)
+;	=2로 역정도(MASTER가 TARGET를 깔아누르고 있다)
 
-;これでとりあえず、大まかには表せます。
-;────────────────────────────────────
-;010,愛撫/手淫する（Ｓ/Ｎ/Ｈ）（快Ｃ、快Ｂ、接触、情愛、性行動、不潔）
-;────────────────────────────────────
+;이것으로 우선, 대략적으로는 나타낼 수 있습니다.
+;─
+;010, 애무/자위 하는(S/N/H)(쾌C, 쾌B, 접촉, 사랑, 성행동, 불결)
+;─
 @MASTER_POSE_ACT10
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
 
-;────────────────────────────────────
-;011,胸愛撫/乳首吸い/乳の揉み合い（Ｓ/Ｎ/Ｈ）（快Ｂ、接触、情愛、性行動、痛み、不潔）
-;────────────────────────────────────
+;─
+;011, 가슴 애무/유두 들이마셔/젖의 몸싸움(S/N/H)(쾌B, 접촉, 사랑, 성행동, 상해, 불결)
+;─
 @MASTER_POSE_ACT11
-	TFLAG:胸使用中 = 1
-	;乳首吸い、乳の揉み合いは対面
-	SIF GROUPMATCH(TFLAG:ACT派生, 1, 2)
-		CALL SET_POSE(TARGET, "継続", "対面", "無効")
+	TFLAG:가슴 사용중 = 1
+	;유두 들이마셔, 젖의 몸싸움은 대면
+	SIF GROUPMATCH(TFLAG:ACT 파생, 1, 2)
+		CALL SET_POSE(TARGET, "계속", "대면", "무효")
 
-;────────────────────────────────────
-;012,クンニ/フェラする（Ｓ/Ｎ/Ｈ）（快Ｃ、接触、情愛、性行動、痛み、不潔）
-;────────────────────────────────────
+;─
+;012, 쿤닐링구스/페라하는(S/N/H)(쾌C, 접촉, 사랑, 성행동, 상해, 불결)
+;─
 @MASTER_POSE_ACT12
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
-	SIF !PENIS(MASTER)
-		TFLAG:Ｖ使用中 = 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;013,アナル愛撫（Ｎ/Ｈ）[罰]（快Ａ、接触、性行動、痛み、不潔、逸脱）
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
+	SIF ! PENIS(MASTER)
+		TFLAG:V사용중 = 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;013, 애널 애무(N/H)[벌](쾌A, 접촉, 성행동, 상해, 불결, 일탈)
+;─
 @MASTER_POSE_ACT13
-	TFLAG:Ａ使用中 += 1
-;────────────────────────────────────
-;014,アナル舐め（Ｎ/Ｈ）[罰]（快Ａ、接触、性行動、痛み、不潔、逸脱）
-;────────────────────────────────────
+	TFLAG:A사용중 += 1
+;─
+;014, 애널 빨고(N/H)[벌](쾌A, 접촉, 성행동, 상해, 불결, 일탈)
+;─
 @MASTER_POSE_ACT14
-	TFLAG:Ａ使用中 += 1
-	;背後
-	CALL SET_POSE(TARGET, "継続", "背後", "無効")
-;────────────────────────────────────
-;015,キス（Ｓ/Ｎ）（接触、情愛、性行動、痛み、不潔）
-;────────────────────────────────────
+	TFLAG:A사용중 += 1
+	;배후
+	CALL SET_POSE(TARGET, "계속", "배후", "무효")
+;─
+;015, 키스(S/N)(접촉, 사랑, 성행동, 상해, 불결)
+;─
 @MASTER_POSE_ACT15
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:口使用中 += 1
-;────────────────────────────────────
-;016,貝あわせ/素股する（Ｓ/Ｎ）（快Ｃ、接触、情愛、性行動、不潔、快ｃ）
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:구 사용중 += 1
+;─
+;016, 조개 우려라/가랑이 하는(S/N)(쾌C, 접촉, 사랑, 성행동, 불결, 쾌c)
+;─
 @MASTER_POSE_ACT16
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
-	TFLAG:Ｖ使用中 = 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;017,パイズリする（Ｓ/Ｎ）（快Ｃ、接触、情愛、痛み、性行動、不潔、快ｂ）
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
+	TFLAG:V사용중 = 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;017, 파이즈리 하는(S/N)(쾌C, 접촉, 사랑, 상해, 성행동, 불결, 쾌b)
+;─
 @MASTER_POSE_ACT17
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;018,足コキする（Ｓ/Ｎ/Ｈ）[罰]（快Ｃ、接触、情愛、性行動、不潔、逸脱）
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;018, 풋잡 하는(S/N/H)[벌](쾌C, 접촉, 사랑, 성행동, 불결, 일탈)
+;─
 @MASTER_POSE_ACT18
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;018,指挿入れ
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;018, 손가락 삽입해라
+;─
 @MASTER_POSE_ACT19
-	TFLAG:Ｖ使用中 += 1
-;────────────────────────────────────
-;020,ローター（Ｓ/Ｎ）（快Ｃ、中毒充足）
-;────────────────────────────────────
+	TFLAG:V사용중 += 1
+;─
+;020, 로터(S/N)(쾌C, 중독 충족)
+;─
 @MASTER_POSE_ACT20
-	TFLAG:Ｐ使用中 = 6
-;────────────────────────────────────
-;021,バイブ（Ｓ/Ｎ/Ｈ）[罰]（快Ｖ、痛み、逸脱、中毒充足、トラウマ）
-;────────────────────────────────────
+	TFLAG:P사용중 = 6
+;─
+;021, 바이브(S/N/H)[벌](쾌V, 상해, 일탈, 중독 충족, 트라우마)
+;─
 @MASTER_POSE_ACT21
-	TFLAG:Ｖ使用中 = 2
-;────────────────────────────────────
-;022,アナルバイブ（Ｎ/Ｈ）[罰]（快Ａ、痛み、逸脱、中毒充足）
-;────────────────────────────────────
+	TFLAG:V사용중 = 2
+;─
+;022, 애널 바이브(N/H)[벌](쾌A, 상해, 일탈, 중독 충족)
+;─
 @MASTER_POSE_ACT22
-	TFLAG:Ａ使用中 = 2
-;────────────────────────────────────
-;023,アナルビーズ（Ｓ/Ｎ/Ｈ）（快Ａ、痛み、逸脱、中毒充足）
-;────────────────────────────────────
+	TFLAG:A사용중 = 2
+;─
+;023, 애널 비즈(S/N/H)(쾌A, 상해, 일탈, 중독 충족)
+;─
 @MASTER_POSE_ACT23
-	TFLAG:Ａ使用中 = 2
-;────────────────────────────────────
-;024,クリキャップ/オナホール（Ｓ/Ｎ）（快Ｃ、中毒充足）
-;────────────────────────────────────
+	TFLAG:A사용중 = 2
+;─
+;024, 클리캡/오나홀(S/N)(쾌C, 중독 충족)
+;─
 @MASTER_POSE_ACT24
-	TFLAG:Ｐ使用中 = 5
-;────────────────────────────────────
-;025,ニプルキャップ
-;────────────────────────────────────
+	TFLAG:P사용중 = 5
+;─
+;025, 니플캡
+;─
 @MASTER_POSE_ACT25
-	TFLAG:胸使用中 = 1
-;────────────────────────────────────
-;026,ペニスバンド
-;────────────────────────────────────
+	TFLAG:가슴 사용중 = 1
+;─
+;026, 페니스 밴드
+;─
 @MASTER_POSE_ACT26
-	TFLAG:Ｐ使用中 = 6
-	TFLAG:Ａ使用中 = 2
-	TFLAG:Ｖ使用中 = 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;030,正常位（Ｓ/Ｎ）（快Ｖ、接触、情愛、性行動、痛み、中毒充足、トラウマ、快ｃ）
-;────────────────────────────────────
+	TFLAG:P사용중 = 6
+	TFLAG:A사용중 = 2
+	TFLAG:V사용중 = 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;030, 정상위(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;─
 @MASTER_POSE_ACT30
-	TFLAG:仰向け = 2
-	TFLAG:Ｖ使用中 = 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;031,後背位（Ｎ/Ｈ）[罰]（快Ｖ、接触、情愛、性行動、痛み、中毒充足、トラウマ、快ｃ）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 2
+	TFLAG:V사용중 = 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;031, 후배위(N/H)[벌](쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;─
 @MASTER_POSE_ACT31
-	TFLAG:仰向け = 0
-	TFLAG:Ｖ使用中 = 1
-	;背後
-	CALL SET_POSE(TARGET, "継続", "背後", "無効")
-;────────────────────────────────────
-;032,騎乗位（Ｓ/Ｎ）（快Ｖ、接触、情愛、性行動、痛み、中毒充足、トラウマ、快ｃ）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:V사용중 = 1
+	;배후
+	CALL SET_POSE(TARGET, "계속", "배후", "무효")
+;─
+;032, 승마위(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;─
 @MASTER_POSE_ACT32
-	TFLAG:仰向け = 0
-	TFLAG:Ｖ使用中 = 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;033,対面座位（Ｓ/Ｎ/Ｈ）（快Ｖ、接触、情愛、性行動、痛み、中毒充足、トラウマ、快ｃ）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:V사용중 = 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;033, 대면좌위(S/N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 중독 충족, 트라우마, 쾌c)
+;─
 @MASTER_POSE_ACT33
-	TFLAG:仰向け = 0
-	TFLAG:Ｖ使用中 = 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;034,背面座位（Ｎ/Ｈ）（快Ｖ、接触、情愛、性行動、痛み、露出、中毒充足、トラウマ、快ｃ）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:V사용중 = 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;034, 배면좌위(N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 노출, 중독 충족, 트라우마, 쾌c)
+;─
 @MASTER_POSE_ACT34
-	TFLAG:仰向け = 0
-	TFLAG:Ｖ使用中 = 1
-	;背後
-	CALL SET_POSE(TARGET, "継続", "背後", "無効")
-;────────────────────────────────────
-;035,アナルセックス（Ｎ/Ｈ/Ａ）[罰]（快Ａ、接触、情愛、性行動、痛み、逸脱、中毒充足、トラウマ、快ｃ）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:V사용중 = 1
+	;배후
+	CALL SET_POSE(TARGET, "계속", "배후", "무효")
+;─
+;035, 애널 섹스(N/H/A)[벌](쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독 충족, 트라우마, 쾌c)
+;─
 @MASTER_POSE_ACT35
-	TFLAG:Ａ使用中 = 2
-	;背後
-	CALL SET_POSE(TARGET, "継続", "背後", "無効")
-;────────────────────────────────────
-;103,逆レイプ（Ｎ/Ｈ/Ａ）[罰]（快Ｃ、接触、情愛、性行動、痛み、逸脱、中毒充足、トラウマ、快ｖ）
-;────────────────────────────────────
+	TFLAG:A사용중 = 2
+	;배후
+	CALL SET_POSE(TARGET, "계속", "배후", "무효")
+;─
+;103, 역강간(N/H/A)[벌](쾌C, 접촉, 사랑, 성행동, 상해, 일탈, 중독 충족, 트라우마, 쾌v)
+;─
 @MASTER_POSE_ACT103
-	TFLAG:仰向け = 2
-	TFLAG:Ｐ挿入中 = 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;041,秘貝開帳（Ｓ/Ｎ/Ｈ）（快Ｃ、露出、逸脱）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 2
+	TFLAG:P삽입중 = 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;041, 비패개장(S/N/H)(쾌C, 노출, 일탈)
+;─
 @MASTER_POSE_ACT41
-	TFLAG:Ｖ使用中 = 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;045,放尿（Ｎ/Ｈ/Ａ）[罰]（露出、逸脱、トラウマ）
-;────────────────────────────────────
+	TFLAG:V사용중 = 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;045, 방뇨(N/H/A)[벌](노출, 일탈, 트라우마)
+;─
 @MASTER_POSE_ACT45
-	TFLAG:Ｐ使用中 = 3
-	TFLAG:Ｖ使用中 = 2
-;────────────────────────────────────
-;050,手淫/愛撫強制（Ｓ/Ｎ）（不潔）
-;────────────────────────────────────
-;奉仕系の行動は拒否できるので、反応が出るまで身体の接触がないようにしておきます
+	TFLAG:P사용중 = 3
+	TFLAG:V사용중 = 2
+;─
+;050, 자위/애무 강제(S/N)(불결)
+;─
+;봉사계의 행동은 거부할 수 있으므로, 반응이 나올 때까지 신체의 접촉이 없도록 해 둡니다
 @MASTER_POSE_ACT50
-	TFLAG:足使用中 += 1
-	;対面（助手に事前に前を開けさせるため）
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;051,フェラチオ/クンニ強制（Ｓ/Ｎ/Ｈ）（不潔）
-;────────────────────────────────────
+	TFLAG:다리 사용중 += 1
+	;대면(조수에 사전에 전을 열게 하기 (위해)때문에)
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;051, 펠라치오/쿤닐링구스 강제(S/N/H)(불결)
+;─
 @MASTER_POSE_ACT51
-	SIF TFLAG:仰向け
-		TFLAG:仰向け = 2
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	SIF TEQUIP:調教対象Ｃ使用 == 1 || TEQUIP:調教対象Ｃ使用 == 2 || TEQUIP:調教対象Ｃ使用 == 4
-		TFLAG:仰向け = 2
-	TFLAG:口使用中 = 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;052,パイズリ（Ｓ/Ｎ/Ｈ）（不潔）
-;────────────────────────────────────
+	SIF TFLAG:위로 돌리고
+		TFLAG:위로 돌리고 = 2
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	SIF TEQUIP:조교 대상 C사용 == 1 || TEQUIP:조교 대상 C사용 == 2 || TEQUIP:조교 대상 C사용 == 4
+		TFLAG:위로 돌리고 = 2
+	TFLAG:구 사용중 = 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;052, 파이즈리(S/N/H)(불결)
+;─
 @MASTER_POSE_ACT52
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:胸使用中 = 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;053,素股（Ｓ/Ｎ/Ｈ）（不潔）
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:가슴 사용중 = 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;053, 가랑이(S/N/H)(불결)
+;─
 @MASTER_POSE_ACT53
-	TFLAG:Ｐ使用中 = 4
-	TFLAG:Ｖ使用中 = 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;055,足舐め強制（Ｎ/Ｈ/Ａ）[罰]（不潔、逸脱、トラウマ）
-;────────────────────────────────────
+	TFLAG:P사용중 = 4
+	TFLAG:V사용중 = 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;055, 다리 빨고 강제(N/H/A)[벌](불결, 일탈, 트라우마)
+;─
 @MASTER_POSE_ACT55
-	TFLAG:口使用中 = 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;056,イラマチオ（Ｈ/Ａ）[罰]（接触、情愛逆、性行動、痛み、拘束<=頭を掴む事、不潔、逸脱、トラウマ、快ｃ）
-;────────────────────────────────────
+	TFLAG:구 사용중 = 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;056, 이라마치오(H/A)[벌](접촉, 사랑역, 성행동, 상해, 구속<=머리를 잡는 일, 불결, 일탈, 트라우마, 쾌c)
+;─
 @MASTER_POSE_ACT56
-	TFLAG:口使用中 = 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
+	TFLAG:구 사용중 = 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
 
-;────────────────────────────────────
-;070,フィストファック（Ｈ/Ａ）[罰]（快Ｖ、接触、痛み、逸脱、中毒充足、トラウマ）
-;────────────────────────────────────
+;─
+;070, 피스트 성교(H/A)[벌](쾌V, 접촉, 상해, 일탈, 중독 충족, 트라우마)
+;─
 @MASTER_POSE_ACT70
-	TFLAG:Ｖ使用中 = 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;071,アナルフィスト（Ｈ/Ａ）[罰]（快Ａ、接触、痛み、逸脱、中毒充足、トラウマ）
-;────────────────────────────────────
+	TFLAG:V사용중 = 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;071, 애널 피스트(H/A)[벌](쾌A, 접촉, 상해, 일탈, 중독 충족, 트라우마)
+;─
 @MASTER_POSE_ACT71
-	TFLAG:Ａ使用中 = 2
-	;背後
-	CALL SET_POSE(TARGET, "継続", "背後", "無効")
-;────────────────────────────────────
-;072,両穴フィスト（Ａ）[罰]（快Ｖ、快Ａ、接触、痛み、逸脱、中毒充足、トラウマ）
-;────────────────────────────────────
+	TFLAG:A사용중 = 2
+	;배후
+	CALL SET_POSE(TARGET, "계속", "배후", "무효")
+;─
+;072, 양구멍 피스트(A)[벌](쾌V, 쾌A, 접촉, 상해, 일탈, 중독 충족, 트라우마)
+;─
 @MASTER_POSE_ACT72
-	TFLAG:Ａ使用中 = 2
-	TFLAG:Ｖ使用中 = 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;095,正常位させる（Ｎ/Ｈ/Ａ）[接触]（快Ｃ、接触、情愛、性行動、中毒充足、達成、悦楽、快ｖ）
-;────────────────────────────────────
+	TFLAG:A사용중 = 2
+	TFLAG:V사용중 = 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;095, 정상위 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v)
+;─
 @MASTER_POSE_ACT95
-	TFLAG:仰向け = 0
-	TFLAG:Ｐ挿入中 = 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;096,後背位させる（Ｎ/Ｈ/Ａ）[接触]（快Ｃ、接触、情愛、性行動、中毒充足、達成、悦楽、快ｖ）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:P삽입중 = 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;096, 후배위 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v)
+;─
 @MASTER_POSE_ACT96
-	TFLAG:仰向け = 0
-	TFLAG:Ｐ挿入中 = 1
-	;背面
-	CALL SET_POSE(TARGET, "継続", "四這", "無効")
-;────────────────────────────────────
-;097,対面座位させる（Ｎ/Ｈ/Ａ）[接触]（快Ｃ、接触、情愛、性行動、中毒充足、達成、悦楽、快ｖ、快ｃ）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:P삽입중 = 1
+	;배면
+	CALL SET_POSE(TARGET, "계속", "4저", "무효")
+;─
+;097, 대면좌위 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v, 쾌c)
+;─
 @MASTER_POSE_ACT97
-	TFLAG:仰向け = 0
-	TFLAG:Ｐ挿入中 = 1
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;098,背面座位させる（Ｎ/Ｈ/Ａ）[接触]（快Ｃ、接触、情愛、性行動、中毒充足、達成、悦楽、快ｖ、快ｃ、快ｂ）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:P삽입중 = 1
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;098, 배면좌위 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
+;─
 @MASTER_POSE_ACT98
-	TFLAG:仰向け = 0
-	TFLAG:Ｐ挿入中 = 1
-	;背面
-	CALL SET_POSE(TARGET, "継続", "四這", "無効")
-;────────────────────────────────────
-;099,アナルセックスさせる（Ｎ/Ｈ/Ａ）[接触]（快Ｃ、接触、情愛、性行動、中毒充足、達成、悦楽、快ｖ、快ｃ、快ｂ）
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:P삽입중 = 1
+	;배면
+	CALL SET_POSE(TARGET, "계속", "4저", "무효")
+;─
+;099, 애널 섹스 시키는(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독 충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
+;─
 @MASTER_POSE_ACT99
-	IF	TFLAG:仰向け == 0
+	IF	TFLAG:위로 돌리고 == 0
 		SIF RAND:2 == 0
-			TFLAG:仰向け = 2
+			TFLAG:위로 돌리고 = 2
 	ELSE
-		TFLAG:仰向け = 2
+		TFLAG:위로 돌리고 = 2
 	ENDIF
-	TFLAG:Ｐ挿入中 = 1
-	;背面
-	CALL SET_POSE(TARGET, "継続", "四這", "無効")
+	TFLAG:P삽입중 = 1
+	;배면
+	CALL SET_POSE(TARGET, "계속", "4저", "무효")
 
-;※要修正
-;↑ここまであんまり弄ってないです。Ｐ使用中フラグの代入とかだいぶ変ですが現状では実害ないので放置
-;そのうち直すタスクということで
+;※요점 수정
+;↑여기까지 그다지 만지작거리지 않습니다. P사용중 플래그의 대입이라든지 많이 이상합니다만 현재 상태로서는 실제 손해 없기 때문에 방치
+;그 중 고치는 태스크라고 하는 일로
 
-;────────────────────────────────────
-;300,Ｗ手淫
-;────────────────────────────────────
+;─
+;300, W자위
+;─
 @MASTER_POSE_ACT300
-	;仰向け判定は手淫と同じ
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	;ＷでＰ使用中
-	TFLAG:Ｐ使用中 += 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;301,Ｗフェラ
-;────────────────────────────────────
+	;위로 돌리고 판정은 자위와 같음
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	;W로 P사용중
+	TFLAG:P사용중 += 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;301, W페라
+;─
 @MASTER_POSE_ACT301
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;302,Ｗキス
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;302, W키스
+;─
 @MASTER_POSE_ACT302
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:口使用中 += 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;303,Ｗ素股
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:구 사용중 += 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;303, W가랑이
+;─
 @MASTER_POSE_ACT303
-	TFLAG:Ｐ使用中 += 2
-	TFLAG:Ｖ使用中 += 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;304,Ｗパイズリ
-;────────────────────────────────────
+	TFLAG:P사용중 += 2
+	TFLAG:V사용중 += 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;304, W파이즈리
+;─
 @MASTER_POSE_ACT304
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;305,Ｗ足コキ
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;305, W풋잡
+;─
 @MASTER_POSE_ACT305
-	SIF RAND:(10 + ABL:欲望 + ABL:技巧) > RAND:(10 + ABL:MASTER:技巧)
-		TFLAG:仰向け = 2
-	TFLAG:Ｐ使用中 += 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;306,騎乗二穴責め
-;────────────────────────────────────
+	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
+		TFLAG:위로 돌리고 = 2
+	TFLAG:P사용중 += 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;306, 승마 두 구멍 고문
+;─
 @MASTER_POSE_ACT306
-	TFLAG:仰向け = 0
-	TFLAG:Ｖ使用中++
-	TFLAG:Ａ使用中++
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;307,対面二穴責め
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:V사용중++
+	TFLAG:A사용중++
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;307, 대면 두 구멍 고문
+;─
 @MASTER_POSE_ACT307
-	TFLAG:仰向け = 0
-	TFLAG:Ｖ使用中++
-	TFLAG:Ａ使用中++
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;308,変則乱れ牡丹
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:V사용중++
+	TFLAG:A사용중++
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;308, 변칙 혼란 모란
+;─
 @MASTER_POSE_ACT308
-	TFLAG:仰向け = 0
-	TFLAG:Ｖ使用中++
-	;背後
-	CALL SET_POSE(TARGET, "継続", "背後", "無効")
-;────────────────────────────────────
-;309,アナル二穴責め
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:V사용중++
+	;배후
+	CALL SET_POSE(TARGET, "계속", "배후", "무효")
+;─
+;309, 애널 두 구멍 고문
+;─
 @MASTER_POSE_ACT309
-	TFLAG:仰向け = 0
-	TFLAG:Ｖ使用中++
-	TFLAG:Ａ使用中++
-	;背後
-	CALL SET_POSE(TARGET, "継続", "背後", "無効")
-;────────────────────────────────────
-;310,Ｗ逆レイプ
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 0
+	TFLAG:V사용중++
+	TFLAG:A사용중++
+	;배후
+	CALL SET_POSE(TARGET, "계속", "배후", "무효")
+;─
+;310, W역강간
+;─
 @MASTER_POSE_ACT310
-	TFLAG:仰向け = 2
-	TFLAG:Ｐ挿入中 += 2
-	;対面
-	CALL SET_POSE(TARGET, "継続", "対面", "無効")
-;────────────────────────────────────
-;311,谷渡り
-;────────────────────────────────────
+	TFLAG:위로 돌리고 = 2
+	TFLAG:P삽입중 += 2
+	;대면
+	CALL SET_POSE(TARGET, "계속", "대면", "무효")
+;─
+;311, 골짜기를 건너감
+;─
 @MASTER_POSE_ACT311
-	TFLAG:仰向け = 0
-	TFLAG:Ｐ挿入中 += 2
-	;背面
-	CALL SET_POSE(TARGET, "継続", "四這", "無効")
+	TFLAG:위로 돌리고 = 0
+	TFLAG:P삽입중 += 2
+	;배면
+	CALL SET_POSE(TARGET, "계속", "4저", "무효")
 
 ;-------------------------------------------------
-;使用状態変更関数
-;ARG:0,1は対象者1,2
-;ARGS:0,1は使用状態を変更する部位1,2
-;	部位     Ｐ(ペニス)/Ｖ(ヴァギナ)/Ａ(アヌス)/Ｂ(胸/バスト)/Ｍ(口/マウス)/Ｈ(手/ハンド)/Ｆ(足/フット/フィート)
+;사용 상태 변경 함수
+;ARG:0, 1은 대상자 1, 2
+;ARGS:0, 1은 사용 상태를 변경하는 부위 1, 2
+;	부위     P(페니스)/V(바기나)/A(아누스)/B(가슴/버스트)/M(입/마우스)/H(손/핸드)/F(다리/풋/피트)
 ;-------------------------------------------------
 @SET_USE(ARG:0, ARGS:0, ARG:1 = -1, ARGS:1)
 #LOCALSSIZE 2
 #DIM LCOUNT
 FOR LCOUNT, 0, 2
-	;互換性のための一時処理！！！！！
+	;호환성을 위한 일시 처리!!!!!
 	IF ARG:LCOUNT == MASTER
 		SELECTCASE ARGS:LCOUNT
-			CASE "Ｐ", "ペニス"
-				SIF GROUPMATCH(ARGS:(!LCOUNT), "Ｖ", "ヴァギナ", "Ａ", "アヌス")
-					TFLAG:Ｐ挿入中++
-				TFLAG:Ｐ使用中++
-			CASE "Ｖ", "ヴァギナ"
-				TFLAG:Ｖ使用中++
-			CASE "Ａ", "アヌス"
-				TFLAG:Ａ使用中++
-			CASE "Ｂ", "胸", "バスト"
-				TFLAG:胸使用中++
-			CASE "Ｍ", "口", "マウス"
-				TFLAG:口使用中++
-			CASE "Ｈ", "手", "ハンド"
-				TFLAG:手使用中++
-			CASE "Ｆ", "足", "フット", "フィート"
-				TFLAG:足使用中++
+			CASE "P", "페니스"
+				SIF GROUPMATCH(ARGS:(! LCOUNT), "V", "바기나", "A", "아누스")
+					TFLAG:P삽입중++
+				TFLAG:P사용중++
+			CASE "V", "바기나"
+				TFLAG:V사용중++
+			CASE "A", "아누스"
+				TFLAG:A사용중++
+			CASE "B", "가슴", "버스트"
+				TFLAG:가슴 사용중++
+			CASE "M", "입", "마우스"
+				TFLAG:구 사용중++
+			CASE "H", "손", "핸드"
+				TFLAG:손사용중++
+			CASE "F", "다리", "풋", "피트"
+				TFLAG:다리 사용중++
 		ENDSELECT
 	ENDIF
 NEXT
 
 ;-------------------------------------------------
-;姿勢変更関数
-;ARGは対象者
-;ARGS:0は現在の姿勢
-;	TCVER:姿勢     0=自由/1=仰向(仰向け)/2=座る/3=四這(四つん這い)/4=起立/10=膝立(膝立ち)
-;ARGS:1はMASTERとの前後関係
-;	TCVER:位置前後 0=無効/1=対面/2=背後(MASTERの背後)/3=前面(MASTERが背後)
-;ARGS:2はMASTERとの上下関係
-;	TCVER:位置上下 0=無効/1=上位(正位)/2=下位(逆位)
+;자세 변경 함수
+;ARG는 대상자
+;ARGS:0은 현재의 자세
+;	TCVER:자세     0=자유/1=앙향(위로 돌리고)/2=앉는다/3=4저(네발로 엎드림)/4=기립/10=히자타테(무릎서기)
+;ARGS:1은 MASTER와의 전후관계
+;	TCVER:위치 전후 0=무효/1=대면/2=배후(MASTER의 배후)/3=전면(MASTER가 배후)
+;ARGS:2는 MASTER와의 상하 관계
+;	TCVER:위치 상하 0=무효/1=상위(정 정도)/2=하위(역정도)
 ;-------------------------------------------------
 @SET_POSE(ARG, ARGS:0, ARGS:1, ARGS:2)
 #LOCALSSIZE 2
 #DIM LCOUNT
-;互換性のための一時処理！！！！！
+;호환성을 위한 일시 처리!!!!!
 IF ARG == MASTER
-	;姿勢セット
-	;セットしない場合は無効な文字列を指定("", "継続" など)
+	;자세 세트
+	;세트 하지 않는 경우는 무효인 캐릭터 라인을 지정("", "계속"등)
 	SELECTCASE ARGS:0
-		CASE "自由"
-			TCVAR:ARG:姿勢 = 0
-		CASE "仰向", "仰向け"
-			TCVAR:ARG:姿勢 = 1
-			;仰向け処理もついでにやっちゃう
-			TFLAG:仰向け = 2
-		CASE "座る"
-			TCVAR:ARG:姿勢 = 2
-		CASE "四這", "四つん這い"
-			TCVAR:ARG:姿勢 = 3
-		CASE "起立"
-			TCVAR:ARG:姿勢 = 4
-		CASE "膝立", "膝立ち"
-			TCVAR:ARG:姿勢 = 10
-		CASE "前回"
-			TCVAR:ARG:姿勢 = TCVAR:ARG:前回の姿勢
+		CASE "자유"
+			TCVAR:ARG:자세 = 0
+		CASE "앙향", "위로 돌리고"
+			TCVAR:ARG:자세 = 1
+			;위로 돌리고 처리도 하는 김에 해 버린다
+			TFLAG:위로 돌리고 = 2
+		CASE "앉는다"
+			TCVAR:ARG:자세 = 2
+		CASE "4저", "네발로 엎드림"
+			TCVAR:ARG:자세 = 3
+		CASE "기립"
+			TCVAR:ARG:자세 = 4
+		CASE "히자타테", "무릎서기"
+			TCVAR:ARG:자세 = 10
+		CASE "전회"
+			TCVAR:ARG:자세 = TCVAR:ARG:전회의 자세
 	ENDSELECT
 ENDIF
-;互換性のための一時処理！！！！！
+;호환성을 위한 일시 처리!!!!!
 ARG = MASTER
-;前後関係セット
-;セットしない場合は無効な文字列を指定("", "継続" など)
+;전후관계 세트
+;세트 하지 않는 경우는 무효인 캐릭터 라인을 지정("", "계속"등)
 SELECTCASE ARGS:1
-	CASE "無効"
-		TCVAR:ARG:位置前後 = 0
-	CASE "対面"
-		TCVAR:ARG:位置前後 = 1
-	CASE "背後", "MASTERの背後"
-		TCVAR:ARG:位置前後 = 2
-	CASE "前面", "MASTERが背後"
-		TCVAR:ARG:位置前後 = 3
-	CASE "前回"
-		TCVAR:ARG:位置前後 = TCVAR:ARG:前回の位置前後
+	CASE "무효"
+		TCVAR:ARG:위치 전후 = 0
+	CASE "대면"
+		TCVAR:ARG:위치 전후 = 1
+	CASE "배후", "MASTER의 배후"
+		TCVAR:ARG:위치 전후 = 2
+	CASE "전면", "MASTER가 배후"
+		TCVAR:ARG:위치 전후 = 3
+	CASE "전회"
+		TCVAR:ARG:위치 전후 = TCVAR:ARG:전회의 위치 전후
 ENDSELECT
-;上下関係セット
-;セットしない場合は無効な文字列を指定("", "継続" など)
+;상하 관계 세트
+;세트 하지 않는 경우는 무효인 캐릭터 라인을 지정("", "계속"등)
 SELECTCASE ARGS:2
-	CASE "無効"
-		TCVAR:ARG:位置上下 = 0
-	CASE "上位", "正位"
-		TCVAR:ARG:位置上下 = 1
-	CASE "下位", "逆位"
-		TCVAR:ARG:位置上下 = 2
-	CASE "前回"
-		TCVAR:ARG:位置上下 = TCVAR:ARG:前回の位置上下
+	CASE "무효"
+		TCVAR:ARG:위치 상하 = 0
+	CASE "상위", "정 정도"
+		TCVAR:ARG:위치 상하 = 1
+	CASE "하위", "역정도"
+		TCVAR:ARG:위치 상하 = 2
+	CASE "전회"
+		TCVAR:ARG:위치 상하 = TCVAR:ARG:전회의 위치 상하
 ENDSELECT
 
 ;-------------------------------------------------
-;使用状態条件関数
-;L種別 は種別を示す文字列
-;ARG:0,1は対象者1,2
-;ARGS:0,1は使用状態を変更する部位1,2
+;사용 상태 조건 함수
+;L종별은 종별을 나타내는 캐릭터 라인
+;ARG:0, 1은 대상자 1, 2
+;ARGS:0, 1은 사용 상태를 변경하는 부위 1, 2
 ;-------------------------------------------------
-@CONDITION_USE(L種別, ARG:0, ARGS:0, ARG:1 = -1, ARGS:1)
-#DIMS L種別
+@CONDITION_USE(L종별, ARG:0, ARGS:0, ARG:1 = -1, ARGS:1)
+#DIMS L종별
 
 ;-------------------------------------------------
-;姿勢条件関数
-;L種別 は種別を示す文字列
-;ARGは対象者
-;ARGS:0は現在の姿勢
-;ARGS:1はMASTERとの前後関係
-;ARGS:2はMASTERとの上下関係
+;자세 조건 함수
+;L종별은 종별을 나타내는 캐릭터 라인
+;ARG는 대상자
+;ARGS:0은 현재의 자세
+;ARGS:1은 MASTER와의 전후관계
+;ARGS:2는 MASTER와의 상하 관계
 ;-------------------------------------------------
-@CONDITION_POSE(L種別, ARG, ARGS:0, ARGS:1, ARGS:2)
-#DIMS L種別
+@CONDITION_POSE(L종별, ARG, ARGS:0, ARGS:1, ARGS:2)
+#DIMS L종별
 
 
 ;-------------------------------------------------
-;姿勢制限関数
-;接触部位を渡すことにより、
-;1,許容される姿勢と位置が存在するかを返す
-;2,許容される姿勢と位置以外を禁止する
-;L処理    は処理内容 "存在", "禁止"
-;L対象:0,1はそれぞれ対象となる者
-;L部位:0,1はそれぞれ接触し合う部位
+;자세 제한 함수
+;접촉 부위를 건네주는 것으로,
+;1, 허용 되는 자세와 위치가 존재할까를 돌려준다
+;2, 허용 되는 자세와 위치 이외를 금지한다
+;L처리    는 처리 내용 "존재", "금지"
+;L대상:0, 1은 각각 대상이 되는 사람
+;L부위:0, 1은 서로 각각 접촉하는 부위
 ;-------------------------------------------------
-@LIMIT_POSE(L対象:0, L部位:0, L対象:1, L部位:1)
-#DIM L対象, 2
-#DIMS L部位, 2
+@LIMIT_POSE(L대상:0, L부위:0, L대상:1, L부위:1)
+#DIM L대상, 2
+#DIMS L부위, 2
 
 ;CALL LIMIT_POSE_PD(LPOSE, ARGS:0, ARGS:1)
 IF RESULT == 0
 	;CALL LIMIT_POSE_PD(LPOSE, ARGS:1, ARGS:0)
-	;逆転処理
+	;역전 처리
 ENDIF
-;穴埋め処理
+;보충 처리
 
-;A⇔V は V⇔A を逆転すれば生成できるので、
-;A⇔V は記述せず、V⇔A のみ記述する
+;A⇔V 는 V⇔A 를 역전하면 생성할 수 있으므로,
+;A⇔V 는 기술하지 않고, V⇔A 마셔 기술한다
 @LIMIT_POSE_PD(LPOSE, ARGS:0, ARGS:1)
 #DIMS REF LPOSE, 0, 0
 #DIM LCOUNT
 
 LCOUNT = 0
-;調教対象部位
+;조교 대상 부위
 SELECTCASE ARGS:0
-	CASE "Ｖ"
-		;調教者部位
+	CASE "V"
+		;조교자 부위
 		SELECTCASE ARGS:1
-			CASE "Ｖ"
+			CASE "V"
 				;CALL LIMIT_POSE_F(LPOSE, ARGS:0, ARGS:1)
-			CASE "Ａ"
+			CASE "A"
 			
-			CASE "Ｂ"
+			CASE "B"
 			
-			CASE "Ｍ"
+			CASE "M"
 			
-			CASE "Ｈ"
+			CASE "H"
 			
-			CASE "Ｆ"
+			CASE "F"
 			
-			;同一の組み合わせが既に記述されている
+			;동일한 편성이 이미 기술되고 있다
 			CASEELSE
 				RETURN 0
 		ENDSELECT
-	CASE "Ａ"
-		;調教者部位
+	CASE "A"
+		;조교자 부위
 		SELECTCASE ARGS:1
-			CASE "Ａ"
+			CASE "A"
 			
-			CASE "Ｂ"
+			CASE "B"
 			
-			CASE "Ｍ"
+			CASE "M"
 			
-			CASE "Ｈ"
+			CASE "H"
 			
-			CASE "Ｆ"
+			CASE "F"
 			
-			;同一の組み合わせが既に記述されている
+			;동일한 편성이 이미 기술되고 있다
 			CASEELSE
 				RETURN 0
 		ENDSELECT
-	CASE "Ｂ"
-		;調教者部位
+	CASE "B"
+		;조교자 부위
 		SELECTCASE ARGS:1
-			CASE "Ｂ"
+			CASE "B"
 			
-			CASE "Ｍ"
+			CASE "M"
 			
-			CASE "Ｈ"
+			CASE "H"
 			
-			CASE "Ｆ"
+			CASE "F"
 			
-			;同一の組み合わせが既に記述されている
+			;동일한 편성이 이미 기술되고 있다
 			CASEELSE
 				RETURN 0
 		ENDSELECT
-	CASE "Ｍ"
-		;調教者部位
+	CASE "M"
+		;조교자 부위
 		SELECTCASE ARGS:1
-			CASE "Ｍ"
+			CASE "M"
 			
-			CASE "Ｈ"
+			CASE "H"
 			
-			CASE "Ｆ"
+			CASE "F"
 			
-			;同一の組み合わせが既に記述されている
+			;동일한 편성이 이미 기술되고 있다
 			CASEELSE
 				RETURN 0
 		ENDSELECT
-	CASE "Ｈ"
-		;調教者部位
+	CASE "H"
+		;조교자 부위
 		SELECTCASE ARGS:1
-			CASE "Ｈ"
+			CASE "H"
 			
-			CASE "Ｆ"
+			CASE "F"
 			
-			;同一の組み合わせが既に記述されている
+			;동일한 편성이 이미 기술되고 있다
 			CASEELSE
 				RETURN 0
 		ENDSELECT
-	CASE "Ｆ"
-		;調教者部位
+	CASE "F"
+		;조교자 부위
 		SELECTCASE ARGS:1
-			CASE "Ｆ"
+			CASE "F"
 			
-			;同一の組み合わせが既に記述されている
+			;동일한 편성이 이미 기술되고 있다
 			CASEELSE
 				RETURN 0
 		ENDSELECT

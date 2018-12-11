@@ -1,226 +1,226 @@
-﻿;────────────────────────────────────
-;040,自慰
-;────────────────────────────────────
-;リアクション前（Ｓ/Ｎ/Ｈ）[罰]（逸脱、中毒充足）
+﻿;─
+;040, 자위
+;─
+;리액션전(S/N/H)[벌](일탈, 중독 충족)
 @ACTION_APPLY_40
-;拒否される可能性があるのでここは命令を出すところまで処理します
-;逸脱SOURCE増加、調教対象露出癖、自慰中毒、調教レベルによって減少
-SOURCE:MASTER:逸脱 = 1200 - GET_ABL(MASTER, "露出癖") * 8 - GET_ABL(MASTER, "自慰中毒") * 20 - CFLAG:MASTER:調教レベル * 20
-;逸脱SOURCEが負の値をとらないよう調整
-SOURCE:MASTER:逸脱 = SOURCE:MASTER:逸脱 < 0 ? 0 # SOURCE:MASTER:逸脱
-;調教対象自慰中毒、技巧に応じて中毒充足SOURCE増加
-SOURCE:MASTER:中毒充足 = GET_ABL(MASTER, "自慰中毒") * (GET_ABL(MASTER, "自慰中毒") + 10) * (GET_ABL(MASTER, "技巧") + 10) / 1000
-;調教対象自慰中毒に応じて勃起度上昇
-TCVAR:MASTER:勃起度 += 100 + GET_ABL(MASTER, "自慰中毒") * 5
-TFLAG:経過時間 += 3
+;거부될 가능성이 있으므로 여기는 명령을 내리는 곳까지 처리합니다
+;일탈 SOURCE 증가, 조교 대상 노출버릇, 자위 중독, 조교 레벨에 의해 감소
+SOURCE:MASTER:일탈 = 1200 - GET_ABL(MASTER, "노출버릇") * 8 - GET_ABL(MASTER, "자위 중독") * 20 - CFLAG:MASTER:조교레벨 * 20
+;일탈 SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
+;조교 대상 자위 중독, 기교에 응해 중독 충족 SOURCE 증가
+SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "자위 중독") * (GET_ABL(MASTER, "자위 중독") + 10) * (GET_ABL(MASTER, "기교") + 10) / 1000
+;조교 대상 자위 중독에 응해 발기도 상승
+TCVAR:MASTER:발기도 += 100 + GET_ABL(MASTER, "자위 중독") * 5
+TFLAG:경과시간 += 3
 
-;リアクション後（快Ｃ、快Ｖ、快Ａ、快Ｂ、性行動、露出、逸脱、中毒充足）
+;리액션 후(쾌C, 쾌V, 쾌A, 쾌B, 성행동, 노출, 일탈, 중독 충족)
 @ACTION_APPLY2_40
-IF IS_COMGRONAME("消極的従う/平然と従う/積極的従う/受け入れる")
-	;自慰の実行関数呼び出し
+IF IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다")
+	;자위의 실행 함수 호출
 	CALL ONANIE_APPLY
-	;調教対象の手を一本占有する
-	TFLAG:手使用中++
-;その他の場合(拒絶)
+	;조교 대상의 손을 한 개 점유 한다
+	TFLAG:손사용중++
+;그 외의 경우(거절)
 ELSE
-	;REACT分類に要求に応じないをセット
-	CALL SET_COMGRO("拒否")
+	;REACT 분류에 요구에 응하지 않는 것을 세트
+	CALL SET_COMGRO("거부")
 ENDIF
 
-;────────────────────────────────────
-;041,秘貝開帳
-;────────────────────────────────────
-;リアクション前（Ｓ/Ｎ/Ｈ）（快Ｃ、露出、逸脱）
+;─
+;041, 비패개장
+;─
+;리액션전(S/N/H)(쾌C, 노출, 일탈)
 @ACTION_APPLY_41
-;下半身全部強制脱衣
-TFLAG:強制脱衣 = 5
-;器用な指先素質、調教対象技巧に応じて快ＣSOURCE増加
-SOURCE:MASTER:快Ｃ = 30 + (TALENT:器用な指先 + 1) * GET_ABL(TARGET, "技巧")
-;快ＣSOURCE、大鏡使用に応じて露出SOURCE増加
-SOURCE:MASTER:露出 = SOURCE:MASTER:快Ｃ / 3 + (TEQUIP:大鏡 + 1) * 250
-;露出SOURCEに応じて逸脱SOURCE増加、露出癖、調教対象調教レベルによって減少
-SOURCE:MASTER:逸脱 = SOURCE:MASTER:露出 - GET_ABL(MASTER, "露出癖") * 2 - CFLAG:MASTER:調教レベル * 5
-;汚れが相互に移る
-STAIN:MASTER:ヴァギナ |= STAIN:手
-STAIN:手 |= STAIN:MASTER:ヴァギナ
-;逸脱SOURCEが負の値をとらないよう調整
-SOURCE:MASTER:逸脱 = SOURCE:MASTER:逸脱 < 0 ? 0 # SOURCE:MASTER:逸脱
-;顔面騎乗系解除
+;하반신 전부 강제 탈의
+TFLAG:강제탈의 = 5
+;기묘한손가락소질, 조교 대상 기교에 응해 쾌CSOURCE 증가
+SOURCE:MASTER:쾌C = 30 + (TALENT:기묘한손가락 + 1) * GET_ABL(TARGET, "기교")
+;쾌CSOURCE, 대거울 사용에 응해 노출 SOURCE 증가
+SOURCE:MASTER:노출 = SOURCE:MASTER:쾌C / 3 + (TEQUIP:대거울 + 1) * 250
+;노출 SOURCE에 응해 일탈 SOURCE 증가, 노출버릇, 조교 대상 조교 레벨에 의해 감소
+SOURCE:MASTER:일탈 = SOURCE:MASTER:노출 - GET_ABL(MASTER, "노출버릇") * 2 - CFLAG:MASTER:조교레벨 * 5
+;더러움이 서로 옮긴다
+STAIN:MASTER:바기나 |= STAIN:손
+STAIN:손 |= STAIN:MASTER:바기나
+;일탈 SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-;調教者、調教対象自慰を中断
-TEQUIP:自慰中 = 0
-TFLAG:経過時間 += 1
+;조교자, 조교 대상 자위를 중단
+TEQUIP:자위중 = 0
+TFLAG:경과시간 += 1
 
-;リアクション後（Ｓ/Ｎ/Ｈ）（快Ｃ、露出、逸脱）
+;리액션 후(S/N/H)(쾌C, 노출, 일탈)
 @ACTION_APPLY2_41
-;現在処理なし
+;현재 처리 없음
 
-;────────────────────────────────────
-;042,自慰みせつけ
-;────────────────────────────────────
-;リアクション前（Ｓ/Ｎ/Ｈ/Ａ）（逸脱、欲情追加、快ｃ、快ｖ、快ｂ）
+;─
+;042, 자위 과시하고
+;─
+;리액션전(S/N/H/A)(일탈, 욕정 추가, 쾌c, 쾌v, 쾌b)
 @ACTION_APPLY_42
-;同じ確率で上＋下上着、上半身全部、下半身全部のどれかを自主脱衣
-TFLAG:自主脱衣 = 3 + RAND:3
-;調教者解放素質が存在すればアクセサリ－まで、全裸まで自主脱衣のどちらかに発展
-SIF TALENT:解放
-	TFLAG:自主脱衣 = 7 + RAND:2
-;調教者抑圧/恥じらい素質が存在すれば上半身上着、下半身上着自主脱衣または脱衣なしまで軽減
-SIF TALENT:抑圧 || TALENT:恥じらい
-	TFLAG:自主脱衣 = RAND:3
-;調教者着衣プレイ好き素質が存在すれば下着だけ自主脱衣に固定
-SIF TALENT:着衣プレイ好き
-	TFLAG:自主脱衣 = 9
-;調教者欲望、技巧、調教レベル、調教者技巧、器用な指先素質に応じて快ｃSOURCE増加
-SOURCE:快Ｃ = 50 + GET_ABL(TARGET, "欲望") * GET_ABL(TARGET, "技巧") * GET_TRAINLV(TARGET) * 2 / 100 + GET_ABL(TARGET, "技巧") * 2 * (TALENT:TARGET:器用な指先 + 1)
-;調教者が非オトコなら、調教者欲望、技巧、調教レベル、調教者技巧、器用な指先素質に応じて快ｂSOURCE増加
-SIF !TALENT:オトコ
-	SOURCE:快Ｂ = 50 + GET_ABL(TARGET, "欲望") * GET_ABL(TARGET, "技巧") * GET_TRAINLV(TARGET) * 2 / 100 + GET_ABL(TARGET, "技巧") * 2 * (TALENT:TARGET:器用な指先 + 1)
+;같은 확률로 상＋시모카미착, 상반신 전부, 하반신 전부의 어떤 것인지를 자주 탈의
+TFLAG:자주탈의 = 3 + RAND:3
+;조교자 해방 소질이 존재하면 액세서리까지, 전라까지 자주 탈의의 어딘가에 발전
+SIF TALENT:해방
+	TFLAG:자주탈의 = 7 + RAND:2
+;조교자 억압/수줍음 소질이 존재하면 상반신 윗도리, 하반신 윗도리 자주 탈의 또는 탈의 없음까지 경감
+SIF TALENT:억압 || TALENT:수줍음
+	TFLAG:자주탈의 = RAND:3
+;조교자 착의플레이선호 소질이 존재하면 속옷만 자주 탈의에 고정
+SIF TALENT:착의플레이선호
+	TFLAG:자주탈의 = 9
+;조교자 욕망, 기교, 조교 레벨, 조교자 기교, 기묘한손가락소질에 응해 쾌cSOURCE 증가
+SOURCE:쾌C = 50 + GET_ABL(TARGET, "욕망") * GET_ABL(TARGET, "기교") * GET_TRAINLV(TARGET) * 2 / 100 + GET_ABL(TARGET, "기교") * 2 * (TALENT:TARGET:기묘한손가락 + 1)
+;조교자가 비남자라면, 조교자 욕망, 기교, 조교 레벨, 조교자 기교, 기묘한손가락소질에 응해 쾌bSOURCE 증가
+SIF !TALENT:남자
+	SOURCE:쾌B = 50 + GET_ABL(TARGET, "욕망") * GET_ABL(TARGET, "기교") * GET_TRAINLV(TARGET) * 2 / 100 + GET_ABL(TARGET, "기교") * 2 * (TALENT:TARGET:기묘한손가락 + 1)
 
 
-;調教者がバイブを所持していて、処女でも男でもなければバイブ使用
-;一時オミット。復活させるときは実行判定を見直してACT派生の方で処置
+;조교자가 바이브를 소지하고 있어, 처녀도 남자도 아니면 바이브 사용
+;일시 생략. 부활시킬 때는 실행 판정을 다시 봐 ACT 파생의 (분)편으로 처치
 [SKIPSTART]
-IF ITEM:バイブ && !TALENT:処女 && !TALENT:オトコ
-	;調教者欲望、調教レベル、道具使い素質、技巧、道具強化に応じて快ｖSOURCE増加
-	SOURCE:快Ｖ = 50 + GET_ABL(TARGET, "欲望") * (GET_TRAINLV(TARGET) + 1) * 5 / 10 + (TALENT:道具使い + 1) * GET_ABL(TARGET, "技巧") * (ITEM:9 + 1) * 3
-	;代わりに快ｃSOURCE減少
-	TIMES SOURCE:快Ｃ , 0.80
+IF ITEM:바이브 && ! TALENT:처녀 && ! TALENT:남자
+	;조교자 욕망, 조교 레벨, 도구사용 소질, 기교, 도구 강화에 응해 쾌vSOURCE 증가
+	SOURCE:쾌V = 50 + GET_ABL(TARGET, "욕망") * (GET_TRAINLV(TARGET) + 1) * 5 / 10 + (TALENT:도구사용 + 1) * GET_ABL(TARGET, "기교") * (ITEM:9 + 1) * 3
+	;대신에 쾌cSOURCE 감소
+	TIMES SOURCE:쾌C , 0.80
 ENDIF
 [SKIPEND]
 
-;快x総計を取得しLOCALへ
-LOCAL = SOURCE:快Ｃ + SOURCE:快Ｖ + SOURCE:快Ｂ
-;調教対象調教レベルと欲望を見て、どちらかが低ければLOCAL軽減
-IF CFLAG:MASTER:調教レベル < 1 || ABL:MASTER:欲望 < 1
+;쾌x총계를 취득해 LOCAL에
+LOCAL = SOURCE:쾌C + SOURCE:쾌V + SOURCE:쾌B
+;조교 대상 조교 레벨과 욕망을 봐, 어느 쪽인지가 낮으면 LOCAL 경감
+IF CFLAG:MASTER:조교레벨 < 1 || ABL:MASTER:욕망 < 1
 	TIMES LOCAL, 0.10
-ELSEIF CFLAG:MASTER:調教レベル < 3 || ABL:MASTER:欲望 < 2
+ELSEIF CFLAG:MASTER:조교레벨 < 3 || ABL:MASTER:욕망 < 2
 	TIMES LOCAL, 0.25
-ELSEIF CFLAG:MASTER:調教レベル < 5 || ABL:MASTER:欲望 < 3
+ELSEIF CFLAG:MASTER:조교레벨 < 5 || ABL:MASTER:욕망 < 3
 	TIMES LOCAL, 0.40
-ELSEIF CFLAG:MASTER:調教レベル < 8 || ABL:MASTER:欲望 < 4
+ELSEIF CFLAG:MASTER:조교레벨 < 8 || ABL:MASTER:욕망 < 4
 	TIMES LOCAL, 0.60
-ELSEIF CFLAG:MASTER:調教レベル < 11 || ABL:MASTER:欲望 < 5
+ELSEIF CFLAG:MASTER:조교레벨 < 11 || ABL:MASTER:욕망 < 5
 	TIMES LOCAL, 0.85
 ENDIF
-;LOCALの1/5だけ調教者欲情が増加
-CUP:MASTER:欲情 += LOCAL / 5
-;LOCALに応じて逸脱SOURCE増加、調教対象露出癖、調教レベルによって減少
-SOURCE:MASTER:逸脱 = LOCAL - GET_ABL(MASTER, "露出癖") * 2 - CFLAG:MASTER:調教レベル * 5
-;逸脱SOURCEが負の値をとらないよう調整
-SOURCE:MASTER:逸脱 = SOURCE:MASTER:逸脱 < 0 ? 0 # SOURCE:MASTER:逸脱
-;顔面騎乗系解除
+;LOCAL의 것 1/5만 조교자 욕정이 증가
+CUP:MASTER:욕정 += LOCAL / 5
+;LOCAL에 응해 일탈 SOURCE 증가, 조교 대상 노출버릇, 조교 레벨에 의해 감소
+SOURCE:MASTER:일탈 = LOCAL - GET_ABL(MASTER, "노출버릇") * 2 - CFLAG:MASTER:조교레벨 * 5
+;일탈 SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-;調教者欲望に応じて勃起度上昇
-TCVAR:MASTER:今回の勃起 += 100 + GET_ABL(TARGET, "欲望")
-TFLAG:経過時間 += 3
+;조교자 욕망에 응해 발기도 상승
+TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
+TFLAG:경과시간 += 3
 
-;リアクション後（Ｓ/Ｎ/Ｈ/Ａ）（逸脱、欲情追加、快ｃ、快ｖ、快ｂ）
+;리액션 후(S/N/H/A)(일탈, 욕정 추가, 쾌c, 쾌v, 쾌b)
 @ACTION_APPLY2_42
-;調教者自慰を開始
-TEQUIP:自慰中 |= 2
+;조교자 자위를 개시
+TEQUIP:자위중 |= 2
 
-;────────────────────────────────────
-;043,羞恥プレイ（Ｓ/Ｎ/Ｈ）（露出）
-;────────────────────────────────────
+;─
+;043, 수치 플레이(S/N/H)(노출)
+;─
 @ACTION_APPLY_43
-;開始時
-IF TFLAG:ACT派生 == 0
-	;露出SOURCE増加
-	SOURCE:MASTER:露出 = 200
-	;大鏡を据え付ける
-	TEQUIP:大鏡 = 1
-;終了時
+;개시시
+IF TFLAG:ACT파생 == 0
+	;노출 SOURCE 증가
+	SOURCE:MASTER:노출 = 200
+	;대거울을 고정시킨다
+	TEQUIP:대거울 = 1
+;종료시
 ELSE
-	;大鏡を片付ける
-	TEQUIP:大鏡 = 0
+	;대거울을 정리한다
+	TEQUIP:대거울 = 0
 ENDIF
-;顔面騎乗系解除
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-TFLAG:経過時間 += 2
+TFLAG:경과시간 += 2
 
-;────────────────────────────────────
-;044,野外プレイ（Ｈ/Ａ）[罰]（拘束<=首輪のこと、露出、逸脱、トラウマ）
-;────────────────────────────────────
+;─
+;044, 야외 플레이(H/A)[벌](구속<=목걸이의 일, 노출, 일탈, 트라우마)
+;─
 @ACTION_APPLY_44
-;終了時
-IF TFLAG:ACT派生 == 1
-	;野外プレイ終了
-	TEQUIP:野外プレイ = 0
-;開始時
+;종료시
+IF TFLAG:ACT파생 == 1
+	;야외 플레이 종료
+	TEQUIP:야외플레이 = 0
+;개시시
 ELSE
-	;反抗刻印に応じて拘束SOURCE増加
-	SOURCE:MASTER:拘束 = 50 + MARK:反抗刻印 * 15
-	;露出SOURCE増加
-	SOURCE:MASTER:露出 = 300
-	;拘束SOURCEに応じて逸脱SOURCE増加、調教対象露出癖、調教レベルによって減少
-	SOURCE:MASTER:逸脱 = 150 + SOURCE:MASTER:拘束 - GET_ABL(MASTER, "露出癖") * 3 - CFLAG:MASTER:調教レベル * 10
-	;逸脱SOURCEが負の値をとらないよう調整
-	SOURCE:MASTER:逸脱 = SOURCE:MASTER:逸脱 < 0 ? 0 # SOURCE:MASTER:逸脱
-	;調教対象臆病、無関心、抑圧、解放、恥じらい、恥薄い素質、逸脱SOURCEに応じてトラウマSOURCE増減
-	SOURCE:MASTER:トラウマ = TALENT:MASTER:臆病 * 150 - TALENT:MASTER:無関心 * 50 + TALENT:MASTER:抑圧 * 150 - TALENT:MASTER:解放 * 50 + TALENT:MASTER:恥じらい * 250 - TALENT:MASTER:恥薄い * 150 + SOURCE:MASTER:逸脱
-	;逸脱SOURCEが0ならトラウマSOURCEも0になる
-	SOURCE:MASTER:トラウマ = SOURCE:MASTER:逸脱 == 0 ? 0 # SOURCE:MASTER:トラウマ
-	;トラウマSOURCEが負の値をとらないよう調整
-	SOURCE:MASTER:トラウマ = SOURCE:MASTER:トラウマ < 0 ? 0 # SOURCE:MASTER:トラウマ
-	;トラウマ(刻印)の元がこの調教だった場合、トラウマSOURCEを1.5倍にする
-	SIF CFLAG:MASTER:トラウマ == 44
-		TIMES SOURCE:MASTER:トラウマ , 1.50
-	;野外プレイ開始
-	TEQUIP:野外プレイ = 1
+	;반항 각인에 응해 구속 SOURCE 증가
+	SOURCE:MASTER:구속 = 50 + MARK:반항각인 * 15
+	;노출 SOURCE 증가
+	SOURCE:MASTER:노출 = 300
+	;구속 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 노출버릇, 조교 레벨에 의해 감소
+	SOURCE:MASTER:일탈 = 150 + SOURCE:MASTER:구속 - GET_ABL(MASTER, "노출버릇") * 3 - CFLAG:MASTER:조교레벨 * 10
+	;일탈 SOURCE가 부의 값을 받지 않게 조정
+	SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
+	;조교 대상 겁쟁이, 무관심, 억압, 해방, 부끄러워해, 수치심옅음 소질, 일탈 SOURCE에 응해 트라우마 SOURCE 증감
+	SOURCE:MASTER:트라우마 = TALENT:MASTER:겁쟁이 * 150 - TALENT:MASTER:무관심 * 50 + TALENT:MASTER:억압 * 150 - TALENT:MASTER:해방 * 50 + TALENT:MASTER:수줍음 * 250 - TALENT:MASTER:수치심옅음 * 150 + SOURCE:MASTER:일탈
+	;일탈 SOURCE가 0이라면 트라우마 SOURCE도 0이 된다
+	SOURCE:MASTER:트라우마 = SOURCE:MASTER:일탈 == 0 ? 0 # SOURCE:MASTER:트라우마
+	;트라우마 SOURCE가 부의 값을 받지 않게 조정
+	SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
+	;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
+	SIF CFLAG:MASTER:트라우마 == 44
+		TIMES SOURCE:MASTER:트라우마 , 1.50
+	;야외 플레이 개시
+	TEQUIP:야외플레이 = 1
 ENDIF
-;顔面騎乗系解除
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-;調教者、調教対象自慰を中断
-TEQUIP:自慰中 = 0
-TFLAG:経過時間 += 5
+;조교자, 조교 대상 자위를 중단
+TEQUIP:자위중 = 0
+TFLAG:경과시간 += 5
 
-;────────────────────────────────────
-;045,放尿
-;────────────────────────────────────
-;リアクション前（Ｎ/Ｈ/Ａ）[罰]（露出、逸脱、トラウマ）
+;─
+;045, 방뇨
+;─
+;리액션전(N/H/A)[벌](노출, 일탈, 트라우마)
 @ACTION_APPLY_45
-;露出SOURCE増加
-SOURCE:MASTER:露出 = 350
-;逸脱SOURCE増加、調教対象露出癖、調教レベルによって減少
-SOURCE:MASTER:逸脱 = 750 - GET_ABL(MASTER, "露出癖") * 15 - CFLAG:MASTER:調教レベル * 30
-;逸脱SOURCEが負の値をとらないよう調整
-SOURCE:MASTER:逸脱 = SOURCE:MASTER:逸脱 < 0 ? 0 # SOURCE:MASTER:逸脱
-;調教対象臆病、無関心、抑圧、解放、恥じらい、恥薄い素質、逸脱SOURCEに応じてトラウマSOURCE増減
-SOURCE:MASTER:トラウマ = TALENT:MASTER:臆病 * 150 - TALENT:MASTER:無関心 * 50 + TALENT:MASTER:抑圧 * 150 - TALENT:MASTER:解放 * 50 + TALENT:MASTER:恥じらい * 250 - TALENT:MASTER:恥薄い * 150 + SOURCE:MASTER:逸脱
-;逸脱SOURCEが0ならトラウマSOURCEも0になる
-SOURCE:MASTER:トラウマ = SOURCE:MASTER:逸脱 == 0 ? 0 # SOURCE:MASTER:トラウマ
-;トラウマSOURCEが負の値をとらないよう調整
-SOURCE:MASTER:トラウマ = SOURCE:MASTER:トラウマ < 0 ? 0 # SOURCE:MASTER:トラウマ
-	;トラウマ(刻印)の元がこの調教だった場合、トラウマSOURCEを1.5倍にする
-	SIF CFLAG:MASTER:トラウマ == 45
-		TIMES SOURCE:MASTER:トラウマ , 1.50
-;調教対象自慰を中断
-TEQUIP:自慰中 &= ~1
-TFLAG:経過時間 += 2
+;노출 SOURCE 증가
+SOURCE:MASTER:노출 = 350
+;일탈 SOURCE 증가, 조교 대상 노출버릇, 조교 레벨에 의해 감소
+SOURCE:MASTER:일탈 = 750 - GET_ABL(MASTER, "노출버릇") * 15 - CFLAG:MASTER:조교레벨 * 30
+;일탈 SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
+;조교 대상 겁쟁이, 무관심, 억압, 해방, 부끄러워해, 수치심옅음 소질, 일탈 SOURCE에 응해 트라우마 SOURCE 증감
+SOURCE:MASTER:트라우마 = TALENT:MASTER:겁쟁이 * 150 - TALENT:MASTER:무관심 * 50 + TALENT:MASTER:억압 * 150 - TALENT:MASTER:해방 * 50 + TALENT:MASTER:수줍음 * 250 - TALENT:MASTER:수치심옅음 * 150 + SOURCE:MASTER:일탈
+;일탈 SOURCE가 0이라면 트라우마 SOURCE도 0이 된다
+SOURCE:MASTER:트라우마 = SOURCE:MASTER:일탈 == 0 ? 0 # SOURCE:MASTER:트라우마
+;트라우마 SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
+	;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
+	SIF CFLAG:MASTER:트라우마 == 45
+		TIMES SOURCE:MASTER:트라우마 , 1.50
+;조교 대상 자위를 중단
+TEQUIP:자위중 &= ~1
+TFLAG:경과시간 += 2
 
-;リアクション後（Ｎ/Ｈ/Ａ）[罰]（露出、逸脱、トラウマ）
+;리액션 후(N/H/A)[벌](노출, 일탈, 트라우마)
 @ACTION_APPLY2_45
-IF IS_COMGRONAME("消極的従う/平然と従う/積極的従う/受け入れる")
-	;尿意を失う
-	BASE:MASTER:尿意 = 0
-	;屈従SOURCE増加
-	SOURCE:MASTER:屈従 += 200
-	SOURCE:MASTER:達成 += 50 + LOCAL
-	;調教対象Ｖを占有する
-	TFLAG:Ｖ使用中 = 2
-;その他の場合(拒絶)
+IF IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다")
+	;소변욕을 잃는다
+	BASE:MASTER:소변욕 = 0
+	;굴종 SOURCE 증가
+	SOURCE:MASTER:굴종 += 200
+	SOURCE:MASTER:달성 += 50 + LOCAL
+	;조교 대상 V를 점유 한다
+	TFLAG:V사용중 = 2
+;그 외의 경우(거절)
 ELSE
-	;REACT分類に要求に応じないをセット
-	CALL SET_COMGRO("拒否")
-	;露出、逸脱、トラウマ、屈従SOURCE減少
-	TIMES SOURCE:MASTER:露出 , 0.40
-	TIMES SOURCE:MASTER:逸脱 , 0.50
-	TIMES SOURCE:MASTER:トラウマ , 0.10
-	TIMES SOURCE:MASTER:屈従 , 0.20
+	;REACT 분류에 요구에 응하지 않는 것을 세트
+	CALL SET_COMGRO("거부")
+	;노출, 일탈, 트라우마, 굴종 SOURCE 감소
+	TIMES SOURCE:MASTER:노출 , 0.40
+	TIMES SOURCE:MASTER:일탈 , 0.50
+	TIMES SOURCE:MASTER:트라우마 , 0.10
+	TIMES SOURCE:MASTER:굴종 , 0.20
 ENDIF
 
-;────────────────────────────────────
-;046,コスプレ（Ｓ/Ｎ/Ｈ/Ａ）（未実装）
-;────────────────────────────────────
+;─
+;046, 코스프레(S/N/H/A)(미실장)
+;─
 ;@ACTION_APPLY_46

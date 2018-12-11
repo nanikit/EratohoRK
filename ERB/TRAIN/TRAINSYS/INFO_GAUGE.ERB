@@ -1,135 +1,135 @@
-﻿;────────────────────────────────────
-;ゲージを表示
-;────────────────────────────────────
-;アライメントのバーの色が少しキツイ感がしたので微調整。無駄にボタン化するのを回避。他、微調整@revkoishi(14/05/26)
+﻿;─
+;게이지를 표시
+;─
+;아라이먼트의 바의 색이 조금 힘든 감이 했으므로 미조정. 쓸데없게 버튼화하는 것을 회피. 외, 미조정@revkoishi(14/05/26)
 @INFO_GAUGE_TRAINER
 #LOCALSSIZE 1
-PRINTFORM %CALLNAME:TARGET% [LV {CFLAG:TARGET:調教レベル}  EXP {CFLAG:TARGET:調教経験}/{CFLAG:TARGET:必要経験値}] が
-PRINTFORML %CALLNAME:MASTER% [LV {CFLAG:MASTER:調教レベル}  EXP {CFLAG:MASTER:調教経験}/{CFLAG:MASTER:必要経験値}] を調教中
-LOCALS = %CALLNAME:TARGET%の状態:[%CONDITION(TCVAR:状態変化)%]\@ FLAG:デバッグ ? %"　"%疲弊[{TFLAG:調教者消耗度}] # \@
-PRINTPLAINFORM %LOCALS,54,LEFT% %CALLNAME:MASTER%の状態:[%CONDITION(TCVAR:MASTER:状態変化)%]\@ FLAG:デバッグ ? %"　"%疲弊[{TFLAG:消耗度}] # \@
+PRINTFORM %CALLNAME:TARGET% [LV {CFLAG:TARGET:조교레벨}  EXP {CFLAG:TARGET:조교경험}/{CFLAG:TARGET:필요경험치}] 가
+PRINTFORML %CALLNAME:MASTER% [LV {CFLAG:MASTER:조교레벨}  EXP {CFLAG:MASTER:조교경험}/{CFLAG:MASTER:필요경험치}] 를 조교중
+LOCALS = %CALLNAME:TARGET%상태:[%CONDITION(TCVAR:상태변화)%]\@ FLAG:디버그 ? %"　"%피폐[{TFLAG:조교자소모도}] # \@
+PRINTPLAINFORM %LOCALS,54,LEFT% %CALLNAME:MASTER%상태:[%CONDITION(TCVAR:MASTER:상태변화)%]\@ FLAG:디버그 ? %"　"%피폐[{TFLAG:소모도}] # \@
 PRINTL 
 
-;好感度表示         //このあたりはもう少しやりようがある感
-IF TALENT:MASTER:読心能力 == 1
-	SELECTCASE CFLAG:好意
+;호감도 표시         //이 근처는 좀 더 할 길이 있는 감
+IF TALENT:MASTER:독심술 == 1
+	SELECTCASE CFLAG:호의
 		CASE IS < -100
-			LOCALS = %CALLNAME:MASTER%への好感度：最悪
+			LOCALS = %CALLNAME:MASTER%에의 호감도:최악
 		CASE IS < 0
-			LOCALS = %CALLNAME:MASTER%への好感度：とても悪い
+			LOCALS = %CALLNAME:MASTER%에의 호감도:매우 나쁘다
 		CASE IS < 200
-			LOCALS = %CALLNAME:MASTER%への好感度：悪い
+			LOCALS = %CALLNAME:MASTER%에의 호감도:나쁘다
 		CASE IS < 500
-			LOCALS = %CALLNAME:MASTER%への好感度：普通
+			LOCALS = %CALLNAME:MASTER%에의 호감도:보통
 		CASE IS < 1000
-			LOCALS = %CALLNAME:MASTER%への好感度：少し気になる
+			LOCALS = %CALLNAME:MASTER%에의 호감도:조금 신경이 쓰인다
 		CASE IS < 1500
-			LOCALS = %CALLNAME:MASTER%への好感度：どきどき
+			LOCALS = %CALLNAME:MASTER%에의 호감도:두근두근
 		CASE IS < 2000
-			LOCALS = %CALLNAME:MASTER%への好感度：好き
+			LOCALS = %CALLNAME:MASTER%에의 호감도:좋아
 		CASE IS < 3000
-			LOCALS = %CALLNAME:MASTER%への好感度：大好き
+			LOCALS = %CALLNAME:MASTER%에의 호감도:너무 좋아
 		CASE IS < 5000
-			LOCALS = %CALLNAME:MASTER%への好感度：%CALLNAME:MASTER%なしではいられない
+			LOCALS = %CALLNAME:MASTER%에의 호감도:%CALLNAME:MASTER%없음로는 있을 수 없다
 		CASEELSE
-			LOCALS = %CALLNAME:MASTER%への好感度：CAUTION!!限界突破!!CAUTION
+			LOCALS = %CALLNAME:MASTER%에의 호감도:CAUTION!! 한계 돌파!! CAUTION
 	ENDSELECT
-ELSEIF TALENT:MASTER:読心能力 == 2
-	LOCALS = %CALLNAME:MASTER%への好感度[{CFLAG:TARGET:好意}] 
+ELSEIF TALENT:MASTER:독심술 == 2
+	LOCALS = %CALLNAME:MASTER%에의 호감도[{CFLAG:TARGET:호의}] 
 ELSE
 	LOCALS =
 ENDIF
-PRINTPLAINFORM %LOCALS,54,LEFT% %CALLNAME:TARGET%への好感度[{CFLAG:TARGET:M好意}]
+PRINTPLAINFORM %LOCALS,54,LEFT% %CALLNAME:TARGET%에의 호감도[{CFLAG:TARGET:M호의}]
 PRINTL 
 
-HTML_PRINT HTML_BASE("体力", TARGET, 0) + "　　" + HTML_BASE("体力", MASTER, 0)
-HTML_PRINT HTML_BASE("気力", TARGET, 1) + "　　" + HTML_BASE("気力", MASTER, 1)
+HTML_PRINT HTML_BASE("체력", TARGET, 0) + "　　" + HTML_BASE("체력", MASTER, 0)
+HTML_PRINT HTML_BASE("기력", TARGET, 1) + "　　" + HTML_BASE("기력", MASTER, 1)
 
 LOCALS '= ""
 IF PENIS(TARGET) || PENIS(MASTER)
 	IF PENIS(TARGET)
-		LOCALS += HTML_BASE("射精", TARGET, 2)
+		LOCALS += HTML_BASE("사정", TARGET, 2)
 	ELSE
 		LOCALS += "　　　　　　　　　　　　　　　　　　　　　　　　　 "
 	ENDIF
 	LOCALS += "　　"
 	SIF PENIS(MASTER)
-		LOCALS += HTML_BASE("射精", MASTER, 2)
+		LOCALS += HTML_BASE("사정", MASTER, 2)
 	HTML_PRINT LOCALS
 ENDIF
 
 LOCALS '= ""
-IF TALENT:TARGET:母乳体質 || TALENT:MASTER:母乳体質
-	IF TALENT:TARGET:母乳体質
-		LOCALS += HTML_BASE("母乳", TARGET, 3)
+IF TALENT:TARGET:모유체질 || TALENT:MASTER:모유체질
+	IF TALENT:TARGET:모유체질
+		LOCALS += HTML_BASE("모유", TARGET, 3)
 	ELSE
 		LOCALS += ""
 	ENDIF
 	LOCALS += "　　"
-	SIF TALENT:MASTER:母乳体質
-		LOCALS += HTML_BASE("母乳", MASTER, 3)
+	SIF TALENT:MASTER:모유체질
+		LOCALS += HTML_BASE("모유", MASTER, 3)
 	HTML_PRINT LOCALS
 ENDIF
-SIF TALENT:MASTER:おもらし癖
-	HTML_PRINT "　　　　　　　　　　　　　　　　　　　　　　　　　　　 " + HTML_BASE("尿意", MASTER, 4)
+SIF TALENT:MASTER:소변버릇
+	HTML_PRINT "　　　　　　　　　　　　　　　　　　　　　　　　　　　 " + HTML_BASE("소변욕", MASTER, 4)
 
 IF PENIS(MASTER)
 	{
 	HTML_PRINT 
-	 "　　　　　　　　　　　　　　　　　　　　　　　　　　　 勃起"
-	+ LAYER_RECTBAR(TCVAR:MASTER:勃起度, MAX(TCVAR:MASTER:勃起度, 1000), 16, 0xC070C0, 0x502050, , , 30)
-	+ @"({TCVAR:MASTER:勃起度,5}/ 1000)　"
+	 "　　　　　　　　　　　　　　　　　　　　　　　　　　　 발기"
+	+ LAYER_RECTBAR(TCVAR:MASTER:발기도, MAX(TCVAR:MASTER:발기도, 1000), 16, 0xC070C0, 0x502050, , , 30)
+	+ @"({TCVAR:MASTER:발기도,5}/ 1000)　"
 	}
 ENDIF
 
-SELECTCASE TALENT:MASTER:読心能力
+SELECTCASE TALENT:MASTER:독심술
 	CASE 1
-		HTML_PRINT @"理性[%TENSION(TARGET, 5)%]" + "　　　　　　　　　　　　　　　　　　　　　　 " + HTML_BASE("理性", MASTER, 5)
-		LOCALS += @"興味[%TENSION(TARGET, 6)%]："
-		LOCALS += @"苛立[%TENSION(TARGET, 7)%]："
-		LOCALS += @"満足[%TENSION(TARGET, 8)%]"
+		HTML_PRINT @"이성[%TENSION(TARGET, 5)%]" + "　　　　　　　　　　　　　　　　　　　　　　 " + HTML_BASE("이성", MASTER, 5)
+		LOCALS += @"흥미[%TENSION(TARGET, 6)%]："
+		LOCALS += @"초조[%TENSION(TARGET, 7)%]："
+		LOCALS += @"만족[%TENSION(TARGET, 8)%]"
 		HTML_PRINT LOCALS
 	CASE 2
-		HTML_PRINT HTML_BASE("理性", TARGET, 5, 32, 1) + "　　" + HTML_BASE("理性", MASTER, 5)
+		HTML_PRINT HTML_BASE("이성", TARGET, 5, 32, 1) + "　　" + HTML_BASE("이성", MASTER, 5)
 		LOCALS '= ""
-		HTML_PRINT HTML_BASE("興味", TARGET, 6, 32, 1)
-		HTML_PRINT HTML_BASE("苛立", TARGET, 7, 32, 1)
-		HTML_PRINT HTML_BASE("満足", TARGET, 8, 32, 1)
-		PRINTFORM 罪悪感[{CFLAG:TARGET:罪悪感}]　アライメント
+		HTML_PRINT HTML_BASE("흥미", TARGET, 6, 32, 1)
+		HTML_PRINT HTML_BASE("초조", TARGET, 7, 32, 1)
+		HTML_PRINT HTML_BASE("만족", TARGET, 8, 32, 1)
+		PRINTFORM 죄악감[{CFLAG:TARGET:죄악감}]  아라이먼트
 		HTML_PRINT LOCALS
 		LOCAL = GETCOLOR()
-		SETCOLOR CFLAG:TARGET:アライメント >= 0 ? 0x0041FF # 0xFF2800
-		BAR CFLAG:TARGET:アライメント + 100, 199, 32
+		SETCOLOR CFLAG:TARGET:아라이먼트 >= 0 ? 0x0041FF # 0xFF2800
+		BAR CFLAG:TARGET:아라이먼트 + 100, 199, 32
 		SETCOLOR LOCAL
-		PRINTPLAINFORM [{CFLAG:TARGET:アライメント}]
+		PRINTPLAINFORM [{CFLAG:TARGET:아라이먼트}]
 		PRINTL 
 	CASEELSE
-		LOCALS += "　　　　　　　　　　　　　　　　　　　　　　　　　　　 " + HTML_BASE("理性", MASTER, 5)
+		LOCALS += "　　　　　　　　　　　　　　　　　　　　　　　　　　　 " + HTML_BASE("이성", MASTER, 5)
 		HTML_PRINT LOCALS
 ENDSELECT
-;────────────────────────────────────
-;助手のゲージを表示
-;────────────────────────────────────
+;─
+;조수의 게이지를 표시
+;─
 ;@INFO_GAUGE_ASSI
-;助手関連の処理は今回見送り
+;조수 관련의 처리는 이번 전송
 ;IF ASSIPLAY
-;	IF TALENT:ASSI:ふたなり || TALENT:ASSI:オトコ
-;		PRINT 射精（助手）
-;		BAR BASE:ASSI:2,MAXBASE:ASSI:2,32
+;	IF TALENT:ASSI:후타나리 || TALENT:ASSI:남자
+;		PRINT 사정(조수)
+;		BAR BASE:ASSI:2, MAXBASE:ASSI:2, 32
 ;		PRINTFORML ({BASE:ASSI:2}/{MAXBASE:ASSI:2})
 ;	ENDIF
 ;ENDIF
 
 
-;────────────────────────────────────
-;触手のゲージを表示
-;────────────────────────────────────
+;─
+;촉수의 게이지를 표시
+;─
 ;@INFO_GAUGE_TENTACLE
-;触手関連の処理も今回見送り
-;IF TEQUIP:触手調教中
-;	SIF MAXBASE:MASTER:尿意 == 0
-;		MAXBASE:MASTER:尿意 == 10000
-;	PRINT 射精（触手）
-;	BAR BASE:MASTER:4,MAXBASE:MASTER:4,32
+;촉수 관련의 처리도 이번 전송
+;IF TEQUIP:촉수 조교중
+;	SIF MAXBASE:MASTER:소변욕 == 0
+;		MAXBASE:MASTER:소변욕 == 10000
+;	PRINT 사정(촉수)
+;	BAR BASE:MASTER:4, MAXBASE:MASTER:4, 32
 ;	PRINTFORML ({BASE:MASTER:4}/{MAXBASE:MASTER:4})
 ;ENDIF

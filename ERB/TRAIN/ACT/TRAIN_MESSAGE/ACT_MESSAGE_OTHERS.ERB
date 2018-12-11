@@ -1,402 +1,402 @@
 ﻿
 ;------------------------------------------------------------------------
-;EDIT	001		KOremi			2011/11/04		全体の書き直し、並べ替え
-;												ACT_APPLY_PROCESS.ERBから地の文を切り出す
-;												強制脱衣、自主脱衣処理を調整
+;EDIT	001		KOremi			2011/11/04		전체의 고쳐 써, 정렬
+;												ACT_APPLY_PROCESS.ERB로부터 지문을 자른다
+;												강제 탈의, 자주 탈의 처리를 조정
 ;------------------------------------------------------------------------
 
-;────────────────────────────────────
-;拒絶時地の文(リアクションによって調教がキャンセルされる)
-;────────────────────────────────────
+;─
+;거절시 지문(리액션에 의해 조교가 캔슬된다)
+;─
 
-;────────────────────────────────────
-;性交のキャンセル
-;────────────────────────────────────
+;─
+;성교의 캔슬
+;─
 @CANCEL_INSERT_TO_M_MESSAGE
 PRINTL 
-;性交開始時
-IF TFLAG:ACT分類 == 3
-	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%と性交しようとしたが、%CALLNAME:MASTER%が暴れてうまくいかなかった…
-;性交中
+;성교 개시시
+IF TFLAG:ACT분류 == 3
+	PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%와 성교하려고 했지만,%CALLNAME:MASTER%가 날뛰어 잘 되지 않았다…
+;성교중
 ELSE
-	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%に挿入していたが、%CALLNAME:MASTER%が暴れたので一旦やめるしかなかった…
+	PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%에 삽입하고 있었지만,%CALLNAME:MASTER%가 날뛰었으므로 일단 그만둘 수 밖에 없었다…
 ENDIF
 RETURN 1
-;────────────────────────────────────
-;性交奉仕のキャンセル
-;────────────────────────────────────
+;─
+;성교 봉사의 캔슬
+;─
 @CANCEL_INSERT_TO_T_MESSAGE
 PRINTL 
-;性交開始時
-IF TFLAG:ACT分類 == 10
-	;ACTがアナルセックスさせるなら
-	IF IS_NOWACTNAME("アナルセックスさせる")
-		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の\@ TEQUIP:ペニスバンド ? 張り型 # ペニス \@をアヌスに挿入させようとしたが、%CALLNAME:MASTER%が暴れてうまくいかなかった…
-	;その他
+;성교 개시시
+IF TFLAG:ACT분류 == 10
+	;ACT가 애널 섹스 시킨다면
+	IF IS_NOWACTNAME("애널 섹스 시킨다")
+		PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의\@ TEQUIP:페니스밴드 ? 의욕형# 페니스\@를 아누스에 삽입 시키려고 했지만,%CALLNAME:MASTER%가 날뛰어 잘 되지 않았다…
+	;그 외
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の\@ TEQUIP:ペニスバンド ? 張り型 # ペニス \@をヴァギナに挿入させようとしたが、%CALLNAME:MASTER%が暴れたので一旦やめるしかなかった…
+		PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의\@ TEQUIP:페니스밴드 ? 의욕형# 페니스\@를 바기나에 삽입 시키려고 했지만,%CALLNAME:MASTER%가 날뛰었으므로 일단 그만둘 수 밖에 없었다…
 	ENDIF
-;性交中
+;성교중
 ELSE
-	;アナルセックス状態であれば
-	IF TEQUIP:性交奉仕中 == 6
-		PRINTFORML %CALLNAME:MASTER%が暴れたため、%CALLNAME:TARGET%のアヌスに挿入されていた\@ TEQUIP:ペニスバンド ? 張り型 # ペニス \@が抜けてしまった…
-	;その他
+	;애널 섹스 상태이면
+	IF TEQUIP:성교봉사중 == 6
+		PRINTFORML %CALLNAME:MASTER%가 날뛰었기 때문에,%CALLNAME:TARGET%의 아누스에 삽입되고 있었다\@ TEQUIP:페니스밴드 ? 의욕형# 페니스\@가 빠져 버렸다…
+	;그 외
 	ELSE
-		PRINTFORML %CALLNAME:MASTER%が暴れたため、%CALLNAME:TARGET%に挿入されていた\@ TEQUIP:ペニスバンド ? 張り型 # ペニス \@が抜けてしまった…
+		PRINTFORML %CALLNAME:MASTER%가 날뛰었기 때문에,%CALLNAME:TARGET%에 삽입되고 있었다\@ TEQUIP:페니스밴드 ? 의욕형# 페니스\@가 빠져 버렸다…
 	ENDIF
 ENDIF
 RETURN 1
-;────────────────────────────────────
-;加虐、露出プレイのキャンセル（痛み、拘束、露出、逸脱）
-;────────────────────────────────────
-;拘束キャンセル
+;─
+;가학, 노출 플레이의 캔슬(아픔, 구속, 노출, 일탈)
+;─
+;구속 캔슬
 @CANCEL_TEQUIP_RESTRAINT_MESSAGE
 PRINTL 
-PRINTFORML %CALLNAME:MASTER%の哀願を聞き入れ、%CALLNAME:TARGET%は%CALLNAME:MASTER%の拘束を解いた…
+PRINTFORML %CALLNAME:MASTER%의 애원을 들어주어,%CALLNAME:TARGET%는%CALLNAME:MASTER%의 구속을 풀었다…
 RETURN 1
-;三角木馬キャンセル
+;삼각 목마 캔슬
 @CANCEL_TEQUIP_W_HORSE_MESSAGE
 PRINTL 
-PRINTFORML %CALLNAME:MASTER%の哀願を聞き入れ、%CALLNAME:TARGET%は%CALLNAME:MASTER%を木馬から降ろした…
+PRINTFORML %CALLNAME:MASTER%의 애원을 들어주어,%CALLNAME:TARGET%는%CALLNAME:MASTER%를 목마로부터 내렸다…
 RETURN 1
-;野外プレイキャンセル
+;야외 플레이 캔슬
 @CANCEL_TEQUIP_OUTDOOR_MESSAGE
 PRINTL 
-PRINTFORML %CALLNAME:MASTER%の哀願を聞き入れ、%CALLNAME:TARGET%は%CALLNAME:MASTER%を連れて部屋に戻ってきた…
+PRINTFORML %CALLNAME:MASTER%의 애원을 들어주어,%CALLNAME:TARGET%는%CALLNAME:MASTER%를 따라 방으로 돌아왔다…
 RETURN 1
-;大鏡キャンセル
+;대거울 캔슬
 @CANCEL_TEQUIP_MIRROR_MESSAGE
 PRINTL 
-PRINTFORML %CALLNAME:MASTER%の哀願を聞き入れ、%CALLNAME:TARGET%は%CALLNAME:MASTER%を連れて鏡の前から離れた…
+PRINTFORML %CALLNAME:MASTER%의 애원을 들어주어,%CALLNAME:TARGET%는%CALLNAME:MASTER%를 따라 거울의 전부터 떨어졌다…
 RETURN 1
-;コスプレキャンセル
+;코스프레캐셀
 @CANCEL_TEQUIP_COSPLAY_MESSAGE
 PRINTL 
-PRINTFORML %CALLNAME:MASTER%の哀願を聞き入れ、%CALLNAME:TARGET%は%CALLNAME:MASTER%の着替えを許し、コスプレ衣装を回収した…
+PRINTFORML %CALLNAME:MASTER%의 애원을 들어주어,%CALLNAME:TARGET%는%CALLNAME:MASTER%의 갈아입음을 허락해, 코스프레 의상을 회수했다…
 RETURN 1
 
-;────────────────────────────────────
-;特殊状況時地の文(特別な状況が起きた時の地の文)
-;────────────────────────────────────
+;─
+;특수 상황시 지문(특별한 상황이 일어났을 때의 지문)
+;─
 
-;────────────────────────────────────
-;自慰絶頂時の地の文表示
-;────────────────────────────────────
+;─
+;자위 절정시의 지문 표시
+;─
 @ONANIE_EX_MESSAGE
-;ACTが自慰の場合内容が被るので表示しない
-SIF TFLAG:ACT == GET_ACTNUM("自慰")
+;ACT가 자위의 경우 내용이 입으므로 표시하지 않는다
+SIF TFLAG:ACT == GET_ACTNUM("자위")
 	RETURN 0
-;ペニスあり
+;페니스 있어
 IF PENIS(MASTER)
-	;REACT分類が積極的従う系
-	IF IS_COMGRONAME("積極的従う")
-		;顔射自慰絶頂
+	;REACT 분류가 적극적 따르는 계
+	IF IS_COMGRONAME("적극적 따른다")
+		;얼굴에 사정하기 자위 절정
 		IF ME_PLAYER(1) == 9
-			PRINTFORML %CALLNAME:MASTER%が自身の陰茎をしごきながら射精が近いことを伝えると、
-			PRINTFORML %CALLNAME:TARGET%は鈴口の前で舌をてろんと突き出して、口の中まで飛ばすように命令した…
-		;その他
+			PRINTFORML %CALLNAME:MASTER%가 자신의 음경을 훑어 내면서 사정이 가까운 것을 전하면,
+			PRINTFORML %CALLNAME:TARGET%는 령구의 앞에서 혀응과 내밀어, 입의 안까지 날리도록(듯이) 명령했다…
+		;그 외
 		ELSE
-			PRINTFORML %CALLNAME:MASTER%が自身の陰茎をしごきながら射精が近いことを伝えると、
-			PRINTFORML %CALLNAME:TARGET%は卑猥な言葉をささやきながら一人でイくように命じた…
+			PRINTFORML %CALLNAME:MASTER%가 자신의 음경을 훑어 내면서 사정이 가까운 것을 전하면,
+			PRINTFORML %CALLNAME:TARGET%는 추잡한 말을 속삭이면서 혼자서 가도록(듯이) 명했다…
 		ENDIF
-	;REACT分類がその他
+	;REACT 분류가 그 외
 	ELSE
-		;顔射自慰絶頂
+		;얼굴에 사정하기 자위 절정
 		IF ME_PLAYER(1) == 9
-			PRINTFORML %CALLNAME:TARGET%は自身の陰茎をしごいている%CALLNAME:MASTER%の絶頂を察すると
-			PRINTFORML 鈴口の前で舌をてろんと突き出して、口の中まで飛ばすように命令した…
-		;その他
+			PRINTFORML %CALLNAME:TARGET%는 자신의 음경을 훑고 있다%CALLNAME:MASTER%의 절정을 헤아리면
+			PRINTFORML 령구의 앞에서 혀응과 내밀어, 입의 안까지 날리도록(듯이) 명령했다…
+		;그 외
 		ELSE
-			PRINTFORML %CALLNAME:TARGET%は自身の陰茎をしごいている%CALLNAME:MASTER%の絶頂を察すると
-			PRINTFORML 卑猥な言葉をささやきながら一人でイくように命じた…
+			PRINTFORML %CALLNAME:TARGET%는 자신의 음경을 훑고 있다%CALLNAME:MASTER%의 절정을 헤아리면
+			PRINTFORML 추잡한 말을 속삭이면서 혼자서 가도록(듯이) 명했다…
 		ENDIF
 	ENDIF
 ELSE
-	;REACT分類が積極的従う系
-	IF IS_COMGRONAME("積極的従う")
-		PRINTFORML %CALLNAME:MASTER%が自身の陰核をこね回しながら絶頂が近いことを伝えると、
-		PRINTFORML %CALLNAME:TARGET%は卑猥な言葉をささやきながら一人でイくように命じた…
-	;REACT分類がその他
+	;REACT 분류가 적극적 따르는 계
+	IF IS_COMGRONAME("적극적 따른다")
+		PRINTFORML %CALLNAME:MASTER%가 자신의 음핵을 뭉그러뜨리면서 절정이 가까운 것을 전하면,
+		PRINTFORML %CALLNAME:TARGET%는 추잡한 말을 속삭이면서 혼자서 가도록(듯이) 명했다…
+	;REACT 분류가 그 외
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%は自身の陰核を弄っている%CALLNAME:MASTER%の絶頂を察すると
-		PRINTFORML 卑猥な言葉をささやきながら一人でイくように命じた…
+		PRINTFORML %CALLNAME:TARGET%는 자신의 음핵을 만지작거리고 있다%CALLNAME:MASTER%의 절정을 헤아리면
+		PRINTFORML 추잡한 말을 속삭이면서 혼자서 가도록(듯이) 명했다…
 	ENDIF
 ENDIF
 RETURN 1
 
-;────────────────────────────────────
-;実行時地の文(ACT種によらない地の文)
-;────────────────────────────────────
+;─
+;실행시 지문(ACT종에 의하지 않는 지문)
+;─
 
-;────────────────────────────────────
-;媚薬・ローション使用時の地の文/口上表示
-;────────────────────────────────────
+;─
+;미약·로션 사용시의 지문/구상 표시
+;─
 @USE_MESSAGE
-;媚薬・ローションを使用した旨のメッセージを表示します
-;ここの改行処理はあやしいので後でいろいろ調整が必要
+;미약·로션을 사용한 취지의 메세지를 표시합니다
+;여기의 개행 처리는 이상하기 때문에 다음에 여러 가지 조정이 필요
 
-;RESULT初期化
+;RESULT 초기화
 RESULT = 0
 
-;媚薬等使用口上呼び出し
-IF TFLAG:媚薬等使用口上 && ((ASSI:1) < 0 || TCVAR:(ASSI:1):助手ACT != 71)
+;미약등 사용 구상 호출
+IF TFLAG:미약등사용구상 && ((ASSI:1) < 0 || TCVAR:(ASSI:1):조수ACT != 71)
 	PRINTL 
 	CALL KOJO_USE
 ENDIF
 
-;口上表示後地の文を表示する場合
-SIF RESULT && TFLAG:媚薬等使用地の文スキップ
+;구상 표시 우시로지의 문장을 표시하는 경우
+SIF RESULT && TFLAG:미약등사용지문스킵
 	PRINTL 
-;地の文表示種別によって分岐
-SELECTCASE TFLAG:媚薬等使用地の文スキップ
-	;ローション
+;지문 표시 종별에 의해 분기
+SELECTCASE TFLAG:미약등사용지문스킵
+	;로션
 	CASE 1
-		;助手協力時
-		IF (ASSI:1) >= 0 && TCVAR:(ASSI:1):助手ACT == 71
+		;조수 협력시
+		IF (ASSI:1) >= 0 && TCVAR:(ASSI:1):조수ACT == 71
 			ALIGNMENT RIGHT
-			PRINTFORML %CALLNAME:(ASSI:1)%は%CALLNAME:MASTER%の体にローションを塗った…
+			PRINTFORML %CALLNAME:(ASSI:1)%는%CALLNAME:MASTER%의 몸에 로션을 발랐다…
 			ALIGNMENT LEFT
-		;助手非協力時
+		;조수비협력시
 		ELSE
-			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の体にローションを塗った…
+			PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의 몸에 로션을 발랐다…
 		ENDIF
-	;媚薬
+	;미약
 	CASE 2
-		;助手協力時
-		IF (ASSI:1) >= 0 && TCVAR:(ASSI:1):助手ACT == 71
+		;조수 협력시
+		IF (ASSI:1) >= 0 && TCVAR:(ASSI:1):조수ACT == 71
 			ALIGNMENT RIGHT
-			PRINTFORML %CALLNAME:(ASSI:1)%は%CALLNAME:MASTER%に媚薬を使った…
+			PRINTFORML %CALLNAME:(ASSI:1)%는%CALLNAME:MASTER%에 미약을 사용했다…
 			ALIGNMENT LEFT
-		;キス時
-		ELSEIF IS_NOWACTNAME("キス")
-			PRINTFORML %CALLNAME:TARGET%は自ら媚薬を飲んで、キスしながらそれを口移しで%CALLNAME:MASTER%に飲ませた…
-		;助手非協力時
+		;키스시
+		ELSEIF IS_NOWACTNAME("키스")
+			PRINTFORML %CALLNAME:TARGET%는 스스로 미약을 마셔, 키스 하면서 그것을 입으로 옮김으로%CALLNAME:MASTER%에 먹였다…
+		;조수비협력시
 		ELSE
-			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%に媚薬を使った…
+			PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%에 미약을 사용했다…
 		ENDIF
-	;ローション＆媚薬
+	;로션＆미약
 	CASE 3
-		;助手協力時
-		IF (ASSI:1) >= 0 && TCVAR:(ASSI:1):助手ACT == 71
+		;조수 협력시
+		IF (ASSI:1) >= 0 && TCVAR:(ASSI:1):조수ACT == 71
 			ALIGNMENT RIGHT
-			PRINTFORML %CALLNAME:(ASSI:1)%は%CALLNAME:MASTER%に媚薬を使った…
-			PRINTFORML さらに%CALLNAME:(ASSI:1)%は火照る%CALLNAME:MASTER%の体にローションを塗った…
+			PRINTFORML %CALLNAME:(ASSI:1)%는%CALLNAME:MASTER%에 미약을 사용했다…
+			PRINTFORML 한층 더%CALLNAME:(ASSI:1)%는 달아오른다%CALLNAME:MASTER%의 몸에 로션을 발랐다…
 			ALIGNMENT LEFT
-		;キス時
-		ELSEIF IS_NOWACTNAME("キス")
-			PRINTFORML %CALLNAME:TARGET%は自ら媚薬を飲んで、キスしながらそれを口移しで%CALLNAME:MASTER%に飲ませた…
-			PRINTFORML さらに口づけしたまま火照る%CALLNAME:MASTER%の体にローションを塗った…
-		;助手非協力時
+		;키스시
+		ELSEIF IS_NOWACTNAME("키스")
+			PRINTFORML %CALLNAME:TARGET%는 스스로 미약을 마셔, 키스 하면서 그것을 입으로 옮김으로%CALLNAME:MASTER%에 먹였다…
+			PRINTFORML 한층 더 입맞춤한 채로 달아오른다%CALLNAME:MASTER%의 몸에 로션을 발랐다…
+		;조수비협력시
 		ELSE
-			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%に媚薬を使った…
-			PRINTFORML さらに%CALLNAME:TARGET%は火照る%CALLNAME:MASTER%の体にローションを塗った…
+			PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%에 미약을 사용했다…
+			PRINTFORML 한층 더%CALLNAME:TARGET%는 달아오른다%CALLNAME:MASTER%의 몸에 로션을 발랐다…
 		ENDIF
 ENDSELECT
 WAIT
 
 ;-----------EDIT 001 START--------------
-;主に引数によって判定する方式に変更
+;주로 인수에 의해 판정하는 방식으로 변경
 ;---------------------------------------
-;────────────────────────────────────
-;強制脱衣、自主脱衣時の地の文/口上表示
-;────────────────────────────────────
-;強制脱衣・自主脱衣のメッセージを表示します
+;─
+;강제 탈의, 자주 탈의시의 지문/구상 표시
+;─
+;강제 탈의·자주 탈의의 메세지를 표시합니다
 
-;脱衣寸前での地の文/口上
+;탈의 직전에서의 지문/구상
 @DATUI_MESSAGE(ARG, ARG:1)
 
-;脱衣前に服装を保存する(脱衣直後での地の文で利用)
+;탈의전에 복장을 보존한다(탈의 직후에서의 지문으로 이용)
 CALLF CLOTHE_SAVE(TARGET)
 CALLF CLOTHE_SAVE(MASTER)
 
-;助手が脱衣の手伝いをする場合
-IF NOWASSIACTNAME(ASSI:1) == "脱衣"
+;조수가 탈의의 심부름을 하는 경우
+IF NOWASSIACTNAME(ASSI:1) == "탈의"
 	ALIGNMENT RIGHT
-	PRINTFORML %CALLNAME:(ASSI:1)%は突然、%CALLNAME:MASTER%の服に手をかけた…
+	PRINTFORML %CALLNAME:(ASSI:1)%는 돌연,%CALLNAME:MASTER%의 옷에 손을 대었다…
 	ALIGNMENT LEFT
-	;調教者脱衣も発生
+	;조교자 탈의도 발생
 	SIF ARG:1 > 0
-		PRINTFORML %CALLNAME:TARGET%も自分の衣服に手をかけ、脱ぎ始めた…
+		PRINTFORML %CALLNAME:TARGET%도 자신의 의복에 손을 대어, 벗기 시작했다…
 	WAIT
-;調教対象、調教者ともに脱衣
+;조교 대상, 조교자 모두 탈의
 ELSEIF ARG > 0 && ARG:1 > 0
-	PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:MASTER%と自分の服に手をかけた…
-;調教対象脱衣
+	PRINTFORMW %CALLNAME:TARGET%는%CALLNAME:MASTER%와 자신의 옷에 손을 대었다…
+;조교 대상 탈의
 ELSEIF ARG > 0
-	PRINTFORMW %CALLNAME:TARGET%は突然、%CALLNAME:MASTER%の服に手をかけた…
-;調教者脱衣
+	PRINTFORMW %CALLNAME:TARGET%는 돌연,%CALLNAME:MASTER%의 옷에 손을 대었다…
+;조교자 탈의
 ELSEIF ARG:1 > 0
-	PRINTFORMW %CALLNAME:TARGET%は自分の衣服に手をかけ、脱ぎ始めた…
+	PRINTFORMW %CALLNAME:TARGET%는 자신의 의복에 손을 대어, 벗기 시작했다…
 ENDIF
 
-;RESULT初期化
+;RESULT 초기화
 RESULT = 0
-;脱衣時口上呼び出し
+;탈의시 구상 호출
 CALL KOJO_DATUI
 
-;調教対象脱衣失敗
-IF TFLAG:強制脱衣 < 0
-	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の服を剥ごうとしたが、%CALLNAME:MASTER%に邪魔された…
-;調教対象脱衣成功
+;조교 대상 탈의 실패
+IF TFLAG:강제탈의 < 0
+	PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의 옷을 벗기려고 했지만,%CALLNAME:MASTER%에 방해받았다…
+;조교 대상 탈의 성공
 ELSEIF ARG > 0
-	;LOCAL初期化
+	;LOCAL 초기화
 	VARSET LOCAL
-	;助手が脱衣の手伝いをする場合
-	IF NOWASSIACTNAME(ASSI:1) == "脱衣"
-		;調教者脱衣も発生
+	;조수가 탈의의 심부름을 하는 경우
+	IF NOWASSIACTNAME(ASSI:1) == "탈의"
+		;조교자 탈의도 발생
 		SIF ARG:1 > 0
 			ALIGNMENT RIGHT
-		PRINTFORM %CALLNAME:(ASSI:1)%\@ ARG:1 > 0 ? が # は \@%CALLNAME:MASTER%の
-	;助手が脱衣の手伝いをしない場合
+		PRINTFORM %CALLNAME:(ASSI:1)%\@ ARG:1 > 0 ? 가# 는\@%CALLNAME:MASTER%의
+	;조수가 탈의의 심부름을 하지 않는 경우
 	ELSE
-		PRINTFORM %CALLNAME:TARGET%は%CALLNAME:MASTER%の
+		PRINTFORM %CALLNAME:TARGET%는%CALLNAME:MASTER%의
 	ENDIF
-	;脱衣枚数確認(LOCAL:1に脱衣枚数を代入)
+	;탈의 매수 확인(LOCAL:1에 탈의 매수를 대입)
 	FOR LOCAL, 0, 7
 		SIF GETBIT(ARG, LOCAL)
 			LOCAL:1 ++
 	NEXT
-	;最終着衣枚数確認(LOCAL:2に最終着衣枚数を代入)
+	;최종 착의 매수 확인(LOCAL:2에 최종 착의 매수를 대입)
 	FOR LOCAL, 0, 7
 		SIF TEQUIP:MASTER:LOCAL != 0 && !GETBIT(ARG, LOCAL)
 			LOCAL:2 ++
 	NEXT
-	;最終着衣が全裸なら
+	;최종 착의가 전라라면
 	IF LOCAL:2 == 0
-		;脱衣枚数が3枚以上
+		;탈의 매수가 3매 이상
 		IF LOCAL:1 > 2
-			PRINT 纏う衣装をすべて
-		;脱衣枚数が2枚
+			PRINT 감기는 의상을 모두
+		;탈의 매수가 2매
 		ELSEIF LOCAL:1 == 2
-			PRINTFORM 衣類すべてを
-		;脱衣枚数が1枚(脱衣側を表示)
+			PRINTFORM 의류 모든 것을
+		;탈의 매수가 1매(탈의측을 표시)
 		ELSE
 			CALL DATUI_MESSAGE_SORT(0, ARG, MASTER)
 		ENDIF
-	;下着のみ脱衣時、残着衣あり
+	;속옷만 탈의시, 잔착의 있어
 	ELSEIF !(ARG & ~12) && (LOCAL:2 >= 0)
-		;下半身、上半身上着
-		IF TEQUIP:MASTER:下半身上着 && TEQUIP:MASTER:上半身上着
-			PRINTFORM %OUTER_T(MASTER, 0, 1)%と%OUTER_B(MASTER, 0, 1)%を残して下着だけ
-		;下半身上着
-		ELSEIF TEQUIP:MASTER:下半身上着
-			PRINTFORM %OUTER_B(MASTER, 0, 1)%を残して下着だけ
-		;上半身、全身上着
-		ELSEIF TEQUIP:MASTER:上半身上着 || TEQUIP:MASTER:全身上着
-			PRINTFORM %OUTER_T(MASTER, 0, 1)%を残して下着だけ
-		;片方の下着のみ脱衣(脱衣側を表示)
+		;하반신, 상반신 윗도리
+		IF TEQUIP:MASTER:하반신윗도리 && TEQUIP:MASTER:상반신윗도리
+			PRINTFORM %OUTER_T(MASTER, 0, 1)%와%OUTER_B(MASTER, 0, 1)%를 남겨 속옷만
+		;하반신 윗도리
+		ELSEIF TEQUIP:MASTER:하반신윗도리
+			PRINTFORM %OUTER_B(MASTER, 0, 1)%를 남겨 속옷만
+		;상반신, 전신 윗도리
+		ELSEIF TEQUIP:MASTER:상반신윗도리 || TEQUIP:MASTER:전신윗도리
+			PRINTFORM %OUTER_T(MASTER, 0, 1)%를 남겨 속옷만
+		;다른 한쪽의 속옷만 탈의(탈의측을 표시)
 		ELSEIF LOCAL:1 == 1
 			CALL DATUI_MESSAGE_SORT(0, ARG, MASTER)
-		;その他
+		;그 외
 		ELSE
-			PRINTFORM 下着すべてを
+			PRINTFORM 속옷 모든 것을
 		ENDIF
-	;最終着衣が全裸以外なら
+	;최종 착의가 전라 이외라면
 	ELSE
-		;脱衣枚数が最終着衣以下なら脱衣側を表示
+		;탈의 매수가 최종 착의 이하라면 탈의측을 표시
 		IF LOCAL:1 <= LOCAL:2
 			CALL DATUI_MESSAGE_SORT(0, ARG, MASTER)
-		;そうでなければ着衣側を表示
+		;그렇지 않으면 착의측을 표시
 		ELSE
 			CALL DATUI_MESSAGE_SORT(1, ARG, MASTER)
 		ENDIF
 	ENDIF
-	;脱いだ結果全裸
+	;벗은 결과 전라
 	IF LOCAL:2 == 0
-		PRINTFORML 強引に\@ ARG:1 > 0 ? 剥いで全裸にすると、 # 剥ぎ、全裸にした… \@
-	;脱いだ結果全裸以外
+		PRINTFORML 억지로\@ ARG:1 > 0 ? 벗겨 전라로 하면,# 벗겨, 전라로 했다…\@
+	;벗은 결과 전라 이외
 	ELSE
-		PRINTFORML 強引に\@ ARG:1 > 0 ? 剥ぐと、 # 剥いだ… \@
+		PRINTFORML 억지로\@ ARG:1 > 0 ? 벗기면,# 벗겼다…\@
 	ENDIF
 	ALIGNMENT LEFT
 ENDIF
-;調教者脱衣発生
+;조교자 탈의 발생
 IF ARG:1 > 0
-	;LOCAL初期化
+	;LOCAL 초기화
 	VARSET LOCAL
-	;調教対象脱衣失敗時
-	IF TFLAG:強制脱衣 < 0
-		PRINTFORM %CALLNAME:TARGET%は諦めて自分の
-	;助手が脱衣の手伝いをする場合
-	ELSEIF NOWASSIACTNAME(ASSI:1) == "脱衣"
-		PRINTFORM %CALLNAME:TARGET%も自分の
-	;調教対象脱衣成功時
+	;조교 대상 탈의 실패시
+	IF TFLAG:강제탈의 < 0
+		PRINTFORM %CALLNAME:TARGET%는 단념해 자신의
+	;조수가 탈의의 심부름을 하는 경우
+	ELSEIF NOWASSIACTNAME(ASSI:1) == "탈의"
+		PRINTFORM %CALLNAME:TARGET%도 자신의
+	;조교 대상 탈의 성공시
 	ELSEIF ARG > 0
-		PRINT 自分も
-	;調教対象脱衣不発生時
+		PRINT 자신도
+	;조교 대상 탈의 불발생시
 	ELSE
-		PRINTFORM %CALLNAME:TARGET%は自分の
+		PRINTFORM %CALLNAME:TARGET%는 자신의
 	ENDIF
-	;脱衣枚数確認(LOCAL:1に脱衣枚数を代入)
+	;탈의 매수 확인(LOCAL:1에 탈의 매수를 대입)
 	FOR LOCAL, 0, 7
 		SIF GETBIT(ARG:1, LOCAL)
 			LOCAL:1 ++
 	NEXT
-	;最終着衣枚数確認(LOCAL:2に最終着衣枚数を代入)
+	;최종 착의 매수 확인(LOCAL:2에 최종 착의 매수를 대입)
 	FOR LOCAL, 0, 7
 		SIF TEQUIP:LOCAL != 0 && !GETBIT(ARG:1, LOCAL)
 			LOCAL:2 ++
 	NEXT
-	;最終着衣が全裸なら
+	;최종 착의가 전라라면
 	IF LOCAL:2 == 0
-		;脱衣枚数が3枚以上
+		;탈의 매수가 3매 이상
 		IF LOCAL:1 > 2
-			PRINT 纏う衣装をすべて
-		;脱衣枚数が2枚
+			PRINT 감기는 의상을 모두
+		;탈의 매수가 2매
 		ELSEIF LOCAL:1 == 2
-			PRINTFORM 衣類すべてを
-		;脱衣枚数が1枚(脱衣側を表示)
+			PRINTFORM 의류 모든 것을
+		;탈의 매수가 1매(탈의측을 표시)
 		ELSE
 			CALL DATUI_MESSAGE_SORT(0, ARG:1, TARGET)
 		ENDIF
-	;下着のみ脱衣時、残着衣あり
+	;속옷만 탈의시, 잔착의 있어
 	ELSEIF !(ARG:1 & ~12) && (LOCAL:2 >= 0)
-		;下半身、上半身上着
-		IF TEQUIP:下半身上着 && TEQUIP:上半身上着
-			PRINTFORM %OUTER_T(TARGET, 0, 1)%と%OUTER_B(TARGET, 0, 1)%を残して下着だけ
-		;下半身上着
-		ELSEIF TEQUIP:下半身上着
-			PRINTFORM %OUTER_B(TARGET, 0, 1)%を残して下着だけ
-		;上半身、全身上着
-		ELSEIF TEQUIP:上半身上着 || TEQUIP:全身上着
-			PRINTFORM %OUTER_T(TARGET, 0, 1)%を残して下着だけ
-		;片方の下着のみ脱衣(脱衣側を表示)
+		;하반신, 상반신 윗도리
+		IF TEQUIP:하반신윗도리 && TEQUIP:상반신윗도리
+			PRINTFORM %OUTER_T(TARGET, 0, 1)%와%OUTER_B(TARGET, 0, 1)%를 남겨 속옷만
+		;하반신 윗도리
+		ELSEIF TEQUIP:하반신윗도리
+			PRINTFORM %OUTER_B(TARGET, 0, 1)%를 남겨 속옷만
+		;상반신, 전신 윗도리
+		ELSEIF TEQUIP:상반신윗도리 || TEQUIP:전신윗도리
+			PRINTFORM %OUTER_T(TARGET, 0, 1)%를 남겨 속옷만
+		;다른 한쪽의 속옷만 탈의(탈의측을 표시)
 		ELSEIF LOCAL:1 == 1
 			CALL DATUI_MESSAGE_SORT(0, ARG:1, TARGET)
-		;その他
+		;그 외
 		ELSE
-			PRINTFORM 下着すべてを
+			PRINTFORM 속옷 모든 것을
 		ENDIF
-	;最終着衣が全裸以外なら
+	;최종 착의가 전라 이외라면
 	ELSE
-		;脱衣枚数が最終着衣以下なら脱衣側を表示
+		;탈의 매수가 최종 착의 이하라면 탈의측을 표시
 		IF LOCAL:1 <= LOCAL:2
 			CALL DATUI_MESSAGE_SORT(0, ARG:1, TARGET)
-		;そうでなければ着衣側を表示
+		;그렇지 않으면 착의측을 표시
 		ELSE
 			CALL DATUI_MESSAGE_SORT(1, ARG:1, TARGET)
 		ENDIF
 	ENDIF
-	;脱いだ結果全裸
+	;벗은 결과 전라
 	IF LOCAL:2 == 0
-		PRINTFORML 脱ぎ、全裸になった…
-	;脱いだ結果全裸以外
+		PRINTFORML 벗어, 전라가 되었다…
+	;벗은 결과 전라 이외
 	ELSE
-		PRINTFORML 脱ぎ捨てた…
+		PRINTFORML 벗어 던졌다…
 	ENDIF
 ENDIF
-;調教対象脱衣失敗時
-SIF TFLAG:強制脱衣 < 0
-	PRINTFORML %CALLNAME:TARGET%はかなり怒っているようだ…
+;조교 대상 탈의 실패시
+SIF TFLAG:강제탈의 < 0
+	PRINTFORML %CALLNAME:TARGET%는 꽤 화나 있는 것 같다…
 WAIT
 
 RETURN RESULT
 
-;脱衣直後での地の文/口上
+;탈의 직후에서의 지문/구상
 @DATUI_MESSAGE2(ARG, ARG:1)
 PRINTL 
-;調教対象、調教者脱衣時結果を表示
+;조교 대상, 조교자 탈의시 결과를 표시
 SIF ARG > 0
 	CALL CLOTHE_SHOW(MASTER)
 SIF ARG:1 > 0
@@ -405,39 +405,39 @@ SIF  ARG > 0 || ARG:1 > 0
 	WAIT
 
 @DATUI_MESSAGE_SORT(ARG, ARG:1, ARG:2)
-;脱衣(最終着衣)種を外側から順に表示
-;ARG:0	0 = 脱衣種　1 = 最終着衣種
-;ARG:1	脱衣指定部位
-;ARG:2	対象者
+;탈의(최종 착의) 종을 외측으로부터 순서에 표시
+;ARG:0	0 =탈의종  1 =최종 착의종
+;ARG:1	탈의 지정 부위
+;ARG:2	대상자
 
-;LOCAL初期化
+;LOCAL 초기화
 VARSET LOCAL
 
-;外側の着衣から確認
+;외측의 착의로부터 확인
 LOCAL = 6
-;無限ループ
+;엔들레스 루프
 WHILE 1
-	;確認着衣を脱衣(着衣)していた場合
+	;확인 착의를 탈의(착의) 하고 있었을 경우
 	IF  TEQUIP:(ARG:2):LOCAL != 0 && !ARG == GETBIT(ARG:1, LOCAL)
-		;二つ目以降は繋ぎ語も表示
+		;2번째 이후는 이음어도 표시
 		SIF LOCAL:1
-			PRINT と
-		;脱衣(着衣)内容を表示
+			PRINT 와
+		;탈의(착의) 내용을 표시
 		PRINTS CLOTHES(LOCAL, ARG:2)
-		;表示数カウント
+		;표시수카운트
 		LOCAL:1++
 	ENDIF
-	;確認する部位が無ければ脱出
+	;확인하는 부위가 없으면 탈출
 	SIF LOCAL == 0
 		BREAK
-	;確認着衣を内側へシフト
+	;확인 착의를 안쪽에 쉬프트
 	LOCAL--
 WEND
-;脱衣種表示時
+;탈의종 표시시
 IF ARG == 0
-	PRINT を
-;最終着衣種表示時
+	PRINT 를
+;최종 착의종 표시시
 ELSE
-	PRINT 以外の衣装全てを
+	PRINT 이외의 의상 모두를
 ENDIF
 ;-----------EDIT 001 END  --------------

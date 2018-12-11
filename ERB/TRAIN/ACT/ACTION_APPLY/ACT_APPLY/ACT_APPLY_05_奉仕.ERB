@@ -1,605 +1,605 @@
-﻿;────────────────────────────────────
-;050,手淫/愛撫強制
-;────────────────────────────────────
-;リアクション前（Ｓ/Ｎ）（不潔）
+﻿;─
+;050, 자위/애무 강제
+;─
+;리액션전(S/N)(불결)
 @ACTION_APPLY_50
-;奉仕系の行動は拒否できるので、反応が出るまで身体の接触がないようにしておきます
-;脱衣の処理
-;調教対象がアクセサリ装着中、1/3の確率か調教者Ｃ鈍感時アクセサリー強制脱衣
-SIF TEQUIP:MASTER:アクセサリ && (!RAND:3 || TALENT:Ｃ鈍感)
-	TFLAG:強制脱衣 = 6
-;調教者着衣プレイ好き素質がある場合
-IF TALENT:着衣プレイ好き
-	;下着だけ自主脱衣
-	TFLAG:自主脱衣 = 9
-;解放素質、または確率(調教者調教レベル、欲望、調教対象魅惑で増大)で
-ELSEIF TALENT:解放 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "欲望") / 10 + TALENT:MASTER:魅惑 * 5 > 4 + RAND:5)
-	;半々の確率でアクセサリ－まで、または全裸まで自主脱衣
-	TFLAG:自主脱衣 = 7 + RAND:2
+;봉사계의 행동은 거부할 수 있으므로, 반응이 나올 때까지 신체의 접촉이 없도록 해 둡니다
+;탈의의 처리
+;조교 대상이 악세사리 장착중,1/3의 확률이나 조교자 C둔감시 액세서리 강제 탈의
+SIF TEQUIP:MASTER:악세사리 && (!RAND:3 || TALENT:C둔감)
+	TFLAG:강제탈의 = 6
+;조교자 착의플레이선호 소질이 있는 경우
+IF TALENT:착의플레이선호
+	;속옷만 자주 탈의
+	TFLAG:자주탈의 = 9
+;해방 소질, 또는 확률(조교자 조교 레벨, 욕망, 조교 대상 매혹으로 증대)로
+ELSEIF TALENT:해방 || (GET_TRAINLV(TARGET) + GET_ABL(TARGET, "욕망") / 10 + TALENT:MASTER:매혹 * 5 > 4 + RAND:5)
+	;반반의 확률로 액세서리까지, 또는 전라까지 자주 탈의
+	TFLAG:자주탈의 = 7 + RAND:2
 ENDIF
-;手淫派生時
-IF TFLAG:ACT派生 == 1
-	;不潔SOURCE増加
-	SOURCE:MASTER:不潔 = 50
-	;調教者のペニスに精液/アナル汚れが存在すると不潔SOURCE中増加
-	SIF STAIN:ペニス & (4 + 8)
-		SOURCE:MASTER:不潔 += 150
-	;調教者のペニスに血/粘液汚れが存在すると不潔SOURCE大増加
-	SIF STAIN:ペニス & (32 + 64)
-		SOURCE:MASTER:不潔 += 400
-	;自主脱衣を行わない判定であれば、下半身全部自主脱衣に変更
-	SIF TFLAG:自主脱衣 == 0
-		TFLAG:自主脱衣 = 5
-;普通の愛撫時
+;자위 파생시
+IF TFLAG:ACT파생 == 1
+	;불결 SOURCE 증가
+	SOURCE:MASTER:불결 = 50
+	;조교자의 페니스에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
+	SIF STAIN:페니스 & (4 + 8)
+		SOURCE:MASTER:불결 += 150
+	;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
+	SIF STAIN:페니스 & (32 + 64)
+		SOURCE:MASTER:불결 += 400
+	;자주 탈의를 실시하지 않는 판정이면, 하반신 전부 자주 탈의로 변경
+	SIF TFLAG:자주탈의 == 0
+		TFLAG:자주탈의 = 5
+;보통 애무시
 ELSE
-	;不潔SOURCE増加
-	SOURCE:MASTER:不潔 = 25
-	;調教者のヴァギナに精液/アナル汚れが存在すると不潔SOURCE中増加
-	SIF STAIN:ヴァギナ & (4 + 8)
-		SOURCE:MASTER:不潔 += 150
-	;調教者のヴァギナに血/粘液汚れが存在すると不潔SOURCE大増加
-	SIF STAIN:ヴァギナ & (32 + 64)
-		SOURCE:MASTER:不潔 += 400
-	;自主脱衣を行わない判定であれば、上＋下上着自主脱衣に変更
-	SIF TFLAG:自主脱衣 == 0
-		TFLAG:自主脱衣 = 3
+	;불결 SOURCE 증가
+	SOURCE:MASTER:불결 = 25
+	;조교자의 바기나에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
+	SIF STAIN:바기나 & (4 + 8)
+		SOURCE:MASTER:불결 += 150
+	;조교자의 바기나에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
+	SIF STAIN:바기나 & (32 + 64)
+		SOURCE:MASTER:불결 += 400
+	;자주 탈의를 실시하지 않는 판정이면, 상＋시모카미착자주 탈의로 변경
+	SIF TFLAG:자주탈의 == 0
+		TFLAG:자주탈의 = 3
 ENDIF
-;顔面騎乗系解除
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-;調教対象自慰を中断
-TEQUIP:自慰中 &= ~1
-;調教者欲望に応じて勃起度上昇
-TCVAR:MASTER:今回の勃起 += 100 + GET_ABL(TARGET, "欲望")
-TFLAG:経過時間 += 2
+;조교 대상 자위를 중단
+TEQUIP:자위중 &= ~1
+;조교자 욕망에 응해 발기도 상승
+TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
+TFLAG:경과시간 += 2
 
-;リアクション後（Ｓ/Ｎ）（不潔）
+;리액션 후(S/N)(불결)
 @ACTION_APPLY2_50
-;REACT分類が要求に応じないの場合(拒絶)
-IF IS_COMGRONAME("拒否/暴れる/逃げる")
-	;リアクションが自慰し始めるの場合
-	IF IS_NOWCOMNAME("自慰し始める")
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.01
-		TIMES SOURCE:MASTER:屈従, 0.10
-	;恥情先行
-	ELSEIF PALAM:MASTER:恥情 > PALAM:MASTER:反抗
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.03
-		TIMES SOURCE:MASTER:屈従, 0.20
-	;反抗先行
+;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+IF IS_COMGRONAME("거부/날뛴다/도망친다")
+	;리액션이 자위하기 시작하는 것 경우
+	IF IS_NOWCOMNAME("자위하기 시작한다")
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.01
+		TIMES SOURCE:MASTER:굴종, 0.10
+	;치정선행
+	ELSEIF PALAM:MASTER:치정 > PALAM:MASTER:반항
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.03
+		TIMES SOURCE:MASTER:굴종, 0.20
+	;반항 선행
 	ELSE
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.05
-		TIMES SOURCE:MASTER:屈従, 0.15
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.05
+		TIMES SOURCE:MASTER:굴종, 0.15
 	ENDIF
-;その他の場合(受容)
+;그 외의 경우(수용)
 ELSE
-	;快ｘ用補正値(LOCAL:1～4)：愛撫補正、調教対象従順、器用な指先素質に応じて上昇(快ｖは計算するが使わない)
+	;쾌x용 보정치(LOCAL:1~4):애무 보정, 조교 대상 순종, 기묘한손가락소질에 응해 상승(쾌v는 계산하지만 사용하지 않는다)
 	FOR LOCAL, 1, 5
-		LOCAL:LOCAL = 100 + ACT_TO(TARGET, LOCAL) * GET_ABL(MASTER, "従順") * (2 + TALENT:MASTER:器用な指先) / 600
+		LOCAL:LOCAL = 100 + ACT_TO(TARGET, LOCAL) * GET_ABL(MASTER, "순종") * (2 + TALENT:MASTER:기묘한손가락) / 600
 	NEXT
-	;汚れが相互に移る
-	STAIN:MASTER:手 |= STAIN:(PENIS(TARGET) ? 2 # 3)
-	STAIN:(PENIS(TARGET) ? 2 # 3) |= STAIN:MASTER:手
-	;調教対象調教レベル、快ｃ用補正値に応じて接触SOURCE増加
-	SOURCE:MASTER:接触 += CFLAG:MASTER:調教レベル * 10 + LOCAL:1 / 10
-	;快ｃ用補正値に応じて情愛、快ｃSOURCE増加
-	SOURCE:MASTER:情愛 += LOCAL:1 / 5
-	SOURCE:快Ｃ += LOCAL:1 * 2
-	;愛撫時
-	IF !TFLAG:ACT派生
-		;快ｂ用補正値に応じて快ｂSOURCE増加
-		SOURCE:快Ｂ += LOCAL:4 * 2
-		;調教対象技巧が高い場合
-		SIF ABL:MASTER:技巧 > 2
-			;快ａ用補正値に応じて快ａSOURCE増加
-			SOURCE:快Ａ += LOCAL:3 * 2
+	;더러움이 서로 옮긴다
+	STAIN:MASTER:손 |= STAIN:(PENIS(TARGET) ? 2 # 3)
+	STAIN:(PENIS(TARGET) ? 2 # 3) |= STAIN:MASTER:손
+	;조교 대상 조교 레벨, 쾌c용 보정치에 응해 접촉 SOURCE 증가
+	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL:1 / 10
+	;쾌c용 보정치에 응해 사랑, 쾌cSOURCE 증가
+	SOURCE:MASTER:사랑 += LOCAL:1 / 5
+	SOURCE:쾌C += LOCAL:1 * 2
+	;애무시
+	IF !TFLAG:ACT파생
+		;쾌b용 보정치에 응해 쾌bSOURCE 증가
+		SOURCE:쾌B += LOCAL:4 * 2
+		;조교 대상 기교가 높은 경우
+		SIF ABL:MASTER:기교 > 2
+			;쾌a용 보정치에 응해 쾌aSOURCE 증가
+			SOURCE:쾌A += LOCAL:3 * 2
 	ENDIF
-	;不潔SOURCE増加
-	TIMES SOURCE:MASTER:不潔 , 1.20
-	;積極的・平然と従うの場合
-	IF IS_COMGRONAME("積極的従う/平然と従う")
-		;2/3で座り姿勢が膝立ちに変化
-		IF TCVAR:MASTER:姿勢 == 2 && RAND:3
-			TCVAR:MASTER:REACT姿勢変化 = 1
-			TCVAR:MASTER:前回の姿勢 = TCVAR:MASTER:姿勢
-			TCVAR:MASTER:姿勢 = 10
+	;불결 SOURCE 증가
+	TIMES SOURCE:MASTER:불결 , 1.20
+	;적극적·태연하게 따르는 것 경우
+	IF IS_COMGRONAME("적극적 따른다/태연하게 따른다")
+		;2/3로 앉아 자세가 무릎서기에 변화
+		IF TCVAR:MASTER:자세 == 2 && RAND:3
+			TCVAR:MASTER:REACT자세변화 = 1
+			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:자세 = 10
 		ENDIF
-		;仰向けでなければ、1/2で後ろから愛撫するように
-		IF TCVAR:MASTER:姿勢 != 1 && RAND:2 && TCVAR:MASTER:位置前後 != 3
-			TCVAR:MASTER:REACT姿勢変化 = 1
-			TCVAR:MASTER:前回の姿勢 = TCVAR:MASTER:姿勢
-			TCVAR:MASTER:位置前後 = 3
+		;위로 돌리고가 아니면,1/2그리고 뒤로부터 애무하도록(듯이)
+		IF TCVAR:MASTER:자세 != 1 && RAND:2 && TCVAR:MASTER:위치전후 != 3
+			TCVAR:MASTER:REACT자세변화 = 1
+			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:위치전후 = 3
 		ENDIF
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;051,フェラチオ/クンニ強制
-;────────────────────────────────────
-;リアクション前（Ｓ/Ｎ/Ｈ）（不潔）
+;─
+;051, 펠라치오/쿤닐링구스 강제
+;─
+;리액션전(S/N/H)(불결)
 @ACTION_APPLY_51
-;脱衣の処理
-;調教者着衣プレイ好き素質がある場合
-IF TALENT:着衣プレイ好き
-	;下着だけ自主脱衣
-	TFLAG:自主脱衣 = 9
-;抑圧/恥じらい素質がある場合
-ELSEIF TALENT:抑圧 || TALENT:恥じらい
-	;下半身上着自主脱衣
-	TFLAG:自主脱衣 = 2
-;その他の場合
+;탈의의 처리
+;조교자 착의플레이선호 소질이 있는 경우
+IF TALENT:착의플레이선호
+	;속옷만 자주 탈의
+	TFLAG:자주탈의 = 9
+;억압/수줍음 소질이 있는 경우
+ELSEIF TALENT:억압 || TALENT:수줍음
+	;하반신 윗도리 자주 탈의
+	TFLAG:자주탈의 = 2
+;그 외의 경우
 ELSE
-	;下半身全部自主脱衣
-	TFLAG:自主脱衣 = 5
+	;하반신 전부 자주 탈의
+	TFLAG:자주탈의 = 5
 ENDIF
-;フェラチオ系強制時
-IF TFLAG:ACT派生 == 1 || TFLAG:ACT派生 == 4
-	;不潔SOURCE増加
-	SOURCE:MASTER:不潔 = 150
-	;調教者のペニスに精液/アナル汚れが存在すると不潔SOURCE中増加
-	SIF STAIN:ペニス & (4 + 8)
-		SOURCE:MASTER:不潔 += 280
-	;調教者のペニスに血/粘液汚れが存在すると不潔SOURCE大増加
-	SIF STAIN:ペニス & (32 + 64)
-		SOURCE:MASTER:不潔 += 650
-;顔面騎乗アナル強制時
-ELSEIF TFLAG:ACT派生 == 3
-	;不潔SOURCE増加
-	SOURCE:MASTER:不潔 = 1000
-;クンニ系強制時
+;펠라치오계 강제시
+IF TFLAG:ACT파생 == 1 || TFLAG:ACT파생 == 4
+	;불결 SOURCE 증가
+	SOURCE:MASTER:불결 = 150
+	;조교자의 페니스에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
+	SIF STAIN:페니스 & (4 + 8)
+		SOURCE:MASTER:불결 += 280
+	;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
+	SIF STAIN:페니스 & (32 + 64)
+		SOURCE:MASTER:불결 += 650
+;안면 승마 애널 강제시
+ELSEIF TFLAG:ACT파생 == 3
+	;불결 SOURCE 증가
+	SOURCE:MASTER:불결 = 1000
+;쿤닐링구스계 강제시
 ELSE
-	;不潔SOURCE増加
-	SOURCE:MASTER:不潔 = 100
-	;調教者のヴァギナに精液/アナル汚れが存在すると不潔SOURCE中増加
-	SIF STAIN:ヴァギナ & (4 + 8)
-		SOURCE:MASTER:不潔 += 230
-	;調教者のヴァギナに血/粘液汚れが存在すると不潔SOURCE大増加
-	SIF STAIN:ヴァギナ & (32 + 64)
-		SOURCE:MASTER:不潔 += 620
+	;불결 SOURCE 증가
+	SOURCE:MASTER:불결 = 100
+	;조교자의 바기나에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
+	SIF STAIN:바기나 & (4 + 8)
+		SOURCE:MASTER:불결 += 230
+	;조교자의 바기나에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
+	SIF STAIN:바기나 & (32 + 64)
+		SOURCE:MASTER:불결 += 620
 ENDIF
-;顔面騎乗強制時
-IF TFLAG:ACT派生 == 2
-	;顔面騎乗状態をセット
+;안면 승마 강제시
+IF TFLAG:ACT파생 == 2
+	;안면 승마 상태를 세트
 	CALL FACESITTING_SET(1)
-;顔面騎乗アナル強制時
-ELSEIF TFLAG:ACT派生 == 3
-	;顔面騎乗状態をセット
+;안면 승마 애널 강제시
+ELSEIF TFLAG:ACT파생 == 3
+	;안면 승마 상태를 세트
 	CALL FACESITTING_SET(2)
-;その他の場合
+;그 외의 경우
 ELSE
-	;顔面騎乗系解除
+	;안면 승마계 해제
 	CALL FACESITTING_SET(0)
 ENDIF
-;調教者自慰を中断
-TEQUIP:自慰中 &= ~2
-;調教者欲望に応じて勃起度上昇
-TCVAR:MASTER:今回の勃起 += 100 + GET_ABL(TARGET, "欲望")
-TFLAG:経過時間 += 2
+;조교자 자위를 중단
+TEQUIP:자위중 &= ~2
+;조교자 욕망에 응해 발기도 상승
+TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
+TFLAG:경과시간 += 2
 
-;リアクション後（Ｓ/Ｎ/Ｈ）（不潔）
+;리액션 후(S/N/H)(불결)
 @ACTION_APPLY2_51
-;REACT分類が要求に応じないの場合(拒絶)
-IF IS_COMGRONAME("拒否/暴れる/逃げる")
-	;恥情先行
-	IF PALAM:MASTER:恥情 > PALAM:MASTER:反抗
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.03
-		TIMES SOURCE:MASTER:屈従, 0.20
-	;反抗先行
+;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+IF IS_COMGRONAME("거부/날뛴다/도망친다")
+	;치정선행
+	IF PALAM:MASTER:치정 > PALAM:MASTER:반항
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.03
+		TIMES SOURCE:MASTER:굴종, 0.20
+	;반항 선행
 	ELSE
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.05
-		TIMES SOURCE:MASTER:屈従, 0.15
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.05
+		TIMES SOURCE:MASTER:굴종, 0.15
 	ENDIF
-;その他の場合(受容)
+;그 외의 경우(수용)
 ELSE
-	;コマンド派生によって分岐
-	SELECTCASE TFLAG:ACT派生
-		;フェラチオ強制
+	;커맨드 파생에 의해 분기
+	SELECTCASE TFLAG:ACT파생
+		;펠라치오 강제
 		CASE 1
-			;愛撫補正、調教対象従順、舌使い、猫舌素質によって補正値上昇
-			LOCAL = 250 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "従順") * (3 + TALENT:MASTER:舌使い + TALENT:MASTER:猫舌) / 900
-			;汚れが相互に移る
-			STAIN:MASTER:口 |= STAIN:ペニス
-			STAIN:ペニス |= STAIN:MASTER:口
-			;補正値に応じて快ｃSOURCE増加
-			SOURCE:快Ｃ = LOCAL * 2
-		;顔面騎乗アナル
+			;애무 보정, 조교 대상 순종, 혀 사용해, 고양이혀 소질에 의해 보정 가격인상승
+			LOCAL = 250 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 900
+			;더러움이 서로 옮긴다
+			STAIN:MASTER:구 |= STAIN:페니스
+			STAIN:페니스 |= STAIN:MASTER:구
+			;보정치에 응해 쾌cSOURCE 증가
+			SOURCE:쾌C = LOCAL * 2
+		;안면 승마 애널
 		CASE 3
-			;愛撫補正、調教対象従順、舌使い、猫舌素質によって補正値上昇
-			LOCAL = 250 + ACT_TO(TARGET, 3) * GET_ABL(MASTER, "従順") * (3 + TALENT:MASTER:舌使い + TALENT:MASTER:猫舌) / 900
-			;汚れが相互に移る
-			STAIN:MASTER:口 |= STAIN:アナル
-			STAIN:アナル |= STAIN:MASTER:口
-			;補正値に応じて快ａSOURCE増加
-			SOURCE:快Ａ = LOCAL * 2
-		;上記以外(クンニ強制/顔面騎乗)
+			;애무 보정, 조교 대상 순종, 혀 사용해, 고양이혀 소질에 의해 보정 가격인상승
+			LOCAL = 250 + ACT_TO(TARGET, 3) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 900
+			;더러움이 서로 옮긴다
+			STAIN:MASTER:구 |= STAIN:애널
+			STAIN:애널 |= STAIN:MASTER:구
+			;보정치에 응해 쾌aSOURCE 증가
+			SOURCE:쾌A = LOCAL * 2
+		;상기 이외(쿤닐링구스 강제/안면 승마)
 		CASEELSE
-			;愛撫補正、調教対象従順、舌使い、猫舌素質によって補正値上昇
-			LOCAL = 250 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "従順") * (3 + TALENT:MASTER:舌使い + TALENT:MASTER:猫舌) / 900
-			;汚れが相互に移る
-			STAIN:MASTER:口 |= STAIN:ヴァギナ
-			STAIN:ヴァギナ |= STAIN:MASTER:口
-			;補正値に応じて快ｃSOURCE増加
-			SOURCE:快Ｃ = LOCAL * 2
+			;애무 보정, 조교 대상 순종, 혀 사용해, 고양이혀 소질에 의해 보정 가격인상승
+			LOCAL = 250 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 900
+			;더러움이 서로 옮긴다
+			STAIN:MASTER:구 |= STAIN:바기나
+			STAIN:바기나 |= STAIN:MASTER:구
+			;보정치에 응해 쾌cSOURCE 증가
+			SOURCE:쾌C = LOCAL * 2
 	ENDSELECT
-	;調教対象調教レベル、補正値に応じて接触SOURCE増加
-	SOURCE:MASTER:接触 += CFLAG:MASTER:調教レベル * 10 + LOCAL / 10
-	;補正値に応じて情愛SOURCE増加
-	SOURCE:MASTER:情愛 += LOCAL / 5
-	;不潔SOURCE増加
-	TIMES SOURCE:MASTER:不潔 , 1.20
-	;積極的/平然と従うの場合
-	IF IS_COMGRONAME("積極的従う/平然と従う") && TFLAG:ACT派生 == 1
-		;2/3で座り姿勢が膝立ちに変化
-		IF TCVAR:MASTER:姿勢 == 2 && RAND:3
-			TCVAR:MASTER:REACT姿勢変化 = 1
-			TCVAR:MASTER:前回の姿勢 = TCVAR:MASTER:姿勢
-			TCVAR:MASTER:姿勢 = 10
+	;조교 대상 조교 레벨, 보정치에 응해 접촉 SOURCE 증가
+	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
+	;보정치에 응해 사랑 SOURCE 증가
+	SOURCE:MASTER:사랑 += LOCAL / 5
+	;불결 SOURCE 증가
+	TIMES SOURCE:MASTER:불결 , 1.20
+	;적극적/태연하게 따르는 것 경우
+	IF IS_COMGRONAME("적극적 따른다/태연하게 따른다") && TFLAG:ACT파생 == 1
+		;2/3로 앉아 자세가 무릎서기에 변화
+		IF TCVAR:MASTER:자세 == 2 && RAND:3
+			TCVAR:MASTER:REACT자세변화 = 1
+			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:자세 = 10
 		ENDIF
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;052,パイズリ
-;────────────────────────────────────
-;リアクション前（Ｓ/Ｎ/Ｈ）（不潔）
+;─
+;052, 파이즈리
+;─
+;리액션전(S/N/H)(불결)
 @ACTION_APPLY_52
-;脱衣の処理
-;半々の確率で上半身上着、上半身全部強制脱衣
-TFLAG:強制脱衣 = 1 + RAND:2 * 3
-;調教者着衣プレイ好き素質がある場合
-IF TALENT:着衣プレイ好き
-	;下半身上着自主脱衣
-	TFLAG:自主脱衣 = 2
-;抑圧/恥じらい素質がある場合
-ELSEIF TALENT:抑圧 || TALENT:恥じらい
-	;下半身全部自主脱衣
-	TFLAG:自主脱衣 = 5
-;その他の場合
+;탈의의 처리
+;반반의 확률로 상반신 윗도리, 상반신 전부 강제 탈의
+TFLAG:강제탈의 = 1 + RAND:2 * 3
+;조교자 착의플레이선호 소질이 있는 경우
+IF TALENT:착의플레이선호
+	;하반신 윗도리 자주 탈의
+	TFLAG:자주탈의 = 2
+;억압/수줍음 소질이 있는 경우
+ELSEIF TALENT:억압 || TALENT:수줍음
+	;하반신 전부 자주 탈의
+	TFLAG:자주탈의 = 5
+;그 외의 경우
 ELSE
-	;アクセサリ－まで自主脱衣
-	TFLAG:自主脱衣 = 7
+	;액세서리까지 자주 탈의
+	TFLAG:자주탈의 = 7
 ENDIF
-;不潔SOURCE増加
-SOURCE:MASTER:不潔 = 75
-;調教者のペニスに精液/アナル汚れが存在すると不潔SOURCE中増加
-SIF STAIN:ペニス & (4 + 8)
-	SOURCE:MASTER:不潔 += 200
-;調教者のペニスに血/粘液汚れが存在すると不潔SOURCE大増加
-SIF STAIN:ペニス & (32 + 64)
-	SOURCE:MASTER:不潔 += 500
-;顔面騎乗系解除
+;불결 SOURCE 증가
+SOURCE:MASTER:불결 = 75
+;조교자의 페니스에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
+SIF STAIN:페니스 & (4 + 8)
+	SOURCE:MASTER:불결 += 200
+;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
+SIF STAIN:페니스 & (32 + 64)
+	SOURCE:MASTER:불결 += 500
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-;調教者、調教対象自慰を中断
-TEQUIP:自慰中 = 0
-;調教者欲望に応じて勃起度上昇
-TCVAR:MASTER:今回の勃起 += 100 + GET_ABL(TARGET, "欲望")
-TFLAG:経過時間 += 3
+;조교자, 조교 대상 자위를 중단
+TEQUIP:자위중 = 0
+;조교자 욕망에 응해 발기도 상승
+TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
+TFLAG:경과시간 += 3
 
-;リアクション後（Ｓ/Ｎ/Ｈ）（不潔）
+;리액션 후(S/N/H)(불결)
 @ACTION_APPLY2_52
-;REACT分類が要求に応じないの場合(拒絶)
-IF IS_COMGRONAME("拒否/暴れる/逃げる")
-	;リアクションが自慰し始めるの場合
-	IF IS_NOWCOMNAME("自慰し始める")
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.01
-		TIMES SOURCE:MASTER:屈従, 0.10
-	;恥情先行
-	ELSEIF PALAM:MASTER:恥情 > PALAM:MASTER:反抗
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.03
-		TIMES SOURCE:MASTER:屈従, 0.20
-	;反抗先行
+;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+IF IS_COMGRONAME("거부/날뛴다/도망친다")
+	;리액션이 자위하기 시작하는 것 경우
+	IF IS_NOWCOMNAME("자위하기 시작한다")
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.01
+		TIMES SOURCE:MASTER:굴종, 0.10
+	;치정선행
+	ELSEIF PALAM:MASTER:치정 > PALAM:MASTER:반항
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.03
+		TIMES SOURCE:MASTER:굴종, 0.20
+	;반항 선행
 	ELSE
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.05
-		TIMES SOURCE:MASTER:屈従, 0.15
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.05
+		TIMES SOURCE:MASTER:굴종, 0.15
 	ENDIF
-;その他の場合(受容)
+;그 외의 경우(수용)
 ELSE
-	;愛撫補正に応じて快ＢSOURCE増加
-	SOURCE:MASTER:快Ｂ += 20 + (ACT_FROM(TARGET, 4) / 2) * (TALENT:腰使い + 1) / 3
-	;愛撫補正、調教対象従順、巨乳、貧乳素質によって補正値上昇
-	LOCAL = 50 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "従順") * (3 + TALENT:MASTER:巨乳 - TALENT:MASTER:貧乳) / 900
-	;汚れが相互に移る
-	STAIN:MASTER:胸 |= STAIN:ペニス
-	STAIN:ペニス |= STAIN:MASTER:胸
-	;調教対象調教レベル、補正値に応じて接触SOURCE増加
-	SOURCE:MASTER:接触 += CFLAG:MASTER:調教レベル * 10 + LOCAL / 10
-	;補正値に応じて情愛、快ｃSOURCE増加
-	SOURCE:MASTER:情愛 += LOCAL / 5
-	SOURCE:快Ｃ += LOCAL * 2
-	;不潔SOURCE増加
-	TIMES SOURCE:MASTER:不潔 , 1.20
+	;애무 보정에 응해 쾌BSOURCE 증가
+	SOURCE:MASTER:쾌B += 20 + (ACT_FROM(TARGET, 4) / 2) * (TALENT:허리사용 + 1) / 3
+	;애무 보정, 조교 대상 순종, 거유, 빈유소질에 의해 보정 가격인상승
+	LOCAL = 50 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:거유 - TALENT:MASTER:빈유) / 900
+	;더러움이 서로 옮긴다
+	STAIN:MASTER:가슴 |= STAIN:페니스
+	STAIN:페니스 |= STAIN:MASTER:가슴
+	;조교 대상 조교 레벨, 보정치에 응해 접촉 SOURCE 증가
+	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
+	;보정치에 응해 사랑, 쾌cSOURCE 증가
+	SOURCE:MASTER:사랑 += LOCAL / 5
+	SOURCE:쾌C += LOCAL * 2
+	;불결 SOURCE 증가
+	TIMES SOURCE:MASTER:불결 , 1.20
 ENDIF
 
-;────────────────────────────────────
-;053,素股
-;────────────────────────────────────
-;リアクション前（Ｓ/Ｎ/Ｈ）（不潔）
+;─
+;053, 가랑이
+;─
+;리액션전(S/N/H)(불결)
 @ACTION_APPLY_53
-;脱衣の処理
-;壁抜けがあると3/4で無視する
-;半々の確率で下半身上着、下半身全部強制脱衣
-SIF !TALENT:壁抜け || !RAND:4
-	TFLAG:強制脱衣 = 2 + RAND:2 * 3
-;調教者着衣プレイ好き素質がある場合
-IF TALENT:着衣プレイ好き
-	;下着だけ自主脱衣
-	TFLAG:自主脱衣 = 9
-;抑圧/恥じらい素質がある場合
-ELSEIF TALENT:抑圧 || TALENT:恥じらい
-	;下半身上着自主脱衣
-	TFLAG:自主脱衣 = 2
-;その他の場合
+;탈의의 처리
+;벽통과가 있으면 3/4로 무시한다
+;반반의 확률로 하반신 윗도리, 하반신 전부 강제 탈의
+SIF !TALENT:벽통과 || !RAND:4
+	TFLAG:강제탈의 = 2 + RAND:2 * 3
+;조교자 착의플레이선호 소질이 있는 경우
+IF TALENT:착의플레이선호
+	;속옷만 자주 탈의
+	TFLAG:자주탈의 = 9
+;억압/수줍음 소질이 있는 경우
+ELSEIF TALENT:억압 || TALENT:수줍음
+	;하반신 윗도리 자주 탈의
+	TFLAG:자주탈의 = 2
+;그 외의 경우
 ELSE
-	;下半身全部自主脱衣
-	TFLAG:自主脱衣 = 5
+	;하반신 전부 자주 탈의
+	TFLAG:자주탈의 = 5
 ENDIF
-SOURCE:MASTER:不潔 = 60
-;調教者のペニスに精液/アナル汚れが存在すると不潔SOURCE中増加
-SIF STAIN:ペニス & (4 + 8)
-	SOURCE:MASTER:不潔 += 180
-;調教者のペニスに血/粘液汚れが存在すると不潔SOURCE大増加
-SIF STAIN:ペニス & (32 + 64)
-	SOURCE:MASTER:不潔 += 450
-;顔面騎乗系解除
+SOURCE:MASTER:불결 = 60
+;조교자의 페니스에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
+SIF STAIN:페니스 & (4 + 8)
+	SOURCE:MASTER:불결 += 180
+;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
+SIF STAIN:페니스 & (32 + 64)
+	SOURCE:MASTER:불결 += 450
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-;調教者、調教対象自慰を中断
-TEQUIP:自慰中 = 0
-;調教者欲望に応じて勃起度上昇
-TCVAR:MASTER:今回の勃起 += 100 + GET_ABL(TARGET, "欲望")
-TFLAG:経過時間 += 3
+;조교자, 조교 대상 자위를 중단
+TEQUIP:자위중 = 0
+;조교자 욕망에 응해 발기도 상승
+TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
+TFLAG:경과시간 += 3
 
-;リアクション後
+;리액션 후
 @ACTION_APPLY2_53
-;REACT分類が要求に応じないの場合(拒絶)
-IF IS_COMGRONAME("拒否/暴れる/逃げる")
-	;リアクションが自慰し始めるの場合
-	IF IS_NOWCOMNAME("自慰し始める")
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.01
-		TIMES SOURCE:MASTER:屈従, 0.10
-	;恥情先行
-	ELSEIF PALAM:MASTER:恥情 > PALAM:MASTER:反抗
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.03
-		TIMES SOURCE:MASTER:屈従, 0.20
-	;反抗先行
+;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+IF IS_COMGRONAME("거부/날뛴다/도망친다")
+	;리액션이 자위하기 시작하는 것 경우
+	IF IS_NOWCOMNAME("자위하기 시작한다")
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.01
+		TIMES SOURCE:MASTER:굴종, 0.10
+	;치정선행
+	ELSEIF PALAM:MASTER:치정 > PALAM:MASTER:반항
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.03
+		TIMES SOURCE:MASTER:굴종, 0.20
+	;반항 선행
 	ELSE
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.05
-		TIMES SOURCE:MASTER:屈従, 0.15
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.05
+		TIMES SOURCE:MASTER:굴종, 0.15
 	ENDIF
-;その他の場合(受容)
+;그 외의 경우(수용)
 ELSE
-	;愛撫補正、調教対象濡れやすい、濡れにくい素質に応じて快ＢSOURCE増加
-	SOURCE:MASTER:快Ｃ += 20 + (ACT_FROM(TARGET, 4) / 2) * (3 + TALENT:MASTER:濡れやすい - TALENT:MASTER:濡れにくい) * (TALENT:腰使い + 1) / 9
-	;愛撫補正、調教対象従順、濡れやすい、濡れにくい素質によって補正値
-	LOCAL = 200 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "従順") * (3 + TALENT:MASTER:濡れやすい - TALENT:MASTER:濡れにくい) / 900
-	;汚れが相互に移る
-	STAIN:MASTER:ヴァギナ |= STAIN:ペニス
-	STAIN:ペニス |= STAIN:MASTER:ヴァギナ
-	;調教対象調教レベル、補正値に応じて接触SOURCE増加
-	SOURCE:MASTER:接触 += CFLAG:MASTER:調教レベル * 10 + LOCAL / 10
-	;補正値に応じて情愛、快ｃSOURCE増加
-	SOURCE:MASTER:情愛 += LOCAL / 5
-	SOURCE:快Ｃ += LOCAL * (TALENT:MASTER:腰使い*2 + 2)
-	;不潔SOURCE増加
-	TIMES SOURCE:MASTER:不潔 , 1.20
+	;애무 보정, 조교 대상 젖기쉬움, 젖기어려움 소질에 응해 쾌BSOURCE 증가
+	SOURCE:MASTER:쾌C += 20 + (ACT_FROM(TARGET, 4) / 2) * (3 + TALENT:MASTER:젖기쉬움 - TALENT:MASTER:젖기어려움) * (TALENT:허리사용 + 1) / 9
+	;애무 보정, 조교 대상 순종, 젖기쉬움, 젖기어려움 소질에 의해 보정치
+	LOCAL = 200 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:젖기쉬움 - TALENT:MASTER:젖기어려움) / 900
+	;더러움이 서로 옮긴다
+	STAIN:MASTER:바기나 |= STAIN:페니스
+	STAIN:페니스 |= STAIN:MASTER:바기나
+	;조교 대상 조교 레벨, 보정치에 응해 접촉 SOURCE 증가
+	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
+	;보정치에 응해 사랑, 쾌cSOURCE 증가
+	SOURCE:MASTER:사랑 += LOCAL / 5
+	SOURCE:쾌C += LOCAL * (TALENT:MASTER:허리사용*2 + 2)
+	;불결 SOURCE 증가
+	TIMES SOURCE:MASTER:불결 , 1.20
 ENDIF
 
-;────────────────────────────────────
-;055,足舐め強制
-;────────────────────────────────────
-;リアクション前（Ｎ/Ｈ/Ａ）[罰]（不潔、逸脱、トラウマ）
+;─
+;055, 다리 빨고 강제
+;─
+;리액션전(N/H/A)[벌](불결, 일탈, 트라우마)
 @ACTION_APPLY_55
-;調教対象が靴下を履いている時
-SIF TEQUIP:靴下
-	;半々の確率でアクセサリー、アクセサリ－まで自主脱衣
-	TFLAG:自主脱衣 = 6 * RAND:2
-SOURCE:MASTER:不潔 = 180
-;調教者の足に精液/アナル汚れが存在すると不潔SOURCE中増加
-SIF STAIN:足 & (4 + 8)
-	SOURCE:MASTER:不潔 += 360
-;調教者の足に血/粘液汚れが存在すると不潔SOURCE大増加
-SIF STAIN:足 & (32 + 64)
-	SOURCE:MASTER:不潔 += 800
-;調教対象従順、マゾっ気、プライド低い、プライド高い素質、反抗強度、反抗刻印、不潔SOURCE、調教レベルに応じて逸脱SOURCE増減
-SOURCE:MASTER:逸脱 = (35 - GET_ABL(MASTER, "従順") * 4 / 10 - GET_ABL(MASTER, "マゾっ気") / 5 - TALENT:MASTER:プライド低い * 5 + TALENT:MASTER:プライド高い * 5) * (50 + CFLAG:MASTER:反抗強度 * 3 + MARK:反抗刻印 * 2 + SOURCE:MASTER:不潔 / 50) / (5 + CFLAG:MASTER:調教レベル)
-;逸脱SOURCEが負の値をとらないよう調整
-SOURCE:MASTER:逸脱 = SOURCE:MASTER:逸脱 < 0 ? 0 # SOURCE:MASTER:逸脱
-;調教対象プライド高い、プライド低い、情緒豊か、感情乏しい素質、逸脱SOURCE、調教レベル、従順に応じてトラウマSOURCE増減
-SOURCE:MASTER:トラウマ = TALENT:MASTER:プライド高い * 150 - TALENT:MASTER:プライド低い * 50 + TALENT:MASTER:情緒豊か * 150 - TALENT:MASTER:感情乏しい * 50 + SOURCE:MASTER:逸脱 - CFLAG:MASTER:調教レベル * ABL:MASTER:従順 * 20
-;逸脱SOURCEが0ならトラウマSOURCEも0になる
-SOURCE:MASTER:トラウマ = SOURCE:MASTER:逸脱 == 0 ? 0 # SOURCE:MASTER:トラウマ
-;トラウマSOURCEが負の値をとらないよう調整
-SOURCE:MASTER:トラウマ = SOURCE:MASTER:トラウマ < 0 ? 0 # SOURCE:MASTER:トラウマ
-;トラウマ(刻印)の元がこの調教だった場合、トラウマSOURCEを1.5倍にする
-SIF CFLAG:MASTER:トラウマ == 55
-	TIMES SOURCE:MASTER:トラウマ , 1.50
-;顔面騎乗系解除
+;조교 대상이 양말을 신고 있을 때
+SIF TEQUIP:양말
+	;반반의 확률로 액세서리, 액세서리까지 자주 탈의
+	TFLAG:자주탈의 = 6 * RAND:2
+SOURCE:MASTER:불결 = 180
+;조교자의 다리에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
+SIF STAIN:다리 & (4 + 8)
+	SOURCE:MASTER:불결 += 360
+;조교자의 다리에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
+SIF STAIN:다리 & (32 + 64)
+	SOURCE:MASTER:불결 += 800
+;조교 대상 순종, 마조끼, 프라이드낮음, 프라이드높음 소질, 반항 강도, 반항 각인, 불결 SOURCE, 조교 레벨에 응해 일탈 SOURCE 증감
+SOURCE:MASTER:일탈 = (35 - GET_ABL(MASTER, "순종") * 4 / 10 - GET_ABL(MASTER, "마조끼") / 5 - TALENT:MASTER:프라이드낮음 * 5 + TALENT:MASTER:프라이드높음 * 5) * (50 + CFLAG:MASTER:반항강도 * 3 + MARK:반항각인 * 2 + SOURCE:MASTER:불결 / 50) / (5 + CFLAG:MASTER:조교레벨)
+;일탈 SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
+;조교 대상 프라이드높음, 프라이드낮음, 감수성, 감정결핍 소질, 일탈 SOURCE, 조교 레벨, 온순하게 응해 트라우마 SOURCE 증감
+SOURCE:MASTER:트라우마 = TALENT:MASTER:프라이드높음 * 150 - TALENT:MASTER:프라이드낮음 * 50 + TALENT:MASTER:감수성 * 150 - TALENT:MASTER:감정결핍 * 50 + SOURCE:MASTER:일탈 - CFLAG:MASTER:조교레벨 * ABL:MASTER:순종 * 20
+;일탈 SOURCE가 0이라면 트라우마 SOURCE도 0이 된다
+SOURCE:MASTER:트라우마 = SOURCE:MASTER:일탈 == 0 ? 0 # SOURCE:MASTER:트라우마
+;트라우마 SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
+;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
+SIF CFLAG:MASTER:트라우마 == 55
+	TIMES SOURCE:MASTER:트라우마 , 1.50
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-;調教者マゾっ気に応じて勃起度上昇
-TCVAR:MASTER:今回の勃起 += 50 + (GET_ABL(MASTER, "マゾっ気") - 20)
-TFLAG:経過時間 += 2
+;조교자 마조끼에 응해 발기도 상승
+TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20)
+TFLAG:경과시간 += 2
 
-;リアクション後
+;리액션 후
 @ACTION_APPLY2_55
-;REACT分類が要求に応じないの場合(拒絶)
-IF IS_COMGRONAME("拒否/暴れる/逃げる")
-	;リアクションが自慰し始めるの場合
-	IF IS_NOWCOMNAME("自慰し始める")
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.01
-		TIMES SOURCE:MASTER:屈従, 0.10
-	;恥情先行
-	ELSEIF PALAM:MASTER:恥情 > PALAM:MASTER:反抗
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.03
-		TIMES SOURCE:MASTER:屈従, 0.20
-	;反抗先行
+;REACT 분류가 요구에 응하지 않는 것 경우(거절)
+IF IS_COMGRONAME("거부/날뛴다/도망친다")
+	;리액션이 자위하기 시작하는 것 경우
+	IF IS_NOWCOMNAME("자위하기 시작한다")
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.01
+		TIMES SOURCE:MASTER:굴종, 0.10
+	;치정선행
+	ELSEIF PALAM:MASTER:치정 > PALAM:MASTER:반항
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.03
+		TIMES SOURCE:MASTER:굴종, 0.20
+	;반항 선행
 	ELSE
-		;トラウマ、屈従SOURCE減少
-		TIMES SOURCE:MASTER:トラウマ, 0.05
-		TIMES SOURCE:MASTER:屈従, 0.15
+		;트라우마, 굴종 SOURCE 감소
+		TIMES SOURCE:MASTER:트라우마, 0.05
+		TIMES SOURCE:MASTER:굴종, 0.15
 	ENDIF
-;その他の場合(受容)
+;그 외의 경우(수용)
 ELSE
-	;調教対象技巧、愛撫補正、調教対象従順、美脚素質によって補正値生成
-	LOCAL = 40 + (GET_ABL(MASTER, "技巧") - 30) * ACT_TO(TARGET, 1) * GET_ABL(MASTER, "従順") * (3 + TALENT:MASTER:美脚) / 4500
-	;汚れが相互に移る
-	STAIN:MASTER:足 |= STAIN:ペニス
-	STAIN:ペニス |= STAIN:MASTER:足
-	;調教対象調教レベル、補正値に応じて接触SOURCE増加
-	SOURCE:MASTER:接触 += CFLAG:MASTER:調教レベル * 10 + LOCAL / 10
-	;補正値に応じて情愛、屈従SOURCE増加
-	SOURCE:MASTER:情愛 += LOCAL / 5
-	SOURCE:MASTER:屈従 += 200 + LOCAL * 50
-	;補正値、調教対象調教レベルに応じて達成SOURCE増加
-	SOURCE:MASTER:達成 += 100 + LOCAL * CFLAG:MASTER:調教レベル * 2
-	;不潔SOURCE増加
-	TIMES SOURCE:MASTER:不潔 , 1.20
-	;積極的/平然と従うの場合
-	IF IS_COMGRONAME("積極的従う/平然と従う")
-		;2/3で座り姿勢が膝立ちに変化
-		IF TCVAR:MASTER:姿勢 == 2 && RAND:3
-			TCVAR:MASTER:REACT姿勢変化 = 1
-			TCVAR:MASTER:前回の姿勢 = TCVAR:MASTER:姿勢
-			TCVAR:MASTER:姿勢 = 10
+	;조교 대상 기교, 애무 보정, 조교 대상 순종, 미각 소질에 의해 보정치 생성
+	LOCAL = 40 + (GET_ABL(MASTER, "기교") - 30) * ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:미각) / 4500
+	;더러움이 서로 옮긴다
+	STAIN:MASTER:다리 |= STAIN:페니스
+	STAIN:페니스 |= STAIN:MASTER:다리
+	;조교 대상 조교 레벨, 보정치에 응해 접촉 SOURCE 증가
+	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
+	;보정치에 응해 사랑, 굴종 SOURCE 증가
+	SOURCE:MASTER:사랑 += LOCAL / 5
+	SOURCE:MASTER:굴종 += 200 + LOCAL * 50
+	;보정치, 조교 대상 조교 레벨에 응해 달성 SOURCE 증가
+	SOURCE:MASTER:달성 += 100 + LOCAL * CFLAG:MASTER:조교레벨 * 2
+	;불결 SOURCE 증가
+	TIMES SOURCE:MASTER:불결 , 1.20
+	;적극적/태연하게 따르는 것 경우
+	IF IS_COMGRONAME("적극적 따른다/태연하게 따른다")
+		;2/3로 앉아 자세가 무릎서기에 변화
+		IF TCVAR:MASTER:자세 == 2 && RAND:3
+			TCVAR:MASTER:REACT자세변화 = 1
+			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:자세 = 10
 		ENDIF
 	ENDIF
 ENDIF
 
-;────────────────────────────────────
-;056,イラマチオ（Ｈ/Ａ）[罰]（接触、情愛逆、性行動、痛み、拘束<=頭を掴む事、不潔、逸脱、トラウマ、快ｃ）
-;────────────────────────────────────
+;─
+;056, 이라마치오(H/A)[벌](접촉, 사랑역, 성행동, 상해, 구속<=머리를 잡는 일, 불결, 일탈, 트라우마, 쾌c)
+;─
 @ACTION_APPLY_56
-;半々の確率で下半身上着、下半身全部自主脱衣
-TFLAG:自主脱衣 = 2 + RAND:2 * 3
-;調教者着衣プレイ好き素質がある場合下着だけ自主脱衣に軽減
-SIF TALENT:着衣プレイ好き
-	TFLAG:自主脱衣 = 9
-;調教レベルに応じて接触SOURCE増加
-SOURCE:MASTER:接触 = 100 + GET_TRAINLV(TARGET) * 10
-;性行動SOURCE増加
-SOURCE:MASTER:性行動 = 50
-;接触SOURCEに応じて痛みSOURCE増加
-SOURCE:MASTER:痛み = 500 + SOURCE:MASTER:接触 / 5
-;接触SOURCEに応じて拘束SOURCE増加
-SOURCE:MASTER:拘束 = SOURCE:MASTER:接触 / 2 + 50
-SOURCE:MASTER:不潔 = 150
-;調教者のペニスに精液/アナル汚れが存在すると不潔SOURCE中増加
-SIF STAIN:ペニス & (4 + 8)
-	SOURCE:MASTER:不潔 += 300
-;調教者のペニスに血/粘液汚れが存在すると不潔SOURCE大増加
-SIF STAIN:ペニス & (32 + 64)
-	SOURCE:MASTER:不潔 += 700
-;調教対象従順、奉仕精神、調教レベル、倒錯的素質、痛み、拘束SOURCEに応じて逸脱SOURCE増減
-SOURCE:MASTER:逸脱 = 800 - GET_ABL(MASTER, "従順") * 8 - GET_ABL(MASTER, "奉仕精神") * 8 - CFLAG:MASTER:調教レベル * 30 - TALENT:MASTER:倒錯的 * 150 + SOURCE:MASTER:痛み + SOURCE:MASTER:拘束
-;逸脱SOURCEが負の値をとらないよう調整
-SOURCE:MASTER:逸脱 = SOURCE:MASTER:逸脱 < 0 ? 0 # SOURCE:MASTER:逸脱
-;調教対象臆病、気丈、反抗的、素直、プライド高い、プライド低い、情緒豊か、感情乏しい素質、逸脱SOURCEに応じてトラウマSOURCE増減
-SOURCE:MASTER:トラウマ = TALENT:MASTER:臆病 * 250 - TALENT:MASTER:気丈 * 200 + TALENT:MASTER:反抗的 * 200 - TALENT:MASTER:素直 * 100 + TALENT:MASTER:プライド高い * 200 - TALENT:MASTER:プライド低い * 100 + TALENT:MASTER:情緒豊か * 150 - TALENT:MASTER:感情乏しい * 50 + SOURCE:MASTER:逸脱
-;逸脱SOURCEが0ならトラウマSOURCEも0になる
-SOURCE:MASTER:トラウマ = SOURCE:MASTER:逸脱 == 0 ? 0 # SOURCE:MASTER:トラウマ
-;トラウマSOURCEが負の値をとらないよう調整
-SOURCE:MASTER:トラウマ = SOURCE:MASTER:トラウマ < 0 ? 0 # SOURCE:MASTER:トラウマ
-;トラウマ(刻印)の元がこの調教だった場合、トラウマSOURCEを1.5倍にする
-SIF CFLAG:MASTER:トラウマ == 56
-	TIMES SOURCE:MASTER:トラウマ , 1.50
-;接触、不潔、トラウマSOURCEに応じて情愛SOURCE減少
-SOURCE:MASTER:情愛 -= SOURCE:MASTER:接触 / 5 + SOURCE:MASTER:不潔 / 5 + SOURCE:MASTER:トラウマ / 5
-;愛撫補正値に応じて快ｃSOURCE増加
-SOURCE:快Ｃ += 300 + ACT_TO(TARGET, 1)
-;汚れが相互に移る
-STAIN:MASTER:口 |= STAIN:ペニス
-STAIN:ペニス |= STAIN:MASTER:口
-;顔面騎乗系解除
+;반반의 확률로 하반신 윗도리, 하반신 전부 자주 탈의
+TFLAG:자주탈의 = 2 + RAND:2 * 3
+;조교자 착의플레이선호 소질이 있는 경우 속옷만 자주 탈의에 경감
+SIF TALENT:착의플레이선호
+	TFLAG:자주탈의 = 9
+;조교 레벨에 응해 접촉 SOURCE 증가
+SOURCE:MASTER:접촉 = 100 + GET_TRAINLV(TARGET) * 10
+;성행동SOURCE 증가
+SOURCE:MASTER:성행동 = 50
+;접촉 SOURCE에 응해 아픔 SOURCE 증가
+SOURCE:MASTER:아픔 = 500 + SOURCE:MASTER:접촉 / 5
+;접촉 SOURCE에 응해 구속 SOURCE 증가
+SOURCE:MASTER:구속 = SOURCE:MASTER:접촉 / 2 + 50
+SOURCE:MASTER:불결 = 150
+;조교자의 페니스에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
+SIF STAIN:페니스 & (4 + 8)
+	SOURCE:MASTER:불결 += 300
+;조교자의 페니스에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
+SIF STAIN:페니스 & (32 + 64)
+	SOURCE:MASTER:불결 += 700
+;조교 대상 순종, 봉사 정신, 조교 레벨, 도착적 소질, 상해, 구속 SOURCE에 응해 일탈 SOURCE 증감
+SOURCE:MASTER:일탈 = 800 - GET_ABL(MASTER, "순종") * 8 - GET_ABL(MASTER, "봉사 정신") * 8 - CFLAG:MASTER:조교레벨 * 30 - TALENT:MASTER:도착적 * 150 + SOURCE:MASTER:아픔 + SOURCE:MASTER:구속
+;일탈 SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
+;조교 대상 겁쟁이, 기장, 반항적, 순수, 프라이드높음, 프라이드낮음, 감수성, 감정결핍 소질, 일탈 SOURCE에 응해 트라우마 SOURCE 증감
+SOURCE:MASTER:트라우마 = TALENT:MASTER:겁쟁이 * 250 - TALENT:MASTER:기장 * 200 + TALENT:MASTER:반항적 * 200 - TALENT:MASTER:순수 * 100 + TALENT:MASTER:프라이드높음 * 200 - TALENT:MASTER:프라이드낮음 * 100 + TALENT:MASTER:감수성 * 150 - TALENT:MASTER:감정결핍 * 50 + SOURCE:MASTER:일탈
+;일탈 SOURCE가 0이라면 트라우마 SOURCE도 0이 된다
+SOURCE:MASTER:트라우마 = SOURCE:MASTER:일탈 == 0 ? 0 # SOURCE:MASTER:트라우마
+;트라우마 SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
+;트라우마(각인)의 원이 이 조교였던 경우, 트라우마 SOURCE를 1.5배로 한다
+SIF CFLAG:MASTER:트라우마 == 56
+	TIMES SOURCE:MASTER:트라우마 , 1.50
+;접촉, 불결, 트라우마 SOURCE에 응해 사랑 SOURCE 감소
+SOURCE:MASTER:사랑 -= SOURCE:MASTER:접촉 / 5 + SOURCE:MASTER:불결 / 5 + SOURCE:MASTER:트라우마 / 5
+;애무 보정치에 응해 쾌cSOURCE 증가
+SOURCE:쾌C += 300 + ACT_TO(TARGET, 1)
+;더러움이 서로 옮긴다
+STAIN:MASTER:구 |= STAIN:페니스
+STAIN:페니스 |= STAIN:MASTER:구
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-;調教者、調教対象自慰を中断
-TEQUIP:自慰中 = 0
-;調教者マゾっ気に応じて勃起度上昇
-TCVAR:MASTER:今回の勃起 += 50 + (GET_ABL(MASTER, "マゾっ気") - 20)
-TFLAG:経過時間 += 3
+;조교자, 조교 대상 자위를 중단
+TEQUIP:자위중 = 0
+;조교자 마조끼에 응해 발기도 상승
+TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20)
+TFLAG:경과시간 += 3
 
-;────────────────────────────────────
-;057,胸愛撫強制
-;────────────────────────────────────
-;リアクション前（Ｓ/Ｎ/Ｈ）
+;─
+;057, 가슴 애무 강제
+;─
+;리액션전(S/N/H)
 @ACTION_APPLY_57
-;上半身全部自主脱衣
-TFLAG:自主脱衣 = 4
-;調教者、調教対象調教レベルに応じて接触SOURCE増加
-SOURCE:MASTER:接触 = 50 + GET_TRAINLV(TARGET) * 5 + CFLAG:MASTER:調教レベル * 5
-;調教対象好意、奉仕精神に応じて情愛SOURCE増加
-SOURCE:MASTER:情愛 = 50 + CFLAG:M好意 / 50 + GET_ABL(TARGET, "奉仕精神") * 5
-;調教者の胸に愛液/ペニス/母乳汚れが存在すると不潔SOURCE小増加
-SIF STAIN:胸 & (1 + 2 + 16)
-	SOURCE:MASTER:不潔 += 85
-;調教者の胸に精液/アナル汚れが存在すると不潔SOURCE中増加
-SIF STAIN:胸 & (4 + 8)
-	SOURCE:MASTER:不潔 += 180
-;調教者の胸に血/粘液汚れが存在すると不潔SOURCE大増加
-SIF STAIN:胸 & (32 + 64)
-	SOURCE:MASTER:不潔 += 550
-;顔面騎乗系解除
+;상반신 전부 자주 탈의
+TFLAG:자주탈의 = 4
+;조교자, 조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+SOURCE:MASTER:접촉 = 50 + GET_TRAINLV(TARGET) * 5 + CFLAG:MASTER:조교레벨 * 5
+;조교 대상 호의, 봉사 정신에 응해 사랑 SOURCE 증가
+SOURCE:MASTER:사랑 = 50 + CFLAG:M호의 / 50 + GET_ABL(TARGET, "봉사 정신") * 5
+;조교자의 가슴에 애액/페니스/모유 더러움이 존재하면 불결 SOURCE소증가
+SIF STAIN:가슴 & (1 + 2 + 16)
+	SOURCE:MASTER:불결 += 85
+;조교자의 가슴에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
+SIF STAIN:가슴 & (4 + 8)
+	SOURCE:MASTER:불결 += 180
+;조교자의 가슴에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
+SIF STAIN:가슴 & (32 + 64)
+	SOURCE:MASTER:불결 += 550
+;안면 승마계 해제
 CALL FACESITTING_SET(0)
-;調教者技巧、愛撫、器用な指先素質に応じて勃起度上昇
-TCVAR:MASTER:今回の勃起 += 80 + (GET_ABL(TARGET, "技巧") + GET_ABL(TARGET, "愛撫") + TALENT:器用な指先 * 50) / 3
-TFLAG:経過時間 += 2
+;조교자 기교, 애무, 기묘한손가락소질에 응해 발기도 상승
+TCVAR:MASTER:이번발기 += 80 + (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 3
+TFLAG:경과시간 += 2
 
-;リアクション後（Ｓ/Ｎ/Ｈ）
+;리액션 후(S/N/H)
 @ACTION_APPLY2_57
-;REACT分類によって分岐
-SELECTCASE COMGRONAME(TFLAG:REACT分類)
-	CASE "消極的従う", "積極的従う", "受け入れる", "平然と従う"
-		;2/3で座り姿勢が膝立ちに変化
-		IF TCVAR:MASTER:姿勢 == 2 && RAND:3
-			TCVAR:MASTER:REACT姿勢変化 = 1
-			TCVAR:MASTER:前回の姿勢 = TCVAR:MASTER:姿勢
-			TCVAR:MASTER:姿勢 = 10
+;REACT 분류에 의해 분기
+SELECTCASE COMGRONAME(TFLAG:REACT분류)
+	CASE "소극적 따른다", "적극적 따른다", "받아들인다", "태연하게 따른다"
+		;2/3로 앉아 자세가 무릎서기에 변화
+		IF TCVAR:MASTER:자세 == 2 && RAND:3
+			TCVAR:MASTER:REACT자세변화 = 1
+			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:자세 = 10
 		ENDIF
-		;仰向けでなく、ACT派生が口で愛撫でない場合、1/2で後ろから愛撫するように
-		IF TCVAR:MASTER:姿勢 != 1 && RAND:2 && TCVAR:MASTER:位置前後 != 3 && TFLAG:ACT派生 != 2
-			TCVAR:MASTER:REACT姿勢変化 = 1
-			TCVAR:MASTER:前回の姿勢 = TCVAR:MASTER:姿勢
-			TCVAR:MASTER:位置前後 = 3
+		;위로 돌리고가 아니고, ACT 파생이 입으로 애무가 아닌 경우,1/2그리고 뒤로부터 애무하도록(듯이)
+		IF TCVAR:MASTER:자세 != 1 && RAND:2 && TCVAR:MASTER:위치전후 != 3 && TFLAG:ACT파생 != 2
+			TCVAR:MASTER:REACT자세변화 = 1
+			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:위치전후 = 3
 		ENDIF
-	;REACT分類が暴れる/逃げるの場合
-	CASE "拒否", "暴れる", "逃げる"
-		;COMが自慰し始めるの場合
-		IF IS_NOWCOMNAME("自慰し始める")
-			;とりあえず汚れの処理から逃がしておくことに
-		;その他
+	;REACT 분류가 날뛴다/도망치는 것 경우
+	CASE "거부", "날뛴다", "도망친다"
+		;COM가 자위하기 시작하는 것 경우
+		IF IS_NOWCOMNAME("자위하기 시작한다")
+			;우선 더러움의 처리로부터 놓쳐 두는 일에
+		;그 외
 		ELSE
-			;口で愛撫強制の場合		ACT派生を見ていなかったので切り分ける@/L
-			IF TFLAG:ACT派生 == 2
-				;汚れが相互に移る
-				STAIN:MASTER:口 |= STAIN:胸
-				STAIN:胸 |= STAIN:MASTER:口
-			;手で愛撫強制の場合		手をとり導いた、いう扱いなんで汚れ移動していいんじゃないかと
+			;구에서 애무 강제의 경우		ACT 파생을 보지 않았기 때문에 분리한다@/L
+			IF TFLAG:ACT파생 == 2
+				;더러움이 서로 옮긴다
+				STAIN:MASTER:구 |= STAIN:가슴
+				STAIN:가슴 |= STAIN:MASTER:구
+			;손으로 애무 강제의 경우		손을 잡아 이끈, 말하는 취급이니까 더러운 이동해도 좋은 것이 아닐까
 			ELSE
-				;汚れが相互に移る
-				STAIN:MASTER:手 |= STAIN:胸
-				STAIN:胸 |= STAIN:MASTER:手
+				;더러움이 서로 옮긴다
+				STAIN:MASTER:손 |= STAIN:가슴
+				STAIN:가슴 |= STAIN:MASTER:손
 			ENDIF
 		ENDIF
 ENDSELECT
-;調教対象調教レベルに応じて接触SOURCE増加
-SOURCE:MASTER:接触 += 75 + CFLAG:MASTER:調教レベル * 3
-;調教対象好意、奉仕精神に応じて情愛SOURCE増加
-SOURCE:MASTER:情愛 += 35 + CFLAG:M好意 / 40 + GET_ABL(MASTER, "奉仕精神") * 3
-;愛撫補正、調教対象器用な指先素質に応じて補正値上昇
-LOCAL = 30 + ACT_TO(TARGET, 4) * (3 + TALENT:MASTER:器用な指先) / 4
+;조교 대상 조교 레벨에 응해 접촉 SOURCE 증가
+SOURCE:MASTER:접촉 += 75 + CFLAG:MASTER:조교레벨 * 3
+;조교 대상 호의, 봉사 정신에 응해 사랑 SOURCE 증가
+SOURCE:MASTER:사랑 += 35 + CFLAG:M호의 / 40 + GET_ABL(MASTER, "봉사 정신") * 3
+;애무 보정, 조교 대상기묘한손가락소질에 응해 보정 가격인상승
+LOCAL = 30 + ACT_TO(TARGET, 4) * (3 + TALENT:MASTER:기묘한손가락) / 4
 
-;補正値に応じて性行動、達成、快ｂSOURCE増加
-SOURCE:MASTER:性行動 += 50 + LOCAL / 8
-SOURCE:MASTER:達成 += LOCAL / 4
-SOURCE:快Ｂ += LOCAL
-;汚れが相互に移る
-STAIN:MASTER:(TFLAG:ACT派生 ? 0 # 1) |= STAIN:胸
-STAIN:胸 |= STAIN:MASTER:(TFLAG:ACT派生 ? 0 # 1)
+;보정치에 응해 성행동, 달성, 쾌bSOURCE 증가
+SOURCE:MASTER:성행동 += 50 + LOCAL / 8
+SOURCE:MASTER:달성 += LOCAL / 4
+SOURCE:쾌B += LOCAL
+;더러움이 서로 옮긴다
+STAIN:MASTER:(TFLAG:ACT파생 ? 0 # 1) |= STAIN:가슴
+STAIN:가슴 |= STAIN:MASTER:(TFLAG:ACT파생 ? 0 # 1)

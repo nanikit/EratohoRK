@@ -1,85 +1,85 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-;		休憩系メッセージ
+;		휴게계 메세지
 
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-;────────────────────────────────────
-;090,休ませる
-;────────────────────────────────────
-;★リアクション前★
+;─
+;090, 쉬게 한다
+;─
+;★리액션전★
 @TRAIN_MESSAGE_90
-PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%を休ませ自分も休もうとした…
+PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%를 쉬게 하고 자신도 쉬려고 했다…
 
-;☆リアクション後☆
+;☆리액션 후☆
 @TRAIN_MESSAGE2_90
 PRINTL 
-SELECTCASE TFLAG:ACT派生
-	CASE 0                    ;ACT派生が普通に休んだ
+SELECTCASE TFLAG:ACT파생
+	CASE 0                    ;ACT 파생이 보통으로 쉬었다
 		IF 0
-		ELSEIF IS_NOWCOMNAME("なすがまま")
-			PRINTFORML 気力の尽きた%CALLNAME:MASTER%は、%CALLNAME%に言われるがまま大人しく休んだ…
-		ELSEIF IS_COMGRONAME("受け入れる")
-			PRINTFORML %CALLNAME:MASTER%が休むより気持ちよくして欲しいと言うと、
-			PRINTFORML %CALLNAME%は苦笑して、後でしてあげると言った…
+		ELSEIF IS_NOWCOMNAME("하는 대로")
+			PRINTFORML 기력이 다했다%CALLNAME:MASTER%는,%CALLNAME%에 말해지는 대로 얌전하게 쉬었다…
+		ELSEIF IS_COMGRONAME("받아들인다")
+			PRINTFORML %CALLNAME:MASTER%가 쉬는 것보다 기분 좋게 했으면 좋겠다고 말하면,
+			PRINTFORML %CALLNAME%는 쓴웃음 지어, 다음에 해 준다고 했다…
 		ELSE
-			PRINTFORML %CALLNAME:MASTER%と%CALLNAME:TARGET%は少し休んだ…
+			PRINTFORML %CALLNAME:MASTER%와%CALLNAME:TARGET%는 조금 쉬었다…
 		ENDIF
-		;+にならない場合もあった気がしたので修正@revkoishi(14/05/26)
-		PRINTFORML 体力\@ ACTION_APPLY2_90V(1) >= 0 ? + # \@{ACTION_APPLY2_90V(1)} 気力\@ ACTION_APPLY2_90V(2) >= 0 ? + # \@{ACTION_APPLY2_90V(2)}
-	CASE 1                    ;ACT派生が道具のせいであまり休めなかった
-		IF IS_COMGRONAME("受け入れる")
-			PRINTFORML %CALLNAME:MASTER%は身につけた道具で感じてしまい、休憩どころではなかった…
-			PRINTFORML %CALLNAME%は苦笑しながらその様子を眺めた…
+		;+가 되지 않는 경우도 있던 것 같았으므로 수정@revkoishi(14/05/26)
+		PRINTFORML 체력\@ ACTION_APPLY2_90V(1) >= 0 ? + # \@{ACTION_APPLY2_90V(1)} 기력\@ ACTION_APPLY2_90V(2) >= 0 ? + # \@{ACTION_APPLY2_90V(2)}
+	CASE 1                    ;ACT 파생이 도구의 탓으로 너무 쉬게 하지 않았다
+		IF IS_COMGRONAME("받아들인다")
+			PRINTFORML %CALLNAME:MASTER%는 몸에 익힌 도구로 느껴 버려, 휴게할 경황은 아니었다…
+			PRINTFORML %CALLNAME%는 쓴웃음 지으면서 그 모습을 바라보았다…
 		ELSE
-			PRINTFORML %CALLNAME:TARGET%は休んでいいと言ったが、
-			PRINTFORML 身につけられてる道具が責め続けたせいで%CALLNAME:MASTER%はあまり休めなかった…
+			PRINTFORML %CALLNAME:TARGET%는 쉬어도 좋다고 말했지만,
+			PRINTFORML 몸에 익혀지고 있는 도구가 계속 꾸짖은 탓으로%CALLNAME:MASTER%는 너무 쉬게 하지 않았다…
 		ENDIF
-		PRINTFORML 体力\@ ACTION_APPLY2_90V(1) >= 0 ? + # \@{ACTION_APPLY2_90V(1)} 気力\@ ACTION_APPLY2_90V(2) >= 0 ? + # \@{ACTION_APPLY2_90V(2)}
-	CASEELSE                  ;ACT派生が勝手に自慰をし始めた
-		PRINTFORML 休みを与えられた%CALLNAME:MASTER%が勝手に自慰をし始め、
-		PRINTFORML %CALLNAME:TARGET%は少し怒ってるようだ…
+		PRINTFORML 체력\@ ACTION_APPLY2_90V(1) >= 0 ? + # \@{ACTION_APPLY2_90V(1)} 기력\@ ACTION_APPLY2_90V(2) >= 0 ? + # \@{ACTION_APPLY2_90V(2)}
+	CASEELSE                  ;ACT 파생이 마음대로 자위를하기 시작했다
+		PRINTFORML 휴일이 주어졌다%CALLNAME:MASTER%가 마음대로 자위를하기 시작해,
+		PRINTFORML %CALLNAME:TARGET%는 조금 화내고 있는 것 같다…
 ENDSELECT
-PRINTFORML （調教者）体力\@ ACTION_APPLY2_90V(3) >= 0 ? + # \@{ACTION_APPLY2_90V(3)} 気力\@ ACTION_APPLY2_90V(4) >= 0 ? + # \@{ACTION_APPLY2_90V(4)}
-IF IS_NOWCOMNAME("なすがまま")                    ;COM:なすがままならここで完結
+PRINTFORML (조교자) 체력\@ ACTION_APPLY2_90V(3) >= 0 ? + # \@{ACTION_APPLY2_90V(3)} 기력\@ ACTION_APPLY2_90V(4) >= 0 ? + # \@{ACTION_APPLY2_90V(4)}
+IF IS_NOWCOMNAME("하는 대로")                    ;COM:하는 대로라면 여기서 완결
 	RETURN 1
 ELSE
 	RETURN 2
 ENDIF
 
-;────────────────────────────────────
-;091,栄養剤を飲ませる
-;────────────────────────────────────
-;★リアクション前★
+;─
+;091, 영양제를 먹인다
+;─
+;★리액션전★
 @TRAIN_MESSAGE_91
-PRINTFORML %CALLNAME:TARGET%は特製の栄養剤を取り出して%CALLNAME:MASTER%に飲ませようとした…
+PRINTFORML %CALLNAME:TARGET%는 특제의 영양제를 꺼내%CALLNAME:MASTER%에 먹이려고 했다…
 
-;☆リアクション後☆
+;☆리액션 후☆
 @TRAIN_MESSAGE2_91
 PRINTL 
-IF TFLAG:ACT派生 == 0         ;ACT派生が栄養剤を飲んだ		REACT分類で分岐を設けても良いのかも知れない
-	PRINTFORML %CALLNAME:MASTER%が%CALLNAME:TARGET%から渡された怪しげな薬剤を飲むと、
-	PRINTFORML 急に体の中から元気があふれてきた…
-	PRINTFORML 体力\@ ACTION_APPLY2_91V(1) >= 0 ? + # \@{ACTION_APPLY2_91V(1)} 気力\@ ACTION_APPLY2_91V(2) >= 0 ? + # \@{ACTION_APPLY2_91V(2)}
-ELSE                          ;ACT派生が栄養剤を捨てた
-	PRINTFORML %CALLNAME:MASTER%は%CALLNAME:TARGET%から渡された怪しげな薬剤を捨てた…
+IF TFLAG:ACT파생 == 0         ;ACT 파생이 영양제를 마셨다		REACT 분류로 분기를 설치해도 좋은 것인지도 모른다
+	PRINTFORML %CALLNAME:MASTER%가%CALLNAME:TARGET%로부터 건네받은 이상한 듯한 약제를 마시면,
+	PRINTFORML 갑자기 몸중에서 건강이 넘쳐 왔다…
+	PRINTFORML 체력\@ ACTION_APPLY2_91V(1) >= 0 ? + # \@{ACTION_APPLY2_91V(1)} 기력\@ ACTION_APPLY2_91V(2) >= 0 ? + # \@{ACTION_APPLY2_91V(2)}
+ELSE                          ;ACT 파생이 영양제를 버렸다
+	PRINTFORML %CALLNAME:MASTER%는%CALLNAME:TARGET%로부터 건네받은 이상한 듯한 약제를 버렸다…
 ENDIF
-SIF IS_NOWCOMNAME("なすがまま")         ;COM:なすがままならここで完結
+SIF IS_NOWCOMNAME("하는 대로")         ;COM:하는 대로라면 여기서 완결
 	RETURN 1
 
-;────────────────────────────────────
-;092,治療する
-;────────────────────────────────────
-;★リアクション前★
+;─
+;092, 치료한다
+;─
+;★리액션전★
 @TRAIN_MESSAGE_92
-PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%を治療しようとした…
+PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%를 치료하려고 했다…
 
-;☆リアクション後☆
+;☆리액션 후☆
 @TRAIN_MESSAGE2_92
 PRINTFORML 
-IF TFLAG:ACT派生 == 0         ;ACT派生が体の隅々まで撫で回して治療した
-	PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%の体の隅々まで撫で回して治療した…
-	PRINTFORML 体力\@ ACTION_APPLY2_92V(1) >= 0 ? + # \@{ACTION_APPLY2_92V(1)} 気力\@ ACTION_APPLY2_92V(2) >= 0 ? + # \@{ACTION_APPLY2_92V(2)}
-ELSE                          ;ACT派生が暴れたため治療できなかった
-	PRINTFORML %CALLNAME:MASTER%が暴れたため治療できなかった…
+IF TFLAG:ACT파생 == 0         ;ACT 파생이 몸의 구석구석까지 더듬어 치료했다
+	PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의 몸의 구석구석까지 더듬어 치료했다…
+	PRINTFORML 체력\@ ACTION_APPLY2_92V(1) >= 0 ? + # \@{ACTION_APPLY2_92V(1)} 기력\@ ACTION_APPLY2_92V(2) >= 0 ? + # \@{ACTION_APPLY2_92V(2)}
+ELSE                          ;ACT 파생이 날뛰었기 때문에 치료 할 수 없었다
+	PRINTFORML %CALLNAME:MASTER%가 날뛰었기 때문에 치료 할 수 없었다…
 ENDIF

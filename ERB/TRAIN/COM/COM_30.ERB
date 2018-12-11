@@ -1,248 +1,248 @@
-﻿;────────────────────────────────────
-;030,痛みを我慢する（痛み、拘束、反抗、恐怖）
-;────────────────────────────────────
+﻿;─
+;030, 아픔을 참는다(아픔, 구속, 반항, 공포)
+;─
 @COM30
-;痛み、拘束SOURCE減少
-TIMES SOURCE:MASTER:痛み , 0.85
-TIMES SOURCE:MASTER:拘束 , 0.95
-;反抗SOURCE増加
-SOURCE:MASTER:反抗 += 10 + SOURCE:MASTER:痛み * (MARK:反抗刻印 + 1) / 20 - SOURCE:MASTER:拘束
-SIF SOURCE:MASTER:反抗 < 0
-	SOURCE:MASTER:反抗 = 0
-;恐怖SOURCE増加
-SOURCE:MASTER:恐怖 += SOURCE:MASTER:痛み * (MARK:MASTER:トラウマ + 10) * (11 - MARK:MASTER:苦痛刻印) * (11 - MARK:反抗刻印) / 1000
-;COM分類
-CALL SET_COMGRO("消極的従う")
-;COM印象
-CALL SET_COMIMP("好印象小")
+;상해, 구속 SOURCE 감소
+TIMES SOURCE:MASTER:아픔 , 0.85
+TIMES SOURCE:MASTER:구속 , 0.95
+;반항 SOURCE 증가
+SOURCE:MASTER:반항 += 10 + SOURCE:MASTER:아픔 * (MARK:반항각인 + 1) / 20 - SOURCE:MASTER:구속
+SIF SOURCE:MASTER:반항 < 0
+	SOURCE:MASTER:반항 = 0
+;공포 SOURCE 증가
+SOURCE:MASTER:공포 += SOURCE:MASTER:아픔 * (MARK:MASTER:트라우마 + 10) * (11 - MARK:MASTER:고통각인) * (11 - MARK:반항각인) / 1000
+;COM 분류
+CALL SET_COMGRO("소극적 따른다")
+;COM 인상
+CALL SET_COMIMP("좋은 인상소")
 
-;REACTION_MESSAGEでは快SOURCEで分岐しており、COM側の修正漏れと思われたのでとりあえず@/L
-;COMIMP/COMGROはそのままで良さそうな気もしたので保留
-IF SOURCE:MASTER:快Ｃ + SOURCE:MASTER:快Ｖ + SOURCE:MASTER:快Ａ + SOURCE:MASTER:快Ｂ > 10
-	;派生：痛いけど気持ち良い！
-	TFLAG:REACT派生 = 1
+;REACTION_MESSAGE에서는 쾌SOURCE로 분기 하고 있어, COM측의 수정 누락이라고 생각되었으므로 우선@/L
+;COMIMP/COMGRO는 그대로 좋은 것 같은 생각도 들었으므로 보류
+IF SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B > 10
+	;파생:아프지만 기분 좋다!
+	TFLAG:REACT파생 = 1
 ELSE
-	;派生：痛みを我慢
-	TFLAG:REACT派生 = 0
+	;파생:아픔을 인내
+	TFLAG:REACT파생 = 0
 ENDIF
 RETURN 1
 
 
-;────────────────────────────────────
-;031,悲鳴を上げる（屈従、達成、恐怖）
-;────────────────────────────────────
+;─
+;031, 비명을 올린다(굴종, 달성, 공포)
+;─
 @COM31
-;屈従、達成、恐怖SOURCE増加
-SOURCE:MASTER:屈従 += 200 + SOURCE:MASTER:痛み * (CFLAG:MASTER:調教レベル + 1) * (MARK:屈服刻印 + 10) / 100
-SOURCE:MASTER:達成 += (SOURCE:MASTER:痛み / 3 + SOURCE:MASTER:屈従 / 2) * (3 + TALENT:サド + TALENT:意地悪 - TALENT:心根優しい) / 5
-SOURCE:MASTER:恐怖 += 200 + SOURCE:MASTER:痛み * (200 - GET_ABL(MASTER, "マゾっ気")) * (MARK:MASTER:トラウマ + 10) / 2000
-;COM分類
-CALL SET_COMGRO("消極的従う")
-;COM印象
-CALL SET_COMIMP("0から遠ざかる")
-IF SOURCE:MASTER:痛み > 500 || SOURCE:MASTER:痛み > PALAM:MASTER:恐怖 * 2
-	;派生：痛みによる悲鳴
-	TFLAG:REACT派生 = 0
+;굴종, 달성, 공포 SOURCE 증가
+SOURCE:MASTER:굴종 += 200 + SOURCE:MASTER:아픔 * (CFLAG:MASTER:조교레벨 + 1) * (MARK:굴복각인 + 10) / 100
+SOURCE:MASTER:달성 += (SOURCE:MASTER:아픔 / 3 + SOURCE:MASTER:굴종 / 2) * (3 + TALENT:새디즘 + TALENT:심술쟁이 - TALENT:상냥함) / 5
+SOURCE:MASTER:공포 += 200 + SOURCE:MASTER:아픔 * (200 - GET_ABL(MASTER, "마조끼")) * (MARK:MASTER:트라우마 + 10) / 2000
+;COM 분류
+CALL SET_COMGRO("소극적 따른다")
+;COM 인상
+CALL SET_COMIMP("0으로부터 멀어진다")
+IF SOURCE:MASTER:아픔 > 500 || SOURCE:MASTER:아픔 > PALAM:MASTER:공포 * 2
+	;파생:아픔에 의한 비명
+	TFLAG:REACT파생 = 0
 ELSE
-	;派生：恐怖による悲鳴
-	TFLAG:REACT派生 = 1
+	;파생:공포에 의한 비명
+	TFLAG:REACT파생 = 1
 ENDIF
 RETURN 1
 
 
-;────────────────────────────────────
-;032,暴れる（痛み、拘束、達成逆、反抗、恐怖、暴れる、お仕置きポイント）
-;────────────────────────────────────
+;─
+;032, 날뛴다(아픔, 구속, 달성역, 반항, 공포, 날뛰는, 벌포인트)
+;─
 @COM32
-;縄拘束中は痛い
-IF TEQUIP:縄 && !IS_NOWACTNAME("縄")
-	SOURCE:MASTER:痛み += (TEQUIP:縄 + 1) * 200
-	TIMES SOURCE:MASTER:拘束 , 1.50
+;줄구속중은 아프다
+IF TEQUIP:줄 && !IS_NOWACTNAME("줄")
+	SOURCE:MASTER:아픔 += (TEQUIP:줄 + 1) * 200
+	TIMES SOURCE:MASTER:구속 , 1.50
 ENDIF
-;反抗SOURCE増加
-SOURCE:MASTER:反抗 += 250 + (13 + MARK:反抗刻印 * 2 - MARK:屈服刻印 + TALENT:MASTER:反抗的 * 5 - TALENT:MASTER:大人しい * 3) * 20
-;達成SOURCE減少
-SOURCE:MASTER:達成 -= SOURCE:MASTER:反抗 / 2
-;暴れ成功の判定
-LOCAL = CFLAG:MASTER:反抗強度 * 2 + BASE:MASTER:体力 / 200 + BASE:MASTER:気力 / 100 + MARK:反抗刻印 + PALAM:MASTER:反抗 / 1000 - MARK:MASTER:トラウマ - GET_ABL(MASTER, "従順") / 10 + TALENT:MASTER:反抗的 * 5 - TALENT:MASTER:素直 * 5 + TALENT:MASTER:長身 * 5 - TALENT:MASTER:小柄 * 5
-LOCAL:1 = BASE:体力 / 250 + BASE:気力 / 150 + GET_TRAINLV(TARGET) + TALENT:長身 * 5 - TALENT:小柄 * 5 + PALAM:MASTER:苦痛 / 1500 - RAND:5
-SIF !IS_NOWACTNAME("縄")
-	LOCAL:1 += (TEQUIP:縄) * 5
-;助手の人数と体格
+;반항 SOURCE 증가
+SOURCE:MASTER:반항 += 250 + (13 + MARK:반항각인 * 2 - MARK:굴복각인 + TALENT:MASTER:반항적 * 5 - TALENT:MASTER:얌전함 * 3) * 20
+;달성 SOURCE 감소
+SOURCE:MASTER:달성 -= SOURCE:MASTER:반항 / 2
+;날뛰고 성공의 판정
+LOCAL = CFLAG:MASTER:반항강도 * 2 + BASE:MASTER:체력 / 200 + BASE:MASTER:기력 / 100 + MARK:반항각인 + PALAM:MASTER:반항 / 1000 - MARK:MASTER:트라우마 - GET_ABL(MASTER, "순종") / 10 + TALENT:MASTER:반항적 * 5 - TALENT:MASTER:순수 * 5 + TALENT:MASTER:장신 * 5 - TALENT:MASTER:작은체형 * 5
+LOCAL:1 = BASE:체력 / 250 + BASE:기력 / 150 + GET_TRAINLV(TARGET) + TALENT:장신 * 5 - TALENT:작은체형 * 5 + PALAM:MASTER:고통 / 1500 - RAND:5
+SIF !IS_NOWACTNAME("줄")
+	LOCAL:1 += (TEQUIP:줄) * 5
+;조수의 인원수와 체격
 SIF ASSI:1 > 0
-	LOCAL:1 += 6 + TALENT:(ASSI:1):長身 * 3 - TALENT:(ASSI:1):小柄 * 3
+	LOCAL:1 += 6 + TALENT:(ASSI:1):장신 * 3 - TALENT:(ASSI:1):작은체형 * 3
 SIF ASSI:2 > 0
-	LOCAL:1 += 6 + TALENT:(ASSI:2):長身 * 3 - TALENT:(ASSI:2):小柄 * 3
-;ACT補正値
-IF IS_NOWACTNAME("口で愛撫")
+	LOCAL:1 += 6 + TALENT:(ASSI:2):장신 * 3 - TALENT:(ASSI:2):작은체형 * 3
+;ACT 보정치
+IF IS_NOWACTNAME("구에서 애무")
 	LOCAL:2 = 2
-ELSEIF IS_NOWACTNAME("キス")
+ELSEIF IS_NOWACTNAME("키스")
 	LOCAL:2 = 5
-ELSEIF IS_NOWACTNAME("パイズリする")
+ELSEIF IS_NOWACTNAME("파이즈리 한다")
 	LOCAL:2 = 3
-ELSEIF IS_NOWACTNAME("足コキする")
+ELSEIF IS_NOWACTNAME("풋잡 한다")
 	LOCAL:2 = 0
-ELSEIF IS_NOWACTNAME("アナルバイブ/アナルビーズ")
+ELSEIF IS_NOWACTNAME("애널 바이브/애널 비즈")
 	LOCAL:2 = 12
-ELSEIF IS_NOWACTNAME("イラマチオ")
+ELSEIF IS_NOWACTNAME("이라마치오")
 	LOCAL:2 = 14
-ELSEIF IS_NOWACTNAME("スパンキング")
+ELSEIF IS_NOWACTNAME("스팽킹")
 	LOCAL:2 = 9
-ELSEIF IS_NOWACTNAME("鞭")
+ELSEIF IS_NOWACTNAME("채찍")
 	LOCAL:2 = 12
-ELSEIF IS_NOWACTNAME("針")
+ELSEIF IS_NOWACTNAME("바늘")
 	LOCAL:2 = 7
-ELSEIF IS_NOWACTNAME("縄")
+ELSEIF IS_NOWACTNAME("줄")
 	LOCAL:2 = 8
-ELSEIF IS_NOWACTNAME("アイマスク")
+ELSEIF IS_NOWACTNAME("아이마스크")
 	LOCAL:2 = 9
-ELSEIF IS_NOWACTNAME("治療する")
+ELSEIF IS_NOWACTNAME("치료한다")
 	LOCAL:2 = -10
-ELSEIF IS_NOWACTNAME("正常位") || TEQUIP:性交中 == 1
+ELSEIF IS_NOWACTNAME("정상위") || TEQUIP:성교중 == 1
 	LOCAL:2 = 12
-ELSEIF IS_NOWACTNAME("後背位") || TEQUIP:性交中 == 2
+ELSEIF IS_NOWACTNAME("후배위") || TEQUIP:성교중 == 2
 	LOCAL:2 = 18
-ELSEIF IS_NOWACTNAME("騎乗位") || TEQUIP:性交中 == 3
+ELSEIF IS_NOWACTNAME("승마위") || TEQUIP:성교중 == 3
 	LOCAL:2 = 7
-ELSEIF IS_NOWACTNAME("対面座位") || TEQUIP:性交中 == 4
+ELSEIF IS_NOWACTNAME("대면좌위") || TEQUIP:성교중 == 4
 	LOCAL:2 = 15
-ELSEIF IS_NOWACTNAME("背面座位") || TEQUIP:性交中 == 5
+ELSEIF IS_NOWACTNAME("배면좌위") || TEQUIP:성교중 == 5
 	LOCAL:2 = 16
-ELSEIF IS_NOWACTNAME("アナルセックス") || TEQUIP:性交中 == 6
+ELSEIF IS_NOWACTNAME("애널 섹스") || TEQUIP:성교중 == 6
 	LOCAL:2 = 20
-ELSEIF IS_NOWACTNAME("正常位させる") || TEQUIP:性交奉仕中 == 1
+ELSEIF IS_NOWACTNAME("정상위 시킨다") || TEQUIP:성교봉사중 == 1
 	LOCAL:2 = 10
-ELSEIF IS_NOWACTNAME("後背位させる") || TEQUIP:性交奉仕中 == 2
+ELSEIF IS_NOWACTNAME("후배위 시킨다") || TEQUIP:성교봉사중 == 2
 	LOCAL:2 = 10
-ELSEIF IS_NOWACTNAME("逆レイプ") || TEQUIP:性交奉仕中 == 3
+ELSEIF IS_NOWACTNAME("역강간") || TEQUIP:성교봉사중 == 3
 	LOCAL:2 = 12
-ELSEIF IS_NOWACTNAME("対面座位させる") || TEQUIP:性交奉仕中 == 4
+ELSEIF IS_NOWACTNAME("대면좌위 시킨다") || TEQUIP:성교봉사중 == 4
 	LOCAL:2 = 12
-ELSEIF IS_NOWACTNAME("背面座位させる") || TEQUIP:性交奉仕中 == 5
+ELSEIF IS_NOWACTNAME("배면좌위 시킨다") || TEQUIP:성교봉사중 == 5
 	LOCAL:2 = 12
-ELSEIF IS_NOWACTNAME("アナルセックスさせる") || TEQUIP:性交奉仕中 == 6
+ELSEIF IS_NOWACTNAME("애널 섹스 시킨다") || TEQUIP:성교봉사중 == 6
 	LOCAL:2 = 22
 ELSE
 	LOCAL:2 = 10
 ENDIF
 SIF ASSI > 0
 	LOCAL:2 += GET_TRAINLV(ASSI) / 2 + 3
-;ＳＰ行動
-SIF TFLAG:ＳＰ行動 > 199
+;SP행동
+SIF TFLAG:SP행동 > 199
 	LOCAL:2 += 10
-;暴れ成否判定		逆レイプは抵抗できなくてよいらしいので、暴れが通らないように変更@/L
-IF LOCAL > LOCAL:1 + LOCAL:2 && TEQUIP:三角木馬 == 0 && !IS_NOWACTNAME("逆レイプ")
-	;COM分類
-	CALL SET_COMGRO("暴れる")
-	;反抗SOURCE増加
-	TIMES SOURCE:MASTER:反抗 , 2.50
-	;道具装着失敗
-	SIF IS_NOWACTNAME("バイブ")
-		TEQUIP:バイブ = 0
-	SIF IS_NOWACTNAME("アナルバイブ")
-		TEQUIP:アナルバイブ = 0
-	SIF IS_NOWACTNAME("アナルビーズ")
-		TEQUIP:アナルビーズ = 0
-	IF IS_NOWACTNAME("Ｃ愛撫道具")
-		TEQUIP:クリキャップ = 0
-		TEQUIP:オナホール = 0
+;날뛰고 성공 여부 판정		역강간은 저항 할 수 없어 좋은 것 같으니까, 날뛰고가 통하지 않게 변경@/L
+IF LOCAL > LOCAL:1 + LOCAL:2 && TEQUIP:삼각목마 == 0 && !IS_NOWACTNAME("역강간")
+	;COM 분류
+	CALL SET_COMGRO("날뛴다")
+	;반항 SOURCE 증가
+	TIMES SOURCE:MASTER:반항 , 2.50
+	;도구 장착 실패
+	SIF IS_NOWACTNAME("바이브")
+		TEQUIP:바이브 = 0
+	SIF IS_NOWACTNAME("애널 바이브")
+		TEQUIP:애널바이브 = 0
+	SIF IS_NOWACTNAME("애널 비즈")
+		TEQUIP:애널비즈 = 0
+	IF IS_NOWACTNAME("C애무 도구")
+		TEQUIP:클리캡 = 0
+		TEQUIP:오나홀 = 0
 	ENDIF
-	SIF IS_NOWACTNAME("ニプルキャップ")
-		TEQUIP:ニプルキャップ = 0
-	SIF IS_NOWACTNAME("縄")
-		TEQUIP:縄 = 0
-	SIF IS_NOWACTNAME("アイマスク")
-		TEQUIP:アイマスク = 0
-	SIF IS_NOWACTNAME("ボールギャグ")
-		TEQUIP:ボールギャグ = 0
-	;体力、気力減少
-	DOWNBASE:体力 += 15 * (6 + MARK:反抗刻印 + TALENT:MASTER:長身 * 5 - TALENT:MASTER:小柄 * 5)
-	DOWNBASE:気力 += 20 * (8 + CFLAG:MASTER:反抗強度 + TALENT:MASTER:反抗的 * 3 + TALENT:MASTER:生意気 * 3 - TALENT:MASTER:素直 * 3 - TALENT:MASTER:大人しい * 3)
-	;派生：暴れ成功
-	TFLAG:REACT派生 = 0
+	SIF IS_NOWACTNAME("니플캡")
+		TEQUIP:니플캡 = 0
+	SIF IS_NOWACTNAME("줄")
+		TEQUIP:줄 = 0
+	SIF IS_NOWACTNAME("아이마스크")
+		TEQUIP:아이마스크 = 0
+	SIF IS_NOWACTNAME("볼개그")
+		TEQUIP:볼개그 = 0
+	;체력, 기력 감소
+	DOWNBASE:체력 += 15 * (6 + MARK:반항각인 + TALENT:MASTER:장신 * 5 - TALENT:MASTER:작은체형 * 5)
+	DOWNBASE:기력 += 20 * (8 + CFLAG:MASTER:반항강도 + TALENT:MASTER:반항적 * 3 + TALENT:MASTER:거만함 * 3 - TALENT:MASTER:순수 * 3 - TALENT:MASTER:얌전함 * 3)
+	;파생:날뛰고 성공
+	TFLAG:REACT파생 = 0
 ELSE
-	;COM分類
-	CALL SET_COMGRO("消極的従う")
-	;反抗SOURCE減少
-	TIMES SOURCE:MASTER:反抗 , 0.10
-	IF TEQUIP:縄 && !IS_NOWACTNAME("縄")
-		;派生：縄拘束による暴れ失敗
-		TFLAG:REACT派生 = 1
+	;COM 분류
+	CALL SET_COMGRO("소극적 따른다")
+	;반항 SOURCE 감소
+	TIMES SOURCE:MASTER:반항 , 0.10
+	IF TEQUIP:줄 && !IS_NOWACTNAME("줄")
+		;파생:줄구속에 의한 날뛰고 실패
+		TFLAG:REACT파생 = 1
 	ELSE
-		;派生：制止による暴れ失敗
-		TFLAG:REACT派生 = 2
-		;体力、気力減少
-		DOWNBASE:体力 += 10 * (6 + MARK:反抗刻印 + TALENT:MASTER:長身 * 5 - TALENT:MASTER:小柄 * 5)
-		DOWNBASE:気力 += 15 * (8 + CFLAG:MASTER:反抗強度 + TALENT:MASTER:反抗的 * 3 + TALENT:MASTER:生意気 * 3 - TALENT:MASTER:素直 * 3 - TALENT:MASTER:大人しい * 3)
+		;파생:제지에 의한 날뛰고 실패
+		TFLAG:REACT파생 = 2
+		;체력, 기력 감소
+		DOWNBASE:체력 += 10 * (6 + MARK:반항각인 + TALENT:MASTER:장신 * 5 - TALENT:MASTER:작은체형 * 5)
+		DOWNBASE:기력 += 15 * (8 + CFLAG:MASTER:반항강도 + TALENT:MASTER:반항적 * 3 + TALENT:MASTER:거만함 * 3 - TALENT:MASTER:순수 * 3 - TALENT:MASTER:얌전함 * 3)
 	ENDIF
 ENDIF
-;COM印象
-CALL SET_COMIMP("悪印象大")
-;お仕置きポイント加算
-TFLAG:お仕置きポイント += IS_COMGRONAME("暴れる")? 8 # 2 + BASE:興味 / 200 + BASE:苛立ち / 150 + RAND:5
+;COM 인상
+CALL SET_COMIMP("악인상대")
+;벌포인트 가산
+TFLAG:벌포인트 += IS_COMGRONAME("날뛴다")? 8 # 2 + BASE:흥미 / 200 + BASE:초조 / 150 + RAND:5
 RETURN 1
 
 
-;────────────────────────────────────
-;033,怯える（屈従、恐怖、哀願、お仕置きポイント）
-;────────────────────────────────────
+;─
+;033, 무서워한다(굴종, 공포, 애원, 벌포인트)
+;─
 @COM33
-;屈従、恐怖SOURCE増加
-SOURCE:MASTER:屈従 += 200 + MARK:屈服刻印 * MARK:MASTER:トラウマ * 10
-SOURCE:MASTER:恐怖 += SOURCE:MASTER:痛み / 3 + SOURCE:MASTER:拘束 / 5 + SOURCE:MASTER:逸脱 / 4 + SOURCE:MASTER:トラウマ / 3
-;意見を出すなんていい度胸だね！とか言いながらお仕置きになります
-LOCAL = BASE:苛立ち / 80 - BASE:理性 / 100 - CFLAG:アライメント / 10 + PALAM:MASTER:反抗 / 1000 + TALENT:サド * 5 + TALENT:意地悪 * 5 - TALENT:心根優しい * 5 - MARK:MASTER:トラウマ / 2
-SIF IS_POLICY("今", "異常")
+;굴종, 공포 SOURCE 증가
+SOURCE:MASTER:굴종 += 200 + MARK:굴복각인 * MARK:MASTER:트라우마 * 10
+SOURCE:MASTER:공포 += SOURCE:MASTER:아픔 / 3 + SOURCE:MASTER:구속 / 5 + SOURCE:MASTER:일탈 / 4 + SOURCE:MASTER:트라우마 / 3
+;의견을 내다니 좋은 담력이구나! 라든지 말하면서 벌이 됩니다
+LOCAL = BASE:초조 / 80 - BASE:이성 / 100 - CFLAG:아라이먼트 / 10 + PALAM:MASTER:반항 / 1000 + TALENT:새디즘 * 5 + TALENT:심술쟁이 * 5 - TALENT:상냥함 * 5 - MARK:MASTER:트라우마 / 2
+SIF IS_POLICY("지금", "이상")
 	LOCAL += RAND:7
-;結局返答がないので、自分が納得できる形に弄ります@/L
-IF LOCAL > 0 && !IS_NOWACTNAME("公衆肉便器プレイ")
-	;お仕置きポイント加算
-	TFLAG:お仕置きポイント += LOCAL
-	;派生：怯えに対する苛立ち
-	TFLAG:REACT派生 = 1
-	;COM印象
-	CALL SET_COMIMP("0から遠ざかる")
+;결국 대답이 없기 때문에, 자신이 납득할 수 있는 형태에 만지작거립니다@/L
+IF LOCAL > 0 && !IS_NOWACTNAME("공중 육변기 플레이")
+	;벌포인트 가산
+	TFLAG:벌포인트 += LOCAL
+	;파생:두려움에 대한 초조
+	TFLAG:REACT파생 = 1
+	;COM 인상
+	CALL SET_COMIMP("0으로부터 멀어진다")
 ELSE
-	;COM分類
-	CALL SET_COMGRO("許しを乞う")
-	;派生：「ふーん」
-	TFLAG:REACT派生 = 0
-	;COM印象
-	CALL SET_COMIMP("0に近づく")
+	;COM 분류
+	CALL SET_COMGRO("허가를 청한다")
+	;파생:「흐음」
+	TFLAG:REACT파생 = 0
+	;COM 인상
+	CALL SET_COMIMP("0에 가까워진다")
 ENDIF
 RETURN 1
 
 
-;────────────────────────────────────
-;各行動の反抗難易度、現在未使用
-;────────────────────────────────────
+;─
+;각 행동의 반항 난이도, 현재미사용
+;─
 ;@COUNTER_CHECK
 [SKIPSTART]
 LOCAL:2 = 0
-SIF IS_NOWACTNAME("手で愛撫/口で愛撫")
+SIF IS_NOWACTNAME("손으로 애무/입으로 애무")
 	LOCAL:2 += 2
-SIF IS_NOWACTNAME("アナル愛撫/アナル舐め")
+SIF IS_NOWACTNAME("애널 애무/애널 빨고")
 	LOCAL:2 += 3
-SIF IS_NOWACTNAME("キス")
+SIF IS_NOWACTNAME("키스")
 	LOCAL:2 += 2
-SIF IS_NOWACTNAME("性器を擦り合う/足コキする")
+SIF IS_NOWACTNAME("성기를 서로 켠다/풋잡 한다")
 	LOCAL:2 -= 1
-SIF IS_NOWACTNAME("アナルバイブ/アナルビーズ")
+SIF IS_NOWACTNAME("애널 바이브/애널 비즈")
 	LOCAL:2 += 2
-SIF TEQUIP:性交中 == 1 || TEQUIP:性交中 == 4
+SIF TEQUIP:성교중 == 1 || TEQUIP:성교중 == 4
 	LOCAL:2 += 2
-SIF TEQUIP:性交中 == 2 || TEQUIP:性交中 == 6
+SIF TEQUIP:성교중 == 2 || TEQUIP:성교중 == 6
 	LOCAL:2 += 5
-SIF TEQUIP:性交中 == 3 || TEQUIP:性交中 == 5
+SIF TEQUIP:성교중 == 3 || TEQUIP:성교중 == 5
 	LOCAL:2 -= 3
-SIF TEQUIP:性交奉仕中 == 3
+SIF TEQUIP:성교 봉사중 == 3
 	LOCAL:2 += 1
-SIF TEQUIP:性交奉仕中 && TEQUIP:性交奉仕中 != 3
+SIF TEQUIP:성교 봉사중 && TEQUIP:성교 봉사중 != 3
 	LOCAL:2 += 5
-SIF TFLAG:ACT分類 == 6 && !IS_NOWACTNAME("イラマチオ/罵倒/浣腸セット")
+SIF TFLAG:ACT 분류 == 6 && ! IS_NOWACTNAME("이라마치오/매도/관장 세트")
 	LOCAL:2 += 5
-SIF IS_NOWACTNAME("イラマチオ")
+SIF IS_NOWACTNAME("이라마치오")
 	LOCAL:2 += 4
-SIF IS_POLICY("今", "異常")
+SIF IS_POLICY("지금", "이상")
 	LOCAL:2 += 1
 [SKIPEND]

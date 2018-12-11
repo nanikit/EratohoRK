@@ -1,38 +1,38 @@
-﻿;フラグ説明
-;KFLAG:1	関数間貫通汎用フラグ。主に行為と反応のランダム文合わせ。
-;KFLAG:2	大妖精の本気度。素質変化イベント用のフラグ。
-;KFLAG:3	エンディングフラグ。
+﻿;플래그 설명
+;KFLAG:1	함수간 관통 범용 플래그. 주로 행위와 반응의 랜덤문 맞추어라.
+;KFLAG:2	대요정의 진심도. 소질 변화 이벤트용의 플래그.
+;KFLAG:3	엔딩 플래그.
 
 
 @INITIATION_K4
-;調教開始時に初期化する為に呼び出される関数。主に一時変数の初期化が行われる。
-;今の気分を聞く
+;조교 개시시에 초기화하기 위해서 불려 가는 함수. 주로 일시 변수의 초기화를 한다.
+;지금의 기분을 (듣)묻는다
 KFLAG:100 = 8
 CFLAG:1000 = 0
-;自分への気持ちを聞く
+;자신에게로의 기분을 (듣)묻는다
 KFLAG:101 = 8
 CFLAG:1001 = 0
-;性についての話をする
+;성에 대한 이야기를 한다
 KFLAG:102 = 8
 CFLAG:1002 = 0
-;キス
+;키스
 KFLAG:115 = 8
 CFLAG:1015 = 0
 
 @CLOSETRAIN_K4
-;調教終了時に呼び出される。
+;조교 종료시에 불려 간다.
 CFLAG:1000 = 0
 CFLAG:1001 = 0
 CFLAG:1002 = 0
 CFLAG:1015 = 0
 
-TALENT:臆病 = 1
-TALENT:大人しい = 1
+TALENT:겁쟁이 = 1
+TALENT:얌전함 = 1
 
 @DECIDEACTCHECK_K4
-;調教主の行動決定後に呼び出される関数。調教主の行為に応じて、行動ごとに指定された変数を操作し、行動禁止フラグをON/OFFする。
+;조교주의 행동 결정 후에 불려 가는 함수. 조교주의 행위에 응해, 행동 마다 지정된 변수를 조작해, 행동 금지 플래그를 ON/OFF 한다.
 
-;今の気分を聞くの頻度をチェック
+;지금의 기분을 (듣)묻는 것 빈도를 체크
 IF TFLAG:90 == 0
 	KFLAG:100 -= 5
 ELSEIF TFLAG:80 == 0 && CFLAG:1000 == 0
@@ -50,7 +50,7 @@ ELSEIF KFLAG:100 < 1
 	CFLAG:1000 = 100
 ENDIF
 
-;自分への気持ちを聞くの頻度をチェック
+;자신에게로의 기분을 (듣)묻는 것 빈도를 체크
 IF TFLAG:90 == 1
 	KFLAG:101 -= 5
 ELSEIF TFLAG:80 == 0 && CFLAG:1000 == 0
@@ -68,7 +68,7 @@ ELSEIF KFLAG:101 < 1
 	CFLAG:1001 = 100
 ENDIF
 
-;性についての話をするの頻度をチェック
+;성에 대한 이야기를 하는 것 빈도를 체크
 IF TFLAG:90 == 2
 	KFLAG:102 -= 5
 ELSEIF TFLAG:80 == 0 && CFLAG:1000 == 0
@@ -86,9 +86,9 @@ ELSEIF KFLAG:102 < 1
 	CFLAG:1002 = 100
 ENDIF
 
-;キスの頻度チェック
+;키스의 빈도 체크
 IF TFLAG:90 == 15
-	;好感度2000未満でのキスは割と貴重
+	;호감도 2000 미만에서의 키스는 생각보다는 귀중
 	IF FAVOR(0, 2000)
 		KFLAG:115 -= 5
 	ENDIF
@@ -102,81 +102,81 @@ ELSEIF KFLAG:115 < 1
 ENDIF
 
 @ACTIVATION_K4
-;十分な体力と気力が奴隷調教者共に保証されているときに、素質[臆病][大人しい]を失う
+;충분한 체력과 기력이 노예 조교자들에게 보증되고 있을 때, 소질[겁쟁이][얌전한]을 잃는다
 PRINTL  
 IF RAND:3 == 0
-	PRINTFORMDW 大妖精は張り切っている……
+	PRINTFORMDW 대요정은 의욕에 넘쳐 있다……
 ELSEIF RAND:2
 	IF FAVOR(0, 2000)
-		PRINTFORMDW 大妖精は楽しそうだ……
+		PRINTFORMDW 대요정은 즐거운 듯 하다……
 	ELSE
-		PRINTFORMDW 大妖精は覚悟を決めたような眼差しで%CALLNAME:MASTER%を見据える……
+		PRINTFORMDW 대요정은 각오를 결정한 것 같은 시선으로%CALLNAME:MASTER%를 응시한다……
 	ENDIF
 ELSE
 	IF FAVOR(0, 2000)
-		PRINTFORMDW 大妖精は嬉々とした表情で悪戯を続ける……
+		PRINTFORMDW 대요정은 희희낙락 한 표정으로 못된 장난을 계속한다……
 	ELSE
-		PRINTFORMDW 大妖精は堪え切れない悪戯への欲望から体をもじもじと震わせている……
+		PRINTFORMDW 대요정은 견디지 못할 못된 장난에의 욕망으로부터 몸을 머뭇머뭇진동시키고 있다……
 	ENDIF
 ENDIF
 IF FIRSTTIME(1000)
 	PRINTL  
-	PRINTFORMDW ※一時的に調教者が素質[臆病][大人しい]を失います（以降この文は表示されません）
+	PRINTFORMDW ※일시적으로 조교자가 소질[겁쟁이][얌전한]을 잃습니다(이후 이 문장은 표시되지 않습니다)
 ENDIF
-TALENT:臆病 = 0
-TALENT:大人しい = 0
+TALENT:겁쟁이 = 0
+TALENT:얌전함 = 0
 PRINTL  
 
 @CALMING_K4
-;お互いの内どちらかでも体力、気力がヤバくなってきたら、[臆病][大人しい]を得て省エネモードに入る
+;서로의 안어느 쪽인지에서도 체력, 기력이 위험해져 오면,[겁쟁이][얌전한]을 얻어 에너지 절약 모드에 들어간다
 PRINTL  
 IF (BASE:0 * 100) / MAXBASE:0 < 25
-	PRINTFORMDW 大妖精は消耗している……少し落ち着くことにしたようだ……
+	PRINTFORMDW 대요정은 소모하고 있는…… 조금 침착하기로 한 것 같다……
 ELSEIF RAND:3 == 0
-	PRINTFORMDW 大妖精は少しはしゃぎすぎてしまったと思ったのか自制をかけている……
+	PRINTFORMDW 대요정은 조금 너무 까불며 떠들어 버렸다고 생각했는지 자제를 걸치고 있다……
 ELSEIF RAND:2
 	IF FAVOR(0, 2000)
-		PRINTFORMDW 大妖精は%CALLNAME:MASTER%を労わり、優しくそっと体を撫で擦り始めた……
+		PRINTFORMDW 대요정은%CALLNAME:MASTER%를 돌봐, 상냥하고 살그머니 몸을 어루만지기 시작했다……
 	ELSE
-		PRINTFORMDW 大妖精は%CALLNAME:MASTER%を労わることにしたようだ……
+		PRINTFORMDW 대요정은%CALLNAME:MASTER%를 돌보기로 한 것 같다……
 	ENDIF
 ELSE
 	IF FAVOR(0, 2000)
-		PRINTFORMDW 大妖精は%CALLNAME:MASTER%の消耗ぶりをみて自身の行いを猛省し、慈愛の表情を浮かべて心身を癒そうとしている……
+		PRINTFORMDW 대요정은%CALLNAME:MASTER%의 소모상을 봐 자신의 행동을 맹성 해, 자애의 표정을 띄워 심신을 달래려고 하고 있다……
 	ELSE
-		PRINTFORMDW 大妖精は%CALLNAME:MASTER%にしてきた仕打ちを思い返して、少し反省したようだ……
+		PRINTFORMDW 대요정은%CALLNAME:MASTER%로 하고 온 처사를 다시 생각해, 조금 반성한 것 같다……
 	ENDIF
 ENDIF
 IF FIRSTTIME(1001)
 	PRINTL  
-	PRINTFORMDW ※一時的に失っていた調教者の素質、[臆病][大人しい]が復帰します（以降この文は表示されません）
+	PRINTFORMDW ※일시적으로 잃고 있던 조교자의 소질,[겁쟁이][얌전한]이 복귀합니다(이후 이 문장은 표시되지 않습니다)
 ENDIF
-TALENT:臆病 = 1
-TALENT:大人しい = 1
+TALENT:겁쟁이 = 1
+TALENT:얌전함 = 1
 PRINTL  
 
 @FADEIO(ARG = 4, ARGS = "VOID", ARGS:1 = "VOID", ARGS:2 = "VOID", ARGS:3 = "VOID", ARGS:4 = "VOID", ARGS:5 = "VOID", ARGS:6 = "VOID", ARGS:7 = "VOID", ARGS:8 = "VOID", ARGS:9 = "VOID", ARGS:10 = "VOID", ARGS:11 = "VOID", ARGS:12 = "VOID", ARGS:13 = "VOID", ARGS:14 = "VOID", ARGS:15 = "VOID", ARGS:16 = "VOID", ARGS:17 = "VOID", ARGS:18 = "VOID", ARGS:19 = "VOID", ARGS:20 = "VOID", ARGS:21 = "VOID", ARGS:22 = "VOID", ARGS:23 = "VOID", ARGS:24 = "VOID", ARGS:25 = "VOID", ARGS:26 = "VOID", ARGS:27 = "VOID", ARGS:28 = "VOID", ARGS:29 = "VOID")
-;指定された文字列をフェードインしてフェードアウトし、行を削除する。
-;色は設定されたものを用いる
-;引数はフェードインと一緒
+;지정된 캐릭터 라인을 페이드 인 해 페이드 아웃 해, 행을 삭제한다.
+;색은 설정된 것을 이용한다
+;인수는 페이드 인과 함께
 CALL FADEIN(ARG, ARGS, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7, ARGS:8, ARGS:9, ARGS:10, ARGS:11, ARGS:12, ARGS:13, ARGS:14, ARGS:15, ARGS:16, ARGS:17, ARGS:18, ARGS:19, ARGS:20, ARGS:21, ARGS:22, ARGS:23, ARGS:24, ARGS:25, ARGS:26, ARGS:27, ARGS:28, ARGS:29)
 CLEARLINE 1
 CALL FADEOUT(ARG, ARGS, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7, ARGS:8, ARGS:9, ARGS:10, ARGS:11, ARGS:12, ARGS:13, ARGS:14, ARGS:15, ARGS:16, ARGS:17, ARGS:18, ARGS:19, ARGS:20, ARGS:21, ARGS:22, ARGS:23, ARGS:24, ARGS:25, ARGS:26, ARGS:27, ARGS:28, ARGS:29)
 CLEARLINE 1
 
 @FADEIOD(ARG = 4, ARGS = "VOID", ARGS:1 = "VOID", ARGS:2 = "VOID", ARGS:3 = "VOID", ARGS:4 = "VOID", ARGS:5 = "VOID", ARGS:6 = "VOID", ARGS:7 = "VOID", ARGS:8 = "VOID", ARGS:9 = "VOID", ARGS:10 = "VOID", ARGS:11 = "VOID", ARGS:12 = "VOID", ARGS:13 = "VOID", ARGS:14 = "VOID", ARGS:15 = "VOID", ARGS:16 = "VOID", ARGS:17 = "VOID", ARGS:18 = "VOID", ARGS:19 = "VOID", ARGS:20 = "VOID", ARGS:21 = "VOID", ARGS:22 = "VOID", ARGS:23 = "VOID", ARGS:24 = "VOID", ARGS:25 = "VOID", ARGS:26 = "VOID", ARGS:27 = "VOID", ARGS:28 = "VOID", ARGS:29 = "VOID")
-;設定された文字列をフェードインしてフェードアウトし、行を削除する。
-;色はデフォルトの色を用いる
-;引数はフェードインと一緒
+;설정된 캐릭터 라인을 페이드 인 해 페이드 아웃 해, 행을 삭제한다.
+;색은 디폴트의 색을 이용한다
+;인수는 페이드 인과 함께
 LOCAL = GETCOLOR()
 SETCOLOR GETDEFCOLOR()
 CALL FADEIO(ARG, ARGS, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7, ARGS:8, ARGS:9, ARGS:10, ARGS:11, ARGS:12, ARGS:13, ARGS:14, ARGS:15, ARGS:16, ARGS:17, ARGS:18, ARGS:19, ARGS:20, ARGS:21, ARGS:22, ARGS:23, ARGS:24, ARGS:25, ARGS:26, ARGS:27, ARGS:28, ARGS:29)
 SETCOLOR LOCAL
 
 @FADEIND(ARG = 4, ARGS = "VOID", ARGS:1 = "VOID", ARGS:2 = "VOID", ARGS:3 = "VOID", ARGS:4 = "VOID", ARGS:5 = "VOID", ARGS:6 = "VOID", ARGS:7 = "VOID", ARGS:8 = "VOID", ARGS:9 = "VOID", ARGS:10 = "VOID", ARGS:11 = "VOID", ARGS:12 = "VOID", ARGS:13 = "VOID", ARGS:14 = "VOID", ARGS:15 = "VOID", ARGS:16 = "VOID", ARGS:17 = "VOID", ARGS:18 = "VOID", ARGS:19 = "VOID", ARGS:20 = "VOID", ARGS:21 = "VOID", ARGS:22 = "VOID", ARGS:23 = "VOID", ARGS:24 = "VOID", ARGS:25 = "VOID", ARGS:26 = "VOID", ARGS:27 = "VOID", ARGS:28 = "VOID", ARGS:29 = "VOID")
-;設定された文字列をフェードインする。
-;色はデフォルトの色を用いる
-;引数はフェードインと一緒
+;설정된 캐릭터 라인을 페이드 인 한다.
+;색은 디폴트의 색을 이용한다
+;인수는 페이드 인과 함께
 LOCAL = GETCOLOR()
 SETCOLOR GETDEFCOLOR()
 CALL FADEIN(ARG, ARGS, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7, ARGS:8, ARGS:9, ARGS:10, ARGS:11, ARGS:12, ARGS:13, ARGS:14, ARGS:15, ARGS:16, ARGS:17, ARGS:18, ARGS:19, ARGS:20, ARGS:21, ARGS:22, ARGS:23, ARGS:24, ARGS:25, ARGS:26, ARGS:27, ARGS:28, ARGS:29)

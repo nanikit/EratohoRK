@@ -1,52 +1,52 @@
 ﻿
-;※調教者のABLUP処理は存在しないパラメータがあるためところどころ妥協している
+;※조교자의 ABLUP 처리는 존재하지 않는 파라미터가 있기 (위해)때문에 군데군데 타협하고 있다
 
-;────────────────────────────────────
-;能力上昇処理
-;────────────────────────────────────
+;─
+;능력 상승 처리
+;─
 ;-------------------------------------------------
-;従順ABL
+;순종 ABL
 ;-------------------------------------------------
 @ABLUP_0M
-#DIM 屈服難易度
-#DIM 屈服EXP
-#DIM 屈服補正
-#DIM 屈服達成
-#DIM 恐怖難易度
-#DIM 恐怖EXP
-#DIM 恐怖補正
-#DIM 恐怖達成
+#DIM 굴복난이도
+#DIM 굴복EXP
+#DIM 굴복보정
+#DIM 굴복달성
+#DIM 공포난이도
+#DIM 공포EXP
+#DIM 공포보정
+#DIM 공포달성
 
-;従順、屈服ルート
-;屈服難易度設定
-屈服難易度 = POWER(2, ABL:MASTER:従順) * (100 - TALENT:MASTER:プライド低い * 20 + TALENT:MASTER:プライド高い * 20)
-;屈服EXP取得
-屈服EXP = EXP:MASTER:屈服経験
-;屈服刻印が不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (MARK:屈服刻印 >= 10) ? 0 # (ABL:MASTER:従順 * 2 - 1 - MARK:屈服刻印)
-屈服補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
-;屈服達成判定
-LOCAL = CUP:MASTER:屈服 + CUP:MASTER:恭順
-屈服達成 = (LOCAL / 2 + 屈服EXP * 20 / 屈服補正) > (屈服難易度 * ABLUP_DIFFICULTY(0))
+;순종, 굴복 루트
+;굴복 난이도 설정
+굴복난이도 = POWER(2, ABL:MASTER:순종) * (100 - TALENT:MASTER:프라이드낮음 * 20 + TALENT:MASTER:프라이드높음 * 20)
+;굴복 EXP 취득
+굴복EXP = EXP:MASTER:굴복경험
+;굴복 각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (MARK:굴복각인 >= 10) ? 0 # (ABL:MASTER:순종 * 2 - 1 - MARK:굴복각인)
+굴복보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;굴복 달성 판정
+LOCAL = CUP:MASTER:굴복 + CUP:MASTER:공순
+굴복달성 = (LOCAL / 2 + 굴복EXP * 20 / 굴복보정) > (굴복난이도 * ABLUP_DIFFICULTY(0))
 
-;恐怖ルート
-;恐怖難易度設定
-恐怖難易度 = POWER(2, ABL:MASTER:従順) * (100 - TALENT:MASTER:臆病 * 20 + TALENT:MASTER:気丈 * 20)
-;恐怖EXP取得
-恐怖EXP = EXP:MASTER:恐怖経験
-;トラウマが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (MARK:トラウマ >= 10) ? 0 # (ABL:MASTER:従順 * 2 - 1 - MARK:トラウマ)
-恐怖補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
-;恐怖達成判定
-恐怖達成 = (CUP:MASTER:恐怖 + 恐怖EXP * 20 / 恐怖補正) > (恐怖難易度 * ABLUP_DIFFICULTY(0))
+;공포 루트
+;공포 난이도 설정
+공포난이도 = POWER(2, ABL:MASTER:순종) * (100 - TALENT:MASTER:겁쟁이 * 20 + TALENT:MASTER:기장 * 20)
+;공포 EXP 취득
+공포EXP = EXP:MASTER:공포경험
+;트라우마가 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (MARK:트라우마 >= 10) ? 0 # (ABL:MASTER:순종 * 2 - 1 - MARK:트라우마)
+공포보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;공포 달성 판정
+공포달성 = (CUP:MASTER:공포 + 공포EXP * 20 / 공포보정) > (공포난이도 * ABLUP_DIFFICULTY(0))
 
-;屈服系・恐怖系で条件を満たせばABLUP
-SIF 屈服達成 || 恐怖達成
+;굴복계·공포계로 조건을 채우면 ABLUP
+SIF 굴복달성 || 공포달성
 	CALL ABLUP_RISE(MASTER, 0)
 
 
 ;-------------------------------------------------
-;欲望ABL
+;욕망 ABL
 ;-------------------------------------------------
 @ABLUP_1M
 CALL ABLUP_1(MASTER)
@@ -54,41 +54,41 @@ CALL ABLUP_1(MASTER)
 CALL ABLUP_1(TARGET)
 
 @ABLUP_1(ARG)
-#DIM 欲望難易度
-#DIM 欲望EXP
-#DIM 欲望補正
+#DIM 욕망난이도
+#DIM 욕망EXP
+#DIM 욕망보정
 
-;欲望難易度設定
-欲望難易度 = POWER(2, ABL:ARG:欲望) * (100 - TALENT:ARG:快感に素直 * 20 + TALENT:ARG:快感の否定 * 20)
-;欲望EXP取得(高度なEXPほど補正値が大きい)
-欲望EXP = EXP:ARG:Ｃ経験 + EXP:ARG:Ｂ経験 + EXP:ARG:性知識
-欲望EXP += EXP:ARG:Ｖ経験 * 2 + EXP:ARG:Ａ経験 * 2 + EXP:ARG:絶頂経験 * 2 + EXP:ARG:射精経験 * 2
-欲望EXP += EXP:ARG:自慰経験 * 3 + EXP:ARG:噴乳経験 * 4 + EXP:ARG:異常経験 * 4 + EXP:ARG:Ｖ拡張経験 * 5 + EXP:ARG:Ａ拡張経験 * 5
-;調教対象
+;욕망 난이도 설정
+욕망난이도 = POWER(2, ABL:ARG:욕망) * (100 - TALENT:ARG:쾌감에순수 * 20 + TALENT:ARG:쾌감을부정 * 20)
+;욕망 EXP 취득(고도의 EXP(정도)만큼 보정치가 크다)
+욕망EXP = EXP:ARG:C경험 + EXP:ARG:B경험 + EXP:ARG:성지식
+욕망EXP += EXP:ARG:V경험 * 2 + EXP:ARG:A경험 * 2 + EXP:ARG:절정경험 * 2 + EXP:ARG:사정경험 * 2
+욕망EXP += EXP:ARG:자위경험 * 3 + EXP:ARG:분유경험 * 4 + EXP:ARG:이상경험 * 4 + EXP:ARG:V확장경험 * 5 + EXP:ARG:A확장경험 * 5
+;조교 대상
 IF ARG == MASTER
-	;快楽刻印が不足しているとEXP補正を減らす(1Lvにつき1/2)
-	LOCAL = (MARK:快楽刻印 >= 10) ? 0 # (ABL:ARG:欲望 * 2 - 1 - MARK:快楽刻印)
-;調教者(妥協)
+	;쾌락 각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+	LOCAL = (MARK:쾌락각인 >= 10) ? 0 # (ABL:ARG:욕망 * 2 - 1 - MARK:쾌락각인)
+;조교자(타협)
 ELSE
-	;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-	LOCAL = (CFLAG:MASTER:調教レベル >= 10) ? 0 # (ABL:ARG:欲望 * 2 - 1 - CFLAG:MASTER:調教レベル)
+	;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+	LOCAL = (CFLAG:MASTER:조교레벨 >= 10) ? 0 # (ABL:ARG:욕망 * 2 - 1 - CFLAG:MASTER:조교레벨)
 ENDIF
-欲望補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+욕망보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;欲望達成判定
-;調教対象
+;욕망 달성 판정
+;조교 대상
 IF ARG == MASTER
-	SIF (CUP:ARG:欲情 + 欲望EXP * 10 / 欲望補正) > (欲望難易度 * ABLUP_DIFFICULTY(1))
+	SIF (CUP:ARG:욕정 + 욕망EXP * 10 / 욕망보정) > (욕망난이도 * ABLUP_DIFFICULTY(1))
 		CALL ABLUP_RISE(MASTER, 1)
-;調教者(妥協)
+;조교자(타협)
 ELSE
-	SIF (CUP:ARG:快Ｃ + CUP:ARG:快Ｖ + CUP:ARG:快Ａ + CUP:ARG:快Ｂ + 欲望EXP * 10 / 欲望補正) > (欲望難易度 * ABLUP_DIFFICULTY(1))
+	SIF (CUP:ARG:쾌C + CUP:ARG:쾌V + CUP:ARG:쾌A + CUP:ARG:쾌B + 욕망EXP * 10 / 욕망보정) > (욕망난이도 * ABLUP_DIFFICULTY(1))
 		CALL ABLUP_RISE(TARGET, 1)
 ENDIF
 
 
 ;-------------------------------------------------
-;技巧ABL
+;기교 ABL
 ;-------------------------------------------------
 @ABLUP_2M
 CALL ABLUP_2(MASTER)
@@ -96,34 +96,34 @@ CALL ABLUP_2(MASTER)
 CALL ABLUP_2(TARGET)
 
 @ABLUP_2(ARG)
-#DIM 技巧難易度
-#DIM 技巧EXP
-#DIM 技巧補正
-#DIM 相手
+#DIM 기교난이도
+#DIM 기교EXP
+#DIM 기교보정
+#DIM 상대
 
-;奉仕相手を代入
+;봉사 상대를 대입
 IF ARG == MASTER
-	相手 = TARGET
+	상대 = TARGET
 ELSE
-	相手 = MASTER
+	상대 = MASTER
 ENDIF
 
-;技巧難易度設定
-技巧難易度 = POWER(2, ABL:ARG:技巧) * (100 - TALENT:ARG:習得早い * 20 + TALENT:ARG:習得遅い * 20)
-;技巧EXP取得
-技巧EXP = EXP:ARG:性知識 + EXP:ARG:口淫経験 * 2 + EXP:ARG:手淫経験 * 2 + EXP:ARG:性交経験 * 2 + EXP:ARG:イかせ経験 * 4
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:ARG:調教レベル >= 10) ? 0 # (ABL:ARG:技巧 * 2 - 1 - CFLAG:ARG:調教レベル)
-技巧補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;기교 난이도 설정
+기교난이도 = POWER(2, ABL:ARG:기교) * (100 - TALENT:ARG:습득빠름 * 20 + TALENT:ARG:습득느림 * 20)
+;기교 EXP 취득
+기교EXP = EXP:ARG:성지식 + EXP:ARG:구음경험 * 2 + EXP:ARG:수음경험 * 2 + EXP:ARG:성교경험 * 2 + EXP:ARG:가게한경험 * 4
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:ARG:조교레벨 >= 10) ? 0 # (ABL:ARG:기교 * 2 - 1 - CFLAG:ARG:조교레벨)
+기교보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;技巧達成判定
-LOCAL = CUP:相手:快Ｃ + CUP:相手:快Ｖ + CUP:相手:快Ａ + CUP:相手:快Ｂ
-SIF (LOCAL / 3 + 技巧EXP * 10 / 技巧補正) > (技巧難易度 * ABLUP_DIFFICULTY(2))
+;기교 달성 판정
+LOCAL = CUP:상대:쾌C + CUP:상대:쾌V + CUP:상대:쾌A + CUP:상대:쾌B
+SIF (LOCAL / 3 + 기교EXP * 10 / 기교보정) > (기교난이도 * ABLUP_DIFFICULTY(2))
 	CALL ABLUP_RISE(ARG, 2)
 
 
 ;-------------------------------------------------
-;Ｘ感覚ABL
+;X감각 ABL
 ;-------------------------------------------------
 @ABLUP_3M
 CALL ABLUP_SENSITIVITY(MASTER, 3)
@@ -142,46 +142,46 @@ CALL ABLUP_SENSITIVITY(TARGET, 5)
 @ABLUP_6T
 CALL ABLUP_SENSITIVITY(TARGET, 6)
 
-@ABLUP_SENSITIVITY(対象, ARG)
-#DIM 部位
-#DIM 感覚難易度
-#DIM 感覚EXP
-#DIM 感覚補正
-#DIM 対象
+@ABLUP_SENSITIVITY(대상, ARG)
+#DIM 부위
+#DIM 감각난이도
+#DIM 감각EXP
+#DIM 감각보정
+#DIM 대상
 
-部位 = ARG - 3
+부위 = ARG - 3
 SPLIT "Ｃ/Ｖ/Ａ/Ｂ", "/", LOCALS
 
-;感覚難易度設定
-感覚難易度 = POWER(2, ABL:対象:@"%LOCALS:部位%感覚") * (100 - TALENT:対象:@"%LOCALS:部位%敏感" * 20 + TALENT:対象:@"%LOCALS:部位%鈍感" * 20)
-;感覚EXP取得
-感覚EXP = EXP:対象:@"%LOCALS:部位%経験" * 2 + EXP:対象:絶頂経験
-SIF LOCALS:部位 == "Ｃ"
-	感覚EXP += EXP:対象:絶頂経験
-SIF LOCALS:部位 == "Ｖ"
-	感覚EXP += EXP:対象:Ｖ拡張経験 * 4 + EXP:対象:性交経験 * 2
-SIF LOCALS:部位 == "Ａ"
-	感覚EXP += EXP:対象:Ａ拡張経験 * 4 + EXP:対象:性交経験 + EXP:対象:異常経験
-SIF LOCALS:部位 == "Ｂ"
-	感覚EXP += EXP:対象:噴乳経験 * 3
-;調教対象
+;감각 난이도 설정
+감각난이도 = POWER(2, ABL:대상:@"%LOCALS:부위%감각") * (100 - TALENT:대상:@"%LOCALS:부위%민감" * 20 + TALENT:대상:@"%LOCALS:부위%둔감" * 20)
+;감각 EXP 취득
+감각EXP = EXP:대상:@"%LOCALS:부위%경험" * 2 + EXP:대상:절정경험
+SIF LOCALS:부위 == "Ｃ"
+	감각EXP += EXP:대상:절정경험
+SIF LOCALS:부위 == "Ｖ"
+	감각EXP += EXP:대상:V확장경험 * 4 + EXP:대상:성교경험 * 2
+SIF LOCALS:부위 == "Ａ"
+	감각EXP += EXP:대상:A확장경험 * 4 + EXP:대상:성교경험 + EXP:대상:이상경험
+SIF LOCALS:부위 == "Ｂ"
+	감각EXP += EXP:대상:분유경험 * 3
+;조교 대상
 IF ARG == MASTER
-	;快楽刻印が不足しているとEXP補正を減らす(1Lvにつき1/2)
-	LOCAL = (MARK:快楽刻印 >= 10) ? 0 # (ABL:対象:@"%LOCALS:部位%感覚" * 2 - 1 - MARK:快楽刻印)
-;調教者(妥協)
+	;쾌락 각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+	LOCAL = (MARK:쾌락각인 >= 10) ? 0 # (ABL:대상:@"%LOCALS:부위%감각" * 2 - 1 - MARK:쾌락각인)
+;조교자(타협)
 ELSE
-	;欲望ABLが不足しているとEXP補正を減らす(1Lvにつき1/2)
-	LOCAL = (ABL:対象:欲望 >= 10) ? 0 # (ABL:対象:@"%LOCALS:部位%感覚" * 2 - 1 - ABL:対象:欲望)
+	;욕망 ABL가 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+	LOCAL = (ABL:대상:욕망 >= 10) ? 0 # (ABL:대상:@"%LOCALS:부위%감각" * 2 - 1 - ABL:대상:욕망)
 ENDIF
-感覚補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+감각보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;感覚達成判定
-SIF (CUP:対象:@"快%LOCALS:部位%" + 感覚EXP * 10 / 感覚補正) > (感覚難易度 * ABLUP_DIFFICULTY(ARG) * 4)
-	CALL ABLUP_RISE(対象, ARG)
+;감각 달성 판정
+SIF (CUP:대상:@"쾌%LOCALS:부위%" + 감각EXP * 10 / 감각보정) > (감각난이도 * ABLUP_DIFFICULTY(ARG) * 4)
+	CALL ABLUP_RISE(대상, ARG)
 
 
 ;-------------------------------------------------
-;奉仕精神ABL
+;봉사 정신 ABL
 ;-------------------------------------------------
 @ABLUP_7M
 CALL ABLUP_7(MASTER)
@@ -189,54 +189,54 @@ CALL ABLUP_7(MASTER)
 CALL ABLUP_7(TARGET)
 
 @ABLUP_7(ARG)
-#DIM 奉仕精神難易度
-#DIM 奉仕精神EXP
-#DIM 奉仕精神補正
+#DIM 봉사정신난이도
+#DIM 봉사정신EXP
+#DIM 봉사정신보정
 
-;奉仕精神難易度設定
-奉仕精神難易度 = POWER(2, ABL:ARG:奉仕精神) * (100 - TALENT:ARG:献身的 * 20 + TALENT:ARG:受け身 * 20)
-;奉仕精神EXP取得
-奉仕精神EXP = EXP:ARG:口淫経験 + EXP:ARG:手淫経験 + EXP:ARG:奉仕快楽経験 * 4
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:ARG:調教レベル >= 10) ? 0 # (ABL:ARG:奉仕精神 * 2 - 1 - CFLAG:ARG:調教レベル)
-奉仕精神補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;봉사 정신 난이도 설정
+봉사정신난이도 = POWER(2, ABL:ARG:봉사정신) * (100 - TALENT:ARG:헌신적 * 20 + TALENT:ARG:수동 * 20)
+;봉사 정신 EXP 취득
+봉사정신EXP = EXP:ARG:구음경험 + EXP:ARG:수음경험 + EXP:ARG:봉사쾌락경험 * 4
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:ARG:조교레벨 >= 10) ? 0 # (ABL:ARG:봉사정신 * 2 - 1 - CFLAG:ARG:조교레벨)
+봉사정신보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;奉仕精神達成判定
-;調教対象
+;봉사 정신 달성 판정
+;조교 대상
 IF ARG == MASTER
-	SIF (CUP:ARG:恭順 + 奉仕精神EXP * 10 / 奉仕精神補正) > (奉仕精神難易度 * ABLUP_DIFFICULTY(7))
+	SIF (CUP:ARG:공순 + 봉사정신EXP * 10 / 봉사정신보정) > (봉사정신난이도 * ABLUP_DIFFICULTY(7))
 		CALL ABLUP_RISE(MASTER, 7)
-;調教者(妥協)
+;조교자(타협)
 ELSE
-	SIF (SOURCE:MASTER:達成 / 3 + 奉仕精神EXP * 10 / 奉仕精神補正) > (奉仕精神難易度 * ABLUP_DIFFICULTY(7))
+	SIF (SOURCE:MASTER:달성 / 3 + 봉사정신EXP * 10 / 봉사정신보정) > (봉사정신난이도 * ABLUP_DIFFICULTY(7))
 		CALL ABLUP_RISE(TARGET, 7)
 ENDIF
 
 
 ;-------------------------------------------------
-;露出癖ABL
+;노출버릇 ABL
 ;-------------------------------------------------
 @ABLUP_8M
 CALL ABLUP_8(MASTER)
 @ABLUP_8T
-;TARGETには露出癖ABL上昇がない(妥協)
+;TARGET에는 노출버릇 ABL 상승이 없다(타협)
 
 @ABLUP_8(ARG)
-#DIM 露出癖難易度
-#DIM 露出癖EXP
+#DIM 노출버릇난이도
+#DIM 노출버릇EXP
 
-;露出癖難易度設定
-露出癖難易度 = POWER(2, ABL:ARG:露出癖) * (100 - TALENT:ARG:解放 * 20 + TALENT:ARG:抑圧 * 20)
-;露出癖EXP取得
-露出癖EXP = EXP:ARG:露出経験 * 3 + EXP:ARG:絶頂経験
+;노출버릇 난이도 설정
+노출버릇난이도 = POWER(2, ABL:ARG:노출버릇) * (100 - TALENT:ARG:해방 * 20 + TALENT:ARG:억압 * 20)
+;노출버릇 EXP 취득
+노출버릇EXP = EXP:ARG:노출경험 * 3 + EXP:ARG:절정경험
 
-;露出癖達成判定
-SIF (CUP:ARG:恥情 + 露出癖EXP * 10) > (露出癖難易度 * ABLUP_DIFFICULTY(8))
+;노출버릇 달성 판정
+SIF (CUP:ARG:치정 + 노출버릇EXP * 10) > (노출버릇난이도 * ABLUP_DIFFICULTY(8))
 	CALL ABLUP_RISE(ARG, 8)
 
 
 ;-------------------------------------------------
-;レズっ気ABL
+;레즈끼 ABL
 ;-------------------------------------------------
 @ABLUP_9M
 CALL ABLUP_9(MASTER)
@@ -244,21 +244,21 @@ CALL ABLUP_9(MASTER)
 CALL ABLUP_9(TARGET)
 
 @ABLUP_9(ARG)
-#DIM レズっ気難易度
-#DIM レズっ気EXP
+#DIM 레즈기분난이도
+#DIM 레즈끼EXP
 
-;レズっ気難易度設定
-レズっ気難易度 = POWER(2, ABL:ARG:レズっ気) * (100 - TALENT:ARG:両刀 * 20)
-;レズっ気EXP取得
-レズっ気EXP = EXP:ARG:百合経験
+;레즈 기분 난이도 설정
+레즈기분난이도 = POWER(2, ABL:ARG:레즈끼) * (100 - TALENT:ARG:양도 * 20)
+;레즈끼 EXP 취득
+레즈끼EXP = EXP:ARG:백합경험
 
-;レズっ気達成判定
-SIF (SOURCE:ARG:情愛 + SOURCE:ARG:悦楽 + レズっ気EXP * 20) > (レズっ気難易度 * ABLUP_DIFFICULTY(9))
+;레즈 기분 달성 판정
+SIF (SOURCE:ARG:사랑 + SOURCE:ARG:열락 + 레즈끼EXP * 20) > (레즈기분난이도 * ABLUP_DIFFICULTY(9))
 	CALL ABLUP_RISE(ARG, 9)
 
 
 ;-------------------------------------------------
-;ＢＬっ気ABL
+;ＢＬ끼 ABL
 ;-------------------------------------------------
 @ABLUP_10M
 CALL ABLUP_10(MASTER)
@@ -266,59 +266,59 @@ CALL ABLUP_10(MASTER)
 CALL ABLUP_10(TARGET)
 
 @ABLUP_10(ARG)
-#DIM ＢＬっ気難易度
-#DIM ＢＬっ気EXP
+#DIM ＢＬ끼난이도
+#DIM ＢＬ끼EXP
 
-;ＢＬっ気難易度設定
-ＢＬっ気難易度 = POWER(2, ABL:ARG:ＢＬっ気) * (100 - TALENT:ARG:両刀 * 20)
-;ＢＬっ気EXP取得
-ＢＬっ気EXP = EXP:ARG:ＢＬ経験
+;ＢＬ끼 난이도 설정
+ＢＬ끼난이도 = POWER(2, ABL:ARG:ＢＬ끼) * (100 - TALENT:ARG:양도 * 20)
+;ＢＬ끼 EXP 취득
+ＢＬ끼EXP = EXP:ARG:BL경험
 
-;ＢＬっ気達成判定
-SIF (SOURCE:ARG:情愛 + SOURCE:ARG:悦楽 + ＢＬっ気EXP * 20) > (ＢＬっ気難易度 * ABLUP_DIFFICULTY(10))
+;ＢＬ끼 달성 판정
+SIF (SOURCE:ARG:사랑 + SOURCE:ARG:열락 + ＢＬ끼EXP * 20) > (ＢＬ끼난이도 * ABLUP_DIFFICULTY(10))
 	CALL ABLUP_RISE(ARG, 10)
 
 
 ;-------------------------------------------------
-;マゾっ気ABL
+;마조끼 ABL
 ;-------------------------------------------------
 @ABLUP_11M
-#DIM マゾっ気難易度
-#DIM マゾっ気EXP
+#DIM 마조끼난이도
+#DIM 마조끼EXP
 
-;マゾっ気難易度設定
-マゾっ気難易度 = POWER(2, ABL:MASTER:マゾっ気) * (100 - TALENT:MASTER:倒錯的 * 20)
-;マゾっ気EXP取得
-マゾっ気EXP = EXP:MASTER:苦痛快楽経験 * 4 + EXP:MASTER:緊縛経験 * 2 + EXP:MASTER:異常経験
+;마조끼 난이도 설정
+마조끼난이도 = POWER(2, ABL:MASTER:마조끼) * (100 - TALENT:MASTER:도착적 * 20)
+;마조끼 EXP 취득
+마조끼EXP = EXP:MASTER:고통쾌락경험 * 4 + EXP:MASTER:긴박경험 * 2 + EXP:MASTER:이상경험
 
-;マゾっ気達成判定
-SIF (CUP:MASTER:苦痛 + CUP:MASTER:不快 - CUP:MASTER:抑鬱 + マゾっ気EXP * 5) > (マゾっ気難易度 * ABLUP_DIFFICULTY(11))
+;마조끼 달성 판정
+SIF (CUP:MASTER:고통 + CUP:MASTER:불쾌 - CUP:MASTER:억울 + 마조끼EXP * 5) > (마조끼난이도 * ABLUP_DIFFICULTY(11))
 	CALL ABLUP_RISE(MASTER, 11)
 
 
 ;-------------------------------------------------
-;自慰中毒ABL
+;자위 중독 ABL
 ;-------------------------------------------------
 @ABLUP_12M
-#DIM 自慰中毒難易度
-#DIM 自慰中毒EXP
-#DIM 自慰中毒補正
+#DIM 자위중독난이도
+#DIM 자위중독EXP
+#DIM 자위중독보정
 
-;自慰中毒難易度設定
-自慰中毒難易度 = POWER(2, ABL:MASTER:自慰中毒) * (100 - TALENT:MASTER:自慰しやすい * 20)
-;自慰中毒EXP取得
-自慰中毒EXP = EXP:MASTER:自慰経験 + EXP:MASTER:調教自慰経験
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = ((ABL:MASTER:欲望 + ABL:MASTER:露出癖) >= 20) ? 0 # (ABL:MASTER:自慰中毒 * 2 - 1 - (ABL:MASTER:欲望 + ABL:MASTER:露出癖))
-自慰中毒補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;자위 중독 난이도 설정
+자위중독난이도 = POWER(2, ABL:MASTER:자위중독) * (100 - TALENT:MASTER:자위쉬움 * 20)
+;자위 중독 EXP 취득
+자위중독EXP = EXP:MASTER:자위경험 + EXP:MASTER:조교자위경험
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = ((ABL:MASTER:욕망 + ABL:MASTER:노출버릇) >= 20) ? 0 # (ABL:MASTER:자위중독 * 2 - 1 - (ABL:MASTER:욕망 + ABL:MASTER:노출버릇))
+자위중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;自慰中毒達成判定
-SIF (CUP:MASTER:快Ｃ + CUP:MASTER:快Ｖ + CUP:MASTER:快Ａ + CUP:MASTER:快Ｂ + 自慰中毒EXP * 10 / 自慰中毒補正) > (自慰中毒難易度 * ABLUP_DIFFICULTY(12))
+;자위 중독 달성 판정
+SIF (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B + 자위중독EXP * 10 / 자위중독보정) > (자위중독난이도 * ABLUP_DIFFICULTY(12))
 	CALL ABLUP_RISE(MASTER, 12)
 
 
 ;-------------------------------------------------
-;精液中毒ABL
+;정액 중독 ABL
 ;-------------------------------------------------
 @ABLUP_13M
 CALL ABLUP_13(MASTER)
@@ -326,25 +326,25 @@ CALL ABLUP_13(MASTER)
 CALL ABLUP_13(TARGET)
 
 @ABLUP_13(ARG)
-#DIM 精液中毒難易度
-#DIM 精液中毒EXP
-#DIM 精液中毒補正
+#DIM 정액중독난이도
+#DIM 정액중독EXP
+#DIM 정액중독보정
 
-;精液中毒難易度設定
-精液中毒難易度 = POWER(2, ABL:ARG:精液中毒) * 100
-;精液中毒EXP取得
-精液中毒EXP = EXP:ARG:精液経験
-;欲望ABLが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (ABL:ARG:欲望 >= 10) ? 0 # (ABL:ARG:精液中毒 - 1 - ABL:ARG:欲望)
-精液中毒補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;정액 중독 난이도 설정
+정액중독난이도 = POWER(2, ABL:ARG:정액중독) * 100
+;정액 중독 EXP 취득
+정액중독EXP = EXP:ARG:정액경험
+;욕망 ABL가 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (ABL:ARG:욕망 >= 10) ? 0 # (ABL:ARG:정액중독 - 1 - ABL:ARG:욕망)
+정액중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;精液中毒達成判定
-SIF (精液中毒EXP * 40 / 精液中毒補正) > (精液中毒難易度 * ABLUP_DIFFICULTY(13))
+;정액 중독 달성 판정
+SIF (정액중독EXP * 40 / 정액중독보정) > (정액중독난이도 * ABLUP_DIFFICULTY(13))
 	CALL ABLUP_RISE(ARG, 13)
 
 
 ;-------------------------------------------------
-;レズ中毒ABL
+;레즈중독 ABL
 ;-------------------------------------------------
 @ABLUP_14M
 CALL ABLUP_14(MASTER)
@@ -352,264 +352,264 @@ CALL ABLUP_14(MASTER)
 CALL ABLUP_14(TARGET)
 
 @ABLUP_14(ARG)
-#DIM レズ中毒難易度
-#DIM レズ中毒EXP
-#DIM レズ中毒補正
+#DIM 레즈중독난이도
+#DIM 레즈중독EXP
+#DIM 레즈중독보정
 
-;レズ中毒難易度設定
-レズ中毒難易度 = POWER(2, ABL:ARG:レズ中毒) * (100 - TALENT:ARG:両刀 * 20)
-;レズ中毒EXP取得
-レズ中毒EXP = EXP:ARG:百合経験
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (ABL:ARG:レズっ気 >= 10) ? 0 # (ABL:ARG:レズ中毒 - 1 - ABL:ARG:レズっ気)
-レズ中毒補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;레즈중독 난이도 설정
+레즈중독난이도 = POWER(2, ABL:ARG:레즈중독) * (100 - TALENT:ARG:양도 * 20)
+;레즈중독 EXP 취득
+레즈중독EXP = EXP:ARG:백합경험
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (ABL:ARG:레즈끼 >= 10) ? 0 # (ABL:ARG:레즈중독 - 1 - ABL:ARG:레즈끼)
+레즈중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;レズ中毒達成判定
-;調教対象
+;레즈중독 달성 판정
+;조교 대상
 IF ARG == MASTER
-	SIF (CFLAG:M好意 / 2 + レズ中毒EXP * 20 / レズ中毒補正) > (レズ中毒難易度 * ABLUP_DIFFICULTY(14))
+	SIF (CFLAG:M호의 / 2 + 레즈중독EXP * 20 / 레즈중독보정) > (레즈중독난이도 * ABLUP_DIFFICULTY(14))
 		CALL ABLUP_RISE(MASTER, 14)
-;調教者
+;조교자
 ELSE
-	SIF (CFLAG:好意 / 2 + レズ中毒EXP * 20 / レズ中毒補正) > (レズ中毒難易度 * ABLUP_DIFFICULTY(14))
+	SIF (CFLAG:호의 / 2 + 레즈중독EXP * 20 / 레즈중독보정) > (레즈중독난이도 * ABLUP_DIFFICULTY(14))
 		CALL ABLUP_RISE(TARGET, 14)
 ENDIF
 
 
 ;-------------------------------------------------
-;苦痛中毒ABL
+;고통 중독 ABL
 ;-------------------------------------------------
 @ABLUP_15M
-#DIM 苦痛中毒難易度
-#DIM 苦痛中毒EXP
-#DIM 苦痛中毒補正
+#DIM 고통중독난이도
+#DIM 고통중독EXP
+#DIM 고통중독보정
 
-;苦痛中毒難易度設定
-苦痛中毒難易度 = POWER(2, ABL:MASTER:苦痛中毒) * (100 - TALENT:MASTER:ドＭ * 20)
-;苦痛中毒EXP取得
-苦痛中毒EXP = EXP:MASTER:苦痛快楽経験 * 2 + EXP:MASTER:異常経験
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = ((ABL:MASTER:欲望 + ABL:MASTER:マゾっ気) >= 20) ? 0 # (ABL:MASTER:苦痛中毒 * 2 - 1 - (ABL:MASTER:欲望 + ABL:MASTER:マゾっ気))
-苦痛中毒補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;고통 중독 난이도 설정
+고통중독난이도 = POWER(2, ABL:MASTER:고통중독) * (100 - TALENT:MASTER:드M * 20)
+;고통 중독 EXP 취득
+고통중독EXP = EXP:MASTER:고통쾌락경험 * 2 + EXP:MASTER:이상경험
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = ((ABL:MASTER:욕망 + ABL:MASTER:마조끼) >= 20) ? 0 # (ABL:MASTER:고통중독 * 2 - 1 - (ABL:MASTER:욕망 + ABL:MASTER:마조끼))
+고통중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;苦痛中毒達成判定
-SIF (CUP:MASTER:苦痛 + 苦痛中毒EXP * 10 / 苦痛中毒補正) > (苦痛中毒難易度 * ABLUP_DIFFICULTY(15))
+;고통 중독 달성 판정
+SIF (CUP:MASTER:고통 + 고통중독EXP * 10 / 고통중독보정) > (고통중독난이도 * ABLUP_DIFFICULTY(15))
 	CALL ABLUP_RISE(MASTER, 15)
 
 
 ;-------------------------------------------------
-;拘束中毒ABL
+;구속 중독 ABL
 ;-------------------------------------------------
 @ABLUP_16M
-#DIM 拘束中毒難易度
-#DIM 拘束中毒EXP
-#DIM 拘束中毒補正
+#DIM 구속중독난이도
+#DIM 구속중독EXP
+#DIM 구속중독보정
 
-;拘束中毒難易度設定
-拘束中毒難易度 = POWER(2, ABL:MASTER:拘束中毒) * (100 - TALENT:MASTER:ドＭ * 20)
-;拘束中毒EXP取得
-拘束中毒EXP = EXP:MASTER:緊縛経験 * 2 + EXP:MASTER:異常経験
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = ((ABL:MASTER:従順 + ABL:MASTER:マゾっ気) >= 20) ? 0 # (ABL:MASTER:拘束中毒 * 2 - 1 - (ABL:MASTER:従順 + ABL:MASTER:マゾっ気))
-拘束中毒補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;구속 중독 난이도 설정
+구속중독난이도 = POWER(2, ABL:MASTER:구속중독) * (100 - TALENT:MASTER:드M * 20)
+;구속 중독 EXP 취득
+구속중독EXP = EXP:MASTER:긴박경험 * 2 + EXP:MASTER:이상경험
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = ((ABL:MASTER:순종 + ABL:MASTER:마조끼) >= 20) ? 0 # (ABL:MASTER:구속중독 * 2 - 1 - (ABL:MASTER:순종 + ABL:MASTER:마조끼))
+구속중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;拘束中毒達成判定
-SIF (CUP:MASTER:不快 + 拘束中毒EXP * 10 / 拘束中毒補正) > (拘束中毒難易度 * ABLUP_DIFFICULTY(16))
+;구속 중독 달성 판정
+SIF (CUP:MASTER:불쾌 + 구속중독EXP * 10 / 구속중독보정) > (구속중독난이도 * ABLUP_DIFFICULTY(16))
 	CALL ABLUP_RISE(MASTER, 16)
 
 
-;────────────────────────────────────
-;調教能力の上昇
-;────────────────────────────────────
+;─
+;조교 능력의 상승
+;─
 ;-------------------------------------------------
-;会話ABL
+;회화 ABL
 ;-------------------------------------------------
 @ABLUP_20T
-#DIM 会話難易度
-#DIM 会話EXP
-#DIM 会話補正
+#DIM 회화난이도
+#DIM 회화EXP
+#DIM 회화보정
 
-;会話難易度設定
-会話難易度 = POWER(2, ABL:会話) * (100 - TALENT:習得早い * 20 + TALENT:習得遅い * 20)
-;会話EXP取得
-会話EXP = EXP:会話経験
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:調教レベル >= 20) ? 0 # (ABL:会話 * 2 - 1 - CFLAG:調教レベル)
-会話補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;회화 난이도 설정
+회화난이도 = POWER(2, ABL:회화) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
+;회화 EXP 취득
+회화EXP = EXP:회화경험
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:회화 * 2 - 1 - CFLAG:조교레벨)
+회화보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;会話達成判定
-LOCAL = CUP:MASTER:屈服 + CUP:MASTER:恭順 * 2 + CUP:MASTER:恐怖 - CUP:MASTER:反抗
-SIF (LOCAL / 2 + 会話EXP * 20 / 会話補正) > (会話難易度 * ABLUP_DIFFICULTY(20))
+;회화 달성 판정
+LOCAL = CUP:MASTER:굴복 + CUP:MASTER:공순 * 2 + CUP:MASTER:공포 - CUP:MASTER:반항
+SIF (LOCAL / 2 + 회화EXP * 20 / 회화보정) > (회화난이도 * ABLUP_DIFFICULTY(20))
 	CALL ABLUP_RISE(TARGET, 20)
 
 
 ;-------------------------------------------------
-;愛撫ABL
+;애무 ABL
 ;-------------------------------------------------
 @ABLUP_21T
-#DIM 愛撫難易度
-#DIM 愛撫EXP
-#DIM 愛撫補正
+#DIM 애무난이도
+#DIM 애무EXP
+#DIM 애무보정
 
-;愛撫難易度設定
-愛撫難易度 = POWER(2, ABL:愛撫) * (100 - TALENT:習得早い * 20 + TALENT:習得遅い * 20)
-;愛撫EXP取得
-愛撫EXP = EXP:手淫経験
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:調教レベル >= 20) ? 0 # (ABL:愛撫 * 2 - 1 - CFLAG:調教レベル)
-愛撫補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;애무 난이도 설정
+애무난이도 = POWER(2, ABL:애무) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
+;애무 EXP 취득
+애무EXP = EXP:수음경험
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:애무 * 2 - 1 - CFLAG:조교레벨)
+애무보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;愛撫達成判定
-LOCAL = CUP:MASTER:快Ｃ + CUP:MASTER:快Ｖ + CUP:MASTER:快Ａ + CUP:MASTER:快Ｂ - CUP:MASTER:抑鬱
-SIF (LOCAL / 3 + 愛撫EXP * 20 / 愛撫補正) > (愛撫難易度 * ABLUP_DIFFICULTY(21))
+;애무 달성 판정
+LOCAL = CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B - CUP:MASTER:억울
+SIF (LOCAL / 3 + 애무EXP * 20 / 애무보정) > (애무난이도 * ABLUP_DIFFICULTY(21))
 	CALL ABLUP_RISE(TARGET, 21)
 
 
 ;-------------------------------------------------
-;道具ABL
+;도구 ABL
 ;-------------------------------------------------
 @ABLUP_22T
-#DIM 道具難易度
-#DIM 道具EXP
-#DIM 道具補正
+#DIM 도구난이도
+#DIM 도구EXP
+#DIM 도구보정
 
-;道具難易度設定
-道具難易度 = POWER(2, ABL:道具) * (100 - TALENT:習得早い * 20 + TALENT:習得遅い * 20)
-;道具EXP取得
-道具EXP = EXP:道具使用経験
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:調教レベル >= 20) ? 0 # (ABL:道具 * 2 - 1 - CFLAG:調教レベル)
-道具補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;도구 난이도 설정
+도구난이도 = POWER(2, ABL:도구) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
+;도구 EXP 취득
+도구EXP = EXP:도구사용경험
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:도구 * 2 - 1 - CFLAG:조교레벨)
+도구보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;道具達成判定
-SIF (CUP:MASTER:快Ｃ + CUP:MASTER:快Ｖ + CUP:MASTER:快Ａ + CUP:MASTER:快Ｂ - CUP:MASTER:不快 + 道具EXP * 20 / 道具補正) > (道具難易度 * ABLUP_DIFFICULTY(22))
+;도구 달성 판정
+SIF (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B - CUP:MASTER:불쾌 + 도구EXP * 20 / 도구보정) > (도구난이도 * ABLUP_DIFFICULTY(22))
 	CALL ABLUP_RISE(TARGET, 22)
 
 
 ;-------------------------------------------------
-;性交ABL
+;성교 ABL
 ;-------------------------------------------------
 @ABLUP_23T
-#DIM 性交難易度
-#DIM 性交EXP
-#DIM 性交補正
+#DIM 성교난이도
+#DIM 성교EXP
+#DIM 성교보정
 
-;性交難易度設定
-性交難易度 = POWER(2, ABL:性交) * (100 - TALENT:習得早い * 20 + TALENT:習得遅い * 20)
-;性交EXP取得
-性交EXP = EXP:性交経験
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:調教レベル >= 20) ? 0 # (ABL:性交 * 2 - 1 - CFLAG:調教レベル)
-性交補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;성교 난이도 설정
+성교난이도 = POWER(2, ABL:성교) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
+;성교 EXP 취득
+성교EXP = EXP:성교경험
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:성교 * 2 - 1 - CFLAG:조교레벨)
+성교보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;性交達成判定
-LOCAL = CUP:MASTER:快Ｃ + CUP:MASTER:快Ｖ + CUP:MASTER:快Ａ + CUP:MASTER:欲情 + CUP:MASTER:恭順 - CUP:MASTER:恐怖 - CUP:MASTER:抑鬱
-SIF (LOCAL / 3 + 性交EXP * 20 / 性交補正) > (性交難易度 * ABLUP_DIFFICULTY(23))
+;성교 달성 판정
+LOCAL = CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:욕정 + CUP:MASTER:공순 - CUP:MASTER:공포 - CUP:MASTER:억울
+SIF (LOCAL / 3 + 성교EXP * 20 / 성교보정) > (성교난이도 * ABLUP_DIFFICULTY(23))
 	CALL ABLUP_RISE(TARGET, 23)
 
 
 ;-------------------------------------------------
-;羞恥ABL
-;『恥ずかしがらせる能力』
+;수치 ABL
+;『부끄러워하게 하는 능력』
 ;-------------------------------------------------
 @ABLUP_24T
-#DIM 羞恥難易度
-#DIM 羞恥EXP
-#DIM 羞恥補正
+#DIM 수치난이도
+#DIM 수치EXP
+#DIM 수치보정
 
-;羞恥難易度設定
-羞恥難易度 = POWER(2, ABL:羞恥) * (100 - TALENT:習得早い * 20 + TALENT:習得遅い * 20)
-;羞恥EXP取得
-羞恥EXP = EXP:MASTER:露出経験 + EXP:MASTER:恥辱快楽経験 * 2
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:調教レベル >= 20) ? 0 # (ABL:羞恥 * 2 - 1 - CFLAG:調教レベル)
-羞恥補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;수치 난이도 설정
+수치난이도 = POWER(2, ABL:수치) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
+;수치 EXP 취득
+수치EXP = EXP:MASTER:노출경험 + EXP:MASTER:치욕쾌락경험 * 2
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:수치 * 2 - 1 - CFLAG:조교레벨)
+수치보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;羞恥達成判定
-SIF (CUP:MASTER:欲情 + CUP:MASTER:恥情 - CUP:MASTER:抑鬱 + 羞恥EXP * 20 / 羞恥補正) > (羞恥難易度 * ABLUP_DIFFICULTY(24))
+;수치 달성 판정
+SIF (CUP:MASTER:욕정 + CUP:MASTER:치정 - CUP:MASTER:억울 + 수치EXP * 20 / 수치보정) > (수치난이도 * ABLUP_DIFFICULTY(24))
 	CALL ABLUP_RISE(TARGET, 24)
 
 
 ;-------------------------------------------------
-;奉仕ABL
-;『奉仕させる能力』
+;봉사 ABL
+;『봉사시키는 능력』
 ;-------------------------------------------------
 @ABLUP_25T
-#DIM 奉仕難易度
-#DIM 奉仕EXP
-#DIM 奉仕補正
+#DIM 봉사난이도
+#DIM 봉사EXP
+#DIM 봉사보정
 
-;奉仕難易度設定
-奉仕難易度 = POWER(2, ABL:奉仕) * (100 - TALENT:習得早い * 20 + TALENT:習得遅い * 20)
-;奉仕EXP取得
-奉仕EXP = EXP:MASTER:口淫経験 + EXP:MASTER:手淫経験 + EXP:MASTER:奉仕快楽経験 * 2 + EXP:MASTER:イかせ経験 * 3 + EXP:MASTER:愛情経験 * 4
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:調教レベル >= 20) ? 0 # (ABL:奉仕 * 2 - 1 - CFLAG:調教レベル)
-奉仕補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;봉사 난이도 설정
+봉사난이도 = POWER(2, ABL:봉사) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
+;봉사 EXP 취득
+봉사EXP = EXP:MASTER:구음경험 + EXP:MASTER:수음경험 + EXP:MASTER:봉사쾌락경험 * 2 + EXP:MASTER:가게한경험 * 3 + EXP:MASTER:애정경험 * 4
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:봉사 * 2 - 1 - CFLAG:조교레벨)
+봉사보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;奉仕達成判定
-SIF (CUP:MASTER:屈服 + CUP:MASTER:恭順 - CUP:MASTER:反抗 + 奉仕EXP * 10 / 奉仕補正) > (奉仕難易度 * ABLUP_DIFFICULTY(25))
+;봉사 달성 판정
+SIF (CUP:MASTER:굴복 + CUP:MASTER:공순 - CUP:MASTER:반항 + 봉사EXP * 10 / 봉사보정) > (봉사난이도 * ABLUP_DIFFICULTY(25))
 	CALL ABLUP_RISE(TARGET, 25)
 
 
 ;-------------------------------------------------
-;加虐ABL
+;가학 ABL
 ;-------------------------------------------------
 @ABLUP_26T
-#DIM 加虐難易度
-#DIM 加虐EXP
-#DIM 加虐補正
+#DIM 가학난이도
+#DIM 가학EXP
+#DIM 가학보정
 
-;加虐難易度設定
-加虐難易度 = POWER(2, ABL:加虐) * (100 - TALENT:習得早い * 20 + TALENT:習得遅い * 20)
-;加虐EXP取得
-加虐EXP = EXP:MASTER:緊縛経験 + EXP:MASTER:苦痛快楽経験 * 2 + EXP:MASTER:Ｖ拡張経験 * 4 + EXP:MASTER:Ａ拡張経験 * 4
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:調教レベル >= 20) ? 0 # (ABL:加虐 * 2 - 1 - CFLAG:調教レベル)
-加虐補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;가학 난이도 설정
+가학난이도 = POWER(2, ABL:가학) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
+;가학 EXP 취득
+가학EXP = EXP:MASTER:긴박경험 + EXP:MASTER:고통쾌락경험 * 2 + EXP:MASTER:V확장경험 * 4 + EXP:MASTER:A확장경험 * 4
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:가학 * 2 - 1 - CFLAG:조교레벨)
+가학보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;加虐達成判定
-SIF (CUP:MASTER:苦痛 + CUP:MASTER:不快 - CUP:MASTER:反抗 + 加虐EXP * 10 / 加虐補正) > (加虐難易度 * ABLUP_DIFFICULTY(26))
+;가학 달성 판정
+SIF (CUP:MASTER:고통 + CUP:MASTER:불쾌 - CUP:MASTER:반항 + 가학EXP * 10 / 가학보정) > (가학난이도 * ABLUP_DIFFICULTY(26))
 	CALL ABLUP_RISE(TARGET, 26)
 
 
 ;-------------------------------------------------
-;異常ABL
+;이상 ABL
 ;-------------------------------------------------
 @ABLUP_27T
-#DIM 異常難易度
-#DIM 異常EXP
-#DIM 異常補正
+#DIM 이상난이도
+#DIM 이상EXP
+#DIM 이상보정
 
-;異常難易度設定
-異常難易度 = POWER(2, ABL:異常) * (100 - TALENT:習得早い * 20 + TALENT:習得遅い * 20)
-;異常EXP取得
-異常EXP = EXP:MASTER:異常経験
-;調教レベルが不足しているとEXP補正を減らす(1Lvにつき1/2)
-LOCAL = (CFLAG:調教レベル >= 20) ? 0 # (ABL:異常 * 2 - 1 - CFLAG:調教レベル)
-異常補正 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
+;이상 난이도 설정
+이상난이도 = POWER(2, ABL:이상) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
+;이상 EXP 취득
+이상EXP = EXP:MASTER:이상경험
+;조교 레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
+LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:이상 * 2 - 1 - CFLAG:조교레벨)
+이상보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
-;異常達成判定
-SIF (SOURCE:MASTER:逸脱 + 異常EXP * 20 / 異常補正) > (異常難易度 * ABLUP_DIFFICULTY(27))
+;이상 달성 판정
+SIF (SOURCE:MASTER:일탈 + 이상EXP * 20 / 이상보정) > (이상난이도 * ABLUP_DIFFICULTY(27))
 	CALL ABLUP_RISE(TARGET, 27)
 
 
 ;-------------------------------------------------
-;使役ABL
+;사역 ABL
 ;-------------------------------------------------
 @ABLUP_28T
-;使役ABLは上昇しない(暫定)
+;사역 ABL는 상승하지 않는다(잠정)
 
 
-@ABLUP_RISE(対象, ARG)
-#DIM 対象
-ABL:対象:ARG++
-IF 対象 == MASTER
+@ABLUP_RISE(대상, ARG)
+#DIM 대상
+ABL:대상:ARG++
+IF 대상 == MASTER
 	CALL KOJO_EVENT(23, ARG)
-ELSEIF 対象 == TARGET
+ELSEIF 대상 == TARGET
 	CALL KOJO_EVENT(24, ARG)
 ENDIF
-PRINTFORMW %CALLNAME:対象%の%ABLNAME:ARG%\@ 20 <= ARG && ARG <= 29 ? スキル # \@が\@ ABL:対象:ARG > 9 ? {ABL:対象:ARG} # %TOFULL(TOSTR(ABL:対象:ARG))% \@になった
+PRINTFORMW %CALLNAME:대상%의%ABLNAME:ARG%\@ 20 <= ARG && ARG <= 29 ? 스킬# \@가\@ ABL:대상:ARG > 9 ? {ABL:대상:ARG} # %TOFULL(TOSTR(ABL:대상:ARG))% \@가 되었다
 
 @ABLUP_DIFFICULTY(ARG)
 #FUNCTION

@@ -1,881 +1,881 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;	アリス口上(対象限定) 調教開始イベント口上ファイル
+;	앨리스 구상(대상 한정) 조교 개시 이벤트 구상 파일
 ;
-;		調教開始イベント口上をまとめたファイル
+;		조교 개시 이벤트 구상을 정리한 파일
 ;
-;	EXTRAモードでN09咲夜をMASTERに選択した場合のみ表示
+;	EXTRA 모드로 N09 사쿠야를 MASTER에 선택했을 경우만 표시
 ;
 ;Version		Reason
-;1.71@0503		CFLAG:調教回数での回数カウントを粛清。オートモード簡略表示の際はINPUT箇所を弾くように修正
-;1.70			@口上記入チェック仕様に。その他細かな修正
-;1.61			一部処理を関数化。その他細かな修正
+;1. 71@0503		CFLAG:조교 회수에서의 회수 카운트를 숙청. 오토 모드 간략 표시때는 INPUT 개소를 연주하도록(듯이) 수정
+;1. 70			@구상 기입 체크 사양에. 그 외 섬세한 수정
+;1. 61			일부 처리를 함수화. 그 외 섬세한 수정
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
 ;-------------------------------------------------
-;関連変数…
+;관련 변수…
 ;FIRSTEVENT
-;初回EVENT判定関数　TFLAG:イベント番号（TFLAG:10）を自動で参照し、
-;現在発生しているEVENTごとに番号が独立して保存される
+;첫회 EVENT 판정 함수  TFLAG:이벤트 번호(TFLAG:10)를 자동으로 참조해,
+;현재 발생하고 있는 EVENT 마다 번호가 독립해 보존된다
 ;-------------------------------------------------
-;EV11 FIRSTEVENT(0) ～ (15), RANDEVENT(0) ～ (15)
-;	エンディング呼び出し FIRSTEVENT(0)
-;	両想い（好意3000以上・好感度3000以上） FIRSTTIME(1)
-;		選択肢によるルート分岐
-;			選択肢Ａ ルート分岐用KFLAG:(FLAG:ご主人様):0
-;			選択肢Ｂ ルート分岐用KFLAG:(FLAG:ご主人様):1
-;		イベント経過判定KFLAG:(FLAG:ご主人様):11 = 1
-;		選択肢Ａの場合 FIRSTEVENT(2)
-;			ルートＡ経過判定KFLAG:(FLAG:ご主人様):2
-;		選択肢Ｂの場合 FIRSTEVENT(3)
-;			ルートＢ経過判定KFLAG:(FLAG:ご主人様):3
-;		ルートＢI　この箇所で初回 FIRSTEVENT(4)
+;EV11 FIRSTEVENT(0) ~ (15), RANDEVENT(0) ~ (15)
+;	엔딩 호출 FIRSTEVENT(0)
+;	서로 사모함(호의 3000이상·호감도 3000이상) FIRSTTIME(1)
+;		선택지에 의한 루트 분기
+;			선택지 A 루트 분기용 KFLAG:(FLAG:주인님):0
+;			선택지 B 루트 분기용 KFLAG:(FLAG:주인님):1
+;		이벤트 경과 판정 KFLAG:(FLAG:주인님):11 = 1
+;		선택지 A의 경우 FIRSTEVENT(2)
+;			루트 A경과 판정 KFLAG:(FLAG:주인님):2
+;		선택지 B의 경우 FIRSTEVENT(3)
+;			루트 B경과 판정 KFLAG:(FLAG:주인님):3
+;		루트 BI  이 개소에서 첫회 FIRSTEVENT(4)
 ;			RANDEVENT(0)(1)
-;		ルートＡI　この箇所で初回 FIRSTEVENT(5)
+;		루트 AI  이 개소에서 첫회 FIRSTEVENT(5)
 ;			RANDEVENT(2)(3)(4)
-;	好意2500 FIRSTTIME(6)
+;	호의 2500 FIRSTTIME(6)
 ;		RANDEVENT(5)
-;	調教完了（好意2000以上） FIRSTEVENT(7)
+;	조교 완료(호의 2000이상) FIRSTEVENT(7)
 ;		RANDEVENT(6)
-;	溺愛（好感度2000以上） FIRSTEVENT(8)
+;	몹시 사랑함(호감도 2000이상) FIRSTEVENT(8)
 ;		RANDEVENT(7)
-;	調教済み（好意1000以上） FIRSTEVENT(9)
+;	조교가 끝난(호의 1000이상) FIRSTEVENT(9)
 ;		RANDEVENT(8)
-;	不倶戴天（好意-300未満） FIRSTEVENT(10)
-;	恐怖（好意200未満・トラウマLv5以上） FIRSTEVENT(11)
+;	불구대천(호의-300 미만) FIRSTEVENT(10)
+;	공포(호의 200 미만·트라우마 Lv5 이상) FIRSTEVENT(11)
 ;		RANDEVENT(9)
-;	反抗（好意0以下・反抗刻印Lv3以上） FIRSTEVENT(12)
+;	반항(호의 0 이하·반항 각인 Lv3 이상) FIRSTEVENT(12)
 ;		RANDEVENT(10)
-;	目覚め（好意500以上） FIRSTEVENT(13)
+;	눈을 뜸(호의 500이상) FIRSTEVENT(13)
 ;		RANDEVENT(11)
-;	順応（好意100以上・好感度100以上） FIRSTEVENT(14)
+;	순응(호의 100이상·호감도 100이상) FIRSTEVENT(14)
 ;		RANDEVENT(12)
-;	序盤（条件なし） FIRSTEVENT(15)
+;	초반(조건 없음) FIRSTEVENT(15)
 ;		RANDEVENT(13)
 ;-------------------------------------------------
 
-;────────────────────────────────────
-;EV11, 調教開始口上 CFLAG:200 FIRSTEVENT(0～15)
-;────────────────────────────────────
-;やはり条件を主人に絞る必要がある感じがするのでTALENT:ご主人様を仕込む
-;さらにKFLAGでOP経過判定し、OPを経過しないと一切のイベントは表示されないように
+;─
+;EV11, 조교 개시 구상 CFLAG:200 FIRSTEVENT(0~15)
+;─
+;역시 조건을 주인에게 좁힐 필요가 있는 느낌이 들므로 TALENT:주인님을 가르친다
+;한층 더 KFLAG로 OP경과 판정해, OP를 경과하지 않으면 일절의 이벤트는 표시되지 않도록
 ;-------------------------------------------------
-;調教開始には昼夜の分岐を入れてみる
-;エフェクト切られてるとちょっと悲しいかも知れない
+;조교 개시에는 밤낮의 분기를 들어갈 수 있어 본다
+;효과 잘리고 있으면 조금 슬플지도 모른다
 ;-------------------------------------------------
 @KOJO_NO9_MS_EVENT_K14_11(ARG)
 ;------------------------------------------------
-;引数内訳…
-;ARG=(0, 調教可、1, 口上主の疲労で中止、2, 調教対象の疲労で中止)
+;인수 내역…
+;ARG=(0, 조교가능, 1, 구상주의 피로로 중지, 2, 조교 대상의 피로로 중지)
 ;-------------------------------------------------
 
-;ビットを初期化
+;비트를 초기화
 KFLAG:TARGET:201 = CLEARBITS(KFLAG:TARGET:201, "0/1/2/3/4")
 CLEARBIT KFLAG:TARGET:202, 0
 
 ;------------------------------------------------
-;MSで立場決めうちしてるんでTALENT:ご主人様はもう要らないんだけどあっても問題ないし面倒なんでそのままに
+;MS로 입장 결정하고 쳐 하고 있기 때문에 TALENT:주인님은 이제 필요하지 않지만 있어도 문제 없고 귀찮아서 그대로
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;初回・監禁、通常調教 アリスが主人の場合
+;첫회·감금, 통상 조교 앨리스가 주인의 경우
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF CFLAG:調教回数 == 1 && KFLAG:(FLAG:ご主人様):51 == 1
-	;初回調教
-	PRINTFORMW 「おはよう咲夜、とっても良い朝ね♪」
-	PRINTFORMDW アリスは上機嫌だった。その姿はいつものアリスそのものに見えた
-	PRINTFORMDW 昨晩の出来事は悪い夢を見ていただけで、現実は何も変わっていない事を私は祈った
-	PRINTFORMDW アリスの指先を見る。そこからは血が滲み出しており、私の淡い希望は脆くも崩れ去った…
+IF CFLAG:조교회수 == 1 && KFLAG:(FLAG:주인님):51 == 1
+	;첫회 조교
+	PRINTFORMW 「안녕 사쿠야, 매우 좋은 아침이군요♪」
+	PRINTFORMDW 앨리스는 매우 기분이 좋았다. 그 모습은 평소의 앨리스 그 자체로 보였다
+	PRINTFORMDW 어젯밤의 사건은 나쁜 꿈을 꾸고 있었을 뿐으로, 현실은 아무것도 변함없는 것을 나는 빌었다
+	PRINTFORMDW 앨리스의 손가락끝을 본다. 거기로부터는 피가 스며나오고 있어 나의 희미한 희망은 무르게도 무너지고 떠났다…
 	PRINTL
-	PRINTFORMW 「そうそう、ねぇ咲夜…貴女、苦痛には強かったわよね？」
-	PRINTFORMW 「私好みの人形に仕立てるのに、ちょっと手荒な事をするかもだけれど…」
+	PRINTFORMW 「그래그래, 저기 사쿠야… 당신, 고통에는 강했네요?」
+	PRINTFORMW 「나취향의 인형으로 키우는데, 조금 난폭한 일을 할지도이지만…」
 	
-	PRINTFORM 「貴女なら遠慮はいらないわね…
+	PRINTFORM 「당신이라면 사양은 필요없네요…
 	CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
 	
 	PRINTL
-	PRINTFORMDW アリスはにこやかにそう言った
-	PRINTFORMDW 普段と変わらぬ屈託の無い笑顔と、おぞましい話の内容はどうあっても結びつかず、私は暗澹たる気持ちになった…
-	TCVAR:行動予約 = 15
+	PRINTFORMDW 앨리스는 상냥하게 그렇게 말했다
+	PRINTFORMDW 평상시와 변함없는 근심이 없는 웃는 얼굴과 무서운 이야기의 내용은 어떻게 있어도 결합되지 않고, 나는 암담인 기분이 되었다…
+	TCVAR:행동예약 = 15
 	CALL TWAIT3_K14
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教１０回目記念 アリスが主人の場合
+;조교 10회째 기념 앨리스가 주인의 경우
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF CFLAG:調教回数 == 10 && !ARG && KFLAG:(FLAG:ご主人様):51 == 1 && !ARG
-	;昼間
+IF CFLAG:조교회수 == 10 && !ARG && KFLAG:(FLAG:주인님):51 == 1 && !ARG
+	;낮
 	IF TIME == 0
-		PRINTFORMW 「おはよう咲夜。今日もとっても良い天気ね♪」
-		PRINTFORMW 「偶には外に出してあげたいんだけど、今は出来ないの。ご免なさいね」
-	;夜間
+		PRINTFORMW 「안녕 사쿠야. 오늘도 매우 좋은 날씨군요♪」
+		PRINTFORMW 「이따금은 밖에 내 주고 싶은 것이지만, 지금은 할 수 없는거야. 미안해요」
+	;야간
 	ELSE
-		PRINTFORMW 「今晩は、咲夜。月がとっても綺麗よ♪」
-		PRINTFORMW 「貴女に見せてあげられないのが残念だけど、ね」
+		PRINTFORMW 「오늘 밤은, 사쿠야. 달이 매우 예뻐요♪」
+		PRINTFORMW 「당신에게 보이게 해 줄 수 없는 것이 유감이지만, 말야」
 	ENDIF
-	PRINTFORMDW アリスは機嫌よく話しかけてきた…
+	PRINTFORMDW 앨리스는 기분 좋게 말을 걸어 왔다…
 	PRINTL
-	PRINTFORMW 「ねぇ、少しは慣れてくれたかしら？」
-	PRINTFORMW 「貴女がもっと愉しんでくれるようになると、私も嬉しいんだけど…」
-	PRINTFORMW 「でも、仕方無いわよね……貴女の自由を奪って、こんな事してるのだから」
+	PRINTFORMW 「저기, 조금은 익숙해져 주었을까?」
+	PRINTFORMW 「당신이 좀 더 즐겨 주게 되면, 나도 기쁘지만…」
+	PRINTFORMW 「그렇지만, 방법 없네요…… 당신의 자유를 빼앗아, 이런 일 하고 있으니까」
 	PRINTL
-	PRINTFORMW 「恨んでくれて構わないわ、でも…」
-	PRINTFORMW 「貴女がいつまでそんな意思を持ち続けられるか、疑問だけど、ね…」
+	PRINTFORMW 「원망해 주어도 상관없어요, 그렇지만…」
+	PRINTFORMW 「당신이 언제까지 그런 의사를 가져 계속되는지, 의문이지만, 말야…」
 	CALL TWAIT3_K14
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教中止 RESULT(3=これ以下の口上も非表示)
+;조교 중지 RESULT(3=이것 이하의 구상도 비표시)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;・疲労で調教が中止になる場合の口上
-;・実際に中止になるのはパラメータ表示後。そちらは調教開始サブ口上で任意に書くことができる
-;・この欄を空欄のまま記入チェックを=3にすることで、調教開始口上をスキップし、サブ口上で休み口上を書くこともできる
+;·피로로 조교가 중지가 되는 경우의 구상
+;·실제로 중지가 되는 것은 파라미터 표시 후. 그 쪽은 조교 개시 서브 구상으로 임의에 쓸 수가 있다
+;·이 란을 공난인 채 기입 체크를=3으로 하는 것으로, 조교 개시 구상을 스킵 해, 서브 구상으로 쉬어 구상을 쓸 수도 있다
 ;-------------------------------------------------
 IF GROUPMATCH(ARG, 1, 2) > 0
-	;疲れているのは口上主
+	;피곤한 것은 구상주
 	IF ARG == 1
-		PRINTFORMW 「どうも体調がイマイチね……今回はやめておきましょう」
+		PRINTFORMW 「아무래도 컨디션이 좀 더…… 이번은 그만둡시다」
 		PRINTFORMW 
-	;疲れているのは調教対象
+	;피곤한 것은 조교 대상
 	ELSE
-		PRINTFORMW 「咲夜、貴女何か具合が悪そうね？」
-		PRINTFORMW 「いいわ。今日はゆっくり休んで」
+		PRINTFORMW 「사쿠야, 당신 뭔가 상태가 좋지 않은 것 같구나?」
+		PRINTFORMW 「좋아요. 오늘은 천천히 쉬어」
 	ENDIF
 	RETURN 1
 ENDIF
 
 [SKIPSTART]
-EXTRAでEDが無かった旧仕様の名残。まぁイベントはいくらでも捏造できるよねっていう
-EV11でイベント捏造して調教をスキップとか他のEVにイベント捻じ込むとか、将来的は何か考えたいけど時間が無い
+EXTRA로 ED가 없었던 구사양의 여운. 뭐 이벤트는 얼마든지 날조 할 수 있지요 하고 말한다
+EV11로 이벤트 날조 해 조교를 스킵이라든지 다른 EV에 이벤트 쑤셔 넣는다든가, 장래적은 뭔가 생각하고 싶지만 시간이 없다
 ;*************************************************
-;エンディング FIRSTEVENT(0)
+;엔딩 FIRSTEVENT(0)
 ;*************************************************
-;現在本体側でEXTRAモードはエンディングを呼ぶ条件から弾かれているので、ここで無理矢理呼ぶ
-;48日経過、KFLAG:(FLAG:ご主人様):8またはKFLAG:(FLAG:ご主人様):9への1代入を条件としてここでCALL
-;KFLAG:(FLAG:ご主人様):8KFLAG:(FLAG:ご主人様):9への代入はEV13_調教終了口上ファイル287行目、335行目を経過する事で行われる
-;ED処理は@KOJO_NO9_MS_EVENT_K14_11_ENDINGで行う
-;EXTRAモード以外の口上では不要な処理
-;というかまぁ、キャラを調教対象とした場合も通常の方法でEDにいけるようなモードが本体側に用意されてしかるべき、とは思う
+;현재 본체측에서 EXTRA 모드는 엔딩을 부르는 조건으로부터 튕겨지고 있으므로, 여기서 무리하게 부른다
+;48날 경과, KFLAG:(FLAG:주인님):8또는 KFLAG:(FLAG:주인님):9에의 1 대입을 조건으로서 여기서 CALL
+;KFLAG:(FLAG:주인님):8KFLAG:(FLAG:주인님):9에의 대입은 EV13_조교 종료 구상 파일 287행째, 335행째를 경과하는 일로 행해진다
+;ED처리는@KOJO_NO9_MS_EVENT_K14_11_ENDING로 실시한다
+;EXTRA 모드 이외의 구상에서는 불필요한 처리
+;그렇다고 할까 아무튼, 캐릭터를 조교 대상으로 했을 경우도 통상의 방법으로 ED에 갈 수 있도록인 모드가 본체 측에 준비되어 마땅하다, 라고는 생각한다
 ;-------------------------------------------------
-;で、0617ではモードに関わらずEDが呼ばれるようになったが0729系では30日過ぎた時点でシステム側からCALL ENDINGされ
-;フラグを立たせ、以降EDが呼ばれない仕様に。これだとCALL ENDINGされた時点で口上側のED条件を満たしていない場合
-;永久にEDが表示されなくなるので別枠の処理が必要になる。
-;今後はRESULT等で判定するようになるらしいんで暫定的なものらしいけど
+;그리고, 0617에서는 모드에 관련되지 않고 ED가 불리게 되었지만 0729계에서는 30일 지난 시점에서 시스템측으로부터 CALL ENDING 되고
+;플래그를 서게 한 이후 ED가 불리지 않는 사양에. 이것이라면 CALL ENDING 된 시점에서 구상측의 ED조건을 채우지 않은 경우
+;영구히 ED가 표시되지 않게 되므로 별도 기준의 처리가 필요하게 된다.
+;향후는 RESULT등으로 판정하게 되는 것 같아서 잠정적인 것인것 같지만
 ;-------------------------------------------------
-;今回に限り暫定的にEVENT2の枠を使ってみる事に
-;とりあえずこちらの処理は不要と思われるんでコメントアウト
+;이번에 한정해 잠정적으로 EVENT2의 테두리를 사용해 보는 일에
+;우선 이쪽의 처리는 불요라고 생각되기 때문에 comment out
 ;-------------------------------------------------
-;IF DAY >= 48 && (KFLAG:(FLAG:ご主人様):8 == 1 || KFLAG:(FLAG:ご主人様):9 == 1) && KFLAG:(FLAG:ご主人様):51 == 1 && FIRSTEVENT(0)
+;IF DAY >= 48 && (KFLAG:(FLAG:주인님):8 == 1 || KFLAG:(FLAG:주인님):9 == 1) && KFLAG:(FLAG:주인님):51 == 1 && FIRSTEVENT(0)
 ;	CALL KOJO_NO9_MS_EVENT_K14_11_ENDING
 ;	RETURN 1
 ;ENDIF
 [SKIPEND]
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;両想い（好意3000以上・好感度3000以上） FIRSTEVENT(1)(2)(3)(4)(5)
+;서로 사모함(호의 3000이상·호감도 3000이상) FIRSTEVENT(1)(2)(3)(4)(5)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;不思議の国のアリスからthe Grimoire of Aliceへの流れはいつかやりたいと思っていた
-;ただそれだけの話かもしれない
+;이상한 나라의 앨리스로부터 the Grimoire of Alice에의 흐름은 언젠가 하고 싶다고 생각하고 있었다
+;단지 그것만의 이야기일지도 모른다
 ;-------------------------------------------------
-;自分の中の位置付けとしては全体を通して最重要な部分
-;ここまでの伏線を回収しつつ、EDに向けて新たなフラグを立てる
-;EDに違和感なく繋げる為にも絶対に手抜きはできない箇所
-;割りと本気で気合入れたけど、さて結果は如何に…
+;자신의 안의 자리 매김으로서는 전체를 통해 최대중요인 부분
+;여기까지의 복선을 회수하면서, ED에 향하여 새로운 플래그를 세운다
+;ED에 위화감 없게 연결하기 위해서(때문에)도 절대로 부실은 할 수 없는 개소
+;비교적 진심으로 기합 넣었지만, 그런데 결과는 여하에…
 ;-------------------------------------------------
-;ルートＡKFLAG:(FLAG:ご主人様):0(基本ルート用)KFLAG:(FLAG:ご主人様):2イベント解除判定用)
-;ルートＢKFLAG:(FLAG:ご主人様):1(基本ルート用)KFLAG:(FLAG:ご主人様):3(イベント解除判定用)
+;루트 AKFLAG:(FLAG:주인님):0(기본 루트용) KFLAG:(FLAG:주인님):2 이벤트 해제 판정용)
+;루트 BKFLAG:(FLAG:주인님):1(기본 루트용) KFLAG:(FLAG:주인님):3(이벤트 해제 판정용)
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("相思相愛") && KFLAG:(FLAG:ご主人様):51 == 1 && TALENT:TARGET:ご主人様 && FLAG:オートモード表示設定 < 1
+IF 구상기입체크(100) && AFFECTION("상사상애") && KFLAG:(FLAG:주인님):51 == 1 && TALENT:TARGET:주인님 && FLAG:오토모드표시설정 < 1
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(1)
-		PRINTFORMDW ――私は気付いていた
-		PRINTFORMDW 私を縛る拘束の力が日々弱まっていく事を
-		PRINTFORMDW それは求めてやまなかった機会の到来を予感させると共に、最悪の事態をも予感させるものであった…
+	IF 구상기입체크(100) && FIRSTEVENT(1)
+		PRINTFORMDW -나는 깨닫고 있었다
+		PRINTFORMDW 나를 묶는 구속의 힘이 나날 약해져 가는 일을
+		PRINTFORMDW 그것은 요구해 마지않았던 기회의 도래를 예감 시킴과 동시에, 최악의 사태를 예감 시키는 것이었다…
 		PRINTL
-		PRINTFORMDW ――拘束が弱まったとはいえ未だ完全には程遠く、能力の行使もままならない
-		PRINTFORMDW 焦ってはいけない。失敗する訳にはいかない
-		PRINTFORMDW 事に及んだ挙句に失敗した場合、彼女がどのような行動に出るかは予測がつかず
-		PRINTFORMDW そのような事態は絶対に避けたかった…
+		PRINTFORMDW -구속이 약해졌다고는 해도 아직도 완전하게는 멀고, 능력의 행사도 마음대로 되지 않는다
+		PRINTFORMDW 초조해 해서는 안 된다. 실패할 수는 없다
+		PRINTFORMDW 일에 이른 결과에 실패했을 경우, 그녀가 어떠한 행동을 취할까는 예측할 수 있지 않고
+		PRINTFORMDW 그러한 사태는 절대로 피하고 싶었다…
 		PRINTL
-		PRINTFORMDW ――ただ、残された時間は、恐らく余り多くは無い
-		PRINTFORMDW どこかで賭けに出るしかないのは確かだ
-		PRINTFORMDW 私はジリジリとした焦燥感に苛まれながら、ひたすらそのタイミングを窺った
-		PRINTFORMDW そして……
+		PRINTFORMDW -다만, 남겨진 시간은, 아마 남아 많지는 않다
+		PRINTFORMDW 어디선가 걸러 나올 수 밖에 없는 것은 확실함
+		PRINTFORMDW 나는 바작바작한 초조감에 시달리면서, 오로지 그 타이밍을 엿보았다
+		PRINTFORMDW 그리고……
 		PRINTL
 		
 		SETCOLOR 172, 175, 210
 		REDRAW 0
-		CALLF ANIME_CONFIG("TIMES", 1) ;強制表示x1
-		CALL FULLCUTIN2(50, 17, "その時が、きた……") ;全画面カットイン2
+		CALLF ANIME_CONFIG("TIMES", 1) ;강제 표시 x1
+		CALL FULLCUTIN2(50, 17, "그 때가, 왔다……") ;전화면 컷 인 2
 		REDRAW 1
 		SETCOLOR 54, 166, 255
 		
-		PRINTFORMW 「…なるほど。ようやくその気になったのかしら、咲夜」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「気付いていたのね、アリス」")
+		PRINTFORMW 「… 과연. 간신히 그럴 기분이 들었을까, 사쿠야」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「깨닫고 있던 거네, 앨리스」")
 		
 		PRINTFORM 「
-		;太字で表示
-		CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "当然よ", 1)
+		;굵은 글씨로 표시
+		CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "당연해요", 1)
 		PRINTFORMW 」
 		
-		CALL BGM_CUTIN("不思議の国のアリス", 1)
+		CALL BGM_CUTIN("이상한 나라의 앨리스", 1)
 		
-		PRINTFORMW 「いつかこんな日が来るとは思っていたけど、随分時間が掛かったわね？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、待たせて悪かったわ」")
-		PRINTFORMW 「別に謝る事なんてないわ。それに…結果がどうなるかは、まだ判らないし、ね」
+		PRINTFORMW 「언젠가 이런 날이 온다고는 생각하고 있었지만, 상당히 시간이 걸렸군요?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그렇구나, 기다리게 해 나빴어요」")
+		PRINTFORMW 「따로 사과하는 일 같은거 없어요. 거기에… 결과가 어떻게 될까는, 아직 알지 않기도 하고,」
 		PRINTL
-		PRINTFORMDW 互いに距離を取り、相手の様子を窺う
-		PRINTFORMDW 私はアリスに今一度問いかけた…
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリス、これが最後よ。もうこんな事やめて」")
+		PRINTFORMDW 서로 거리를 취해, 상대의 모습을 엿본다
+		PRINTFORMDW 나는 앨리스에게 한번 더 물어 보았다…
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「앨리스, 이것이 최후야. 이제(벌써) 이런 일 그만두어」")
 		
 		PRINTFORM 「
-		;太字で表示
-		CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "イヤよ", 1)
+		;굵은 글씨로 표시
+		CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "싫어요", 1)
 		PRINTFORMW 」
 		
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「即答ね。まあ判ってはいたけど」")
-		PRINTFORMW 「分かりきった事を聞くのは愚か者のする事よ。咲夜」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうだったわね。正直言うと、言葉で説得するつもりなんて最初から無かったけど」")
-		PRINTFORML 「それでいいと思うわよ？ ま、そんな訳で…」
-		PRINTFORMW 「お喋りはここまでにしたいんだけど、どうかしら？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「異論は無いわよ」")
-		PRINTFORMW 「こんな時でも互いに同意できるのを嬉しく思うわ、咲夜…」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「즉답이군요. 뭐 알고는 있었지만」")
+		PRINTFORMW 「다 안 일을 (듣)묻는 것은 어리석은 자가 하는 일이야. 사쿠야」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그랬네요. 솔직히 말하면, 말로 설득할 생각은 최초부터 없었지만」")
+		PRINTFORML 「그것으로 좋다고 생각해요? 뭐, 그런 (뜻)이유로…」
+		PRINTFORMW 「수다는 여기까지로 하고 싶은 것이지만, 어떨까?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이론은 없어요」")
+		PRINTFORMW 「이런 때라도 서로 동의 할 수 있는 것을 기쁘다고 생각해요, 사쿠야…」
 		PRINTL
-		PRINTFORMDW アリスは差し出した人差し指をクイッと曲げながら、私に向かって言い放った…
-		PRINTFORMW 「来なさい咲夜。死なない程度に殺してあげるから」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「望むところよ、アリス！」")
+		PRINTFORMDW 앨리스는 보낸 집게 손가락을 꾸욱 굽히면서, 나에게 향해 단언했다…
+		PRINTFORMW 「오세요 사쿠야. 죽지 않는 정도로 죽여 주기 때문에」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「바라는 곳, 앨리스!」")
 		PRINTL
 		
 		CALL BGM_CUTIN("the Grimoire of Alice", 1)
 		
-		PRINTFORMDW 間合いに飛び込み打撃を叩き込む、アリスがそれをガードしつつ放つ蹴りを防ぎながら
-		PRINTFORMDW 彼女の防御を切り崩すべく、再び打撃を繰り出す
-		PRINTFORMDW 互いの身体がぶつかり合い、私は体重をかけてアリスを押しやりつつ隙をみて蹴りを放つが
-		PRINTFORMDW それはあっさりと防がれてしまう
+		PRINTFORMDW 틈에 뛰어들어 타격을 주입하는, 앨리스가 그것을 가드 하면서 발하는 차는 것을 막으면서
+		PRINTFORMDW 그녀의 방어를 무너뜨릴 수 있도록, 다시 타격을 내지른다
+		PRINTFORMDW 서로의 신체가 서로 부딪쳐, 나는 체중을 걸쳐 앨리스를 밀어 내면서 틈을 봐 차는 것을 발하지만
+		PRINTFORMDW 그것은 시원스럽게 막아져 버린다
 		PRINTL
-		PRINTFORMDW ナイフが無いとどうにも勝手が悪い。現状、時を止める事も適わない
-		PRINTFORMDW 今私に出来るのは恐らくプライベートスクウェアを一度きり、それも不完全な状態で、といった所だった
-		PRINTFORMDW 距離をとっては駄目だ。可能な限り近接戦闘に持ち込まない限り勝機は薄いように思われた
-		PRINTFORMDW 万全の状態でないのはアリスも同様のはず。ただ、その動きは予想していたよりずっと軽快で
-		PRINTFORMDW 私は時期を誤った可能性について思いを巡らしつつも、もう後には引けないと自らを戒める
+		PRINTFORMDW 나이프가 없으면 어떻게도 제멋대로임이 나쁘다. 현상, 때를 멈추는 일도 들어맞지 않는다
+		PRINTFORMDW 지금 나에게 할 수 있는 것은 아마 프라이빗 스퀘어를 한 번만, 그것도 불완전한 상태로, 라고 하는 곳이었다
+		PRINTFORMDW 거리를 취해서는 안된다. 가능한 한 근접 전투에 반입하지 않는 한 이길 기회는 얇다고 생각되었다
+		PRINTFORMDW 만전 상태가 아닌 것은 앨리스도 마찬가지일 것. 다만, 그 움직임은 예상하고 있었던 것보다 훨씬 경쾌해
+		PRINTFORMDW 나는 시기를 잘못한 가능성에 대해 생각을 돌리면서도, 이제(벌써) 뒤에는 물러날 수 없으면 스스로를 경고한다
 		PRINTL
-		PRINTFORMW 「こんな時に考え事？ 随分舐められたものね…」
-		PRINTFORMW 「いずれにしても、その程度じゃ私は止められないわよ」
-		PRINTFORMW 「ほら、もっと本気で来なさいよ！ お願いだから、私を失望させないで頂戴」
+		PRINTFORMW 「이런 때에 걱정거리? 상당히 빨 수 있던 거네…」
+		PRINTFORMW 「어쨌든, 그 정도는 나는 멈출 수 없어요」
+		PRINTFORMW 「이봐요, 좀 더 진심으로 오세요! 부탁이니까, 나를 실망시키지 말아줘」
 		PRINTL
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…アリスがそんな事言うなんてね。でも、そういう貴女こそどうなのよ」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「… 앨리스가 그런 일 말하다니. 그렇지만, 그러한 당신이야말로 어때」")
 		
-		PRINTFORMW 「そうね、魔力はすっかり消耗してるし身体も万全じゃない。でも…」
-		PRINTFORMW 「今現在の私の全力で貴女を叩き潰してあげるつもりよ。他ならぬ貴女だからこそ、ね」
+		PRINTFORMW 「그렇구나, 마력은 완전히 소모하고 있고 신체도 만전이 아니다. 그렇지만…」
+		PRINTFORMW 「지금 현재의 나의 전력으로 당신을 두드려 잡아 줄 생각이야. 다름아닌 당신이기 때문에 더욱,」
 		
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……わかった。それに、私も同じ気持ちよ」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女を失望させるつもりはないから…」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「…… 알았다. 게다가, 나도 같은 기분이야」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「당신을 실망시킬 생각은 없으니까…」")
 		
-		PRINTFORMW 「それを聞いて安心したわ。これでもう何も…いや、今はやめておくべきかしらね」
-		PRINTFORMW 「さぁ続けましょう、咲夜。貴女がダンスの相手に相応しい事を期待してるわ」
+		PRINTFORMW 「그것을 (들)물어 안심했어요. 이것으로 이제(벌써) 아무것도… 아니, 지금은 그만두어야 할까요」
+		PRINTFORMW 「자 계속합시다, 사쿠야. 당신이 댄스의 상대에게 적당한 일을 기대하고 있어요」
 		
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはこっちの台詞……よっ！！」")
-		
-		PRINTL
-		PRINTFORMDW 一気に間合いを詰め、アリスの防御の隙をつくべく手数を繰り出す
-		PRINTFORMDW 彼女はそれを巧みにガードしながら、時折重い蹴りを放ってくる
-		PRINTFORMW 「いい目をしてるわ、咲夜！ その紅い瞳……貴女が本気なのが判る！！」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女もね、アリス！」")
-		PRINTL
-		PRINTFORMDW 三度打ち込んでから、今度はアリスの蹴りが私の防御の隙をつこうとし、私は肘でガードしつつ
-		PRINTFORMDW 左右に身をかわしながらそれを防いだ
-		PRINTFORMDW 暫くの間互いに譲らず、戦いは膠着しつつあるように思われたその時、アリスの足元がふらついている事に気付く
-		PRINTFORMDW 恐らく限界が近いのだ。こちらとしては、それを利用しない手はない
-		PRINTFORMDW 私はアリスに食らいつき、近接打撃系に徹した。人形を繰り出されると厄介だ。このまま押し切るしかない
-		PRINTFORMDW そのときアリスは大きく踏み込み、さながらガードごと粉砕しようとするかのように殴りに掛かってきた
-		PRINTFORMDW それを受け流しつつカウンターを放つと、彼女は身を沈めながら足払いを仕掛けてくる
-		PRINTFORMDW 私は身を翻しながら側面に回りこみ、無防備な腰のところを蹴りつけた
-		PRINTFORMDW アリスの体勢が崩れる。その瞬間、私は勝利を確信した
-		PRINTL
-		PRINTFORMDW 今の状態で時間を遅延させられるのは一秒あるかないか、でもそれで十分だ…
-		
-		;BGM_CUTINは引数の指定で汎用的に使う事も可能。この場合"♪"や"ＢＧＭ"等は表示されない
-		;というか、こういうのをいつかやりたいと思っていた
-		CALL BGM_CUTIN("時符「プライベートスクウェア」", -1)
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그것은 여기의 대사…… 욧!!」")
 		
 		PRINTL
-		;選択肢で分岐
-		CALL HTMLPRINTDL(@"%HTMLBUTTON("[0] 鳩尾に渾身の一撃を叩き込む！", "0", "ルートＢへ")%")
-		CALL HTMLPRINTDL(@"%HTMLBUTTON("[1] なにかがおかしい…", "1", "ルートＡへ")%")
-		;PRINTFORMDL [0] 鳩尾に渾身の一撃を叩き込む！
-		;PRINTFORMDL [1] なにかがおかしい…
+		PRINTFORMDW 단번에 틈을 채워, 앨리스의 방어의 틈을 찌를 수 있도록 수고를 내지른다
+		PRINTFORMDW 그녀는 그것을 교묘하게 가드 하면서, 때때로 무거운 차는 것을 발해 온다
+		PRINTFORMW 「좋은 눈을 하고 있어요, 사쿠야! 그 붉은 눈동자…… 당신이 진심인 것이 안다!!」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「당신도 말야, 앨리스!」")
+		PRINTL
+		PRINTFORMDW 세번 쳐박고 나서, 이번은 앨리스의 차는 것이 나의 방어의 틈을 찌르려고 해, 나는 팔꿈치로 가드 하면서
+		PRINTFORMDW 좌우에 몸을 주고 받으면서 그것을 막았다
+		PRINTFORMDW 잠시의 사이 서로 양보하지 않고, 싸움은 교착하고 있는 것처럼 생각된 그 때, 앨리스의 발밑이 휘청거리고 있는 일을 알아차린다
+		PRINTFORMDW 아마 한계가 가까운 것이다. 이쪽으로서는, 그것을 이용하지 않는 손은 없다
+		PRINTFORMDW 나는 앨리스에게 입질, 근접 타격계에 사무쳤다. 인형을 내질러지면 귀찮다. 이대로 눌러 자를 수 밖에 없다
+		PRINTFORMDW 그 때 앨리스는 크게 발을 디뎌, 마치 가드마다 분쇄하려고 하는것 같이 구타에 걸려 왔다
+		PRINTFORMDW 그것을 받아 넘기면서 카운터를 발하면, 그녀는 몸을 가라앉히면서 다리후리기를 걸어 온다
+		PRINTFORMDW 나는 몸을 바꾸면서 측면으로 돌아 들어가, 무방비인 허리의 곳을 차대었다
+		PRINTFORMDW 앨리스의 몸의 자세가 무너진다. 그 순간, 나는 승리를 확신했다
+		PRINTL
+		PRINTFORMDW 지금 상태로 시간을 지연 당하는 것은 1초 있을까 없을까, 그렇지만 그래서 충분하다…
+		
+		;BGM_CUTIN는 인수의 지정으로 범용적으로 사용하는 일도 가능. 이 경우"♪"야"BGM"등은 표시되지 않는다
+		;라고 할까, 이런 것을 언젠가 하고 싶다고 생각하고 있었다
+		CALL BGM_CUTIN("시 부 「프라이빗 스퀘어」", -1)
+		
+		PRINTL
+		;선택지로 분기
+		CALL HTMLPRINTDL(@"%HTMLBUTTON("[0] 명치에 혼신의 일격을 주입한다!", "0", "루트 B에")%")
+		CALL HTMLPRINTDL(@"%HTMLBUTTON("[1] 뭔가가 이상하다…", "1", "루트 A에")%")
+		;PRINTFORMDL [0] 명치에 혼신의 일격을 주입한다!
+		;PRINTFORMDL [1] 뭔가가 이상하다…
 		CALL INPUTINTD(0, 1)
 		SELECTCASE RESULT
-			;選択肢Ｂ
+			;선택지 B
 			CASE 0
-				CALL PRINTCOLORW(COLOR_K14("咲夜"), "「これで終わりよ！ アリスっ！！」")
-				PRINTFORMDW 完全に捉えた！ そのはずだった…
-				PRINTFORMDW しかし拳は空しく中を切り、そこに在るべきアリスの姿は無かった
-				PRINTFORMDW ――これは、幻影！？
-				PRINTFORMDW そう思った瞬間……
+				CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이것으로 끝이야! 앨리스!!」")
+				PRINTFORMDW 완전하게 파악했다! 그럴 것이었다…
+				PRINTFORMDW 그러나 주먹은 허무하게 가운데를 잘라, 거기에 있어야 할 앨리스의 모습은 없었다
+				PRINTFORMDW -이것은, 환영!?
+				PRINTFORMDW 그렇게 생각한 순간……
 				PRINTL
 				
-				CALL BGM_CUTIN("魔操「リターンイナニメトネス」", -1)
+				CALL BGM_CUTIN("마조 「리탄이나니메트네스」", -1)
 				
-				PRINTFORMDW 背後から聞こえるスペル詠唱の声。そう……私は完全に裏を取られた
-				PRINTFORMDW そして、今の私に出来る事はもう何も無かった…
+				PRINTFORMDW 배후로부터 들리는 스펠 영창의 소리. 그렇게…… 나는 완전하게 뒤를 빼앗겼다
+				PRINTFORMDW 그리고, 지금의 나에게 할 수 있는 일은 이제(벌써) 아무것도 없었다…
 				
 				CALL TWAIT3_K14
 				
-				PRINTFORMDW 床が目の前にある。痛みが全身を覆い、身体が思うように動かない
-				PRINTFORMDW そうか……、私は負けたのだ。目論見は外れ、ただ惨めに這い蹲る事だけが、今の私に出来る全てだった…
-				PRINTFORMDW 視界は霞み、意識を保つのが難しくなる。そして脳裏をよぎる数々の思い出…
-				PRINTFORMDW そうか……、私はここまでか。そう思った瞬間…
+				PRINTFORMDW 마루가 눈앞에 있다. 아픔이 전신을 가려, 신체가 생각하도록(듯이) 움직이지 않는다
+				PRINTFORMDW 그런가……, 나는 진 것이다. 계획은 빗나가, 다만 비참하게 납죽 엎드리는 일만이, 지금의 나에게 할 수 있는 모두였다…
+				PRINTFORMDW 시야는 희미하게 보여, 의식을 유지하는 것이 어려워진다. 그리고 뇌리를 지나가는 많은 추억…
+				PRINTFORMDW 그런가……, 나는 여기까지인가. 그렇게 생각한 순간…
 				PRINTL
-				PRINTFORMW 「駄目よ、咲夜。そんな勝手なマネはさせないわ」
-				PRINTFORMW 「貴女は生きなくちゃならない。そして貴女にはまだやって貰う事があるの。だから…」
-				PRINTFORMW 「私に残された力で、貴女を……」
+				PRINTFORMW 「안 돼요, 사쿠야. 그렇게 제멋대로인 흉내는 시키지 않아요」
+				PRINTFORMW 「당신은 살지 않으면 안 된다. 그리고 당신에게는 아직 해 받는 것이 있어. 그러니까…」
+				PRINTFORMW 「나에게 남겨진 힘으로, 당신을……」
 				PRINTL
-				PRINTFORMDW 柔らかな光が周囲を包み、私は身体が軽くなるような感覚を覚えた
-				PRINTFORMDW どこか懐かしさを覚えるような、暖かで、優しい感触
-				PRINTFORMDW 目を閉じると、このまま眠ってしまいそうで……
+				PRINTFORMDW 부드러운 빛이 주위를 싸, 나는 신체가 가벼워지는 것 같은 감각을 기억했다
+				PRINTFORMDW 어딘가 그리움을 기억하는 것 같은, 따뜻해, 상냥한 감촉
+				PRINTFORMDW 눈을 감으면, 이대로 자 버릴 것 같아……
 				
 				CALL TWAIT1_K14
 				
-				PRINTFORMDW 気がつくと、目の前にアリスの姿があった
-				PRINTFORMDW 床に倒れたその姿からは生気が失われ、消耗しきっている様子が窺われた
-				PRINTFORMDW その姿を見て私は悟った。そうか、アリスは回復魔法を私に…
+				PRINTFORMDW 깨달으면, 눈앞에 앨리스의 모습이 있었다
+				PRINTFORMDW 마루에 넘어진 그 모습으로부터는 생기가 없어져 소모해 버리고 있는 모습이 엿봐졌다
+				PRINTFORMDW 그 모습을 봐 나는 깨달았다. 그런가, 앨리스는 회복 마법을 나에게…
 				PRINTL
-				PRINTFORMDW 未だ痛みは感じるが、どうやら動く事に支障はなさそうだ
-				PRINTFORMDW 私は今為さねばならない事を為すために、なんとか起き上がった…
-				;エンディング用フラグに代入		ルートＢ
-				KFLAG:(FLAG:ご主人様):1 = 1
-			;選択肢Ａ
+				PRINTFORMDW 아직도 아픔은 느끼지만, 아무래도 움직이는 일에 지장은 없는 것 같다
+				PRINTFORMDW 나는 지금 하지 않으면 안 되는 것을 하기 위해서(때문에), 어떻게든 일어났다…
+				;엔딩용 플래그에 대입		루트 B
+				KFLAG:(FLAG:주인님):1 = 1
+			;선택지 A
 			CASE 1
-				PRINTFORMDW ふいに感じる違和感。思えばアリスの攻撃は不自然なほど隙が大きかった
-				PRINTFORMDW これは…デコイ！？ となると……、後ろか！
-				PRINTFORMDW 振り返るとスペル発動の体制に入りつつあるアリスの姿が目に入る
-				PRINTFORMDW 間に合うだろうか……
+				PRINTFORMDW 있어에 느끼는 위화감. 생각하면 앨리스의 공격은 부자연스러울 정도 틈이 컸다
+				PRINTFORMDW 이것은… 미끼!? 그렇게 되면……, 뒤인가!
+				PRINTFORMDW 되돌아 보면 스펠 발동의 체제에 들어가고 있는 앨리스의 모습이 눈에 들어온다
+				PRINTFORMDW 시간에 맞을까……
 				PRINTL
-				PRINTFORMDW 最早逃げ切る事は出来なかった。ならば懐に飛び込み、スペル発動を止めるしかない！
-				PRINTFORMDW ダッシュでアリスに近づく。停滞した時間に捕われた彼女の瞳に、一瞬驚きの色が見えた気がした…
-				PRINTFORMDW ――全身全霊の力を込めて、最後の一撃を放つ
-				PRINTFORMDW アリスの身体は糸の切れた操り人形のように崩れ落ち、その瞬間私は全てが終わった事を悟った
-				PRINTFORMDW そして、私は……
+				PRINTFORMDW 이미 잘 도망치는 일은 할 수 없었다. 그러면 품에 뛰어들어, 스펠 발동을 멈출 수 밖에 없다!
+				PRINTFORMDW 데쉬로 앨리스에게 다가간다. 정체한 시간에 잡힌 그녀의 눈동자에, 일순간 놀라움의 색이 보인 것 같았다…
+				PRINTFORMDW -전신전령이 힘을 집중해, 마지막 일격을 발한다
+				PRINTFORMDW 앨리스의 신체는 실의 끊어진 꼭두각시와 같이 붕괴되어 그 순간 나는 모두가 끝난 일을 깨달았다
+				PRINTFORMDW 그리고, 나는……
 				
 				CALL TWAIT3_K14
 				
-				;エンディング用フラグに代入		ルートＡ
-				KFLAG:(FLAG:ご主人様):0 = 1
+				;엔딩용 플래그에 대입		루트 A
+				KFLAG:(FLAG:주인님):0 = 1
 		ENDSELECT
-		;ここで纏める
-		PRINTFORMDW 斃れたアリスの元に近づき安否を確認する。命に別状は……、ない
-		PRINTFORMDW 私はほっと胸を撫で下ろしたが、すぐさま次の行動に移る
-		PRINTFORMDW そう、指輪だ。指輪を外さなければ…
-		PRINTFORMDW アリスの指に嵌められたソレは、ほぼ効力が失われたと思える現在も尚、彼女の魔力を吸い上げているかのようで
-		PRINTFORMDW かつては美しい金細工であったとは思えないほど、毒々しい血の色に染まっていた
-		PRINTFORMDW そして彼女から指輪を抜き取ったその瞬間、私の喉元には銀のダガーナイフが突きつけられていた
+		;여기서 모은다
+		PRINTFORMDW 넘어진 앨리스의 바탕으로 가까워 짐 안부를 확인한다. 생명에 이상은……, 없다
+		PRINTFORMDW 나는 안심 가슴을 쓸어내렸지만, 곧바로 다음의 행동으로 옮긴다
+		PRINTFORMDW 그렇게, 반지다. 반지를 벗지 않으면…
+		PRINTFORMDW 앨리스의 손가락에 끼워진 그것은, 거의 효력이 없어졌다고 생각되는 현재도 상, 그녀의 마력을 빨아 올려 있는 것과 같아
+		PRINTFORMDW  이전에는 아름다운 금세공이었다고는 생각되지 않을 정도(수록), 독살스러운 피의 색에 물들고 있었다
+		PRINTFORMDW 그리고 그녀로부터 반지를 빼낸 그 순간, 나의 목구멍 맨 안쪽에는 은의 대거 나이프를 들이대어지고 있었다
 		PRINTL
-		PRINTFORMDW アリスを見やると、その瞳は普段の碧眼ではなく金色に染まり、微かに揺れているように、私には見えた
-		PRINTFORMDW 互いに口を開かず暫しの沈黙の後、アリスは手を翻し私にナイフの柄を差し出す
-		PRINTFORMW 「これを受け取って頂戴、咲夜。そして私を……」
+		PRINTFORMDW 앨리스를 바라보면, 그 눈동자는 평상시의 푸른 눈은 아니고 금빛에 물들어, 희미하게 흔들리고 있도록(듯이), 나에게는 보였다
+		PRINTFORMDW 서로 입을 열지 않고 잠깐의 침묵의 뒤, 앨리스는 손을 바꾸어 나에게 나이프의 (무늬)격을 내민다
+		PRINTFORMW 「이것을 받아 줘, 사쿠야. 그리고 나를……」
 		
-		;中央に表示
+		;중앙에 표시
 		ALIGNMENT CENTER
 		REDRAW 0
-		CALLF ANIME_CONFIG("TIMES", 1) ;強制表示x1
-		CALL FULLCUTIN2(0, 17, "「殺して」") ;全画面カットインII
+		CALLF ANIME_CONFIG("TIMES", 1) ;강제 표시 x1
+		CALL FULLCUTIN2(0, 17, "「죽여」") ;전화면 컷 인 II
 		REDRAW 1
-		;左寄せに戻す
+		;왼쪽 맞춤에 되돌린다
 		ALIGNMENT LEFT
 		
 		CALL BGM_CUTIN("Romantic Children", 1)
 		
-		PRINTFORMW 「全てにけりをつける時よ。私はそれを貴女にして貰いたいの」
-		PRINTFORMW 「もう終わり…何もかも終わりよ。私なんて、どうせ…」
+		PRINTFORMW 「모두에 결말을 지을 때. 나는 그것을 당신으로 해 받고 싶은거야」
+		PRINTFORMW 「벌써 끝나… 이것도 저것도 끝이야. 나는, 어차피…」
 		
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「イヤよ。お断りするわ」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「싫어요. 거절해요」")
 		
-		PRINTFORMW 「ど、どうしてよ！ 私が憎くないの？ 貴女に酷い事してきた、この私が憎くないの！？」
+		PRINTFORMW 「어, 어째서요! 내가 밉지 않은거야? 당신에게 심한 일 해 온, 이 내가 밉지 않은거야!?」
 		
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なにも判ってないのね、アリス…」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「憎める訳なんてないじゃない！ だって私は、アリスの事っ！」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「아무것도 알지 않은거네, 앨리스…」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「미워할 수 있는 것 같은거 없잖아! 왜냐하면 나는, 앨리스의 일!」")
 		
-		CALL FADEIN(20, "「さ、咲夜…」")
+		CALL FADEIN(20, "「자, 사쿠야…」")
 		
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私が嫌々貴女に合わせてたとでも思ってるなら、とんでもない大間違いよっ！！」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だ、だからっ！ 人間の…いや、わたしの一生分の時間でいいからっ！！！」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女の時間……、私に預けて欲しいの、アリス」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「내가 마지못해서 당신에 맞추고 있었다고라도 생각하고 있다면, 터무니 없는 큰 실수야!!」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그, 그러니까! 인간의… 아니, 나의 일생 분의 시간에 좋으니까!!!」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「당신의 시간……, 내가 맡겼으면 좋은 것, 앨리스」")
 		PRINTL
-		PRINTFORMW 「……嫌いよ。あんたなんか」
+		PRINTFORMW 「…… 싫어요. 너 따위」
 		
-		PRINTFORM 「嫌い、
-		CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "大っ嫌い", 1)
+		PRINTFORM 「싫은,
+		CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "너무 싫다", 1)
 		PRINTFORMW ！」
 		
-		;フェードイン
-		CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "「うん」")
+		;페이드 인
+		CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "「응」")
 		
-		PRINTFORMW 「きらいよっ！」
-		;フェードイン
-		CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "「うん」")
+		PRINTFORMW 「싫어해요!」
+		;페이드 인
+		CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "「응」")
 		
-		PRINTFORMW 「本当に……だいっっきらいなんだからっ！！」
-		PRINTFORMDW 私は、まるで子供のように泣きじゃくるアリスの涙を指先で拭いながら言った
+		PRINTFORMW 「정말로…… 매우 싫어하니까!!」
+		PRINTFORMDW 나는, 마치 아이와 같이 흐느껴 우는 앨리스의 눈물을 손가락끝으로 닦으면서 말했다
 		PRINTL
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それでも私はね……」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그런데도 나는 말야……」")
 		
-		;フェードイン
-		CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "「あなたが好きよ、アリス」")
+		;페이드 인
+		CALL FADE(20, COLOR_K14("black"), COLOR2_K14("SAKUYA"), "「당신을 좋아해요, 앨리스」")
 		
-		PRINTFORMDW 私からのキス。そして互いに唇を合わせながら、この時初めて二人の心が一つになった
-		PRINTFORMDW そんな気がした…
-		;TALENT:恋慕自体は現在機能していないし、何の定義もなされていない
-		;定義が為され、機能するようになると不具合が起きる可能性も。って事でコメントアウト
-		;フレーバーとしては使えない事もない感があるので、好みに応じてコメントアウトを外してもいいかも
-		;ただし自己責任で
-		;TALENT:MASTER:恋慕 = 1
-		;TALENT:TARGET:恋慕 = 1
-		;イベント経過判定
-		KFLAG:(FLAG:ご主人様):11 = 1
-		;処女で無い場合はアナルセックスさせるを解放
-		SIF !TALENT:TARGET:処女
+		PRINTFORMDW 나로부터의 키스. 그리고 서로 입술을 맞추면서, 이 때 처음으로 두 명의 마음이 1개가 되었다
+		PRINTFORMDW 그런 생각이 들었다…
+		;TALENT:연모 자체는 현재 기능하고 있지 않고, 어떤 정의도 이루어지지 않았다
+		;정의가 해져 기능하게 되면 불편이 일어날 가능성도. 라는 일로 comment out
+		;플래이버로서는 사용할 수 없는 것도 없는 감이 있으므로, 기호에 응해 comment out를 제외해도 괜찮을지도
+		;다만 자기책임으로
+		;TALENT:MASTER:연모 = 1
+		;TALENT:TARGET:연모 = 1
+		;이벤트 경과 판정
+		KFLAG:(FLAG:주인님):11 = 1
+		;처녀가 아닌 경우는 애널 섹스 시키는 것을 해방
+		SIF !TALENT:TARGET:처녀
 			CFLAG:1099 = 0
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;エンディングルートＡへ(暫定)
+	;엔딩 루트 A에(잠정)
 	;=================================================
-	;後日談(初回)　選択肢Ａの場合
+	;후일담(첫회)  선택지 A의 경우
 	;=================================================
-	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):0 == 1 && FIRSTEVENT(2)
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス…身体の方は大丈夫なの？」")
-		PRINTFORMW 「なんか、ダメみたい…」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「な、なによそれ！ それならこんな事してる場合じゃ！」")
-		PRINTFORMW 「…まったく。少し落ち着きなさいよ？ 冗談もオチオチ言えやしないわ、これじゃ」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「は？」")
-		PRINTFORMW 「だ・か・ら！ 冗談だって言ってるのよ」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…冗談になってないわよ、それ」")
-		PRINTFORMW 「咲夜が鈍いだけじゃないの？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「最低……、ホント貴女って最低ね！」")
-		PRINTFORMW 「どういたしまして、って…最後に殴られたとこ、まだ痛むのは本当だけどね」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それについてはお互い様ってとこだと思うけど？ 私だって同じよ」")
-		PRINTFORMW 「ま、そうよね。ところで咲夜、話は変わるんだけど」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なによ」")
-		PRINTFORMW 「結界がね、その……、解けないみたいなの」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どういう事？」")
-		PRINTFORMW 「それが良く判らないのよね。まぁ、きっと徐々に効力が弱まって最後には消滅するはずだけど…」
-		PRINTFORMW 「それにもう私から魔力を供給してる訳じゃないから、そんなに先の事じゃないと思うわ」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…やれやれ、ね。もう魔法はうんざりよ」")
-		PRINTFORMW 「その気持ちは判らないでも無いけど…」
-		PRINTFORMW 「ま、それは別として、これはちょっと興味深い現象ね。研究のし甲斐があるわ」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ホント懲りないのね、アリス」")
-		PRINTFORMW 「あら、知らないの？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なんの話よ」")
-		PRINTFORMW 「魔法使いというのはね、世界の根源に迫り、解き明かし、それを使役する姿勢を指すの」
-		PRINTFORMW 「だから疑問や興味深い事象は調べずにはいられない。そういうものなのよ」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「へぇへぇ、それは結構なことで……というか、同じような人物に心当たりが…」")
-		PRINTFORMW 「ま、諦める事ね？ どうせ咲夜は魔法使いとの関わりは避けられないんだから」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、なのよねぇ……」")
-		PRINTFORMW 「ふふふ…」
+	IF 구상기입체크(100) && KFLAG:(FLAG:주인님):0 == 1 && FIRSTEVENT(2)
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기 앨리스… 신체는 괜찮아?」")
+		PRINTFORMW 「무엇인가, 안 되는 것 같다…」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭐, 뭐야 그것! 그렇다면 이런 일 하고 있는 경우다!」")
+		PRINTFORMW 「… 완전히. 조금 침착하세요? 농담도 끝 끝 말할 수 없어요, 이래서야」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하?」")
+		PRINTFORMW 「그·러·니·까! 농담이라고 말하고 있는거야」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「… 농담으로 되어 있지 않아요, 그것」")
+		PRINTFORMW 「사쿠야가 둔한 것뿐이 아닌거야?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「최저……, 정말 당신은 최악이구나!」")
+		PRINTFORMW 「천만에요, 는… 마지막에 맞았던 곳, 아직 상하는 것은 사실이지만 말야」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그것에 대해서는 피차일반이라는 곳이라고 생각하지만? 나라도 같아요」")
+		PRINTFORMW 「뭐, 그래요. 그런데 사쿠야, 이야기는 바뀌지만」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭐야」")
+		PRINTFORMW 「결계가 말야, 그……, 풀 수 없는 것 같아」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「어떻게 말하는 일?」")
+		PRINTFORMW 「그것이 자주(잘) 알지 않네요. 뭐, 반드시 서서히 효력이 약해져 마지막에는 소멸할 것이지만…」
+		PRINTFORMW 「거기에 이제(벌써) 나부터 마력을 공급하고 있는 것이 아니기 때문에, 그렇게 앞의 일이 아니라고 생각해요」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「… 아휴,. 이제(벌써) 마법은 지긋지긋해요」")
+		PRINTFORMW 「그 기분은 모르는 것도 아니지만…」
+		PRINTFORMW 「뭐, 그것은 별개로, 이것은 조금 흥미로운 현상이군요. 연구하는 보람이 있어요」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「정말 질리지 않는거네, 앨리스」")
+		PRINTFORMW 「아라, 모르는거야?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「무슨 이야기야」")
+		PRINTFORMW 「마법사라고 하는 것은 말야, 세계의 근원에 강요해, 해명해, 그것을 사역하는 자세를 가리켜」
+		PRINTFORMW 「그러니까 의문이나 흥미로운 사상은 조사하지 않고는 있을 수 없다. 그러한 것이야」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「에 에, 그것은 좋은 일로…… 라고 할까, 같은 인물에게 짐작이…」")
+		PRINTFORMW 「뭐, 단념하는 일이군요? 어차피 사쿠야는 마법사와의 관계는 피할 수 없기 때문에」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그런, 것이군요……」")
+		PRINTFORMW 「후후후…」
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;エンディングルートＢへ(暫定)
+	;엔딩 루트 B에(잠정)
 	;=================================================
-	;後日談(初回)　選択肢Ｂの場合
+	;후일담(첫회)  선택지 B의 경우
 	;=================================================
-	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):1 == 1 && FIRSTEVENT(3)
-		PRINTFORMW 「咲夜、なんか顔色が悪いわね。大丈夫なの？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「気のせいじゃないかしら？ 別に何ともないけど」")
-		PRINTFORMW 「そう？ ならいいけど…」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇ、そんな事より……、そろそろあの時の種明かししてくれないかしら？」")
-		PRINTFORMW 「ふふっ、知りたいの？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それは知りたいわよ。今後の為にも…」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「と言っても、もう貴女とはどんな形であれ、戦う事は無いと思うけど」")
-		PRINTFORMW 「そうね、私も同感。もう咲夜とは戦いたくないわ。どんな理由であれ、ね」
-		PRINTFORMW 「だから、本来種明かしは好きじゃないんだけど、特別に教えてあげる」
+	IF 구상기입체크(100) && KFLAG:(FLAG:주인님):1 == 1 && FIRSTEVENT(3)
+		PRINTFORMW 「사쿠야, 뭔가 안색이 나쁘네요. 괜찮아?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「기분탓이 아닐까? 별로 어떻지도 않지만」")
+		PRINTFORMW 「그래? 그러면 좋지만…」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기, 그런 일보다……, 슬슬 그 때의 요술의 술책 공개 해 주지 않을까?」")
+		PRINTFORMW 「후훗, 알고 싶은거야?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그것은 알고 싶어요. 향후를 위해서(때문에)도…」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이렇게 말해도, 이제(벌써) 당신이란 어떤 형태든, 싸우는 일은 없다고 생각하지만」")
+		PRINTFORMW 「그렇구나, 나도 동감. 이제 사쿠야와는 싸우고 싶지 않아요. 어떤 이유일 수 있는,」
+		PRINTFORMW 「그러니까, 본래 요술의 술책 공개는 좋아하지 않지만, 특별히 가르쳐 준다」
 		PRINTL
-		PRINTFORMW 「咲夜がどこかで時間停止か時間停滞を使ってくるのは判ってた」
-		PRINTFORMW 「たぶん状態からいって、時間停止はできないだろうなって思ってたけど」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、まぁその辺が読まれてる事は織り込み済みだったけど…」")
-		PRINTFORMW 「もう何度も戦ってるしね？ ま、そんな訳で、私としてはそれを利用しようと考えたってわけ」
+		PRINTFORMW 「사쿠야가 어디선가 시간 정지나 시간 정체를 사용해 오는 것은 알고 있었다」
+		PRINTFORMW 「아마 상태로부터 말해, 시간 정지는 할 수 없을거라고 생각했지만」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그렇구나, 아무튼 그근처가 읽혀지고 있는 일은 포함시켜가 끝난 상태였지만…」")
+		PRINTFORMW 「이제(벌써) 몇번이나 싸우고 있지요? 뭐, 그런 (뜻)이유로, 나로서는 그것을 이용하려고 생각했다는 것」
 		PRINTL
-		PRINTFORMW 「発動前の霊力の流れ、発動のタイミングは判ってる」
-		PRINTFORMW 「だから、こちらの望むタイミングで発動させるように仕向けてやれば、溜め動作に対して先手を打てるわ」
-		PRINTFORMW 「実を言うとね？ 幻影自体はずっと前から展開してたの。必要な時いつでも直ぐに発動出来るように、ね」
+		PRINTFORMW 「발동전의 영력의 흘러, 발동의 타이밍은 알고 있다」
+		PRINTFORMW 「그러니까, 이쪽의 바라는 타이밍에 발동시키도록(듯이) 대해 주면, 모으고 동작에 대해서 선수를 칠 수 있어요」
+		PRINTFORMW 「사실을 말하면 말이죠? 환영 자체는 훨씬 전부터 전개하고 있었어. 필요한 시 언제라도 곧바로 발동 할 수 있도록(듯이),」
 		PRINTL
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何か仕込んでるとは思っていたわ。でもそれは、防御系の何かだと思ってた」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それがまさか攻めさせて、受け流して、切りかえしてトドメを刺すための布石とはね」")
-		PRINTFORMW 「まぁ結果論だけどね？ 私としても賭けだったわ。何もしないうちに押し切られる可能性もあった訳だし」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……してやられたわ。でも最後のアレは、流石にどうなのかしら」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「本当に死ぬかと思ったわよ…」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭔가 가르치고 있다고는 생각하고 있었어요. 그렇지만 그것은, 방어계의 뭔가라고 생각하고 있었다」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그것이 설마 공격하게 해, 받아 넘겨, 바꾸고 해 결정타를 찌르기 위한 포석과는」")
+		PRINTFORMW 「뭐 결과론이지만 말야? 나로서도 내기였어요. 아무것도 하지 않는 동안에 눌러 잘라질 가능성도 있던 (뜻)이유이고」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「…… 감쪽같이 속았어요. 그렇지만 마지막 저것은, 과연 어떨까」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「정말로 죽을까하고 생각했어요…」")
 		PRINTL
-		PRINTFORMW 「最初に言ったじゃない、死なない程度に殺してあげるって」
-		PRINTFORMW 「まぁ本音を言うと…思った以上にダメージが入ったみたいでちょっとあせったんだけど」
-		PRINTFORMW 「ちゃんと回復させられるか、自信も無かったし…」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「えっ、そうなの？」")
-		PRINTFORMW 「うん…でもまぁ、こうして居られるんだから結果オーライってね♪」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「その辺はアバウトなのね…」")
-		PRINTFORMW 「咲夜だって、瀟洒って言われる割に天然なとこがあるじゃない？ お互い様よ」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「なによそれ。私ってそういう風に見られてるの！？」")
-		PRINTFORMW 「気付いてないのは咲夜だけって感じだけどね？ 今更過ぎる話よ」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう、だったんだ……」")
+		PRINTFORMW 「최초로 말했지 않아, 죽지 않는 정도로 죽여 준다고」
+		PRINTFORMW 「뭐 본심을 말하면… 생각한 이상으로 데미지가 들어간 것 같아 조금 서둘렀지만」
+		PRINTFORMW 「분명하게 회복 당하는지, 자신도 없었고…」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「엣, 그래?」")
+		PRINTFORMW 「응… 그렇지만 아무튼, 이렇게 해 있어지기 때문에 결과 오라이는♪」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그근처는 어바웃인 거네…」")
+		PRINTFORMW 「사쿠야도, 소쇄라고 말해지는 것 치고 천연인 점이 있지 않아? 피차일반이야」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭐야 그것. 나는 그러한 식으로 보여지고 있어!?」")
+		PRINTFORMW 「깨닫지 않은 것은 사쿠야만이라는 느낌이지만 말야? 이제 와서 지나는 이야기야」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그래, 였던 것이다……」")
 		
-		PRINTFORM 「そんなに凹む事でもないと思うわよ。だって私、咲夜のそういうとこも大好きだから…
+		PRINTFORM 「그렇게 패이는 일도 아니라고 생각해요. 왜냐하면 나, 사쿠야의 그러한 곳도 정말 좋아하기 때문에…
 		CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
 		
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「嫌いって言われた気がするけど…実を言うとアレ、結構傷付いたんだから」")
-		PRINTFORMW 「記憶にないわね」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「嘘はつかないんじゃなかった？」")
-		PRINTFORMW 「ウルサイわね。余計な事言ってると口を塞ぐわよ」
-		PRINTFORMDW アリスは咲夜の顔に口元を寄せ、唇を重ねた…
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「싫다고 말해진 것 같지만… 사실을 말한다고 저것, 상당히 손상된 것이니까」")
+		PRINTFORMW 「기억에 없네요」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「거짓말은 하지 않는 것이 아니었어?」")
+		PRINTFORMW 「시끄럽네요. 불필요한 일 말하고 있다고 입을 막아요」
+		PRINTFORMDW 앨리스는 사쿠야의 얼굴에 입가를 대어, 입술을 거듭했다…
 		PRINTL
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「んっ、アリ、スっ…貴女…自分がしたいだけじゃないの？」")
-		PRINTFORMW 「♪～　でも、嫌じゃないんでしょう？」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…そうね。じゃ、今度は私から…」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「읏, 개미, 슷… 당신… 자신이 하고 싶은 것뿐이 아닌거야?」")
+		PRINTFORMW 「♪  에서도, 싫지 않겠지요?」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「… 그렇구나. 그러면, 이번은 나부터…」")
 		
-		;フェードアウト
-		CALL FADE(20, COLOR_K14("white"), COLOR_K14("black"), KOJO_RAND_K14(("キス"), 1))
+		;페이드 아웃
+		CALL FADE(20, COLOR_K14("white"), COLOR_K14("black"), KOJO_RAND_K14(("키스"), 1))
 		CLEARLINE 1
 		
-		;フェードアウト
-		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ふふっ」")
+		;페이드 아웃
+		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「후훗」")
 		CLEARLINE 1
 		
-		;フェードアウト
-		CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「くすっ」")
+		;페이드 아웃
+		CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「키득」")
 		CLEARLINE 1
 		
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;エンディングまでルート毎に分離させる
+	;엔딩까지 루트마다 분리시킨다
 	;=================================================
-	;ルートＢ
+	;루트 B
 	;=================================================
-	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):3 == 1
-		;EDへの伏線を張る
+	IF 구상기입체크(100) && KFLAG:(FLAG:주인님):3 == 1
+		;ED에의 복선을 친다
 		;------------------------------------------------
-		;ルートＢI　この箇所で初回
+		;루트 BI  이 개소에서 첫회
 		;------------------------------------------------
-		IF 口上記入チェック(100) && FIRSTEVENT(4)
-			PRINTFORMW 「ねぇ咲夜。指輪を処分しようと思っけど見当たらないの。何処かで見なかった？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「指輪？ なんの話よ」")
-			PRINTFORMW 「貴女があの時外してくれたんじゃない。今からボケてたら将来心配ね」
-			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「面倒みてくれるの？」")
+		IF 구상기입체크(100) && FIRSTEVENT(4)
+			PRINTFORMW 「저기 사쿠야. 반지를 처분하려고 사지만 눈에 띄지 않는거야. 어디선가 보지 않았어?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「반지? 무슨 이야기야」")
+			PRINTFORMW 「당신이 그 때 빗나가게 해 주었지 않아. 지금부터 보케하고 있으면 장래 걱정이구나」
+			CALL PRINTCOLORL(COLOR_K14("사쿠야"), "「보살펴 줄래?」")
 			
 			PRINTFORM 「
-			;太字で表示
-			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "イヤよ", 1)
+			;굵은 글씨로 표시
+			CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "싫어요", 1)
 			PRINTFORMW 」
 			
 			PRINTL
-			PRINTFORMW 「……って。そんな事より指輪、指輪よ！」
-			PRINTFORML 「私の魔力をたっぷり吸ったアレを放置しておく訳にはいかないの」
-			PRINTFORMW 「どんな影響があるか判らないし、封印するなり、破壊しないと危険なのよ」
+			PRINTFORMW 「…… 은. 그런 일보다 반지, 반지야!」
+			PRINTFORML 「나의 마력을 충분히 들이마신 저것을 방치해 둘 수는 없는거야」
+			PRINTFORMW 「어떤 영향이 있을까 모르고, 봉인하든지, 파괴하지 않으면 위험한 것이야」
 			PRINTL
-			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「…………」")
-			PRINTFORMW 「…咲夜？ なにボンヤリしてるのよ」
-			CALL PRINTCOLORL(COLOR_K14("咲夜"), "「あ、あぁごめんなさい。ちょっと考え事をね…」")
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「おかげで思い出したけど」")
-			PRINTFORMW 「で？ 指輪はどうしたの？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「壊して棄てた」")
-			PRINTFORMW 「は？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「言葉の通りよ。私が壊して棄てたの」")
-			PRINTFORMW 「無茶な事するわね……それなりの手順を踏まないと危険だったはずだけど」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大した事なかったわ。貴女と戦う事に比べれば、ね」")
-			PRINTFORMW 「そう、それならまぁいいけど。でもちょっと惜しい気もするわね。いい研究材料になったのに…」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…呆れた。ホント魔法使いって懲りないのね」")
-			PRINTFORMW 「その点については、まぁ弁解の余地もないけど……魔法使いである限り仕方無いわね、諦めて頂戴」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「……やれやれ、ね」")
+			CALL PRINTCOLORL(COLOR_K14("사쿠야"), "「…………」")
+			PRINTFORMW 「… 사쿠야? 뭐멍하니 하고 있는거야」
+			CALL PRINTCOLORL(COLOR_K14("사쿠야"), "「아, 아미안해요. 조금 걱정거리를 말야…」")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「덕분에 생각해 냈지만」")
+			PRINTFORMW 「그래서? 반지는 무슨 일이야?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「부수어 버렸다」")
+			PRINTFORMW 「하?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「말대로야. 내가 부수어 버렸어」")
+			PRINTFORMW 「엉뚱한 일 해요…… 그만한 순서를 밟지 않으면 위험했을 것이지만」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「굉장한 일 없었어요. 당신과 싸우는 일에 비하면, 말야」")
+			PRINTFORMW 「그래, 그렇다면 아무튼 좋지만. 그렇지만 조금 아까운 생각도 들어요. 좋은 연구 재료가 되었는데…」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「… 기가 막혔다. 정말 마법사는 질리지 않는거네」")
+			PRINTFORMW 「그 점에 대해서는, 뭐 변명의 여지도 없지만…… 마법사인 한 방법 없네요, 단념해 줘」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「…… 아휴,」")
 			
-			PRINTFORM 「まぁまぁ、そう言わないでよ
-			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "　ね、そんな事より…」")
+			PRINTFORM 「뭐 그래, 그렇게 말하지 말아요
+			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "  군요, 그런 일보다…」")
 			
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ん、わかったわ……」")
-			KFLAG:(FLAG:ご主人様):5 = 1
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「응, 알았어요……」")
+			KFLAG:(FLAG:주인님):5 = 1
 			CALL TWAIT3_K14
 			RETURN 1
 		ENDIF
 		
-		;FIRSTTIME以外を処理
-		IF TIME ;夜
+		;FIRSTTIME 이외를 처리
+		IF TIME ;밤
 			SELECTCASE RANDEVENT(2, 0)
 				CASE 0
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリス…その……、月が綺麗ね」")
-					PRINTFORMW 「…は？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「『…は？』じゃないわよ、まったく！」")
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ムードもへったくれもないわ！ もう少し可愛げのある反応できないのかしら？」")
-					PRINTFORMW 「やだ咲夜ったら……今夜はわたしの事、好きにしていわよ」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「今頃言っても遅いのよ！ バカっ！」")
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「앨리스… 그……, 달이 예쁘구나」")
+					PRINTFORMW 「… 하?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「『… 하?』가 아니에요, 완전히!」")
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「무드도 뭣도 없어요! 좀 더 귀염성이 있는 반응 할 수 없는 것일까?」")
+					PRINTFORMW 「(이)나다 사쿠야도 참…… 오늘 밤은 나의 일, 마음대로 하고 있고 원이야」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「지금쯤 말해도 늦은거야! 바봇!」")
 					
-					PRINTFORM 「ふふっ、ごめんなさい
+					PRINTFORM 「후훗, 미안해요
 					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
 				CASE 1
-					PRINTFORMW 「ねぇ見て、咲夜。月がとっても綺麗よ♪」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね」")
-					PRINTFORMW 「気の無い返事ねぇ」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「悪かったわね？ でも、今の私は……早く貴女を食べたくて仕方無いんだけど」")
-					PRINTFORMW 「…まったく。ムードもへったくれもありゃしないわね！ どうして貴女ってそういう…って、ちょっと！」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ちゅっ……ふふ、たまにはこういうのもいいじゃない」")
-					PRINTFORMW 「そういう話をしてる訳じゃ…んっ」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「好きよ、アリス」")
-					PRINTFORMW 「知ってるわよ。バカ咲夜…」
+					PRINTFORMW 「저기 봐, 사쿠야. 달이 매우 예뻐요♪」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그렇구나」")
+					PRINTFORMW 「기분이 없는 대답이군요」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「나빴지요? 그렇지만, 지금의 나는…… 빨리 당신을 먹고 싶어서 방법 없지만」")
+					PRINTFORMW 「… 완전히. 무드도 뭣도 있지는 않네요! 어째서 당신은 그러한… 은, 조금!」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「츗…… 후후, 가끔 씩은 이런 것도 좋지 않아」")
+					PRINTFORMW 「그러한 이야기를 하고 있는 것은… 읏」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「좋아해요, 앨리스」")
+					PRINTFORMW 「알고 있어요. 바보 사쿠야…」
 			ENDSELECT
-			;一行空ける
+			;일행 비운다
 			PRINTL
-		ELSE ;昼
+		ELSE ;낮
 			SELECTCASE RANDEVENT(2, 1)
 				CASE 0
-					PRINTFORMW 「はぁ～天気が良くて気持ちいいわねー」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それもいいけど、私は違う気持ちいい事の方がいいわね」")
-					PRINTFORMW 「…やれやれ。どうして咲夜ってそう即物的なのかしら？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「時間が勿体無いのよ。私だって忙しくて、その…って、ちょ、ちょっとアリ、ス…」")
-					PRINTFORMW 「♪～　ほら、時間が勿体無いんでしょ？ それに、私だって…」
-					PRINTFORMW 「咲夜に会えるの、待ち遠しかったんだから……」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「今日は珍しく素直なのね」")
-					PRINTFORMW 「そうね？ それに私達、もっとお互いが素直になるべきだと思うわ」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…同感ね」")
+					PRINTFORMW 「후~~날씨가 좋아서 기분이 좋네요―」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그것도 좋지만, 나는 다른 기분이 좋은 일이 좋네요」")
+					PRINTFORMW 「… 아휴. 어째서 사쿠야는 그렇게 즉물적인 것일까?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「시간이 과분한거야. 나라도 바쁘고, 그… 는, 조, 조금 개미, 스…」")
+					PRINTFORMW 「♪  이봐요, 시간이 과분하지요? 게다가, 나라고…」
+					PRINTFORMW 「사쿠야를 만날 수 있는 것, 몹시 기다려 졌던 것이니까……」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「오늘은 드물고 솔직한거네」")
+					PRINTFORMW 「그렇구나? 거기에 우리들, 좀 더 서로가 솔직해져야 한다고 생각해요」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「… 동감이군요」")
 					
-					;フェードアウト
-					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ふふっ…」")
+					;페이드 아웃
+					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「후훗…」")
 					CLEARLINE 1
 					
-					;フェードアウト
-					CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「くすっ…」")
+					;페이드 아웃
+					CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「키득…」")
 					CLEARLINE 1
 				CASE 1
-					PRINTFORMW 「あら、遅かったわね」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「色々と忙しくてね……」")
-					PRINTFORMW 「咲夜の事だから心配要らないと思うけど……余り無理しちゃ駄目よ？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私を気遣ってくれるなんて珍しいわね？ どういう風の吹き回し？」")
-					PRINTFORMDW アリスは突然咲夜を押し倒した…
+					PRINTFORMW 「아라, 늦었지요」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「다양하게 바빠서 말야……」")
+					PRINTFORMW 「사쿠야의 일이니까 걱정 필요하지 않다고 생각하지만…… 나머지 무리해서는 안 돼요?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「나를 신경써 준다니 드무네요? 어떤 바람의 불어 돌리기?」")
+					PRINTFORMDW 앨리스는 돌연 사쿠야를 밀어 넘어뜨렸다…
 					PRINTL
-					PRINTFORMW 「心配してるわよ…悪い？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリ、ス…？」")
-					PRINTFORMW 「それを、そんな皮肉を言うなんて…」
-					PRINTFORMW 「あんたなんか一度過労でぶっ倒れてしまえばいいのよっ！ バカ咲夜…」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ごめんなさい、でも…そう思っていてくれたのは嬉しいわ」")
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大好きよ、アリス……ちゅっ」")
-					PRINTFORMW 「ば、バカっ！ こんな事で誤魔化されないんだからっ！ んっ…」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「大丈夫、私の事なら心配要らないから…本当に」")
+					PRINTFORMW 「걱정하고 있어요… 나빠?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「개미, 스…?」")
+					PRINTFORMW 「그것을, 그렇게 빈정거리다니…」
+					PRINTFORMW 「너 같은 것 한 번 과로로 쳐 넘어져 버리면 좋은거야! 바보 사쿠야…」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「미안해요, 그렇지만… 그렇게 생각하고 있어 준 것은 기뻐요」")
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「정말 좋아해요, 앨리스…… 츗」")
+					PRINTFORMW 「바, 바봇! 이런 일로 속여지지 않기 때문에! 읏…」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「괜찮아, 나의 일이라면 걱정 필요하지 않기 때문에… 정말로」")
 			ENDSELECT
-			;一行空ける
+			;일행 비운다
 			PRINTL
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ルートＡ
+	;루트 A
 	;=================================================
-	IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):2 == 1
-		;ルートＢと対になる話
+	IF 구상기입체크(100) && KFLAG:(FLAG:주인님):2 == 1
+		;루트 B와 대가 되는 이야기
 		;------------------------------------------------
-		;ルートＡI　この箇所で初回
+		;루트 AI  이 개소에서 첫회
 		;------------------------------------------------
-		IF 口上記入チェック(100) && FIRSTEVENT(5)
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス。そういえばあの指輪ってどうなったのかしら？」")
-			PRINTFORMW 「あぁ、アレね。私の魔力を吸ってちょっと危険過ぎる代物になってたから封印したわ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「えっ、それって…私、手で触っちゃったんだけど…」")
-			PRINTFORMW 「触れた位なら大丈夫なはずよ？ ただ、魔法使い以外の抵抗力のない者が持っていたりしたら…」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どうなるのよ」")
-			PRINTFORMW 「死ぬかも」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そんな物騒な物だったなんて…」")
-			PRINTFORMW 「まぁでも、もう心配要らないわよ。封印は厳重にしたから、ただ…」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ただ、なによ？ 気になるじゃない」")
-			PRINTFORMW 「うん、まぁ…色々と、ね。今後の研究に生かせるかなぁって」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あれだけの事があって、まだ懲りないのね」")
-			PRINTFORMW 「前にも言ったでしょ？ 魔法使いってそういうものなのよ」
-			PRINTFORMW 「誤りがあったなら正さなきゃならないの。正しく理解する事によって初めて正しい使い道が判る」
-			PRINTFORMW 「それは決して無駄にはならない。と言っても、教訓から学ぶってのは、別に魔法使いに限らないと思うけど…ね」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「まぁそれはそうなんでしょうけど。いずれにしても、私はあまり関わりたくないわね…」")
-			PRINTFORML 「ふふっ、まぁ気持ちは判るけど。その点については私もあまり言えた義理じゃないし」
-			PRINTFORMW 「でも、魔法についてある程度の事を知っておくのは無駄にはならないと思うわよ？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…やれやれ、ね。なんで私の周りって皆こうなのなしら…」")
-			PRINTFORMW 「悪魔の従者の言葉とは思えないわね？ 咲夜ほど、こちら側に深く関わってる人間なんていないのに」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それはそれ、これはこれ。別に不満がある訳じゃないわ。ただ、なんていうか…」")
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私はやっぱり人間なんだって思い知るのよ。皆とは違うんだなって」")
+		IF 구상기입체크(100) && FIRSTEVENT(5)
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기 앨리스. 그렇게 말하면 그 반지는 어떻게 되었을까?」")
+			PRINTFORMW 「아아, 저것이군요. 나의 마력을 들이마셔 조금 너무 위험한 대용품이 되어 있었기 때문에 봉인했어요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「엣, 그 거… 나, 손으로 손대어 버렸지만…」")
+			PRINTFORMW 「접한 정도라면 괜찮을 것이야? 다만, 마법사 이외의 저항력이 없는 사람이 가지고 있거나 하면…」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「어떻게 되는거야」")
+			PRINTFORMW 「죽을지도」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그렇게 뒤숭숭한 것이었다니…」")
+			PRINTFORMW 「뭐 그렇지만, 이제 걱정 필요하지 않아요. 봉인은 엄중하게 했기 때문에, 다만…」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「다만, 뭐야? 신경이 쓰이지 않아」")
+			PRINTFORMW 「응, 뭐… 다양하게, 말야. 향후의 연구에 활용할 수 있을까 하고」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그토록의 일이 있어, 아직 질리지 않는거네」")
+			PRINTFORMW 「전에도 말한 것이겠지? 마법사는 그러한 것이야」
+			PRINTFORMW 「잘못이 있었다면 바로잡지 않으면 안 되는거야. 올바르게 이해하는 일에 의하고 처음으로 올바른 용도가 안다」
+			PRINTFORMW 「그것은 결코 쓸데없게는 안 된다. 이렇게 말해도, 교훈으로부터 배운다는 것은, 별로 마법사에게 한정되지 않는다고 생각하지만… 말야」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「아무튼 그것은 그렇겠지만. 어쨌든, 나는 그다지 관련되고 싶지 않네요…」")
+			PRINTFORML 「후훗, 뭐 기분은 알지만. 그 점에 대해서는 나도 그다지 말할 수 있던 의리가 아니고」
+			PRINTFORMW 「그렇지만, 마법에 대해 어느 정도의 일을 알아 두는 것은 쓸데없게는 안 된다고 생각해요?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「… 아휴,. 어째서 나의 주위는 모두 이러한 없음등…」")
+			PRINTFORMW 「악마의 수행원의 말이라고는 생각되지 않네요? 사쿠야만큼, 이 쪽편으로 깊게 관련되고 있는 인간은 없는데」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그것은 그것, 이것은 이것. 별로 불만이 있는 것이 아니에요. 다만, 뭐라고 할까…」")
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「나는 역시 인간 라고 깨닫는거야. 모두와는 다르구나 하고」")
 			PRINTL
-			PRINTFORML 「意外と繊細なのね？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「喧嘩売ってる？」")
+			PRINTFORML 「의외로 섬세한거네?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「싸움을 걸고 있어?」")
 			PRINTL
-			PRINTFORMW 「ま、それはそれとして…貴女がその気なら色々と方法はあるけど、咲夜は人間をやめる気はないのよね？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうね、少なくても今はその気はないわ。人であるからこそ、って事も多いしね」")
-			PRINTFORMW 「本人にその気がない以上どうしようもないわね。ただの操り人形にするなら簡単なんだけど」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「それ、冗談になってないから…」")
-			PRINTFORMW 「ふふ、そうだったわね。まぁ私としてはその辺の折り合いはつけたつもりよ？」
-			PRINTFORMW 「遠くばかり見て、目の前の大切なものを見過ごす事はやめたわ」
-			PRINTFORMW 「先の事を気に病むより、今この瞬間を大事にしたい。そう思えるようになったの」
+			PRINTFORMW 「뭐, 그건 그걸로하고… 당신이 그 기분이라면 다양하게 방법은 있지만, 사쿠야는 인간을 그만둘 생각은 없네요?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그렇구나, 적어도 지금은 그 기분은 없어요. 사람이니까, 라는 일도 많기도 하고」")
+			PRINTFORMW 「본인에게 그럴 마음이 없는 이상 어쩔 수 없네요. 단순한 꼭두각시로 한다면 간단한 것이지만」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그것, 농담으로 되어 있지 않으니까…」")
+			PRINTFORMW 「후후, 그랬네요. 뭐 나로서는 그근처의 타협은 붙인 생각이야?」
+			PRINTFORMW 「먼 곳(뿐)만 봐, 눈앞의 중요한 것을 간과하는 일은 그만두었어요」
+			PRINTFORMW 「앞의 일을 걱정하는 것보다, 지금 이 순간을 소중히 하고 싶다. 그렇게 생각할 수 있게 되었어」
 			PRINTL
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私のおかげかしらね？」")
-			PRINTFORMW 「……自惚れるのもいい加減にして。でも、まぁ…そうね。咲夜のおかげね」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「未熟な魔法使いもちょっとは成長したって感じね」")
-			PRINTFORMW 「ちょっと！ 流石にそこまで言うのはどうなの？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あら、この位のくらい言う資格はあるはずよ？ 魔法使いさん♪」")
-			PRINTFORMW 「…ま、そうよね。それは認めるわ、だから……ちゃんと責任取りなさいよね」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「話が見えないわね、何の責任よ？」")
-			PRINTFORMW 「自分で言っといてもう忘れたわけ？ 私の時間を預けてって、咲夜が言ったんじゃない」
-			PRINTFORMDW 咲夜は突然アリスを押し倒した…
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「나의 덕분일까요?」")
+			PRINTFORMW 「…… 자만하는 것도 적당히 해. 그렇지만, 뭐… 그렇구나. 사쿠야의 덕분이군요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「미숙한 마법사도 조금은 성장했다는 느낌이군요」")
+			PRINTFORMW 「조금! 과연 거기까지 말하는 것은 어때?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「아라, 이 정도의 것 정도 말하는 자격은 있을 것이야? 마법사씨♪」")
+			PRINTFORMW 「… 뭐, 그래요. 그것은 인정해요, 그러니까…… 분명하게 책임 취하세요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이야기가 안보이네요, 무슨 책임이야?」")
+			PRINTFORMW 「스스로 말해 두어 벌써 잊은 (뜻)이유? 나의 시간을 맡겨는, 사쿠야가 말했지 않아」
+			PRINTFORMDW 사쿠야는 돌연 앨리스를 밀어 넘어뜨렸다…
 			PRINTL
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「馬鹿ね、忘れるわけ無いじゃない」")
-			PRINTFORMW 「嘘…ホントは忘れてた癖に」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「好きよ、アリス」")
-			PRINTFORMW 「答えになってないわ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いいから、黙って…」")
-			PRINTFORMW 「こんな事で、誤魔化そうったって…んっ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いいから、大人しくして…」")
-			PRINTFORMW 「もう…咲夜の馬鹿…」
-			KFLAG:(FLAG:ご主人様):4 = 1
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「바보같구나, 잊을 이유 없잖아」")
+			PRINTFORMW 「거짓말… 사실은 잊고 있었던 주제에」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「좋아해요, 앨리스」")
+			PRINTFORMW 「대답이 되어 있지 않아요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「좋으니까, 입다물어…」")
+			PRINTFORMW 「이런 일로, 속이려 하더라도… 읏」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「좋으니까, 얌전하게 해…」")
+			PRINTFORMW 「이제(벌써)… 사쿠야의 바보…」
+			KFLAG:(FLAG:주인님):4 = 1
 			CALL TWAIT3_K14
 			RETURN 1
 		ENDIF
 		
-		;FIRSTEVENT以外を処理。そしてここにもFIRSTEVENTを使いたくなる不具合
-		;ただ、ここでやり過ぎると仕事が進まないのであとでゆっくり考える
-		;長ったらしいのは部分的に確率表示にしてもいいかもだけど、とりあえず全部見ろ的な作者の意向って事で
-		IF TIME ;夜
+		;FIRSTEVENT 이외를 처리. 그리고 여기에도 FIRSTEVENT를 사용하고 싶어지는 불편
+		;다만, 여기서 너무 여기서 하면 일이 진행되지 않기 때문에 나중에 천천히 생각한다
+		;장황한 것은 부분적으로 확률 표시로 해도 괜찮을지도이지만, 우선 전부 봐라적인 작자의 의향이라는 일로
+		IF TIME ;밤
 			SELECTCASE RANDEVENT(2, 2)
 				CASE 0
-					PRINTFORMW 「いらっしゃい咲夜。今日は朝まで居られるの？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いや、夜明け前には帰るわ」")
-					PRINTFORMW 「メイド長は大変ね？ 私としては、咲夜の寝顔を見られないのが不満なんだけど」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「だったら私より早起きする事ね」")
-					PRINTFORMW 「偶には起こしてくれてもいいじゃない。起きた時一人なのって結構寂しいんだから…」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そう言われてもね？ ぐっすり寝てるのに悪いと思って。それに…」")
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「眠ってるアリスに、あんな事やこんな事をするのが愉しくてつい、ね」")
-					PRINTFORMW 「げっ！？ そんな事してるの？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「えっ、何！？ 私、引かれてる？」")
-					PRINTFORMW 「馬鹿ね、軽い冗談じゃない。それに、その、私だって…」
-					PRINTFORMW 「咲夜の匂いのするシーツに包まって、自分で…」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そ、そうなんだ……」")
-					PRINTFORMW 「うん……」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ま、まぁでも…お互い様って事でいいんじゃ…」")
-					PRINTFORMW 「そう、よね…ははは」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ははは…」")
+					PRINTFORMW 「계(오)세요 사쿠야. 오늘은 아침까지 있어지는 거야?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「아니, 새벽전에는 돌아가요」")
+					PRINTFORMW 「메이드장은 큰 일이구나? 나로서는, 사쿠야의 잠자는 얼굴을 볼 수 없는 것이 불만인 것이지만」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그렇다면 나보다 일찍 일어나는 일이군요」")
+					PRINTFORMW 「이따금은 일으켜 주어도 좋지 않아. 일어났을 때 한사람인 것은 상당히 외롭기 때문에…」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그런 말을 들어도 말야? 푹 자고 있는데 나쁘다고 생각해. 거기에…」")
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「자고 있는 앨리스에게, 저런 일이나 이런 일을 하는 것이 즐겁고 무심코,」")
+					PRINTFORMW 「겟!? 그런 일 하고 있는 거야?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「무, 무엇!? 나, 끌리고 있어?」")
+					PRINTFORMW 「바보같구나, 가벼운 농담이 아니다. 게다가, 그, 나라고…」
+					PRINTFORMW 「사쿠야의 냄새가 나는 시트에 휩싸여, 스스로…」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그, 그렇다……」")
+					PRINTFORMW 「응……」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭐, 뭐 그렇지만… 피차일반이라는 일로 좋지…」")
+					PRINTFORMW 「그, 래요… 하하하」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하하하…」")
 					PRINTFORMW 「…………」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…………」")
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「…………」")
 				CASE 1
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「今晩はアリス。いい夜ね」")
-					PRINTFORM 「そうね、
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「오늘 밤은 앨리스. 좋은 밤이군요」")
+					PRINTFORM 「그렇구나,
 					
-					;まぁ実質的には春くらいしか出番ないんだろうなとは思うけど、こういう事は大好きなので
-					SELECTCASE FLAG:季節
-						CASE 0 ;春
-							PRINTFORMW まだ風がちょっと冷たいけど、春ってなんかワクワクするわよね♪」
-						CASE 1 ;夏
-							PRINTFORMW 夜風が気持ちいいわよねぇ」
-						CASE 2 ;秋
-							PRINTFORMW この季節の月って最高よねぇ」
-						CASE 3 ;冬
-							PRINTFORMW 流石にちょっと寒いけど、冬の夜ってのも趣があっていいものよね」
+					;아무튼 실질적으로는 봄 정도 밖에 차례 없을 것이다라고는 생각하지만, 이런 일은 정말 좋아하는 것으로
+					SELECTCASE FLAG:계절
+						CASE 0 ;봄
+							PRINTFORMW 아직 바람이 조금 차갑지만, 봄은 뭔가 두근두근 하네요♪」
+						CASE 1 ;여름
+							PRINTFORMW 밤바람이 기분이 좋네요」
+						CASE 2 ;가을
+							PRINTFORMW 이 계절의 달은 최고군요」
+						CASE 3 ;동
+							PRINTFORMW 과연 조금 춥지만, 겨울의 밤이라는 것도 정취가 있어 좋은 것이군요」
 					ENDSELECT
 					
-					PRINTFORMW 「…で？ 今日はゆっくりしていけるの？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「微妙なところね。朝には戻らなきゃならないし、でも…」")
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「時間操作である程度はなんとかなるかしら？」")
-					PRINTFORMW 「そういう事に”能力”を使うってちょっとどうなの、って気がするけど」
+					PRINTFORMW 「… 그래서? 오늘은 천천히 하고 갈 수 있는 거야?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「미묘한 점이네. 아침에는 돌아오지 않으면 안 되고, 그렇지만…」")
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「시간 조작인 정도는 어떻게든 될까?」")
+					PRINTFORMW 「그런 일에 "능력"을 사용한다 라고 조금 어떻게, 는 생각이 들지만」
 					PRINTL
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「『そういう事』、だからこそよ」")
-					PRINTFORMW 「そうなの？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そうよ、だって…少しでも長く、その…あ、アリスと一緒に居たいから」")
-					PRINTFORML 「…まったく。そういう事言うならキッチリ決めてくれないかしら？」
-					PRINTFORMW 「こっちまで恥ずかしくなるじゃない……」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そ、そうよね…」")
-					PRINTFORMW 「うん……」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「『그런 일』, 그러니까」")
+					PRINTFORMW 「그래?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그래요, 왜냐하면… 조금이라도 길고, 그… 아, 앨리스와 함께 있고 싶으니까」")
+					PRINTFORML 「… 완전히. 그런 일 말한다면 빈틈없이 결정해 주지 않을까?」
+					PRINTFORMW 「여기까지 부끄러워지지 않아……」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그, 그래요…」")
+					PRINTFORMW 「응……」
 			ENDSELECT
-			;一行空ける
+			;일행 비운다
 			PRINTL
-		ELSE ;昼
+		ELSE ;낮
 			SELECTCASE RANDEVENT(2, 3)
 				CASE 0
-					PRINTFORM 「あら、遅かったわね？ ちょっと前まで
+					PRINTFORM 「아라, 늦었지요? 조금 전까지
 					SELECTCASE RANDEVENT(4, 4)
 						CASE 0
-							PRINTFORM 霊夢
+							PRINTFORM 레이무
 						CASE 1
-							PRINTFORM 魔理沙
+							PRINTFORM 마리사
 						CASE 2
-							PRINTFORM 紫
+							PRINTFORM 보라색
 						CASE 3
-							PRINTFORM 幽香
+							PRINTFORM 유향
 					ENDSELECT
-					PRINTFORMW が居たのよ」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「へぇ、そう…、愉しそうで何よりね……」")
-					PRINTFORMW 「…面白くなさそうね。もしかして妬いてるの？」
-					PRINTFORMDW 突然、咲夜はアリスを押し倒した…
+					PRINTFORMW 가 있던거야」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「헤에, 그렇게…, 즐거운 것 같아 무엇보다네……」")
+					PRINTFORMW 「… 재미있지 않은 것 같구나. 혹시 질투하고 있는 거야?」
+					PRINTFORMDW 돌연, 사쿠야는 앨리스를 밀어 넘어뜨렸다…
 					PRINTL
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「妬いてるわよ、悪い？」")
-					PRINTFORML 「咲夜は私のこと好き？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「好きよ」")
-					PRINTFORML 「生涯のパートナーを選ぶとしたら？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「貴女以外に考えられないわ」")
-					PRINTFORML 「即答ね」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「当然よ」")
-					PRINTFORML 「こんな面倒な女なのに？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「関係ないわ。私はアリスじゃないと駄目なの」")
-					PRINTFORML 「いいわよ」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「へっ？ あ、あの…アリ…」")
-					PRINTFORMW 「…まったく。仕様の無い人ね！」
-					PRINTFORMDW アリスは突然起き上がり、咲夜を押し倒した…
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「질투하고 있어요, 나빠?」")
+					PRINTFORML 「사쿠야는 나의 일 좋아?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「좋아해요」")
+					PRINTFORML 「생애의 파트너를 선택한다고 하면?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「당신 이외에 생각할 수 없어요」")
+					PRINTFORML 「즉답이군요」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「당연해요」")
+					PRINTFORML 「이런 귀찮은 여자인데?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「관계없어요. 나는 앨리스가 아니면 안돼」")
+					PRINTFORML 「좋아요」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「헷? 저, 저… 개미…」")
+					PRINTFORMW 「… 완전히. 사양이 없는 사람이네!」
+					PRINTFORMDW 앨리스는 돌연 일어나, 사쿠야를 밀어 넘어뜨렸다…
 					PRINTL
-					PRINTFORML 「最後の最後でへたれないでよ…」
-					PRINTFORMW 「やっぱり私から動かないと駄目なのかしら？」
+					PRINTFORML 「마지막 최후로에 축 늘어차지 말아요…」
+					PRINTFORMW 「역시 나부터 움직이지 않으면 안 되는 것일까?」
 					
-					;フェードアウト
-					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), KOJO_RAND_K14(("キス"), 1))
-					CLEARLINE 1 ;行削除
+					;페이드 아웃
+					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), KOJO_RAND_K14(("키스"), 1))
+					CLEARLINE 1 ;행 삭제
 					
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリ…スっ……んっ」")
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「개미… 슷…… 읏」")
 					
-					PRINTFORM 「♪～　ま、傍にいてくれるなら細かい事は気にしないけど…
+					PRINTFORM 「♪  뭐, 옆에 있어 준다면 세세한 일은 신경쓰지 않지만…
 					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
 					
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「…同感ね」")
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「… 동감이군요」")
 					
-					;フェードアウト
-					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「ふふっ」")
-					CLEARLINE 1 ;行削除
+					;페이드 아웃
+					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「후훗」")
+					CLEARLINE 1 ;행 삭제
 					
-					;フェードアウト
-					CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「くすっ」")
-					CLEARLINE 1 ;行削除
+					;페이드 아웃
+					CALL FADE(20, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "「키득」")
+					CLEARLINE 1 ;행 삭제
 				CASE 1
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス、私思うんだけど…」")
-					PRINTFORMW 「なによ」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「こんな所に一人で住んでるのって無用心過ぎない？」")
-					PRINTFORMW 「…唐突ね。どうしたのよ急に」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別に。気になっていた事を言っただけよ」")
-					PRINTFORMW 「心配してくれてるの？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ただの忠告。いや、助言といったところね」")
-					PRINTFORMW 「ふふっ、本当にそうかしら？ 咲夜の本音は違うとこにありそうだけど」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「！？ へ、変な勘ぐりはやめて頂けるかしら。私はただ……」")
-					PRINTFORMDW アリスは咲夜を引き寄せ、その唇を奪った…
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기 앨리스, 나 생각하지만…」")
+					PRINTFORMW 「뭐야」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이런 곳에 혼자서 살고 있는 것은 너무 조심성이 없잖아?」")
+					PRINTFORMW 「… 당돌하구나. 왜갑자기」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「별로. 신경이 쓰이고 있던 일을 말한 것 뿐이야」")
+					PRINTFORMW 「걱정해 주고 있는 거야?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「단순한 충고. 아니, 조언이라고 하는 곳이군요」")
+					PRINTFORMW 「후훗, 정말로 그런가? 사쿠야의 본심은 다른 곳에 있을 것 같지만」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「!? 이, 이상한 억측은 그만두어 받을 수 있을까. 나는 다만……」")
+					PRINTFORMDW 앨리스는 사쿠야를 끌어 들여, 그 입술을 빼앗았다…
 					PRINTL
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリ……んっ」")
-					PRINTFORMW 「…馬鹿ね。咲夜が心配してるような事なんてある訳ないでしょ？」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「そ、それは！ そう、思ってるけど…」")
-					PRINTFORMW 「あーまったく！ なんで咲夜ってそうなのかしら」
-					PRINTFORMDW アリスは咲夜の頬を両手で思いっきり抓った…
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「개미…… 읏」")
+					PRINTFORMW 「… 바보같구나. 사쿠야가 걱정하고 있는 듯 한 일은 있을 이유 없지요?」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그, 그것은! 그래, 생각하고 있지만…」")
+					PRINTFORMW 「아─완전히! 어째서 사쿠야는 있는 것 보고싶은 것일까」
+					PRINTFORMDW 앨리스는 사쿠야의 뺨을 양손으로 마음껏 꼬집었다…
 					PRINTL
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「あ、ありひゅ？」")
-					PRINTFORMW 「私はね、咲夜が好きなの！ 咲夜じゃなきゃ嫌なの！ 他の誰かじゃ意味が無いの！」
-					PRINTFORMW 「だからっ、そんな情けない顔するのはやめなさいよっ！」
-					CALL PRINTCOLORW(COLOR_K14("咲夜"), "「いひゃい、いひゃぃかりゃ！」")
-					PRINTFORMW 「…ちょっと力が入りすぎたわね。でも謝らないわよ？ 私にこんな事言わせて…」
-					PRINTFORMW 「わたしだって恥ずかしいんだから……いい加減わかりなさいよ、ばかっ！」
-					IF !RAND:3 ;1/3の確率で表示
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「,?」")
+					PRINTFORMW 「나는 말야, 사쿠야가 좋아해! 사쿠야가 아니면 싫어! 다른 누군가는 의미가 없는거야!」
+					PRINTFORMW 「그러니까, 그렇게 한심한 얼굴 하는 것은 그만두세요!」
+					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「있고,!」")
+					PRINTFORMW 「… 조금 너무 힘이 들어갔군요. 그렇지만 사과하지 않아요? 나에게 이런 일 말하게 해…」
+					PRINTFORMW 「나라도 부끄럽기 때문에…… 적당 아세요, 바보!」
+					IF !RAND:3 ;1/3의 확률로 표시
 						PRINTL
-						CALL PRINTCOLORW(COLOR_K14("咲夜"), "「うぅ…ヒリヒリするわ……」")
+						CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「우우… 얼얼 해요……」")
 						PRINTFORM 「
-						;太字で表示
-						CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "自業自得よ", 1)
+						;굵은 글씨로 표시
+						CALL PRINTFONTSTYLE(COLOR2_K14("ALICE"), "자업자득이야", 1)
 						PRINTFORMW 」
 					ENDIF
 			ENDSELECT
-			;一行空ける
+			;일행 비운다
 			PRINTL
 			RETURN 1
 		ENDIF
@@ -885,751 +885,751 @@ IF 口上記入チェック(100) && AFFECTION("相思相愛") && KFLAG:(FLAG:ご
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;傀儡 （好意2500以上） FIRSTEVENT(6)
+;괴뢰(호의 2500이상) FIRSTEVENT(6)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;妖々夢と萃夢想で咲夜自機の場合を前提としている
-;ここだけ@FAVORなのも何なのでAFFECTIONで定義した
+;요들꿈과 아츠무 몽상으로 사쿠야 자기의 경우를 전제로 하고 있다
+;여기만@FAVOR인 것도 무엇인 것으로 AFFECTION로 정의했다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("傀儡") && KFLAG:(FLAG:ご主人様):51 == 1 && TALENT:TARGET:ご主人様
-	;ニコ童祭投票で順位は下がったものの二人が5位、6位と並んでいたので俺に良し！ 
-	;パートナー投票の結果はまぁ、うｎ…
+IF 구상기입체크(100) && AFFECTION("괴뢰") && KFLAG:(FLAG:주인님):51 == 1 && TALENT:TARGET:주인님
+	;니코동제투표로 순위는 내린 것의 두 명이 5위, 6위와 함께 있었으므로 나에게 좋다!
+	;파트너 투표의 결과는 아무튼, n…
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(6)
-		PRINTFORMDL ふと、アリスと最初に出会った時の事を思い出す
-		PRINTFORMDW あれはそう、終わらない冬の異変のときだった…
+	IF 구상기입체크(100) && FIRSTEVENT(6)
+		PRINTFORMDL 문득, 앨리스와 최초로 만났을 때의 일을 생각해 낸다
+		PRINTFORMDW 저것은 그렇게, 끝나지 않는 겨울의 이변 때였다…
 		
-		;ＢＧＭカットイン(人形裁判　～ 人の形弄びし少女)
+		;BGM 컷 인(인형 재판  ~사람의 형태 희롱해 소녀)
 		CALL BGM_CUTIN(CSTR:13, 1)
 		
-		PRINTFORMDW その理路整然とした美しい弾幕と人形のように整った容姿、ひどく冷めきった瞳を今でも覚えている
-		PRINTFORMDW 負けても悪びれるでもなく、悔しがるでもなく、どこか余裕を漂わせたその姿に私は少し苛立ったものだった…
+		PRINTFORMDW 그 이로정 같은 아름다운 탄막과 인형과 같이 갖추어진 용모, 몹시 차가운 자른 눈동자를 지금도 기억하고 있다
+		PRINTFORMDW 져도 기죽는 것도 아니고, 분해하는 것도 아니고, 어딘가 여유를 감돌게 한 그 모습에 나는 조금 초조한 것이었다…
 		PRINTL
 		
-		;フェードイン
-		CALL FADE(20, COLOR_K14("black"), COLOR_K14("white"), "――気取った嫌な女")
+		;페이드 인
+		CALL FADE(20, COLOR_K14("black"), COLOR_K14("white"), "-뽐낸 싫은 여자")
 		
 		PRINTL
-		PRINTFORMDW 最初の印象は決して好ましいものではなかったが、それだけでない何かも感じていた
-		PRINTFORMDL 今まで出合ったどんな人妖とも違う。その在りようは何処か自分に似ている気がした
-		PRINTFORMDW 以後何度か彼女と関わる機会があったが、相変わらずその瞳は冷たいままで…
+		PRINTFORMDW 최초의 인상은 결코 바람직한 것으로는 없었지만, 그것뿐만이 아닌 뭔가도 느끼고 있었다
+		PRINTFORMDL 지금까지 만난 어떤 인 요와도 다르다. 그 존재하는 형태는 어딘가 자신을 닮아 있는 생각이 들었다
+		PRINTFORMDW 이후 몇번이나 그녀와 관련될 기회가 있었지만, 변함 없이 그 눈동자는 차가운 채로…
 		
-		;フェードアウト
-		CALL FADE(25, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "――この子、私に興味がないのね")
-		CLEARLINE 1 ;行削除
+		;페이드 아웃
+		CALL FADE(25, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "-이 아이, 나에게 흥미가 없는거네")
+		CLEARLINE 1 ;행 삭제
 		
-		PRINTFORMDW その事を悔しく、また寂しく感じている自分に気が付いた時、私の中で何かが変わり始めた
-		PRINTFORMDW もっと彼女の事を知りたい、そして私の事を知って欲しい、そう思うようになって…
+		PRINTFORMDW 그 일을 분하고, 또 외롭게 느끼고 있는 자신을 알아차렸을 때, 나의 안에서 뭔가가 바뀌기 시작했다
+		PRINTFORMDW 좀 더 그녀를 알고 싶은, 그리고 나의 일을 알았으면 좋은, 그렇게 생각하게 되어…
 		PRINTL
-		PRINTFORMDL 或る時は森で迷った振りをして彼女の元を訪れた事もあった
-		PRINTFORMDW あの時アリスが放った最初の言葉は今でも覚えている…
+		PRINTFORMDL 혹시는 숲에서 헤맨 모습을 해 그녀의 곁을 방문한 일도 있었다
+		PRINTFORMDW 그 때 앨리스가 추방한 최초의 말은 지금도 기억하고 있다…
 		PRINTL
 		
-		;フェードイン
-		CALL FADE(20, COLOR_K14("black"), COLOR2_K14("ALICE"), "「あれ？ 珍しい顔だわ」")
+		;페이드 인
+		CALL FADE(20, COLOR_K14("black"), COLOR2_K14("ALICE"), "「어? 드문 얼굴이예요」")
 		
 		PRINTL
-		PRINTFORMDW 売り言葉に買い言葉。私は彼女をハズレ呼ばわりして…
-		PRINTFORMDW それでも彼女は頼みもしないのに帰り道を送ってくれた。私はアリスの以外な一面に触れ
-		PRINTFORMDW ある意味驚くと共に、嬉しくも思ったのだった…
+		PRINTFORMDW 가는 말 고와야 오는 말도 곱다. 나는 그녀를 제외되고 불러…
+		PRINTFORMDW 그런데도 그녀는 부탁도 하지 않는데 돌아가는 길을 보내 주었다. 나는 앨리스의 이외일면에 손대어라
+		PRINTFORMDW 어느 의미 놀람과 동시에, 기쁘게도 생각한 것이었다…
 		PRINTL
-		PRINTFORMDW やがて言葉を交わしていくうちに、少しずつ笑顔を見せてくれるようになり
-		PRINTFORMDW いつしか私は、その事をとても嬉しく、幸せに感じるようになっていた
-		PRINTFORMDW 共に語らい、お互いの事を徐々に知るようになっても過度に干渉する事もなく、
-		PRINTFORMDW 適度な距離感を保ったその関係はとても心地良かった
-		PRINTFORMDW 出合った時から変わらないはずのその瞳も、ずっと優しく、暖かなものに見えて…
+		PRINTFORMDW 이윽고 말을 주고 받아 가는 동안에, 조금씩 웃는 얼굴을 보여 주게 되어
+		PRINTFORMDW 어느덧 나는, 그 일을 매우 기쁘고, 행복하게 느끼게 되어 있었다
+		PRINTFORMDW 모두 이야기를 주고 받아, 서로의 일을 서서히 알게 되어도 과도하게 간섭하는 일도 없고,
+		PRINTFORMDW 적당한 거리감을 유지한 그 관계는 매우 마음 좋았다
+		PRINTFORMDW 만났을 때로부터 변함없어야 할 그 눈동자도, 훨씬 상냥하고, 따뜻한 것으로 보여…
 		PRINTL
-		PRINTFORMDL でも、それらは全て過ぎ去った過去…
-		PRINTFORMDW そして今は想い出に浸っている場合ではない
+		PRINTFORMDL 에서도, 그것들은 모두 지나가 버린 과거…
+		PRINTFORMDW 그리고 지금은 추억에 잠겨 있을 때는 아니다
 		
-		;ＢＧＭカットイン(フラワリングナイト)
+		;BGM 컷 인(후라와링나이트)
 		CALL BGM_CUTIN(CSVCSTR(9, 14, 0), 1)
 		
 		PRINTL
-		PRINTFORMDW 今まで多くのものを失ってきた。中には自ら望んで切り捨ててきたものもあったが…
-		PRINTFORMDW 運命というものは、何故か私のかけがえの無いものばかり奪っていく
-		PRINTFORMDW それは突然に、無慈悲に、訪れるのが常であり、私の想いとは裏腹な結果になるのが常であった
-		PRINTFORMDW だがそんな過去に決別し、運命を操る悪魔の従者として生きる現在、私はもう何も失うつもりはなかった
+		PRINTFORMDW 지금까지 많은 것을 잃어 왔다. 안에는 스스로 바라봐 잘라 버려 온 것도 있었지만…
+		PRINTFORMDW 운명이라는 것은, 왜일까 나의 둘도 없는 것(뿐)만 빼앗아 간다
+		PRINTFORMDW 그것은 돌연에, 무자비하게, 방문하는 것이 보통이며, 나의 생각과는 정반대인 결과가 되는 것이 보통이었다
+		PRINTFORMDW 이지만 그런 과거에 결별해, 운명을 조종하는 악마의 수행원으로서 사는 현재, 나는 이제(벌써) 아무것도 잃을 생각은 없었다
 		PRINTL
-		PRINTFORMDW それが何であれ、私の大切なものを奪うのは絶対に許さない
-		PRINTFORMDW かけがえの無いものが失われるのを、手をこまねいて見ているようなまねは二度としない
-		PRINTFORMDW 例えこの身がどうなろうと私はアリスを軛から解放し、救い出す
-		PRINTFORMDW そう、決意を新たにした…
+		PRINTFORMDW 그것이 뭐가 되었든, 나의 중요한 것을 빼앗는 것은 절대로 허락하지 않는다
+		PRINTFORMDW 둘도 없는 것이 없어지는 것을, 손을 팔짱을 껴 보고 있는 것 같은 흉내는 두 번 다시 하지 않는다
+		PRINTFORMDW 비유하고 이 몸이 어떻게 되려고 나는 앨리스를 액으로부터 해방해, 구조해 낸다
+		PRINTFORMDW 그렇게, 결의를 새롭게 했다…
 		
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;初回以外
+	;첫회 이외
 	;=================================================
 	SELECTCASE RANDEVENT(2, 5)
 		CASE 0
-			PRINTFORMW 「あら、何か考え事？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ん、いや別に何も。ちょっとぼんやりしてただけよ」")
-			PRINTFORMW 「そう…、貴女って意外とそういうとこあるわよね？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「どういう意味よ」")
-			PRINTFORMW 「止めておくわ、言ったら絶対怒るもの。ふふ」
+			PRINTFORMW 「아라, 뭔가 걱정거리?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「응, 아니별로 아무것도. 조금 멍하니 하고 있었을 뿐이야」")
+			PRINTFORMW 「그래…, 당신이라는거 의외로 그러한 곳 있네요?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「어떤 의미야」")
+			PRINTFORMW 「멈추어 두어요, 말하면 절대 화내는 것. 후후」
 		CASE 1
-			PRINTFORMW 「準備はいいかしら、咲夜？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ええ、何も問題はないわよ」")
-			PRINTFORMW 「それは何よりだけど…、違和感を感じるのはなぜかしらね？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「考えすぎじゃないの」")
-			PRINTFORMW 「そうね、たぶんそうなんでしょうけど…」
+			PRINTFORMW 「준비는 좋을까, 사쿠야?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「에에, 아무것도 문제는 없어요」")
+			PRINTFORMW 「그것은 무엇보다이지만…, 위화감을 느끼는 것은 왜일까요?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「지나치게 생각하는 것이 아니야」")
+			PRINTFORMW 「그렇구나, 아마 그렇겠지만…」
 	ENDSELECT
-	;一行空ける
+	;일행 비운다
 	PRINTL
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教完了（好意2000以上） FIRSTEVENT(7)
+;조교 완료(호의 2000이상) FIRSTEVENT(7)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;・咲夜視点
-;・このあたりでようやく軌道に乗る感じだと思われ
+;·사쿠야 시점
+;·이 근처에서 간신히 궤도에 오르는 느낌이라고 생각되고
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("調教完了") && KFLAG:(FLAG:ご主人様):51 == 1 && TALENT:TARGET:ご主人様
+IF 구상기입체크(100) && AFFECTION("조교 완료") && KFLAG:(FLAG:주인님):51 == 1 && TALENT:TARGET:주인님
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(7)
+	IF 구상기입체크(100) && FIRSTEVENT(7)
 		
-		;フォントをセット
+		;폰트를 세트
 		CALL SETFONT_K14
-		CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　帯びる悲劇の色濃く")
+		CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　띠는 비극의 현저하고")
 		CLEARLINE 1
-		CALL FADE(28, COLOR_K14("white"), COLOR_K14("black"), "　　　　　その姿はただ力なく")
+		CALL FADE(28, COLOR_K14("white"), COLOR_K14("black"), "　　　　　그 모습은 다만 힘 없고")
 		CLEARLINE 1
-		CALL FADE(32, COLOR_K14("white"), COLOR_K14("black"), "　　　　　呼びかける声は届かない……")
+		CALL FADE(32, COLOR_K14("white"), COLOR_K14("black"), "　　　　　부르는 소리는 닿지 않는다……")
 		CLEARLINE 1
-		;フォントをリセット
+		;폰트를 리셋트
 		CALL RESETFONT_K14
 		
-		PRINTFORMDW 次第に自分を保つのが難しくなる
-		PRINTFORMDW 流れに身を任せてしまいたいという抗しがたい欲求は日々高まり、私の身を焦がしていく
+		PRINTFORMDW 점차 자신을 유지하는 것이 어려워진다
+		PRINTFORMDW 흐름에 몸을 맡겨 버리고 싶다고 하는 저항하기 어려운 욕구는 나날 높아져, 나의 몸을 태워 간다
 		PRINTL
-		PRINTFORMDW 仕方が無い、とも思う。元々想いを寄せていた相手なのだから
-		PRINTFORMDW アリスの繊細な指が私の身体を這う度に、身も心も蕩けてしまいそうになる
-		PRINTFORMDW 浅ましい嬌声をあげ、ただ、なすがままの私は、与えられる快楽に抗う事もできず、堕とされていく……
+		PRINTFORMDW 어쩔 수 없는, 이라고도 생각한다. 원래 마음을 보내고 있던 상대인 것이니까
+		PRINTFORMDW 앨리스의 섬세한 손가락이 나의 신체를 길 때에, 몸도 마음도 녹아 버릴 것 같게 된다
+		PRINTFORMDW 야비한 교성을 주어 다만, 하는 대로의 나는, 주어지는 쾌락에 저항하는 일도 하지 못하고, 떨어뜨려져 간다……
 		PRINTL
-		PRINTFORMDW それは歪な愛の形、ずっと心に描いていた、望んだ形ではなかったが
-		PRINTFORMDW これは彼女なりの愛、歪んではいるが、アリスの全てを賭した、愛の形だった
-		PRINTFORMDW そう、私には理解できた……
+		PRINTFORMDW 그것은 삐뚤어진 사랑의 형태, 쭉 마음에 그리고 있던, 바란 형태는 아니었지만
+		PRINTFORMDW 이것은 그녀나름의 사랑, 비뚤어지고는 있지만, 앨리스의 모두를 건, 사랑의 형태였다
+		PRINTFORMDW 그렇게, 나에게는 이해할 수 있었다……
 		PRINTL
 		
-		;フェードアウト
-		CALL FADE(25, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "　　　　　　　　　でも……")
+		;페이드 아웃
+		CALL FADE(25, COLOR2_K14("SAKUYA"), COLOR_K14("black"), "　　　　　　　　　에서도……")
 		CLEARLINE 1
 		
-		PRINTFORMDW このような事を続けていい訳がない
-		PRINTFORMDW アリスは平静を装っているが、魔術の反動が彼女の身体を蝕んでいっている事は明らかだった
-		PRINTFORMDW そして事態を打開出来るのがこの私しかいない以上、このまま流されてしまう訳にはいかなかった…
+		PRINTFORMDW 이러한 일을 계속해도 좋을 이유가 없다
+		PRINTFORMDW 앨리스는 평정을 가장하고 있지만, 마술의 반동이 그녀의 신체를 침식해 가고 있는 일은 분명했다
+		PRINTFORMDW 그리고 사태를 타개 할 수 있는 것이 이 나 밖에 없는 이상, 이대로 흐르게 되어 버릴 수는 없었다…
 		PRINTL
-		PRINTFORMDW 私は気付いていた…アリスの指に嵌められた見慣れない指輪の存在を…
-		PRINTFORMDW 事の起こりから気付いていたにも関わらず、他の事柄に注意を奪われ、その存在をすっかり忘れていた
-		PRINTFORMDL 見事な細工が施されたそれは、過剰な装飾を好まないはずの彼女が本来するはずが無いものであり、
-		PRINTFORMDW 何がしかの意味があるに違いなかった
-		PRINTFORMDW そして意味があるとすれば、それは魔術に深く関わるものであるというのは想像に難くない
+		PRINTFORMDW 나는 깨닫고 있던… 앨리스의 손가락에 끼워진 낯선 반지의 존재를…
+		PRINTFORMDW 일의 시초로부터 깨닫고 있었음에도 관련되지 않고, 다른 일에 주의를 빼앗겨 그 존재를 완전히 잊고 있었다
+		PRINTFORMDL 훌륭한 세공이 베풀어진 그것은, 과잉인 장식을 좋아하지 않아야 할 그녀가 본래 할 리가 없는 것으로 있어,
+		PRINTFORMDW 얼마간의 의미가 있을 것임에 틀림없었다
+		PRINTFORMDW 그리고 의미가 있다고 하면, 그것은 마술에 깊게 관련되는 것이다는 것은 상상하기 어렵지 않다
 		PRINTL
-		PRINTFORMDW あの指輪さえなんとかできれば、などと単純な思考をする訳ではないが、
-		PRINTFORMDW これが事態打開への糸口であることは間違いないように思われた
-		PRINTFORMDW それでも能力を封じられ糸で自由に動けない現状、取れる手段は限られている…
-		PRINTFORMDW アリスが衰弱するのを待つ事は出来ない。あまりにリスクが高く、最悪の場合、私はかけがえのない人を失ってしまう
+		PRINTFORMDW 그 반지조차 어떻게든 할 수 있으면, 등이라고 단순한 사고를 할 것은 아니지만,
+		PRINTFORMDW 이것이 사태 타개에의 실마리인 것은 틀림없다고 생각되었다
+		PRINTFORMDW 그런데도 능력을 봉쇄되고 실로 자유롭게 움직일 수 없는 현상, 잡히는 수단은 한정되어 있다…
+		PRINTFORMDW 앨리스가 쇠약하는 것을 기다리는 일은 할 수 없다. 너무나 리스크가 높고, 최악의 경우, 나는 둘도 없는 사람을 잃어 버린다
 		PRINTL
-		PRINTFORMDW そうなる前になんとかしなければ…
-		PRINTFORMDW 近頃アリスが当初程警戒心を抱いてない様子なのは、私にとってある意味朗報だった
-		PRINTFORMDW ただそれは、明らかに彼女の心身の衰弱を示しており、素直に喜べる類のものではないのも確かだった…
+		PRINTFORMDW 그렇게 되기 전에 어떻게든 하지 않으면…
+		PRINTFORMDW 최근 앨리스가 당초정도 경계심을 안지 않은 모습인 것은, 나에게 있어 어느 의미 희소식이었다
+		PRINTFORMDW 다만 그것은, 분명하게 그녀의 심신의 쇠약을 나타내고 있어 솔직하게 기뻐할 수 있는 종류의 것은 아닌 것도 확실했다…
 		PRINTL
-		PRINTFORMDW それでもその事実は、そう遠くない時期に何らかの機会が訪れる事を私に予感させる
-		PRINTFORMDW 恐らくチャンスは一度きり。失敗は絶対に許されない
+		PRINTFORMDW 그런데도 그 사실은, 그렇게 멀지 않은 시기에 어떠한 기회가 찾아오는 일을 나에게 예감 시킨다
+		PRINTFORMDW 아마 찬스는 한 번 만. 실패는 절대로 용서되지 않는다
 		
-		CALL BGM_CUTIN("メイドと血の懐中時計", 1)
+		CALL BGM_CUTIN("메이드와 피의 회중 시계", 1)
 		
-		PRINTFORMDW 神経を研ぎ澄ませ獲物を待ち受ける狩人のように、いつの日か訪れる機会に備えなければならない
-		PRINTFORMDW かつての私が、常にそうしてきたように…
+		PRINTFORMDW 신경을 예리하게 해 사냥감을 기다리는 사냥꾼과 같이, 언제의 날인가 방문할 기회에 대비하지 않으면 안 된다
+		PRINTFORMDW 한 때의 내가, 항상 그렇게 해서 온 것처럼…
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;汎用処理
+	;범용 처리
 	SELECTCASE RANDEVENT(2, 6)
 		CASE 0
-			PRINTFORML 「ねぇ、咲夜？ 何かあったの？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「何の話よ」")
-			PRINTFORML 「なんか雰囲気が変わったような気がするんだけど…私の気のせいかしら？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別に何も無いし、貴女の気のせいではなくて？」")
-			PRINTFORMW 「そう、ならいいんだけど…」
+			PRINTFORML 「저기, 사쿠야? 뭔가 있었어?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「무슨이야기야」")
+			PRINTFORML 「뭔가 분위기가 바뀐 것 같은 생각이 들지만… 나의 기분탓일까?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「별로 아무것도 없고, 당신의 기분탓이 아니라?」")
+			PRINTFORMW 「그래, 그러면 좋지만…」
 		CASE 1
-			PRINTFORMW 「咲夜、調子はどうかしら？」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「別に？ 変わりないわよ」")
-			PRINTFORMW 「そう…それならいいんだけど、ね…」
+			PRINTFORMW 「사쿠야, 상태는 어떨까?」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「별로? 변함없어요」")
+			PRINTFORMW 「그렇게… 그렇다면 좋지만, 말야…」
 	ENDSELECT
-	;一行空ける
+	;일행 비운다
 	PRINTL
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;調教済み（好意1000以上） FIRSTEVENT(9) RANDEVENT(8)
+;조교가 끝난(호의 1000이상) FIRSTEVENT(9) RANDEVENT(8)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;・篭絡されつつある咲夜
-;・そして新たな策をめぐらす
+;·농락되고 있는 사쿠야
+;·그리고 새로운 책을 돌린다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("調教済み") && KFLAG:(FLAG:ご主人様):51 == 1 && TALENT:TARGET:ご主人様
+IF 구상기입체크(100) && AFFECTION("조교가 끝난 상태") && KFLAG:(FLAG:주인님):51 == 1 && TALENT:TARGET:주인님
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(9)
-		PRINTFORMDW 部屋に近づく足音、アリスの足音、それを心待ちにしている私
-		PRINTFORMDW 日々、アリスによって与えられる快楽に、私は溺れかけている…
+	IF 구상기입체크(100) && FIRSTEVENT(9)
+		PRINTFORMDW 방에 가까워지는 발소리, 앨리스의 발소리, 그것을 손꼽아 기다리고 있는 나
+		PRINTFORMDW 나날, 앨리스에 의해 주어지는 쾌락에, 나는 빠지고 있다…
 		PRINTL
-		PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。ご機嫌いかが？」
+		PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 기분 어떠세요?」
 		PRINTL
-		PRINTFORMW 「あら、そんな嬉しそうな顔しちゃって」
-		PRINTFORMW 「でも、フフ…すっかり素直になってくれたみたいで、私も嬉しいわ♪」
+		PRINTFORMW 「아라, 그렇게 기쁜 듯한 얼굴 해 버려」
+		PRINTFORMW 「그렇지만, 후후… 완전히 솔직해져 준 것 같아, 나도 기뻐요♪」
 		PRINTL
-		PRINTFORMDW アリスが微笑みながら近づいてくる
-		PRINTFORMDW しかし柔らかな表情とは裏腹に、その物腰は抜け目無く、隙が無い…
-		PRINTFORMDW だが、そのような態度が、私に本来の目的を思い起こさせた事は皮肉と言うべきだろう
-		PRINTFORMDW そう、このまま溺れてしまう訳にはいかない、このままではいけない……
+		PRINTFORMDW 앨리스가 미소지으면서 가까워져 온다
+		PRINTFORMDW 그러나 부드러운 표정과는 정반대로, 그 언행은 빈틈 없고, 틈이 없다…
+		PRINTFORMDW 이지만, 그러한 태도가, 나에게 본래의 목적을 생각해내게 한 일은 야유라고 말해야 할 것이다
+		PRINTFORMDW 그렇게, 이대로 빠져 버릴 수는 없는, 이대로는 안 된다……
 		PRINTL
-		PRINTFORMDW アリスは日々、衰弱の度合いを増しているようだった
-		PRINTFORMDW 本来の透き通るような美しい白い肌は、徐々に血の気を失っているように、私には見えた…
-		PRINTFORMDW 私は欲した、一瞬の隙を、僅かな隙を！
+		PRINTFORMDW 앨리스는 나날, 쇠약의 정도를 늘리고 있는 것 같았다
+		PRINTFORMDW 본래가 투명한 것 같은 아름다운 흰 피부는, 서서히 핏기를 잃고 있도록(듯이), 나에게는 보였다…
+		PRINTFORMDW 나는 바란, 일순간의 틈을, 얼마 안되는틈을!
 		PRINTL
-		PRINTFORMDW しかし、それが得られないならば、何か考える必要があるかも知れない
-		PRINTFORMDW 従順に振る舞い、油断を誘うのも一つの手だろうか？
-		PRINTFORMDW 稚拙な考えではあるが、取るべき手段が限られた現状、試してみる価値はあるように思われた…
+		PRINTFORMDW 그러나, 그것을 얻을 수 없다면, 뭔가 생각할 필요가 있을지도 모른다
+		PRINTFORMDW 온순하게 행동해, 방심을 권하는 것도 하나의 손일까?
+		PRINTFORMDW 치졸한 생각이지만, 취해야 할 수단이 한정된 현상, 시험해 볼 가치는 있는 것처럼 생각되었다…
 		PRINTL
-		PRINTFORMW 「咲夜、今日もたっぷり可愛がってあげるわ…」
-		PRINTFORMW 「貴女は何も考えなくていいの、全部私に任せて頂戴」
+		PRINTFORMW 「사쿠야, 오늘도 충분히 귀여워해 주어요…」
+		PRINTFORMW 「당신은 아무것도 생각하지 않아도 괜찮은 것, 전부 나에게 맡겨 줘」
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;汎用処理
-	PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。元気そうで何よりね？」
+	;범용 처리
+	PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 건강한 것 같아 무엇보다네?」
 	SELECTCASE RANDEVENT(2, 8)
 		CASE 0
-			PRINTFORMW 「大分馴染んできたみたいね」
-			PRINTFORMW 「いいわよ…素直にしてればもっと気持ちよくしてあげる…」
+			PRINTFORMW 「상당히 친숙해 져 온 것 같구나」
+			PRINTFORMW 「좋아요… 솔직하게 하고 있으면 좀 더 기분 좋게 해 준다…」
 		CASE 1
-			PRINTFORMW 「ねぇ、最近随分素直じゃない？ 何か企んでるのかしら」
-			PRINTFORM 「でも、フフ…貴女のそんなところは大好きよ…
+			PRINTFORMW 「저기, 최근 상당히 솔직하지 않아? 뭔가 기도하고 있을까」
+			PRINTFORM 「그렇지만, 후후… 당신의 그런 곳은 정말 좋아해요…
 			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
 	ENDSELECT
-	;一行空ける
+	;일행 비운다
 	PRINTL
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;溺愛（好感度2000以上） FIRSTEVENT(8)
+;몹시 사랑함(호감도 2000이상) FIRSTEVENT(8)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ふたたびアリス視点
-;アリス、次第に自らの狂気に飲み込まれていく
+;다시 앨리스 시점
+;앨리스, 점차 스스로의 광기에 삼켜져 간다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("溺愛") && KFLAG:(FLAG:ご主人様):51 == 1 && TALENT:TARGET:ご主人様
+IF 구상기입체크(100) && AFFECTION("몹시 사랑함") && KFLAG:(FLAG:주인님):51 == 1 && TALENT:TARGET:주인님
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(8)
-		;フォントをセット
+	IF 구상기입체크(100) && FIRSTEVENT(8)
+		;폰트를 세트
 		CALL SETFONT_K14
-		;昼間
+		;낮
 		IF TIME == 0
-			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　愛情も友情も嘘だらけ")
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　애정도 우정도 거짓말투성이")
 			CLEARLINE 1
-			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　試して、遊んで、壊して、そして……")
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　시험해, 놀아, 부수고, 그리고……")
 			CLEARLINE 1
-		;夜間
+		;야간
 		ELSE
-			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　闇は月を焦がし、私の心をも侵食していく")
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　어둠은 달을 태워, 나의 마음을 침식해 나간다")
 			CLEARLINE 1
-			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　深く、そして、確実に……")
+			CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　깊고, 그리고, 확실히……")
 			CLEARLINE 1
 		ENDIF
-		;フォントをリセット
+		;폰트를 리셋트
 		CALL RESETFONT_K14
 		
-		PRINTFORMDW 咲夜と肌を合わせている間だけは、私は全てを忘れる事ができた…
-		PRINTFORMDW ただそれは、一方的な押し付け、彼女の気持ちを踏みにじる、おぞましき所業
-		PRINTFORMDW ふとした瞬間に、私は我が身を振り返る
+		PRINTFORMDW 사쿠야와 피부를 맞추고 있는 동안 만은, 나는 모두를 잊을 수가 있었다…
+		PRINTFORMDW 다만 그것은, 일방적인 강압해, 그녀의 기분을 짓밟는, 무서운 소행
+		PRINTFORMDW 사소한 순간에, 나는 우리 몸을 되돌아 본다
 		PRINTL
-		PRINTFORMDW 咲夜を拘束し、縛りつけ、玩具のように扱い、倒錯した愛情を注ぎ込む
-		PRINTFORMDW それはあまりに甘美で、邪悪で、私の心も体も蝕んでいく……
+		PRINTFORMDW 사쿠야를 구속해, 묶어 붙여, 완구와 같이 취급해, 도착 한 애정을 쏟는다
+		PRINTFORMDW 그것은 너무나 감미로워, 사악해, 나의 마음도 몸도 침식해 간다……
 		PRINTL
-		PRINTFORMDW 忍び寄る狂気、募る焦燥、身体は負荷に悲鳴を上げ始めている
-		PRINTFORMDW あの日以来、術は発動させたままだ。時間と空間を操れる咲夜相手に、たとえ一瞬でも術を解く訳にはいかなかった
-		PRINTFORMDW 私は睡眠をとる事もやめ、その維持に努めてきた
+		PRINTFORMDW 소리없이 다가오는 광기, 모집하는 초조, 신체는 부하에 비명을 올리기 시작하고 있다
+		PRINTFORMDW 그 날 이래, 방법은 발동시킨 채다. 시간으로 공간을 조종할 수 있는 사쿠야 상대에게, 비록 일순간이라도 방법을 풀 수는 없었다
+		PRINTFORMDW 나는 수면을 취하는 일도 그만두어 그 유지에 노력해 왔다
 		PRINTL
-		PRINTFORMDW この術にはもう一つの側面がある
-		PRINTFORMDW それは極薄く、限られた範囲の、外部の因果から切り離された結界を展開する事だ
+		PRINTFORMDW 이 방법에는 하나 더의 측면이 있다
+		PRINTFORMDW 그것은 극박구, 한정된 범위의, 외부의 인과로부터 떼어내진 결계를 전개하는 일이다
 		
-		CALL BGM_CUTIN("不思議の国のアリス", 1)
+		CALL BGM_CUTIN("이상한 나라의 앨리스", 1)
 		
-		PRINTFORMDW 世界から完全に切り離された、小さな、私達だけのワンダーランド、二人だけの世界
-		PRINTFORMDW 結界内に居る者の、過去、現在、未来は外部の者に知覚されず、その存在は忘れさられる
-		PRINTFORMDW 私がそれを維持し続けられる限り……
+		PRINTFORMDW 세계로부터 완전하게 떼어내진, 작은, 우리들만의 원더랜드, 두 명만의 세계
+		PRINTFORMDW 결계내에 있는 사람의, 과거, 현재, 미래는 외부의 사람에게 지각되지 않고, 그 존재는 잊고 떠나진다
+		PRINTFORMDW 내가 그것을 유지해 계속되는 한……
 		PRINTL
-		PRINTFORMDW 魂を扱う術は未だ完成の目処がたたず、時間だけが悪戯に過ぎ去っていく
-		PRINTFORMDW その間にも、術の反動は確実に身体を蝕み、私は狂おしいまでの焦燥感に苛まれる
-		PRINTFORMDW 考える事はやめた、そのはずだった。にも関わらず、心に去来する様々な感情はとどまる事なく、私を苦しめる
+		PRINTFORMDW 영혼을 취급할 방법은 아직도 완성의 목표가 끊지 않고, 시간만이 못된 장난에 지나가 버려 간다
+		PRINTFORMDW 그 사이에도, 방법의 반동은 확실히 신체를 침식해, 나는 미칠 듯한까지의 초조감에 시달린다
+		PRINTFORMDW 생각하는 일은 그만둔, 그럴 것이었다. 에도 불구하고, 마음에 오고 가는 여러가지 감정은 머무는 무사히, 나를 괴롭힌다
 		PRINTL
-		PRINTFORMDW 本当にこれで良かったのだろうか？
-		PRINTFORMDW 私が真に欲したのは、朽ちることのない、しかし物言わぬ、感情の無い人形だったのだろうか？
-		PRINTFORMDW いけない、これ以上考えてはいけない……
+		PRINTFORMDW 정말로 이것으로 좋았던 것일까?
+		PRINTFORMDW 내가 실로 바란 것은, 썩을리가 없는, 그러나 말하지 않는, 감정이 없는 인형이었을까?
+		PRINTFORMDW 안 되는, 더 이상 생각해서는 안 된다……
 		PRINTL
-		PRINTFORMDW 眼下に広がる深淵、私はそこに渡された細い、細い、銀の糸を渡っている
-		PRINTFORMDW 自らその糸を削りながら、いっそ身を投げてしまいたくなる衝動に抗いながら、私は渡っていく
-		PRINTFORMDW 背後から迫りくる、破滅の気配に恐れ、慄きながら……
+		PRINTFORMDW 눈아래에 퍼지는 심연, 나는 거기에게 건네진 가는, 가는, 은의실을 건너고 있다
+		PRINTFORMDW 스스로 그 실을 깎으면서, 차라리 몸을 던져 버리고 싶어지는 충동에 저항하면서, 나는 건너 간다
+		PRINTFORMDW 배후로부터 다가오는, 파멸의 기색으로 무서워해, 전율하면서……
 		PRINTL
 		
-		CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　お願い、誰か…")
+		CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "　　　　　부탁해요, 누군가…")
 		CLEARLINE 1
-		CALL FADE(32, COLOR_K14("white"), COLOR_K14("black"), "　　　　　私を止めて、そして……")
-		;行削除x2でPRINTLまで消す
+		CALL FADE(32, COLOR_K14("white"), COLOR_K14("black"), "　　　　　나를 멈추고, 그리고……")
+		;행 삭제 x2로 PRINTL까지 지운다
 		CLEARLINE 2
 		
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;昼間
+	;낮
 	IF TIME == 0
-		PRINTFORMW 「おはよう咲夜、良い天気ね…」
-	;夜間
+		PRINTFORMW 「안녕 사쿠야, 좋은 날씨군요…」
+	;야간
 	ELSE
-		PRINTFORMW 「今晩は咲夜、いい夜ね…」
+		PRINTFORMW 「오늘 밤은 사쿠야, 좋은 밤이군요…」
 	ENDIF
 	SELECTCASE RANDEVENT(2, 7)
 		CASE 0
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス。少し具合が悪いように見えるんだけど」")
-			PRINTFORMW 「大丈夫、私の事なら心配要らないわ」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ホントに大丈夫なの？」")
-			PRINTFORMW 「私、しつこいのは嫌いよ。咲夜…」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기 앨리스. 조금 상태가 좋지 않은 것 처럼 보이지만」")
+			PRINTFORMW 「괜찮아, 나의 일이라면 걱정 필요하지 않아요」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「정말 괜찮아?」")
+			PRINTFORMW 「나, 끈질긴 것은 싫어요. 사쿠야…」
 		CASE 1
-			PRINTFORMW 「さぁ始めるわよ、咲夜。さっさと準備して頂戴」
-			CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇ、アリス。貴女…本当に大丈夫なの？」")
-			PRINTFORMW 「メイド長は心配性ね？ 大した事ないわよ、こんなの…」
+			PRINTFORMW 「자 시작해요, 사쿠야. 빨리 준비해 줘」
+			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기, 앨리스. 당신… 정말로 괜찮아?」")
+			PRINTFORMW 「메이드장은 걱정 많은 성격이군요? 굉장한 일 없어요, 이런 건…」
 	ENDSELECT
 	PRINTL
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;順応（好意100以上・好感度100以上） FIRSTEVENT(14) RANDEVENT(12)
+;순응(호의 100이상·호감도 100이상) FIRSTEVENT(14) RANDEVENT(12)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;アリスと咲夜、互いの感情をぶつけ合う
+;앨리스와 사쿠야, 서로의 감정을 서로 부딪친다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("順応") && KFLAG:(FLAG:ご主人様):51 == 1 && TALENT:TARGET:ご主人様
+IF 구상기입체크(100) && AFFECTION("순응") && KFLAG:(FLAG:주인님):51 == 1 && TALENT:TARGET:주인님
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(14)
-		PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。調子はどうかしら？」
-		PRINTFORMDW アリスは相変わらずいつもの調子だ
-		PRINTFORMDW 表情は穏やかだが、その立ち居振る舞いには一分の隙もない
-		PRINTFORMDW ただこれは、彼女が狂ってしまった訳ではない事も示している。狂人にこれだけ計算された隙の無さはありえない…
+	IF 구상기입체크(100) && FIRSTEVENT(14)
+		PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 상태는 어떨까?」
+		PRINTFORMDW 앨리스는 변함 없이 평소의 상태다
+		PRINTFORMDW 표정은 온화하지만, 그 행동거지에는 1분의 틈도 없다
+		PRINTFORMDW 다만 이것은, 그녀가 미쳐 버렸을 것이 아닌 것도 가리키고 있다. 광인에게 이만큼 계산된 틈이 없음은 있을 수 없다…
 		PRINTL
-		PRINTFORMDW そしてこれは私にとって好材料でもある。まだアリスの理性に訴える余地は残されている
-		PRINTFORMDW 最初に彼女は言った。伊達や酔狂ではないと…
-		PRINTFORMDW その覚悟を覆すのは並大抵ではないだろうが、可能性がゼロで無い以上、試す価値は十分にある
+		PRINTFORMDW 그리고 이것은 나에게 있어 호재료이기도 하다. 아직 앨리스의 이성에 호소하는 여지는 남아 있다
+		PRINTFORMDW 최초로 그녀는 말했다. 겉멋이나 유별나지 않으면…
+		PRINTFORMDW 그 각오를 뒤집는 것은 이만 저만은 아닐 것이지만, 가능성이 제로가 아닌 이상, 시험하는 가치는 충분히 있다
 		PRINTL
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ねぇアリス。こんな事もう終わりにしない？」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「私達、お互い好きって事が確認出来たんだし、もうこんな事に意味なんて…」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「저기 앨리스. 이런 일 이제 끝내지 않아?」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「우리들, 서로를 좋아한다는 것이 확인 할 수 있던 것이고, 이제(벌써) 이런 일에 의미는…」")
 		PRINTL
-		PRINTFORMDW アリスは肩を竦めた後、私の頬に手を添えて言った…
-		PRINTFORMW 「咲夜、咲夜、可愛い咲夜、愛しい咲夜、そして…」
-		CALL FADEIN(20, "「愚かな咲夜」")
+		PRINTFORMDW 앨리스는 어깨를 움츠린 후, 나의 뺨에 손을 더해 말했다…
+		PRINTFORMW 「사쿠야, 사쿠야, 사랑스러운 사쿠야, 사랑스러운 사쿠야, 그리고…」
+		CALL FADEIN(20, "「어리석은 사쿠야」")
 		PRINTL
-		PRINTFORMW 「貴女がこんなに愚鈍だったなんてねぇ。ちょっと興醒めかしら…」
-		PRINTFORMDW 途端にアリスの雰囲気が禍々しいものに変わった…
+		PRINTFORMW 「당신이 이렇게 미련했던이라니. 조금 흥을 깸일까…」
+		PRINTFORMDW 순간에 앨리스의 분위기가 불길한 것으로 바뀌었다…
 		PRINTL
-		PRINTFORMW 「もうどうでもいいのよ、そんな事……」
+		PRINTFORMW 「이제(벌써) 아무래도 좋은 것, 그런 일……」
 		
-		;ＢＧＭカットイン(人形裁判　～ 人の形弄びし少女)
+		;BGM 컷 인(인형 재판  ~사람의 형태 희롱해 소녀)
 		CALL BGM_CUTIN(CSTR:13, 1)
 		
-		PRINTFORMW 「私が欲しいのは人形としての貴女、永遠に朽ちる事のない貴女なの」
-		PRINTFORMW 「私を一人置き去りにする事なんて許さない……」
+		PRINTFORMW 「나를 갖고 싶은 것은 인형으로서의 당신, 영원히 썩는 일이 없는 당신이야」
+		PRINTFORMW 「나를 한사람 방치로 하는 일 같은거 허락하지 않는다……」
 		PRINTL
-		PRINTFORMDW 私は咄嗟に言葉が出なかった。しかし、このままにしておく訳にもいかない…
+		PRINTFORMDW 나는 순간에 말이 나오지 않았다. 그러나, 이대로 해 둘 수도 없다…
 		PRINTL
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「アリス、よく聞いて。私は貴女の人形になったって構わない」")
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「でも、こんな事続けてたら、貴女が先に壊れてしまうわ！」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「앨리스, 잘 들어. 나는 당신의 인형이 되어도 상관없다」")
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그렇지만, 이런 일 계속하고 있으면, 당신이 먼저 망가져 버려요!」")
 		PRINTL
-		PRINTFORMW 「別に大した事ないわよ、こんなの。この程度の事で魔法使いは……」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「嘘よ！ 手の傷は日に日に酷くなってるし、本当はつらいんでしょう」")
+		PRINTFORMW 「별로 굉장한 일 없어요, 이런 건. 이 정도의 일로 마법사는……」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「거짓말이야! 손의 상처는 나날이 심해지고 있고, 사실은 괴롭겠지요」")
 		PRINTL
-		PRINTFORMW 「分かったような口を利かないで欲しいわね！ 人間の貴女に、一体何が分かるって言うのよ！」
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「分かるわよ！ 分からない訳が、無いじゃない……」")
+		PRINTFORMW 「안 것 같은 말을 하지 않으면 좋네요! 인간의 당신에게, 도대체 무엇을 알 수 있다 라고 말하는거야!」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「알아요! 모를 이유가, 없잖아……」")
 		PRINTL
-		CALL PRINTCOLORW(COLOR_K14("咲夜"), "「ずっとアリスを見てきた！　ずっとアリスが好きだった！　貴女が苦しんでるのは見れば分かるのよ！」")
-		PRINTFORMW 「面白い冗談ね？　私が気持ちを打ち明けようとすると、いつもいつも逃げていた癖に！」
+		CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「쭉 앨리스를 봐 왔다!   쭉 앨리스를 좋아했다!   당신이 괴로워하고 있는 것은 보면 아는거야!」")
+		PRINTFORMW 「재미있는 농담이군요?   내가 기분을 털어 놓으려고 하면, 언제나 언제나 도망치고 있던 주제에!」
 		PRINTL
-		PRINTFORMDW 返す言葉が無かった……
-		PRINTFORMDW そう、たしかにアリスの言う通りだった。好きでたまらない癖に、いざとなると私は逃げ、はぐらかしてきた…
-		PRINTFORMDW 変化を恐れ、友人という立場に甘え、こんな結果を招いてしまった
+		PRINTFORMDW 돌려주는 말이 없었다……
+		PRINTFORMDW 그렇게, 분명히 앨리스의 말하는 대로였다. 좋아하고 견딜 수 없는 주제에, 막상 때가 되면 나는 도망쳐, 따돌려 왔다…
+		PRINTFORMDW 변화를 무서워해, 친구라고 하는 입장에 응석부려, 이런 결과를 불러 버렸다
 		PRINTL
-		PRINTFORMDW これは私の咎、アリスをここまで追い詰めてしまったのは全て私のせい……
-		PRINTFORMDW 心が折れそうだった。しかし、完全に折れてしまう訳にはいかない
+		PRINTFORMDW 이것은 나의 허물, 앨리스를 여기까지 추적해 버린 것은 모두 나의 탓……
+		PRINTFORMDW 심이 접힐 것 같았다. 그러나, 완전하게 접혀 버릴 수는 없다
 		PRINTL
-		PRINTFORMDW この状況を打開しアリスを救えるのは、恐らくこの私だけなのだから……
+		PRINTFORMDW 이 상황을 타개해 앨리스를 구할 수 있는 것은, 아마 이 나만이기 때문에……
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;汎用処理
-	PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。気分はいかが？」
+	;범용 처리
+	PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 기분은 어떠세요?」
 	SELECTCASE RANDEVENT(2, 12)
 		CASE 0
-			PRINTFORMW 「少しは慣れてもらえたかしら？」
-			PRINTFORM 「でも、こんなのまだまだ序の口よ。貴女にはもっと色々としてあげるから…
+			PRINTFORMW 「조금은 익숙해져 받을 수 있었을까?」
+			PRINTFORM 「그렇지만, 이런 건 아직도 시초야. 당신에게는 좀 더 다양하게 해 주기 때문에…
 			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
 		CASE 1
-			PRINTFORMW 「あら、なんか大人しいわね？　何か企んでるのかしら」
-			PRINTFORMW 「フフ、それはそれで面白そうだけど、ね♪」
+			PRINTFORMW 「아라, 뭔가 얌전하네요?   뭔가 기도하고 있을까」
+			PRINTFORMW 「후후, 그건 그걸로 재미있을 것 같지만, 말야♪」
 	ENDSELECT
-	;一行空ける
+	;일행 비운다
 	PRINTL
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;不倶戴天（好意-300未満） FIRSTEVENT(10)
+;불구대천(호의-300 미만) FIRSTEVENT(10)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;・度重なる酷い仕打ちに、心の底から調教者を憎んでいる
+;·거듭되는 심한 처사에, 마음속으로부터 조교자를 미워하고 있다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("不倶戴天") && KFLAG:(FLAG:ご主人様):51 == 1
-	PRINTFORMW 「そんなに睨んだって、どうにもなりはしないわ」
-	PRINTFORMW 「所詮%CNAME(MASTER, TARGET)%は…只の、か弱い人間…」
-	PRINTFORMW 「いや、人形かしら…ね」
+IF 구상기입체크(100) && AFFECTION("불구대천") && KFLAG:(FLAG:주인님):51 == 1
+	PRINTFORMW 「그렇게 노려봐도, 어떻게도 되지는 않아요」
+	PRINTFORMW 「결국%CNAME(MASTER, TARGET)%는… 무료의, 연약한 인간…」
+	PRINTFORMW 「아니, 인형일… 까요」
 	PRINTL
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;恐怖（好意200未満・トラウマLv5以上） FIRSTEVENT(11) RANDEVENT(9)
+;공포(호의 200 미만·트라우마 Lv5 이상) FIRSTEVENT(11) RANDEVENT(9)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;・心に傷を作られ、ご主人様の姿を見るだけで怯えてしまう
-;・トラウマの種は「%ACTSTR(CFLAG:MASTER:8)%」で表示できる
-;　例）PRINTFORMW 「もう%ACTSTR(CFLAG:MASTER:8)%は嫌ですって？」
+;·마음에 상처를 만들어져 주인님의 모습을 보는 것만으로 무서워해 버린다
+;·트라우마의 종은 「%ACTSTR(CFLAG:MASTER:8)%」로 표시할 수 있다
+;  예) PRINTFORMW 「이제(벌써)%ACTSTR(CFLAG:MASTER:8)%는 싫습니다 라고?」
 ;
-;※ACTSTRは未定義のものを拾えていないので要修正(忘れそうだけど)
+;※ACTSTR는 미정도리의 것을 주울 수 있지 않기 때문에 요점 수정(잊을 것 같지만)
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("恐怖") && KFLAG:(FLAG:ご主人様):51 == 1
+IF 구상기입체크(100) && AFFECTION("공포") && KFLAG:(FLAG:주인님):51 == 1
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(11)
-		PRINTFORMW 「そんなあからさまに怯えられると、あまり良い気持ちはしないわね。それに……」
-		PRINTFORMW 「貴女がそんな風になってしまうなんて、ちょっと興醒めかしら？」
-		PRINTFORMW 「でも、私の人形にするには、この方が都合がいいのかも。フフ…」
+	IF 구상기입체크(100) && FIRSTEVENT(11)
+		PRINTFORMW 「그렇게 명백하게 두려워해지면, 너무 좋은 기분은 하지 않네요. 거기에……」
+		PRINTFORMW 「당신이 그런 식으로 되어 버리다니 조금 흥을 깸일까?」
+		PRINTFORMW 「그렇지만, 나의 인형으로 하려면, 이 (분)편이 적당한 것인지도. 후후…」
 		RETURN 1
 	ENDIF
 	
-	;初回以外
-	PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。調子はどうかしら？」
+	;첫회 이외
+	PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 상태는 어떨까?」
 	SELECTCASE RANDEVENT(2, 9)
 		CASE 0
-			PRINTFORMW 「ねぇ、そんなに怖がらないで頂戴」
-			PRINTFORMW 「貴女にそんな態度されると、私、悲しくなっちゃうわ」
-			PRINTFORMW 「フフフ…」
+			PRINTFORMW 「저기, 그렇게 무서워하지 말아줘」
+			PRINTFORMW 「당신에게 그런 태도 되면, 나, 슬퍼져 버려요」
+			PRINTFORMW 「후후후…」
 		CASE 1
-			PRINTFORMW 「大丈夫、今に恐怖なんて感じないようにしてあげるわ」
-			PRINTFORMW 「だってそうでしょう？　人形にとって感情なんて邪魔でしかないもの」
-			PRINTFORMW 「フフフ…」
+			PRINTFORMW 「괜찮아, 지금에 공포 같은거 느끼지 않도록 해 주어요」
+			PRINTFORMW 「왜냐하면 그렇겠지요?   인형에게 있어 감정 같은거 방해에 지나지 않는 것」
+			PRINTFORMW 「후후후…」
 	ENDSELECT
-	;一行空ける
+	;일행 비운다
 	PRINTL
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;反抗（好意0以下・反抗刻印Lv3以上） FIRSTEVENT(12) RANDEVENT(10)
+;반항(호의 0 이하·반항 각인 Lv3 이상) FIRSTEVENT(12) RANDEVENT(10)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;・気付いてしまった憎しみ、それに戸惑う咲夜
+;·깨달아 버린 미움, 거기에 당황하는 사쿠야
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("反抗") && KFLAG:(FLAG:ご主人様):51 == 1 && TALENT:TARGET:ご主人様
+IF 구상기입체크(100) && AFFECTION("반항") && KFLAG:(FLAG:주인님):51 == 1 && TALENT:TARGET:주인님
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(12)
-		PRINTFORMW 「あら、いやねぇ咲夜。そんなに睨んじゃって」
-		PRINTFORMW 「可愛い顔が台無しよ？　フフフ…」
+	IF 구상기입체크(100) && FIRSTEVENT(12)
+		PRINTFORMW 「아라, 싫은 있고 사쿠야. 그렇게 노려봐 버려」
+		PRINTFORMW 「사랑스러운 얼굴이 엉망이야?   후후후…」
 		PRINTL
-		PRINTFORMDW アリスにそう言われ初めて気付く。自分がそのような表情を見せていた事を…
-		PRINTFORMDW 考えたくない事だが、私の中に彼女に対する憎しみが芽生え始めているのだろうか
-		PRINTFORMDW このままではいけない…このままでは、私は……
+		PRINTFORMDW 앨리스에 그렇게 말해져 처음으로 깨닫는다. 자신이 그러한 표정을 보이고 있던 일을…
+		PRINTFORMDW 생각하고 싶지 않은 것이지만, 나의 안에 그녀에 대한 미움이 싹트기 시작하고 있을까
+		PRINTFORMDW 이대로는 안 되는… 이대로는, 나는……
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;汎用処理
-	PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。機嫌悪そうね？」
+	;범용 처리
+	PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 기분 나쁜 것 같구나?」
 	SELECTCASE RANDEVENT(2, 10)
 		CASE 0
-			PRINTFORMW 「私は別に構わないわよ」
-			PRINTFORMW 「ただそんな顔されると、ちょっと意地悪したくなっちゃうかも、ね…」
+			PRINTFORMW 「나는 별로 상관없어요」
+			PRINTFORMW 「다만 그런 얼굴 되면, 조금 심술쟁이하고 싶어져 버릴지도 몰라,…」
 		CASE 1
-			PRINTFORMW 「まぁでも、貴女らしいとも言えるかしら」
-			PRINTFORMW 「私、嫌いじゃないわよ？　そういうの。フフ…」
+			PRINTFORMW 「뭐 그렇지만, 당신답다고 말할 수 있을까」
+			PRINTFORMW 「나, 싫지 않아요?   그러한 것. 후후…」
 	ENDSELECT
-	;一行空ける
+	;일행 비운다
 	PRINTL
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;興味（好感度500以上） FIRSTEVENT(13) RANDEVENT(11)
+;흥미(호감도 500이상) FIRSTEVENT(13) RANDEVENT(11)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;ここで初めてアリス視点
-;アリスさんの魔術解説コーナー
+;여기서 처음으로 앨리스 시점
+;앨리스씨의 마술 해설 코너
 ;-------------------------------------------------
-IF 口上記入チェック(100) && AFFECTION("興味") && KFLAG:(FLAG:ご主人様):51 == 1 && TALENT:TARGET:ご主人様
+IF 구상기입체크(100) && AFFECTION("흥미") && KFLAG:(FLAG:주인님):51 == 1 && TALENT:TARGET:주인님
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(13)
-		;アリス、そっと部屋を覗く
-		PRINTFORMDW 気配を絶ち、ドアをそっと開ける。咲夜はこちらに気付かず、所在なさ気に窓の方を見ている
-		PRINTFORMDW 透き通るような白い肌、スラリと伸びた長い手足。私は一瞬見惚れてしまう…
-		PRINTFORMDW ようやくこちらに気付いた咲夜が、抜け目のない一瞥を投げかけてくる
+	IF 구상기입체크(100) && FIRSTEVENT(13)
+		;앨리스, 살그머니 방을 들여다 본다
+		PRINTFORMDW 기색을 끊어, 문을 살그머니 연다. 사쿠야는 이쪽을 알아차리지 않고, 심심함 기분에 창의 (분)편을 보고 있다
+		PRINTFORMDW 투명한 것 같은 흰 피부, 술술 성장한 긴 수족. 나는 일순간 넋을 잃고 봐 버린다…
+		PRINTFORMDW 간신히 이쪽을 알아차린 사쿠야가, 빈틈이 없는 일별을 던져 온다
 		PRINTL
-		PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。ご機嫌いかが？」
+		PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 기분 어떠세요?」
 		PRINTL
 		;------------------------------------------------------------------------------------------------------
-		;対面、そして一人語り
+		;대면, 그리고 한사람 이야기
 		;------------------------------------------------------------------------------------------------------
-		PRINTFORMDW お決まりの一言。その間にも咲夜はこちらの様子を注意深く伺っている
-		PRINTFORMDW 私の隙を探っているのだ。一瞬の、私が見せるかもしれない、僅かな隙を……
-		PRINTFORMDW 最初から気付いていた。咲夜が大人しくこのような状態を甘受するとは、私も考えてはいなかった
+		PRINTFORMDW 상투적인 한 마디. 그 사이에도 사쿠야는 이쪽의 모습을 주의 깊게 듣고 있다
+		PRINTFORMDW 나의 틈을 찾고 있다. 일순간의, 내가 보일지도 모르는, 얼마 안되는틈을……
+		PRINTFORMDW 최초부터 깨닫고 있었다. 사쿠야가 얌전하고 이러한 상태를 감수 한다는 것은, 나도 생각하지는 않았다
 		PRINTL
-		PRINTFORMDW 彼女を縛る魔力の糸も完全ではない。そもそも意思を持つ者を完全に拘束し、操る術など存在しなかった
-		PRINTFORMDW 人形を操るのとは訳が違う。対象の意思の力を押さえ込むのは並大抵の事ではない
+		PRINTFORMDW 그녀를 묶는 마력의 실도 완전하지 않다. 원래 의사를 가지는 사람을 완전하게 구속해, 조종할 방법 따위 존재하지 않았다
+		PRINTFORMDW 인형을 조종하는 것과는 (뜻)이유가 다르다. 대상의 의사의 힘을 억누르는 것은 이만 저만의 일은 아니다
 		PRINTL
-		PRINTFORMDW 咲夜の持つ、時間と空間を操る能力も厄介だ。おかげであらゆる能力の干渉を阻み、封じる術式が必要だった
-		PRINTFORMDW そしてそのような術式は私の能力に余るものであり、他の力を引き出し、利用する必要があった
+		PRINTFORMDW 사쿠야가 가지는, 시간으로 공간을 조종하는 능력도 귀찮다. 덕분에 모든 능력의 간섭을 막아, 봉하는 술식이 필요했다
+		PRINTFORMDW 그리고 그러한 술식은 나의 능력에 남는 것이어, 다른 힘을 끌어 내, 이용할 필요가 있었다
 		PRINTL
 		PRINTFORMDW ――。
 		CALL BGM_CUTIN("the Grimoire of Alice", 1)
 		PRINTL
-		PRINTFORMDW 私は占星術と錬金術に答えを求めた
-		PRINTFORMDW 星の影響力を引き出し、錬金術によりその力を制御し増幅させる事、それが最適であるように思われた
+		PRINTFORMDW 나는 점성술과 연금술에 대답을 요구했다
+		PRINTFORMDW 별의 영향력을 끌어 내, 연금술에 의해 그 힘을 제어해 증폭시키는 일, 그것이 최적이도록 생각되었다
 		PRINTL
 		;------------------------------------------------------------------------------------------------------
-		;錬金術解説
+		;연금술 해설
 		;------------------------------------------------------------------------------------------------------
-		PRINTFORMDW 求める術式に相応しいのは太陽だ
-		PRINTFORMDW 太陽が表すのは影響力のある人々の支持の獲得、友情、調和の招来と獲得――
-		PRINTFORMDW そして、その影響力を引き出す為に必要なのは、金に埋め込まれたダイヤモンド或いはトパーズだった
+		PRINTFORMDW 요구하는 술식에 적당한 것은 태양이다
+		PRINTFORMDW 태양이 나타내는 것은 영향력이 있는 사람들의 지지의 획득, 우정, 조화의 초래와 획득─
+		PRINTFORMDW 그리고, 그 영향력을 끌어 내기 위해서(때문에) 필요한 것은, 돈에 파묻힌 다이아몬드 혹은 토파즈였다
 		PRINTL
 		;------------------------------------------------------------------------------------------------------
-		;作中では七つの過程で簡単に済ませたが、十二の過程というのもある。その過程は十二宮に照応し十二ヶ月を要するとか
-		;その内容のリストはイングランドのGEORGE RIPLEYにより1470年『"THE COMPOUND OF ALCHYMIE"』内の『"The Twelve Gates"』で記されている
-		;"The first Gate." から"The twelfth Gate."までの全十二章で構成された詩篇の形をとっている
+		;작중에서는 7개의 과정에서 간단하게 끝마쳤지만, 12의 과정이라고 하는 것도 있다. 그 과정은 12궁에 조응해 12개월을 필요로 한다든가
+		;그 내용의 리스트는 잉글랜드의 GEORGE RIPLEY에 의해 1470년 『"THE COMPOUND OF ALCHYMIE"』안의 『"The Twelve Gates"』로 기록되고 있다
+		;"The first Gate."로부터"The twelfth Gate."까지의 전 12장으로 구성된 시편의 형태를 취하고 있다
 		;CALCINATION, SOLUTION. SEPARATION, CONJUNCTION, PUTREFACTION, CONGELATION, CIBATION, SUBLIMATION, FERMENTATION,
-		;EXALTATION. MULTIPLICATION, PROJECTION. だそうで。長いので引用するのは止めた
-		;興味があるなら"GEORGE RIPLEY UNTO King EDWARD the fourth"や"THE COMPOUND OF ALCHYMIE"等で検索すれば何か引っかかるはず
+		;EXALTATION. MULTIPLICATION, PROJECTION. 라고 해. 길기 때문에 인용하는 것은 멈추었다
+		;흥미가 있다면"GEORGE RIPLEY UNTO King EDWARD the fourth"야"THE COMPOUND OF ALCHYMIE"등으로 검색하면 뭔가 걸릴 것
 		;------------------------------------------------------------------------------------------------------
-		PRINTFORMDW 単なる金を使うつもりはなかった
-		PRINTFORMDW 私はそれを錬金によって精製し、賢者の石は無理としても、それに近い性格を持つものを作り上げる事にした
-		PRINTFORMDW 金はある比率に於ける四大元素の混合物、私は七つの惑星に照応する七つの過程を経て、それを作り上げた
+		PRINTFORMDW 단순한 돈을 사용할 생각은 없었다
+		PRINTFORMDW 나는 그것을 연금에 의해 정제 해, 현자의 돌은 무리라고 해도, 거기에 가까운 성격을 가지는 것을 만들어내는 일로 했다
+		PRINTFORMDW 금은 있는 비율에 있어서 4 근본소의 혼합물, 나는 7개의 혹성에 조응하는 7개의 과정을 거쳐, 그것을 만들어냈다
 		PRINTL
-		PRINTFORMDW 出来上がった物を指輪に整形する。術式の性格的にも指輪の形状が最適のように思われた
-		PRINTFORMDW そして、身体に『en to pan(すべてはひとつなり)』という金言を刻まれ、自らの尾を飲み込み、輪の形を成す蛇の刻印を施す
+		PRINTFORMDW 완성된 것을 반지에 정형한다. 술식의 성격적으로도 반지의 형상이 최적과 같이 생각되었다
+		PRINTFORMDW 그리고, 신체에 『en to pan(모든 것은 하나든지)』라고 하는 금언을 새겨져 스스로의 꼬리를 삼켜, 고리의 형태를 이루는 뱀의 각인을 베푼다
 		
-		PRINTFORMD この金言は三つの言葉と七つの文字からなり、数秘術で言うところの『
-		CALL PRINTFONTSTYLE(COLOR_K14("white"), "あらゆるもの", 1)
-		PRINTFORMDW 』を意味する
+		PRINTFORMD 이 금언은 3개의 말과 7개의 문자로부터 되어, 수비술로 말하는 곳의 『
+		CALL PRINTFONTSTYLE(COLOR_K14("white"), "모든 것", 1)
+		PRINTFORMDW 』를 의미한다
 		
-		PRINTFORMDW その和は一へと還元され、唯一なるもの、十全なるものを表す
-		PRINTFORMDW それが意味するのは太陽であり、賢者の石と同一であり、私は自らの錬金術の稚拙さを、数秘術で補おうとしたのだった
+		PRINTFORMDW 그 화는 1으로 환원되어 유일한 것, 만전 되는 것을 나타낸다
+		PRINTFORMDW 그것이 의미하는 것은 태양이며, 현자의 돌과 동일하고, 나는 스스로의 연금술의 치졸함을, 수비술로 보충하려고 한 것이었다
 		PRINTL
-		PRINTFORMDW 埋め込む鉱物にはダイヤモンドを選んだ。それが意味する永遠の絆、純潔、不屈は目指す術式に相応しかった
-		PRINTFORMDW 完成した指輪は満足のいく出来栄えだったが、これだけではまだ不完全だ
-		PRINTFORMDW 私の中の魔力と結合させ、太陽の影響力を引き出すには儀式が必要だった…
+		PRINTFORMDW 묻는 광물에는 다이아몬드를 선택했다. 그것이 의미하는 영원의 인연, 순결, 불굴은 목표로 하는 술식에 적당했다
+		PRINTFORMDW 완성한 반지는 만족이 가는 솜씨였지만, 이것만으로는 아직 불완전함
+		PRINTFORMDW 나의 안의 마력과 결합시켜, 태양의 영향력을 끌어 내려면 의식이 필요했다…
 		CALL TWAIT1_K14
 		;------------------------------------------------------------------------------------------------------
-		;魔術解説
+		;마술 해설
 		;------------------------------------------------------------------------------------------------------
-		PRINTFORMDW 他の星ならいざ知らず、太陽の場合には日中に儀式を行う必要がある
-		PRINTFORMDW 人目につかず、邪魔が入らない場所としては魔法の森は最適だった
+		PRINTFORMDW 다른 별이라면 모르겠으나, 태양의 경우에는 일중에 의식을 실시할 필요가 있다
+		PRINTFORMDW 남의 눈에 띄지 않고, 방해가 들어가지 않는 장소로서는 마법의 숲은 최적이었다
 		PRINTL
-		PRINTFORMDW 未使用の羊皮紙に、十字架が上に置かれた二つの同心円を描く
-		PRINTFORMDW 十字架の左は太陽のシンボル、右は月のシンボル、上は星のシンボルだ
+		PRINTFORMDW 미사용의 양피지에, 십자가가 위에 놓여진 2개의 동심원을 그린다
+		PRINTFORMDW 십자가의 왼쪽은 태양의 심볼, 오른쪽은 달의 심볼, 위는 별의 심볼이다
 		
-		PRINTFORMD 内側の円の中に自分の名前を書き、羊皮紙の反対側には魔力を帯びた名前、
+		PRINTFORMD 안쪽의 엔안에 자신의 이름을 써, 양피지의 반대 측에는 마력을 띤 이름,
 		CALL PRINTCOLOR(COLOR2_K14("pink"), "Melchiael Bareschas")
-		PRINTFORMDW を書く
+		PRINTFORMDW 를 쓴다
 		
 		PRINTL
-		PRINTFORMDW 昼の十二時にこの護符を持ち外に出る。私以外誰も立ち入る事のない場所に向かう
-		PRINTFORMDW 羊皮紙を地面に置き右足を羊皮紙の上に、左膝を地面に置く
-		PRINTFORMDW そして一時間燃え続けるに十分な長さの蝋燭を右手に持ち、太陽に向けて精神を集中し、呪文を唱える
+		PRINTFORMDW 낮의 12시에 이 부적을 가져 밖에 나온다. 나 이외 아무도 들어가는 일이 없는 장소에 향한다
+		PRINTFORMDW 양피지를 지면에 두어 오른쪽 다리를 양피지 위에, 왼쪽 무릎을 지면에 둔다
+		PRINTFORMDW 그리고 1시간 계속 불타기에 충분한 길이의 초를 오른손에 가져, 태양에 향하여 정신을 집중해, 주문을 주창한다
 		PRINTL
 		PRINTL
 		
-		;フォントをセット
+		;폰트를 세트
 		CALL SETFONT_K14
-		CALL FADEIN(20, "われ汝を称える。来たれ、美しき星よ、私の手にする輝く星よ")
+		CALL FADEIN(20, "깨지고 너를 칭한다. 와라, 아름다운 별이야, 내가 손에 넣는 빛나는 별이야")
 		TWAIT 600, 0
 		PRINTL
-		CALL FADEIN(20, "私の吸い込む大気によって、私のなかの息によって、私の触れる土によって、汝よ来たれ")
+		CALL FADEIN(20, "내가 들이 마시는 대기에 의해, 나 속의 숨에 의해, 나의 접하는 흙에 의해, 너야 와라")
 		TWAIT 600, 0
-		;フォントを戻す
+		;폰트를 되돌린다
 		CALL RESETFONT_K14
 		
 		PRINTL
 		PRINTL
-		PRINTFORMDW この呪文は、天上の力を、大気を通じ、息を通じ、私の身体に導く。また羊皮紙を通じ、大地へと導く
-		PRINTFORMDW さもなければ、その力によって、雷によるごとく私の身体は破壊されてしまう
+		PRINTFORMDW 이 주문은, 천상의 힘을, 대기를 통해, 숨을 통해, 나의 신체에 이끈다. 또 양피지를 통해, 대지로 이끈다
+		PRINTFORMDW 아주 없으면, 그 힘에 의해, 번개에 의하는 것과 같이 나의 신체는 파괴되어 버린다
 		PRINTL
-		PRINTFORMDW 呪文はさらに続く……
+		PRINTFORMDW 주문은 한층 더 계속된다……
 		
-		;フォントをセット
+		;폰트를 세트
 		CALL SETFONT_K14
 		PRINTL
 		PRINTL
-		CALL FADEIN(20, "われ、汝、ことをなすもののかたちを、此処に呼ばん")
+		CALL FADEIN(20, "깨져 너, 일을 이루는 것의 형태를, 여기에 부르지 않아")
 		TWAIT 600, 0
 		PRINTL
-		CALL FADEIN(20, "天の力によって、支配惑星の全てによって、四大元素の力によって")
+		CALL FADEIN(20, "하늘의 힘에 의해, 지배 혹성의 모두에 의해, 4 근본소의 힘에 의해")
 		TWAIT 600, 0
 		PRINTL
-		CALL FADEIN(20, "すべて石から、すべて植物から、すべて動物から、或いは何であれ全てそれらから出来ているものによって")
+		CALL FADEIN(20, "모두 돌로부터, 모두 식물로부터, 모두 동물로부터, 혹은 뭐가 되었든 모두 그것들로부터 되어있는 것에 의해")
 		TWAIT 600, 0
 		PRINTL
-		CALL FADEIN(20, "雹と風の力によって、われら全ての欲望の完全なる出口である汝によって、われらがここに獲得しうる力を得んがため")
+		CALL FADEIN(20, "우박과 바람의 힘에 의해, 우리들 모든 욕망의 완전한 출구인 너에 의해, 우리들이 여기에 획득할 수 있는 힘을 얻지 않지만 싶은")
 		TWAIT 600, 0
 		PRINTL
-		CALL FADEIN(25, "望むらくは、この力を、邪悪さや偽りを伴うことなく発揮したい。太陽と天使の創造者、神の名によって")
+		CALL FADEIN(25, "바라건대, 이 힘을, 사악함이나 거짓을 수반하는 일 없이 발휘하고 싶다. 태양과 천사의 창조자, 신의 이름에 의해")
 		;------------------------------------------------------------------------------------------------------
-		;↑『真実の書』より 1517年、エジプト人アリベックにより出版された。その内容は『ソロモンの鍵に』基づいているとされている
-		;上手くはまる気がしたので引用。本来は儀式用の刃物等にエンチャントを付与する際の呪文
+		;↑『진실의 책』보다 1517년, 이집트인 개미 베크에 의해 출판되었다. 그 내용은 『솔로몬의 열쇠에』기초를 두고 있다고 여겨지고 있다
+		;능숙하지는 만생각이 들었으므로 인용. 본래는 의식용의 칼날등에 엔챤트를 부여할 때의 주문
 		;------------------------------------------------------------------------------------------------------
 		TWAIT 600, 0
 		PRINTL
 		PRINTL
-		;フォントを戻す
+		;폰트를 되돌린다
 		CALL RESETFONT_K14
 		
-		PRINTFORMDW この呪文を三回繰り返し、羊皮紙を蝋燭で燃やす。蝋燭と結びついた天上の力によって焼く
-		PRINTFORMDW そして羊皮紙の灰を左の靴の中に入れ、術を用いるまでそうしておく
+		PRINTFORMDW 이 주문을 3회반복해, 양피지를 초로 태운다. 초와 결합된 천상의 힘에 의해 굽는다
+		PRINTFORMDW 그리고 양피지의 재를 왼쪽의 구두안에 넣어, 방법을 이용할 때까지 그렇게 해서 둔다
 		PRINTL
-		PRINTFORMDW ある意味賭けだった。上手くいく保障は何も無く、負担の大きさ故、事前に試す訳にはいかなかった
-		PRINTFORMDW 太陽の影響力である人々の支持の獲得、友情、調和の招来と獲得は、相手の気持ちがこちらにない場合、あまり意味を持たない
-		PRINTFORMDW しかし、結果は悪くないものだった。術の負荷の大きさは予想以上であったけれども……
+		PRINTFORMDW 어느 의미 내기였다. 능숙하게 가는 보장은 아무것도 없고, 부담의 크기 까닭, 사전에 시험할 수는 없었다
+		PRINTFORMDW 태양의 영향력인 사람들의 지지의 획득, 우정, 조화의 초래와 획득은, 상대의 기분이 이쪽에 없는 경우, 그다지 의미를 가지지 않는다
+		PRINTFORMDW 그러나, 결과는 나쁘지 않은 것이었다. 방법의 부하의 크기는 예상 이상으로 있었지만……
 		PRINTL
-		PRINTFORMDW この糸が効果を発揮しているという事実が、彼女が今まで見せてくれなかった心の内を私に教えてくれた…
-		PRINTFORMDW そう、この術式は私に対する気持ちが強ければ強い程、効果を発揮する
-		PRINTFORMDW 咲夜の私に対する想いが、彼女自身を縛るのだ
+		PRINTFORMDW 이 실이 효과를 발휘하고 있다고 하는 사실이, 그녀가 지금까지 보여 주지 않았던 마음중을 나에게 가르쳐 주었다…
+		PRINTFORMDW 그렇게, 이 술식은 나에 대한 기분이 강하면 강할수록, 효과를 발휘한다
+		PRINTFORMDW 사쿠야의 나에 대한 생각이, 그녀 자신을 묶는다
 		PRINTL
-		PRINTFORMDW 糸が見事な効果を発揮するのを見て、私は嬉しかった、涙が出そうだった、一瞬止めていいとさえ思った
+		PRINTFORMDW 실이 훌륭한 효과를 발휘하는 것을 봐, 나는 기뻤다, 눈물이 나올 것 같았던, 일순간 멈추어도 좋다고마저 생각했다
 		PRINTL
 		;------------------------------------------------------------------------------------------------------
-		;@FADE @FADEOUTは現在の仕様だと文字が消えた後も行が残ってしまう。CLEARLINEでの行削除とセットで使う方が無難
+		;@FADE @FADEOUT는 현재의 사양이라면 문자가 사라진 뒤도 행이 남아 버린다. CLEARLINE에서의 행 삭제와 세트로 사용하는 (분)편이 무난
 		;------------------------------------------------------------------------------------------------------
-		CALL FADEOUT(30, "でも……")
+		CALL FADEOUT(30, "에서도……")
 		CLEARLINE 1
-		PRINTFORMDW もう引き返せない。彼女を永遠の存在にするまで、止める訳にはいかない
-		PRINTFORMDW これは人形遣いとしての業。私自身、その業に縛られ、操られるだけの、ただの人形なのかも知れない
-		PRINTFORMDW ある種の狂気に陥っているという自覚はあった。大切な人をいつの日か失うという恐怖が、この私を狂気に駆り立てる
+		PRINTFORMDW 이제 되돌릴 수 없다. 그녀를 영원의 존재로 할 때까지, 멈출 수는 없다
+		PRINTFORMDW 이것은 인형견실 한 업. 나 자신, 그 업에 얽매여 조종될 뿐(만큼)의, 단순한 인형인 것일지도 모른다
+		PRINTFORMDW 어떤 종류의 광기에 빠져 있다고 하는 자각은 있었다. 소중한 사람을 언제의 날인가 잃는다고 하는 공포가, 이 나를 광기에 휘몬다
 		PRINTL
-		PRINTFORMDW 止まらない、でも止めて欲しい、自分が分からなくなる…
-		PRINTFORMDW 私は考える事をやめた。これら一切の事柄に意味を求めるのをやめた。その道の果てには、完全な狂気があるのが分かっていた
+		PRINTFORMDW 멈추지 않는, 그렇지만 멈추었으면 좋은, 자신을 모르게 된다…
+		PRINTFORMDW 나는 생각하는 일을 그만두었다. 이것들 일절의 일에 의미를 요구하는 것을 그만두었다. 그 방면의 끝에는, 완전한 광기가 있는 것이 알고 있었다
 		PRINTL
-		PRINTFORMDW 魂を扱う術はまだ未完成だ。それが完成するまで、この身体が術の負荷に耐えられる事だけを、私は望み、そして祈った……
+		PRINTFORMDW 영혼을 취급할 방법은 아직 미완성이다. 그것이 완성할 때까지, 이 신체가 방법의 부하에 견딜 수 있는 일만을, 나는 바래, 그리고 빌었다……
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;汎用処理
-	PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。ご機嫌いかが？」
+	;범용 처리
+	PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 기분 어떠세요?」
 	SELECTCASE RANDEVENT(2, 11)
 		CASE 0
-			PRINTFORMW 「ねぇ、もう全部受け入れて楽になってしまったらどう？」
-			PRINTFORMW 「私だって、あまり貴女に酷い事はしたくないのよ…」
+			PRINTFORMW 「저기, 벌써 전부 받아들여 편해져 버리면 어때?」
+			PRINTFORMW 「나도, 너무 당신에게 심한 일은 하고 싶지 않은거야…」
 		CASE 1
-			PRINTFORMW 「ねぇ、随分素直になってきたような気がするんだけど…」
-			PRINTFORMW 「私の気のせい？ それとも……フフフ…」
+			PRINTFORMW 「저기, 상당히 솔직해져 온 것 같은 생각이 들지만…」
+			PRINTFORMW 「나의 기분탓? 그렇지 않으면…… 후후후…」
 	ENDSELECT
-	;一行空ける
+	;일행 비운다
 	PRINTL
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;序盤（条件なし） FIRSTEVENT(15) RANDEVENT(13)
+;초반(조건 없음) FIRSTEVENT(15) RANDEVENT(13)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;要は他の条件にヒットしない場合に呼ばれる箇所
+;요점은 다른 조건에 히트 하지 않는 경우에 불리는 개소
 ;-------------------------------------------------
-;・咲夜、事態の打開へ向け策を練る
+;·사쿠야, 사태의 타개에 향해 책을 가다듬는다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && KFLAG:(FLAG:ご主人様):51 == 1 && TALENT:TARGET:ご主人様
+IF 구상기입체크(100) && KFLAG:(FLAG:주인님):51 == 1 && TALENT:TARGET:주인님
 	;=================================================
-	;初回
+	;첫회
 	;=================================================
-	IF 口上記入チェック(100) && FIRSTEVENT(15)
-		PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。気分はどうかしら？」
-		PRINTFORMW 「何も心配しなくていいわ。全部私に任せて頂戴」
-		PRINTFORMW 「貴女はこの私が優しく壊していってあげるから…」
+	IF 구상기입체크(100) && FIRSTEVENT(15)
+		PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 기분은 어떨까?」
+		PRINTFORMW 「아무것도 걱정하지 않아도 괜찮아요. 전부 나에게 맡겨 줘」
+		PRINTFORMW 「당신은 이 내가 상냥하게 부수어 가 주기 때문에…」
 		PRINTL
-		PRINTFORMDW アリスの調子は相変わらずだった。依然として止めるような気配はない
-		PRINTFORMDW そしてその手には、血の滲んだ包帯が巻かれている
-		PRINTFORMDW 術の反動は僅かずつではあるが、着実にアリスの身体を蝕んでいっているようだった…
+		PRINTFORMDW 앨리스의 상태는 변함 없이였다. 여전히 멈추는 것 같은 기색은 없다
+		PRINTFORMDW 그리고 그 손에는, 피가 배인 붕대가 감겨지고 있다
+		PRINTFORMDW 방법의 반동은 조금씩이지만, 착실하게 앨리스의 신체를 침식해 가고 있는 것 같았다…
 		PRINTL
 		
-		;フェードアウト
-		CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "一刻も早くやめさせなければ――")
+		;페이드 아웃
+		CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "일각이라도 빨리 그만두게 하지 않으면―")
 		CLEARLINE 1
 		
-		PRINTFORMDW 私はまだ大丈夫。この程度の事を耐え忍ぶのは造作も無い
-		PRINTFORMDW しかし、アリスが目の前で徐々に壊れていくのを見るのは、耐え難い苦痛だった…
+		PRINTFORMDW 나는 아직 괜찮아. 이 정도의 일을 참는 것은 조작도 없다
+		PRINTFORMDW 그러나, 앨리스가 눈앞에서 서서히 망가져 가는 것을 보는 것은, 참기 어려운 고통이었다…
 		PRINTL
 		
-		;ＢＧＭカットイン(月時計　～ ルナ・ダイアル)
+		;BGM 컷 인(달시계  ~루나·다이얼)
 		CALL BGM_CUTIN(CSVCSTR(9, 13, 0), 1)
 		
-		PRINTFORMDW 隙、そう、一瞬の隙を突く事ができれば…
-		PRINTFORMDW 術が完全ではないと言うのは確かなようで、時折拘束が弱まる事があった
-		PRINTFORMDW アリスに手荒な事をするのは本意ではないが、手段を選んでいる状況ではない
-		PRINTFORMDW 私は魔術というものに関しては全くの素人だ
-		PRINTFORMDW それでも、術者を失神させる事ができれば、術を解除させる事が出来るという事は容易に想像がつく
+		PRINTFORMDW 틈, 그렇게, 일순간의 틈을 찌를 수가 있으면…
+		PRINTFORMDW 방법이 완전하지 않다고 말하는 것은 확실하고 같아서, 때때로 구속이 약해지는 것이 있었다
+		PRINTFORMDW 앨리스에게 난폭한 일을 하는 것은 본의는 아니지만, 수단을 선택하고 있는 상황은 아니다
+		PRINTFORMDW 나는 마술이라는 것에 관해서는 완전한 아마추어다
+		PRINTFORMDW 그런데도, 시술자를 실신시킬 수가 있으면, 방법을 해제시킬 수가 있다고 하는 일은 용이하게 상상이 붙는다
 		PRINTL
-		PRINTFORMDW ただ、私のそんな思惑を知ってか知らずか、アリスは何気ない風を装いながらも、隙を見せる事はなかった…
-		PRINTFORMDW 恐らく防御系のスペルも、私に見えない形で展開しているに違いない
+		PRINTFORMDW 다만, 나의 그런 기대를 아는지 모르는지, 앨리스는 아무렇지도 않은 바람을 가장하면서도, 틈을 보이는 일은 없었다…
+		PRINTFORMDW 아마 방어계의 스펠도, 나로 보이지 않는 형태로 전개하고 있을 것임에 틀림없다
 		PRINTL
-		PRINTFORMDW それでも人であれ妖であれ、完全というものが無い以上、いつかは隙を見せる可能性がある
-		PRINTFORMDW 私に出来るのは、その一瞬の隙を見逃さず、無駄にしないよう、観察を怠らず、その瞬間に備える事……
+		PRINTFORMDW 그런데도 사람이든 요든, 완전이라는 것이 없는 이상, 언젠가는 틈을 보일 가능성이 있다
+		PRINTFORMDW 나에게 할 수 있는 것은, 그 일순간의 틈을 놓치지 않고, 쓸데없게 하지 않게, 관찰을 게을리하지 않고, 그 순간에 대비하는 일……
 		PRINTL
 		
-		;フェードアウト
-		CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "手遅れになる前に、何とかしないと――")
-		;行削除x2
+		;페이드 아웃
+		CALL FADE(30, COLOR_K14("white"), COLOR_K14("black"), "손을 쓸 수 없게 되기 전에, 어떻게든 하지 않으면―")
+		;행 삭제 x2
 		CLEARLINE 2
 		
 		CALL TWAIT3_K14
 		RETURN 1
 	ENDIF
 	
-	;汎用処理
-	PRINTFORMW 「\@ TIME ? 今晩は # おはよう \@咲夜。気分はどうかしら？」
+	;범용 처리
+	PRINTFORMW 「\@ TIME ? 오늘 밤은# 안녕\@사쿠야. 기분은 어떨까?」
 	SELECTCASE RANDEVENT(2, 13)
 		CASE 0
-			PRINTFORMDW 私はアリスにややきつい一瞥を投げかけた…
+			PRINTFORMDW 나는 앨리스에게 약간 힘든 일별을 던졌다…
 			PRINTL
-			PRINTFORMW 「ふふ、元気そうで何よりね♪」
-			PRINTFORMW 「さぁ、観念して…」
-			PRINTFORMW 「今日も思いっきり愉しませてもらうから」
+			PRINTFORMW 「후후, 건강한 것 같아 무엇보다네♪」
+			PRINTFORMW 「자, 체념해…」
+			PRINTFORMW 「오늘도 마음껏 즐겁게 해 받기 때문에」
 		CASE 1
-			PRINTFORMW 「そんなにジロジロ見て、私の顔に何か付いてる？」
-			PRINTFORMW 「あぁ、言わなくていいのよ。大体察しはついてるから」
-			PRINTFORMW 「咲夜、貴女って分かり易いわね。ウフフ…」
+			PRINTFORMW 「그렇게 빤히 봐, 나의 얼굴에 뭔가 붙어 있어?」
+			PRINTFORMW 「아아, 말하지 않아도 괜찮은거야. 대개 짐작은 가고 있기 때문에」
+			PRINTFORMW 「사쿠야, 당신이라고 알기 쉽네요. 우후후…」
 	ENDSELECT
-	;一行空ける
+	;일행 비운다
 	PRINTL
 	RETURN 1
 ENDIF

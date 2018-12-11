@@ -1,663 +1,663 @@
-﻿;────────────────────────────────────
-;異常 (Fist70/ＡFi71/両Fi72/放置73/公衆74/Ｐ装75/嗤う9/足で18/足舐55/木馬67)
-;────────────────────────────────────
+﻿;─
+;이상(Fist70/AFi71/양Fi72/방치 73/공중 74/P장 75/비웃는다 9/다리로 18/족지 55/목마 67)
+;─
 @ACT_M7(ARG = 0)
-;1以上なら判定を行わない
+;1이상이라면 판정을 실시하지 않는다
 #DIM LCOUNT, 1
 
-;関数初期化
+;함수 초기화
 CALL ACT_M_INIT(7)
 
-;処理開始
+;처리 개시
 
 LOCALS = ACT_ACTM7
 
-CALL CHA_CRI_VAR, "基準値"
+CALL CHA_CRI_VAR, "기준치"
 CALLFORM %LOCALS%_REFERENCE
 
-CALL CHA_CRI_VAR, "調教者の素質"
+CALL CHA_CRI_VAR, "조교자의 소질"
 CALLFORM %LOCALS%_TALENT_T
 
-CALL CHA_CRI_VAR, "調教対象の素質"
+CALL CHA_CRI_VAR, "조교 대상의 소질"
 CALLFORM %LOCALS%_TALENT_M
 
-CALL CHA_CRI_VAR, "調教対象のフィスト適性"
+CALL CHA_CRI_VAR, "조교 대상의 피스트 적성"
 CALLFORM %LOCALS%_FIST
 
-CALL CHA_CRI_VAR, "調教者の能力"
+CALL CHA_CRI_VAR, "조교자의 능력"
 CALLFORM %LOCALS%_ABL_T
 
-CALL CHA_CRI_VAR, "調教対象の能力"
+CALL CHA_CRI_VAR, "조교 대상의 능력"
 CALLFORM %LOCALS%_ABL_M
 
-CALL CHA_CRI_VAR, "調教者のALI"
+CALL CHA_CRI_VAR, "조교자의 ALI"
 CALLFORM %LOCALS%_ALI_T
 
-CALL CHA_CRI_VAR, "調教者の気力"
+CALL CHA_CRI_VAR, "조교자의 기력"
 CALLFORM %LOCALS%_MENTAL_T
 
-CALL CHA_CRI_VAR, "調教者の理性"
+CALL CHA_CRI_VAR, "조교자의 이성"
 CALLFORM %LOCALS%_REASON_T
 
-CALL CHA_CRI_VAR, "調教者の興味"
+CALL CHA_CRI_VAR, "조교자의 흥미"
 CALLFORM %LOCALS%_INTEREST_T
 
-CALL CHA_CRI_VAR, "調教対象の体力"
+CALL CHA_CRI_VAR, "조교 대상의 체력"
 CALLFORM %LOCALS%_PHYSICAL_M
 
-CALL CHA_CRI_VAR, @"調教者の状態(%CONDITION(TCVAR:状態変化)%)"
+CALL CHA_CRI_VAR, @"조교자 상태(%CONDITION(TCVAR:상태변화)%)"
 CALLFORM %LOCALS%_CONDITION_T
 
-CALL CHA_CRI_VAR, "媚薬"
+CALL CHA_CRI_VAR, "미약"
 CALLFORM %LOCALS%_DRAG
 
-CALL CHA_CRI_VAR, "縄"
+CALL CHA_CRI_VAR, "줄"
 CALLFORM %LOCALS%_ROPE
 
-CALL CHA_CRI_VAR, "アイマスク"
+CALL CHA_CRI_VAR, "아이마스크"
 CALLFORM %LOCALS%_EYEMASK
 
-CALL CHA_CRI_VAR, "ボールギャグ"
+CALL CHA_CRI_VAR, "볼개그"
 CALLFORM %LOCALS%_GAG
 
-CALL CHA_CRI_VAR, "三角木馬"
+CALL CHA_CRI_VAR, "삼각 목마"
 CALLFORM %LOCALS%_HORSE
 
-CALL CHA_CRI_VAR, "野外プレイ"
+CALL CHA_CRI_VAR, "야외 플레이"
 CALLFORM %LOCALS%_OUT
 
-CALL CHA_CRI_VAR, "道具をはずした"
+CALL CHA_CRI_VAR, "도구를 떼었다"
 CALLFORM %LOCALS%_TAKE_OFF_TOOLS
 
-CALL CHA_CRI_VAR, "調教者自慰中"
+CALL CHA_CRI_VAR, "조교자 자위중"
 CALLFORM %LOCALS%_MASTURBATION_T
 
-CALL CHA_CRI_VAR, "調教対象の衣服"
+CALL CHA_CRI_VAR, "조교 대상의 의복"
 CALLFORM %LOCALS%_CLOTH_M
 
-CALL CHA_CRI_VAR, "もっとハードにして"
+CALL CHA_CRI_VAR, "좀 더 하드하게 해"
 CALLFORM %LOCALS%_PLEASE_HARD
 
-CALL CHA_CRI_VAR, "許しを乞う"
+CALL CHA_CRI_VAR, "허가를 청한다"
 CALLFORM %LOCALS%_PLEASE_HELP
 
-CALL CHA_CRI_VAR, "お仕置き"
+CALL CHA_CRI_VAR, "벌"
 CALLFORM %LOCALS%_OSHIOKI
 
-CALL CHA_CRI_VAR, "連続行動補正"
+CALL CHA_CRI_VAR, "연속 행동 보정"
 CALLFORM %LOCALS%_PREV
 
-CALL CHA_CRI_VAR, "口上補正値"
+CALL CHA_CRI_VAR, "구상 보정치"
 CALL ACT_ACTM_KOJO_CORRECTION_T, 7
 
-CALL CHA_CRI_VAR, "ACT補正値"
+CALL CHA_CRI_VAR, "ACT 보정치"
 CALLFORM %LOCALS%_CORRECTION(ARG)
 
-;ARGが1以上なら処理中断
+;ARG가 1이상이라면 처리 중단
 SIF ARG
 	RETURN RESULT
 
-CALL CHA_CRI_VAR, "実行判定"
+CALL CHA_CRI_VAR, "실행 판정"
 CALLFORM %LOCALS%_ABLE
 
-;────────────────────────────────────
-;最終判定
-;────────────────────────────────────
-CALL DEF_CRI_VAR("最大前者")
-LOCAL = GET_CRI_VAR("決定")
+;─
+;최종 판정
+;─
+CALL DEF_CRI_VAR("최대 전자")
+LOCAL = GET_CRI_VAR("결정")
 IF LOCAL == -1
-	SIF FLAG:デバッグ
-		PRINTL (異常ACT分類に実行可能なACTが存在しません)
+	SIF FLAG:디버그
+		PRINTL (이상 ACT 분류에 실행 가능한 ACT가 존재하지 않습니다)
 	TFLAG:ACT = -1
-	CALL ACT_MENU_RESULT(2, "異常")
+	CALL ACT_MENU_RESULT(2, "이상")
 ELSE
 	TFLAG:ACT = GET_ACTNUM(RESULTS)
 ENDIF
 CALL ANA_CRI_VAR()
 
 ;-------------------------------------------------------------------------
-;基準値
+;기준치
 ;-------------------------------------------------------------------------
 @ACT_ACTM7_REFERENCE
 
-;要らないかもと思ったので試しに無効化@これみ
+;필요하지 않을지도라고 생각했으므로 시험삼아 무효화@이것 보고
 [SKIPSTART]
-CALL ADD_CRI_VAR("フィストファック", 10)
-CALL ADD_CRI_VAR("アナルフィスト", 10)
-CALL ADD_CRI_VAR("両穴フィスト", 10)
-CALL ADD_CRI_VAR("放置プレイ", 10)
-CALL ADD_CRI_VAR("公衆肉便器プレイ", 10)
-CALL ADD_CRI_VAR("不気味に笑う", 8)
-CALL ADD_CRI_VAR("足コキする", 5)
-CALL ADD_CRI_VAR("足舐め強制", 5)
-CALL ADD_CRI_VAR("三角木馬", 5)
+CALL ADD_CRI_VAR("피스트 성교", 10)
+CALL ADD_CRI_VAR("애널 피스트", 10)
+CALL ADD_CRI_VAR("양구멍 피스트", 10)
+CALL ADD_CRI_VAR("방치 플레이", 10)
+CALL ADD_CRI_VAR("공중 육변기 플레이", 10)
+CALL ADD_CRI_VAR("기분 나쁘게 웃는다", 8)
+CALL ADD_CRI_VAR("풋잡 한다", 5)
+CALL ADD_CRI_VAR("다리 빨고 강제", 5)
+CALL ADD_CRI_VAR("삼각 목마", 5)
 [SKIPEND]
 
 ;-------------------------------------------------------------------------
-;調教者の素質を参照
+;조교자의 소질을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM7_TALENT_T
 
-;調教者が臆病/気丈
-IF TALENT:臆病
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", -5)
-ELSEIF TALENT:気丈
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", , 5)
+;조교자가 겁쟁이/기장
+IF TALENT:겁쟁이
+	CALL ADD_CRI_VAR("공중 육변기 플레이", -5)
+ELSEIF TALENT:기장
+	CALL ADD_CRI_VAR("공중 육변기 플레이", , 5)
 ENDIF
 
-;調教者が大人しい/生意気
-IF TALENT:大人しい
-	CALL ADD_CRI_VAR("フィストファック", -5)
-	CALL ADD_CRI_VAR("アナルフィスト", -6)
-	CALL ADD_CRI_VAR("両穴フィスト", -7)
-ELSEIF TALENT:生意気
-	CALL ADD_CRI_VAR("放置プレイ", , 4)
-	CALL ADD_CRI_VAR("不気味に笑う", , 6)
-	CALL ADD_CRI_VAR("足コキする", 2, 2)
+;조교자가 얌전하다/거만함
+IF TALENT:얌전함
+	CALL ADD_CRI_VAR("피스트 성교", -5)
+	CALL ADD_CRI_VAR("애널 피스트", -6)
+	CALL ADD_CRI_VAR("양구멍 피스트", -7)
+ELSEIF TALENT:거만함
+	CALL ADD_CRI_VAR("방치 플레이", , 4)
+	CALL ADD_CRI_VAR("기분 나쁘게 웃는다", , 6)
+	CALL ADD_CRI_VAR("풋잡 한다", 2, 2)
 ENDIF
 
-;調教者がプライド高い/低い
-IF TALENT:プライド高い
-	CALL ADD_CRI_VAR("足舐め強制", , 5)
-ELSEIF TALENT:プライド低い
-	CALL ADD_CRI_VAR("足舐め強制", , -5)
+;조교자가 프라이드높음/낮다
+IF TALENT:프라이드높음
+	CALL ADD_CRI_VAR("다리 빨고 강제", , 5)
+ELSEIF TALENT:프라이드낮음
+	CALL ADD_CRI_VAR("다리 빨고 강제", , -5)
 ENDIF
 
-;調教者が自制的/衝動的
-IF TALENT:自制的
-	CALL ADD_CRI_VAR("放置プレイ", , 4)
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", -5)
-ELSEIF TALENT:衝動的
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", , 5)
-	CALL ADD_CRI_VAR("三角木馬", 4)
+;조교자가 자제적/충동적
+IF TALENT:자제적
+	CALL ADD_CRI_VAR("방치 플레이", , 4)
+	CALL ADD_CRI_VAR("공중 육변기 플레이", -5)
+ELSEIF TALENT:충동적
+	CALL ADD_CRI_VAR("공중 육변기 플레이", , 5)
+	CALL ADD_CRI_VAR("삼각 목마", 4)
 ENDIF
 
-;調教者が無関心/好奇心
-IF TALENT:無関心
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", 5)
-ELSEIF TALENT:好奇心
-	CALL ADD_CRI_VAR("足コキする", , 6)
+;조교자가 무관심/호기심
+IF TALENT:무관심
+	CALL ADD_CRI_VAR("공중 육변기 플레이", 5)
+ELSEIF TALENT:호기심
+	CALL ADD_CRI_VAR("풋잡 한다", , 6)
 ENDIF
 
-;調教者が感情乏しい/感情豊富な
-IF TALENT:感情乏しい
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", 3)
-ELSEIF TALENT:情緒豊か
-	CALL ADD_CRI_VAR("不気味に笑う", , 6)
+;조교자가 감정결핍/감정 풍부한
+IF TALENT:감정결핍
+	CALL ADD_CRI_VAR("공중 육변기 플레이", 3)
+ELSEIF TALENT:감수성
+	CALL ADD_CRI_VAR("기분 나쁘게 웃는다", , 6)
 ENDIF
 
-;調教者が目立ちたがり
-IF TALENT:目立ちたがり
-	CALL ADD_CRI_VAR("足コキする", 5)
-	CALL ADD_CRI_VAR("足舐め強制", 3)
+;조교자가튀고싶어함
+IF TALENT:튀고싶어함
+	CALL ADD_CRI_VAR("풋잡 한다", 5)
+	CALL ADD_CRI_VAR("다리 빨고 강제", 3)
 ENDIF
 
-;調教者が抑圧/解放
-IF TALENT:抑圧
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", -5)
-	CALL ADD_CRI_VAR("不気味に笑う", -5)
-	CALL ADD_CRI_VAR("足コキする", -5)
-	CALL ADD_CRI_VAR("足舐め強制", -5)
-ELSEIF TALENT:解放
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", , 6)
-	CALL ADD_CRI_VAR("足コキする", , 4)
+;조교자가 억압/해방
+IF TALENT:억압
+	CALL ADD_CRI_VAR("공중 육변기 플레이", -5)
+	CALL ADD_CRI_VAR("기분 나쁘게 웃는다", -5)
+	CALL ADD_CRI_VAR("풋잡 한다", -5)
+	CALL ADD_CRI_VAR("다리 빨고 강제", -5)
+ELSEIF TALENT:해방
+	CALL ADD_CRI_VAR("공중 육변기 플레이", , 6)
+	CALL ADD_CRI_VAR("풋잡 한다", , 4)
 ENDIF
 
-;調教者が恥じらい/恥薄い
-IF TALENT:恥じらい
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", -5)
-ELSEIF TALENT:恥薄い
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", 5)
+;조교자가 부끄러워해/수치심옅음
+IF TALENT:수줍음
+	CALL ADD_CRI_VAR("공중 육변기 플레이", -5)
+ELSEIF TALENT:수치심옅음
+	CALL ADD_CRI_VAR("공중 육변기 플레이", 5)
 ENDIF
 
-;調教者が献身的/受け身
-IF TALENT:献身的
-	CALL ADD_CRI_VAR("足コキする", 5)
-ELSEIF TALENT:受け身
-	CALL ADD_CRI_VAR("足舐め強制", 5)
+;조교자가 헌신적/수동
+IF TALENT:헌신적
+	CALL ADD_CRI_VAR("풋잡 한다", 5)
+ELSEIF TALENT:수동
+	CALL ADD_CRI_VAR("다리 빨고 강제", 5)
 ENDIF
 
-;調教者が男嫌いで調教対象がオトコ。進展度に応じて緩和
-SIF TALENT:男嫌い && TALENT:MASTER:オトコ
-	CALL ADD_CRI_VAR("足コキする", CFLAG:M好意 + CFLAG:好意 >= 10000? -4 # -7)
+;조교자가 남성혐오로 조교 대상이 남자. 진전도에 응해 완화
+SIF TALENT:남성혐오 && TALENT:MASTER:남자
+	CALL ADD_CRI_VAR("풋잡 한다", CFLAG:M호의 + CFLAG:호의 >= 10000? -4 # -7)
 
-;調教者がサド
-IF TALENT:サド
-	CALL ADD_CRI_VAR("足舐め強制", , 6)
-	CALL ADD_CRI_VAR("三角木馬", 3, 4)
+;조교자가 새디즘
+IF TALENT:새디즘
+	CALL ADD_CRI_VAR("다리 빨고 강제", , 6)
+	CALL ADD_CRI_VAR("삼각 목마", 3, 4)
 ENDIF
 
-;調教者が慎重/短気
-IF TALENT:慎重
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", -5)
-ELSEIF TALENT:短気
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", 5)
+;조교자가 신중/조급함
+IF TALENT:신중
+	CALL ADD_CRI_VAR("공중 육변기 플레이", -5)
+ELSEIF TALENT:조급함
+	CALL ADD_CRI_VAR("공중 육변기 플레이", 5)
 ENDIF
 
-;調教者が意地悪/心根優しい
-IF TALENT:意地悪
-	CALL ADD_CRI_VAR("不気味に笑う", 3)
-	CALL ADD_CRI_VAR("足コキする", 3)
-ELSEIF TALENT:心根優しい
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", -5)
-	CALL ADD_CRI_VAR("三角木馬", -5)
+;조교자가 심술쟁이/상냥함
+IF TALENT:심술쟁이
+	CALL ADD_CRI_VAR("기분 나쁘게 웃는다", 3)
+	CALL ADD_CRI_VAR("풋잡 한다", 3)
+ELSEIF TALENT:상냥함
+	CALL ADD_CRI_VAR("공중 육변기 플레이", -5)
+	CALL ADD_CRI_VAR("삼각 목마", -5)
 ENDIF
 
-;調教者が狂気
-IF TALENT:狂気
-	CALL ADD_CRI_VAR("フィストファック", , 4)
-	CALL ADD_CRI_VAR("アナルフィスト", , 4)
-	CALL ADD_CRI_VAR("両穴フィスト", , 4)
-	CALL ADD_CRI_VAR("放置プレイ", , 4)
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", , 4)
-	CALL ADD_CRI_VAR("不気味に笑う", , 7)
-	CALL ADD_CRI_VAR("足コキする", , 4)
-	CALL ADD_CRI_VAR("足舐め強制", , 4)
-	CALL ADD_CRI_VAR("三角木馬", , 4)
+;조교자가 광기
+IF TALENT:광기
+	CALL ADD_CRI_VAR("피스트 성교", , 4)
+	CALL ADD_CRI_VAR("애널 피스트", , 4)
+	CALL ADD_CRI_VAR("양구멍 피스트", , 4)
+	CALL ADD_CRI_VAR("방치 플레이", , 4)
+	CALL ADD_CRI_VAR("공중 육변기 플레이", , 4)
+	CALL ADD_CRI_VAR("기분 나쁘게 웃는다", , 7)
+	CALL ADD_CRI_VAR("풋잡 한다", , 4)
+	CALL ADD_CRI_VAR("다리 빨고 강제", , 4)
+	CALL ADD_CRI_VAR("삼각 목마", , 4)
 ENDIF
 
-;調教者がＣ敏感
-SIF TALENT:Ｃ敏感
-	CALL ADD_CRI_VAR("足コキする", 2, 4)
+;조교자가 C민감
+SIF TALENT:C민감
+	CALL ADD_CRI_VAR("풋잡 한다", 2, 4)
 
 ;----------------------------------------------------------------------
-;フィスト適性
-;経験と双方の素質が絡むので素質から独立
+;피스트 적성
+;경험과 쌍방의 소질이 관련되므로 소질로부터 독립
 ;
-;ただ、小柄長身によって乗算をかける意義があんまり感じられないし
-;それぞれ経験と素質で、普通に加減すればいいと思うのと
-;経験がないとき、マイナスになるっていうのを採用するんなら基礎値の概念使って
+;다만, 작은체형 장신에 의해 곱셈을 걸치는 의의가 그다지 느껴지지 않고
+;각각 경험과 소질로, 보통으로 가감(상태)하면 좋다고 생각하는 것과
+;경험이 없을 때, 마이너스가 된다 라고 하는 것을 채용한다면 기초치의 개념 사용해
 ;----------------------------------------------------------------------
 @ACT_ACTM7_FIST
-;小柄体型/巨躯/ＶＡ経験/拡張経験/淫系素質などでフィストの処理をしてみる
+;작은체형 체형/거구/VA경험/확장 경험/음계 소질 따위로 피스트의 처리를 해 본다
 VARSET LOCAL
 
-;Ｖ経験/拡張経験/淫系素質によって増減
-IF EXP:MASTER:Ｖ経験 < 10
+;V경험/확장 경험/음계 소질에 의해 증감
+IF EXP:MASTER:V경험 < 10
 	LOCAL:0 = -6
-ELSEIF EXP:MASTER:Ｖ経験 < 20 && EXP:MASTER:Ｖ拡張経験 < 1
+ELSEIF EXP:MASTER:V경험 < 20 && EXP:MASTER:V확장경험 < 1
 	LOCAL:0 = -4
-ELSEIF EXP:MASTER:Ｖ経験 < 40 && EXP:MASTER:Ｖ拡張経験 < 3
+ELSEIF EXP:MASTER:V경험 < 40 && EXP:MASTER:V확장경험 < 3
 	LOCAL:0 = -2
 ENDIF
-SIF TALENT:MASTER:淫壷
+SIF TALENT:MASTER:음란
 	LOCAL:0 += 4
 
-;Ａ経験/拡張経験/淫系素質によって増減
-IF EXP:MASTER:Ａ経験 < 10
+;A경험/확장 경험/음계 소질에 의해 증감
+IF EXP:MASTER:A경험 < 10
 	LOCAL:1 = -6
-ELSEIF EXP:MASTER:Ａ経験 < 20 && EXP:MASTER:Ａ拡張経験 < 1
+ELSEIF EXP:MASTER:A경험 < 20 && EXP:MASTER:A확장경험 < 1
 	LOCAL:1 = -4
-ELSEIF EXP:MASTER:Ａ経験 < 40 && EXP:MASTER:Ａ拡張経験 < 3
+ELSEIF EXP:MASTER:A경험 < 40 && EXP:MASTER:A확장경험 < 3
 	LOCAL:1 = -2
 ENDIF
-SIF TALENT:MASTER:淫尻
+SIF TALENT:MASTER:음고
 	LOCAL:1 += 4
 
-;小柄体型/長身によって増減
-IF TALENT:MASTER:小柄 || TALENT:長身
+;작은체형 체형/장신에 의해 증감
+IF TALENT:MASTER:작은체형 || TALENT:장신
 	LOCAL:0 = LOCAL:0 * 3 / 4
 	LOCAL:1 = LOCAL:1 * 3 / 4
-ELSEIF TALENT:MASTER:長身 || TALENT:小柄
+ELSEIF TALENT:MASTER:장신 || TALENT:작은체형
 	LOCAL:0 = LOCAL:0 * 4 / 3
 	LOCAL:1 = LOCAL:1 * 4 / 3
 ENDIF
 
-;加算処理
-CALL ADD_CRI_VAR("フィストファック", LOCAL:0)
-CALL ADD_CRI_VAR("アナルフィスト", LOCAL:1)
-CALL ADD_CRI_VAR("両穴フィスト", LOCAL:0 + LOCAL:1)
+;가산 처리
+CALL ADD_CRI_VAR("피스트 성교", LOCAL:0)
+CALL ADD_CRI_VAR("애널 피스트", LOCAL:1)
+CALL ADD_CRI_VAR("양구멍 피스트", LOCAL:0 + LOCAL:1)
 
 ;-------------------------------------------------------------------------
-;調教対象の素質を参照
+;조교 대상의 소질을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM7_TALENT_M
 
-;調教対象が臆病/気丈
-IF TALENT:MASTER:臆病
-	CALL ADD_CRI_VAR("不気味に笑う", 3)
-ELSEIF TALENT:MASTER:気丈
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", 3)
+;조교 대상이 겁쟁이/기장
+IF TALENT:MASTER:겁쟁이
+	CALL ADD_CRI_VAR("기분 나쁘게 웃는다", 3)
+ELSEIF TALENT:MASTER:기장
+	CALL ADD_CRI_VAR("공중 육변기 플레이", 3)
 ENDIF
 
-;調教対象が反抗的/素直
-IF TALENT:MASTER:反抗的
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", 4)
-	CALL ADD_CRI_VAR("三角木馬", 3)
-ELSEIF TALENT:MASTER:素直
-	CALL ADD_CRI_VAR("足舐め強制", 3)
+;조교 대상이 반항적/순수
+IF TALENT:MASTER:반항적
+	CALL ADD_CRI_VAR("공중 육변기 플레이", 4)
+	CALL ADD_CRI_VAR("삼각 목마", 3)
+ELSEIF TALENT:MASTER:순수
+	CALL ADD_CRI_VAR("다리 빨고 강제", 3)
 ENDIF
 
-;調教対象が恥じらい/恥薄い
-IF TALENT:MASTER:恥じらい
-	CALL ADD_CRI_VAR("放置プレイ", 3)
-ELSEIF TALENT:MASTER:恥薄い
-	CALL ADD_CRI_VAR("放置プレイ", -3)
+;조교 대상이 부끄러워해/수치심옅음
+IF TALENT:MASTER:수줍음
+	CALL ADD_CRI_VAR("방치 플레이", 3)
+ELSEIF TALENT:MASTER:수치심옅음
+	CALL ADD_CRI_VAR("방치 플레이", -3)
 ENDIF
 
-;調教対象が痛みに弱い/痛みに強い
-IF TALENT:MASTER:痛みに弱い
-	CALL ADD_CRI_VAR("三角木馬", 5)
-ELSEIF TALENT:MASTER:痛みに強い
-	CALL ADD_CRI_VAR("三角木馬", -5)
+;조교 대상이 아픔에약함/아픔에강함
+IF TALENT:MASTER:아픔에약함
+	CALL ADD_CRI_VAR("삼각 목마", 5)
+ELSEIF TALENT:MASTER:아픔에강함
+	CALL ADD_CRI_VAR("삼각 목마", -5)
 ENDIF
 
-;調教対象が淫茎
-SIF TALENT:MASTER:淫核／淫茎
-	CALL ADD_CRI_VAR("足コキする", , 9)
+;조교 대상이 음경
+SIF TALENT:MASTER:음핵／음경
+	CALL ADD_CRI_VAR("풋잡 한다", , 9)
 
-;調教対象がＣ敏感/鈍感
-IF TALENT:MASTER:Ｃ敏感
-	CALL ADD_CRI_VAR("足コキする", 1, 6)
-ELSEIF TALENT:MASTER:Ｃ鈍感
-	CALL ADD_CRI_VAR("足コキする", -1, -6)
+;조교 대상이 C민감/둔감
+IF TALENT:MASTER:C민감
+	CALL ADD_CRI_VAR("풋잡 한다", 1, 6)
+ELSEIF TALENT:MASTER:C둔감
+	CALL ADD_CRI_VAR("풋잡 한다", -1, -6)
 ENDIF
 
-;調教対象がＶ敏感/鈍感
-IF TALENT:MASTER:Ｖ敏感
-	CALL ADD_CRI_VAR("ペニスバンド装着", TEQUIP:調教者ペニスバンド ? 0 # 3, TEQUIP:調教者ペニスバンド ? 0 # 1)
-ELSEIF TALENT:MASTER:Ｖ鈍感
-	CALL ADD_CRI_VAR("ペニスバンド装着", TEQUIP:ペニスバンド ? 0 # -3, TEQUIP:調教者ペニスバンド ? 0 # -1)
+;조교 대상이 V민감/둔감
+IF TALENT:MASTER:V민감
+	CALL ADD_CRI_VAR("페니스 밴드 장착", TEQUIP:조교자페니스밴드 ? 0 # 3, TEQUIP:조교자페니스밴드 ? 0 # 1)
+ELSEIF TALENT:MASTER:V둔감
+	CALL ADD_CRI_VAR("페니스 밴드 장착", TEQUIP:페니스밴드 ? 0 # -3, TEQUIP:조교자페니스밴드 ? 0 # -1)
 ENDIF
 
-;調教者がＶ敏感/鈍感
-IF TALENT:TARGET:Ｖ敏感
-	CALL ADD_CRI_VAR("ペニスバンド装着", TEQUIP:調教者ペニスバンド ? 0 # 3, TEQUIP:調教者ペニスバンド ? 0 # 1)
-ELSEIF TALENT:TARGET:Ｖ鈍感
-	CALL ADD_CRI_VAR("ペニスバンド装着", TEQUIP:調教者ペニスバンド ? 0 # -3, TEQUIP:調教者ペニスバンド ? 0 # -1)
+;조교자가 V민감/둔감
+IF TALENT:TARGET:V민감
+	CALL ADD_CRI_VAR("페니스 밴드 장착", TEQUIP:조교자페니스밴드 ? 0 # 3, TEQUIP:조교자페니스밴드 ? 0 # 1)
+ELSEIF TALENT:TARGET:V둔감
+	CALL ADD_CRI_VAR("페니스 밴드 장착", TEQUIP:조교자페니스밴드 ? 0 # -3, TEQUIP:조교자페니스밴드 ? 0 # -1)
 ENDIF
 
-;調教者が処女
-SIF TALENT:TARGET:処女
-	CALL ADD_CRI_VAR("ペニスバンド装着", -10)
+;조교자가 처녀
+SIF TALENT:TARGET:처녀
+	CALL ADD_CRI_VAR("페니스 밴드 장착", -10)
 
-;調教対象が蓬莱人
-SIF TALENT:不死
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", , 9)
+;조교 대상이 호라이인
+SIF TALENT:불사
+	CALL ADD_CRI_VAR("공중 육변기 플레이", , 9)
 
-;調教対象がふたなり
-SIF TALENT:MASTER:ふたなり
-	CALL ADD_CRI_VAR("足コキする", TALENT:好奇心 * 3 - TALENT:無関心, 4)
+;조교 대상이 후타나리
+SIF TALENT:MASTER:후타나리
+	CALL ADD_CRI_VAR("풋잡 한다", TALENT:호기심 * 3 - TALENT:무관심, 4)
 
-;調教対象が処女
-IF TALENT:MASTER:処女
-	CALL ADD_CRI_VAR("フィストファック", -10)
-	CALL ADD_CRI_VAR("両穴フィスト", -10)
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", -10)
+;조교 대상이 처녀
+IF TALENT:MASTER:처녀
+	CALL ADD_CRI_VAR("피스트 성교", -10)
+	CALL ADD_CRI_VAR("양구멍 피스트", -10)
+	CALL ADD_CRI_VAR("공중 육변기 플레이", -10)
 ENDIF
 
-;調教対象が童貞
-SIF TALENT:MASTER:童貞
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", -5)
+;조교 대상이 동정
+SIF TALENT:MASTER:동정
+	CALL ADD_CRI_VAR("공중 육변기 플레이", -5)
 
-;調教対象がオトコ
-SIF TALENT:MASTER:オトコ
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", -3, -4)
+;조교 대상이 남자
+SIF TALENT:MASTER:남자
+	CALL ADD_CRI_VAR("공중 육변기 플레이", -3, -4)
 
-;────────────────────────────────────
-;能力、パラメーターによる変動
-;────────────────────────────────────
+;─
+;능력, 파라미터에 의한 변동
+;─
 ;-------------------------------------------------------------------------
-;調教者の能力を参照
+;조교자의 능력을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM7_ABL_T
 
-;調教者の会話が[0→0, 5→0～5]を加算(0～5)
-CALL ADD_CRI_VAR("不気味に笑う", , LINE_CALC(ABL:会話, "0→0,5→5,LIMIT/0～5"))
+;조교자의 회화가[0→0, 5→0~5]를 가산(0~5)
+CALL ADD_CRI_VAR("기분 나쁘게 웃는다", , LINE_CALC(ABL:회화, "0→0,5→5,LIMIT/0～5"))
 
-;調教者の愛撫が[0→0, 5→2～4]を加算(0～4)
-CALL ADD_CRI_VAR("足コキする", LINE_CALC(ABL:愛撫, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:愛撫, "0→0,5→2,LIMIT/0～2"))
+;조교자의 애무가[0→0, 5→2~4]를 가산(0~4)
+CALL ADD_CRI_VAR("풋잡 한다", LINE_CALC(ABL:애무, "0→0,5→2,LIMIT/0～2"), LINE_CALC(ABL:애무, "0→0,5→2,LIMIT/0～2"))
 
-;調教者の奉仕が[0→0, 5→3～5]を加算(0～5)
-CALL ADD_CRI_VAR("足舐め強制", LINE_CALC(ABL:奉仕, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:奉仕, "0→0,5→2,LIMIT/0～2"))
+;조교자의 봉사가[0→0, 5→3~5]를 가산(0~5)
+CALL ADD_CRI_VAR("다리 빨고 강제", LINE_CALC(ABL:봉사, "0→0,5→3,LIMIT/0～3"), LINE_CALC(ABL:봉사, "0→0,5→2,LIMIT/0～2"))
 
 ;-------------------------------------------------------------------------
-;調教対象の能力を参照
+;조교 대상의 능력을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM7_ABL_M
 
-;調教対象のＶ感覚が[0→0, 5→3]を加算(0～3)
-CALL ADD_CRI_VAR("フィストファック", LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→3,LIMIT/0～3"))
-;調教対象のＶ感覚が[0→0, 5→2]を加算(0～2)
-CALL ADD_CRI_VAR("両穴フィスト", LINE_CALC(ABL:MASTER:Ｖ感覚, "0→0,5→2,LIMIT/0～2"))
+;조교 대상의 V감각이[0→0, 5→3]을 가산(0~3)
+CALL ADD_CRI_VAR("피스트 성교", LINE_CALC(ABL:MASTER:V감각, "0→0,5→3,LIMIT/0～3"))
+;조교 대상의 V감각이[0→0, 5→2]를 가산(0~2)
+CALL ADD_CRI_VAR("양구멍 피스트", LINE_CALC(ABL:MASTER:V감각, "0→0,5→2,LIMIT/0～2"))
 
-;調教対象のＡ感覚が[0→0, 5→3]を加算(0～3)
-CALL ADD_CRI_VAR("アナルフィスト", LINE_CALC(ABL:MASTER:Ａ感覚, "0→0,5→3,LIMIT/0～3"))
-;調教対象のＡ感覚が[0→0, 5→2]を加算(0～2)
-CALL ADD_CRI_VAR("両穴フィスト", LINE_CALC(ABL:MASTER:Ａ感覚, "0→0,5→2,LIMIT/0～2"))
+;조교 대상의 A감각이[0→0, 5→3]을 가산(0~3)
+CALL ADD_CRI_VAR("애널 피스트", LINE_CALC(ABL:MASTER:A감각, "0→0,5→3,LIMIT/0～3"))
+;조교 대상의 A감각이[0→0, 5→2]를 가산(0~2)
+CALL ADD_CRI_VAR("양구멍 피스트", LINE_CALC(ABL:MASTER:A감각, "0→0,5→2,LIMIT/0～2"))
 
 ;-------------------------------------
-;調教者のALI
+;조교자의 ALI
 ;-------------------------------------
 @ACT_ACTM7_ALI_T
 
-;アライメントが[-50→3～8, 50→-8～-3]を加算(-8～8)
-CALL ADD_CRI_VAR("公衆肉便器プレイ", LINE_CALC(CFLAG:アライメント, "-50→3,50→-3,LIMIT/-3～3"), LINE_CALC(CFLAG:アライメント, "-50→5,50→-5,LIMIT/-5～5"))
-;アライメントが[-50→-8～-3, 50→3～8]を加算(-8～8)
-CALL ADD_CRI_VAR("足コキする", LINE_CALC(CFLAG:アライメント, "-50→-3,50→3,LIMIT/-3～3"), LINE_CALC(CFLAG:アライメント, "-50→-5,50→5,LIMIT/-5～5"))
-;アライメントが[-30→0, 0→3, 30→0]を加算(0～3)
-CALL ADD_CRI_VAR("足舐め強制", LINE_CALC(CFLAG:アライメント, "-30→0,0→3,30→0,LIMIT/0～3"))
-;アライメントが[-20→0, 0→2, 20→0]を加算(0～2)
-CALL ADD_CRI_VAR("フィストファック", LINE_CALC(CFLAG:アライメント, "-20→0,0→2,20→0,LIMIT/0～2"))
+;아라이먼트가[-50→3~8, 50→-8-3]을 가산(-8~8)
+CALL ADD_CRI_VAR("공중 육변기 플레이", LINE_CALC(CFLAG:아라이먼트, "-50→3,50→-3,LIMIT/-3～3"), LINE_CALC(CFLAG:아라이먼트, "-50→5,50→-5,LIMIT/-5～5"))
+;아라이먼트가[-50→-8-3, 50→3~8]을 가산(-8~8)
+CALL ADD_CRI_VAR("풋잡 한다", LINE_CALC(CFLAG:아라이먼트, "-50→-3,50→3,LIMIT/-3～3"), LINE_CALC(CFLAG:아라이먼트, "-50→-5,50→5,LIMIT/-5～5"))
+;아라이먼트가[-30→0, 0→3, 30→0]을 가산(0~3)
+CALL ADD_CRI_VAR("다리 빨고 강제", LINE_CALC(CFLAG:아라이먼트, "-30→0,0→3,30→0,LIMIT/0～3"))
+;아라이먼트가[-20→0, 0→2, 20→0]을 가산(0~2)
+CALL ADD_CRI_VAR("피스트 성교", LINE_CALC(CFLAG:아라이먼트, "-20→0,0→2,20→0,LIMIT/0～2"))
 
-;────────────────────────────────────
-;ゲージや状態による変動
-;────────────────────────────────────
+;─
+;게이지나 상태에 의한 변동
+;─
 ;-------------------------------------
-;調教者の気力
+;조교자의 기력
 ;-------------------------------------
 @ACT_ACTM7_MENTAL_T
 
-;調教者の気力が[0→3+α*3, 750→0, 1000→-3]を加算(-3～3+α*3)(α=調教者消耗度)
-CALL ADD_CRI_VAR("放置プレイ", LINE_CALC(BASE:気力, "0→3,750→0,1000→-3,LIMIT/-3～3") + TFLAG:調教者消耗度 * LINE_CALC(BASE:気力, "0→3,750→0,LIMIT/0～3"))
-CALL ADD_CRI_VAR("公衆肉便器プレイ", LINE_CALC(BASE:気力, "0→3,750→0,1000→-3,LIMIT/-3～3") + TFLAG:調教者消耗度 * LINE_CALC(BASE:気力, "0→3,750→0,LIMIT/0～3"))
+;조교자의 기력이[0→3+α*3, 750→0, 1000→-3]을 가산(-3~3+α*3)(α=조교자 소모도)
+CALL ADD_CRI_VAR("방치 플레이", LINE_CALC(BASE:기력, "0→3,750→0,1000→-3,LIMIT/-3～3") + TFLAG:조교자소모도 * LINE_CALC(BASE:기력, "0→3,750→0,LIMIT/0～3"))
+CALL ADD_CRI_VAR("공중 육변기 플레이", LINE_CALC(BASE:기력, "0→3,750→0,1000→-3,LIMIT/-3～3") + TFLAG:조교자소모도 * LINE_CALC(BASE:기력, "0→3,750→0,LIMIT/0～3"))
 
 ;-------------------------------------
-;調教者の理性
+;조교자의 이성
 ;-------------------------------------
 @ACT_ACTM7_REASON_T
 
-;調教者の理性が[0→2～7, 750→0]を加算(0～7)
-CALL ADD_CRI_VAR("不気味に笑う", LINE_CALC(BASE:理性, "0→2,750→0,LIMIT/0～2"), LINE_CALC(BASE:理性, "0→5,750→0,LIMIT/0～5"))
-;調教者の理性が[500→0, 1000→3]を加算(0～3)
-CALL ADD_CRI_VAR("足コキする", LINE_CALC(BASE:理性, "500→0,1000→3,LIMIT/0～3"))
-;調教者の理性が[500→0, 1000→2～5]を加算(0～5)
-CALL ADD_CRI_VAR("足舐め強制", LINE_CALC(BASE:理性, "500→0,1000→2,LIMIT/0～2"), LINE_CALC(BASE:理性, "500→0,1000→5,LIMIT/0～5"))
+;조교자의 이성이[0→2~7, 750→0]을 가산(0~7)
+CALL ADD_CRI_VAR("기분 나쁘게 웃는다", LINE_CALC(BASE:이성, "0→2,750→0,LIMIT/0～2"), LINE_CALC(BASE:이성, "0→5,750→0,LIMIT/0～5"))
+;조교자의 이성이[500→0, 1000→3]을 가산(0~3)
+CALL ADD_CRI_VAR("풋잡 한다", LINE_CALC(BASE:이성, "500→0,1000→3,LIMIT/0～3"))
+;조교자의 이성이[500→0, 1000→2~5]를 가산(0~5)
+CALL ADD_CRI_VAR("다리 빨고 강제", LINE_CALC(BASE:이성, "500→0,1000→2,LIMIT/0～2"), LINE_CALC(BASE:이성, "500→0,1000→5,LIMIT/0～5"))
 
 ;-------------------------------------
-;調教者の興味
+;조교자의 흥미
 ;-------------------------------------
 @ACT_ACTM7_INTEREST_T
 
-;調教者の興味が[0→-3, 550→0]を加算(-3～0)
-CALL ADD_CRI_VAR("フィストファック", LINE_CALC(BASE:興味, "0→-3,550→0,LIMIT/-3～0"))
-CALL ADD_CRI_VAR("アナルフィスト", LINE_CALC(BASE:興味, "0→-3,550→0,LIMIT/-3～0"))
-CALL ADD_CRI_VAR("両穴フィスト", LINE_CALC(BASE:興味, "0→-3,550→0,LIMIT/-3～0"))
-;調教者の興味が[0→3, 700→-3]を加算(-3～3)
-CALL ADD_CRI_VAR("放置プレイ", LINE_CALC(BASE:興味, "0→3,700→-3,LIMIT/-3～3"))
-;調教者の興味が[0→5, 700→-5]を加算(-5～5)
-CALL ADD_CRI_VAR("公衆肉便器プレイ", LINE_CALC(BASE:興味, "0→5,700→-5,LIMIT/-5～5"))
-;調教者の興味が[0→-5, 700→0]を加算(-5～0)
-CALL ADD_CRI_VAR("足コキする", LINE_CALC(BASE:興味, "0→-5,700→0,LIMIT/-5～0"))
-CALL ADD_CRI_VAR("足舐め強制", LINE_CALC(BASE:興味, "0→-5,700→0,LIMIT/-5～0"))
+;조교자의 흥미가[0→-3, 550→0]을 가산(-3~0)
+CALL ADD_CRI_VAR("피스트 성교", LINE_CALC(BASE:흥미, "0→-3,550→0,LIMIT/-3～0"))
+CALL ADD_CRI_VAR("애널 피스트", LINE_CALC(BASE:흥미, "0→-3,550→0,LIMIT/-3～0"))
+CALL ADD_CRI_VAR("양구멍 피스트", LINE_CALC(BASE:흥미, "0→-3,550→0,LIMIT/-3～0"))
+;조교자의 흥미가[0→3, 700→-3]을 가산(-3~3)
+CALL ADD_CRI_VAR("방치 플레이", LINE_CALC(BASE:흥미, "0→3,700→-3,LIMIT/-3～3"))
+;조교자의 흥미가[0→5, 700→-5]를 가산(-5~5)
+CALL ADD_CRI_VAR("공중 육변기 플레이", LINE_CALC(BASE:흥미, "0→5,700→-5,LIMIT/-5～5"))
+;조교자의 흥미가[0→-5, 700→0]을 가산(-5~0)
+CALL ADD_CRI_VAR("풋잡 한다", LINE_CALC(BASE:흥미, "0→-5,700→0,LIMIT/-5～0"))
+CALL ADD_CRI_VAR("다리 빨고 강제", LINE_CALC(BASE:흥미, "0→-5,700→0,LIMIT/-5～0"))
 
 ;-------------------------------------
-;調教対象の体力
+;조교 대상의 체력
 ;-------------------------------------
 @ACT_ACTM7_PHYSICAL_M
 
-;調教対象の体力が[0→-1, 500→0]を加算(-1～0)
-CALL ADD_CRI_VAR("フィストファック", LINE_CALC(BASE:MASTER:体力, "0→-1,500→0,LIMIT/-1～0"))
-;調教対象の体力が[0→-3, 1000→0]を加算(-3～0)
-CALL ADD_CRI_VAR("アナルフィスト", LINE_CALC(BASE:MASTER:体力, "0→-3,1000→0,LIMIT/-3～0"))
-;調教対象の体力が[0→-4, 1000→0]を加算(-4～0)
-CALL ADD_CRI_VAR("両穴フィスト", LINE_CALC(BASE:MASTER:体力, "0→-4,1000→0,LIMIT/-4～0"))
-;※キャンセル時は正の補正
-;調教対象の体力が[0→9/-9, 1500→0]を加算(-9～9)
-LOCAL = TEQUIP:三角木馬 ? 1 # -1
-CALL ADD_CRI_VAR("三角木馬", LOCAL * LINE_CALC(BASE:MASTER:体力, "0→9,1500→0,LIMIT/0～9"))
+;조교 대상의 체력이[0→-1, 500→0]을 가산(-1~0)
+CALL ADD_CRI_VAR("피스트 성교", LINE_CALC(BASE:MASTER:체력, "0→-1,500→0,LIMIT/-1～0"))
+;조교 대상의 체력이[0→-3, 1000→0]을 가산(-3~0)
+CALL ADD_CRI_VAR("애널 피스트", LINE_CALC(BASE:MASTER:체력, "0→-3,1000→0,LIMIT/-3～0"))
+;조교 대상의 체력이[0→-4, 1000→0]을 가산(-4~0)
+CALL ADD_CRI_VAR("양구멍 피스트", LINE_CALC(BASE:MASTER:체력, "0→-4,1000→0,LIMIT/-4～0"))
+;※캔슬시는 정의 보정
+;조교 대상의 체력이[0→9/-9, 1500→0]을 가산(-9~9)
+LOCAL = TEQUIP:삼각목마 ? 1 # -1
+CALL ADD_CRI_VAR("삼각 목마", LOCAL * LINE_CALC(BASE:MASTER:체력, "0→9,1500→0,LIMIT/0～9"))
 
 ;-------------------------------------
-;調教者の状態
+;조교자 상태
 ;-------------------------------------
 @ACT_ACTM7_CONDITION_T
 
-;調教者の状態(0=通常/1=疲弊/2=衰弱/3=無気力/4=朦朧/5=情欲/6=怒り/7=退屈/8=鬱屈)
+;조교자 상태(0=통상/1=피폐/2=쇠약/3=무기력/4=몽롱/5=정욕/6=분노/7=싫증/8=울적)
 SELECTCASE GET_CONDITION(TARGET)
-	CASE "疲弊", "衰弱"
-		CALL ADD_CRI_VAR("フィストファック", -TFLAG:調教者消耗度)
-		CALL ADD_CRI_VAR("アナルフィスト", -TFLAG:調教者消耗度)
-		CALL ADD_CRI_VAR("両穴フィスト", -TFLAG:調教者消耗度 - 3)
-		CALL ADD_CRI_VAR("足コキする", -TFLAG:調教者消耗度 * 2)
-		CALL ADD_CRI_VAR("足舐め強制", -TFLAG:調教者消耗度 / 2)
-		CALL ADD_CRI_VAR("三角木馬", -TFLAG:調教者消耗度, -5)
-	CASE "退屈"
-		CALL ADD_CRI_VAR("放置プレイ", 5)
-		CALL ADD_CRI_VAR("公衆肉便器プレイ", 5)
+	CASE "피폐", "쇠약"
+		CALL ADD_CRI_VAR("피스트 성교", -TFLAG:조교자소모도)
+		CALL ADD_CRI_VAR("애널 피스트", -TFLAG:조교자소모도)
+		CALL ADD_CRI_VAR("양구멍 피스트", -TFLAG:조교자소모도 - 3)
+		CALL ADD_CRI_VAR("풋잡 한다", -TFLAG:조교자소모도 * 2)
+		CALL ADD_CRI_VAR("다리 빨고 강제", -TFLAG:조교자소모도 / 2)
+		CALL ADD_CRI_VAR("삼각 목마", -TFLAG:조교자소모도, -5)
+	CASE "지루함"
+		CALL ADD_CRI_VAR("방치 플레이", 5)
+		CALL ADD_CRI_VAR("공중 육변기 플레이", 5)
 ENDSELECT
 
-;────────────────────────────────────
-;前回の行動や状況による変動
-;────────────────────────────────────
+;─
+;전회의 행동이나 상황에 의한 변동
+;─
 ;-------------------------------------
-;媚薬
+;미약
 ;-------------------------------------
 @ACT_ACTM7_DRAG
-SIF TEQUIP:媚薬
-	CALL ADD_CRI_VAR("放置プレイ", TALENT:意地悪 * 3 - TALENT:心根優しい * 3, 4)
+SIF TEQUIP:미약
+	CALL ADD_CRI_VAR("방치 플레이", TALENT:심술쟁이 * 3 - TALENT:상냥함 * 3, 4)
 
 ;-------------------------------------
-;縄
+;줄
 ;-------------------------------------
 @ACT_ACTM7_ROPE
-SIF TEQUIP:縄
-	CALL ADD_CRI_VAR("放置プレイ", 5)
+SIF TEQUIP:줄
+	CALL ADD_CRI_VAR("방치 플레이", 5)
 
 ;-------------------------------------
-;アイマスク
+;아이마스크
 ;-------------------------------------
 @ACT_ACTM7_EYEMASK
-SIF TEQUIP:アイマスク
-	CALL ADD_CRI_VAR("放置プレイ", 3)
+SIF TEQUIP:아이마스크
+	CALL ADD_CRI_VAR("방치 플레이", 3)
 
 ;-------------------------------------
-;ボールギャグ
+;볼개그
 ;-------------------------------------
 @ACT_ACTM7_GAG
-SIF TEQUIP:ボールギャグ
-	CALL ADD_CRI_VAR("放置プレイ", , 3)
+SIF TEQUIP:볼개그
+	CALL ADD_CRI_VAR("방치 플레이", , 3)
 
 ;-------------------------------------
-;三角木馬
+;삼각 목마
 ;-------------------------------------
 @ACT_ACTM7_HORSE
-SIF TEQUIP:三角木馬
-	CALL ADD_CRI_VAR("放置プレイ", , 7)
+SIF TEQUIP:삼각목마
+	CALL ADD_CRI_VAR("방치 플레이", , 7)
 
 ;-------------------------------------
-;野外プレイ
+;야외 플레이
 ;-------------------------------------
 @ACT_ACTM7_OUT
-IF TEQUIP:野外プレイ
-	CALL MUL_CRI_VAR("放置プレイ", 150)
-	CALL MUL_CRI_VAR("公衆肉便器プレイ", 125)
+IF TEQUIP:야외플레이
+	CALL MUL_CRI_VAR("방치 플레이", 150)
+	CALL MUL_CRI_VAR("공중 육변기 플레이", 125)
 ENDIF
 
 ;-------------------------------------
-;要求されて道具をはずした
+;요구되어 도구를 떼었다
 ;-------------------------------------
 @ACT_ACTM7_TAKE_OFF_TOOLS
-;キャンセルに応じて装着を躊躇
-SIF !TEQUIP:三角木馬
-	CALL ADD_CRI_VAR("三角木馬", -CANCEL_TEQUIP_COUNT("三角木馬") / 20)
+;캔슬에 응해 장착을 주저
+SIF !TEQUIP:삼각목마
+	CALL ADD_CRI_VAR("삼각 목마", -CANCEL_TEQUIP_COUNT("삼각 목마") / 20)
 
 ;-------------------------------------
-;調教者自慰中
+;조교자 자위중
 ;-------------------------------------
 @ACT_ACTM7_MASTURBATION_T
-;調教者のみ自慰中
-SIF TEQUIP:自慰中 == 2
-	CALL ADD_CRI_VAR("放置プレイ", , 9)
+;조교자만 자위중
+SIF TEQUIP:자위중 == 2
+	CALL ADD_CRI_VAR("방치 플레이", , 9)
 
 ;-------------------------------------
-;調教対象の衣服
+;조교 대상의 의복
 ;-------------------------------------
 @ACT_ACTM7_CLOTH_M
-;調教対象の下半身下着があるとき
+;조교 대상의 하반신 속옷이 있을 때
 SIF CLOTHESTYPE(1, 0)
-	CALL ADD_CRI_VAR("三角木馬", -2)
+	CALL ADD_CRI_VAR("삼각 목마", -2)
 
-;調教対象の下半身上着に妨害されるとき
+;조교 대상의 하반신 윗도리에 방해될 때
 IF CLOTHESTYPE(1, 1) == 2
-	;調教者に壁抜けがない
-	IF !TALENT:壁抜け
-		CALL ADD_CRI_VAR("フィストファック", -5)
-		CALL ADD_CRI_VAR("アナルフィスト", -5)
-		CALL ADD_CRI_VAR("両穴フィスト", -5)
+	;조교자에게 벽통과가 없다
+	IF !TALENT:벽통과
+		CALL ADD_CRI_VAR("피스트 성교", -5)
+		CALL ADD_CRI_VAR("애널 피스트", -5)
+		CALL ADD_CRI_VAR("양구멍 피스트", -5)
 	ENDIF
-	CALL ADD_CRI_VAR("三角木馬", -5)
+	CALL ADD_CRI_VAR("삼각 목마", -5)
 ENDIF
 
 ;-------------------------------------
-;もっとハードにして
+;좀 더 하드하게 해
 ;-------------------------------------
 @ACT_ACTM7_PLEASE_HARD
-IF IS_NOWCOMNAME("もっとハードにして")
-	CALL ADD_CRI_VAR("放置プレイ", -10)
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", 2)
-	CALL ADD_CRI_VAR("不気味に笑う", -3)
-	CALL ADD_CRI_VAR("足コキする", -3)
+IF IS_NOWCOMNAME("좀 더 하드하게 해")
+	CALL ADD_CRI_VAR("방치 플레이", -10)
+	CALL ADD_CRI_VAR("공중 육변기 플레이", 2)
+	CALL ADD_CRI_VAR("기분 나쁘게 웃는다", -3)
+	CALL ADD_CRI_VAR("풋잡 한다", -3)
 ENDIF
 
 ;-------------------------------------
-;許しを乞う
+;허가를 청한다
 ;-------------------------------------
 @ACT_ACTM7_PLEASE_HELP
-;許しを乞ったかつ、調教者の状態が鬱屈以外
-SIF IS_NOWCOMNAME("許しを乞う") && TCVAR:状態変化 < 8
-	CALL ADD_CRI_VAR("放置プレイ", 5)
+;허가를 청했는지 개, 조교자 상태가 울적 이외
+SIF IS_NOWCOMNAME("허가를 청한다") && TCVAR:상태변화 < 8
+	CALL ADD_CRI_VAR("방치 플레이", 5)
 
 ;-------------------------------------
-;お仕置き中
+;벌중
 ;-------------------------------------
 @ACT_ACTM7_OSHIOKI
-IF TFLAG:お仕置きフラグ
-	CALL ADD_CRI_VAR("公衆肉便器プレイ", TFLAG:お仕置きフラグ / 2)
-	CALL ADD_CRI_VAR("三角木馬", TFLAG:お仕置きフラグ / 2)
+IF TFLAG:벌플래그
+	CALL ADD_CRI_VAR("공중 육변기 플레이", TFLAG:벌플래그 / 2)
+	CALL ADD_CRI_VAR("삼각 목마", TFLAG:벌플래그 / 2)
 ENDIF
 
-;────────────────────────────────────
-;同じ行動連続実行の確率をダウンします
-;────────────────────────────────────
+;─
+;같은 행동 연속 실행의 확률을 다운합니다
+;─
 @ACT_ACTM7_PREV
-SELECTCASE TFLAG:前ACT
+SELECTCASE TFLAG:전ACT
 	CASE 9, 18, 55, 67, 70 TO 74
-		CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:前ACT), -3 * TFLAG:同一行動ボーナス, -4 * TFLAG:同一行動ボーナス)
+		CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:전ACT), -3 * TFLAG:동일행동보너스, -4 * TFLAG:동일행동보너스)
 ENDSELECT
 
-;────────────────────────────────────
-;補正値計算
-;────────────────────────────────────
+;─
+;보정치 계산
+;─
 @ACT_ACTM7_CORRECTION(ARG)
 #DIM LCOUNT
 
-;ARGが0以外なら補正値を計算し、以後の処理を行わない
+;ARG가 0이외라면 보정치를 계산해, 이후의 처리를 실시하지 않는다
 IF ARG
-	;9,18,55,67に関してはここで計算しない
+	;9, 18, 55, 67에 관해서는 여기서 계산하지 않는다
 	FOR LCOUNT, 70, 75
-		CALL ACT_M_RES_CALC(LCOUNT, GET_CRI_VAR(GET_ACTNAME(LCOUNT) + "累計"))
+		CALL ACT_M_RES_CALC(LCOUNT, GET_CRI_VAR(GET_ACTNAME(LCOUNT) + "누계"))
 	NEXT
 ELSE
-	;補正値を判定値に加算する
+	;보정치를 판정치에 가산한다
 	CALL ACT_ACTM_CORRECTION(7)
 ENDIF
 
-;────────────────────────────────────
-;その他変動や実行不可能の判定
-;────────────────────────────────────
+;─
+;그 외 변동이나 실행 불가능의 판정
+;─
 @ACT_ACTM7_ABLE
 #DIM LCOUNT
 
-;不可能判定
+;불가능 판정
 CALL ACT_ACTM_ABLE(7)
 

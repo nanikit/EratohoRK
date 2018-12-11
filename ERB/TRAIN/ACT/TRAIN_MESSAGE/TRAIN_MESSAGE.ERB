@@ -1,13 +1,13 @@
-﻿;────────────────────────────────────
-;調教者行動 地の文(リアクション前)
+﻿;─
+;조교자 행동 지문(리액션전)
 ;
-;調教者行動が決まったらここから地の文を呼び出します。
-;口上で指定することによって置換した文章を表示し呼ばれないようにすることができます。
-;────────────────────────────────────
+;조교자 행동이 정해지면 여기로부터 지문을 호출합니다.
+;구상으로 지정하는 것에 의해 치환한 문장을 표시해 불리지 않도록 할 수가 있습니다.
+;─
 @TRAIN_MESSAGE
 CALL KOJO_TRAIN_MESSAGE
 IF !RESULT
-	IF TFLAG:ＳＰ行動 >= 200
+	IF TFLAG:SP행동 >= 200
 		CALL SP_TRAIN_MESSAGE
 	ELSE
 		TRYCCALLFORM TRAIN_MESSAGE_{TFLAG:ACT}
@@ -19,24 +19,24 @@ IF !RESULT
 ENDIF
 RETURN RESULT
 
-;────────────────────────────────────
-;調教対象行動 地の文(リアクション後)
+;─
+;조교 대상 행동 지문(리액션 후)
 ;
-;調教対象リアクションが決まったらここからメッセージを呼び出します。
-;口上で指定することによって置換した文章を表示し呼ばれないようにすることができます。
-;────────────────────────────────────
+;조교 대상 리액션이 정해지면 여기로부터 메세지를 호출합니다.
+;구상으로 지정하는 것에 의해 치환한 문장을 표시해 불리지 않도록 할 수가 있습니다.
+;─
 @TRAIN_MESSAGE2
-;COMが優先REACTのときは処理せずに戻す。ACTが放置プレイ/休ませる/栄養剤を飲ませるなら通す@/L
-SIF IS_NOWCOMNAME("なすがまま") && !IS_NOWACTNAME("放置プレイ/休ませる/栄養剤を飲ませる")
+;COM가 우선 REACT 때는 처리하지 않고 되돌린다. ACT가 방치 플레이/쉬게 한다/영양제를 먹인다면 통한다@/L
+SIF IS_NOWCOMNAME("하는 대로") && !IS_NOWACTNAME("방치 플레이/쉬게 한다/영양제를 먹인다")
 	RETURN 0
 CALL KOJO_TRAIN_MESSAGE2
 IF !RESULT
-	;SHOW_USERCOM_COMにツールチップが仕込まれたので封印。ここでREACT派生を表示するようにしてもいいのかも知れない
-	;IF !IS_NOWCOMNAME("なすがまま")					;COM:なすがままなら弾く
-	;	PRINTFORML [%COM_RANK(TFLAG:REACT負荷)%]
+	;SHOW_USERCOM_COM에 툴 팁이 가르쳐졌으므로 봉인. 여기서 REACT 파생을 표시하도록(듯이)해도 되는 것인지도 모른다
+	;IF ! IS_NOWCOMNAME("하는 대로")					;COM:하는 대로라면 연주한다
+	;	PRINTFORML [%COM_RANK(TFLAG:REACT 부하)%]
 	;	PRINTL
 	;ENDIF
-	;調教項目毎の地の文を呼び出し
+	;조교 항목 마다의 지문을 호출해
 	TRYCCALLFORM TRAIN_MESSAGE2_{TFLAG:ACT}
 		RETURN RESULT
 	CATCH
@@ -45,29 +45,29 @@ IF !RESULT
 ENDIF
 RETURN RESULT
 
-;────────────────────────────────────
-;リアクション後の脱衣アニメ表示
-;────────────────────────────────────
+;─
+;리액션 후의 탈의 애니메이션 표시
+;─
 @TRAIN_MESSAGE2_5_ANIME
-;衣装変更でない場合は戻る
-SIF !IS_NOWACTNAME("衣装の変更を要求する") || !IS_COMGRONAME("消極的従う/平然と従う/積極的従う")
+;의상 변경이 아닌 경우는 돌아온다
+SIF !IS_NOWACTNAME("의상의 변경을 요구한다") || !IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다")
 	RETURN RESULT
 PRINTL
-;服を脱いだ場合
-IF TFLAG:ACT派生 == 0 && IS_COMGRONAME("消極的従う/平然と従う/積極的従う")
-	;調教対象服装の表示
+;옷을 벗었을 경우
+IF TFLAG:ACT파생 == 0 && IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다")
+	;조교 대상 복장의 표시
 	CALL CLOTHE_SHOW(MASTER)
-;服を着た場合
-ELSEIF  TFLAG:ACT派生 && IS_COMGRONAME("消極的従う/平然と従う/積極的従う")
-	;調教対象服装の表示
+;옷을 입었을 경우
+ELSEIF  TFLAG:ACT파생 && IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다")
+	;조교 대상 복장의 표시
 	CALL CLOTHE_SHOW(MASTER, 1)
 ENDIF
 RETURN RESULT
 
-;────────────────────────────────────
-;調教者行動地の文(行動毎)
+;─
+;조교자 행동 지문(행동마다)
 ;
-;リアクション前、リアクション後の地の文を一箇所にまとめた
-;REACTION後、RESULT値が1以外の場合はREACTION_MESSAGEも呼び出される
-;────────────────────────────────────
-;ACT分類毎にファイルを切り分け。個別のファイルはACT_MESSAGEフォルダへ移設@/L
+;리액션전, 리액션 후의 지문을 1개소에 정리했다
+;REACTION 후, RESULT치가 1이외의 경우는 REACTION_MESSAGE도 불려 간다
+;─
+;ACT 분류마다 파일을 분리. 개별의 파일은 ACT_MESSAGE 폴더에 이전@/L

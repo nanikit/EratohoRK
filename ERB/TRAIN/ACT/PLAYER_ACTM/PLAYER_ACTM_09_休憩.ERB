@@ -1,58 +1,58 @@
-﻿;────────────────────────────────────
-;休憩 (休み90/服薬91/治療92)
-;────────────────────────────────────
+﻿;─
+;휴게(휴일 90/복약 91/치료 92)
+;─
 @ACT_M9(ARG = 0)
-;1以上なら判定を行わない
+;1이상이라면 판정을 실시하지 않는다
 #DIM LCOUNT, 1
 
-;関数初期化
+;함수 초기화
 CALL ACT_M_INIT(9)
 
-;処理開始
+;처리 개시
 
 LOCALS = ACT_ACTM9
 
-CALL CHA_CRI_VAR, "基準値"
+CALL CHA_CRI_VAR, "기준치"
 CALLFORM %LOCALS%_REFERENCE
 
-CALL CHA_CRI_VAR, "調教者の素質"
+CALL CHA_CRI_VAR, "조교자의 소질"
 CALLFORM %LOCALS%_TALENT_T
 
-CALL CHA_CRI_VAR, "調教者の体力"
+CALL CHA_CRI_VAR, "조교자의 체력"
 CALLFORM %LOCALS%_PHYSICAL_T
 
-CALL CHA_CRI_VAR, "調教者の気力"
+CALL CHA_CRI_VAR, "조교자의 기력"
 CALLFORM %LOCALS%_MENTAL_T
 
-CALL CHA_CRI_VAR, @"調教者の状態(%CONDITION(TCVAR:状態変化)%)"
+CALL CHA_CRI_VAR, @"조교자 상태(%CONDITION(TCVAR:상태변화)%)"
 CALLFORM %LOCALS%_CONDITION_T
 
-CALL CHA_CRI_VAR, "連続行動補正"
+CALL CHA_CRI_VAR, "연속 행동 보정"
 CALLFORM %LOCALS%_PREV
 
-CALL CHA_CRI_VAR, "ヒート値"
+CALL CHA_CRI_VAR, "히트치"
 CALLFORM %LOCALS%_HEAT
 
-CALL CHA_CRI_VAR, "口上補正値"
+CALL CHA_CRI_VAR, "구상 보정치"
 CALL ACT_ACTM_KOJO_CORRECTION_T, 9
 
-CALL CHA_CRI_VAR, "ACT補正値"
+CALL CHA_CRI_VAR, "ACT 보정치"
 CALLFORM %LOCALS%_CORRECTION(ARG)
 
-;ARGが1以上なら処理中断
+;ARG가 1이상이라면 처리 중단
 SIF ARG
 	RETURN RESULT
 
-CALL CHA_CRI_VAR, "実行判定"
+CALL CHA_CRI_VAR, "실행 판정"
 CALLFORM %LOCALS%_ABLE
 
-;────────────────────────────────────
-;最終判定
-;────────────────────────────────────
-CALL DEF_CRI_VAR("最大前者")
-LOCAL = GET_CRI_VAR("決定")
+;─
+;최종 판정
+;─
+CALL DEF_CRI_VAR("최대 전자")
+LOCAL = GET_CRI_VAR("결정")
 IF LOCAL == -1
-	PRINTL (休憩カウンタ異常)
+	PRINTL (휴게 카운터 이상)
 	TFLAG:ACT = 90
 ELSE
 	TFLAG:ACT = GET_ACTNUM(RESULTS)
@@ -60,100 +60,100 @@ ENDIF
 CALL ANA_CRI_VAR()
 
 ;-------------------------------------------------------------------------
-;基準値
+;기준치
 ;-------------------------------------------------------------------------
 @ACT_ACTM9_REFERENCE
-;調合知識があるときに増加する動作にするために修正@kap
-CALL ADD_CRI_VAR("治療する", -5)
-;要らないかもと思ったので試しに無効化@これみ
+;약학지식이 있을 때 증가하는 동작으로 하기 위해서(때문에) 수정@kap
+CALL ADD_CRI_VAR("치료한다", -5)
+;필요하지 않을지도라고 생각했으므로 시험삼아 무효화@이것 보고
 [SKIPSTART]
-CALL DIM_CRI_VAR("休ませる", 5)
-CALL DIM_CRI_VAR("栄養剤を飲ませる", 8)
-CALL DIM_CRI_VAR("治療する", 10)
+CALL DIM_CRI_VAR("쉬게 한다", 5)
+CALL DIM_CRI_VAR("영양제를 먹인다", 8)
+CALL DIM_CRI_VAR("치료한다", 10)
 [SKIPEND]
 
 ;-------------------------------------------------------------------------
-;調教者の素質を参照
+;조교자의 소질을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM9_TALENT_T
 
-;調合知識がない <<---------？
-SIF TALENT:調合知識
-	CALL ADD_CRI_VAR("治療する", 5)
+;약학지식이 없는<<---------?
+SIF TALENT:약학지식
+	CALL ADD_CRI_VAR("치료한다", 5)
 
-;────────────────────────────────────
-;ゲージや状態による変動
-;────────────────────────────────────
+;─
+;게이지나 상태에 의한 변동
+;─
 ;-------------------------------------
-;調教者の体力
+;조교자의 체력
 ;-------------------------------------
 @ACT_ACTM9_PHYSICAL_T
 
-;調教者の体力が[0→3, 900→0]を加算(0～3)
-CALL ADD_CRI_VAR("休ませる", LINE_CALC(BASE:体力, "0→3,900→0,LIMIT/0～3"))
+;조교자의 체력이[0→3, 900→0]을 가산(0~3)
+CALL ADD_CRI_VAR("쉬게 한다", LINE_CALC(BASE:체력, "0→3,900→0,LIMIT/0～3"))
 
 ;-------------------------------------
-;調教者の気力
+;조교자의 기력
 ;-------------------------------------
 @ACT_ACTM9_MENTAL_T
 
-;調教者の気力が[0→-9～0, 450→0]を加算(-9～0)
-CALL ADD_CRI_VAR("治療する", , LINE_CALC(BASE:気力, "0→-9,450→0,LIMIT/-9～0"))
+;조교자의 기력이[0→-9~0, 450→0]을 가산(-9~0)
+CALL ADD_CRI_VAR("치료한다", , LINE_CALC(BASE:기력, "0→-9,450→0,LIMIT/-9～0"))
 
 ;-------------------------------------
-;調教者の状態
+;조교자 상태
 ;-------------------------------------
 @ACT_ACTM9_CONDITION_T
 
-;調教者の状態(0=通常/1=疲弊/2=衰弱/3=無気力/4=朦朧/5=情欲/6=怒り/7=退屈/8=鬱屈)
+;조교자 상태(0=통상/1=피폐/2=쇠약/3=무기력/4=몽롱/5=정욕/6=분노/7=싫증/8=울적)
 SELECTCASE GET_CONDITION(TARGET)
-	CASE "無気力"
-		CALL ADD_CRI_VAR("治療する", -3)
-	CASE "朦朧"
-		CALL ADD_CRI_VAR("治療する", , -4)
+	CASE "무기력"
+		CALL ADD_CRI_VAR("치료한다", -3)
+	CASE "몽롱"
+		CALL ADD_CRI_VAR("치료한다", , -4)
 ENDSELECT
 
-;────────────────────────────────────
-;同じ行動連続実行の確率をダウンします
-;────────────────────────────────────
+;─
+;같은 행동 연속 실행의 확률을 다운합니다
+;─
 @ACT_ACTM9_PREV
-SIF INRANGE(TFLAG:前ACT, 90, 92)
-	CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:前ACT), -3 * TFLAG:同一行動ボーナス, -4 * TFLAG:同一行動ボーナス)
+SIF INRANGE(TFLAG:전ACT, 90, 92)
+	CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:전ACT), -3 * TFLAG:동일행동보너스, -4 * TFLAG:동일행동보너스)
 
-;────────────────────────────────────
-;ヒート値を差し引きます
-;────────────────────────────────────
+;─
+;히트값을 공제합니다
+;─
 @ACT_ACTM9_HEAT
 
-;栄養剤のヒート値
-SIF FLAG:栄養ヒート > 0
-	CALL ADD_CRI_VAR("栄養剤を飲ませる", -FLAG:栄養ヒート)
-;治療のヒート値
-SIF FLAG:治療ヒート > 0
-	CALL ADD_CRI_VAR("治療する", -FLAG:治療ヒート)
+;영양제의 히트치
+SIF FLAG:영양히트 > 0
+	CALL ADD_CRI_VAR("영양제를 먹인다", -FLAG:영양히트)
+;치료의 히트치
+SIF FLAG:치료히트 > 0
+	CALL ADD_CRI_VAR("치료한다", -FLAG:치료히트)
 
-;────────────────────────────────────
-;補正値計算
-;────────────────────────────────────
+;─
+;보정치 계산
+;─
 @ACT_ACTM9_CORRECTION(ARG)
 #DIM LCOUNT
 
-;ARGが0以外なら補正値を計算し、以後の処理を行わない
+;ARG가 0이외라면 보정치를 계산해, 이후의 처리를 실시하지 않는다
 IF ARG
 	FOR LCOUNT, 90, 93
-		CALL ACT_M_RES_CALC(LCOUNT, GET_CRI_VAR(GET_ACTNAME(LCOUNT) + "累計"))
+		CALL ACT_M_RES_CALC(LCOUNT, GET_CRI_VAR(GET_ACTNAME(LCOUNT) + "누계"))
 	NEXT
 ELSE
-	;補正値を判定値に加算する
+	;보정치를 판정치에 가산한다
 	CALL ACT_ACTM_CORRECTION(9)
 ENDIF
 
-;────────────────────────────────────
-;その他変動や実行不可能の判定
-;────────────────────────────────────
+;─
+;그 외 변동이나 실행 불가능의 판정
+;─
 @ACT_ACTM9_ABLE
 #DIM LCOUNT
 
-;不可能判定
+;불가능 판정
 CALL ACT_ACTM_ABLE(9)
 

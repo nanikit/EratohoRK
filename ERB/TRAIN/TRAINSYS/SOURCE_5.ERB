@@ -1,448 +1,448 @@
-﻿;────────────────────────────────────
-;調教者快感（ｃｖａｂ）のソースと絶頂の処理（快ｃ、快ｖ、快ａ、快ｂ、体力、気力、射精、母乳、理性、興味）
-;────────────────────────────────────
+﻿;─
+;조교자 쾌감의 소스와 절정의 처리(쾌c, 쾌v, 쾌a, 쾌b, 체력, 기력, 사정, 모유, 이성, 흥미)
+;─
 @CALC_SOURCE40
 
 LOCALS = CALC_SOURCE40
 
-;最初の変動
+;최초의 변동
 CALLFORM %LOCALS%_TALENT
 
-;快感（ＣＶＡＢ）の上昇
+;쾌감(CVAB)의 상승
 CALLFORM %LOCALS%_PLEASURE
 
-;絶頂、体力、気力、射精、母乳、尿意などの処理
+;절정, 체력, 기력, 사정, 모유, 소변욕 따위의 처리
 CALLFORM %LOCALS%_EX
 
-;────────────────────────────────────
-;最初の変動
-;────────────────────────────────────
+;─
+;최초의 변동
+;─
 @CALC_SOURCE40_TALENT
 #DIM LCOUNT
-;ペニスバンド装備中は快ｃが快ｖに変換
-;変換率…快ｃを20％にし、残りの値にｖ感覚+1/ｃ感覚+1を掛けて２で割って快Ｖに加算する
-IF TEQUIP:調教者ペニスバンド
-	SOURCE:快Ｖ += (SOURCE:快Ｃ*8*(((ABL:Ｖ感覚+1)*100)/(ABL:Ｃ感覚+1)))/2000
-	TIMES SOURCE:快Ｃ, 0.20
+;페니스 밴드 장비중은 쾌c가 쾌v에 변환
+;변환율… 쾌c를 20%로 해, 나머지의 값에 v감각+1/c감각+1을 걸어 2로 나누어 쾌V에 가산한다
+IF TEQUIP:조교자페니스밴드
+	SOURCE:쾌V += (SOURCE:쾌C*8*(((ABL:V감각+1)*100)/(ABL:C감각+1)))/2000
+	TIMES SOURCE:쾌C, 0.20
 ENDIF
 
-;ＣＶＡＢ部位について
+;CVAB 부위에 대해서
 FOR LCOUNT, 0, 4
-	;敏感と鈍感は最初で処理
-	;Ｘ敏感
+	;민감과 둔감은 최초로 처리
+	;X민감
 	SIF TALENT:(100 + LCOUNT * 2)
 		TIMES SOURCE:LCOUNT, 1.50
-	;Ｘ鈍感
+	;X둔감
 	SIF TALENT:(101 + LCOUNT * 2)
 		TIMES SOURCE:LCOUNT, 0.70
-	;調教者の状態
+	;조교자 상태
 	IF 0
-	ELSEIF T_COND("疲弊")
+	ELSEIF T_COND("피폐")
 		TIMES SOURCE:LCOUNT, 0.80
-	ELSEIF T_COND("衰弱")
+	ELSEIF T_COND("쇠약")
 		TIMES SOURCE:LCOUNT, 0.65
-	ELSEIF T_COND("無気力")
+	ELSEIF T_COND("무기력")
 		TIMES SOURCE:LCOUNT, 0.70
-	ELSEIF T_COND("情欲")
+	ELSEIF T_COND("정욕")
 		TIMES SOURCE:LCOUNT, 1.20
 	ENDIF
 NEXT
 
-;────────────────────────────────────
-;快感（ＣＶＡＢ）の上昇
-;────────────────────────────────────
+;─
+;쾌감(CVAB)의 상승
+;─
 @CALC_SOURCE40_PLEASURE
 #DIM LCOUNT
 
-;欲情PALAMが[0→4, 1000→7, 2000→9, 3000→10, 4000→11, 5000→12]をLOCALへ(4～12)
-LOCAL = LIMIT(GET_REVISION_SQRT(PALAM:MASTER:欲情, 5000, 8) + 4, 4, 12)
+;욕정 PALAM가[0→4, 1000→7, 2000→9, 3000→10, 4000→11, 5000→12]를 LOCAL에(4~12)
+LOCAL = LIMIT(GET_REVISION_SQRT(PALAM:MASTER:욕정, 5000, 8) + 4, 4, 12)
 FOR LCOUNT, 0, 4
-	;連続ボーナス(連続回数倍に増加するボーナス)
-	CUP:LCOUNT += SOURCE:LCOUNT * LOCAL * TFLAG:同一行動ボーナス / 10
-	;調教中に集中的に責られると弱くなる気がする(快Ｘ補正処理)
+	;연속 보너스(연속 회수배에 증가하는 보너스)
+	CUP:LCOUNT += SOURCE:LCOUNT * LOCAL * TFLAG:동일행동보너스 / 10
+	;조교중에 집중적으로 책와 약해질 생각이 든다(쾌X보정 처리)
 	CUP:LCOUNT = CUP:LCOUNT * CFLAG:(30 + LCOUNT) / 50
 NEXT
 
-;────────────────────────────────────
-;絶頂、体力、気力、射精、母乳、尿意などの処理
-;────────────────────────────────────
+;─
+;절정, 체력, 기력, 사정, 모유, 소변욕 따위의 처리
+;─
 @CALC_SOURCE40_EX
 #DIM LCOUNT
-#DIM DYNAMIC 絶頂強度, 4
-#DIM DYNAMIC 快感負担
-#DIM DYNAMIC 射精負担
-#DIM DYNAMIC 噴乳負担
-#DIM DYNAMIC 絶頂負担
+#DIM DYNAMIC 절정강도, 4
+#DIM DYNAMIC 쾌감부담
+#DIM DYNAMIC 사정부담
+#DIM DYNAMIC 분유부담
+#DIM DYNAMIC 절정부담
 
-;絶頂Ｃ
-SIF (!PENIS(TARGET) || TCVAR:勃起 > 1)
-	絶頂強度:0 = CALC_SOURCE40_EX_P(0, CUP:快Ｃ + PALAM:快Ｃ)
+;절정 C
+SIF (!PENIS(TARGET) || TCVAR:발기 > 1)
+	절정강도:0 = CALC_SOURCE40_EX_P(0, CUP:쾌C + PALAM:쾌C)
 
-;絶頂Ｖ
-絶頂強度:1 = CALC_SOURCE40_EX_P(1, CUP:快Ｖ + PALAM:快Ｖ)
+;절정 V
+절정강도:1 = CALC_SOURCE40_EX_P(1, CUP:쾌V + PALAM:쾌V)
 
-;絶頂Ａ
-絶頂強度:2 = CALC_SOURCE40_EX_P(2, CUP:快Ａ + PALAM:快Ａ)
+;절정 A
+절정강도:2 = CALC_SOURCE40_EX_P(2, CUP:쾌A + PALAM:쾌A)
 
-;絶頂Ｂ
-絶頂強度:3 = CALC_SOURCE40_EX_P(3, CUP:快Ｂ + PALAM:快Ｂ)
+;절정 B
+절정강도:3 = CALC_SOURCE40_EX_P(3, CUP:쾌B + PALAM:쾌B)
 
-;絶頂強度合計から絶頂負担を計算
-絶頂負担 = 1000 * SUMARRAY(絶頂強度)
+;절정 강도 합계로부터 절정 부담을 계산
+절정부담 = 1000 * SUMARRAY(절정강도)
 
-;快感による体力気力理性消耗
-;快ＸSOURCE合計が[0→0, 2000→44, 4000→63, 6000→77, 8000→89, 10000→100]を快感負担へ
-快感負担 = GET_REVISION_SQRT(SUMARRAY(SOURCE, 40, 44), 10000, 100)
+;쾌감에 의한 체력 기력 이성 소모
+;쾌XSOURCE 합계가[0→0, 2000→44, 4000→63, 6000→77, 8000→89, 10000→100]을 쾌감 부담에
+쾌감부담 = GET_REVISION_SQRT(SUMARRAY(SOURCE, 40, 44), 10000, 100)
 
-;調教の度合いによる軽減
-;調教者調教レベル+欲望ABLが[0→100%, 2→91%, 4→83%, 6→75%, 8→67%, 10→59%, 12→51%]を快感負担に乗算(50～100%)
-LOCAL = GET_REVISION_SQRT_PROP(CFLAG:調教レベル + ABL:欲望, 1, 5, 12, 50)
-快感負担 -= 快感負担 * LIMIT(LOCAL, 50, 100) / 100
+;조교의 정도에 의한 경감
+;조교자 조교 레벨+욕망 ABL가[0→100%, 2→91%, 4→83%, 6→75%, 8→67%, 10→59%, 12→51%]를 쾌감 부담에 곱셈(50~100%)
+LOCAL = GET_REVISION_SQRT_PROP(CFLAG:조교레벨 + ABL:욕망, 1, 5, 12, 50)
+쾌감부담 -= 쾌감부담 * LIMIT(LOCAL, 50, 100) / 100
 
-;ペニス存在時
+;페니스 존재시
 IF PENIS(TARGET)
-	;絶頂決定時
-	IF 絶頂強度:0 > 0
-		;射精ゲージがない
-		IF BASE:射精 == 0
-			STR:1044 = 空射精（調教者）
-			DOWNBASE:体力  += 100
-			DOWNBASE:気力  += 80
-			NOWEX:射精      = 1
-			TCVAR:射精      = 1
-			TCVAR:空射精    = 1
-			TCVAR:空射精数 += 1
-		;強絶頂
-		ELSEIF 絶頂強度:0 == 2
-			STR:1044 = 大量射精（調教者）
-			射精負担 = 500
-			NOWEX:射精 = 3
-			TCVAR:射精 = 3
-		;通常の絶頂
+	;절정 결정시
+	IF 절정강도:0 > 0
+		;사정 게이지가 없다
+		IF BASE:사정 == 0
+			STR:1044 = 하늘 사정(조교자)
+			DOWNBASE:체력  += 100
+			DOWNBASE:기력  += 80
+			NOWEX:사정      = 1
+			TCVAR:사정      = 1
+			TCVAR:하늘사정    = 1
+			TCVAR:드라이사정수 += 1
+		;강절정
+		ELSEIF 절정강도:0 == 2
+			STR:1044 = 대량 사정(조교자)
+			사정부담 = 500
+			NOWEX:사정 = 3
+			TCVAR:사정 = 3
+		;통상의 절정
 		ELSE
-			STR:1044 = 射精（調教者）
-			射精負担 = 300
-			NOWEX:射精 = 2
-			TCVAR:射精 = 2
+			STR:1044 = 사정(조교자)
+			사정부담 = 300
+			NOWEX:사정 = 2
+			TCVAR:사정 = 2
 		ENDIF
 	ENDIF
-	;空でない射精時
-	IF NOWEX:射精 > 1
-		;精液汚れの追加
-		;────────────────────────────────────
-		;ACTが派生すると愛撫物が変わる場合があるので@IS_NOWACTNAMEではなく@TC_PLAYERで
-		;一々ACT派生も参照するのは面倒だし！
-		;────────────────────────────────────
-		;調教者のペニス
-		CALL SET_STAIN("ペニス", "精液", TARGET)
-		;調教対象の
-		;ヴァギナ(性交奉仕時)
+	;하늘이 아닌 사정시
+	IF NOWEX:사정 > 1
+		;정액 더러움의 추가
+		;─
+		;ACT가 파생하면 애무물이 바뀌는 경우가 있으므로@IS_NOWACTNAME는 아니고@TC_PLAYER로
+		;하나 하나 ACT 파생도 참조하는 것은 귀찮고!
+		;─
+		;조교자의 페니스
+		CALL SET_STAIN("페니스", "정액", TARGET)
+		;조교 대상의
+		;바기나(성교 봉사시)
 		SIF TC_PLAYER(1) == 4
-			CALL SET_STAIN("ヴァギナ", "精液", MASTER)
-		;アナル
+			CALL SET_STAIN("바기나", "정액", MASTER)
+		;애널
 		SIF TC_PLAYER(1) == 5
-			CALL SET_STAIN("アナル", "精液", MASTER)
-		;手
+			CALL SET_STAIN("애널", "정액", MASTER)
+		;손
 		SIF TC_PLAYER(1) == 2
-			CALL SET_STAIN("手", "精液", MASTER)
-		;口
+			CALL SET_STAIN("손", "정액", MASTER)
+		;구
 		SIF TC_PLAYER(1) == 1
-			CALL SET_STAIN("口", "精液", MASTER)
-		;胸
+			CALL SET_STAIN("구", "정액", MASTER)
+		;가슴
 		SIF TC_PLAYER(1) == 6
-			CALL SET_STAIN("胸", "精液", MASTER)
+			CALL SET_STAIN("가슴", "정액", MASTER)
 		[SKIPSTART]
-		Ｖ/Ａは中出し判定以降に処理を移設
-		;ヴァギナ
+		V/A는 질내사정 판정 이후에 처리를 이전
+		;바기나
 		SIF TC_PLAYER(1) == 4
-			CALL SET_STAIN("ヴァギナ", "精液", MASTER)
-		;アナル
+			CALL SET_STAIN("바기나", "정액", MASTER)
+		;애널
 		SIF TC_PLAYER(1) == 5
-			CALL SET_STAIN("アナル", "精液", MASTER)
+			CALL SET_STAIN("애널", "정액", MASTER)
 		[SKIPEND]
 	ENDIF
 ENDIF
 
-;中/外に射精
-IF TEQUIP:性交中 && NOWEX:射精
-	;中出し判定
+;중/밖에 사정
+IF TEQUIP:성교중 && NOWEX:사정
+	;질내사정 판정
 	LOCAL = 0
-	;中に出さないで！かつ許しを乞う失敗
-	IF IS_NOWCOMNAME("中に出さないで！") && !IS_COMGRONAME("許しを乞う")
-		;トラウマ加算
-		SOURCE:MASTER:トラウマ += (BASE:射精 == 1 ? 200 # 500) - CFLAG:MASTER:調教レベル * 10
-		;中出し確認
+	;중에 내지 마! 한편 허가를 청하는 실패
+	IF IS_NOWCOMNAME("중에 내지 마!") && !IS_COMGRONAME("허가를 청한다")
+		;트라우마 가산
+		SOURCE:MASTER:트라우마 += (BASE:사정 == 1 ? 200 # 500) - CFLAG:MASTER:조교레벨 * 10
+		;질내사정 확인
 		LOCAL = 1
-	;中に出して！または好意(M→T)が十分に存在
-	ELSEIF IS_NOWCOMNAME("中に出して！") || CFLAG:M好意 > RAND:8000
-		;中出し確認
+	;중에 내! 또는 호의(M→T)가 충분히 존재
+	ELSEIF IS_NOWCOMNAME("중에 내!") || CFLAG:M호의 > RAND:8000
+		;질내사정 확인
 		LOCAL = 1
 	ENDIF
-	;中出し時
+	;질내사정시
 	IF LOCAL
-		;Ｖ性交
-		IF TEQUIP:性交中 < 6
-			;汚れ追加(空射精時除く)
-			STAIN:MASTER:ヴァギナ |= (BASE:射精 == 1 ? 0 # 4)
-			;中出し記録(空射精情報も記入)
-			TFLAG:前回中出し = (BASE:射精 == 1 ? 3 # 1)
-			;調教対象(ご主人様)の膣内射精量を増やす
-			CFLAG:M膣精 += DOWNBASE:射精
-			;調教対象のヴァギナに精液汚れを追加
-			CALL SET_STAIN("ヴァギナ", "精液", MASTER)
-		;Ａ性交
+		;V성교
+		IF TEQUIP:성교중 < 6
+			;더러운 추가(하늘 사정시 제외함)
+			STAIN:MASTER:바기나 |= (BASE:사정 == 1 ? 0 # 4)
+			;질내사정 기록(하늘 사정 정보도 기입)
+			TFLAG:전회질내사정 = (BASE:사정 == 1 ? 3 # 1)
+			;조교 대상(주인님)의 질내 사정량을 늘린다
+			CFLAG:M질정 += DOWNBASE:사정
+			;조교 대상의 바기나에 정액 더러움을 추가
+			CALL SET_STAIN("바기나", "정액", MASTER)
+		;A성교
 		ELSE
-			;汚れ追加(空射精時除く)
-			STAIN:MASTER:アナル |= (BASE:射精 == 1 ? 0 # 4)
-			;中出し記録(空射精情報も記入)
-			TFLAG:前回中出し = (BASE:射精 == 1 ? 7 # 5)
-			;調教対象のアナルに精液汚れを追加
-			CALL SET_STAIN("アナル", "精液", MASTER)
+			;더러운 추가(하늘 사정시 제외함)
+			STAIN:MASTER:애널 |= (BASE:사정 == 1 ? 0 # 4)
+			;질내사정 기록(하늘 사정 정보도 기입)
+			TFLAG:전회질내사정 = (BASE:사정 == 1 ? 7 # 5)
+			;조교 대상의 애널에 정액 더러움을 추가
+			CALL SET_STAIN("애널", "정액", MASTER)
 		ENDIF
 	ENDIF
 ENDIF
 
-;Ｂ絶頂時、母乳体質であれば
-IF 絶頂強度:3 && TALENT:母乳体質
-	;母乳不足
-	IF BASE:母乳 < 50 + RAND:5 * 10
-		STR:1045 = 空噴乳（調教者）
-		噴乳負担 = 50 + 絶頂強度:3 * 10
-		DOWNBASE:体力 += 100
-		DOWNBASE:気力 += 80
-		NOWEX:噴乳 = 1
-		TCVAR:噴乳 = 1
-		;NOWEX:噴乳では『空噴乳』と通常の噴乳に1を割り当ててしまっているので、TCVAR:噴乳と番号がずれる
-		;現状NOWEXの番号をずらしたくないので、TCVAR:噴乳だけ手当しておくことにする@(2014/11/08)/L
-	;強絶頂
-	ELSEIF 絶頂強度:3 == 2
-		STR:1045 = 大量噴乳（調教者）
-		噴乳負担 = 500
-		NOWEX:噴乳 = 2
-		TCVAR:噴乳 = 3
-	;通常の絶頂
+;B절정시, 모유체질이면
+IF 절정강도:3 && TALENT:모유체질
+	;모유 부족
+	IF BASE:모유 < 50 + RAND:5 * 10
+		STR:1045 = 공분유(조교자)
+		분유부담 = 50 + 절정강도:3 * 10
+		DOWNBASE:체력 += 100
+		DOWNBASE:기력 += 80
+		NOWEX:분유 = 1
+		TCVAR:분유 = 1
+		;NOWEX:분유에서는 『공분유』라고 통상의 분유에 1을 할당해 버리고 있으므로, TCVAR:분유와 번호가 어긋난다
+		;현상 NOWEX의 번호를 비켜 놓고 싶지 않기 때문에, TCVAR:분유만 수당 해 두기로 한다@(2014/11/08) /L
+	;강절정
+	ELSEIF 절정강도:3 == 2
+		STR:1045 = 대량분유(조교자)
+		분유부담 = 500
+		NOWEX:분유 = 2
+		TCVAR:분유 = 3
+	;통상의 절정
 	ELSE
-		STR:1045 = 噴乳（調教者）
-		噴乳負担 = 300
-		NOWEX:噴乳 = 1
-		TCVAR:噴乳 = 2
+		STR:1045 = 분유(조교자)
+		분유부담 = 300
+		NOWEX:분유 = 1
+		TCVAR:분유 = 2
 	ENDIF
-	;調教者胸に母乳汚れ
-	CALL SET_STAIN("胸", "母乳", TARGET)
-	;調教対象の
-	;手
+	;조교자 가슴에 모유 더러움
+	CALL SET_STAIN("가슴", "모유", TARGET)
+	;조교 대상의
+	;손
 	SIF TB_PLAYER(1) == 2
-		CALL SET_STAIN("手", "母乳", MASTER)
-	;口
+		CALL SET_STAIN("손", "모유", MASTER)
+	;구
 	SIF TB_PLAYER(1) == 1
-		CALL SET_STAIN("口", "母乳", MASTER)
-	;ペニス
+		CALL SET_STAIN("구", "모유", MASTER)
+	;페니스
 	SIF TB_PLAYER(1) == 3
-		CALL SET_STAIN("ペニス", "母乳", MASTER)
+		CALL SET_STAIN("페니스", "모유", MASTER)
 ENDIF
 
-;STR:1046(絶頂表示用文字列)初期化
+;STR:1046(절정 표시용 캐릭터 라인) 초기화
 STR:1046 = 
-;絶頂種を順に記入
+;절정종을 순서에 기입
 SPLIT "＆Ｃ/＆Ｖ/＆Ａ/＆Ｂ", "/", LOCALS
 FOR LCOUNT, 0, 4
-	SIF 絶頂強度:LCOUNT
+	SIF 절정강도:LCOUNT
 		STR:1046 += LOCALS:LCOUNT
 NEXT
-;多重絶頂時
+;다중 절정시
 IF STRLENSU(STR:1046) > 2
-	;書式を整える
-	STR:1046 = %SUBSTRINGU(STR:1046, 1)%絶頂（調教者）
-	;文字数で絶頂種を判定
-	;四重絶頂
+	;서식을 정돈한다
+	STR:1046 = %SUBSTRINGU(STR:1046, 1)%절정(조교자)
+	;문자수로 절정종을 판정
+	;사중 절정
 	IF STRLENSU(STR:1046) > 13
-		;四重絶頂時には特別な文字列を記入
-		STR:1046 = 四 重 絶 頂（調教者）
-		TIMES 絶頂負担, 2.00
-		TIMES 射精負担, 1.40
-		TIMES 噴乳負担, 1.40
-		TIMES 快感負担, 1.50
-	;三重絶頂
+		;사중 절정시에는 특별한 캐릭터 라인을 기입
+		STR:1046 = 사중 절정(조교자)
+		TIMES 절정부담, 2.00
+		TIMES 사정부담, 1.40
+		TIMES 분유부담, 1.40
+		TIMES 쾌감부담, 1.50
+	;삼중 절정
 	ELSEIF STRLENSU(STR:1046) > 11
-		TIMES 絶頂負担, 1.65
-		TIMES 射精負担, 1.20
-		TIMES 噴乳負担, 1.20
-		TIMES 快感負担, 1.30
-	;二重絶頂
+		TIMES 절정부담, 1.65
+		TIMES 사정부담, 1.20
+		TIMES 분유부담, 1.20
+		TIMES 쾌감부담, 1.30
+	;이중 절정
 	ELSE
-		TIMES 絶頂負担, 1.30
-		TIMES 射精負担, 1.10
-		TIMES 噴乳負担, 1.10
-		TIMES 快感負担, 1.30
+		TIMES 절정부담, 1.30
+		TIMES 사정부담, 1.10
+		TIMES 분유부담, 1.10
+		TIMES 쾌감부담, 1.30
 	ENDIF
-;単絶頂、無絶頂時
+;단절정, 무절정시
 ELSE
-	;文字列初期化
+	;캐릭터 라인 초기화
 	STR:1046 = 
 ENDIF
 
-;絶頂は達成の主なソースの一つ
-SOURCE:MASTER:達成 += 射精負担 + 噴乳負担 + 絶頂負担
+;절정은 달성의 주된 소스의 1개
+SOURCE:MASTER:달성 += 사정부담 + 분유부담 + 절정부담
 
-;体力と気力と精力の消耗
-DOWNBASE:体力 += 20 * 絶頂強度:0 + 40 * 絶頂強度:1 + 60 * 絶頂強度:2 + 20 * 絶頂強度:3 + 射精負担 / 10 + 噴乳負担 / 10 + 快感負担 * (TFLAG:同一行動ボーナス + 1) / 2
-DOWNBASE:気力 += 10 * 絶頂強度:0 + 20 * 絶頂強度:1 + 30 * 絶頂強度:2 + 10 * 絶頂強度:3 + 射精負担 / 15 + 噴乳負担 / 15 + 快感負担 * (TFLAG:同一行動ボーナス + 1) * 4 / 10
-DOWNBASE:射精 = 射精負担
-;限界を超えて絞られた場合体力が削られる
-SIF DOWNBASE:射精 > BASE:射精
-	DOWNBASE:体力 += 200 * (2 - TALENT:精力絶倫 + TALENT:精力薄弱) / 2
-;母乳の消耗
-DOWNBASE:母乳 += 噴乳負担
-;限界を超えて絞られた場合体力が削られる
-SIF DOWNBASE:母乳 > BASE:母乳
-	DOWNBASE:体力 += 200 * (2 - TALENT:精力絶倫 + TALENT:精力薄弱) / 2
+;체력과 기력과 정력의 소모
+DOWNBASE:체력 += 20 * 절정강도:0 + 40 * 절정강도:1 + 60 * 절정강도:2 + 20 * 절정강도:3 + 사정부담 / 10 + 분유부담 / 10 + 쾌감부담 * (TFLAG:동일행동보너스 + 1) / 2
+DOWNBASE:기력 += 10 * 절정강도:0 + 20 * 절정강도:1 + 30 * 절정강도:2 + 10 * 절정강도:3 + 사정부담 / 15 + 분유부담 / 15 + 쾌감부담 * (TFLAG:동일행동보너스 + 1) * 4 / 10
+DOWNBASE:사정 = 사정부담
+;한계를 넘어 좁혀졌을 경우 체력이 깎아진다
+SIF DOWNBASE:사정 > BASE:사정
+	DOWNBASE:체력 += 200 * (2 - TALENT:정력절륜 + TALENT:정력박약) / 2
+;모유의 소모
+DOWNBASE:모유 += 분유부담
+;한계를 넘어 좁혀졌을 경우 체력이 깎아진다
+SIF DOWNBASE:모유 > BASE:모유
+	DOWNBASE:체력 += 200 * (2 - TALENT:정력절륜 + TALENT:정력박약) / 2
 
-;理性
-DOWNBASE:理性 += 快感負担 + (SUMARRAY(絶頂強度) + DOWNBASE:射精 / 300 + NOWEX:噴乳 + 5) * 20
+;이성
+DOWNBASE:이성 += 쾌감부담 + (SUMARRAY(절정강도) + DOWNBASE:사정 / 300 + NOWEX:분유 + 5) * 20
 
-;調教部位の累積値(補正値計算)
+;조교 부위의 누적치(보정치 계산)
 FOR LCOUNT, 0, 4
-	SIF 絶頂強度:LCOUNT
+	SIF 절정강도:LCOUNT
 		CFLAG:(30 + LCOUNT) = 50 + (CFLAG:(30 + LCOUNT) - 50) / 2
 NEXT
 
-;NOWEXにデータを入れる（絶頂時口上に使う）
+;NOWEX에 데이터를 넣는다(절정시 구상에 사용한다)
 FOR LCOUNT, 0, 4
-	NOWEX:LCOUNT = 絶頂強度:LCOUNT
+	NOWEX:LCOUNT = 절정강도:LCOUNT
 NEXT
 
-;NOWEXをTCVAR絶頂系に保存
-TCVAR:Ｃ絶頂 = NOWEX:Ｃ絶頂
-TCVAR:Ｖ絶頂 = NOWEX:Ｖ絶頂
-TCVAR:Ａ絶頂 = NOWEX:Ａ絶頂
-TCVAR:Ｂ絶頂 = NOWEX:Ｂ絶頂
+;NOWEX를 TCVAR 절정계에 보존
+TCVAR:C절정 = NOWEX:C절정
+TCVAR:V절정 = NOWEX:V절정
+TCVAR:A절정 = NOWEX:A절정
+TCVAR:B절정 = NOWEX:B절정
 
-;射精時、関連フラグを設定
-IF NOWEX:射精
-	;調教者射精後経過ターン参照系フラグをリセット
+;사정시, 관련 플래그를 설정
+IF NOWEX:사정
+	;조교자 사정 후 경과 턴 참조계 플래그를 리셋트
 	VARSET TCVAR:0, 0, 90, 100
-	;Ｖ性交時
+	;V성교시
 	SIF V_SEX()
-		TCVAR:膣内射精後経過ターン参照 = 1
-	;Ａ性交時
+		TCVAR:질내사정후경과턴참조 = 1
+	;A성교시
 	SIF A_SEX()
-		TCVAR:腸内射精後経過ターン参照 = 1
-	TCVAR:射精後経過ターン参照 = 1
-	CFLAG:射精回数            += 1
+		TCVAR:장내사정후경과턴참조 = 1
+	TCVAR:사정후경과턴참조 = 1
+	CFLAG:사정회수            += 1
 ENDIF
 
-;調教者の勃起
+;조교자의 발기
 
-;快感系ソースを受けるか、キスか、足舐め強制時。
-SIF (SOURCE:快Ｃ || SOURCE:快Ｖ || SOURCE:快Ａ || SOURCE:快Ｂ || IS_NOWACTNAME("キス/足舐め強制/Ｗキス")) && PENIS(TARGET)
-	TCVAR:勃起++
-;ぱんつ・性器見せ脱衣時。
+;쾌감계 소스를 받는지, 키스인가, 다리 빨고 강제시.
+SIF (SOURCE:쾌C || SOURCE:쾌V || SOURCE:쾌A || SOURCE:쾌B || IS_NOWACTNAME("키스/다리 빨고 강제/W키스")) && PENIS(TARGET)
+	TCVAR:발기++
+;팬티·성기 보이고 탈의시.
 SIF P_DATUICHECK(1) > 1 && PENIS(TARGET)
-	TCVAR:勃起++
-;ブラ・胸見せ脱衣時。
+	TCVAR:발기++
+;브라·가슴 보이고 탈의시.
 SIF B_DATUICHECK(1) > 1 && PENIS(TARGET)
-	TCVAR:勃起++
-;調教対象絶頂時。
-SIF (NOWEX:MASTER:Ｃ絶頂 || NOWEX:MASTER:Ｖ絶頂 || NOWEX:MASTER:Ａ絶頂 || NOWEX:MASTER:Ｂ絶頂 || NOWEX:MASTER:射精 || NOWEX:MASTER:噴乳 || NOWEX:MASTER:潮吹き || NOWEX:MASTER:放尿) && PENIS(TARGET)
-	TCVAR:勃起++
-;サドの場合、加虐系ACT時。
-SIF MENU(TFLAG:ACT分類) == "加虐" && TALENT:サド && PENIS(TARGET)
-	TCVAR:勃起++
-;献身的の場合、愛撫系ACT時。
-SIF MENU(TFLAG:ACT分類) == "愛撫" && TALENT:献身的 && PENIS(TARGET)
-	TCVAR:勃起++
-;受け身の場合、奉仕系ACT時。
-SIF MENU(TFLAG:ACT分類) == "奉仕" && TALENT:受け身 && PENIS(TARGET)
-	TCVAR:勃起++
-;意地悪の場合、羞恥系ACT時。
-SIF MENU(TFLAG:ACT分類) == "羞恥" && TALENT:意地悪 && PENIS(TARGET)
-	TCVAR:勃起++
-;狂気の場合、異常系ACT時。
-SIF MENU(TFLAG:ACT分類) == "異常" && TALENT:狂気 && PENIS(TARGET)
-	TCVAR:勃起++
+	TCVAR:발기++
+;조교 대상 절정시.
+SIF (NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정 || NOWEX:MASTER:A절정 || NOWEX:MASTER:B절정 || NOWEX:MASTER:사정 || NOWEX:MASTER:분유 || NOWEX:MASTER:물총 || NOWEX:MASTER:방뇨) && PENIS(TARGET)
+	TCVAR:발기++
+;새디즘의 경우, 가학계 ACT시.
+SIF MENU(TFLAG:ACT분류) == "가학" && TALENT:새디즘 && PENIS(TARGET)
+	TCVAR:발기++
+;헌신적의 경우, 애무계 ACT시.
+SIF MENU(TFLAG:ACT분류) == "애무" && TALENT:헌신적 && PENIS(TARGET)
+	TCVAR:발기++
+;수동의 경우, 봉사계 ACT시.
+SIF MENU(TFLAG:ACT분류) == "봉사" && TALENT:수동 && PENIS(TARGET)
+	TCVAR:발기++
+;심술쟁이의 경우, 수치계 ACT시.
+SIF MENU(TFLAG:ACT분류) == "수치" && TALENT:심술쟁이 && PENIS(TARGET)
+	TCVAR:발기++
+;광기의 경우, 이상계 ACT시.
+SIF MENU(TFLAG:ACT분류) == "이상" && TALENT:광기 && PENIS(TARGET)
+	TCVAR:발기++
 
-;射精すると1に戻る
-SIF NOWEX:射精
-	TCVAR:勃起 = 1
+;사정하면 1에 돌아온다
+SIF NOWEX:사정
+	TCVAR:발기 = 1
 
-;射精時、関連フラグを設定
-IF NOWEX:射精
-	CFLAG:(250 + NOWEX:射精) += 1
-	CFLAG:射精回数 += 1
+;사정시, 관련 플래그를 설정
+IF NOWEX:사정
+	CFLAG:(250 + NOWEX:사정) += 1
+	CFLAG:사정회수 += 1
 ENDIF
-;絶頂回数フラグを設定
+;절정 회수 플래그를 설정
 FOR LCOUNT, 0, 4
-	SIF 絶頂強度:LCOUNT
+	SIF 절정강도:LCOUNT
 		CFLAG:(256 + LCOUNT)++
 NEXT
 
-;絶頂回数を増やす
+;절정 회수를 늘린다
 FOR LCOUNT, 0, 4
 	EX:LCOUNT += NOWEX:LCOUNT
 NEXT
 SIF PENIS(TARGET)
-	EX:射精 += NOWEX:射精
-EX:噴乳 += NOWEX:噴乳
+	EX:사정 += NOWEX:사정
+EX:분유 += NOWEX:분유
 
-;いきそう（暫定）
-;イきそうでなく、ペニスがあれば勃起しているか、ペニスがないとき、快ｃが存在すれば
-IF TCVAR:TARGET:イきそう == 0 && (!PENIS(TARGET) || TCVAR:勃起 > 1) && CUP:快Ｃ > 0
-	;C感覚が低いとより低い値でいきそうに、また理性低下でC値にかかわらずいきそうになる。
+;삶그렇게(잠정)
+;가 그렇지 않고, 페니스가 있으면 발기하고 있는지, 페니스가 없을 때, 쾌c가 존재하면
+IF TCVAR:TARGET:갈것같다 == 0 && (!PENIS(TARGET) || TCVAR:발기 > 1) && CUP:쾌C > 0
+	;C감각이 낮으면보다 낮은 값으로 갈 것 같게, 또 이성 저하로 C치에 관계없이 살 것 같게 된다.
 	VARSET LOCAL
-	;C刺激 > C感覚 判定
-	LOCAL += (CUP:快Ｃ + PALAM:快Ｃ) >= MAX(GET_ABL(TARGET, "Ｃ感覚") * 100, 1000)
-	;技能 > 理性 判定
-	LOCAL += GET_ABL(MASTER, "技巧") - GET_ABL(TARGET, "技巧") > RAND:(MAX(BASE:TARGET:理性 / 10, 1))
-	;理性が全くなければ無条件でイきそうに
-	LOCAL += BASE:TARGET:理性 == 0
-	;どれかの判定に引っかかれば
+	;C자극 > C감각 판정
+	LOCAL += (CUP:쾌C + PALAM:쾌C) >= MAX(GET_ABL(TARGET, "C감각") * 100, 1000)
+	;기능 > 이성 판정
+	LOCAL += GET_ABL(MASTER, "기교") - GET_ABL(TARGET, "기교") > RAND:(MAX(BASE:TARGET:이성 / 10, 1))
+	;이성이 전혀 없으면 무조건으로 갈 것 같게
+	LOCAL += BASE:TARGET:이성 == 0
+	;어떤 것인가의 판정에 인소
 	IF LOCAL
-		TCVAR:TARGET:イきそう += 5
-		PRINTFORMW %CALLNAME:TARGET%はイきそうになった…
+		TCVAR:TARGET:갈것같다 += 5
+		PRINTFORMW %CALLNAME:TARGET%는 갈 것 같게 되었다…
 	ENDIF
 ENDIF
 
-;絶頂強度処理
-;ARG:0 = 快Ｘ種(ＣＶＡＢ)
-;ARG:1 = 今回の到達強度
-;RESULT = 絶頂強度
+;절정 강도 처리
+;ARG:0 =쾌X종(CVAB)
+;ARG:1 =이번 도달 강도
+;RESULT =절정 강도
 @CALC_SOURCE40_EX_P(ARG, ARG:1)
 #FUNCTION
 #DIM LCOUNT
-#DIM 絶頂境界, 3
-;絶頂境界セット
-絶頂境界 = 90
-絶頂境界:1 = 10000
-絶頂境界:2 = 20000
-;LOCAL初期化
+#DIM 절정경계, 3
+;절정 경계 세트
+절정경계 = 90
+절정경계:1 = 10000
+절정경계:2 = 20000
+;LOCAL 초기화
 VARSET LOCAL
-;絶頂境界分だけループする
+;절정 경계분만큼 루프 한다
 FOR LCOUNT, 1, 3
-	;絶頂境界を越えると、絶頂強度が1ずつ上がる
-	SIF ARG:1 < 絶頂境界:LCOUNT
+	;절정 경계를 넘으면, 절정 강도가 1씩 오른다
+	SIF ARG:1 < 절정경계:LCOUNT
 		BREAK
 	LOCAL++
 NEXT
-;イきそう時、快ｃがあればＣ絶頂が必ず起こる
-SIF (ARG == 0) && TCVAR:TARGET:イきそう && CUP:快Ｃ > 0
+;행그렇게시, 쾌c가 있으면 C절정이 반드시 일어난다
+SIF (ARG == 0) && TCVAR:TARGET:갈것같다 && CUP:쾌C > 0
 	LOCAL = MAX(LOCAL, 1)
-;絶頂時
+;절정시
 IF LOCAL >= 1
-	;絶頂境界:N、絶頂境界:0の数値に応じてPALAM減少
-	;(下限を突破しないよう調整)
-	CDOWN:ARG = MIN(絶頂境界:LOCAL * 絶頂境界 / 100, ARG:1)
-	;絶頂表示用文字列初期化
+	;절정 경계:N, 절정 경계:0의 수치에 응해 PALAM 감소
+	;(하한을 돌파하지 않게 조정)
+	CDOWN:ARG = MIN(절정경계:LOCAL * 절정경계 / 100, ARG:1)
+	;절정 표시용 캐릭터 라인 초기화
 	STR:(1040 + ARG) = 
-	;強度が2なら"強"を追加
+	;강도가 2라면 "강"을 추가
 	SIF LOCAL == 2
-		STR:(1040 + ARG) += "強"
-	;絶頂種を記入
-	STR:(1040 + ARG) += EXNAME:ARG + "（調教者）"
-	;CDOWN:快Ｘで下げても絶頂以上なら
-	;その値-1になるように調整（10000で絶頂なら9999）
-	SIF ARG:1 - CDOWN:ARG >= 絶頂境界:1
-		CDOWN:ARG = ARG:1 - 絶頂境界:1 + 1
+		STR:(1040 + ARG) += "강"
+	;절정종을 기입
+	STR:(1040 + ARG) += EXNAME:ARG + "(조교자)"
+	;CDOWN:쾌X로 내려도 절정 이상이라면
+	;그 값-1이 되도록(듯이) 조정(10000으로 절정이라면 9999)
+	SIF ARG:1 - CDOWN:ARG >= 절정경계:1
+		CDOWN:ARG = ARG:1 - 절정경계:1 + 1
 ENDIF
-;絶頂強度を返す
+;절정 강도를 돌려준다
 RETURNF LOCAL
 

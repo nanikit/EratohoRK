@@ -1,132 +1,132 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-;	アリス口上 その他イベント口上ファイル
+;	앨리스 구상 그 외 이벤트 구상 파일
 
-;	大満足ボーナス、本日の方針イベント口上をまとめたファイル
+;	대만족 보너스, 오늘의 방침 이벤트 구상을 정리한 파일
 
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-;#############################
-;EV16, 大満足ボーナス口上
-;#############################
+;              #
+;EV16, 대만족 보너스 구상
+;              #
 [SKIPSTART]
-・@EVENTRAINから呼び出される
-・大満足ボーナスが発生した場合に表示される
-・タイミングは調教開始口上(EV11)の後、調教者行動前口上(EV12)の前
-・選択前、選択後は共通の呼び出しからARGで別けられる
+·@EVENTRAIN로부터 불려 간다
+·대만족 보너스가 발생했을 경우에 표시된다
+·타이밍은 조교 개시 구상(EV11)의 뒤, 조교자 행동 서두(EV12)의 앞
+·선택전, 선택 후는 공통의 호출로부터 ARG로 구별 차진다
 [SKIPEND]
-@KOJO_EVENT_K14_16(ARG) ;ARG=(0.選択前/1.選択後)
+@KOJO_EVENT_K14_16(ARG) ;ARG=(0. 선택전/1. 선택 후)
 #DIMS DYNAMIC RHEART
 RHEART '= RAND:3 ? HTML_HEARTB(, COLOR2_K14("pink")) # HTML_HEART(, COLOR2_K14("pink"))
 
 
 ;/////////////////////////////
-;選択前口上
+;선택 서두
 ;/////////////////////////////
-;・上機嫌な様子で、今日は何をされたいかとたずねる
-;・上機嫌な様子で、今日は何をされたいかとたずねる
-;・口上表示前に地の文(%CALLNAME:TARGET%さま大満足ボーナス)
-;・口上表示の後に地の文(%CALLNAME:TARGET%は上機嫌な様子で、今日は何をされたいかとたずねてきた)が続く
-;・地の文の後に選択肢が表示される
-IF 口上記入チェック(100) && ARG == 0 && TALENT:TARGET:ご主人様
+;·매우 기분이 좋은 모습으로, 오늘은 무엇을 되고 싶을까 방문한다
+;·매우 기분이 좋은 모습으로, 오늘은 무엇을 되고 싶을까 방문한다
+;·구상 표시전에 지문(%CALLNAME:TARGET%님대만족 보너스)
+;·구상 표시의 뒤로 지문(%CALLNAME:TARGET%는 매우 기분이 좋은 모습으로, 오늘은 무엇을 되고 싶을까 방문해 왔다)가 계속된다
+;·지문의 뒤로 선택지가 표시된다
+IF 구상기입체크(100) && ARG == 0 && TALENT:TARGET:주인님
 	SELECTCASE RANDEVENT(4, 20)
 		CASE 0
-			PRINTFORMW 「今回はご褒美として何でもしてあげるわよ」
-			PRINTFORMW 「ねぇ、どうして欲しい…？」
+			PRINTFORMW 「이번은 포상으로서 뭐든지 해 주어요」
+			PRINTFORMW 「저기, 어째서 갖고 싶어…?」
 		CASE 1
-			PRINTFORMW 「ねぇ、何かリクエストはあるかしら？」
-			PRINTFORMW 「別に驚く事はないわ。私だってそういう気分の時はあるもの。ふふ」
+			PRINTFORMW 「저기, 뭔가 리퀘스트는 있을까?」
+			PRINTFORMW 「따로 놀라는 일은 없어요. 나도 그러한 기분때는 있는 것. 후후」
 		CASE 2
-			PRINTFORMW 「偶には希望を聞いてあげてもいいわよ？」
-			PRINTFORMW 「今日は%CNAME(MASTER, TARGET)%がしたい事をしてあげる」
-			PRINTFORMW 「さて、何がお望みかしら？」
+			PRINTFORMW 「이따금은 희망을 (들)물어 주어도 괜찮아요?」
+			PRINTFORMW 「오늘은%CNAME(MASTER, TARGET)%를 하고 싶은 일을 해 준다」
+			PRINTFORMW 「그런데, 무엇이 소망일까?」
 		CASE 3
-			PRINTFORMW 「今回は特別よ。何か希望があるなら聞いてあげるわ」
-			PRINTFORMW 「で、%CNAME(MASTER, TARGET)%は何を望むの…？」
+			PRINTFORMW 「이번은 특별해요. 뭔가 희망이 있다면 (들)물어 주어요」
+			PRINTFORMW 「그래서,%CNAME(MASTER, TARGET)%는 무엇을 바라는 거야…?」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 ;/////////////////////////////
-;選択後口上
+;선택 뒷맛상
 ;/////////////////////////////
 [SKIPSTART]
-・調教対象の返答に対して、一言
-・口上表示に後に地の文(%CALLNAME:TARGET%は%CALLNAME:MASTER%の返事を聞くと調教の準備を始めた)が続く
-・上記の地の文を表示した後に、選択肢毎の地の文が表示される
-・休憩が選択された場合はEV12, ご褒美による中止に続く
+·조교 대상의 대답에 대해서, 한 마디
+·구상 표시에 뒤로 지문(%CALLNAME:TARGET%는 %CALLNAME:MASTER%의 대답을 (들)물으면 조교의 준비를 시작했다)이 계속된다
+·상기의 지문을 표시한 뒤로, 선택지 마다의 지문이 표시된다
+·휴게가 선택되었을 경우는 EV12, 포상에 의한 중지에 계속된다
 
-・TCVAR:今日の満足ボーナス
-	0=いつもどおり
-	1=A開発
-	2=お仕置き
-	3=ハード
-	4=イチャイチャ
-	5=異常
-	6=野外
-	7=子作り
-	8=休憩
-	9=抱いて
-	10=ご奉仕
-	11=かわいがり
-・IS_SATIS_BONUS(通常/アナル/お仕置き/ハード/イチャイチャ/異常/野外/子作り/休憩/抱いて/ご奉仕/かわいがり)
+·TCVAR:오늘의 만족 보너스
+	0=언제나 대로
+	1=A개발
+	2=벌
+	3=하드
+	4=러브러브
+	5=이상
+	6=야외
+	7=아이 만들기
+	8=휴게
+	9=안아
+	10= 봉사
+	11=귀여워해
+·IS_SATIS_BONUS(통상/애널/벌/하드/러브러브/이상/야외/아이 만들기/휴게/안아/봉사/귀여워해)
 [SKIPEND]
 
-;大満足ボーナス選択後
+;대만족 보너스 선택 후
 ;********************
-;TCVAR:今日の満足ボーナス/IS_POLICY/POLICY単体でもこの箇所での参照は可能
-;調教ターン中に満足ボーナスを参照するならTCVAR:今日の満足ボーナスで
-;v1.212から口上表示前にシステム側で空行が入るように
-IF ARG == 1 && TALENT:TARGET:ご主人様 ;調教者がご主人様
-	;ボーナス[0] いつも通り
+;TCVAR:오늘의 만족 보너스/IS_POLICY/POLICY 단체에서도 이 개소에서의 참조는 가능
+;조교 턴중에 만족 보너스를 참조한다면 TCVAR:오늘의 만족 보너스로
+;v1. 212로부터 구상 표시전에 시스템측에서 공행이 들어가도록(듯이)
+IF ARG == 1 && TALENT:TARGET:주인님 ;조교자가 주인님
+	;보너스[0] 언제나 대로
 	;======================
-	IF IS_SATIS_BONUS("通常")
-		;2/3の確率で表示
+	IF IS_SATIS_BONUS("통상")
+		;2/3의 확률로 표시
 		IF RAND:3
 			SELECTCASE RANDEVENT(4, 0)
 				CASE 0
-					PRINTFORMW 「あら､ 控えめね？」
-					PRINTFORMW 「遠慮なんていらないのに」
+					PRINTFORMW 「아라, 소극적이구나?」
+					PRINTFORMW 「사양 같은거 필요없는데」
 				CASE 1
-					PRINTFORMW 「意外と欲が無いのね？」
-					PRINTFORMW 「ま、%CNAME(MASTER, TARGET)%がそれでいいなら」
+					PRINTFORMW 「의외로욕구가 없는거네?」
+					PRINTFORMW 「뭐,%CNAME(MASTER, TARGET)%가 그것으로 좋으면」
 				CASE 2
-					PRINTFORMW 「折角の機会だと思うんだけど%CNAME(MASTER, TARGET)%、本当にそれでいいわけ？」
-					PRINTFORMW 「まぁ…、私としては別に構わないけど」
+					PRINTFORMW 「모처럼의 기회라고 생각하지만%CNAME(MASTER, TARGET)%, 정말로 그것으로 좋은 것?」
+					PRINTFORMW 「뭐…, 나로서는 별로 상관없지만」
 				CASE 3
-					PRINTFORMW 「正直、%CNAME(MASTER, TARGET)%が何を言ってくるか楽しみにしてたんだけど」
-					PRINTFORMW 「これじゃ興ざめもいいとこだわ…」
+					PRINTFORMW 「정직,%CNAME(MASTER, TARGET)%가 무슨 말을 해 올까 기대해 있었다지만」
+					PRINTFORMW 「이래서야 흥을 깸도 좋으면 개예요…」
 			ENDSELECT
-		;1/3の確率で汎用口上
+		;1/3의 확률로 범용 구상
 		ELSE
 			CALL KOJO_EV16_K14
 		ENDIF
 		RETURN 1
 	ENDIF
 
-	;ボーナス[1] アナルをいじめて
+	;보너스[1] 애널을 괴롭혀
 	;============================
-	IF IS_SATIS_BONUS("アナル")
+	IF IS_SATIS_BONUS("애널")
 		IF RAND:3
 			SELECTCASE RANDEVENT(3, 1)
 				CASE 0
-					PRINTFORMW 「お尻ね？ 判ったわ…」
-					CALL HTMLPRINTW(@"「ふふっ…、私も%CNAME(MASTER, TARGET)%のお尻虐めるの、大好きよ…%RHEART%」")
+					PRINTFORMW 「엉덩이군요? 알았어요…」
+					CALL HTMLPRINTW(@"「후훗…, 나도%CNAME(MASTER, TARGET)%의 엉덩이 괴롭히는 것, 정말 좋아해요…%RHEART%」")
 				CASE 1
-					PRINTFORMW 「……変態」
-					CALL HTMLPRINTW(@"「ま、%CNAME(MASTER, TARGET)%がいいなら別に構わないけど%RAND_SPLIT("/、ね")%%RHEART%」")
+					PRINTFORMW 「…… 변태」
+					CALL HTMLPRINTW(@"「뭐,%CNAME(MASTER, TARGET)%가 좋으면 별로 상관없지만%RAND_SPLIT("/, 저기")%%RHEART%」")
 				CASE 2
-					PRINTFORMW 「おしりを虐めてだなんて、\@ TALENT:MASTER:オトコ ? 男の癖に # はしたないわね \@…」
-					PRINTFORM 「でも…、%CNAME(MASTER, TARGET)%のおしり弄って
-					;調教対象が小柄
-					IF TALENT:MASTER:小柄
-						PRINTFORM \@ TALENT:MASTER:オトコ ? 女の子 # 子猫 \@みたいに鳴かせると、とっても可愛いのよね
+					PRINTFORMW 「엉덩이를 괴롭혀이라니,\@ TALENT:MASTER:남자 ? 남의 주제에# 상스럽네요\@…」
+					PRINTFORM 「그렇지만…,%CNAME(MASTER, TARGET)%의 엉덩이 만지작거려
+					;조교 대상이 작은체형
+					IF TALENT:MASTER:작은체형
+						PRINTFORM \@ TALENT:MASTER:남자 ? 여자 아이# 새끼 고양이\@같이 울릴 수 있으면, 매우 사랑스럽네요
 						CALL PRINT_SYMBOL_K14
-					;その他
+					;그 외
 					ELSE
-						PRINTFORMW \@ TALENT:MASTER:オトコ ? 女 # 発情したメス豚 \@みたいに鳴かせるの、ゾクゾクしちゃうのよね%RAND_SPLIT("ぇ/")%」
+						PRINTFORMW \@ TALENT:MASTER:남자 ? 녀# 발정한 암퇘지\@같이 울릴 수 있는 것, 오슬오슬 해 버리는거네요%RAND_SPLIT("/")%」
 					ENDIF
-					CALL FADEOUT(15, @"「\@ AFFECTION("相思相愛") ? ふふ # フフ \@……」")
+					CALL FADEOUT(15, @"「\@ AFFECTION("상사상애") ? 후후# 후후\@……」")
 					SIF ANIME_CONFIG("FADE")
 						CLEARLINE 1
 			ENDSELECT
@@ -136,17 +136,17 @@ IF ARG == 1 && TALENT:TARGET:ご主人様 ;調教者がご主人様
 		RETURN 1
 	ENDIF
 
-	;ボーナス[2] お仕置きして
+	;보너스[2] 벌 해
 	;========================
-	IF IS_SATIS_BONUS("お仕置き")
+	IF IS_SATIS_BONUS("벌")
 		IF RAND:3
 			SELECTCASE RANDEVENT(2, 2)
 				CASE 0
-					PRINTFORMW 「いいわよ……私も%CNAME(MASTER, TARGET)%にお仕置きするの、大好きだもの」
-					PRINTFORMW 「さぁ、覚悟はいいかしら…」
+					PRINTFORMW 「좋아요…… 나도%CNAME(MASTER, TARGET)%에 벌 하는 것, 정말 좋아한 것」
+					PRINTFORMW 「자, 각오는 좋을까…」
 				CASE 1
-					PRINTFORMW 「あら、マゾ豚らしいリクエストね？ ふふ」
-					PRINTFORMW 「そういう事なら遠慮なくいく%RAND_SPLIT("から/わよ")%……」
+					PRINTFORMW 「아라, 마조돼지인것 같은 리퀘스트군요? 후후」
+					PRINTFORMW 「그런 일이라면 사양말고 간다%RAND_SPLIT("로부터/원이야")%……」
 			ENDSELECT
 		ELSE
 			CALL KOJO_EV16_K14
@@ -154,17 +154,17 @@ IF ARG == 1 && TALENT:TARGET:ご主人様 ;調教者がご主人様
 		RETURN 1
 	ENDIF
 
-	;ボーナス[3] 激しくして
+	;보너스[3] 격렬하게 해
 	;======================
-	IF IS_SATIS_BONUS("ハード")
+	IF IS_SATIS_BONUS("하드")
 		IF RAND:3
 			SELECTCASE RANDEVENT(2, 3)
 				CASE 0
-					PRINTFORMW 「あら、激しいのがいいの…？」
-					CALL HTMLPRINTW(@"「いやらしいお人形さんね%RHEART%」")
+					PRINTFORMW 「아라, 격렬한 것이 좋은거야…?」
+					CALL HTMLPRINTW(@"「추잡한 인형씨네%RHEART%」")
 				CASE 1
-					PRINTFORMW 「そうね？ 偶にはそういうのもいいかもね」
-					CALL HTMLPRINTW(@"「私も激しいのは嫌いじゃないし。ふふ%RHEART%」")
+					PRINTFORMW 「그렇구나? 이따금은 그러한 것도 좋을지도」
+					CALL HTMLPRINTW(@"「나도 격렬한 것은 싫지 않고. 후후%RHEART%」")
 			ENDSELECT
 		ELSE
 			CALL KOJO_EV16_K14
@@ -172,22 +172,22 @@ IF ARG == 1 && TALENT:TARGET:ご主人様 ;調教者がご主人様
 		RETURN 1
 	ENDIF
 
-	;ボーナス[4] 甘えさせて
+	;보너스[4] 응석부리게 해
 	;======================
-	IF IS_SATIS_BONUS("イチャイチャ")
+	IF IS_SATIS_BONUS("러브러브")
 		IF RAND:3
-			;調教対象がお子様
-			IF TALENT:MASTER:小柄
-				PRINTFORMW 「可愛い事言うじゃない……」
-				CALL HTMLPRINTW(@"「いいわよ%RHEART% 今日はお姉さんに思いっきり甘えさせてあげるから。ふふ」")
-			;調教対象がオトコ
-			ELSEIF TALENT:MASTER:オトコ
-				PRINTFORMW 「いい年した男が甘えさせてって、ちょっとどうかと思うわよ？」
-				CALL HTMLPRINTW(@"「でもまぁ……時にはそういうのもいいかしら、ね%RHEART%」")
-			;その他
+			;조교 대상이 꼬마님
+			IF TALENT:MASTER:작은체형
+				PRINTFORMW 「사랑스러운 일 말하지 않아……」
+				CALL HTMLPRINTW(@"「좋아요%RHEART% 오늘은 누나에게 마음껏 응석부리게 해 주기 때문에. 후후」")
+			;조교 대상이 남자
+			ELSEIF TALENT:MASTER:남자
+				PRINTFORMW 「좋은 나이 한 남자가 응석부리게 해는, 조금 어떨까라고 생각해요?」
+				CALL HTMLPRINTW(@"「그렇지만 아무튼…… 가끔 그러한 것도 좋을, 까요%RHEART%」")
+			;그 외
 			ELSE
-				PRINTFORMW 「甘えさせてだなんて、可愛い事言うわね…」
-				CALL HTMLPRINTW(@"「さぁ、いらっしゃい。思いっきり可愛がってあげる%RHEART%」")
+				PRINTFORMW 「응석부리게 해이라니, 사랑스러운 일 말해요…」
+				CALL HTMLPRINTW(@"「자, 어서오세요. 마음껏 귀여워해 준다%RHEART%」")
 			ENDIF
 		ELSE
 			CALL KOJO_EV16_K14
@@ -195,41 +195,41 @@ IF ARG == 1 && TALENT:TARGET:ご主人様 ;調教者がご主人様
 		RETURN 1
 	ENDIF
 
-	;ボーナス[5] 壊れるまでして
+	;보너스[5] 망가질 때까지 해
 	;==========================
-	IF IS_SATIS_BONUS("異常")
+	IF IS_SATIS_BONUS("이상")
 		IF RAND:3
 			SELECTCASE RANDEVENT(3, 5)
 				CASE 0
-					PRINTFORMW 「いいわ、 お望み通り、壊してあげる……」
+					PRINTFORMW 「좋아요, 소망 대로, 부수어 준다……」
 				CASE 1
-					PRINTFORMW 「フフ、本当にいいのかしら？ 後で取り消しはきかないのよ」
+					PRINTFORMW 「후후, 정말로 좋은 것일까? 다음에 취소는 (듣)묻지 않는거야」
 				CASE 2
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%…、変わってるわね」
-					PRINTFORMW 「ま、それが望みと言うなら叶えてあげるわ…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%…, 변해요」
+					PRINTFORMW 「뭐, 그것이 소망이라고 말한다면 실현되어 주어요…」
 			ENDSELECT
-			PRINTFORMDW アリスの瞳は金色に染まり、妖しい雰囲気を漂わせている…
+			PRINTFORMDW 앨리스의 눈동자는 금빛에 물들어, 요염한 분위기를 감돌게 하고 있다…
 		ELSE
 			CALL KOJO_EV16_K14
 		ENDIF
 		RETURN 1
 	ENDIF
 
-	;方針[6], 外に出たい
+	;방침[6], 밖에 나가고 싶다
 	;===================
-	IF IS_SATIS_BONUS("野外")
+	IF IS_SATIS_BONUS("야외")
 		IF RAND:3
 			SELECTCASE RANDEVENT(3, 6)
 				CASE 0
-					PRINTFORMW 「それ、人に見られても良いって事よね？」
-					PRINTFORMW 「まぁ…、%CNAME(MASTER, TARGET)%がいいなら構わないけど」
+					PRINTFORMW 「그것, 사람에게 보여져도 좋다는 일이군요?」
+					PRINTFORMW 「뭐…,%CNAME(MASTER, TARGET)%가 좋으면 상관없지만」
 				CASE 1
-					PRINTFORMW 「外に出たい、ねぇ。ま、それはいいんだけど」
-					PRINTFORMW 「面倒なやつには会いたくないわね…」
+					PRINTFORMW 「밖에 나가고 싶은, 저기. 뭐, 그것은 좋지만」
+					PRINTFORMW 「귀찮은 녀석에게는 만나고 싶지 않네요…」
 				CASE 2
-					PRINTFORML 「そうねぇ。気分転換にはいいかも」
-					PRINTFORMW 「でも…、あまり目立つ訳にもいかないわよ？」
-					PRINTFORMW 「つまらない噂を立てられると、色々と面倒だし……」
+					PRINTFORML 「그렇구나. 기분 전환에는 좋을지도」
+					PRINTFORMW 「그렇지만…, 너무 눈에 띌 수도 없어요?」
+					PRINTFORMW 「시시한 소문을 세울 수 있으면, 다양하게 귀찮고……」
 			ENDSELECT
 		ELSE
 			CALL KOJO_EV16_K14
@@ -237,100 +237,100 @@ IF ARG == 1 && TALENT:TARGET:ご主人様 ;調教者がご主人様
 		RETURN 1
 	ENDIF
 
-	;ボーナス[7] 孕ませたい
+	;보너스[7] 임신하게 하고 싶다
 	;======================
-	IF IS_SATIS_BONUS("子作り")
-		;初回かつ調教者が処女 // 今の動作だとこの手の分岐が必要だと思った
+	IF IS_SATIS_BONUS("자 만들기")
+		;첫회 또한 조교자가 처녀 // 지금의 동작이라면 이 손의 분기가 필요하다고 생각했다
 		;--------------------
-		IF TALENT:TARGET:処女
-			PRINTFORML 「えっ！？ それって、つまり……」
-			CALL HTMLPRINTW(@"「この私の%HTMLFONT("<b>初めて</b>", , COLOR2_K14("white"))%が欲しいって事よね？」")
+		IF TALENT:TARGET:처녀
+			PRINTFORML 「엣!? 그 거, 즉……」
+			CALL HTMLPRINTW(@"「이 나의%HTMLFONT("<b>처음</b>", , COLOR2_K14("white"))%를 갖고 싶다는 일이군요?」")
 			PRINTL
 			CALL TWAIT3_K14
 			PRINTL
-			PRINTFORMDW %CALLNAME%はうつむき、暫しの間考え込んだあと言った…
-			;各分岐毎確実に排他にしたいので個別にRETURNする
+			PRINTFORMDW %CALLNAME%는 숙여, 잠깐의 사이 골똘히 생각한 뒤 했다…
+			;각 분기마다 확실히 배타로 하고 싶기 때문에 개별적으로 RETURN 한다
 			IF 0
-			;イベント経過後
-			ELSEIF GET_KFLAG_K14("相思相愛")
+			;이벤트 경과후
+			ELSEIF GET_KFLAG_K14("상사상애")
 				{
-				CALL HTMLPRINTL(@"「ま、正直今更感はあるけど…%CNAME(MASTER, TARGET)%が" + 
-				@"%HTMLFONT("<b>そこまで</b>", , COLOR2_K14("白"))%言うなら仕方ないわね」")
+				CALL HTMLPRINTL(@"「뭐, 정직 이제 와서 감은 있지만…%CNAME(MASTER, TARGET)%가" + 
+				@"%HTMLFONT("<b>거기까지</b>", , COLOR2_K14("흰색"))%말한다면 어쩔 수 없네요」")
 				}
-				PRINTFORMW 「大事にとっておいたところで自慢になるものでもないし、いくらでもあげるわよ」
-				;心が読める
-				SIF TALENT:MASTER:読心能力 == 2
-					CALL FADEIN(15, "（やっとその気になったのね。遅いのよ、馬鹿……）")
-				;空気が読める
-				;SIF TALENT:MASTER:読心能力 == 1
+				PRINTFORMW 「소중하게 취해 둔 곳에서 자랑이 되는 것도 아니고, 얼마든지 주어요」
+				;심을 읽을 수 있다
+				SIF TALENT:MASTER:독심술 == 2
+					CALL FADEIN(15, "(겨우 그럴 기분이 든 거네. 늦은 것, 바보……)")
+				;공기를 읽을 수 있다
+				;SIF TALENT:MASTER:독심술 == 1
 				;	PRINTFORMDW
-				;汎用処理
+				;범용 처리
 				CALL KOJO_EV16_1_K14
 				RETURN 1
-			;調教者の方が依存している
-			ELSEIF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
-				PRINTFORMW 「ま、別にいいけど。こんなもの、私のでよければあげるわよ」
-				;心が読める
-				SIF TALENT:MASTER:読心能力 == 2
-					CALL FADEIN(15, @"（%CNAME(MASTER, TARGET)%になら…、いくらでも……）")
-				;汎用処理
+			;조교자가 의존하고 있다
+			ELSEIF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「뭐, 별로 좋지만. 이런 것, 나의 것으로 좋다면 주어요」
+				;심을 읽을 수 있다
+				SIF TALENT:MASTER:독심술 == 2
+					CALL FADEIN(15, @"（%CNAME(MASTER, TARGET)%에라면…, 얼마든지……)")
+				;범용 처리
 				CALL KOJO_EV16_1_K14
 				RETURN 1
-			;その他
+			;그 외
 			ELSE
-				PRINTFORMW 「そうね、別にいいわよ。%CNAME(MASTER, TARGET)%の希望を聞いたのは私だしね」
-				;汎用処理
+				PRINTFORMW 「그렇구나, 별로 좋아요.%CNAME(MASTER, TARGET)%의 희망을 (들)물은 것은 나이고」
+				;범용 처리
 				CALL KOJO_EV16_1_K14
 				RETURN 1
 			ENDIF
 		ENDIF
 
-		;初回かつ調教者が処女でない場合
+		;첫회 또한 조교자가 처녀가 아닌 경우
 		;------------------------------
-		IF !TALENT:TARGET:処女 && FIRSTEVENT(7)
+		IF !TALENT:TARGET:처녀 && FIRSTEVENT(7)
 			{
-			CALL HTMLPRINTW(@"「は、孕ませたいとか…、%HTMLFONT("<b>馬っ鹿じゃないの</b>", , 
-			COLOR2_K14("ALICE"))%！？　この私に種付けしたいとか何様よっ！」")
+			CALL HTMLPRINTW(@"「이, 임신하게 하고 싶다든가…,%HTMLFONT("<b>마 사슴이 아닌거야</b>", , 
+			COLOR2_K14("ALICE"))%!?   이 나에게 교배하고 싶다든가 어떤 분이야!」")
 			}
-			PRINTFORMW 「な～んていうのを期待してるとしたら、お生憎様…」
-			PRINTFORMW 「この際ハッキリ言っとくけど、私にだって選ぶ権利はあるのよ？ %CNAME(MASTER, TARGET)%、その辺判ってる！？」
+			PRINTFORMW 「뭐라고 하는 것을 기대하고 있다고 하면, 공교롭게도…」
+			PRINTFORMW 「이 때 분명하게 말해 두지만, 나에게라도 선택할 권리는 있는거야?%CNAME(MASTER, TARGET)%, 그근처 알고 있다!?」
 			CALL TWAIT1_K14
-			PRINTFORMW 「でもなぜかしら。%CNAME(MASTER, TARGET)%にそう言われて、悪い気がしないのは確かなのよ」
-			PRINTFORMW 「むしろ、ちょっと……って、これ以上はやめておくわ…」
-			PRINTFORMW 「いくら聞かれても教える気はないから、そのつもりでね。判った？」
+			PRINTFORMW 「그렇지만 왜일까.%CNAME(MASTER, TARGET)%에 그렇게 말해져, 나쁜 생각이 들지 않는 것은 확실한 것이야」
+			PRINTFORMW 「오히려, 조금…… 은, 더 이상은 그만두어요…」
+			PRINTFORMW 「아무리 (들)물어도 가르칠 생각은 없기 때문에, 그럴 생각으로. 알았어?」
 			CALL KOJO_EV16_1_K14
 			CALL TWAIT3_K14
 			RETURN 1
 		ENDIF
 
-		;その他
+		;그 외
 		;------
 		IF RAND:3
 			SELECTCASE RANDEVENT(5, 7)
 				CASE 0
-					CALL HTMLPRINTL(@"「あら、生意気な事言うじゃない……ふふ%RHEART%」")
-					PRINTFORMW 「そう言うからには期待していいのかしら？」
+					CALL HTMLPRINTL(@"「아라, 건방진 일 말하지 않아…… 후후%RHEART%」")
+					PRINTFORMW 「그렇게 말하는 이상에는 기대해도 좋은 것일까?」
 				CASE 1
-					PRINTFORMW 「この私を孕ませたいなんて生意気ね！ でも…」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%ならいいわよ……」
+					PRINTFORMW 「이 나를 임신하게 하고 싶다니 건방지구나! 그렇지만…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%라면 좋아요……」
 				CASE 2
-					PRINTFORMW 「そう言うからには責任を取る覚悟があるって事かしら？」
-					PRINTFORMW 「まぁでも……、今更過ぎるわよね？ そんな話。くすっ」
+					PRINTFORMW 「그렇게 말하는 이상에는 책임을 질 각오가 있다는 일일까?」
+					PRINTFORMW 「뭐 그렇지만……, 이제 와서 지나네요? 그런 이야기. 키득」
 				CASE 3
-					CALL FADEIN(10, "「……まったく」")
+					CALL FADEIN(10, "「…… 완전히」")
 					WAIT
 					{
-					CALL HTMLPRINTW(@"「この%HTMLFONT("<b>私</b>", , 
-					COLOR2_K14("ALICE"))%に向かって種付けしたいとか、どの口が言うのかしら…」")
+					CALL HTMLPRINTW(@"「이%HTMLFONT("<b>나</b>", , 
+					COLOR2_K14("ALICE"))%에 향해 교배하고 싶다든가, 어느 입이 말할까…」")
 					}
-					PRINTW 「とか言ってはみたものの…、ん、そうね」
-					CALL HTMLPRINTW(@"「面と向かって言われると、ちょとドキドキしちゃうのは確かなのよね…%RHEART%」")
+					PRINTW 「라든지 말해 보았지만…, 응, 그렇구나」
+					CALL HTMLPRINTW(@"「정면에서 말해지면, 와 두근두근 해 버리는 것은 확실한 것이군요…%RHEART%」")
 				CASE 4
-					PRINTFORML 「そうね、それは別に構わないけど…」
-					PRINTFORMW 「そこまで言うからには、相応の頑張りを期待させてもらうわよ。いいわね？」
+					PRINTFORML 「그렇구나, 그것은 별로 상관없지만…」
+					PRINTFORMW 「거기까지 말하는 이상에는, 상응하는 분발함을 기대시켜 받아요. 좋네요?」
 					{
-					CALL HTMLPRINTW(@"「途中で萎びたり、打ち止めになったりしたら%HTMLFONT("<b>ちょん切って</b>"
-					, , COLOR2_K14("ALICE"))%やるんだから。ふふ%RHEART%」")
+					CALL HTMLPRINTW(@"「도중에 시들거나 최후가 되거나 하면%HTMLFONT("<b>싹독 잘라</b>"
+					, , COLOR2_K14("ALICE"))%하기 때문에. 후후%RHEART%」")
 					}
 			ENDSELECT
 		ELSE
@@ -339,212 +339,212 @@ IF ARG == 1 && TALENT:TARGET:ご主人様 ;調教者がご主人様
 		RETURN 1
 	ENDIF
 
-	;ボーナス[8] 休ませて
+	;보너스[8] 쉬게 해
 	;====================
-	IF IS_SATIS_BONUS("休憩")
-		;調教対象が消耗している
+	IF IS_SATIS_BONUS("휴게")
+		;조교 대상이 소모하고 있다
 		{
-		PRINTFORMW 「\@ CFLAG:MASTER:消耗 >= 3 
-		? そうね、%CNAME(MASTER, TARGET)%も大分疲れているみたいだし 
-		# 休ませてとか言う割には元気そうに見えるけど？ でもまあ… \@」
+		PRINTFORMW 「\@ CFLAG:MASTER:소모 >= 3 
+		? 그렇구나,%CNAME(MASTER, TARGET)%도 상당히 피곤한 것 같고
+		# 쉬게 해라든지 말하는 것 치고는 건강한 것 같게 보이지만? 그렇지만 뭐…\@」
 		}
-		PRINTFORMW 「たまには%RAND_SPLIT("のんびり過ごすのもいいわね/そういう日があってもいいわよね")%」
+		PRINTFORMW 「가끔 씩은%RAND_SPLIT("한가로이 보내는 것도 좋네요/그러한 날 이 있어도 돼요")%」
 		RETURN 1
 	ENDIF
 
-	;ボーナス[9] 抱いてほしい
+	;보너스[9] 안으면 좋겠다
 	;========================
-	IF IS_SATIS_BONUS("抱いて")
-		;調教対象が処女かつ初回
+	IF IS_SATIS_BONUS("안아")
+		;조교 대상이 처녀 또한 첫회
 		;----------------------
-		IF TALENT:MASTER:処女 && FIRSTEVENT(9)
-			PRINTFORML 「えっ、それってつまり……」
+		IF TALENT:MASTER:처녀 && FIRSTEVENT(9)
+			PRINTFORML 「엣, 그 거 즉……」
 			{
-			CALL HTMLPRINTW(@"「この私に%CNAME(MASTER, TARGET)%の%HTMLFONT("<b>初めて</b>"
-			, , COLOR2_K14("white"))%を捧げてもいいって事よね？」")
+			CALL HTMLPRINTW(@"「이 나에게%CNAME(MASTER, TARGET)%의%HTMLFONT("<b>처음</b>"
+			, , COLOR2_K14("white"))%를 바쳐도 괜찮다는 일이군요?」")
 			}
 			PRINTL
 			CALL TWAIT3_K14
 			PRINTL
-			PRINTFORMDW %CALLNAME%はうつむき、暫しの間考え込んだあと言った…
+			PRINTFORMDW %CALLNAME%는 숙여, 잠깐의 사이 골똘히 생각한 뒤 했다…
 			IF 0
-			;イベント経過済み
-			ELSEIF GET_KFLAG_K14("相思相愛")
-				PRINTFORMW 「今頃になってやっとその気になるとか…遅いのよ、%CNAME(MASTER, TARGET)%」
-				PRINTFORMW 「でも……、まぁいいいわ。許してあげる」
-				PRINTFORMW 「私だって、その…なんていうか……%CNAME(MASTER, TARGET)%から切り出してくれて凄く嬉しいのは確かだし」
-				CALL HTMLPRINTL(@"「…って、お喋りはこの辺にしておくべきよね。ふふ%RHEART%」")
-			;調教者が依存している
-			ELSEIF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
-				PRINTFORMW 「正直、%CNAME(MASTER, TARGET)%から言い出すなんてちょっとビックリね。でも…」
-				PRINTFORMW 「とても嬉しく思うわ。本当よ？」
-			;その他
+			;이벤트 경과가 끝난 상태
+			ELSEIF GET_KFLAG_K14("상사상애")
+				PRINTFORMW 「지금에서야 겨우 그럴 기분이 든다든가… 늦은 것,%CNAME(MASTER, TARGET)%」
+				PRINTFORMW 「그렇지만……, 뭐 좋은 있고 원. 허락해 준다」
+				PRINTFORMW 「나도, 그… 뭐라고 할까……%CNAME(MASTER, TARGET)%로부터 잘라 주어 굉장히 기쁜 것은 확실하고」
+				CALL HTMLPRINTL(@"「… 읏, 수다는 이 근처로 해 두어야 하는 것이군요. 후후%RHEART%」")
+			;조교자가 의존하고 있다
+			ELSEIF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「정직,%CNAME(MASTER, TARGET)%로부터 말하기 시작하다니 조금 놀라구나. 그렇지만…」
+				PRINTFORMW 「매우 기쁘다고 생각해요. 사실이야?」
+			;그 외
 			ELSE
-				PRINTFORMW 「そうね。私もそろそろ次の段階に進んでも、って思ってたけど…」
-				PRINTFORMW 「でもまさか、%CNAME(MASTER, TARGET)%から言い出すなんてね？」
-				CALL HTMLPRINTL(@"「ちょっと意外…、って言ったら%CNAME(MASTER, TARGET)%に失礼かもだけど。ふふ%RHEART%」")
+				PRINTFORMW 「그렇구나. 나도 슬슬 다음의 단계로 나아가도, 라고 생각했지만…」
+				PRINTFORMW 「그렇지만 설마,%CNAME(MASTER, TARGET)%로부터 말하기 시작하다니?」
+				CALL HTMLPRINTL(@"「조금 의외…, 라고 말하면%CNAME(MASTER, TARGET)%에 실례일지도이지만. 후후%RHEART%」")
 			ENDIF
 			PRINTL
 			{
-			PRINTFORMW 「さぁ、こっちへいらっしゃい。このアリス\@ 
-			TALENT:MASTER:小柄 ? お姉 # \@さんが%CNAME(MASTER, TARGET)%の初めて貰ってあげる」
+			PRINTFORMW 「자, 여기에 계(오)세요. 이 앨리스\@ 
+			TALENT:MASTER:작은체형 ? 누나# \@씨가%CNAME(MASTER, TARGET)%의 처음으로 받아 준다」
 			}
-			CALL HTMLPRINTW(@"「思いっきり可愛がってあげるわ…%RHEART%」")
+			CALL HTMLPRINTW(@"「마음껏 귀여워해 주어요…%RHEART%」")
 			RETURN 1
 		ENDIF
 
-		;調教対象が処女でないかつ初回
+		;조교 대상이 처녀가 아닌가 개첫회
 		;----------------------------
-		IF !TALENT:MASTER:処女 && FIRSTEVENT(9)
-			PRINTFORMW 「そう、ようやく私に抱かれる気になったのね」
-			PRINTFORMW 「%CNAME(MASTER, TARGET)%がその気なら、私に断る理由なんてないわ」
-			PRINTFORMW 「ま、そういうことだから、よろしくお願いね…って言ったらちょっと変かしら？」
-			CALL FADEOUT(15, "「ふふ…」")
+		IF !TALENT:MASTER:처녀 && FIRSTEVENT(9)
+			PRINTFORMW 「그래, 간신히 나에게 안길 마음이 생긴 거네」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%가 그 기분이라면, 나에게 거절하는 이유 같은거 없어요」
+			PRINTFORMW 「뭐, 그런 일이니까, 아무쪼록 부탁이군요… 라고 말하면 조금 이상할까?」
+			CALL FADEOUT(15, "「후후…」")
 			SIF ANIME_CONFIG("FADE")
 				CLEARLINE 1
 			RETURN 1
 		ENDIF
 
-		;条件なし
+		;조건 없음
 		;--------
 		SELECTCASE RANDEVENT(6, 9)
 			CASE 0
-				CALL HTMLPRINTW(@"「あら…%RHEART% 私に抱かれたいだなんて直球ね？ ふふ」")
+				CALL HTMLPRINTW(@"「아라…%RHEART% 나에게 안기고 싶다는 직구군요? 후후」")
 			CASE 1
-				CALL HTMLPRINTW(@"「ふふ、随分可愛らしいこと言ってくれるじゃない%RHEART%」")
+				CALL HTMLPRINTW(@"「후후, 상당히 사랑스러운 일 말해 주지 않아%RHEART%」")
 			CASE 2
-				PRINTFORML 「いいわよ、抱いてあげる…」
-				CALL HTMLPRINTW(@"「子猫のように可愛がってあげるわ…%RHEART%」")
+				PRINTFORML 「좋아요, 안아 준다…」
+				CALL HTMLPRINTW(@"「새끼 고양이와 같이 귀여워해 주어요…%RHEART%」")
 			CASE 3
-				CALL HTMLPRINTW(@"「ふふ…%RHEART% そこまで言われて断る理由なんてないわね」")
+				CALL HTMLPRINTW(@"「후후…%RHEART% 그렇게 까지 말해져 거절하는 이유 같은거 없네요」")
 			CASE 4
-				CALL HTMLPRINTL(@"「正直、直接的な物言いってあまり好きじゃないんだけど…」")
-				CALL HTMLPRINTW(@"「こういう場合は別よね%RHEART% 私好きよ？ そういうの」")
+				CALL HTMLPRINTL(@"「정직, 직접적인 말투는 그다지 좋아하지 않지만…」")
+				CALL HTMLPRINTW(@"「이런 경우는 별도여요%RHEART% 나를 좋아해요? 그러한 것」")
 			CASE 5
-				CALL HTMLPRINTL(@"「あら%RHEART% 大胆ね、%CNAME(MASTER, TARGET)%」")
-				CALL HTMLPRINTL(@"「そこまで言われたら、私としても応えない訳にいかないじゃない…%RHEART%」")
+				CALL HTMLPRINTL(@"「아라%RHEART% 대담하구나,%CNAME(MASTER, TARGET)%」")
+				CALL HTMLPRINTL(@"「그렇게 까지 말해지면, 나로서도 응하지 않을 수는 없잖아…%RHEART%」")
 		ENDSELECT
 		RETURN 1
 	ENDIF
 
-	;ボーナス[10] ご奉仕したい
+	;보너스[10] 봉사하고 싶다
 	;=========================
-	IF IS_SATIS_BONUS("ご奉仕")
-		;初回
+	IF IS_SATIS_BONUS("봉사")
+		;첫회
 		IF FIRSTEVENT(10)
 			IF 0
-			ELSEIF GET_KFLAG_K14("相思相愛")
-				PRINTFORML 「そういえば、%CNAME(MASTER, TARGET)%がそういう事言い出したのはこれが初めてよね」
-				PRINTFORMW 「ま、正直…今更すぎる気はするけど。でも、そうね……」
-				PRINTFORML 「言われて悪い気がしないのは確かね。むしろちょっと嬉しいかも…」
+			ELSEIF GET_KFLAG_K14("상사상애")
+				PRINTFORML 「그렇게 말하면,%CNAME(MASTER, TARGET)%가 그런 일 말하기 시작한 것은 이것이 처음이군요」
+				PRINTFORMW 「뭐, 정직… 이제 와서 지날 생각은 들지만. 그렇지만, 그렇구나……」
+				PRINTFORML 「말해져 나쁜 생각이 들지 않는 것은 확실하구나. 오히려 조금 기쁠지도…」
 				{
-				CALL HTMLPRINTW(@"「な～んて言うと%CNAME(MASTER, TARGET)%はすぐ調子に乗りそうだけど。" + 
-				@"ま、この際どうでもいいわね。ふふ…%RHEART%」")
+				CALL HTMLPRINTW(@"「뭐라고 말하면%CNAME(MASTER, TARGET)%는 곧 우쭐해질 것 같지만." + 
+				@"뭐, 이 때 아무래도 좋네요. 후후…%RHEART%」")
 				}
 			ELSE
 				IF 0
-				ELSEIF TALENT:MASTER:小柄
+				ELSEIF TALENT:MASTER:작은체형
 					{
-					CALL HTMLPRINTW(@"「あら%RHEART% 随分可愛らしいこと言ってくれるじゃない。この\@ 
-					TALENT:MASTER:オトコ ? 子 # 娘 \@ってば。ふふ…」")
+					CALL HTMLPRINTW(@"「아라%RHEART% 상당히 사랑스러운 일 말해 주지 않아. 이\@ 
+					TALENT:MASTER:남자 ? 자# 아가씨\@는 정말. 후후…」")
 					}
-				ELSEIF TALENT:MASTER:オトコ
-					PRINTFORMW 「へぇ、大の男がそういう事言いだすなんてね。ま、これはこれで…悪くない気分だけど」
+				ELSEIF TALENT:MASTER:남자
+					PRINTFORMW 「헤에, 대단한 남자가 그런 일 말하기 시작하다니. 뭐, 이것은 이것대로… 나쁘지 않은 기분이지만」
 				ELSE
-					PRINTFORML 「%CNAME(MASTER, TARGET)%からそんな健気な台詞が聞けるなんてね？」
-					PRINTFORMW 「それに今の…、ちょっと可愛かったわよ」
+					PRINTFORML 「%CNAME(MASTER, TARGET)%로부터 그렇게 기특한 대사를 (들)물을 수 있다니?」
+					PRINTFORMW 「거기에 지금의…, 조금 사랑스러웠어요」
 				ENDIF
-				IF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度
-					PRINTFORMW 「まぁそういう事なら、%CNAME(MASTER, TARGET)%がどこまで本気なのか見せてもらおうかしら」
-					CALL HTMLPRINTW(@"「精々頑張ることね？ 期待してるわよ%RHEART%」")
+				IF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+					PRINTFORMW 「아무튼 그런 일이라면,%CNAME(MASTER, TARGET)%가 어디까지 진심인 것인가 보여 받을까」
+					CALL HTMLPRINTW(@"「최대한 노력하는거네? 기대하고 있어요%RHEART%」")
 				ELSE
-					PRINTFORMW 「まぁでも、%CNAME(MASTER, TARGET)%がそこまで言うなら仕方ないわね」
+					PRINTFORMW 「뭐 그렇지만,%CNAME(MASTER, TARGET)%가 거기까지 말한다면 어쩔 수 없네요」
 					{
-					PRINTFORMW 「このアリス\@ TALENT:MASTER:小柄 
-					? お姉さん # 様 \@に奉仕できる幸せを噛み締めながら、精々頑張って頂戴…」
+					PRINTFORMW 「이 앨리스\@ TALENT:MASTER:작은체형 
+					? 누나# 님\@에 봉사할 수 있는 행복을 음미하면서, 최대한 노력해 줘…」
 					}
 				ENDIF
 			ENDIF
 			RETURN 1
 		ENDIF
 
-		;初回以外
+		;첫회 이외
 		SELECTCASE RANDEVENT(5, 10)
 			CASE 0
-				CALL HTMLPRINTW(@"「ふふ%RHEART% 嬉しいこと言ってくれるじゃない。ほら、こっちにきなさいよ…」")
+				CALL HTMLPRINTW(@"「후후%RHEART% 기쁜 일 말해 주지 않아. 이봐요, 여기에 오세요…」")
 			CASE 1
-				CALL HTMLPRINTW(@"「ご奉仕したいだなんて、殊勝な心がけね？ ふふ…%RHEART%」")
+				CALL HTMLPRINTW(@"「봉사하고 싶다는, 기특한 배려군요? 후후…%RHEART%」")
 			CASE 2
-				PRINTFORMW 「そうね。そういうことならお願いしようかしら」
+				PRINTFORMW 「그렇구나. 그런 일이라면 부탁할까」
 			CASE 3
-				PRINTFORMW 「これはまた、随分可愛らしい申し出ね%RAND_SPLIT("。/？")% クスクス…」
+				PRINTFORMW 「이것은 또, 상당히 사랑스러운 의사표현이군요%RAND_SPLIT("。/？")% 킥킥…」
 			CASE 4
-				PRINTFORML 「%CNAME(MASTER, TARGET)%がそう言うなら断る理由なんてないわね」
-				CALL HTMLPRINTW(@"「私は精々楽しませてもらう事にするわ%RHEART%」")
+				PRINTFORML 「%CNAME(MASTER, TARGET)%가 그렇게 말한다면 거절하는 이유 같은거 없네요」
+				CALL HTMLPRINTW(@"「나는 최대한 즐겁게 해 받는 일로 해요%RHEART%」")
 		ENDSELECT
 		RETURN 1
 	ENDIF
 
-	;ボーナス[11] かわいがって
+	;보너스[11] 귀여워해
 	;=========================
-	IF IS_SATIS_BONUS("かわいがり")
-		;初回
+	IF IS_SATIS_BONUS("귀여워해")
+		;첫회
 		IF FIRSTEVENT(11)
-			CALL HTMLPRINTW(@"「ふふっ、随分可愛らしいこと言うようになったじゃない%RHEART%」")
-			;調教対象がオトコかつ小柄ではない
-			SIF TALENT:MASTER:オトコ && !TALENT:MASTER:小柄
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%のような男の口からそんな言葉が出るとは思ってもみなかったけど。まぁ…」
-			PRINTFORMW 「いいわよ、このアリス\@ TALENT:MASTER:小柄 ? お姉さん # 様 \@がたっぷり可愛がってあげるわ」
-			SIF !TALENT:MASTER:小柄
-				PRINTW 「私なりのやりかたで、ね……」
+			CALL HTMLPRINTW(@"「후훗, 상당히 사랑스러운 일 말하게 되었지 않아%RHEART%」")
+			;조교 대상이 남자 한편 작은체형은 아니다
+			SIF TALENT:MASTER:남자 && !TALENT:MASTER:작은체형
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%와 같은 남자의 입으로부터 그런 말이 나온다고는 생각도 해보지 않았지만. 뭐…」
+			PRINTFORMW 「좋아요, 이 앨리스\@ TALENT:MASTER:작은체형 ? 누나# 님\@가 충분히 귀여워해 주어요」
+			SIF !TALENT:MASTER:작은체형
+				PRINTW 「나나름의 사용 방법으로,……」
 			RETURN 1
 		ENDIF
 
-		;2/3の確率で表示
+		;2/3의 확률로 표시
 		IF RAND:3
-			;調教対象が子供 //小柄は子供として扱うのがこの口上の仕様
-			IF TALENT:MASTER:小柄
+			;조교 대상이 아이 //작은체형은 아이로서 취급하는 것이 이 구상의 사양
+			IF TALENT:MASTER:작은체형
 				SELECTCASE RANDEVENT(11)
 					CASE 0
-						CALL HTMLPRINTW(@"「ふふ%RHEART% 可愛らしいこと言うのね」")
-						PRINTFORMW 「尤も…、%CNAME(MASTER, TARGET)%の歳ならそういうこと言い出してもおかしくはないけど」
+						CALL HTMLPRINTW(@"「후후%RHEART% 사랑스러운 일 하는 거네」")
+						PRINTFORMW 「무엇보다…,%CNAME(MASTER, TARGET)%의 나이라면 그런 일 말하기 시작해도 이상하지는 않지만」
 					CASE 1
-						CALL HTMLPRINTW(@"「あら、かわいい%RHEART%」")
-						PRINTFORMW 「%CNAME(MASTER, TARGET)%みたいな\@ TALENT:MASTER:オトコ ? 子 # 娘 \@にそんなこと言われたら断れないわね」
+						CALL HTMLPRINTW(@"「아라, 사랑스럽다%RHEART%」")
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%같은\@ TALENT:MASTER:남자 ? 자# 아가씨\@에 그런 일 말해지면 거절할 수 없네요」
 					CASE 2
-						PRINTFORMW 「ふふ…、何だかんだいってやっぱり歳相応の子供ね」
-						PRINTFORMW 「まぁでも…、%CNAME(MASTER, TARGET)%がそう言うなら」
+						PRINTFORMW 「후후…, 이러니 저러니 말해 역시 나이 상응하는 아이네」
+						PRINTFORMW 「뭐 그렇지만…,%CNAME(MASTER, TARGET)%가 그렇게 말한다면」
 				ENDSELECT
-			;調教対象がオトコ
-			ELSEIF TALENT:MASTER:オトコ
+			;조교 대상이 남자
+			ELSEIF TALENT:MASTER:남자
 				SELECTCASE RANDEVENT(12)
 					CASE 0
-						PRINTFORMW 「大の男がそういうこと言い出すのって、ちょっとどうなの？」
-						CALL HTMLPRINTW(@"「な～んて今更よね、そんなの。ふふ%RHEART%」")
+						PRINTFORMW 「대단한 남자가 그런 일 말하기 시작하는 것은, 조금 어때?」
+						CALL HTMLPRINTW(@"「무슨 이제 와서군요, 그런 것. 후후%RHEART%」")
 					CASE 1
-						PRINTFORMW 「全く…、%CNAME(MASTER, TARGET)%にはプライドってものが無いのかしら？」
-						CALL HTMLPRINTW(@"「%HTMLFONT("<b>恥を知りなさい！</b>", "ＭＳ 明朝", COLOR2_K14("白"))%」")
-						PRINTFORMW 「とか、思わず言いたくなるけど今は止めておくわ。って…」
-						PRINTFORMW 「ちょっと遅かったかしらね？ ふふ…」
+						PRINTFORMW 「완전히…,%CNAME(MASTER, TARGET)%에는 프라이드라는 것이 없는 것일까?」
+						CALL HTMLPRINTW(@"「%HTMLFONT("<b>수치를 아세요! </b>", "MS 내일 아침", COLOR2_K14("흰색"))%」")
+						PRINTFORMW 「라든지, 무심코 말하고 싶어지지만 지금은 멈추어 두어요. 라고…」
+						PRINTFORMW 「조금 늦었을까요? 후후…」
 					CASE 2
-						PRINTFORMW 「そうねぇ…、『かわいがって』とかどう考えても%CNAME(MASTER, TARGET)%のような男には似つかわしくない台詞だけど…」
-						PRINTFORMW 「これはこれで悪い気がしないのは確かなのよ。私も大概ね」
+						PRINTFORMW 「그렇구나…, 『귀여워해』든지 어떻게 생각해도%CNAME(MASTER, TARGET)%와 같은 남자에게는 적합하지 않은 대사이지만…」
+						PRINTFORMW 「이것은 이것대로 나쁜 생각이 들지 않는 것은 확실한 것이야. 나도 대개군요」
 				ENDSELECT
-			;調教対象がオトコ以外
+			;조교 대상이 남자 이외
 			ELSE
 				SELECTCASE RANDEVENT(13)
 					CASE 0
-						PRINTFORMW 「%CNAME(MASTER, TARGET)%にそう言われて断る理由なんてないわ」
-						PRINTFORMW 「いいわよ、可愛がってあげるわ…」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%에 그렇게 말해져 거절하는 이유 같은거 없어요」
+						PRINTFORMW 「좋아요, 귀여워해 주어요…」
 					CASE 1
-						PRINTFORMW 「あらあら、まるで子供みたいなこと言うのね」
-						PRINTFORMW 「でも、ふふ…%CNAME(MASTER, TARGET)%のそういうとこ、嫌いじゃないわよ」
+						PRINTFORMW 「아라아라, 마치 아이같은 일 하는 거네」
+						PRINTFORMW 「그렇지만, 후후…%CNAME(MASTER, TARGET)%의 그러한 곳, 싫지 않아요」
 					CASE 2
-						PRINTFORMW 「ま、そういう気分になることってあるわよね。判るわ」
-						CALL HTMLPRINTW(@"「いいわよ、子猫のように可愛がってあげる…%RHEART%」")
+						PRINTFORMW 「뭐, 그러한 기분이 되는 것은 있네요. 알아요」
+						CALL HTMLPRINTW(@"「좋아요, 새끼 고양이와 같이 귀여워해 준다…%RHEART%」")
 				ENDSELECT
 			ENDIF
-		;1/3の確率で汎用処理
+		;1/3의 확률로 범용 처리
 		ELSE
 			CALL KOJO_EV16_K14
 		ENDIF
@@ -553,81 +553,81 @@ IF ARG == 1 && TALENT:TARGET:ご主人様 ;調教者がご主人様
 ENDIF
 
 ;========================================================================
-;EV17, 本日の方針口上
+;EV17, 오늘의 방침 구상
 ;========================================================================
-;・@EVENTTRAINから呼び出される
-;・タイミングは調教開始口上(EV11)の後、調教者行動前口上(EV12)の前
-;・大満足ボーナスを得ている場合はそちらが優先される(即ち、この箇所が呼び出される事はない)
-;・調教者により本日の方針が決定された場合に表示
-;・口上表示の後にPRINTLを挟んで地の文。地の文は方針毎に専用のものになる
-;・子作り、休憩はご褒美でしか出ないのでこの箇所では不要。方針が通常の場合は処理されないので通常も不要
-;・Ａ感覚が4までは確率（Ａ感覚、0で1/3）でTFLAG:今日の方針 == 1（Ａ開発）になり1/5の確率で他の方針によって上書きされる
-;・Ａ感覚が5以降になると今日の方針 == 1（Ａ開発）になる可能性は無くなる（感覚が上昇すればＡ開発の必要はない、という仕様？）
+;·@EVENTTRAIN로부터 불려 간다
+;·타이밍은 조교 개시 구상(EV11)의 뒤, 조교자 행동 서두(EV12)의 앞
+;·대만족 보너스를 얻고 있는 경우는 그 쪽이 우선된다(즉, 이 개소가 불려 가는 일은 없다)
+;·조교자에 의해 오늘의 방침이 결정되었을 경우에 표시
+;·구상 표시의 뒤로 PRINTL를 사이에 두어 지문. 지문은 방침마다 전용의 것이 된다
+;·아이 만들어, 휴게는 포상으로 밖에 나오지 않기 때문에 이 개소에서는 불요. 방침이 통상의 경우는 처리되지 않기 때문에 통상도 불요
+;·A감각이 4까지는 확률(A감각, 0으로 1/3)로 TFLAG:오늘의 방침 == 1(A개발)이 되어 1/5의 확률로 다른 방침에 의해 덧쓰기된다
+;·A감각이 5이후가 되면 오늘의 방침 == 1(A개발)이 될 가능성은 없어진다(감각이 상승하면 A개발의 필요는 없는, 이라고 하는 사양?)
 ;-------------------------------------------------
 @KOJO_EVENT_K14_17(ARG)
 ;-------------------------------------------------
 
-LOCALS = \@ AFFECTION("相思相愛") ? くすくす # ウフフ \@
-;一行空ける
+LOCALS = \@ AFFECTION("상사상애") ? 킥킥# 우후후\@
+;일행 비운다
 PRINTL
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;方針がアナル開発 FIRST/RANDEVENT(0)
+;방침이 애널 개발 FIRST/RANDEVENT(0)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && IS_POLICY("今日", "アナル")
-	PRINTFORMW 「さてと、今回はおしりを虐めてあげようかしら？」
+IF 구상기입체크(100) && IS_POLICY("오늘", "애널")
+	PRINTFORMW 「그럼, 이번은 엉덩이를 괴롭혀 줄까?」
 	SELECTCASE RANDEVENT(2, 0)
 		CASE 0
-			PRINTFORMW 「もう少し慣らしてあげないとね。色々な意味で…ふふ」
+			PRINTFORMW 「좀 더 길들여 주지 않으면. 다양한 의미로… 후후」
 		CASE 1
-			PRINTFORMW 「おしり弄られて\@ TALENT:MASTER:オトコ ? 女の子みたいに # \@鳴いちゃう%CNAME(MASTER, TARGET)%の姿、わたし好きなのよね」
+			PRINTFORMW 「엉덩이 만지작거려져\@ TALENT:MASTER:남자 ? 여자 아이같이# \@울어 버린다%CNAME(MASTER, TARGET)%의 모습, 나 좋아하는 것이군요」
 	ENDSELECT
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;方針がお仕置き FIRST/RANDEVENT(1)
+;방침이 벌FIRST/RANDEVENT(1)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && IS_POLICY("今日", "お仕置き")
-	PRINTFORMW 「たまにはお仕置きの日っていうのもいいかも知れないわ」
-	PRINTFORMW 「自分でも良く判らないけど…、なんかそういう気分なのよね」
+IF 구상기입체크(100) && IS_POLICY("오늘", "벌")
+	PRINTFORMW 「가끔 씩은 벌의 날이라고 하는 것도 좋을지도 몰라요」
+	PRINTFORMW 「스스로도 잘 모르지만…, 뭔가 그러한 기분인 것이군요」
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;方針がいつもより激しく FIRST/RANDEVENT(2)
+;방침이 평소보다 격렬하고 FIRST/RANDEVENT(2)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && IS_POLICY("今日", "ハード")
-	PRINTFORMW 「さて、今回はちょっと激しくするわよ。覚悟して頂戴…」
-	;調教対象のマゾっ気が4以上
-	SIF ABL:MASTER:マゾっ気 > 4
-		PRINTFORMW 「違うわね。%CNAME(MASTER, TARGET)%の場合、愉しみにしててってのが正しいわよね？」
+IF 구상기입체크(100) && IS_POLICY("오늘", "하드")
+	PRINTFORMW 「그런데, 이번은 조금 격렬하게 해요. 각오 해 줘…」
+	;조교 대상의 마조끼가 4이상
+	SIF ABL:MASTER:마조끼 > 4
+		PRINTFORMW 「달라요.%CNAME(MASTER, TARGET)%의 경우, 기대하고 있어라는 것이 올발라요?」
 	CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%LOCALS%…」")
 	CLEARLINE 1
 	RETURN 1
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;方針がイチャイチャ FIRST/RANDEVENT(3)
+;방침이 러브러브 FIRST/RANDEVENT(3)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && IS_POLICY("今日", "イチャイチャ")
-	PRINTFORMW 「時にはちょっと甘やかすのも悪くないわよね。ま、そんな訳で…」
-	PRINTFORM 「今回は思い切り可愛がってあげるわ
+IF 구상기입체크(100) && IS_POLICY("오늘", "러브러브")
+	PRINTFORMW 「때에는 조금 응석부리게 하는 것도 나쁘지 않네요. 뭐, 그런 (뜻)이유로…」
+	PRINTFORM 「이번은 마음껏 귀여워해 주어요
 	CALL PRINT_SYMBOL_K14
 	SIF !RAND:3
-		PRINTFORMW 「あ、これは文字通りの意味で…別に裏はないから、安心していいわよ？ ふふっ……」
+		PRINTFORMW 「아, 이것은 문자 그대로의 의미로… 별로 뒤는 없기 때문에, 안심해도 좋아요? 후훗……」
 	RETURN 1
 ENDIF
 
-;この口上の場合、方針が異常でも放置プレイ、足舐め強制、罵倒にしかならない。他は封印しているのでね
-;とはいってもアリスさんの場合、補正値的に公衆便器は強烈なマイナス補正がかかってるし、fist系が出る事もまずないんだけど
-;というかまぁ、画的に美しくないものは嫌い。fistとか死ねばいい
+;이 구상의 경우, 방침이 이상해도 방치 플레이, 다리 빨고 강제, 매도 밖에 되지 않는다. 다른 것은 봉인하고 있으므로
+;라고는 말해도 앨리스씨의 경우, 보정치적으로 공중 변기는 강렬한 마이너스 보정이 걸려 있고, fist계가 나오는 일도 우선 없지만
+;라고 할까 아무튼, 획적으로 아름답지 않은 것은 싫다. fist라든지 죽으면 된다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;方針が異常 FIRST/RANDEVENT(4)
+;방침이 이상 FIRST/RANDEVENT(4)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && IS_POLICY("今日", "異常")
-	PRINTFORMW 「今回はたっぷりと可愛がってあげるから、愉しみにしてていいわよ。とは言っても…」
-	PRINTFORMW 「文字通りって訳でもないんだけど。ね？」
+IF 구상기입체크(100) && IS_POLICY("오늘", "이상")
+	PRINTFORMW 「이번은 충분히 귀여워해 주기 때문에, 기대해도 좋아요. 라고는 말해도…」
+	PRINTFORMW 「문자 그대로라는 것도 아니지만. 저기?」
 	IF !RAND:3
 		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%LOCALS%…」")
 		SIF ANIME_CONFIG("FADE")
@@ -637,14 +637,14 @@ IF 口上記入チェック(100) && IS_POLICY("今日", "異常")
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;方針が野外 FIRST/RANDEVENT(5)
+;방침이 야외 FIRST/RANDEVENT(5)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && IS_POLICY("今日", "野外")
-	PRINTFORMW 「たまには外出するのもいいかも知れないわね」
-	PRINTFORMW 「%CNAME(MASTER, TARGET)%の事は、そうねぇ…」
-	PRINTFORMW 「よく出来た人形とでも言っておけば、なんとかなるのではないかしら」
+IF 구상기입체크(100) && IS_POLICY("오늘", "야외")
+	PRINTFORMW 「가끔 씩은 외출하는 것도 좋을지도 모르네요」
+	PRINTFORMW 「%CNAME(MASTER, TARGET)%의 일은, 그렇구나…」
+	PRINTFORMW 「잘 할 수 있던 인형이라고도 말하면, 어떻게든 되는 것은 아닐까」
 	IF !RAND:3
-		PRINTFORMW 「流石に、死霊術とも言えないしね？」
+		PRINTFORMW 「과연, 사령술이라고도 말할 수 없기도 하고?」
 		CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%LOCALS%…」")
 		SIF ANIME_CONFIG("FADE")
 			CLEARLINE 1
@@ -653,22 +653,22 @@ IF 口上記入チェック(100) && IS_POLICY("今日", "野外")
 ENDIF
 
 ;-------------------------------------------------
-;EV16汎用口上
+;EV16 범용 구상
 ;-------------------------------------------------
 @KOJO_EV16_K14
-PRINTFORM 「いいわよ、お望み通りにしてあげる…
+PRINTFORM 「좋아요, 소망 대로로 해 준다…
 CALL PRINT_SYMBOL_K14
-PRINTFORMW 「じゃ、はじめるわよ」
+PRINTFORMW 「그러면, 시작해요」
 
 @KOJO_EV16_1_K14
 {
-PRINTFORMDL %CALLNAME%は\@ TALENT:TARGET:処女
-? まるで他人事のようにあっさりと承諾し 
-# 努めて冷静に振舞ってい \@たが、
+PRINTFORMDL %CALLNAME%는\@ TALENT:TARGET:처녀
+? 마치 남의 일과 같이 시원스럽게 승낙해
+# 노력해 냉정하게 행동하고 있고\@가,
 }
-PRINTFORMD その表情には
-SIF CFLAG:TARGET:依存度 > 4000
-	PRINTFORMD 、隠し切れない
-SIF GET_KFLAG_K14("相思相愛")
-	PRINTFORMD 幸せそうな
-PRINTFORMDW 笑みが浮かんでいた…
+PRINTFORMD 그 표정에는
+SIF CFLAG:TARGET:의존도 > 4000
+	PRINTFORMD , 숨기지 못한다
+SIF GET_KFLAG_K14("상사상애")
+	PRINTFORMD 행복한
+PRINTFORMDW 미소가 떠올라 있었다…

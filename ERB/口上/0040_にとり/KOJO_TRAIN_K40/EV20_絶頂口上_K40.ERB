@@ -1,540 +1,540 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;	にとり口上 調教イベント口上ファイル
+;	에 있어 구상 조교 이벤트 구상 파일
 ;
-;	調教ターン中イベント、絶頂口上をまとめたファイル
+;	조교 턴중 이벤트, 절정 구상을 정리한 파일
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-;0.60時代の口上を現行仕様の枠に当てはめる為に少々アレンジしています
-;ここで使ったそれぞれの枠組みは、私個人としては必ずしも望ましいものとは考えていません@/L
+;0. 60시대의 구상을 현행 사양의 테두리에 적용시키기 위해서(때문에) 조금 어레인지 하고 있습니다
+;여기서 사용한 각각의 골조는, 나개인으로서는 반드시 바람직한 것이라고는 생각하고 있지 않습니다@/L
 
 ;========================================================================
-;EV20, 絶頂口上
+;EV20, 절정 구상
 ;========================================================================
-;・調教者か調教対象が絶頂に達するときに表示
-;・各絶頂は個別の呼び出しを持たずに、全て派生で処理される
+;·조교자나 조교 대상이 절정에 이를 때 표시
+;· 각 절정은 개별의 호출을 가지지 않고, 모두 파생으로 처리된다
 ;-------------------------------------------------
 ;=================================================
-;関連変数…
+;관련 변수…
 ;
-;TFLAG:前回中出し,(1=Ｖ性交/2=Ｖ性交奉仕/3=Ｖ性交(空射)/4=Ｖ性交奉仕(空射)/5=Ａ性交/6=Ａ性交奉仕/7=Ａ性交(空射)/8=Ａ性交奉仕(空射))
-;TFLAG:REACT分類,(0=なし/1=消極的従う/2=積極的従う/3=許しを乞う/4=暴れる/5=要求に応じない,拒否/6=逃げる,もがく)
-;NOWEX:射精,(1=空射精/2=射精/3=大量射精/4=射精(早漏)/5=A責射精)
-;TEQUIP:自慰中,(bit0=調教対象/bit1=調教者)
+;TFLAG:전회 질내사정, (1=V성교/2=V성교 봉사/3=V성교(하늘 쏘아 맞히고)/4=V성교 봉사(하늘 쏘아 맞히고)/5=A성교/6=A성교 봉사/7=A성교(하늘 쏘아 맞히고)/8=A성교 봉사(하늘 쏘아 맞히고))
+;TFLAG:REACT 분류, (0=없음/1=소극적 따른다/2=적극적 따른다/3=허가를 청한다/4=날뛴다/5=요구에 응하지 않는, 거부/6=도망치는, 발버둥 친다)
+;NOWEX:사정, (1=하늘 사정/2=사정/3=대량 사정/4=사정(조루)/5=A책사정)
+;TEQUIP:자위중, (bit0=조교 대상/bit1=조교자)
 ;
 ;=================================================
-;関数類…
+;함수류…
 ;
 ;MASTER_EX
-;引　数:ARG:0…愛撫者→1.調教対象自身/2.調教者/4.助手１/8.助手２/16.助手３
-;                      /64.道具/128.便所利用者　省略すると愛撫者を問わない
-;              ビット和での指定が可能
-;       ARG:1…(省略可)絶頂の種別→1.Ｃ絶頂/2.Ｖ絶頂/3.Ａ絶頂/4.Ｂ絶頂
-;                                  /11.噴乳/12.射精/13.放尿
-;ARG:0 (bit0 = 調教対象自身/bit1 = 調教者/bit2 = 助手１/bit3 = 助手２/bit4 = 助手３/bit6 = 道具/bit7 = 便所利用者)
+;인  수:ARG:0… 애무자→1. 조교 대상 자신/2. 조교자/4. 조수 1/8. 조수 2/16. 조수 3
+;                      /64. 도구/128. 변소 이용자  생략 하면 애무자를 묻지 않는다
+;              비트화에서의 지정이 가능
+;       ARG:1…(생략가능) 절정의 종별→1. C절정/2. V절정/3. A절정/4. B절정
+;                                  /11. 분유/12. 사정/13. 방뇨
+;ARG:0(bit0 =조교 대상 자신 /bit1 =조교자 /bit2 =조수 1/bit3 =조수 2/bit4 =조수 3/bit6 =도구 /bit7 =변소 이용자)
 ;-------------------------------------------------
 ;TARGET_EX
-;引　数:ARG:0…愛撫者→1.調教対象/2.調教者自身/4.助手１/8.助手２/16.助手３
-;              ビット和での指定が可能。省略すると愛撫者を問わない
-;       ARG:1…(省略可)絶頂の種別→1.ｃ絶頂/2.ｖ絶頂/3.ａ絶頂/4.ｂ絶頂
-;                                  /11.噴乳/12.射精
-;ARG:0 (bit0 = 調教対象/bit1 = 調教者自身/bit2 = 助手１/bit3 = 助手２/bit4 = 助手３)
+;인  수:ARG:0… 애무자→1. 조교 대상/2. 조교자 자신/4. 조수 1/8. 조수 2/16. 조수 3
+;              비트화에서의 지정이 가능. 생략 하면 애무자를 묻지 않는다
+;       ARG:1…(생략가능) 절정의 종별→1. c절정/2. v절정/3. a절정/4. b절정
+;                                  /11. 분유/12. 사정
+;ARG:0(bit0 =조교 대상 /bit1 =조교자 자신 /bit2 =조수 1/bit3 =조수 2/bit4 =조수 3)
 ;-------------------------------------------------
 @KOJO_EVENT_K40_20(ARG)
 ;-------------------------------------------------
-;TFLAG:前回中出し;(1=Ｖ性交/2=Ｖ性交奉仕/3=Ｖ性交(空射)/4=Ｖ性交奉仕(空射)/5=Ａ性交/6=Ａ性交奉仕/7=Ａ性交(空射)/8=Ａ性交奉仕(空射))
+;TFLAG:전회 질내사정;(1=V성교/2=V성교 봉사/3=V성교(하늘 쏘아 맞히고)/4=V성교 봉사(하늘 쏘아 맞히고)/5=A성교/6=A성교 봉사/7=A성교(하늘 쏘아 맞히고)/8=A성교 봉사(하늘 쏘아 맞히고))
 ;-------------------------------------------------
 
-;────────────────────────────────────
-;膣内射精/アナル内射精(MASTER→TARGET)
-;────────────────────────────────────
-;・性交奉仕系で調教対象が射精する場合に表示
-;・TFLAG:抜かずは抜かない判定ごとに+1される
-;・射精量による分岐は必要に応じ追加して使うのが望ましい
+;─
+;질내 사정/애널내 사정(MASTER→TARGET)
+;─
+;·성교 봉사계로 조교 대상이 사정하는 경우에 표시
+;·TFLAG:뽑지 않고는 뽑지 않는 판정 마다+1된다
+;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
 ;-------------------------------------------------
 
-;空射精を想定してある内容ではないので、条件で弾いてしまいます@/L
+;하늘 사정을 상정되어 있는 내용은 아니기 때문에, 조건으로 연주해 버립니다@/L
 ;━━━━━━━━━━━━━━━━━━━━━━━━━
-;膣内射精/アナル内射精(調教対象→調教者)
+;질내 사정/애널내 사정(조교 대상→조교자)
 ;━━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 2, 6) > 0
+IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 2, 6) > 0
 	;=================================================
-	;調教者が絶頂
+	;조교자가 절정
 	;=================================================
-	IF 口上記入チェック(100) && TRUECHECK(NOWEX:Ｖ絶頂, NOWEX:Ａ絶頂) > 0
-		;アライメント正
+	IF 구상기입체크(100) && TRUECHECK(NOWEX:V절정, NOWEX:A절정) > 0
+		;아라이먼트정
 		IF ALI(0)
 			SELECTCASE RANDEVENT(3, 0)
 				CASE 0
-					PRINTFORMW 「手、握って……？」
-					PRINTFORMW 「一緒に、良くなりたいから……ぁっ！」
+					PRINTFORMW 「손, 잡아……?」
+					PRINTFORMW 「함께, 좋아지고 싶으니까…… 앗!」
 				CASE 1
-					PRINTFORMW 「いきなり、抱きつかないでぇ……」
-					PRINTFORMW 「私、もう駄目なんだから……っ！」
+					PRINTFORMW 「갑자기, 껴안지 마아……」
+					PRINTFORMW 「나, 이제(벌써) 안 되는 것이니까……!」
 				CASE 2
-					PRINTFORMW 「熱いの、出てるよっ……」
-					PRINTFORMW 「これ、凄い……っ！」
+					PRINTFORMW 「뜨거운 것, 나오고 있는……」
+					PRINTFORMW 「이것, 굉장하다……!」
 			ENDSELECT
-		;アライメント負
+		;아라이먼트부
 		ELSE
 			SELECTCASE RANDEVENT(3, 1)
 				CASE 0
-					PRINTFORMW 「もう、我慢できないみたいだあね……」
-					PRINTFORMW 「出しちゃっても、いいよ……」
+					PRINTFORMW 「이제(벌써), 인내 할 수 없는 것 같다 누나……」
+					PRINTFORMW 「내 버려도, 좋아……」
 				CASE 1
-					PRINTFORMW 「よく、頑張ったね……」
-					PRINTFORMW 「早く、出して……っ！」
+					PRINTFORMW 「자주(잘), 노력했군요……」
+					PRINTFORMW 「빨리, 내……!」
 				CASE 2
-					PRINTFORMW 「必死な顔、してるねえ」
-					PRINTFORMW 「我慢しないで、出しちゃいなよぉ……っ！」
+					PRINTFORMW 「필사적인 얼굴, 하고 있네요」
+					PRINTFORMW 「참지 말고, 내 버려……!」
 			ENDSELECT
 		ENDIF
 		RETURN 2
 	ENDIF
 	
-	;アライメント正
+	;아라이먼트정
 	IF ALI(0)
 		SELECTCASE RANDEVENT(3, 2)
 			CASE 0
-				PRINTFORMW 「中で、出てるよ……っ」
-				PRINTFORMW 「そんなに、良かったんだ？」
+				PRINTFORMW 「안에서, 나오고 있는……」
+				PRINTFORMW 「그렇게, 좋았던 것이야?」
 			CASE 1
-				PRINTFORMW 「ん、熱いの、がぁ……！」
-				PRINTFORMW 「零れちゃうよぉ……」
+				PRINTFORMW 「응, 뜨거운 것, 가아……!」
+				PRINTFORMW 「흘러넘쳐 버린다……」
 			CASE 2
-				PRINTFORMW 「凄い、勢いだあ……」
-				PRINTFORMW 「全部、搾ってあげるからね……」
+				PRINTFORMW 「굉장한, 기세다아……」
+				PRINTFORMW 「전부, 짜 주니까요……」
 		ENDSELECT
-	;アライメント負
+	;아라이먼트부
 	ELSE
 		SELECTCASE RANDEVENT(3, 3)
 			CASE 0
-				PRINTFORMW 「あっ……！」
-				PRINTFORMW 「ちょっと、気持ち良かったよ……」
+				PRINTFORMW 「앗……!」
+				PRINTFORMW 「좀, 기분 좋았어요……」
 			CASE 1
-				PRINTFORMW 「中で、出しちゃうなんてねえ」
-				PRINTFORMW 「気持ち良ければ、何でもいいのかな？」
+				PRINTFORMW 「안에서, 내 버리다니」
+				PRINTFORMW 「기분 좋다면, 뭐든지 좋은 걸까나?」
 			CASE 2
-				PRINTFORMW 「我慢が足りないなあ」
-				PRINTFORMW 「もっと、楽しませてよ？」
+				PRINTFORMW 「인내가 부족하구나」
+				PRINTFORMW 「좀 더, 즐겁게 해요?」
 		ENDSELECT
 	ENDIF
 	RETURN 2
 ENDIF
 
-;────────────────────────────────────
-;膣内射精/アナル内射精(TARGET→MASTER)
-;────────────────────────────────────
-;・性交系で調教者が射精する場合に表示
-;・射精量による分岐は必要に応じ追加して使うのが望ましい
+;─
+;질내 사정/애널내 사정(TARGET→MASTER)
+;─
+;·성교계로 조교자가 사정하는 경우에 표시
+;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
 ;-------------------------------------------------
 
-;空射精を想定してある内容ではないので、条件で弾いてしまいます@/L
+;하늘 사정을 상정되어 있는 내용은 아니기 때문에, 조건으로 연주해 버립니다@/L
 ;━━━━━━━━━━━━━━━━━━━━━━━━━
-;膣内射精/アナル内射精(調教者→調教対象)
+;질내 사정/애널내 사정(조교자→조교 대상)
 ;━━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && GROUPMATCH(TFLAG:前回中出し, 1, 5) > 0
+IF 구상기입체크(100) && GROUPMATCH(TFLAG:전회질내사정, 1, 5) > 0
 	;=================================================
-	;調教対象が絶頂
+	;조교 대상이 절정
 	;=================================================
-	IF 口上記入チェック(100) && TRUECHECK(NOWEX:MASTER:Ｖ絶頂, NOWEX:MASTER:Ａ絶頂) > 0
-		;アライメント正
+	IF 구상기입체크(100) && TRUECHECK(NOWEX:MASTER:V절정, NOWEX:MASTER:A절정) > 0
+		;아라이먼트정
 		IF ALI(0)
 			SELECTCASE RANDEVENT(3, 10)
 				CASE 0
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%の体、震えて……」
-					PRINTFORMW 「私も、出ちゃう……っ！」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%의 몸, 떨려……」
+					PRINTFORMW 「나도, 나와 버린다……!」
 				CASE 1
-					PRINTFORMW 「手、握ってあげる……」
-					PRINTFORMW 「一緒に、良くなろうね……！」
+					PRINTFORMW 「손, 잡아 준다……」
+					PRINTFORMW 「함께, 좋아지자……!」
 				CASE 2
-					PRINTFORMW 「ふぁ……っ、もう駄目……！」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%も、限界そうだね……っ」
+					PRINTFORMW 「후아……, 이제 안돼……!」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%도, 한계 그렇다……」
 			ENDSELECT
-		;アライメント負
+		;아라이먼트부
 		ELSE
 			SELECTCASE RANDEVENT(3, 11)
 				CASE 0
-					PRINTFORMW 「顔、見ないで……っ」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%よりは、ましだけどさぁ……っ！」
+					PRINTFORMW 「얼굴, 보지 말고……」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%보다는, 좋지만 말야……!」
 				CASE 1
-					PRINTFORMW 「出るよ……っ！」
-					PRINTFORMW 「そんな声出されると、私また……」
+					PRINTFORMW 「나온다……!」
+					PRINTFORMW 「그런 소리 나오면, 나 또……」
 				CASE 2
-					PRINTFORMW 「良く、我慢できたねえ……」
-					PRINTFORMW 「今、出してあげるからね……っ！」
+					PRINTFORMW 「자주(잘), 참을 수 있었군요……」
+					PRINTFORMW 「지금, 내 준다……!」
 			ENDSELECT
 		ENDIF
 		RETURN 2
 	ENDIF
 	
-	;調教対象がオトコの場合、PRINTFORMW 「子供、できちゃうかもねえ」は不味いので条件で弾きます@/L
+	;조교 대상이 남자의 경우, PRINTFORMW 「아이, 가능하게 될지도 몰라」는 맛이 없기 때문에 조건으로 연주합니다@/L
 	;=================================================
-	;COMが中に出して！
+	;COM가 안에 내!
 	;=================================================
-	IF 口上記入チェック(100) && IS_NOWCOMNAME("中に出して！") && !TALENT:MASTER:オトコ
-		;アライメント正
+	IF 구상기입체크(100) && IS_NOWCOMNAME("중에 내!") && !TALENT:MASTER:남자
+		;아라이먼트정
 		IF ALI(0)
 			SELECTCASE RANDEVENT(3, 12)
 				CASE 0
-					PRINTFORMW 「出ちゃ……っ！」
-					PRINTFORMW 「気持ち、良かったよ……」
+					PRINTFORMW 「나와서는…… 읏!」
+					PRINTFORMW 「기분, 좋았어요……」
 				CASE 1
-					PRINTFORMW 「あ……暖かい……」
-					PRINTFORMW 「私の、気持ち良かった？」
+					PRINTFORMW 「아…… 따뜻하다……」
+					PRINTFORMW 「나의, 기분 좋았어?」
 				CASE 2
-					PRINTFORMW 「うあ……っ、搾られてるよ……」
-					PRINTFORMW 「本当に、欲張りなんだから……」
+					PRINTFORMW 「우아……, 짜지고 있다……」
+					PRINTFORMW 「정말로, 욕심쟁이이니까……」
 			ENDSELECT
-		;アライメント負
+		;아라이먼트부
 		ELSE
 			SELECTCASE RANDEVENT(3, 13)
 				CASE 0
-					PRINTFORMW 「お望み通り、出したげるよ……っ！」
-					PRINTFORMW 「良い締め付けだったねえ」
+					PRINTFORMW 「소망 대로, 내 준다……!」
+					PRINTFORMW 「좋은 억압이었네」
 				CASE 1
-					PRINTFORMW 「子供、できちゃうかもねえ」
-					PRINTFORMW 「ちゃんと、育てるんだよ？」
+					PRINTFORMW 「아이, 가능하게 될지도 몰라」
+					PRINTFORMW 「분명하게, 기르는거야?」
 				CASE 2
-					PRINTFORMW 「ふ、ぅ……っ」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%の中、一杯にしてあげる……」
+					PRINTFORMW 「후, 우……」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%안, 가득 해 준다……」
 			ENDSELECT
 		ENDIF
 		RETURN 2
 	ENDIF
 	
-	;調教対象がオトコの場合、PRINTFORMW 「責任は、絶対取るから……」は微妙な感じなので条件で弾きます@/L
+	;조교 대상이 남자의 경우, PRINTFORMW 「책임은, 절대 취하기 때문에……」는 미묘한 느낌인 것으로 조건으로 연주합니다@/L
 	;=================================================
-	;COMが中に出さないで！
+	;COM가 안에 내지 마!
 	;=================================================
-	IF 口上記入チェック(100) && IS_NOWCOMNAME("中に出さないで！") && !TALENT:MASTER:オトコ
-		;アライメント正
+	IF 구상기입체크(100) && IS_NOWCOMNAME("중에 내지 마!") && !TALENT:MASTER:남자
+		;아라이먼트정
 		IF ALI(0)
 			SELECTCASE RANDEVENT(3, 14)
 				CASE 0
-					PRINTFORMW 「あ、出ちゃっ、た……」
-					PRINTFORMW 「責任は、絶対取るから……」
+					PRINTFORMW 「아, 나와, ……」
+					PRINTFORMW 「책임은, 절대 취하기 때문에……」
 				CASE 1
-					PRINTFORMW 「我慢、できなくて……」
-					PRINTFORMW 「ごめんね……」
+					PRINTFORMW 「인내, 할 수 없어서……」
+					PRINTFORMW 「미안해요……」
 				CASE 2
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%が、良すぎるからぁ……」
-					PRINTFORMW 「仕方が無かったんだよっ……」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%가, 너무 좋기 때문에……」
+					PRINTFORMW 「어쩔 수 없었던 것이야……」
 			ENDSELECT
-		;アライメント負
+		;아라이먼트부
 		ELSE
 			SELECTCASE RANDEVENT(3, 15)
 				CASE 0
-					PRINTFORMW 「気持ち良かったでしょ？」
-					PRINTFORMW 「感謝して欲しいぐらいだなあ」
+					PRINTFORMW 「기분 좋았던 것이겠지?」
+					PRINTFORMW 「감사해 주었으면 할 정도다」
 				CASE 1
-					PRINTFORMW 「何泣いてるのさ？」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%の使い道なんて、これくらいだよね」
+					PRINTFORMW 「무엇 울고 있는 거야?」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%의 용도는, 이 정도지요」
 				CASE 2
-					PRINTFORMW 「良かったよ……」
-					PRINTFORMW 「これからも、出したげるからさ」
+					PRINTFORMW 「좋았어요……」
+					PRINTFORMW 「앞으로도, 내 줄테니까」
 			ENDSELECT
 		ENDIF
 		RETURN 2
 	ENDIF
 	
-	;アライメント正
+	;아라이먼트정
 	IF ALI(0)
 		SELECTCASE RANDEVENT(3, 16)
 			CASE 0
-				PRINTFORMW 「これっ、凄いよ……」
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%の、吸い付いて……っ！」
+				PRINTFORMW 「이것, 굉장해……」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%의, 달라붙어……!」
 			CASE 1
-				PRINTFORMW 「中に、出しちゃうねっ」
-				PRINTFORMW 「全部、受け止めて……！」
+				PRINTFORMW 「안에, 내 버린다」
+				PRINTFORMW 「전부, 받아 들여……!」
 			CASE 2
-				PRINTFORMW 「やだぁ……激しすぎだって……」
-				PRINTFORMW 「気持ち、良いよお……」
+				PRINTFORMW 「싫다아…… 너무 격렬하다고……」
+				PRINTFORMW 「기분, 좋아……」
 		ENDSELECT
-	;アライメント負
+	;아라이먼트부
 	ELSE
 		SELECTCASE RANDEVENT(3, 17)
 			CASE 0
-				PRINTFORMW 「どう、気持ち良い？」
-				PRINTFORMW 「中に出てるの、わかるでしょ？」
+				PRINTFORMW 「어떻게, 기분 좋아?」
+				PRINTFORMW 「안에 나와 있는 것, 알겠죠?」
 			CASE 1
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%の体、暖かいねえ」
-				PRINTFORMW 「思わず、中で出しちゃったよ」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%의 몸, 따뜻하구나」
+				PRINTFORMW 「무심코, 안에서 내 버렸어」
 			CASE 2
-				PRINTFORMW 「そんなに、締め付けられるとさあ」
-				PRINTFORMW 「出ちゃっ……たぁ……！」
+				PRINTFORMW 「그렇게, 단단히 조일 수 있으면 자」
+				PRINTFORMW 「나와…………!」
 		ENDSELECT
 	ENDIF
 	RETURN 2
 ENDIF
 
-;────────────────────────────────────
-;同時絶頂
-;────────────────────────────────────
-;・調教者と調教対象がともに絶頂する場合に表示
+;─
+;동시 절정
+;─
+;·조교자와 조교 대상이 함께 절정 하는 경우에 표시
 ;-------------------------------------------------
-IF 口上記入チェック(100) && TRUECHECK(NOWEX:MASTER:Ｃ絶頂, NOWEX:MASTER:Ｖ絶頂, NOWEX:MASTER:Ａ絶頂, NOWEX:MASTER:Ｂ絶頂) > 0 && TRUECHECK(NOWEX:Ｃ絶頂, NOWEX:Ｖ絶頂, NOWEX:Ａ絶頂, NOWEX:Ｂ絶頂) > 0
-	;アライメント正
+IF 구상기입체크(100) && TRUECHECK(NOWEX:MASTER:C절정, NOWEX:MASTER:V절정, NOWEX:MASTER:A절정, NOWEX:MASTER:B절정) > 0 && TRUECHECK(NOWEX:C절정, NOWEX:V절정, NOWEX:A절정, NOWEX:B절정) > 0
+	;아라이먼트정
 	IF ALI(0)
 		SELECTCASE RANDEVENT(3, 20)
 			CASE 0
-				PRINTFORMW 「凄いの、来ちゃ……っ」
-				PRINTFORMW 「私と、一緒に……！」
+				PRINTFORMW 「굉장한 것, 와서는…… 읏」
+				PRINTFORMW 「나와 함께……!」
 			CASE 1
-				PRINTFORMW 「これ、蕩けちゃうよ……」
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%も、良いんだね……？」
+				PRINTFORMW 「이것, 녹아 버린다……」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%도, 좋네……?」
 			CASE 2
-				PRINTFORMW 「もう、弄らないで……っ」
-				PRINTFORMW 「負けないよっ……」
+				PRINTFORMW 「이제(벌써), 만지작거리지 말고……」
+				PRINTFORMW 「지지 않아……」
 		ENDSELECT
-	;アライメント負
+	;아라이먼트부
 	ELSE
 		SELECTCASE RANDEVENT(3, 21)
 			CASE 0
-				PRINTFORMW 「く、ぅ……っ」
-				PRINTFORMW 「みっともないね……っ！」
+				PRINTFORMW 「쿠, 우……」
+				PRINTFORMW 「보기 흉하다……!」
 			CASE 1
-				PRINTFORMW 「いいよ、それ……」
-				PRINTFORMW 「お返し、したげるよ……っ」
+				PRINTFORMW 「좋아, 그것……」
+				PRINTFORMW 「답례, 해 준다……」
 			CASE 2
-				PRINTFORMW 「上手になったねえ」
-				PRINTFORMW 「ちょっと、悔しいなあ……！」
+				PRINTFORMW 「능숙하게 되었군요」
+				PRINTFORMW 「좀, 분하구나……!」
 		ENDSELECT
 	ENDIF
 	RETURN 2
 ENDIF
 
-;────────────────────────────────────
-;調教対象射精
-;────────────────────────────────────
-;・調教対象が射精する場合に表示
-;・射精量による分岐は必要に応じ加減して使うのが望ましい
+;─
+;조교 대상 사정
+;─
+;·조교 대상이 사정하는 경우에 표시
+;·사정량에 의한 분기는 필요하게 응하고 가감(상태)해 사용하는 것이 바람직함
 ;-------------------------------------------------
-IF 口上記入チェック(100) && NOWEX:MASTER:射精
-	;アライメント正
+IF 구상기입체크(100) && NOWEX:MASTER:사정
+	;아라이먼트정
 	IF ALI(0)
 		SELECTCASE RANDEVENT(3, 30)
 			CASE 0
-				PRINTFORMW 「あはっ……出てきたっ」
-				PRINTFORMW 「これ、熱いんだねえ……」
+				PRINTFORMW 「아핫…… 나왔닷」
+				PRINTFORMW 「이것, 뜨겁네……」
 			CASE 1
-				PRINTFORMW 「きゃ……っ」
-				PRINTFORMW 「凄い、勢いだあ……」
+				PRINTFORMW 「꺄……」
+				PRINTFORMW 「굉장한, 기세다아……」
 			CASE 2
-				PRINTFORMW 「気持ち良さそうな顔、してるねえ……」
-				PRINTFORMW 「何だか私も、嬉しくなっちゃうよ……」
+				PRINTFORMW 「기분 좋은 것 같은 얼굴, 하고 있네요……」
+				PRINTFORMW 「뭔가 나도, 기뻐져 버린다……」
 		ENDSELECT
-	;アライメント負
+	;아라이먼트부
 	ELSE
 		SELECTCASE RANDEVENT(3, 31)
 			CASE 0
-				PRINTFORMW 「うひゃぁ……っ」
-				PRINTFORMW 「いきなりだと、驚いちゃうんだけどさあ」
+				PRINTFORMW 「우햐아……」
+				PRINTFORMW 「갑자기라고, 놀라 버리지만」
 			CASE 1
-				PRINTFORMW 「あ……汚れちった……」
-				PRINTFORMW 「どう責任取ってくれるのかな？」
+				PRINTFORMW 「아…… 더러워지고 흩어졌다……」
+				PRINTFORMW 「어떻게 책임 집어 줄까나?」
 			CASE 2
-				PRINTFORMW 「呑気な顔、してるねえ……」
-				PRINTFORMW 「どんな状況か、わかってるのかなあ」
+				PRINTFORMW 「태평한 얼굴, 하고 있네요……」
+				PRINTFORMW 「어떤 상황인가, 알고 있을까나」
 		ENDSELECT
 	ENDIF
 	RETURN 2
 ENDIF
 
-;────────────────────────────────────
-;調教者射精
-;────────────────────────────────────
-;・調教者が射精する場合に表示
-;・射精量による分岐は必要に応じ追加して使うのが望ましい
-;・現在の仕様では調教者が空射精することは非常に稀(ほぼ無い？)
+;─
+;조교자 사정
+;─
+;·조교자가 사정하는 경우에 표시
+;·사정량에 의한 분기는 필요하게 응하고 추가해 사용하는 것이 바람직함
+;·현재의 사양에서는 조교자가 하늘 사정하는 것은 매우 희(거의 없어?)
 ;-------------------------------------------------
-IF 口上記入チェック(100) && NOWEX:射精 && TC_PLAYER(1) != 0           ;愛撫物有りの場合に限定します@/L
-	;アライメント正
+IF 구상기입체크(100) && NOWEX:사정 && TC_PLAYER(1) != 0           ;애무물유의 경우로 한정합니다@/L
+	;아라이먼트정
 	IF ALI(0)
 		SELECTCASE RANDEVENT(3, 40)
 			CASE 0
-				PRINTFORMW 「出るよ……っ」
-				PRINTFORMW 「全部、出しちゃうからねっ」
+				PRINTFORMW 「나온다……」
+				PRINTFORMW 「전부, 내 버린다」
 			CASE 1
-				PRINTFORMW 「あぁ……気持ち、良いよ……」
-				PRINTFORMW 「汚しちゃった、ねえ……」
+				PRINTFORMW 「아아…… 기분, 좋아……」
+				PRINTFORMW 「더럽혀 버린, 저기……」
 			CASE 2
-				PRINTFORMW 「こんな、凄いの……っ」
-				PRINTFORMW 「もっと、出したいよっ……」
+				PRINTFORMW 「이런, 굉장한 것……」
+				PRINTFORMW 「좀 더, 내고 싶어……」
 		ENDSELECT
-	;アライメント負
+	;아라이먼트부
 	ELSE
 		SELECTCASE RANDEVENT(3, 41)
 			CASE 0
-				PRINTFORMW 「零したら、許さないよ？」
-				PRINTFORMW 「全部、受け止めて……」
+				PRINTFORMW 「흘리면, 허락하지 않아?」
+				PRINTFORMW 「전부, 받아 들여……」
 			CASE 1
-				PRINTFORMW 「汚れちゃうねえ……」
-				PRINTFORMW 「ほら、綺麗にしてよ」
+				PRINTFORMW 「더러워져 버리네요……」
+				PRINTFORMW 「이봐요, 예쁘게 해요」
 			CASE 2
-				PRINTFORMW 「ふぁ……っ、良い、ねえ……」
-				PRINTFORMW 「もっと、悦ばせてよ……？」
+				PRINTFORMW 「후아……, 좋은, 저기……」
+				PRINTFORMW 「좀 더, 기쁘게 해요……?」
 		ENDSELECT
 	ENDIF
 	RETURN 2
 ENDIF
 
-;────────────────────────────────────
-;調教対象絶頂
-;────────────────────────────────────
-;・調教対象が絶頂する場合に表示
+;─
+;조교 대상 절정
+;─
+;·조교 대상이 절정 하는 경우에 표시
 ;-------------------------------------------------
-IF 口上記入チェック(100) && TRUECHECK(NOWEX:MASTER:Ｃ絶頂, NOWEX:MASTER:Ｖ絶頂, NOWEX:MASTER:Ａ絶頂, NOWEX:MASTER:Ｂ絶頂) > 0
-	;アライメント正
+IF 구상기입체크(100) && TRUECHECK(NOWEX:MASTER:C절정, NOWEX:MASTER:V절정, NOWEX:MASTER:A절정, NOWEX:MASTER:B절정) > 0
+	;아라이먼트정
 	IF ALI(0)
 		SELECTCASE RANDEVENT(3, 50)
 			CASE 0
-				PRINTFORMW 「気持ち、良いんだね？」
-				PRINTFORMW 「凄く、震えてるよ……」
+				PRINTFORMW 「기분, 좋네?」
+				PRINTFORMW 「굉장히, 떨리고 있다……」
 			CASE 1
-				PRINTFORMW 「我慢、しないで……？」
-				PRINTFORMW 「いくらでも、良くしてあげるからさあ……」
+				PRINTFORMW 「인내, 하지 않고……?」
+				PRINTFORMW 「얼마든지, 자주(잘) 해 줄테니까……」
 			CASE 2
-				PRINTFORMW 「ふふっ、抱き付いてくるなんて、ねえ？」
-				PRINTFORMW 「いつでも、抱きしめてあげるからね？」
+				PRINTFORMW 「후훗, 껴안아 오다니저기?」
+				PRINTFORMW 「언제라도, 껴안아 주니까요?」
 		ENDSELECT
-	;アライメント負
+	;아라이먼트부
 	ELSE
 		SELECTCASE RANDEVENT(3, 51)
 			CASE 0
-				PRINTFORMW 「何、しがみついちゃってさあ」
-				PRINTFORMW 「優しくするとでも、思ったのかなあ」
+				PRINTFORMW 「무엇, 매달려 버려 말야」
+				PRINTFORMW 「상냥하게 한다고라도, 생각했던가」
 			CASE 1
-				PRINTFORMW 「随分だらしない顔だあね」
-				PRINTFORMW 「これ以上やったら、どうなるのかなあ」
+				PRINTFORMW 「상당히 야무지지 못한 얼굴이다 누나」
+				PRINTFORMW 「더 이상 하면, 어떻게 될까나」
 			CASE 2
-				PRINTFORMW 「そんなに気持ち良かったの？」
-				PRINTFORMW 「一応これ、%CNAME(MASTER, TARGET)%の為にやってる訳じゃあないんだけどさあ」
+				PRINTFORMW 「그렇게 기분 좋았어?」
+				PRINTFORMW 「일단 이것,%CNAME(MASTER, TARGET)%를 위해서(때문에) 하고 있는 것이 아니지만 말야」
 		ENDSELECT
 	ENDIF
 	RETURN 2
 ENDIF
 
-;────────────────────────────────────
-;調教者絶頂
-;────────────────────────────────────
-;・調教者が絶頂する場合に表示
+;─
+;조교자 절정
+;─
+;·조교자가 절정 하는 경우에 표시
 ;-------------------------------------------------
-IF 口上記入チェック(100) && TRUECHECK(NOWEX:Ｃ絶頂, NOWEX:Ｖ絶頂, NOWEX:Ａ絶頂, NOWEX:Ｂ絶頂) > 0
-	;アライメント正
+IF 구상기입체크(100) && TRUECHECK(NOWEX:C절정, NOWEX:V절정, NOWEX:A절정, NOWEX:B절정) > 0
+	;아라이먼트정
 	IF ALI(0)
 		SELECTCASE RANDEVENT(3, 60)
 			CASE 0
-				PRINTFORMW 「これ、来ちゃ……っ」
-				PRINTFORMW 「見ないで、よお……」
+				PRINTFORMW 「이것, 와서는…… 읏」
+				PRINTFORMW 「보지 말고, 여어……」
 			CASE 1
-				PRINTFORMW 「そこ、良いよ……」
-				PRINTFORMW 「私の気持ち良い所、覚えてくれたんだね……っ」
+				PRINTFORMW 「거기, 좋아……」
+				PRINTFORMW 「나의 기분 좋은 곳, 기억해 준 것이구나……」
 			CASE 2
-				PRINTFORMW 「もう、我慢できないよ……っ！」
-				PRINTFORMW 「私だけ、ごめんね……！」
+				PRINTFORMW 「이제(벌써), 인내 할 수 없어……!」
+				PRINTFORMW 「나만, 미안해요……!」
 		ENDSELECT
-	;アライメント負
+	;아라이먼트부
 	ELSE
 		SELECTCASE RANDEVENT(3, 61)
 			CASE 0
-				PRINTFORMW 「く、あぁ……」
-				PRINTFORMW 「何、にやついてるのかなあ……っ？」
+				PRINTFORMW 「쿠, 아아……」
+				PRINTFORMW 「무엇, 히쭉거리고 있을까나……?」
 			CASE 1
-				PRINTFORMW 「んん……っ！」
-				PRINTFORMW 「もっと、私を、良くしなよ……っ！」
+				PRINTFORMW 「응응……!」
+				PRINTFORMW 「좀 더, 나를, 자주(잘) 해……!」
 			CASE 2
-				PRINTFORMW 「気持ち良く、なんて……」
-				PRINTFORMW 「絶対、なってないからぁっ……！」
+				PRINTFORMW 「기분 좋게, 뭐라고 하는……」
+				PRINTFORMW 「절대, 되지 않으니까……!」
 		ENDSELECT
 	ENDIF
 	RETURN 2
 ENDIF
 
-;────────────────────────────────────
-;調教対象Ｃ絶頂
-;────────────────────────────────────
-;・調教対象がＣ絶頂する場合に表示
-;・ここでは「女の子のＣ絶頂」を想定している
+;─
+;조교 대상 C절정
+;─
+;·조교 대상이 C절정 하는 경우에 표시
+;·여기에서는 「여자 아이의 C절정」을 상정하고 있다
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:MASTER:Ｃ絶頂
+;IF 구상 기입 체크(0) && NOWEX:MASTER:C절정
 ;ENDIF
 
-;────────────────────────────────────
-;調教対象Ｖ絶頂
-;────────────────────────────────────
-;・調教対象がＶ絶頂する場合に表示
+;─
+;조교 대상 V절정
+;─
+;·조교 대상이 V절정 하는 경우에 표시
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:MASTER:Ｖ絶頂
+;IF 구상 기입 체크(0) && NOWEX:MASTER:V절정
 ;ENDIF
 
-;────────────────────────────────────
-;調教対象Ａ絶頂
-;────────────────────────────────────
-;・調教対象がＡ絶頂する場合に表示
+;─
+;조교 대상 A절정
+;─
+;·조교 대상이 A절정 하는 경우에 표시
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:MASTER:Ａ絶頂
+;IF 구상 기입 체크(0) && NOWEX:MASTER:A절정
 ;ENDIF
 
-;────────────────────────────────────
-;調教対象Ｂ絶頂
-;────────────────────────────────────
-;・調教対象がＢ絶頂する場合に表示
+;─
+;조교 대상 B절정
+;─
+;·조교 대상이 B절정 하는 경우에 표시
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:MASTER:Ｂ絶頂
+;IF 구상 기입 체크(0) && NOWEX:MASTER:B절정
 ;ENDIF
 
-;────────────────────────────────────
-;調教者Ｃ絶頂
-;────────────────────────────────────
-;・調教者がＣ絶頂する場合に表示
-;・ここでは「女の子のＣ絶頂」を想定している
-;・射精は射精口上の分岐で書くのが望ましい
+;─
+;조교자 C절정
+;─
+;·조교자가 C절정 하는 경우에 표시
+;·여기에서는 「여자 아이의 C절정」을 상정하고 있다
+;·사정은 사정 구상의 분기에서 쓰는 것이 바람직함
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:Ｃ絶頂
+;IF 구상 기입 체크(0) && NOWEX:C절정
 ;ENDIF
 
-;────────────────────────────────────
-;調教者Ｖ絶頂
-;────────────────────────────────────
-;・調教者がＶ絶頂する場合に表示
+;─
+;조교자 V절정
+;─
+;·조교자가 V절정 하는 경우에 표시
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:Ｖ絶頂
+;IF 구상 기입 체크(0) && NOWEX:V절정
 ;ENDIF
 
-;────────────────────────────────────
-;調教者Ａ絶頂
-;────────────────────────────────────
-;・調教者がＡ絶頂する場合に表示
+;─
+;조교자 A절정
+;─
+;·조교자가 A절정 하는 경우에 표시
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:Ａ絶頂
+;IF 구상 기입 체크(0) && NOWEX:A절정
 ;ENDIF
 
-;────────────────────────────────────
-;調教者Ｂ絶頂
-;────────────────────────────────────
-;・調教者がＢ絶頂する場合に表示
+;─
+;조교자 B절정
+;─
+;·조교자가 B절정 하는 경우에 표시
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:Ｂ絶頂
+;IF 구상 기입 체크(0) && NOWEX:B절정
 ;ENDIF
 
-;────────────────────────────────────
-;調教対象潮吹き
-;────────────────────────────────────
-;・調教対象が潮吹きの場合に表示
-;・現状、ACT指挿入れ時にＧスポット責めに派生した場合にのみ起きる
-;・ご主人様の潮吹きは無い
+;─
+;조교 대상 물총
+;─
+;·조교 대상이 물총의 경우에 표시
+;·현상, ACT손가락 삽입할 수 있는 때에 G스팟 고문에 파생했을 경우에게만 일어난다
+;·주인님의 물총은 없다
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:MASTER:潮吹き
+;IF 구상 기입 체크(0) && NOWEX:MASTER:물총
 ;ENDIF
 
-;────────────────────────────────────
-;調教対象失禁
-;────────────────────────────────────
-;・調教対象が失禁する場合に表示
-;・調教対象に素質:おもらし癖が無ければ発生しない
-;・Ｃ絶頂なしで失禁だけというのは稀にあるケース
+;─
+;조교 대상 실금
+;─
+;·조교 대상이 실금 하는 경우에 표시
+;·조교 대상으로 소질:소변버릇이 없으면 발생하지 않는다
+;·C절정없이 실금만이라고 하는 것은 드물게 있는 케이스
 ;-------------------------------------------------
-;IF 口上記入チェック(0) && NOWEX:MASTER:放尿
+;IF 구상 기입 체크(0) && NOWEX:MASTER:방뇨
 ;ENDIF

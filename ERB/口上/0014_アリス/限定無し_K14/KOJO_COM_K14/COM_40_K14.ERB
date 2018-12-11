@@ -1,421 +1,421 @@
 ﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 ;
-;		アリス口上 奉仕系汎用リアクション口上ファイル
+;		앨리스 구상 봉사계 범용 리액션 구상 파일
 ;
 ;Version		Reason
-;1.71			新規作成
+;1. 71			신규 작성
 ;
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
 ;=====================================================================
-;奉仕系反応 COM40番台
+;봉사계 반응 COM40 접수대
 ;=====================================================================
-;・調教者への愛撫を含む行動で見られる
-;・ACT分類:奉仕+トリガーイベント制
+;·조교자에게로의 애무를 포함한 행동으로 볼 수 있다
+;·ACT 분류:봉사+트리거 이벤트제
 ;-------------------------------------------------
-;────────────────────────────────────
-;COM40, 拒否する
-;────────────────────────────────────
-;・REACT分類:拒否
-;・REACT印象:悪印象大
-;・お仕置きポイント追加
-;・依存度変化(-2, -4)
+;─
+;COM40, 거부한다
+;─
+;·REACT 분류:거부
+;·REACT 인상:악인상대
+;·벌포인트 추가
+;·의존도 변화(-2, -4)
 ;-------------------------------------------------
-;トリガーする行動や状況…
-;ACT分類:0:会話
-;	ACT:衣装の変更を要求する/合意を求める
-;ACT分類:1:愛撫
+;트리거하는 행동이나 상황…
+;ACT 분류:0:회화
+;	ACT:의상의 변경을 요구한다/합의를 요구한다
+;ACT 분류:1:애무
 ;	ACT:
-;ACT分類:2:道具
+;ACT 분류:2:도구
 ;	ACT:
-;ACT分類:3:性交
-;	ACT:騎乗位
-;ACT分類:4:羞恥
-;	ACT:自慰/放尿
-;ACT分類:5:奉仕
-;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/胸愛撫強制
-;ACT分類:6:加虐
-;	ACT:罵倒
-;ACT分類:7:異常
+;ACT 분류:3:성교
+;	ACT:승마위
+;ACT 분류:4:수치
+;	ACT:자위/방뇨
+;ACT 분류:5:봉사
+;	ACT:손으로 애무를 강제/입으로 애무를 강제/파이즈리/가랑이/다리 빨고 강제/가슴 애무 강제
+;ACT 분류:6:가학
+;	ACT:매도
+;ACT 분류:7:이상
 ;	ACT:
-;ACT分類:9:休憩
-;	ACT:栄養剤を飲ませる
-;ACT分類:10:性交奉仕
-;	ACT:正常位させる/後背位させる/対面座位させる/背面座位させる/アナルセックスさせる
+;ACT 분류:9:휴게
+;	ACT:영양제를 먹인다
+;ACT 분류:10:성교 봉사
+;	ACT:정상위 시킨다/후배위 시킨다/대면좌위 시킨다/배면좌위 시킨다/애널 섹스 시킨다
 ;-------------------------------------------------
-;・REACT派生なし
+;·REACT 파생 없음
 ;-------------------------------------------------
 ;=================================================
 @KOJO_COM_K14_40
 ;=================================================
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;COM40, 拒否する
+;COM40, 거부한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && !TFLAG:REACT派生
+IF 구상기입체크(100) && !TFLAG:REACT파생
 	;=================================================
-	;ACT分類が性交
+	;ACT 분류가 성교
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性交")
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "성교")
 		;-------------------------------------------------
-		;無理をした行動
+		;무리를 한 행동
 		;-------------------------------------------------
-		IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
-			;実はまんざらでもない
+		IF 구상기입체크(100) && GET_COM_RANK() == "무리를 한 행동"
+			;실은 그렇지만도 않다
 			IF COMCOR_POSI()
-				PRINTFORMW 「そうやって逆らう事で、私を誘ってる%RAND_SPLIT("のかしら/つもり？")%」
-				PRINTFORMW 「ねぇ、本当は嫌じゃないんでしょう？ ほら、正直に言いなさいよ……」
-			;実は嫌
+				PRINTFORMW 「그렇게 거역하는 일로, 나를 부르고 있다%RAND_SPLIT("의 것인지 해들/생각?")%」
+				PRINTFORMW 「저기, 사실은 싫지 않겠지요? 이봐요, 정직하게 말하세요……」
+			;실은 싫어
 			ELSE
-				PRINTFORMW 「なによ、嫌なの！？ シたくないって訳？」
-				PRINTFORMW 「ホント%CNAME(MASTER, TARGET)%って気紛れで、面倒臭い人ね？」
-				PRINTFORMW 「ま、私も人のこと言えないけど…」
+				PRINTFORMW 「뭐야, 싫어!? 시 싶지 않다는 것?」
+				PRINTFORMW 「정말%CNAME(MASTER, TARGET)%는 변덕으로, 귀찮은 사람이네?」
+				PRINTFORMW 「뭐, 나도 사람의 일 말할 수 없지만…」
 			ENDIF
 			RETURN 1
 		ENDIF
 		
 		;---------------------
-		;その他
+		;그 외
 		;---------------------
 		SELECTCASE RANDCOM(2, 0)
 			CASE 0
-				PRINTFORMW 「この期に及んで拒否するとか、いい度胸してるわね…」
-				PRINTFORMW 「許し難いわ、%CNAME(MASTER, TARGET)%……」
+				PRINTFORMW 「이 시기에 이르러 거부한다든가, 좋은 담력 하고 있어요…」
+				PRINTFORMW 「허락하기 어려워요,%CNAME(MASTER, TARGET)%……」
 			CASE 1
-				PRINTFORMW 「そうやって、あくまでも拒否するつもりなら…」
-				PRINTFORMW 「私も考えなくてはいけないわね……」
+				PRINTFORMW 「그렇게, 어디까지나 거부할 생각이라면…」
+				PRINTFORMW 「나도 생각하지 않으면 안 되네요……」
 		ENDSELECT
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ACT分類が羞恥
+	;ACT 분류가 수치
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "羞恥")
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "수치")
 		;-------------------------------------------------
-		;無理をした行動
+		;무리를 한 행동
 		;-------------------------------------------------
-		IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
-			;実はまんざらでもない
+		IF 구상기입체크(100) && GET_COM_RANK() == "무리를 한 행동"
+			;실은 그렇지만도 않다
 			IF COMCOR_POSI()
-				PRINTFORMW 「ただ拒否するにしては、迷いがあるようにみえるんだけど」
-				PRINTFORMW 「本当のとこはどうなのかしら。ねぇ？」
-			;実は嫌
+				PRINTFORMW 「다만 거부하는 것으로서는, 미혹이 있는 것처럼 보이지만」
+				PRINTFORMW 「진정한 곳은 어떨까. 저기?」
+			;실은 싫어
 			ELSE
-				PRINTFORMW 「ま、そうよねぇ。こんな恥ずかしい事、普通は断るわよね」
-				PRINTFORMW 「でも私…、%CNAME(MASTER, TARGET)%の意思を尊重するつもりは無いのよ」
+				PRINTFORMW 「뭐, 그래요. 이런 부끄러운 일, 보통은 거절하네요」
+				PRINTFORMW 「그렇지만 나…,%CNAME(MASTER, TARGET)%의 의사를 존중할 생각은 없는거야」
 			ENDIF
 			RETURN 1
 		ENDIF
 		
 		;---------------------
-		;その他
+		;그 외
 		;---------------------
-		;無理のない行動
-		IF TFLAG:REACT負荷
-			PRINTFORMW 「へぇ、そういう態度するわけね。結構なことで」
-			PRINTFORMW 「でも%CNAME(MASTER, TARGET)%…、それなりの覚悟はできてるんでしょうね……」
-		;自然な行動
+		;무리가 없는 행동
+		IF TFLAG:REACT부하
+			PRINTFORMW 「헤에, 그러한 태도 하는 것. 좋은 일로」
+			PRINTFORMW 「그렇지만%CNAME(MASTER, TARGET)%…, 그만한 각오는 되어 있겠지요……」
+		;자연스러운 행동
 		ELSE
-			PRINTFORMW 「どうあっても私の言うこと聞くつもりはなさそうね」
-			PRINTFORMW 「見上げた度胸だけど…、%CNAME(MASTER, TARGET)%の為にならないわよ。そういうの」
+			PRINTFORMW 「어떻게 있어도 나의 말하는 일 (들)물을 생각은 없는 것 같구나」
+			PRINTFORMW 「올려본 담력이지만…,%CNAME(MASTER, TARGET)%에게 도움이 되지 않아요. 그러한 것」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;無理をした行動
+	;무리를 한 행동
 	;=================================================
-	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
+	IF 구상기입체크(100) && GET_COM_RANK() == "무리를 한 행동"
 		IF COMCOR_POSI()
 			SELECTCASE RANDCOM(2, 10)
 				CASE 0
-					PRINTFORMW 「へぇ、そう…、嫌なの。でもおかしいわね？」
-					PRINTFORMW 「そうやって拒絶する事自体、%CNAME(MASTER, TARGET)%にとっては辛そうに見えるんだけど」
-					PRINTFORMW 「私の気のせい？ じゃ、ないわよねぇ。フフフ…」
+					PRINTFORMW 「헤에, 그렇게…, 싫어. 그렇지만 이상하네요?」
+					PRINTFORMW 「그렇게 거절하는 일자체,%CNAME(MASTER, TARGET)%에 있어서는 괴로운 듯이 보이지만」
+					PRINTFORMW 「나의 기분탓? 그러면, 없네요. 후후후…」
 				CASE 1
-					PRINTFORMW 「迷った末の拒絶、ねぇ。一つ言っておくけど……」
-					PRINTFORMW 「心の内がどうであれ、%CNAME(MASTER, TARGET)%が拒絶したって事実に変わりはないのよ」
-					CALL FADEIN(8, "「面白くないわ、本当に……」")
+					PRINTFORMW 「헤맨 끝의 거절, 저기. 1개 말해 두지만……」
+					PRINTFORMW 「마음중이 어떻게든,%CNAME(MASTER, TARGET)%가 거절해도 사실에 변화는 없는거야」
+					CALL FADEIN(8, "「재미있지 않아요, 정말로……」")
 					WAIT
 			ENDSELECT
 		ELSE
 			SELECTCASE RANDCOM(2, 11)
 				CASE 0
-					PRINTFORMW 「あらあら、随分余裕がないわねぇ。それが%CNAME(MASTER, TARGET)%の精一杯だったのかしら」
-					PRINTFORMW 「そんなに隙をみせてると、相手に付け込まれるわよ…」
-					PRINTFORMW 「と言ったところで、もう手遅れなのよね。残念だけど」
+					PRINTFORMW 「아라아라, 상당히 여유가 없네요. 그것이%CNAME(MASTER, TARGET)%의 힘껏이었을까」
+					PRINTFORMW 「그렇게 틈을 보이고 있으면, 상대에게 기입해져요…」
+					PRINTFORMW 「이렇게 말한 곳에서, 이제(벌써) 뒤늦음인 것이군요. 유감이지만」
 				CASE 1
-					PRINTFORMW 「自分から拒否したくせにおどおどしちゃって…」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%…、一体何なのよ\@ TENSION(TARGET, 7) == "高い" ? ！？ # …… \@」
+					PRINTFORMW 「자신으로부터 거부한 주제에 흠칫흠칫 해 버려…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%…, 도대체 무엇인 것이야\@ TENSION(TARGET, 7) == "높다" ? ！？ # …… \@」
 			ENDSELECT
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;-------------------------
-	;その他
+	;그 외
 	;-------------------------
 	IF RAND:3
-		LOCALS = \@ T_COND("怒り") ? ！ # \@
-		;無理のない行動
-		IF TFLAG:REACT負荷
-			;BASE:7, 苛立ち派生
+		LOCALS = \@ T_COND("분노") ? ！ # \@
+		;무리가 없는 행동
+		IF TFLAG:REACT부하
+			;BASE:7, 초조 파생
 			SELECTCASE TENSION(TARGET, 7)
-				CASE "高い"
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%…、私をイラつかせる才能があるわね」
-					PRINTFORMW 「本当、許し難いわ…%LOCALS%」
-				CASE "一般"
-					PRINTFORMW 「少しは自分の立場を弁えて欲しいものだけど」
-					PRINTFORMW 「気に入らないわ…%LOCALS%」
-				CASE "低い"
-					PRINTFORMW 「そう…、私の言う事が聞けないっていうのね」
-					PRINTFORMW 「生意気だわ…%LOCALS%」
+				CASE "높다"
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%…, 나를 초조해지게 하는 재능이 있어요」
+					PRINTFORMW 「사실, 허락하기 어려워요…%LOCALS%」
+				CASE "일반"
+					PRINTFORMW 「조금은 자신의 입장을 분별해 주었으면 하는 것이지만」
+					PRINTFORMW 「마음에 들지 않아요…%LOCALS%」
+				CASE "낮다"
+					PRINTFORMW 「그래…, 나의 말하는 것이 (들)물을 수 없다고 말하는 거네」
+					PRINTFORMW 「건방지구나…%LOCALS%」
 			ENDSELECT
-		;自然な行動
+		;자연스러운 행동
 		ELSE
 			SELECTCASE TENSION(TARGET, 7)
-				CASE "高い"
-					PRINTFORMW 「へぇ？ 私の要求を拒絶したからには、それなりの覚悟はできてるんでしょうねぇ」
-					PRINTFORMW 「今に思い知らせてやるから……」
-				CASE "一般"
-					PRINTFORMW 「身の程も弁えず、調子に乗ってると後悔する事になるわよ」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%、人形の癖に生意気なのよ…%LOCALS%」
-				CASE "低い"
-					PRINTFORMW 「この私にそんな態度とるなんて、いい度胸ね。でも…」
-					PRINTFORMW 「調子に乗ってると、痛い目に遭わせるから…」
+				CASE "높다"
+					PRINTFORMW 「헤에? 나의 요구를 거절한 이상에는, 그만한 각오는 되어 있겠지요」
+					PRINTFORMW 「지금에 깨닫게 해 주기 때문에……」
+				CASE "일반"
+					PRINTFORMW 「분수도 분별하지 않고, 우쭐해지고 있으면 후회하는 일이 되어요」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%, 인형의 주제에 건방진 것이야…%LOCALS%」
+				CASE "낮다"
+					PRINTFORMW 「이 나에게 그런 태도 취하다니 좋은 담력이군요. 그렇지만…」
+					PRINTFORMW 「우쭐해지고 있으면, 아픈 꼴을 당하게 하기 때문에…」
 			ENDSELECT
 		ENDIF
 	ELSE
 		IF 0
-		ELSEIF (AFFECTION("相思相愛") || CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度) && !T_COND("怒り")
-			PRINTFORMW 「なによそれ… 一体どうしちゃったのよ…」
-			PRINTFORMW 「ねぇ、私の事嫌いになちゃったの…？」
-			PRINTFORMDW アリスは涙を堪えながら、肩を震わせている…
-		ELSEIF AFFECTION("溺愛") && !T_COND("怒り")
-			PRINTFORMW 「なによ、それ…」
-			PRINTFORMW 「一体どうしちゃったのよ…」
-		ELSEIF AFFECTION("眷愛") && !T_COND("怒り")
-			PRINTFORMW 「私の言う事が聞けないっていうの…？」
-			PRINTFORMW 「一体どういうつもりなのか、はっきり聞かせて貰おうじゃない」
-		ELSEIF AFFECTION("嫌悪") || (!ALI(0) && !RAND:3) || T_COND("怒り")
-			PRINTFORMW 「本当に役立たずな駄犬ね！」
-			PRINTFORMW 「私にそんな態度をとった事、後悔させてあげるから……」
+		ELSEIF (AFFECTION("상사상애") || CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도) && !T_COND("분노")
+			PRINTFORMW 「뭐야 그것… 도대체 어떻게 해 버린거야…」
+			PRINTFORMW 「저기, 나의 일 싫은 의…?」
+			PRINTFORMDW 앨리스는 눈물을 견디면서, 어깨를 진동시키고 있다…
+		ELSEIF AFFECTION("몹시 사랑함") && !T_COND("분노")
+			PRINTFORMW 「뭐야, 그것…」
+			PRINTFORMW 「도대체 어떻게 해 버린거야…」
+		ELSEIF AFFECTION("권애") && !T_COND("분노")
+			PRINTFORMW 「나의 말하는 것이 (들)물을 수 없다고 말하는거야…?」
+			PRINTFORMW 「도대체 어떤 생각인가, 분명히 들려주어 받자가 아니다」
+		ELSEIF AFFECTION("혐오") || (!ALI(0) && !RAND:3) || T_COND("분노")
+			PRINTFORMW 「정말로 쓸모없음인 똥개군요!」
+			PRINTFORMW 「나에게 그렇게 태도를 취한 일, 후회시켜 주기 때문에……」
 		ELSE
-			PRINTFORMW 「……使えないわね。お仕置きされたいのかしら…？」
+			PRINTFORMW 「…… 사용할 수 없네요. 벌 되고 싶은 것일까…?」
 		ENDIF
 	ENDIF
 	RETURN 1
 ENDIF
 
-;──────────────────────────────────
-;COM41, 消極的やる
-;──────────────────────────────────
-;・REACT分類:消極的従う
-;・REACT派生1は"消極的なのが気に入らない"となりお仕置きポイント追加
-;・REACT印象:好印象小
+;─
+;COM41, 소극적 한다
+;─
+;·REACT 분류:소극적 따른다
+;·REACT 파생 1은 "소극적인의가 마음에 들지 않는다"되어 벌포인트 추가
+;·REACT 인상:좋은 인상소
 ;-------------------------------------------------
-;・TFLAG:REACT派生 == 0, 消極的だけどいいか
-;・依存度変化(-3, +2)
+;·TFLAG:REACT 파생 == 0, 소극적이지만 좋은가
+;·의존도 변화(-3, +2)
 ;-------------------------------------------------
-;・TFLAG:REACT派生 == 1, 消極的なのが気に入らない
-;・依存度変化(-5, 0)
+;·TFLAG:REACT 파생 == 1, 소극적인의가 마음에 들지 않는다
+;·의존도 변화(-5, 0)
 ;-------------------------------------------------
-;トリガーする行動や状況…
-;ACT分類:0:会話
-;	ACT:衣装の変更を要求する
-;ACT分類:1:愛撫
+;트리거하는 행동이나 상황…
+;ACT 분류:0:회화
+;	ACT:의상의 변경을 요구한다
+;ACT 분류:1:애무
 ;	ACT:
-;ACT分類:2:道具
+;ACT 분류:2:도구
 ;	ACT:
-;ACT分類:3:性交
-;	ACT:騎乗位
-;ACT分類:4:羞恥
-;	ACT:自慰/放尿
-;ACT分類:5:奉仕
-;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/イラマチオ/胸愛撫強制
-;ACT分類:6:加虐
+;ACT 분류:3:성교
+;	ACT:승마위
+;ACT 분류:4:수치
+;	ACT:자위/방뇨
+;ACT 분류:5:봉사
+;	ACT:손으로 애무를 강제/입으로 애무를 강제/파이즈리/가랑이/다리 빨고 강제/이라마치오/가슴 애무 강제
+;ACT 분류:6:가학
 ;	ACT:
-;ACT分類:7:異常
+;ACT 분류:7:이상
 ;	ACT:
-;ACT分類:9:休憩
+;ACT 분류:9:휴게
 ;	ACT:
-;ACT分類:10:性交奉仕
-;	ACT:正常位させる/後背位させる/対面座位させる/後背位させる/アナルセックスさせる
+;ACT 분류:10:성교 봉사
+;	ACT:정상위 시킨다/후배위 시킨다/대면좌위 시킨다/후배위 시킨다/애널 섹스 시킨다
 ;-------------------------------------------------
 ;=================================================
 @KOJO_COM_K14_41
 ;=================================================
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;COM41_0 & 1, 消極的やる
+;COM41_0 & 1, 소극적 한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;早い段階から選択可能になる可能性が高く、進展した後は負荷2で選択肢になる場合もあったり
-;ある程度注力すべき箇所であるように思う。という訳でちょっと真面目にやってみる
+;빠른 단계로부터 선택 가능하게 될 가능성이 높고, 진전한 뒤는 부하 2로 선택지가 되는 경우도 있거나
+;어느 정도 주력 해야 할 개소이도록(듯이) 생각한다. 그렇다고 하는 것으로 조금 성실하게 해 본다
 ;-------------------------------------------------
-IF 口上記入チェック(100) && GROUPMATCH(TFLAG:REACT派生, 0, 1) > 0
+IF 구상기입체크(100) && GROUPMATCH(TFLAG:REACT파생, 0, 1) > 0
 	;=================================================
-	;ACT分類が性交		騎乗位は弾く
+	;ACT 분류가 성교		승마위는 연주한다
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性交") && SEX_INITIATIVE(MASTER)
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "성교") && SEX_INITIATIVE(MASTER)
 		;-------------------------------------------------
-		;無理をした行動
+		;무리를 한 행동
 		;-------------------------------------------------
-		IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動"
-			;実はまんざらでもない
+		IF 구상기입체크(100) && GET_COM_RANK() == "무리를 한 행동"
+			;실은 그렇지만도 않다
 			IF COMCOR_POSI()
 				SELECTCASE RANDCOM(3, 0)
 					CASE 0
-						PRINTFORMW 「なによそれ、%RAND_SPLIT("じれったい/もどかしい")%わね。少しは自分で動きなさいよ」
-						PRINTFORMW 「ほんと、\@ TFLAG:REACT派生 ? 使えないったらないわね！ # 興ざめもいいとこね \@……」
+						PRINTFORMW 「뭐야 그것,%RAND_SPLIT("속상하다/안타깝다")%원이군요. 조금은 스스로 움직이세요」
+						PRINTFORMW 「정말,\@ TFLAG:REACT파생 ? 사용할 수 없기 이를 데 없네요!# 흥을 깸도 좋으면 반죽하고\@……」
 					CASE 1
-						PRINTFORMW 「退屈でツマラナイわね…。%CNAME(MASTER, TARGET)%みたいな人は"dead fish"って言うらしいわ」
-						PRINTFORMW 「誰が考えたのか知らないけど、%CNAME(MASTER, TARGET)%にはピッタリの言葉ね…\@ TFLAG:REACT派生 ? ！ # \@」
+						PRINTFORMW 「지루하고 재미없네요….%CNAME(MASTER, TARGET)%같은 사람은"dead fish"라고 말하는 것 같아요」
+						PRINTFORMW 「누가 생각했는지 모르지만,%CNAME(MASTER, TARGET)%에는 딱 맞는 말이군요…\@ TFLAG:REACT파생 ? ！ # \@」
 					CASE 2
-						PRINTFORMW 「は？ なんなのよ、それ。%CNAME(MASTER, TARGET)%、全部私にやらせるつもり！？」
-						PRINTFORMW 「マグロ相手のセックスって、%RAND_SPLIT("最高にツマラナイわ/ホント退屈/あり得ないくらい最悪")%\@ TFLAG:REACT派生 ? ね！ # だわ… \@」
+						PRINTFORMW 「하? 무엇인 것이야, 그것.%CNAME(MASTER, TARGET)%, 전부 나에게 시킬 생각!?」
+						PRINTFORMW 「마구로 상대의 섹스는,%RAND_SPLIT("최고로 재미없어요/정말 싫증/있을 수 없을 정도 최악")%\@ TFLAG:REACT파생 ? 군요!# 예요…\@」
 				ENDSELECT
-			;実は嫌
+			;실은 싫어
 			ELSE
 				SELECTCASE RANDCOM(3, 1)
 					CASE 0
-						PRINTFORMW 「ふぅん。取りあえず、逆らうつもりはないみたいだけど」
-						IF TFLAG:REACT負荷
-							PRINTFORMW 「そのやる気のない態度、気に入らない%RAND_SPLIT("わ/のよね/わね")%……」
+						PRINTFORMW 「후응. 우선, 거역할 생각은 없는 것 같지만」
+						IF TFLAG:REACT부하
+							PRINTFORMW 「그 할 마음이 없는 태도, 마음에 들지 않는다%RAND_SPLIT("원/의군요/원이군요")%……」
 						ELSE
-							PRINTFORMW 「単調でつまらないわね、%CNAME(MASTER, TARGET)%……」
+							PRINTFORMW 「단조롭고 시시하네요,%CNAME(MASTER, TARGET)%……」
 						ENDIF
 					CASE 1
-						PRINTFORMW 「今更悔しそうな顔したって、滑稽なだけなのにね」
-						PRINTFORMW 「もう色んな意味で手遅れなんだから、いい加減\@ TFLAG:REACT派生 ? 諦めなさいよ！ # 素直にしたらどうなの？ \@」
+						PRINTFORMW 「이제 와서 분한 것 같은 얼굴 해도, 우스운 만인데 말야」
+						PRINTFORMW 「이제(벌써) 여러 가지 의미로 뒤늦음이니까, 적당\@ TFLAG:REACT파생 ? 단념하세요!# 솔직하게 하면 어때?\@」
 					CASE 2
-						PRINTFORMW 「逆らうつもりはないけど、積極的に従うつもりも無いってわけ？」
-						PRINTFORMW 「ホント退屈ね、%CNAME(MASTER, TARGET)%…。\@ TFLAG:REACT派生 ? 面白くないわ…… # もう少しなんとかならないのかしら \@」
+						PRINTFORMW 「거역할 생각은 없지만, 적극적으로 따를 생각도 없다는 것?」
+						PRINTFORMW 「정말 지루하구나,%CNAME(MASTER, TARGET)%…。\@ TFLAG:REACT파생 ? 재미있지 않아요……# 좀 더 어떻게든 안 되는 것일까\@」
 				ENDSELECT
 			ENDIF
 			RETURN 1
 		ENDIF
 		
 		;---------------------
-		;その他
+		;그 외
 		;---------------------
-		;無理のない行動
-		IF TFLAG:REACT負荷
+		;무리가 없는 행동
+		IF TFLAG:REACT부하
 			SELECTCASE RANDCOM(2, 2)
 				CASE 0
-					PRINTFORMW 「う～ん、まぁ…。大人しく、言う通りにするのは結構なんだけど…」
-					IF TFLAG:REACT派生
-						PRINTFORMW 「%CNAME(MASTER, TARGET)%がそんな様子じゃ、全然愉しくないのよ…」
+					PRINTFORMW 「응, 뭐…. 얌전하고, 말하는 대로 하는 것은 좋은 것이지만…」
+					IF TFLAG:REACT파생
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%가 그런 모습은, 전혀 즐겁지 않은거야…」
 					ELSE
-						PRINTFORMW 「そんなんじゃ、退屈過ぎて欠伸がでるわ。勘弁してくれないかしら」
+						PRINTFORMW 「그런 것은, 너무 지루해 하품이 나와요. 용서해 주지 않을까」
 					ENDIF
 				CASE 1
-					PRINTFORMW 「気の無い動きねぇ。単調過ぎて嫌になってくるわ」
-					PRINTFORMW 「特別なにかを期待してた訳じゃないけど、流石に\@ TFLAG:REACT派生 ? お粗末すぎるわよ！ # \@ちょっと。ねぇ…」
+					PRINTFORMW 「기분이 없는 움직임 응. 너무 단조로워 싫게 되어 와요」
+					PRINTFORMW 「특별한으로인지를 기대하고 있던 것이 아니지만, 과연\@ TFLAG:REACT파생 ? 너무 허술해요!# \@조금. 저기…」
 			ENDSELECT
-		;自然な行動
+		;자연스러운 행동
 		ELSE
 			SELECTCASE RANDCOM(2, 3)
 				CASE 0
-					PRINTFORMW 「逆らえないから仕方なくって感じがアリアリで、ホント白けちゃうわ」
-					PRINTFORMW 「『もっと情熱的に』なんて言うつもりはないけど、もう少しなんとかならないの\@ TFLAG:REACT派生 ? ！ # \@？」
+					PRINTFORMW 「거역할 수 없기 때문에 어쩔 수 없어서 느낌이 아리아리로, 정말 퇴색해 버려요」
+					PRINTFORMW 「『좀 더 정열적으로』라고 말할 생각은 없지만, 좀 더 어떻게든 안 되는거야\@ TFLAG:REACT파생 ? ！ # \@？」
 				CASE 1
-					PRINTFORMW 「取りあえず、私の機嫌を損ねない程度にって感じよね？」
-					PRINTFORMW 「半端なことされても、じれったくて…、イライラする\@ TFLAG:REACT派生 ? のよ！ # わ… \@」
+					PRINTFORMW 「우선, 나의 기분을 해치지 않는 정도로라는 느낌이지요?」
+					PRINTFORMW 「어중간한 일 되어도, 속상해서…, 안절부절 한다\@ TFLAG:REACT파생 ? 의 것!# 원…\@」
 			ENDSELECT
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ACT分類が羞恥
+	;ACT 분류가 수치
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "羞恥")
-		LOCALS = \@ AFFECTION("溺愛") ? %RAND_SPLIT("ふふ/くすくす/ふふっ")% # %RAND_SPLIT("ウフフ/フフフ/フフ")% \@
-		;ACTを決めうちしてしまう
-		IF IS_NOWACTNAME("自慰/放尿")
-			;FADEの処理を纏めたかったので刻まずに派生処理する
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "수치")
+		LOCALS = \@ AFFECTION("몹시 사랑함") ? %RAND_SPLIT("후후/킥킥/후훗")% # %RAND_SPLIT("우후후/후후후/후후")% \@
+		;ACT를 결정하고 쳐 해 버린다
+		IF IS_NOWACTNAME("자위/방뇨")
+			;FADE의 처리를 모으고 싶었기 때문에 새기지 않고 파생 처리한다
 			SELECTCASE GET_COM_RANK()
-				CASE "自然な行動"
-					;派生：消極的なのが気に入らない
-					IF TFLAG:REACT派生
-						PRINTFORMW 「大人しく従うのは結構だけど…」
-						PRINTFORMW 「%CNAME(MASTER, TARGET)%、消極的すぎるのよ。気に入らないわ…」
-					;派生：消極的だけどいいか
+				CASE "자연스러운 행동"
+					;파생:소극적인의가 마음에 들지 않는다
+					IF TFLAG:REACT파생
+						PRINTFORMW 「얌전하게 따르는 것은 좋지만…」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%, 너무 소극적인거야. 마음에 들지 않아요…」
+					;파생:소극적이지만 좋은가
 					ELSE
 						SELECTCASE RANDCOM(3, 10)
 							CASE 0
-								PRINTFORMW 「悪くない眺めね。その『強要されて仕方なく』って感じもとってもいいわよ」
-								PRINTFORMW 「%CNAME(MASTER, TARGET)%には、もっと色んな事させたくなっちゃうわ」
+								PRINTFORMW 「나쁘지 않은 경치군요. 그 『강요받아 어쩔 수 없이』라는 느낌 아래라고 해도 좋아요」
+								PRINTFORMW 「%CNAME(MASTER, TARGET)%에는, 좀 더 여러 가지 일 시키고 싶어져 버려요」
 							CASE 1
-								PRINTFORMW 「『逆らえないから仕方なく』って感じも悪くないわね」
-								PRINTFORMW 「どうせ恥ずかしがったところで手遅れなんだから。もっとよく見えるようにして頂戴」
+								PRINTFORMW 「『거역할 수 없기 때문에 어쩔 수 없이』라는 느낌도 나쁘지 않네요」
+								PRINTFORMW 「어차피 부끄러워한 곳에서 뒤늦음이니까. 좀 더 잘 보이도록해 줘」
 							CASE 2
-								PRINTFORMW 「流石の%CNAME(MASTER, TARGET)%でも、こういうのは気乗りしないのかしら？」
-								PRINTFORMW 「ま、そういう事も含めて…。私はじっくり鑑賞させて貰うことにするわ」
+								PRINTFORMW 「과연%CNAME(MASTER, TARGET)%에서도, 이런 것은 마음 내키지 않는 것일까?」
+								PRINTFORMW 「뭐, 그런 일도 포함해…. 나는 차분히 감상시켜 받기로 해요」
 						ENDSELECT
 					ENDIF
-				CASE "無理のない行動"
-					;派生：消極的なのが気に入らない
-					IF TFLAG:REACT派生
-						PRINTFORMW 「ねぇ、言っとくけど…。言う通りにしてれば良いってものじゃないのよ」
-						PRINTFORMW 「その、言われた事だけ最低限って感じ…。気に食わないわ」
-					;派生：消極的だけどいいか
+				CASE "무리가 없는 행동"
+					;파생:소극적인의가 마음에 들지 않는다
+					IF TFLAG:REACT파생
+						PRINTFORMW 「저기, 말해 두지만…. 말하는 대로 하고 있으면 좋다는 것이 아니야」
+						PRINTFORMW 「그, 말해진 일만 최저한이라는 느낌…. 마음에 들지 않아요」
+					;파생:소극적이지만 좋은가
 					ELSE
 						SELECTCASE RANDCOM(3, 11)
 							CASE 0
-								PRINTFORMW 「流石にあまり気乗りはしないみたいね」
-								PRINTFORMW 「ま、そうよね。こんな恥ずかしい事、人前ではしたくないわよね？」
+								PRINTFORMW 「과연 그다지 마음에 당김은 하지 않는 것 같구나」
+								PRINTFORMW 「뭐, 그래요. 이런 부끄러운 일, 남의 앞에서는 하고 싶지 않네요?」
 							CASE 1
-								PRINTFORMW 「どうせなら、もっと堂々とすればいいのに。ってコレ」
-								PRINTFORMW 「そういう問題じゃ、ないわよねぇ」
+								PRINTFORMW 「어차피라면, 좀 더 당당히 하면 좋은데. 라는 이것」
+								PRINTFORMW 「그러한 문제가 아니네요」
 							CASE 2
-								PRINTFORMW 「そんなんじゃ駄目よ。もっと私に良く見えるようにして頂戴」
-								PRINTFORMW 「だって…、ねぇ？ 折角の機会なんだから」
+								PRINTFORMW 「그런 것은 안 돼요. 좀 더 나에게 자주(잘) 보이도록(듯이)해 줘」
+								PRINTFORMW 「왜냐하면…, 저기? 모처럼의 기회인 것이니까」
 						ENDSELECT
 					ENDIF
-				CASE "無理をした行動"
-					;実はまんざらでもない
+				CASE "무리를 한 행동"
+					;실은 그렇지만도 않다
 					IF COMCOR_POSI()
-						;派生：消極的なのが気に入らない
-						IF TFLAG:REACT派生
-							PRINTFORMW 「……まったく。駄目ね、%CNAME(MASTER, TARGET)%…」
-							PRINTFORMW 「半端なことされても、見てる方は面白くないのよ」
-						;派生：消極的だけどいいか
+						;파생:소극적인의가 마음에 들지 않는다
+						IF TFLAG:REACT파생
+							PRINTFORMW 「…… 완전히. 안되구나,%CNAME(MASTER, TARGET)%…」
+							PRINTFORMW 「어중간한 일 되어도, 보고 있는 (분)편은 재미있지 않은거야」
+						;파생:소극적이지만 좋은가
 						ELSE
 							SELECTCASE RANDCOM(2, 12)
 								CASE 0
-									PRINTFORMW 「気が進まないようだけど、逆らうまでには至らない。って感じな訳？」
-									PRINTFORMW 「でもまぁ…。結局、私に従うなら同じことよね」
+									PRINTFORMW 「마음이 내키지 않는 것 같지만, 거역하기까지는 도달하지 않는다. 라는 느낌인 이유?」
+									PRINTFORMW 「그렇지만 아무튼…. 결국, 나에 따른다면 같은 것이군요」
 								CASE 1
-									PRINTFORMW 「あら、いいわねぇ。あり得ないくらい無様で、%CNAME(MASTER, TARGET)%には良くお似合いよ」
-									PRINTFORMW 「ま、こんな恥ずかしい事…、積極的にはできないわよね」
+									PRINTFORMW 「아라, 좋네요. 있을 수 없을 정도 보기 흉해,%CNAME(MASTER, TARGET)%에는 자주(잘) 어울려요」
+									PRINTFORMW 「뭐, 이런 부끄러운 일…, 적극적으로는 할 수 없네요」
 							ENDSELECT
 						ENDIF
-					;実は嫌
+					;실은 싫어
 					ELSE
-						;派生：消極的なのが気に入らない
-						IF TFLAG:REACT派生
-							PRINTFORMW 「なによ……、悔しそうな顔しちゃって。文句があるなら逆らってみなさいよ」
-							PRINTFORMW 「そんな半端なことされても、面白くもなんともないのよ！」
-						;派生：消極的だけどいいか
+						;파생:소극적인의가 마음에 들지 않는다
+						IF TFLAG:REACT파생
+							PRINTFORMW 「뭐야……, 분한 것 같은 얼굴 해 버려. 불평이 있다면 거역해 보세요」
+							PRINTFORMW 「그런 어중간한 일 되어도, 재미있지도 어떻지도 않은거야!」
+						;파생:소극적이지만 좋은가
 						ELSE
 							SELECTCASE RANDCOM(2, 13)
 								CASE 0
-									PRINTFORMW 「悔しそうな顔したところで、結局は私の言うこと聞くのね？」
-									PRINTFORMW 「ふふ…本当に情けない姿。見てる方が恥ずかしくなるわ」
+									PRINTFORMW 「분한 것 같은 얼굴 한 곳에서, 결국은 나의 말하는 일 (듣)묻는 거네?」
+									PRINTFORMW 「후후… 정말로 한심한 모습. 보고 있는 (분)편이 부끄러워져요」
 								CASE 1
-									PRINTFORMW 「ふふ…、いい表情。こんな事を強要されるのは、さぞかし悔しいでしょうねぇ」
-									PRINTFORMW 「こんな恥ずかしい事、本来…、人前ですることじゃないし。ね」
+									PRINTFORMW 「후후…, 좋은 표정. 이런 일을 강요받는 것은, 필시 분하겠지요」
+									PRINTFORMW 「이런 부끄러운 일, 본래…, 남의 앞에서 하는 것이 아니고. 저기」
 							ENDSELECT
 						ENDIF
 					ENDIF
 			ENDSELECT
-			;調教者のBASE:満足が50%以上の場合かつ派生0の場合
-			IF TENSION(TARGET, 8) == "高い" && !TFLAG:REACT派生
-				;フェードアウト
+			;조교자의 BASE:만족이 50%이상의 경우 또한 파생 0의 경우
+			IF TENSION(TARGET, 8) == "높다" && !TFLAG:REACT파생
+				;페이드 아웃
 				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%LOCALS%…」")
-				;コンフィグを参照
+				;콘피그를 참조
 				SIF ANIME_CONFIG("FADE")
-					;真なら行削除する
+					;진이라면 행 삭제한다
 					CLEARLINE 1
 			ENDIF
 		ENDIF
@@ -423,106 +423,106 @@ IF 口上記入チェック(100) && GROUPMATCH(TFLAG:REACT派生, 0, 1) > 0
 	ENDIF
 	
 	;=================================================
-	;ACT分類が奉仕
+	;ACT 분류가 봉사
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "奉仕")
-		LOCALS = \@ TALENT:MASTER:オトコ ? 犬 # メス犬 \@
-		;ACTが口による奉仕である場合		関数による処理を終端で纏めたかったので刻まない。というか刻んで記述したものをあとから統合した
-		IF IS_NOWACTNAME("口で愛撫を強制/足舐め強制/イラマチオ") || (IS_NOWACTNAME("胸愛撫強制") && TFLAG:ACT派生 == 2)
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "봉사")
+		LOCALS = \@ TALENT:MASTER:남자 ? 개# 암캐\@
+		;ACT가 입에 의한 봉사인 경우		함수에 의한 처리를 종단으로 모으고 싶었기 때문에 새기지 않는다. 라고 할까 새겨 기술한 것을 나중에 통합했다
+		IF IS_NOWACTNAME("구에서 애무를 강제/다리 빨고 강제/이라마치오") || (IS_NOWACTNAME("가슴 애무 강제") && TFLAG:ACT파생 == 2)
 			SELECTCASE GET_COM_RANK()
-				CASE "自然な行動"
-					;派生：消極的なのが気に入らない
-					IF TFLAG:REACT派生
-						PRINTFORMW 「これまた随分と%RAND_SPLIT("熱のこもってない/おざなりな")%奉仕だこと」
-						PRINTFORMW 「%CNAME(MASTER, TARGET)%…、%RAND_SPLIT("私を怒らせたいの？/その程度で誤魔化せると思ったら大間違いよ")%」
-					;派生：消極的だけどいいか
+				CASE "자연스러운 행동"
+					;파생:소극적인의가 마음에 들지 않는다
+					IF TFLAG:REACT파생
+						PRINTFORMW 「이것 또 상당히%RAND_SPLIT("열이 가득차지 않았다/일시 모면적인")%봉사다 일」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%…、%RAND_SPLIT("나를 화나게 하고 싶은거야? /그 정도로 속일 수 있다고 생각하면 큰 실수야")%」
+					;파생:소극적이지만 좋은가
 					ELSE
-						PRINTFORMW 「ふふ、そうそう。大人しく従ってればいいのよ」
-						PRINTFORMW 「ご主人様に\@ IS_NOWACTNAME("足舐め強制") ? 舌で # 口を使って \@奉仕できるなんて、%CNAME(MASTER, TARGET)%のような%LOCALS%にとっては、この上ない幸せでしょう？」
-						;BASE:8 満足
-						PRINTFORMW 「例えどうしようもない駄犬であったとしても、ね\@ TENSION(TARGET, 8) == "高い" ? ぇ # … \@」
+						PRINTFORMW 「후후, 그래그래. 얌전하게 따라서 있으면 좋은거야」
+						PRINTFORMW 「주인님에\@ IS_NOWACTNAME("다리 빨고 강제") ? 혀로# 구를 사용해\@봉사할 수 있다니%CNAME(MASTER, TARGET)%와 같은%LOCALS%에 있어서는, 이 이상 없는 행복하겠지요?」
+						;BASE:8 만족
+						PRINTFORMW 「비유하고 어쩔 수 없는 똥개였다고 해도, 말야\@ TENSION(TARGET, 8) == "높다" ?# … \@」
 					ENDIF
-				CASE "無理のない行動"
-					PRINTFORMW 「イマイチね、%CNAME(MASTER, TARGET)%…」
-					PRINTFORMW 「%LOCALS%の癖に舌使いもなってないし、退屈極まりないわ\@ TFLAG:REACT派生 ? ！ # ね…… \@」
-				CASE "無理をした行動"
-					;実はまんざらでもない
+				CASE "무리가 없는 행동"
+					PRINTFORMW 「좀 더,%CNAME(MASTER, TARGET)%…」
+					PRINTFORMW 「%LOCALS%의 주제에 혀사용도 되지 않고, 싫증 마지막 없어요\@ TFLAG:REACT파생 ? ！ # 군요……\@」
+				CASE "무리를 한 행동"
+					;실은 그렇지만도 않다
 					IF COMCOR_POSI()
-						PRINTFORMW 「飼い犬なら、もっと喜んでご主人様に奉仕すべきじゃないの\@ TFLAG:REACT派生 ? ！ # \@？」
-						;派生：消極的なのが気に入らない
-						IF TFLAG:REACT派生
-							PRINTFORMW 「%CNAME(MASTER, TARGET)%…、%LOCALS%としての自覚が足りないのよ！」
-						;派生：消極的だけどいいか
+						PRINTFORMW 「기르는 개라면, 좀 더 기뻐해 주인님에 봉사해야 하지 않아\@ TFLAG:REACT파생 ? ！ # \@？」
+						;파생:소극적인의가 마음에 들지 않는다
+						IF TFLAG:REACT파생
+							PRINTFORMW 「%CNAME(MASTER, TARGET)%…、%LOCALS%로서의 자각이 부족한거야!」
+						;파생:소극적이지만 좋은가
 						ELSE
-							PRINTFORMW 「もしかして%CNAME(MASTER, TARGET)%…、まだ%LOCALS%としての自覚が足りないのかしら%RAND_SPLIT("。ねぇ？/")%」
+							PRINTFORMW 「혹시%CNAME(MASTER, TARGET)%…, 아직%LOCALS%로서의 자각이 부족한 것일까%RAND_SPLIT(". 저기? /")%」
 						ENDIF
-					;実は嫌
+					;실은 싫어
 					ELSE
-						PRINTFORMW 「ん？ 何よ。まだ人並みのプライドが残ってるのかしら」
-						PRINTFORMW 「そんなもの…、もはや一匹の%LOCALS%に過ぎない%CNAME(MASTER, TARGET)%には必要ないはずだけど」
-						;派生：消極的なのが気に入らない
-						IF TFLAG:REACT派生
-							PRINTFORMW 「もう一度、%CNAME(MASTER, TARGET)%の立場を思い知らせてあげる必要がありそうね…」
-						;派生：消極的だけどいいか
+						PRINTFORMW 「응? 뭐야. 아직 남들 수준의 프라이드가 남아 있을까」
+						PRINTFORMW 「그런 것…, 이미 한마리의%LOCALS%에 지나지 않는다%CNAME(MASTER, TARGET)%에는 필요없을 것이지만」
+						;파생:소극적인의가 마음에 들지 않는다
+						IF TFLAG:REACT파생
+							PRINTFORMW 「한번 더,%CNAME(MASTER, TARGET)%의 입장을 깨닫게 해 줄 필요가 있을 듯 하구나…」
+						;파생:소극적이지만 좋은가
 						ELSE
-							PRINTFORMW 「…って。ここまで言われても逆らえない時点で、もうどうしようもない%RAND_SPLIT("感じ/わ")%ねぇ？ \@ TENSION(TARGET, 8) == "高い" ? あははっ！ # ウフフ… \@」
+							PRINTFORMW 「… 은. 여기까지 말해져도 거역할 수 없는 시점에서, 이제(벌써) 어쩔 수 없다%RAND_SPLIT("느낌/와")%응?\@ TENSION(TARGET, 8) == "높다" ? 아하하!# 우후후…\@」
 						ENDIF
 					ENDIF
 			ENDSELECT
-		;その他の奉仕系ACT
+		;그 외의 봉사계 ACT
 		ELSE
 			SELECTCASE GET_COM_RANK()
-				CASE "自然な行動"
+				CASE "자연스러운 행동"
 					SELECTCASE RANDCOM(2, 20)
 						CASE 0
-							PRINTFORMW 「逆らえないから仕方なくって感じね。%RAND_SPLIT("つまらない/面白くない")%わ」
-							;派生：消極的なのが気に入らない
-							IF TFLAG:REACT派生
-								PRINTFORMW 「一度%CNAME(MASTER, TARGET)%を躾けなおす必要がありそうね……」
-							;派生：消極的だけどいいか
+							PRINTFORMW 「거역할 수 없기 때문에 어쩔 수 없어서 느낌이군요.%RAND_SPLIT("시시하다/재미있지 않다")%원」
+							;파생:소극적인의가 마음에 들지 않는다
+							IF TFLAG:REACT파생
+								PRINTFORMW 「한 번%CNAME(MASTER, TARGET)%를 다시 예의범절을 가르칠 필요가 있을 듯 하구나……」
+							;파생:소극적이지만 좋은가
 							ELSE
-								PRINTFORMW 「もう少し愉しませてくれると思ったんだけど」
+								PRINTFORMW 「좀 더 즐겁게 해 준다고 생각했지만」
 							ENDIF
 						CASE 1
-							;BASE:7 苛立ち
-							PRINTFORMW 「\@ TENSION(TARGET, 7) == "高い" ? はぁ！？ # \@なによ、随分消極的じゃない」
-							;派生：消極的なのが気に入らない
-							IF TFLAG:REACT派生
-								PRINTFORMW 「%CNAME(MASTER, TARGET)%…、私を怒らせるつもり？」
-							;派生：消極的だけどいいか
+							;BASE:7 초조
+							PRINTFORMW 「\@ TENSION(TARGET, 7) == "높다" ? 는!?# \@뭐야, 상당히 소극적이지 않아」
+							;파생:소극적인의가 마음에 들지 않는다
+							IF TFLAG:REACT파생
+								PRINTFORMW 「%CNAME(MASTER, TARGET)%…, 나를 화나게 할 생각?」
+							;파생:소극적이지만 좋은가
 							ELSE
-								PRINTFORMW 「%RAND_SPLIT("特/別")%に期待してたって訳じゃないけど、だからと言ってお粗末過ぎるのも、ねぇ…」
+								PRINTFORMW 「%RAND_SPLIT("특/구별")%에 기대하고 있었다는 것이 아니지만, 그렇다고 해서 너무 허술한 것도, 저기…」
 							ENDIF
 					ENDSELECT
-				CASE "無理のない行動"
+				CASE "무리가 없는 행동"
 					SELECTCASE RANDCOM(2, 21)
 						CASE 0
-							PRINTFORMW 「言われたことだけ最低限とか…、%RAND_SPLIT("馬鹿/愚か者")%の考えそうなことね」
-							;派生：消極的なのが気に入らない
-							IF TFLAG:REACT派生
-								PRINTFORMW 「私、大嫌いなのよね。そういうの……」
-							;派生：消極的だけどいいか
+							PRINTFORMW 「말해진 것만 최저한이라든지…,%RAND_SPLIT("바보/어리석은 자")%의 생각할 것 같은 일이군요」
+							;파생:소극적인의가 마음에 들지 않는다
+							IF TFLAG:REACT파생
+								PRINTFORMW 「나, 정말 싫은 것이군요. 그러한 것……」
+							;파생:소극적이지만 좋은가
 							ELSE
-								PRINTFORMW 「退屈なのよ、%CNAME(MASTER, TARGET)%……」
+								PRINTFORMW 「지루한 것이야,%CNAME(MASTER, TARGET)%……」
 							ENDIF
 						CASE 1
-							PRINTFORMW 「%CNAME(MASTER, TARGET)%…、言われたことだけやってれば良いとか思ってる？」
-							PRINTFORMW 「\@ TFLAG:REACT派生 ? 気に入らない # あまり感心しない \@わね、そういうの……」
+							PRINTFORMW 「%CNAME(MASTER, TARGET)%…, 말해진 것만 하고 있으면 좋다고 생각하고 있어?」
+							PRINTFORMW 「\@ TFLAG:REACT파생 ? 마음에 들지 않는다# 그다지 감탄하지 않는다\@원이군요, 그러한 것……」
 					ENDSELECT
-				CASE "無理をした行動"
-					;実はまんざらでもない
+				CASE "무리를 한 행동"
+					;실은 그렇지만도 않다
 					IF COMCOR_POSI()
-						PRINTFORMW 「本当…、じれったいわね。もう少し何とかならないの？」
-						PRINTFORMW 「退屈すぎて、\@ TFLAG:REACT派生 ? 頭にくるのよ…！ # 嫌になってくるわ… \@」
-					;実は嫌
+						PRINTFORMW 「사실…, 속상하네요. 좀 더 어떻게든 안 되는거야?」
+						PRINTFORMW 「너무 지루해,\@ TFLAG:REACT파생 ? 화가 나는거야…!# 싫게 되어 와요…\@」
+					;실은 싫어
 					ELSE
-						PRINTFORMW 「そんな嫌々ながらにされても困る%RAND_SPLIT("のよね/わ/わね")%…」
-						;派生：消極的なのが気に入らない
-						IF TFLAG:REACT派生
-							PRINTFORMW 「――前言撤回。困ると言うより、気に入らないのよね。そういう態度…」
-						;派生：消極的だけどいいか
+						PRINTFORMW 「그런 마지못해서면서 되어도 곤란함%RAND_SPLIT("의 것이군요/원/원이군요")%…」
+						;파생:소극적인의가 마음에 들지 않는다
+						IF TFLAG:REACT파생
+							PRINTFORMW 「-전언 철회. 곤란하다고 하는 것보다, 마음에 들지 않네요. 그러한 태도…」
+						;파생:소극적이지만 좋은가
 						ELSE
-							PRINTFORM 「ま、%CNAME(MASTER, TARGET)%に何かを強要する事自体は、悪くない気分だけど
+							PRINTFORM 「뭐,%CNAME(MASTER, TARGET)%에 뭔가를 강요하는 일자체는, 나쁘지 않은 기분이지만
 							CALL PRINT_SYMBOL_K14
 						ENDIF
 					ENDIF
@@ -533,78 +533,78 @@ IF 口上記入チェック(100) && GROUPMATCH(TFLAG:REACT派生, 0, 1) > 0
 	ENDIF
 	
 	;=================================================
-	;ACT分類が性奉
+	;ACT 분류가 성 봉
 	;=================================================
-	;IF 口上記入チェック(0) && MENUMATCH(TFLAG:ACT, "性奉")
+	;IF 구상 기입 체크(0) && MENUMATCH(TFLAG:ACT, "성 봉")
 	;ENDIF
 	
 	;-------------------------
-	;汎用処理
+	;범용 처리
 	;-------------------------
-	LOCALS = \@ TFLAG:REACT派生 == 1 || TENSION(TARGET, 7) == "高い" || T_COND("怒り") ? ！ # \@
-	;派生：消極的なのが気に入らない（お仕置きポイント加算）
-	IF TFLAG:REACT派生
-		IF AFFECTION("相思相愛")
+	LOCALS = \@ TFLAG:REACT파생 == 1 || TENSION(TARGET, 7) == "높다" || T_COND("분노") ? ！ # \@
+	;파생:소극적인의가 마음에 들지 않는다(벌포인트 가산)
+	IF TFLAG:REACT파생
+		IF AFFECTION("상사상애")
 			SELECTCASE RANDCOM (2, 30)
 				CASE 0
-					PRINTFORMW 「なにそれ…。わざわざ無理してまで消極的にする理由な何なのよ\@ T_COND("怒り") ? ！ # \@」
-					PRINTFORMW 「面白くないわね、ハッキリ言って…」
+					PRINTFORMW 「뭐야 그것…. 일부러 무리해서까지 소극적으로 하는 이유인 무엇인 것이야\@ T_COND("분노") ? ！ # \@」
+					PRINTFORMW 「재미있지 않네요, 분명하게 말해…」
 				CASE 1
-					PRINTFORMW 「やる気のない素振りをしたって…、本当は辛いんじゃないの？」
-					PRINTFORMW 「そもそも、そんな事する意味が判らないわね\@ T_COND("怒り") ? ！ # \@」
+					PRINTFORMW 「할 마음이 없는 기색을 해도…, 사실은 괴로운 것이 아닌거야?」
+					PRINTFORMW 「원래, 그런 일 하는 의미가 알지 않네요\@ T_COND("분노") ? ！ # \@」
 			ENDSELECT
 		ELSE
-			;BASE:8 満足派生
+			;BASE:8 만족 파생
 			SELECTCASE TENSION(TARGET, 8)
-				CASE "高い"
-					PRINTFORMW 「なによ、それ…。半端な事されても、じれったいだけなんだけど…」
-					PRINTFORMW 「私を怒らせるつもりじゃないなら、もう少し考えた方がいいんじゃない？」
-					PRINTFORMW 「尤も…、今更謝ったって、ただで済ますつもりはないんだけど。ね…」
-				CASE "一般"
-					PRINTFORMW 「そのやる気のなさそうな顔見てるとうんざりするわ…」
-					PRINTFORMW 「ホント、もどかしいったらないわね！」
-				CASE "低い"
-					PRINTFORMW 「中途半端でもどかしいわね…」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%…、私を怒らせたいのかしら」
+				CASE "높다"
+					PRINTFORMW 「뭐야, 그것…. 어중간한 일 되어도, 속상한 것뿐이지만…」
+					PRINTFORMW 「나를 화나게 할 생각이 아니면, 좀 더 생각하는 것이 좋은 것이 아니야?」
+					PRINTFORMW 「무엇보다…, 이제 와서 사과해도, 공짜로 끝낼 생각은 없지만. 저기…」
+				CASE "일반"
+					PRINTFORMW 「그 할 마음이 없는 것 같은 얼굴 보고 있으면 진절머리 나요…」
+					PRINTFORMW 「정말, 안타깝기 이를 데 없네요!」
+				CASE "낮다"
+					PRINTFORMW 「어중간하고 안타깝네요…」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%…, 나를 화나게 하고 싶은 것일까」
 			ENDSELECT
 		ENDIF
-	;派生：消極的だけどいいか
+	;파생:소극적이지만 좋은가
 	ELSE
 		;2/3
 		IF RAND:3
 			SELECTCASE GET_COM_RANK()
-				CASE "自然な行動"
-					PRINTFORMW 「ただ従ってれば良いってものじゃないんだけど。%CNAME(MASTER, TARGET)%、判ってる%LOCALS%？」
-					PRINTFORMW 「兎も角…、こんなのは不満なの。面白くないのよ%LOCALS%」
-				CASE "無理のない行動"
-					PRINTFORMW 「…ったく。幾らなんでも消極的すぎない%LOCALS%？」
-					PRINTFORMW 「フザケルのも大概にして頂戴%LOCALS%」
-				CASE "無理をした行動"
-					;実はまんざらでもない
+				CASE "자연스러운 행동"
+					PRINTFORMW 「다만 따라서 있으면 좋다는 것이 아니지만.%CNAME(MASTER, TARGET)%, 알고 있다%LOCALS%？」
+					PRINTFORMW 「어쨌든…, 이런 것은 불만이야. 재미있지 않은거야%LOCALS%」
+				CASE "무리가 없는 행동"
+					PRINTFORMW 「… 나참. 얼마 뭐든지 너무 소극적이지 않는다%LOCALS%？」
+					PRINTFORMW 「후자켈의 것도 대충 해두어 줘%LOCALS%」
+				CASE "무리를 한 행동"
+					;실은 그렇지만도 않다
 					IF COMCOR_POSI()
-						PRINTFORMW 「…まったく。%CNAME(MASTER, TARGET)%…、一々わたしに指図されないと何もできないの？」
-						PRINTFORMW 「そういう事じゃ困る\@ AFFECTION("溺愛") ? んですけど？ # のよね… \@」
-					;実は嫌
+						PRINTFORMW 「… 완전히.%CNAME(MASTER, TARGET)%…, 하나 하나 나에게 지시되지 않으면 아무것도 할 수 없는거야?」
+						PRINTFORMW 「그런 일은 곤란함\@ AFFECTION("몹시 사랑함") ? 응이지만?# 의 것이군요…\@」
+					;실은 싫어
 					ELSE
-						PRINTFORMW 「逆らわず、私に従うのは結構なことだけど…」
-						PRINTFORMW 「半端なことされても、ね……」
+						PRINTFORMW 「거역하지 않고, 나에 따르는 것은 좋은 일이지만…」
+						PRINTFORMW 「어중간한 일 되어도, 말야……」
 					ENDIF
 			ENDSELECT
 		;1/3
 		ELSE
 			IF 0
-			ELSEIF AFFECTION("相思相愛") && !T_COND("怒り")
-				PRINTFORMW 「ねぇ、なによそれ。どうしちゃったのよ…」
-				PRINTFORMW 「私、そんなのじゃ嫌よ…」
-			ELSEIF AFFECTION("溺愛") && !T_COND("怒り")
-				PRINTFORMW 「なによ、どうしたのよ…」
-				PRINTFORMW 「ねぇ、もっと真面目にやりなさいよ…」
-			ELSEIF AFFECTION("眷愛") && !T_COND("怒り")
-				PRINTFORMW 「随分消極的ね。体調でも悪いのかしら…？」
-			ELSEIF AFFECTION("嫌悪") || T_COND("怒り") || TENSION(TARGET, 7) == "高い"
-				PRINTFORMW 「RAND_SPLIT("ホント/ほんと/本当、")使えない%RAND_SPLIT("駄犬/犬/豚")%ね…%LOCALS%」
+			ELSEIF AFFECTION("상사상애") && !T_COND("분노")
+				PRINTFORMW 「저기, 뭐야 그것. 어떻게 해 버린거야…」
+				PRINTFORMW 「나, 그런 것은 싫어요…」
+			ELSEIF AFFECTION("몹시 사랑함") && !T_COND("분노")
+				PRINTFORMW 「뭐야, 어떻게 한거야…」
+				PRINTFORMW 「저기, 좀 더 성실하게 하세요…」
+			ELSEIF AFFECTION("권애") && !T_COND("분노")
+				PRINTFORMW 「상당히 소극적이구나. 컨디션에서도 나쁜 것일까…?」
+			ELSEIF AFFECTION("혐오") || T_COND("분노") || TENSION(TARGET, 7) == "높다"
+				PRINTFORMW 「RAND_SPLIT("정말/정말/사실, ") 사용할 수 없다%RAND_SPLIT("똥개/견/돼지")%군요…%LOCALS%」
 			ELSE
-				PRINTFORMW 「%RANDTEXT_K14("つまらない", "ツマラナイ", "使えない")%わね、%CNAME(MASTER, TARGET)%…」
+				PRINTFORMW 「%RANDTEXT_K14("시시함", "재미없다", "사용할 수 없다")%원이군요,%CNAME(MASTER, TARGET)%…」
 			ENDIF
 		ENDIF
 	ENDIF
@@ -612,128 +612,128 @@ IF 口上記入チェック(100) && GROUPMATCH(TFLAG:REACT派生, 0, 1) > 0
 	RETURN 1
 ENDIF
 
-;──────────────────────────────────
-;COM42, 積極的やる
-;──────────────────────────────────
-;・REACT分類:積極的従う
-;・REACT印象:好印象大
-;・我慢フラグ解消
+;─
+;COM42, 적극적 한다
+;─
+;·REACT 분류:적극적 따른다
+;·REACT 인상:좋은 인상대
+;·인내 플래그 해소
 ;-------------------------------------------------
-;トリガーする行動や状況…
-;ACT分類:0:会話
-;	ACT:衣装の変更を要求する
-;ACT分類:1:愛撫
+;트리거하는 행동이나 상황…
+;ACT 분류:0:회화
+;	ACT:의상의 변경을 요구한다
+;ACT 분류:1:애무
 ;	ACT:
-;ACT分類:2:道具
+;ACT 분류:2:도구
 ;	ACT:
-;ACT分類:3:性交
-;	ACT:騎乗位
-;ACT分類:4:羞恥
-;	ACT:自慰/放尿
-;ACT分類:5:奉仕
-;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/イラマチオ/胸愛撫強制
-;ACT分類:6:加虐
+;ACT 분류:3:성교
+;	ACT:승마위
+;ACT 분류:4:수치
+;	ACT:자위/방뇨
+;ACT 분류:5:봉사
+;	ACT:손으로 애무를 강제/입으로 애무를 강제/파이즈리/가랑이/다리 빨고 강제/이라마치오/가슴 애무 강제
+;ACT 분류:6:가학
 ;	ACT:
-;ACT分類:7:異常
+;ACT 분류:7:이상
 ;	ACT:
-;ACT分類:9:休憩
+;ACT 분류:9:휴게
 ;	ACT:
-;ACT分類:10:性交奉仕
-;	ACT:正常位させる/後背位させる/対面座位させる/後背位させる/アナルセックスさせる
+;ACT 분류:10:성교 봉사
+;	ACT:정상위 시킨다/후배위 시킨다/대면좌위 시킨다/후배위 시킨다/애널 섹스 시킨다
 ;-------------------------------------------------
-;・REACT派生なし
+;·REACT 파생 없음
 ;-------------------------------------------------
 ;=================================================
 @KOJO_COM_K14_42
 ;=================================================
-;会話系はREACTで完結させているので枠を設けない
+;회화계는 REACT로 완결시키고 있으므로 테두리를 마련하지 않는다
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;COM42, 積極的やる
+;COM42, 적극적 한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100)
-	;試験運用中…
+IF 구상기입체크(100)
+	;시험 운용중…
 	;=================================================
-	;無理をした行動
+	;무리를 한 행동
 	;=================================================
-	IF 口上記入チェック(100) && (GET_COM_RANK() == "無理をした行動" && (!TCVAR:イきそう || PALAM:快Ｖ < 8500 || PALAM:快Ａ < 8500 || PALAM:快Ｂ < 8500))
+	IF 구상기입체크(100) && (GET_COM_RANK() == "무리를 한 행동" && (!TCVAR:갈것같다 || PALAM:쾌V < 8500 || PALAM:쾌A < 8500 || PALAM:쾌B < 8500))
 		SELECTCASE TENSION(TARGET, 8)
-			CASE "高い"
-				PRINTFORMW 「無理してるのがみえみえよ。まぁでも…」
-				PRINTFORM 「その姿勢は評価すべきかしら、ね
+			CASE "높다"
+				PRINTFORMW 「무리하고 있는 것이 보이고 보여라. 뭐 그렇지만…」
+				PRINTFORM 「그 자세는 평가해야 할, 까요
 				CALL PRINT_SYMBOL_K14
-			CASE "一般"
-				PRINTFORMW 「あらあら、頑張っちゃって健気なこと。まぁ悪い気はしないけど…」
-				PRINTFORMW 「\@ AFFECTION("溺愛") ? ご褒美が欲しいなら # それなりの扱いを受けたいなら \@、もっと頑張る事ね」
-				SIF AFFECTION("溺愛")
-					PRINTFORMW 「期待しているわ。ふふっ…」
-			CASE "低い"
-				PRINTFORMW 「必死に尻尾ふっちゃって……、%CNAME(MASTER, TARGET)%にはプライドがないのかしら」
-				PRINTFORMW 「ま、私は別に構わないわよ？ それなりの、%CNAME(MASTER, TARGET)%に相応しい扱いをしてあげるから」
-				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「フフフ…」")
+			CASE "일반"
+				PRINTFORMW 「아라아라, 노력해 버려 기특한 일. 뭐 기분은 나쁘지 않지만…」
+				PRINTFORMW 「\@ AFFECTION("몹시 사랑함") ? 포상을 갖고 싶으면# 그만한 취급을 받고 싶으면\@, 좀 더 노력하는 일이군요」
+				SIF AFFECTION("몹시 사랑함")
+					PRINTFORMW 「기대하고 있어요. 후훗…」
+			CASE "낮다"
+				PRINTFORMW 「필사적으로 꼬리 흔들어 버려……,%CNAME(MASTER, TARGET)%에는 프라이드가 없는 것일까」
+				PRINTFORMW 「뭐, 나는 별로 상관없어요? 그만한,%CNAME(MASTER, TARGET)%에 적당한 취급을 해 주기 때문에」
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「후후후…」")
 				CLEARLINE 1
 		ENDSELECT
 		RETURN 1
 	ENDIF
 	
-	;騎乗位はMENUMATCHで拾う可能性があるので、条件追加して弾く
-	;クソ長ったらしい条件は望ましくないけど、枠を新設するのも面倒なので妥協する
+	;승마위는 MENUMATCH로 주울 가능성이 있으므로, 조건 추가해 연주한다
+	;똥 장황한 조건은 바람직하지 않지만, 테두리를 신설하는 것도 귀찮은 것으로 타협한다
 	;=================================================
-	;奉仕
+	;봉사
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "奉仕") && (!IS_NOWACTNAME("騎乗位") || TEQUIP:性交中 != 3) && (SOURCE:快Ｃ + SOURCE:快Ｖ + SOURCE:快Ａ + SOURCE:快Ｂ > 10)
-		;書いたものは最後まで機能してもらう構え
-		IF AFFECTION("相思相愛") && PERCENT(80)
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "봉사") && (!IS_NOWACTNAME("승마위") || TEQUIP:성교중 != 3) && (SOURCE:쾌C + SOURCE:쾌V + SOURCE:쾌A + SOURCE:쾌B > 10)
+		;쓴 것은 끝까지 기능해 받을 자세
+		IF AFFECTION("상사상애") && PERCENT(80)
 			SELECTCASE RANDCOM(2, 0)
 				CASE 0
-					PRINTFORM 「ふぁぁっ
+					PRINTFORM 「후앗
 					CALL AUTOHEARTCB_K14
-					PRINTFORMW 　や、やだっ！ ソコ、弱いのに……」
-					PRINTFORMW 「んっ…、あ…あっ！ こんなに、されたら…ッ！」
+					PRINTFORMW   나, 싫닷! 거기, 약한데……」
+					PRINTFORMW 「읏…, 아… 앗! 이렇게, 되면…!」
 				CASE 1
-					PRINTFORM 「あんっ
+					PRINTFORM 「아읏
 					CALL AUTOHEARTCB_K14
-					PRINTFORMW 　んあっ、はぁんっ…、んくっ…！」 
-					PRINTFORM 「いいわ……、もっと、もっとっ…あぁ…ッ
+					PRINTFORMW   응아, 하아읏…, 응쿳…!」 
+					PRINTFORM 「좋아요……, 좀 더, 좀 더… 아아…
 					CALL PRINT_SYMBOL2_K14
 			ENDSELECT
-		ELSEIF AFFECTION("溺愛") && PERCENT(70)
-			PRINTFORMW 「あっ、んんっ！ なかなか、良い感じよ……」
-			PRINTFORMW 「…んぁっ！ や…、そんな、とこまで……」
+		ELSEIF AFFECTION("몹시 사랑함") && PERCENT(70)
+			PRINTFORMW 「앗, 응읏! 꽤, 좋은 느낌이야……」
+			PRINTFORMW 「… 응앗! 야…, 그런, 곳까지……」
 		ELSE
 			SELECTCASE RANDCOM(2, 1)
 				CASE 0
-					PRINTFORMW 「んんっ…！ まぁまぁって感じね…」
-					PRINTFORMW 「いつもこの調子でお願いしたいものだわ……」
+					PRINTFORMW 「응읏…! 아무튼 아무튼이라는 느낌이군요…」
+					PRINTFORMW 「언제나 이 상태로 부탁하고 싶은 것이예요……」
 				CASE 1
-					PRINTFORMW 「ん…、んんっ！ 悪く、ないわね…」
-					PRINTFORMW 「ほら、もっとお願い…」
+					PRINTFORMW 「응…, 응읏! 나쁘고, 없네요…」
+					PRINTFORMW 「이봐요, 좀 더 부탁…」
 			ENDSELECT
 		ENDIF
 		RETURN 1
 	ENDIF
 	
-	;性交の騎乗位は奉仕系反応が出る。枠新設が面倒なんでここに落ちて貰う
+	;성교의 승마위는 봉사계 반응이 나온다. 테두리 신설이 귀찮아서 여기에 떨어져 받는다
 	;=================================================
-	;性交奉仕＆騎乗位（性交）
+	;성교 봉사＆승마위(성교)
 	;=================================================
-	IF 口上記入チェック(100) && ((MENUMATCH(TFLAG:ACT, "性奉") || IS_NOWACTNAME("騎乗位") || TEQUIP:性交奉仕中 || TEQUIP:性交中 == 3) && (SOURCE:快Ｃ + SOURCE:快Ｖ + SOURCE:快Ａ + SOURCE:快Ｂ > 10))
-		IF TEQUIP:性交中 == 3 || IS_NOWACTNAME("騎乗位")
-			PRINTFORM 「ふふ、いい感じよ。今の%CNAME(MASTER, TARGET)%、とっても可愛いわ…
+	IF 구상기입체크(100) && ((MENUMATCH(TFLAG:ACT, "성 봉") || IS_NOWACTNAME("승마위") || TEQUIP:성교봉사중 || TEQUIP:성교중 == 3) && (SOURCE:쾌C + SOURCE:쾌V + SOURCE:쾌A + SOURCE:쾌B > 10))
+		IF TEQUIP:성교중 == 3 || IS_NOWACTNAME("승마위")
+			PRINTFORM 「후후, 좋은 느낌이야. 지금의%CNAME(MASTER, TARGET)%, 매우 사랑스러워요…
 			CALL PRINT_SYMBOL_K14
-			PRINTFORMW 「ほら、もっといい声を聴かせて頂戴…」
+			PRINTFORMW 「이봐요, 좀 더 좋은 소리를 듣게 해 줘…」
 		ELSE
 			SELECTCASE RANDCOM(2, 2)
 				CASE 0
-					PRINTFORM 「うっ…、あぁっ
+					PRINTFORM 「웃…, 아앗
 					CALL AUTOHEARTCB_K14
-					PRINTFORMW 　だ、だめぇっ！ もっと、ゆっくり……」
-					PRINTFORMW 「ひっ……、あっ！ あぁっ！ んっ…、んくっ！」
+					PRINTFORMW   다, 안돼엣! 좀 더, 천천히……」
+					PRINTFORMW 「힛……, 앗! 아앗! 읏…, 응쿳!」
 				CASE 1
-					PRINTFORM 「あんっ
+					PRINTFORM 「아읏
 					CALL AUTOHEARTCB_K14
-					PRINTFORMW 　んあっ！ はぁんっ……、んっ！」
-					PRINTFORM 「いいわ……、もっと、もっとっ！ あぁ…ッ
+					PRINTFORMW   응아! 하아읏……, 읏!」
+					PRINTFORM 「좋아요……, 좀 더, 좀 더! 아아…
 					CALL PRINT_SYMBOL2_K14
 			ENDSELECT
 		ENDIF
@@ -741,162 +741,162 @@ IF 口上記入チェック(100)
 	ENDIF
 	
 	;-------------------------
-	;汎用処理
+	;범용 처리
 	;-------------------------
-	IF AFFECTION("相思相愛")
+	IF AFFECTION("상사상애")
 		SELECTCASE RANDCOM(2, 3)
 			CASE 0
-				PRINTFORMW 「ま、そうよね。その位はして貰わないとね」
-				PRINTFORMW 「別に褒めてるワケじゃないわよ？ この程度の事、当然だと思うし…ねぇ？」
-				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「くすくす…」")
+				PRINTFORMW 「뭐, 그래요. 그 정도는 해 받지 않으면」
+				PRINTFORMW 「따로 칭찬하고 있는 것이 아니에요? 이 정도의 일, 당연하다고 생각하고…?」
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), "「킥킥…」")
 				CLEARLINE 1
 			CASE 1
-				PRINTFORMW 「すっかり飼いならされちゃって……、って言うのは禁句かしら？ ふふっ」
-				PRINTFORMW 「でもそうね。%CNAME(MASTER, TARGET)%が素直なら、私も嬉しいのよ？」
-				PRINTFORM 「こう見えたって、ね…
+				PRINTFORMW 「완전히 길러 말해져 버려……, 라고 말하는 것은 금구일까? 후훗」
+				PRINTFORMW 「그렇지만 그렇구나.%CNAME(MASTER, TARGET)%가 솔직하면, 나도 기쁜거야?」
+				PRINTFORM 「이렇게 보여도,…
 				CALL PRINT_SYMBOL_K14
 		ENDSELECT
 	ELSE
 		SELECTCASE RANDCOM(2, 4)
 			CASE 0
-				PRINTFORMW 「あら、随分積極的じゃない？」
-				PRINTFORMW 「ま、これはこれで…、悪くないわ。%CNAME(MASTER, TARGET)%の本心は知らないけど、ね」
+				PRINTFORMW 「아라, 상당히 적극적이 아니야?」
+				PRINTFORMW 「뭐, 이것은 이것대로…, 나쁘지 않아요.%CNAME(MASTER, TARGET)%의 본심은 모르지만, 말야」
 			CASE 1
-				PRINTFORMW 「とりあえず、素直に私に従うのはいい傾向と言えるかしら？」
-				PRINTFORM 「いつもこんな感じだと、私も楽できるんだけど…、ね
+				PRINTFORMW 「우선, 솔직하게 나에 따르는 것은 좋은 경향이라고 말할 수 있을까?」
+				PRINTFORM 「언제나 이런 느낌이라고, 나도 락 할 수 있…, 지만
 				CALL PRINT_SYMBOL_K14
 		ENDSELECT
 	ENDIF
 	RETURN 1
 ENDIF
 
-;──────────────────────────────────
-;COM43, 愛情を込めてやる
-;──────────────────────────────────
-;・一定以上の好感度、調教レベルが必要
-;・REACT分類:積極的従う
-;・REACT印象:好印象大
-;・我慢フラグ解消
-;・反発刻印があると弾かれる
-;・依存度変化(+6, +10)
+;─
+;COM43, 애정을 담아 준다
+;─
+;·일정 이상의 호감도, 조교 레벨이 필요
+;·REACT 분류:적극적 따른다
+;·REACT 인상:좋은 인상대
+;·인내 플래그 해소
+;·반발 각인이 있으면 튕겨진다
+;·의존도 변화(+6, +10)
 ;-------------------------------------------------
-;トリガーする行動や状況…
-;ACT分類:0:会話
+;트리거하는 행동이나 상황…
+;ACT 분류:0:회화
 ;	ACT:
-;ACT分類:1:愛撫
+;ACT 분류:1:애무
 ;	ACT:
-;ACT分類:2:道具
+;ACT 분류:2:도구
 ;	ACT:
-;ACT分類:3:性交
-;	ACT:騎乗位
-;ACT分類:4:羞恥
+;ACT 분류:3:성교
+;	ACT:승마위
+;ACT 분류:4:수치
 ;	ACT:
-;ACT分類:5:奉仕
-;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/イラマチオ/胸愛撫強制
-;ACT分類:6:加虐
+;ACT 분류:5:봉사
+;	ACT:손으로 애무를 강제/입으로 애무를 강제/파이즈리/가랑이/다리 빨고 강제/이라마치오/가슴 애무 강제
+;ACT 분류:6:가학
 ;	ACT:
-;ACT分類:7:異常
+;ACT 분류:7:이상
 ;	ACT:
-;ACT分類:9:休憩
+;ACT 분류:9:휴게
 ;	ACT:
-;ACT分類:10:性交奉仕
-;	ACT:正常位させる/後背位させる/対面座位させる/後背位させる/アナルセックスさせる
+;ACT 분류:10:성교 봉사
+;	ACT:정상위 시킨다/후배위 시킨다/대면좌위 시킨다/후배위 시킨다/애널 섹스 시킨다
 ;-------------------------------------------------
 ;=================================================
 @KOJO_COM_K14_43
 ;=================================================
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;COM43, 愛情を込めてやる
+;COM43, 애정을 담아 준다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && !TFLAG:REACT派生
+IF 구상기입체크(100) && !TFLAG:REACT파생
 	;=================================================
-	;無理をした行動		性奉時は負荷2以下の選択肢になる事が殆どないので弾いておく。奉仕系ならそうでもないんだけど
+	;무리를 한 행동		성 봉시는 부하 2 이하의 선택지가 되는 것이 대부분 없기 때문에 연주해 둔다. 봉사계라면 그렇지도 않지만
 	;=================================================
-	IF 口上記入チェック(100) && GET_COM_RANK() == "無理をした行動" && !TEQUIP:性交奉仕中
+	IF 구상기입체크(100) && GET_COM_RANK() == "무리를 한 행동" && !TEQUIP:성교봉사중
 		SELECTCASE RANDCOM(2, 0)
 			CASE 0
-				PRINTFORMW 「ねぇ%CNAME(MASTER, TARGET)%…、何か無理してない？」
-				PRINTFORMW 「そういうのって、微妙に伝わるのよ。ちょっと不愉快だわ」
+				PRINTFORMW 「저기%CNAME(MASTER, TARGET)%…, 뭔가 무리하고 있지 않아?」
+				PRINTFORMW 「그러한 것은, 미묘하게 전해지는거야. 조금 불쾌하구나」
 			CASE 1
-				PRINTFORMW 「…ん。ね、悪くないけど…」
-				PRINTFORMW 「なんとなく、ちょっと違う気がするのよね。私には判るの」
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%、本当は無理してるでしょう…」
+				PRINTFORMW 「… 응. 저기, 나쁘지 않지만…」
+				PRINTFORMW 「어딘지 모르게, 조금 틀리다는 느낌이 드는거네요. 나에게는 알아」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%, 사실은 무리하고 있겠지요…」
 		ENDSELECT
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ACT分類が性交（騎乗位）
+	;ACT 분류가 성교(승마위)
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性交") && TEQUIP:性交中 == 3
-		IF CFLAG:TARGET:依存度 > 4000
-			PRINTFORMW 「自分より、私の方を優先してくれるの？ 可愛いわ…」
-			PRINTFORMDW %CALLNAME%は%CALLNAME:MASTER%を引き寄せると、優しく抱きしめながらそっと口付けをした…
-			PRINTFORM 「ぷは…ぁ…、ふふ、柔らかくって美味し%RAND_SPLIT("い/")%
-			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), @"　ほら、今度は%CNAME(MASTER, TARGET)%の番よ」")
-			PRINTFORMW 「ちゃんと…、私にキス、して……」
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "성교") && TEQUIP:성교중 == 3
+		IF CFLAG:TARGET:의존도 > 4000
+			PRINTFORMW 「자기보다, 내 쪽을 우선해 줄래? 사랑스러워요…」
+			PRINTFORMDW %CALLNAME%는%CALLNAME:MASTER%를 끌어 들이면, 상냥하게 껴안으면서 살그머니 입맞춤을 했다…
+			PRINTFORM 「푸하… 아…, 후후, 부드러워서 좋은 맛 해%RAND_SPLIT("있고/")%
+			CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), @"  이봐요, 이번은%CNAME(MASTER, TARGET)%의 차례야」")
+			PRINTFORMW 「분명하게…, 나에게 키스, 해……」
 			CALL SET_KISS
 		ELSE
-			PRINTFORMW 「ふふ、私をキモチ良くさせようと頑張っちゃって。健気で可愛い」
-			PRINTFORMDW %CALLNAME%は%CALLNAME:MASTER%の手を取るとしっかりと握り締めた…
-			PRINTFORMW 「さぁ、いいわよ。%CNAME(MASTER, TARGET)%の可愛いとこ、私に見せて」
-			PRINTFORMW 「もっと%CNAME(MASTER, TARGET)%の声、聞かせて……」
+			PRINTFORMW 「후후, 나를 기분 좋게 시키려고 노력해 버려. 기특하고 사랑스럽다」
+			PRINTFORMDW %CALLNAME%는%CALLNAME:MASTER%의 손을 잡으면 제대로 꽉 쥐었다…
+			PRINTFORMW 「자, 좋아요.%CNAME(MASTER, TARGET)%의 사랑스러운 곳, 나에게 보이게 해 줘」
+			PRINTFORMW 「좀 더%CNAME(MASTER, TARGET)%의 소리, 들려줘……」
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ACT分類が奉仕
+	;ACT 분류가 봉사
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "奉仕")
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "봉사")
 		;-------------------------------------------------
-		;ACT足舐め強制
+		;ACT다리 빨고 강제
 		;-------------------------------------------------
-		IF 口上記入チェック(100) && IS_NOWACTNAME("足舐め強制")
-			;BASE:8, 満足派生
+		IF 구상기입체크(100) && IS_NOWACTNAME("다리 빨고 강제")
+			;BASE:8, 만족 파생
 			SELECTCASE TENSION(TARGET, 8)
-				;50%以上
-				CASE "高い"
+				;50% 이상
+				CASE "높다"
 					SELECTCASE RANDCOM(2, 10)
 						CASE 0
-							PRINTFORM 「%RAND_SPLIT("ッ/ん/あ")%…
+							PRINTFORM 「%RAND_SPLIT("/응/아")%…
 							CALL AUTOHEARTCB_K14
-							PRINTFORMW 　ずるいわ…、そんなとこまで舐めるなんて」
-							PRINTFORM 「%RAND_SPLIT("ひ/ふ")%ぁ
+							PRINTFORMW   간사해요…, 그런 곳까지 빨다니」
+							PRINTFORM 「%RAND_SPLIT("히/후")%
 							CALL AUTOHEARTCB_K14
-							PRINTFORMW 　もうっ！ だから…、駄目だって、言ってるのに……」
+							PRINTFORMW   이제(벌써)! 그러니까…, 안된다고, 말하고 있는데……」
 						CASE 1
-							PRINTFORMW 「ねぇ、だから…。舐めていいのはふとももまでって言ってるでしょう」
-							PRINTFORM 「%RAND_SPLIT("く/ん")%ぁ
+							PRINTFORMW 「저기, 그러니까…. 빨아도 좋은 것은 허벅지까지라고 말하고 있겠지요」
+							PRINTFORM 「%RAND_SPLIT("구/응")%
 							CALL AUTOHEARTCB_K14
-							PRINTFORMW 　そんな優しくされたら、怒れなくなるじゃない」
-							PRINTFORMW 「ずるいわ、%CNAME(MASTER, TARGET)%…」
+							PRINTFORMW   그렇게 상냥하게 여겨지면, 화낼 수 없게 되지 않아」
+							PRINTFORMW 「간사해요,%CNAME(MASTER, TARGET)%…」
 					ENDSELECT
-				;25%以上
-				CASE "一般"
+				;25% 이상
+				CASE "일반"
 					SELECTCASE RANDCOM(2, 11)
 						CASE 0
-							PRINTFORMW 「ねぇ、ちょっと。登ってくるのが早すぎない？」
-							PRINTFORMW 「舐めていいのはふとももまでだからね。でないと私…」
-							PRINTFORMW 「我慢できなくなっちゃうもの。ふふ」
+							PRINTFORMW 「저기, 조금. 올라 오는 것이 너무 빠르지 않아?」
+							PRINTFORMW 「빨아도 좋은 것은 허벅지까지니까. 그렇지 않으면 나…」
+							PRINTFORMW 「인내 할 수 없게 되어 버리는 것. 후후」
 						CASE 1
-							PRINTFORMW 「%RAND_SPLIT("んんー/あらぁ")%？ ズルはよくないわよ。許可したのはふとももまでなんだから」
-							PRINTFORM 「だって、ねぇ。あまり上まで来られると、私、抑えきれなくなっちゃうもの…
+							PRINTFORMW 「%RAND_SPLIT("응응―/어머나")%? 즐은 좋지 않아요. 허가한 것은 허벅지까지니까」
+							PRINTFORM 「왜냐하면, 저기. 너무 위까지 올 수 있으면, 나, 다 억제할 수 있지 않게 되어 버리는 것…
 							CALL PRINT_SYMBOL_K14
 					ENDSELECT
-				;25%未満
-				CASE "低い"
+				;25% 미만
+				CASE "낮다"
 					SELECTCASE RANDCOM(3, 12)
 						CASE 0
-							PRINTFORMW 「あら、随分丁寧に舐めてくれるのね。ふふ」
-							PRINTFORM 「こんな風にされるのも、悪くない%RAND_SPLIT("もの/わ")%ね…
+							PRINTFORMW 「아라, 상당히 정중하게 빨아 주는 거네. 후후」
+							PRINTFORM 「이런 식으로 되는 것도, 나쁘지 않다%RAND_SPLIT("것/와")%군요…
 							CALL PRINT_SYMBOL_K14
 						CASE 1
-							PRINTFORMW 「なによ、優しいじゃない。どういう風の吹き回し？」
-							PRINTFORMW 「ふふ、%CNAME(MASTER, TARGET)%…。何かご褒美を期待してたり、とか？」
+							PRINTFORMW 「뭐야, 상냥하지 않아. 어떤 바람의 불어 돌리기?」
+							PRINTFORMW 「후후,%CNAME(MASTER, TARGET)%…. 뭔가 포상을 기대하기도 하고, 라든지?」
 						CASE 2
-							PRINTFORMW 「ふふ、上の方が気になる？ でも駄目よ。ふとももまでにしておいて」
-							PRINTFORM 「そこから先は、後のお楽しみってね…
+							PRINTFORMW 「후후, 위의 (분)편이 신경이 쓰여? 그렇지만 안 돼요. 허벅지까지 해 둬」
+							PRINTFORM 「거기에서 앞은, 후의 즐거움은…
 							CALL PRINT_SYMBOL_K14
 					ENDSELECT
 			ENDSELECT
@@ -904,206 +904,206 @@ IF 口上記入チェック(100) && !TFLAG:REACT派生
 		ENDIF
 		
 		;---------------------
-		;その他
+		;그 외
 		;---------------------
-		LOCALS = %RAND_SPLIT("ふ/は/あ/んッ/はぁ/あぁ/ふぁ")%
-		;調教者がイきそう
-		IF TCVAR:イきそう || PALAM:快Ｖ > 8500 || PALAM:快Ａ > 8500 || PALAM:快Ｂ > 8500
+		LOCALS = %RAND_SPLIT("/하/아/응/후~/아/후아")%
+		;조교자가 갈 것 같다
+		IF TCVAR:갈것같다 || PALAM:쾌V > 8500 || PALAM:쾌A > 8500 || PALAM:쾌B > 8500
 			SELECTCASE RANDCOM(2, 13)
 				CASE 0
-					PRINTFORM 「%RAND_SPLIT("ふ/は")%……ぁ
+					PRINTFORM 「%RAND_SPLIT("/하")%…… 아
 					CALL AUTOHEARTCB_K14
-					PRINTFORMW 　そんな、優しくされると…わ、私っ！」
-					PRINTFORM 「\@ !AFFECTION("相思相愛") ? %CNAME(MASTER, TARGET)%の事…、好きに # 切なくって…、抑えられなく \@なっちゃうっ…
+					PRINTFORMW   그런, 상냥하게 여겨지면… 나, 나!」
+					PRINTFORM 「\@ !AFFECTION("상사상애") ? %CNAME(MASTER, TARGET)%의 일…, 좋아하게# 안타까워…, 억제할 수 없고\@되어 버린닷…
 					CALL PRINT_SYMBOL2_K14
 				CASE 1
 					PRINTFORM 「%LOCALS%…
 					CALL AUTOHEARTCB_K14
-					PRINTFORMW 　ねぇ…、そんなに優しくしないでよ。私、我慢できなくなっちゃうわ…」
-					PRINTFORM 「あ゛っ
+					PRINTFORMW   응…, 그렇게 상냥하게 하지 말아요. 나, 인내 할 수 없게 되어 버려요…」
+					PRINTFORM 「아″
 					CALL AUTOHEARTCB_K14
-					PRINTFORM 　だ、だから！ 駄目だって、言ってるのにぃっ
+					PRINTFORM   다, 그러니까! 안된다고, 말하고 있는데
 					CALL PRINT_SYMBOL2_K14
 			ENDSELECT
-		;その他
+		;그 외
 		ELSE
 			SELECTCASE RANDCOM(2, 14)
 				CASE 0
-					PRINTFORMW 「な、なによ。随分優しいじゃない」
-					PRINTFORMW 「そんな風にされると私…、スイッチ入っちゃう\@ AFFECTION("相思相愛") ? けど、それでもいいの？ # わよ… \@」
+					PRINTFORMW 「뭐, 뭐야. 상당히 상냥하지 않아」
+					PRINTFORMW 「그런 식으로 되면 나…, 스윗치 들어가 버린다\@ AFFECTION("상사상애") ? 하지만, 그런데도 좋은거야?# 원이야…\@」
 				CASE 1
 					PRINTFORM 「%LOCALS%…
 					CALL AUTOHEARTCB_K14
-					PRINTFORMW 　すっかり%CNAME(MASTER, TARGET)%のペースに嵌っちゃって、ちょっと癪ね」
-					PRINTFORMW 「でも、こんなに優しくされるなら、それもいいのかも…」
+					PRINTFORMW   완전히%CNAME(MASTER, TARGET)%의 페이스에 빠져 버려, 조금 적이군요」
+					PRINTFORMW 「그렇지만, 이렇게 상냥하게 여겨진다면, 그것도 좋은 것인지도…」
 			ENDSELECT
 		ENDIF
 		RETURN 1
 	ENDIF
 	
 	;=================================================
-	;ACT分類が性奉
+	;ACT 분류가 성 봉
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性奉")
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "성 봉")
 		SELECTCASE GET_ACTNAME(TFLAG:ACT)
-			CASE "正常位させる"
-				PRINTFORMW 「ん……優しいのね。どういう風の吹き回しか知らないけど。ふふ」
-				PRINTFORMW 「ねぇ、キスして。もっと%CNAME(MASTER, TARGET)%の体温、感じ\@ AFFECTION("相思相愛") ? たいの # させて \@……」
-				;地の文
-				PRINTFORMDW 二人は互いを確かめ合うかのようにしっかりと抱き合い、口付けを交わしながら揺れあった…
-				;一行空ける
+			CASE "정상위 시킨다"
+				PRINTFORMW 「응…… 상냥한거네. 무슨 바람이 불었는지 모르지만. 후후」
+				PRINTFORMW 「저기, 키스 해. 좀 더%CNAME(MASTER, TARGET)%의 체온, 느낌\@ AFFECTION("상사상애") ? 싶은거야# 시켜\@……」
+				;지문
+				PRINTFORMDW 두 명은 서로를 서로 확인하는것 같이 제대로 얼싸안아, 입맞춤을 주고 받으면서 서로 흔들렸다…
+				;일행 비운다
 				PRINTL
-				;フェードアウト
-				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%KOJO_RAND_K14(("キス"), 1)%」")
-				;コンフィグを参照
+				;페이드 아웃
+				CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%KOJO_RAND_K14(("키스"), 1)%」")
+				;콘피그를 참조
 				IF ANIME_CONFIG("FADE")
-					;真なら行削除する
+					;진이라면 행 삭제한다
 					CLEARLINE 1
 				ENDIF
-				;相思相愛時80%の確率、もしくは調教者が情欲かつBASE:満足が50%以上の場合に真
-				IF (AFFECTION("相思相愛") && PERCENT(80)) || (T_COND("情欲") && TENSION(TARGET, 8) == "高い")
-					PRINTFORM 「ん……ぁ
-					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), @"　すきっ！ 好きなの！ %CNAME(MASTER, TARGET)%のことっ！」")
+				;상사상애시 80%의 확률, 혹은 조교자가 정욕 또한 BASE:만족이 50%이상의 경우에 진
+				IF (AFFECTION("상사상애") && PERCENT(80)) || (T_COND("정욕") && TENSION(TARGET, 8) == "높다")
+					PRINTFORM 「응…… 아
+					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), @"  좋아! 좋아해!%CNAME(MASTER, TARGET)%의 일!」")
 					
-					PRINTFORM 「あんっ、あっ
+					PRINTFORM 「아읏, 앗
 					CALL AUTOHEARTCB_K14
-					PRINTFORM 　お、奥まで…、届いてっ！ %RAND_SPLIT("ん/ふ")%あぁっ…
+					PRINTFORM   , 안쪽까지…, 닿앗!%RAND_SPLIT("응/후")%아…
 					CALL PRINT_SYMBOL2_K14
 				ELSE
-					PRINTFORM 「ん…、ふふ。%CNAME(MASTER, TARGET)%に抱かれながらキスするの、大好き…
+					PRINTFORM 「응…, 후후.%CNAME(MASTER, TARGET)%에 안기면서 키스 하는 것, 너무 좋아…
 					CALL PRINT_SYMBOL_K14
-					PRINTFORMW 「ねぇ、ほら。もう一度、キスして……」
+					PRINTFORMW 「저기, 이봐요. 한번 더, 키스 해……」
 				ENDIF
 				CALL SET_KISS
-			CASE "後背位させる"
-				PRINTFORMW 「…っ！ な、なによ…。そんな優しくされたら私、どうにかなっちゃいそうなんだけど…」
-				PRINTFORMW 「%CNAME(MASTER, TARGET)%の事…、\@ AFFECTION("相思相愛") ? 好きなキモチが止まらなくなっちゃうわ # 好きになっちゃいそうよ \@…」
-				PRINTFORMDW %CALLNAME:MASTER%は快楽を貪るのではなく、さらに優しく、%CALLNAME%を慈しむように抽送を繰り返した…
-				;一行空ける
+			CASE "후배위 시킨다"
+				PRINTFORMW 「… 읏! 뭐, 뭐야…. 그렇게 상냥하게 여겨지면 나, 어떻게든 되어 버릴 것 같지만…」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%의 일…,\@ AFFECTION("상사상애") ? 를 좋아하는 기분이 멈추지 않게 되어 버려요# 를 좋아하게 되어 버릴 것 같아\@…」
+				PRINTFORMDW %CALLNAME:MASTER%는 쾌락을 탐내는 것은 아니고, 한층 더 상냥하고,%CALLNAME%를 사랑하도록(듯이) 삽입질을 반복했다…
+				;일행 비운다
 				PRINTL
-				;相思相愛時80%の確率、もしくは調教者が情欲かつBASE:満足が50%以上の場合に真
-				IF (AFFECTION("相思相愛") && PERCENT(80)) || (T_COND("情欲") && TENSION(TARGET, 8) == "高い")
+				;상사상애시 80%의 확률, 혹은 조교자가 정욕 또한 BASE:만족이 50%이상의 경우에 진
+				IF (AFFECTION("상사상애") && PERCENT(80)) || (T_COND("정욕") && TENSION(TARGET, 8) == "높다")
 					CALL QUAKE(4)
-					;PS2までで一行
-					PRINTFORM 「んっ
+					;PS2까지로 일행
+					PRINTFORM 「읏
 					CALL AUTOHEARTCB_K14
-					PRINTFORM 　あっ
+					PRINTFORM   아
 					CALL AUTOHEARTCB_K14
-					PRINTFORM 　あぁぁっ！ ダメっ！ だめぇっ
+					PRINTFORM   아! 안됏! 안돼엣
 					CALL PRINT_SYMBOL2_K14
 					
-					PRINTFORMW 「どんどん%CNAME(MASTER, TARGET)%が……、好きになっちゃうぅっ！！」
-				;その他
+					PRINTFORMW 「자꾸자꾸%CNAME(MASTER, TARGET)%가……, 좋아하게 되어 버린다앗!!」
+				;그 외
 				ELSE
-					PRINTFORM 「ん…
+					PRINTFORM 「응…
 					CALL AUTOHEARTCB_K14
-					PRINTFORMW 　いいのよ、もっと激しく……、私を、人形みたいに扱っても」
+					PRINTFORMW   좋은 것, 좀 더 격렬하고……, 나를, 인형같이 취급해도」
 					
-					PRINTFORMW 「私…、%CNAME(MASTER, TARGET)%が相手なら、嫌じゃない、から……」
+					PRINTFORMW 「나…,%CNAME(MASTER, TARGET)%가 상대라면, 싫지 않아, 로부터……」
 				ENDIF
-			CASE "対面座位させる"
+			CASE "대면좌위 시킨다"
 				CALL QUAKE(4)
-				;PS2までで一行
-				PRINTFORM 「ッ！ ん…
+				;PS2까지로 일행
+				PRINTFORM 「! 응…
 				CALL AUTOHEARTCB_K14
-				PRINTFORM 　んっ、あ……あっ
+				PRINTFORM   응, 아…… 앗
 				CALL PRINT_SYMBOL2_K14
 				
-				;地の文
-				PRINTFORMDL %CALLNAME%は%CALLNAME:MASTER%の動きに身を%RAND_SPLIT("委ね/任せ")%ながら、\@ CFLAG:TARGET:依存度 > 4000 ? 揺れる瞳で # \@じっと%CALLNAME:MASTER%を見つめている
-				;地の文@カラープリント
-				CALL COLORPRINTW(@"__0xC0C0C0__%CALLNAME%は%CALLNAME:MASTER%の頬に両手を這わせると、\@ T_COND("情欲") ? 情熱的に # そっと\@__0x36A6FF__『ちゅ\@ T_COND("情欲") ? ぅっ # っ \@』__0xC0C0C0__口付けをした…")
-				;一行空ける
+				;지문
+				PRINTFORMDL %CALLNAME%는%CALLNAME:MASTER%의 움직임에 몸을%RAND_SPLIT("맡기고/맡김")%면서,\@ CFLAG:TARGET:의존도 > 4000 ? 흔들리는 눈동자로# \@가만히%CALLNAME:MASTER%를 응시하고 있다
+				;지문@칼라 프린트
+				CALL COLORPRINTW(@"__0xC0C0C0__%CALLNAME%는%CALLNAME:MASTER%의 뺨에 양손을 기게 하면,\@ T_COND("정욕") ? 정열적으로# 살그머니\@__0 x36A6FF__ 『츄\@ T_COND("정욕") ?#\@』__0 xC0C0C0__입맞춤을 했다…")
+				;일행 비운다
 				PRINTL
-				;相思相愛、もしくは調教者の状態が情欲かつBASE:満足が50%以上
-				IF AFFECTION("相思相愛") && PERCENT(85) || (T_COND("情欲") && TENSION(TARGET, 8) == "高い")
-					PRINTFORM 「好き！ すきっ
+				;상사상애, 혹은 조교자 상태가 정욕 또한 BASE:만족이 50%이상
+				IF AFFECTION("상사상애") && PERCENT(85) || (T_COND("정욕") && TENSION(TARGET, 8) == "높다")
+					PRINTFORM 「좋아! 좋앗
 					CALL AUTOHEARTCB_K14
-					PRINTFORM 　好きなの！ 大好き \@ CFLAG:TARGET:依存度 > 4000 ? 大好き！ 大好きっ… # っ…\@
+					PRINTFORM   를 좋아해! 너무 좋아\@ CFLAG:TARGET:의존도 > 4000 ? 너무 좋아! 너무 좋앗…# …\@
 					CALL PRINT_SYMBOL2_K14
-					;調教者の依存度5000以上。通常の進展度合いで30日前後での到達を想定
-					IF CFLAG:TARGET:依存度 > 4000
+					;조교자의 의존도 5000이상. 통상의 진전 정도로 30일 전후에서의 도달을 상정
+					IF CFLAG:TARGET:의존도 > 4000
 						SELECTCASE RANDCOM(2, 20)
 							CASE 0
-								PRINTFORMW 「好きすぎて……、%RAND_SPLIT("変になっちゃい/頭がおかしくなり")%そうなの…\@ TENSION(TARGET, 8) == "高い" ? っ # \@！」
+								PRINTFORMW 「너무 좋아해……,%RAND_SPLIT("이상하게 되고는 있고/머리가 이상해져")%그래…\@ TENSION(TARGET, 8) == "높다" ?# \@！」
 							CASE 1
-								PRINTFORMW 「この私を……、全部\@ TENSION(TARGET, 8) == "高い" ? ！ 全部# \@%CNAME(MASTER, TARGET)%のものにしてっ！」
+								PRINTFORMW 「이 나를……, 전부\@ TENSION(TARGET, 8) == "높다" ? ! 전부# \@%CNAME(MASTER, TARGET)%의 것으로 햇!」
 						ENDSELECT
 					ENDIF
-					;くどい気もしたので1/2に
+					;장황한 생각도 들었으므로 1/2에
 					IF !RAND:2
-						PRINTFORMDL 普段の澄ました様子からは想像も出来ない、
-						PRINTFORMDW ただひたすら\@ CFLAG:TARGET:依存度 > 4000 ? 、狂おしいまでに # \@愛し、愛されたいと願う一人の\@ CFLAG:TARGET:子持ち > 0 ? 女 # 少女 \@の姿が、そこにはあった…
+						PRINTFORMDL 평상시가 가라앉힌 모습으로부터는 상상도 할 수 없는,
+						PRINTFORMDW 다만 오로지\@ CFLAG:TARGET:의존도 > 4000 ? , 미칠 듯한까지# \@사랑해, 사랑 받고 싶다고 바라는 한사람의\@ CFLAG:TARGET:아이딸린사람 > 0 ? 녀# 소녀\@의 모습이, 거기에는 있었다…
 					ENDIF
-				;その他
+				;그 외
 				ELSE
-					PRINTFORMW 「ねぇ、私にキスして。もっと強く抱いて\@ T_COND("情欲") ? っ！ # … \@」
+					PRINTFORMW 「저기, 나에게 키스 해. 좀 더 강하게 안아\@ T_COND("정욕") ?!# … \@」
 					SELECTCASE RANDCOM(2, 21)
 						CASE 0
-							PRINTFORMW 「もっと激しくったって、私は大丈夫だから…」
+							PRINTFORMW 「좀 더 격렬하고 끊어, 나는 괜찮기 때문에…」
 						CASE 1
-							PRINTFORMW 「あまり優しくされると、不安になるのよ…」
+							PRINTFORMW 「너무 상냥하게 여겨지면, 불안하게 되는거야…」
 					ENDSELECT
 				ENDIF
 				CALL SET_KISS
-			CASE "背面座位させる"
+			CASE "배면좌위 시킨다"
 				CALL QUAKE(4)
-				PRINTFORM 「%RAND_SPLIT("ぅ/ん/ふ")%……あ\@ PALAM:快Ｖ > 6000 ? っ # \@
+				PRINTFORM 「%RAND_SPLIT("/응/후")%…… 아\@ PALAM:쾌V > 6000 ?# \@
 				CALL AUTOHEARTCB_K14
-				PRINTFORM 　%RAND_SPLIT("は/あ")%ぅ…、%RAND_SPLIT("ふ/あ/ん")%ぁ
+				PRINTFORM 　%RAND_SPLIT("는/아")%…,%RAND_SPLIT("/아/응")%
 				CALL PRINT_SYMBOL2_K14
 				
-				PRINTFORMDL %CALLNAME:MASTER%の愛情を込めた動きに感応したのか、%CALLNAME%はいつになく甘えた声で喘いでいる…
-				PRINTFORMW 「ねぇもっと！ %RAND_SPLIT("強く……、抱いて/ちゃんと……、ぎゅってして")%\@ TENSION(TARGET, 8) == "高い" ? っ # \@！」
-				;一行空ける
+				PRINTFORMDL %CALLNAME:MASTER%의 애정을 담은 움직임에 감응했는지,%CALLNAME%는 평소와 다르게 응석부린 소리로 허덕이고 있다…
+				PRINTFORMW 「응 좀 더!%RAND_SPLIT("강하고……, 안아/분명하게……, 꽉 해")%\@ TENSION(TARGET, 8) == "높다" ?# \@！」
+				;일행 비운다
 				PRINTL
-				;地の文2行
-				PRINTFORMDL %CALLNAME:MASTER%が背後から抱きしめつつ、身体を密着させながら慈しむような抽送を繰り出すと、
-				PRINTFORMDW %CALLNAME%は身体を弓なりに反らしながら、%CALLNAME:MASTER%の動きにその身を任せた…
-				IF AFFECTION("相思相愛") && PERCENT(80) || (T_COND("情欲") && TENSION(TARGET, 8) == "高い")
-					PRINTFORM 「や、%RAND_SPLIT("嫌/いや/駄目/だめ/ダメ")%っ！ %RAND_SPLIT("おかしく/変に")%なっちゃう！ これ…、怖いくらい……感じちゃうっ
+				;지문 2행
+				PRINTFORMDL %CALLNAME:MASTER%가 배후로부터 껴안으면서, 신체를 밀착시키면서 사랑하는 것 같은 삽입질을 내지르면,
+				PRINTFORMDW %CALLNAME%는 신체를 활처럼 뒤로 젖히면서,%CALLNAME:MASTER%의 움직임에 그 몸을 맡겼다…
+				IF AFFECTION("상사상애") && PERCENT(80) || (T_COND("정욕") && TENSION(TARGET, 8) == "높다")
+					PRINTFORM 「야,%RAND_SPLIT("혐/아니/안돼/안돼/안돼")%!%RAND_SPLIT("이상하고/이상하게")%되어 버린다! 이것…, 무서울 정도…… 느껴 버린닷
 				ELSE
-					PRINTFORM 「%RAND_SPLIT("あ/ふ/ん/")%あっ……%RAND_SPLIT("イイ/いい")%っ！ なんで私…、こんなに…感じ、て%RAND_SPLIT("ッ/っ/ぇっ")%
+					PRINTFORM 「%RAND_SPLIT("아//응/")%아……%RAND_SPLIT("좋다/좋다")%! 어째서 나…, 이렇게… 느껴라고%RAND_SPLIT("//엣")%
 				ENDIF
 				CALL PRINT_SYMBOL2_K14
-			CASE "アナルセックスさせる"
-				;口上の仕様的に、相思相愛以降にしか発生しないので、FAVOR系では分けない
-				PRINTFORM 「%RAND_SPLIT("あ/は/ん")%んっ
+			CASE "애널 섹스 시킨다"
+				;구상의 사양적으로, 상사상애 이후에 밖에 발생하지 않기 때문에, FAVOR계에서는 나누지 않는다
+				PRINTFORM 「%RAND_SPLIT("아/하/응")%응
 				CALL AUTOHEARTCB_K14
-				PRINTFORMW 　ん……あぁっ！ 随分優しくシてくれるのね…」
-				IF ABL:Ａ感覚 >= 4
-					PRINTFORMW 「おしりでセックスしてるから、私を気遣ってくれてるの？」
-					PRINTFORMW 「私は平気だから、%CNAME(MASTER, TARGET)%が望むだけ激しくしてもいいのよ」
-					PRINTFORMW 「%CNAME(MASTER, TARGET)%になら、むしろそうされたいって…、私は思うから……」
+				PRINTFORMW   응…… 아앗! 상당히 상냥하게 시라고 주는 거네…」
+				IF ABL:A감각 >= 4
+					PRINTFORMW 「엉덩이로 섹스 하고 있기 때문에, 나를 신경써 주고 있는 거야?」
+					PRINTFORMW 「나는 괜찮기 때문에,%CNAME(MASTER, TARGET)%가 바랄 뿐(만큼) 격렬하게 해도 되는거야」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%에라면, 오히려 그렇게 되고 싶다고…, 나는 생각하기 때문에……」
 				ELSE
-					PRINTFORMW 「おしりでするのまだ慣れないけど…。こんな風にされるなら悪くない、かも…」
-					PRINTFORMW 「いいわよ、続けて？ 私の全ては、%CNAME(MASTER, TARGET)%のものだから……」
+					PRINTFORMW 「엉덩이로 하는 것 아직 익숙해지지 않지만…. 이런 식으로 된다면 나쁘지 않은, 일지도…」
+					PRINTFORMW 「좋아요, 계속해? 나의 모두는,%CNAME(MASTER, TARGET)%의 것이니까……」
 				ENDIF 
-			CASE "逆レイプ"
-				PRINTFORM 「%RAND_SPLIT("んっ/あっ/はっ/ッ")%…
+			CASE "역강간"
+				PRINTFORM 「%RAND_SPLIT("응/아/하/")%…
 				CALL AUTOHEARTCB_K14
-				PRINTFORM 　私をキモチ良くさせようと\@ CFLAG:MASTER:依存度 > 4500 ? 夢中にな # 頑張 \@っちゃって…、可愛い
-				IF AFFECTION("相思相愛") || CFLAG:TARGET:依存度 > 4000
+				PRINTFORM   나를 기분 좋게 시키려고\@ CFLAG:MASTER:의존도 > 4500 ? 열중하게# 완장\@는 끝내…, 사랑스럽다
+				IF AFFECTION("상사상애") || CFLAG:TARGET:의존도 > 4000
 					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
 				ELSE
-					PRINTFORMW %RAND_SPLIT("わ/わね/")%…」
+					PRINTFORMW %RAND_SPLIT("원/원이군요/")%…」
 				ENDIF
-				PRINTFORMW 「こんな風にされたら私、\@ AFFECTION("相思相愛") ? %CNAME(MASTER, TARGET)%の事…、もっと好きになっちゃう！ # もう…、たまらなくなっちゃうわ！ \@」
-				PRINTFORMD %CALLNAME%は%CALLNAME:MASTER%
-				IF AFFECTION("相思相愛") || CFLAG:TARGET:依存度 > 4000
-					PRINTFORMDL に覆いかぶさると、
-					PRINTFORMDW 溢れ出る感情の赴くまま、%CALLNAME:MASTER%にキスの雨を降らせた…
+				PRINTFORMW 「이런 식으로 되면 나,\@ AFFECTION("상사상애") ? %CNAME(MASTER, TARGET)%의 일…, 좀 더 좋아하게 되어 버린다!# 이제(벌써)…, 견딜 수 없게 되어 버려요!\@」
+				PRINTFORMD %CALLNAME%는%CALLNAME:MASTER%
+				IF AFFECTION("상사상애") || CFLAG:TARGET:의존도 > 4000
+					PRINTFORMDL 에 덮어씌우면,
+					PRINTFORMDW 넘쳐 나오는 감정이 가는 대로,%CALLNAME:MASTER%에 키스를 세례를 퍼부을 수 있었다…
 					PRINTL
-					PRINTFORMW 「スキっ！ %CNAME(MASTER, TARGET)%のこと、大好きなの！ \@ CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度 ? だからずっと…、私の傍にいてっ！ # もう絶対に…、離さない！ \@」
+					PRINTFORMW 「빈틈!%CNAME(MASTER, TARGET)%의 일, 정말 좋아해!\@ CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도 ? 이니까 쭉…, 나의 옆에 있엇!# 이제 절대로…, 떼어 놓지 않는다!\@」
 					CALL SET_KISS
 				ELSE
-					PRINTFORMDL の手を取るとしっかりと握り締め、
-					PRINTFORMDW 蕩けきった表情で%CALLNAME:MASTER%の動きに応えた…
-					CALL FADEIN(8, @"「もっと私を\@ !TEQUIP:アイマスク ? 見て # を感じて \@…！」")
+					PRINTFORMDL 의 손을 잡으면 제대로 꽉 쥐어,
+					PRINTFORMDW 다 녹은 표정으로%CALLNAME:MASTER%의 움직임에 응했다…
+					CALL FADEIN(8, @"「좀 더 나를\@ !TEQUIP:아이마스크 ? 봐# 를 느껴\@…！」")
 					WAIT
-					CALL FADEIN(8, @"「%CNAME(MASTER, TARGET)%の\@ TALENT:MASTER:小柄 || !TALENT:MASTER:オトコ ? 可愛い # \@顔をみせて…！」")
+					CALL FADEIN(8, @"「%CNAME(MASTER, TARGET)%의\@ TALENT:MASTER:작은체형 || !TALENT:MASTER:남자 ? 사랑스럽다# \@얼굴을 보여…!」")
 					WAIT
-					PRINTFORM 「もっと…！ もっと%RAND_SPLIT("下から/激しく")%突き上げて…
+					PRINTFORM 「좀 더…! 좀 더%RAND_SPLIT("하로부터/격렬하고")%밀어올려…
 					CALL PRINT_SYMBOL2_K14
 				ENDIF
 		ENDSELECT
@@ -1111,281 +1111,281 @@ IF 口上記入チェック(100) && !TFLAG:REACT派生
 	ENDIF
 	
 	;-------------------------
-	;その他
+	;그 외
 	;-------------------------
-	;ここまで漏れてこない気はするけど、なにもしない訳にもいかない。"safety valve"は用意しておかないとだ
-	IF CFLAG:TARGET:依存度 > CFLAG:MASTER:依存度 || CFLAG:TARGET:依存度 > 4000
+	;여기까지 새어 오지 않는 생각은 들지만, 아무것도 하지 않을 수도 없다."safety valve"는 준비해 두지 않으면이다
+	IF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도 || CFLAG:TARGET:의존도 > 4000
 		SELECTCASE RANDCOM(2, 30)
 			CASE 0
-				PRINTFORM 「ひっ…、あ……あんっ
+				PRINTFORM 「힛…, 아…… 아읏
 				CALL AUTOHEARTCB_K14
-				PRINTFORMW 　んっ、……んんっ！」
-				PRINTFORMW 「そ、そんなに…っ！ 優しくされると……、私ッ…！」
+				PRINTFORMW   응,…… 응읏!」
+				PRINTFORMW 「그, 그렇게…! 상냥하게 여겨지면……, 나…!」
 			CASE 1
-				PRINTFORM 「あんっ
+				PRINTFORM 「아읏
 				CALL AUTOHEARTCB_K14
-				PRINTFORMW 　んあっ！ はぁんっ……、んくっ！」 
-				PRINTFORMW 「だめっ！ そんなに優しく、されたら……抑えられなくなっちゃう…ッ！」
+				PRINTFORMW   응아! 하아읏……, 응쿳!」 
+				PRINTFORMW 「안됏! 그렇게 상냥하고, 되면…… 억제할 수 없게 되어 버리는…!」
 		ENDSELECT
 	ELSE
 		SELECTCASE RANDCOM(2, 31)
 			CASE 0
-				PRINTFORMW 「ふふ、優しいのね。でも…」
-				PRINTFORMW 「あまり優しくされると私…、不安になるのよ」
+				PRINTFORMW 「후후, 상냥한거네. 그렇지만…」
+				PRINTFORMW 「너무 상냥하게 여겨지면 나…, 불안하게 되는거야」
 			CASE 1
-				PRINTFORMW 「うふっ、可愛いわね。私も嬉しくなっちゃうわ」
-				PRINTFORMW 「本当…、こんな時間が、何時までも続けばいいのに…」
+				PRINTFORMW 「우훗, 사랑스럽네요. 나도 기뻐져 버려요」
+				PRINTFORMW 「사실…, 이런 시간이, 몇시까지도 계속되면 좋은데…」
 		ENDSELECT
 	ENDIF
 	RETURN 1
 ENDIF
 
-;────────────────────────────────────
-;COM44, 平然とやる
-;────────────────────────────────────
-;・REACT分類:平然と従う
-;・REACT印象:好印象小
-;・依存度変化(+2, -2)
+;─
+;COM44, 태연하게 한다
+;─
+;·REACT 분류:태연하게 따른다
+;·REACT 인상:좋은 인상소
+;·의존도 변화(+2, -2)
 ;-------------------------------------------------
-;トリガーする行動や状況…
-;ACT分類:0:会話
-;	ACT:衣装の変更を要求する
-;ACT分類:1:愛撫
+;트리거하는 행동이나 상황…
+;ACT 분류:0:회화
+;	ACT:의상의 변경을 요구한다
+;ACT 분류:1:애무
 ;	ACT:
-;ACT分類:2:道具
+;ACT 분류:2:도구
 ;	ACT:
-;ACT分類:3:性交
-;	ACT:騎乗位
-;ACT分類:4:羞恥
-;	ACT:自慰/放尿
-;ACT分類:5:奉仕
-;	ACT:手で愛撫を強制/口で愛撫を強制/パイズリ/素股/足舐め強制/イラマチオ/胸愛撫強制
-;ACT分類:6:加虐
+;ACT 분류:3:성교
+;	ACT:승마위
+;ACT 분류:4:수치
+;	ACT:자위/방뇨
+;ACT 분류:5:봉사
+;	ACT:손으로 애무를 강제/입으로 애무를 강제/파이즈리/가랑이/다리 빨고 강제/이라마치오/가슴 애무 강제
+;ACT 분류:6:가학
 ;	ACT:
-;ACT分類:7:異常
+;ACT 분류:7:이상
 ;	ACT:
-;ACT分類:9:休憩
+;ACT 분류:9:휴게
 ;	ACT:
-;ACT分類:10:性交奉仕
-;	ACT:正常位させる/後背位させる/対面座位させる/後背位させる/アナルセックスさせる
+;ACT 분류:10:성교 봉사
+;	ACT:정상위 시킨다/후배위 시킨다/대면좌위 시킨다/후배위 시킨다/애널 섹스 시킨다
 ;-------------------------------------------------
-;・REACT派生なし
+;·REACT 파생 없음
 ;-------------------------------------------------
 ;=================================================
 @KOJO_COM_K14_44
 ;=================================================
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;COM44, 平然とやる
+;COM44, 태연하게 한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 口上記入チェック(100) && !TFLAG:REACT派生
-	;逆レイプの場合当該COMはトリガーされない。SEX_INITIATIVE(MASTER)で真になる状況のみ
+IF 구상기입체크(100) && !TFLAG:REACT파생
+	;역강간의 경우 해당 COM는 트리거되지 않는다. SEX_INITIATIVE(MASTER)로 실로 되는 상황만
 	;=================================================
-	;性交奉仕
+	;성교 봉사
 	;=================================================
-	IF 口上記入チェック(100) && MENUMATCH(TFLAG:ACT, "性奉")
-		LOCALS = %RAND_SPLIT("ふあ/んん/んぁ/あ/あぁ/はぅ")%
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "성 봉")
+		LOCALS = %RAND_SPLIT("아/응응/응/아/아/하우")%
 		;-------------------------------------------------
-		;イきそう状態
+		;행그렇게 상태
 		;-------------------------------------------------
-		IF 口上記入チェック(100) && TCVAR:MASTER:イきそう
-			;焦らし度派生
-			SELECTCASE TCVAR:MASTER:焦らし度
-				;焦らし中
+		IF 구상기입체크(100) && TCVAR:MASTER:갈것같다
+			;초조하게 해 번파생
+			SELECTCASE TCVAR:MASTER:초조하게해번
+				;초조하게 해 안
 				CASE IS > 1
-					PRINTFORMW 「%RAND_SPLIT("ハァ、ハァ/んんっ！ くっ/はぁ、はぁ")%…駄目よ。簡単にはイかせないわ」
-					PRINTFORMW 「私が満足するまで、もう少し付き合ってもらうから…」
-					;実は調教者もイきそう
-					SIF TCVAR:イきそう || PALAM:快Ｖ > 8500 || PALAM:快Ａ > 8500 || PALAM:快Ｂ > 8500
-						PRINTFORMW （なんて言いながら、実は私がイかされちゃいそうなのは秘密…）
-				;その他（焦らし無し）
+					PRINTFORMW 「%RAND_SPLIT("하, 하/응읏! 구/하아, 하아")%… 안 돼요. 간단하게는 가게 하지 않아요」
+					PRINTFORMW 「내가 만족할 때까지, 좀 더 교제해 받기 때문에…」
+					;실은 조교자도 갈 것 같다
+					SIF TCVAR:갈것같다 || PALAM:쾌V > 8500 || PALAM:쾌A > 8500 || PALAM:쾌B > 8500
+						PRINTFORMW (뭐라고 말하면서, 실은 내가 가게 되어 버릴 것 같은 것은 비밀…)
+				;그 외(초조하게 해 없음)
 				CASEELSE
-					PRINTFORM 「あ%RANDTEXT_K14("ぅ", "ん", "＿")%っ
+					PRINTFORM 「아%RANDTEXT_K14("", "응", "＿")%
 					CALL AUTOHEARTCB_K14
-					PRINTFORM 　あぁっ…
+					PRINTFORM   아…
 					CALL AUTOHEARTCB_K14
-					PRINTFORMW 　はげしい\@ TENSION(TARGET, 8) == "高い" ? ぃっ！ # わね… \@」
-					PRINTFORM 「あぁん
+					PRINTFORMW   격렬함\@ TENSION(TARGET, 8) == "높다" ?!# 원이군요…\@」
+					PRINTFORM 「아앙
 					CALL AUTOHEARTCB_K14
-					PRINTFORM 　あっ…、%RAND_SPLIT("ふ//ん")%あぁっ！
-					PRINTFORMW \@ TCVAR:イきそう || PALAM:快Ｖ > 8500 || PALAM:快Ａ > 8500 ? 　やだ、コレじゃ私も…イっちゃう、イかされちゃう！ # \@」
+					PRINTFORM   아…,%RAND_SPLIT("//응")%아!
+					PRINTFORMW \@ TCVAR:갈것같다 || PALAM:쾌V > 8500 || PALAM:쾌A > 8500 ?   나다, 이래서야 나도… 가 버리는, 가게 되어 버린다!# \@」
 			ENDSELECT
 			RETURN 1
 		ENDIF
 		
-		;しかしなんとも読み難い
+		;그러나 뭐라고도 읽기 어렵다
 		;-------------------------------
-		;イきそう以外はREACT負荷で処理
+		;행그렇게 이외는 REACT 부하로 처리
 		;-------------------------------
-		;REACT負荷派生
+		;REACT 부하 파생
 		SELECTCASE GET_COM_RANK()
-			CASE "自然な行動"
+			CASE "자연스러운 행동"
 				SELECTCASE GET_ACTNAME(TFLAG:ACT)
-					;逆レイプだと蹴られると思うけど、一応入れておく
-					CASE "逆レイプ", "正常位させる", "後背位させる", "背面座位させる"
-						PRINTFORM 「%LOCALS%…っ
+					;역강간이라고 차진다고 생각하지만, 일단 넣어 둔다
+					CASE "역강간", "정상위 시킨다", "후배위 시킨다", "배면좌위 시킨다"
+						PRINTFORM 「%LOCALS%…
 						CALL AUTOHEARTCB_K14
-						PRINTFORMW 　%RAND_SPLIT("やだコレっ！ ゾクゾクしてッ…！/そ、そこ…弱いのに…ッ！")%」
-						PRINTFORM 「\@ T_COND("情欲") ? わたし…、頭の中……真っ白にっ！ あぁっ# あっ、ああ…っ！ ふぁあっ \@
+						PRINTFORMW 　%RAND_SPLIT("나다 이것! 오슬오슬 햇…! /거, 거기… 약한데…!")%」
+						PRINTFORM 「\@ T_COND("정욕") ? 나…, 머릿속…… 새하얗게! 아앗# 아, 아아…! 후아앗\@
 						CALL PRINT_SYMBOL2_K14
-					CASE "対面座位させる"
+					CASE "대면좌위 시킨다"
 						IF RAND:2
-							CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("キス"), 1)%")
+							CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("키스"), 1)%")
 						ELSE
-							PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%」
+							PRINTFORMW 「%KOJO_RAND_K14(("키스"), 1)%」
 						ENDIF
-						PRINTFORMW 「ねぇもっと\@ TENSION(TARGET, 8) == "高い" ? ！ # … \@　%RAND_SPLIT("もっと、キスして/キスしながら突いて")%…っ！」
-						;キスを捏造
+						PRINTFORMW 「응 좀 더\@ TENSION(TARGET, 8) == "높다" ? ！ # … \@　%RAND_SPLIT("좀 더, 키스 해/키스 하면서 찔러")%…!」
+						;키스를 날조
 						CALL SET_KISS
-					CASE "アナルセックスさせる"
-						PRINTFORM 「%LOCALS%っ
+					CASE "애널 섹스 시킨다"
+						PRINTFORM 「%LOCALS%
 						CALL AUTOHEARTCB_K14
-						PRINTFORMW 　なによ…、随分優しい\@ TENSION(TARGET, 8) == "高い" ? じゃない # のね \@……」
-						PRINTFORMW 「でもコレ…\@ ABL:Ａ感覚 < 4 ? まだ違和感あるわね…… # どうしておしりで、こんなに…ッ！ \@」
+						PRINTFORMW   뭐야…, 상당히 상냥함\@ TENSION(TARGET, 8) == "높다" ? 가 아니다# 의 것\@……」
+						PRINTFORMW 「그렇지만 이것…\@ ABL:A감각 < 4 ? 아직 위화감 있어요……# 어째서 엉덩이로, 이렇게…!\@」
 				ENDSELECT
-			CASE "無理のない行動"
+			CASE "무리가 없는 행동"
 				SELECTCASE GET_ACTNAME(TFLAG:ACT)
-					CASE "正常位させる", "後背位させる"
-						PRINTFORMW 「んんっ！ ごりごり抉ってくれちゃって…\@ TENSION(TARGET, 8) == "高い" ? なまいき…ッ # 生意気 \@」
-						PRINTFORM 「でもこれ、奥まできて……%RAND_SPLIT("わたし/すごく")%、キモチ良くって…ッ！%RAND_SPLIT("あん/や")%っ、%RAND_SPLIT("ふ/")%あぁっ
+					CASE "정상위 시킨다", "후배위 시킨다"
+						PRINTFORMW 「응읏! 빠득빠득 후벼파 주어 버려…\@ TENSION(TARGET, 8) == "높다" ? 날것 삶…# 거만함\@」
+						PRINTFORM 「그렇지만 이것, 안쪽까지 와……%RAND_SPLIT("나/굉장히")%, 기분 좋아서…!%RAND_SPLIT("팥고물/야")%,%RAND_SPLIT("/")%아
 						CALL PRINT_SYMBOL2_K14
-					CASE "対面座位させる"
-						PRINTFORMW 「ん！？ %KOJO_RAND_K14(("キス"), 1)%」
-						PRINTFORMW 「%CNAME(MASTER, TARGET)%からキスしてくるなんて、ちょっと生意気……でも」
-						PRINTFORMW 「こういうのも、悪くない、わね……」
-						;キスを捏造
+					CASE "대면좌위 시킨다"
+						PRINTFORMW 「응!?%KOJO_RAND_K14(("키스"), 1)%」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%로부터 키스 해 오다니 조금 거만함…… 에서도」
+						PRINTFORMW 「이런 것도, 나쁘지 않, 네요……」
+						;키스를 날조
 						CALL SET_KISS
-					CASE "背面座位させる"
-						PRINTFORM 「%LOCALS%っ
+					CASE "배면좌위 시킨다"
+						PRINTFORM 「%LOCALS%
 						CALL AUTOHEARTCB_K14
-						PRINTFORMW 　\@ TENSION(TARGET, 8) == "高い" ? やだ…そこ、弄っちゃっ！ # ん…そこ、キモチ良い…… \@」
-						PRINTFORM 「\@ TENSION(TARGET, 8) == "高い" ? んはぁっ、あぁっ！ それ…ッ、だめぇっ # んぁ…はぁ……あっ、あぁっ \@
+						PRINTFORMW 　\@ TENSION(TARGET, 8) == "높다" ? 나다… 거기, 만지작거려!# 응… 거기, 기분 좋다……\@」
+						PRINTFORM 「\@ TENSION(TARGET, 8) == "높다" ? 응은, 아앗! 그것…, 안돼엣# 응… 하아…… 아, 아앗\@
 						CALL PRINT_SYMBOL2_K14
-					CASE "アナルセックスさせる"
-						PRINTFORMW 「%LOCALS%っ！　\@ ABL:Ａ感覚 < 4 ? 激しすぎるわよ # は、はげしいっ \@！」
-						PRINTFORM 「こんなにされたら、わ、わたし%RAND_SPLIT("っ/ッ")%！ んあっ、あぁっ
+					CASE "애널 섹스 시킨다"
+						PRINTFORMW 「%LOCALS%!   \@ ABL:A감각 < 4 ? 너무 격렬해요# 는, 격렬하닷\@！」
+						PRINTFORM 「이렇게 되면, 나, 나%RAND_SPLIT("/")%! 응앗, 아앗
 						CALL PRINT_SYMBOL_K14
-					CASE "逆レイプ"
-						PRINTFORM 「あっ
+					CASE "역강간"
+						PRINTFORM 「앗
 						CALL AUTOHEARTCB2_K14
-						PRINTFORMW 　いいわよ、それ。%CNAME(MASTER, TARGET)%、良く判ってるじゃない…」
-						PRINTFORMW 「ほら、もっとよ\@ TENSION(TARGET, 8) == "高い" ? ！ # 。 \@　盛りのついた、犬みたいに…ッ！」
+						PRINTFORMW   좋아요, 그것.%CNAME(MASTER, TARGET)%, 잘 알고 있지 않아…」
+						PRINTFORMW 「이봐요, 좀 더\@ TENSION(TARGET, 8) == "높다" ? ！ # 。 \@  발정난, 개같이…!」
 				ENDSELECT
-			CASE "無理をした行動"
+			CASE "무리를 한 행동"
 				SELECTCASE GET_ACTNAME(TFLAG:ACT)
-					CASE "正常位させる", "後背位させる", "背面座位させる"
-						;実はまんざらでもない
+					CASE "정상위 시킨다", "후배위 시킨다", "배면좌위 시킨다"
+						;실은 그렇지만도 않다
 						IF COMCOR_POSI()
-							PRINTFORMW 「なにそれ…、ペース%RAND_SPLIT("ダウン/を落とそう")%って訳？」
-							PRINTFORMW 「んんっ！ でもその割りに……\@ PALAM:快Ｖ > 5000 ? キモチ良いとこ探り当てられちゃって、ちょっと癪ね # いいとこに当たるわね \@…」
-						;実は嫌
+							PRINTFORMW 「뭐야 그것…, 페이스%RAND_SPLIT("다운/를 떨어뜨리자")%라는 것?」
+							PRINTFORMW 「응읏! 그렇지만 그것치고……\@ PALAM:쾌V > 5000 ? 기분 좋은 곳 더듬어 찾을 수 있어 버려, 조금 적이군요# 좋은 곳에 해당되어요\@…」
+						;실은 싫어
 						ELSE
-							PRINTFORMW 「ちょっと抵抗はあっても、結局は従うのね？」
-							PRINTFORMW 「そうやって健気に奉仕する姿、悪くないわよ。可愛いとさえ言えるかしら。ねぇ？」
+							PRINTFORMW 「조금 저항은 있어도, 결국은 따르는 거네?」
+							PRINTFORMW 「그렇게 기특하게 봉사하는 모습, 나쁘지 않아요. 사랑스럽다고마저 말할 수 있을까. 저기?」
 						ENDIF
-					CASE "対面座位させる"
-						;実はまんざらでもない
+					CASE "대면좌위 시킨다"
+						;실은 그렇지만도 않다
 						IF COMCOR_POSI()
-							PRINTFORMW 「…ん。キスしながらシてくれるなんて、気前がいいのね？ ふふ…」
-							PRINTFORMW 「ほら、今度は私からキスしてあげるわ……」
-							;1/2でフェードアウト
+							PRINTFORMW 「… 응. 키스 하면서 시라고 주다니 마음이 후한거네? 후후…」
+							PRINTFORMW 「이봐요, 이번은 나부터 키스 해 주어요……」
+							;1/2로 페이드 아웃
 							IF RAND:2
-								CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("キス"), 1)%")
+								CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("키스"), 1)%")
 								CLEARLINE 1
-							;1/2でPRINT
+							;1/2로 PRINT
 							ELSE
-								PRINTFORMW 「%KOJO_RAND_K14(("キス"), 1)%」
+								PRINTFORMW 「%KOJO_RAND_K14(("키스"), 1)%」
 							ENDIF
-							;キスを捏造
+							;키스를 날조
 							CALL SET_KISS
-						;実は嫌
+						;실은 싫어
 						ELSE
-							PRINTFORMW 「%CNAME(MASTER, TARGET)%が無理してるのが良く判るわ。ただ、そうね？」
-							PRINTFORM 「そうやって健気に頑張る姿は、ちょっと可愛いかもだけど
+							PRINTFORMW 「%CNAME(MASTER, TARGET)%가 무리하고 있는 것이 자주(잘) 알아요. 다만, 그렇구나?」
+							PRINTFORM 「그렇게 기특하게 노력하는 모습은, 조금 사랑스러울지도이지만
 							CALL PRINT_SYMBOL_K14
 						ENDIF
-					CASE "背面座位させる"
-						;実はまんざらでもない
+					CASE "배면좌위 시킨다"
+						;실은 그렇지만도 않다
 						IF COMCOR_POSI()
-							PRINTFORMW 「%LOCALS%…っ！ \@ ABL:MASTER:技巧 > 4 ? 手つきが覚束無いけど、悪くないわよ… # 本当、イヤラシイ手つきね… \@」
-							PRINTFORMW 「\@ TCVAR:イきそう || PALAM:快Ｖ > 8500 || PALAM:快Ｂ > 8500 ? これじゃ…、手だけでイかされちゃいそう…… # ただ…、腰の動きが止まってるのがじれったい%RAND_SPLIT("の/わ")%よ… \@」
-						;実は嫌
+							PRINTFORMW 「%LOCALS%…!\@ ABL:MASTER:기교 > 4 ? 손놀림이 미덥지 않지만, 나쁘지 않아요…# 사실, 추잡한 손놀림이군요…\@」
+							PRINTFORMW 「\@ TCVAR:갈것같다 || PALAM:쾌V > 8500 || PALAM:쾌B > 8500 ? 이래서야…, 손만으로 가게 되어 버릴 것 같다……# 다만…, 허리의 움직임이 멈추어 있는 것이 속상함%RAND_SPLIT("의/와")%야…\@」
+						;실은 싫어
 						ELSE
-							PRINTFORMW 「強制されるのは嫌みたいだけど…」
-							PRINTFORMW 「それでも言う事は聞くのね？ ま、こういうのも悪くないわ…」
+							PRINTFORMW 「강제당하는 것은 싫은소리 도미이지만…」
+							PRINTFORMW 「그런데도 말하는 일은 (듣)묻는 거네? 뭐, 이런 것도 나쁘지 않아요…」
 						ENDIF
-					CASE "アナルセックスさせる", "逆レイプ"
-						;実はまんざらでもない
+					CASE "애널 섹스 시킨다", "역강간"
+						;실은 그렇지만도 않다
 						IF COMCOR_POSI()
-							PRINTFORMW 「%LOCALS%…っ！ %CNAME(MASTER, TARGET)%なりに気を使ってくれているのね」
-							IF IS_NOWACTNAME("アナルセックスさせる")
-								PRINTFORMW 「でも\@ ABL:Ａ感覚 < 4 ? この感じ、まだ慣れないわ # 、ちょっともどかしいのよね。これじゃ \@…」
+							PRINTFORMW 「%LOCALS%…!%CNAME(MASTER, TARGET)%나름대로 신경을 써 주고 있는 거네」
+							IF IS_NOWACTNAME("애널 섹스 시킨다")
+								PRINTFORMW 「그렇지만\@ ABL:A감각 < 4 ? 이 느낌, 아직 익숙해지지 않아요# , 조금 안타깝네요. 이래서야\@…」
 							ELSE
-								PRINTFORMW 「でも\@ ABL:Ｖ感覚 < 4 ? この感じ、まだ慣れないわ # 、ちょっともどかしいのよね。これじゃ \@…」
+								PRINTFORMW 「그렇지만\@ ABL:V감각 < 4 ? 이 느낌, 아직 익숙해지지 않아요# , 조금 안타깝네요. 이래서야\@…」
 							ENDIF
-						;実は嫌
+						;실은 싫어
 						ELSE
-							PRINTFORMW 「そうよ、%CNAME(MASTER, TARGET)%は私の言いなりになっていればいいの」
-							PRINTFORMW 「それがどれほど異常な事であろうとも、ね。%LOCALS%…っ！」
+							PRINTFORMW 「그래요,%CNAME(MASTER, TARGET)%는 나의 하라는 대로 되어 있으면 좋은거야」
+							PRINTFORMW 「그것이 얼마나 이상한 일이든, 지.%LOCALS%…!」
 						ENDIF
 					CASEELSE
-				ENDSELECT ;			書いたあとから刻みたくなったけど、後回しにする構え
+				ENDSELECT ;			쓴 뒤로부터 새기고 싶어졌지만, 뒷전으로 할 자세
 		ENDSELECT
 		RETURN 1
 	ENDIF
 	
-	;奉仕系、もしくはその他の場合に落ちてくるのを想定。
-	;ただ、この構造なら奉仕系の枠を埋めておけばその他に落ちる可能性は無いはず？
-	;MENUMATCH(TFLAG:ACT, "奉仕")でやらなかったのは、汎用処理を別個につくるのが面倒だったから
-	;何かを表示する為の最後の箇所なんで、まぁ一般分岐はあった方が望ましいよね、という話
-	;色々な可能性を完全に把握するのは非常に困難
+	;봉사계, 혹은 그 외의 경우에 떨어져 내리는 것을 상정.
+	;다만, 이 구조라면 봉사계의 테두리를 묻어 두면 그 외에 떨어질 가능성은 없을 것?
+	;MENUMATCH(TFLAG:ACT, "봉사")로 하지 않았던 것은, 범용 처리를 별개에 만드는 것이 귀찮았기 때문에
+	;뭔가를 표시하기 위한 마지막 개소이니까, 뭐 일반 분기는 있는 것이 바람직하지요, 라고 하는 이야기
+	;다양한 가능성을 완전하게 파악하는 것은 매우 곤란
 	;-------------------------
-	;その他を処理
+	;그 외를 처리
 	;-------------------------
 	SELECTCASE GET_COM_RANK()
-		CASE "自然な行動"
+		CASE "자연스러운 행동"
 			SELECTCASE TENSION(TARGET, 8)
-				CASE "高い"
-					PRINTFORMW 「…ん、悪くないわ。%CNAME(MASTER, TARGET)%にしては%RAND_SPLIT("上出来/まずます/まあまあ")%かしら？」
-					PRINTFORMW 「でもそうね…、その余裕の表情が%RAND_SPLIT("癪に障るわ/ちょっと生意気ね")%」
-					PRINTFORMW 「ま、身勝手この上ない話なのは判っているつもりよ。フフ…」
-				CASE "一般"
-					PRINTFORMW 「まぁ、このくらいは出来て当然よね%RAND_SPLIT("？/")%」
-					PRINTFORMW 「というか正直…、今の%CNAME(MASTER, TARGET)%ならもっとできるはずだと思うんだけど」
+				CASE "높다"
+					PRINTFORMW 「… 응, 나쁘지 않아요.%CNAME(MASTER, TARGET)%으로서는%RAND_SPLIT("좋은 결과//뭐 그래")%일까?」
+					PRINTFORMW 「그렇지만 그렇구나…, 그 여유의 표정이%RAND_SPLIT("아니꼽게 거슬려요/조금 건방지구나")%」
+					PRINTFORMW 「뭐, 제멋대로 하는 모양 이 이상 없는 이야기인 것은 알고 있을 생각이야. 후후…」
+				CASE "일반"
+					PRINTFORMW 「뭐, 이 정도는 되어있고 당연해요%RAND_SPLIT("？/")%」
+					PRINTFORMW 「라고 할까 정직…, 지금의%CNAME(MASTER, TARGET)%라면 좀 더 할 수 있을 것이라고 생각하지만」
 					SIF !RAND:3
-						PRINTFORMW 「その辺どうなのかしら。ねぇ？」
-				CASE "低い"
-					PRINTFORMW 「%RAND_SPLIT("へぇ/あら/ふーん")%、随分余裕%RAND_SPLIT("がある/")%じゃない」
-					PRINTFORMW 「これなら、%CNAME(MASTER, TARGET)%にはもっと色々要求してもよさそうね%RAND_SPLIT("？/")%」
-					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ AFFECTION("相思相愛") ? クスクス # ウフフ \@…」")
+						PRINTFORMW 「그근처 어떨까. 저기?」
+				CASE "낮다"
+					PRINTFORMW 「%RAND_SPLIT("에/어머나/흐음")%, 상당히 여유%RAND_SPLIT("가 있다/")%가 아니다」
+					PRINTFORMW 「이것이라면,%CNAME(MASTER, TARGET)%에는 좀 더 여러가지 요구해도 좋은 것 같구나%RAND_SPLIT("？/")%」
+					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ AFFECTION("상사상애") ? 킥킥# 우후후\@…」")
 					CLEARLINE 1
 			ENDSELECT
-		CASE "無理のない行動"
+		CASE "무리가 없는 행동"
 			SELECTCASE TENSION(TARGET, 8)
-				CASE "高い"
-					PRINTFORM 「そういう%CNAME(MASTER, TARGET)%の姿をみるのは、悪くない気分ね
+				CASE "높다"
+					PRINTFORM 「그러한%CNAME(MASTER, TARGET)%의 모습을 보는 것은, 나쁘지 않은 기분이군요
 					CALL PRINT_SYMBOL_K14
-					PRINTFORMW 「でも今の%CNAME(MASTER, TARGET)%なら、もっとできるんじゃないかしら。ねぇ？」
-				CASE "一般"
-					PRINTFORMW 「\@ AFFECTION("溺愛") ? ふふ # フフ \@…、私の歓心を買おうと必死みたいね%RAND_SPLIT("？/")%」
-					PRINTFORM 「まあでも……、その姿勢は評価してあげるわ
+					PRINTFORMW 「그렇지만 지금의%CNAME(MASTER, TARGET)%라면, 좀 더 할 수 있는 것이 아닐까. 저기?」
+				CASE "일반"
+					PRINTFORMW 「\@ AFFECTION("몹시 사랑함") ? 후후# 후후\@…, 나의 환심을 사려고 필사같구나%RAND_SPLIT("？/")%」
+					PRINTFORM 「뭐 그렇지만……, 그 자세는 평가 해 주어요
 					CALL PRINT_SYMBOL_K14
-				CASE "低い"
-					PRINTFORMW 「ま、この程度の事はやって貰わないとね」
-					PRINTFORMW 「\@ AFFECTION("溺愛") ? 今の%CNAME(MASTER, TARGET)%ならできて当然だし、ね # 私に気に入られたいのなら尚更。ねぇ？ \@」
+				CASE "낮다"
+					PRINTFORMW 「뭐, 이 정도의 일은 해 받지 않으면」
+					PRINTFORMW 「\@ AFFECTION("몹시 사랑함") ? 지금의%CNAME(MASTER, TARGET)%라면 가능하는 것이 당연하, 니까# 나에게 마음에 들고 싶다면 더욱 더. 저기?\@」
 			ENDSELECT
-		CASE "無理をした行動"
-			;実はまんざらでもない
+		CASE "무리를 한 행동"
+			;실은 그렇지만도 않다
 			IF COMCOR_POSI()
-				PRINTFORMW 「何でもないような顔してるけど、本当は違うんでしょう%RAND_SPLIT("？/")%」
-				PRINTFORM 「そういうのって伝わ%RAND_SPLIT("る/っちゃう")%のよね。\@ TENSION(TARGET, 8) == "高い" ? ザ・ン・ネ・ン # 残念 \@だけど
+				PRINTFORMW 「아무것도 아닌 것 같은 얼굴 하고 있지만, 사실은 다르겠지요%RAND_SPLIT("？/")%」
+				PRINTFORM 「그러한 것은 전원%RAND_SPLIT("/라고 끝낸다")%의 것이군요.\@ TENSION(TARGET, 8) == "높다" ? 더··네·# 유감\@이지만
 				CALL PRINT_SYMBOL_K14
-				;依存度変化
+				;의존도 변화
 				CALL ADD_DEPEND(-1, +2)
-			;実は嫌
+			;실은 싫어
 			ELSE
-				PRINTFORMW 「平静を装ったって、無理をしてるのは見れば判るわ」
-				PRINTFORMW 「その程度%RAND_SPLIT("じゃ私の歓心は買えないわよ/で私のご機嫌を取ろうとしても無駄よ")%、悪いけど」
-				;依存度変化
+				PRINTFORMW 「평정을 가장해도, 무리를 하고 있는 것은 보면 알아요」
+				PRINTFORMW 「그 정도%RAND_SPLIT("는 나의 환심은 살 수 없어요/그리고 나의 비위를 맞추려고 해도 쓸데없어요")%, 나쁘지만」
+				;의존도 변화
 				CALL ADD_DEPEND(-2, +3)
 			ENDIF
 	ENDSELECT
