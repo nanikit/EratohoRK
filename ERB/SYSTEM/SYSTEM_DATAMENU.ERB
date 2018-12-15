@@ -103,22 +103,22 @@ RETURN RESULT
 ; →SHOP.ERB에서 comment out
 
 ;-------------------------------------------------------------------------------
-;	SAVEINFOF(식 나카노세키수)
+;	SAVEINFOF(식 안의 함수)
 ;-------------------------------------------------------------------------------
-;	SAVEINFO의 식 나카노세키수판  PUTFORM?   그게 뭐야 맛있는거야?
+;	SAVEINFO의 식 안의 함수판  PUTFORM?   그게 뭐야 맛있는거야?
 ;===============================================================================
 @SAVEINFOF
 #FUNCTIONS
 #LOCALSSIZE 1
 GETTIME
-LOCALS = %RESULTS% %CALLNAME:MASTER% {DAY+1}일째%GET_TIME()% \@ TARGET >= 0 ? %CALLNAME:TARGET%가%CALLNAME:MASTER%를 조교중# \@【%PLAYTIME("GET")%】
+LOCALS = %RESULTS% %CALLNAME:MASTER% {DAY+1}일째%GET_TIME()% \@ TARGET >= 0 ? %CALLNAME:TARGET%가%CALLNAME:MASTER%를 조교중 # \@【%PLAYTIME("GET")%】
 RETURNF LOCALS
 
 ;-------------------------------------------------------------------------------
-;	CHKDATA의 RESULTS로부터 세이브 일시를 취득한다(식 나카노세키수)
+;	CHKDATA의 RESULTS로부터 세이브 일시를 취득한다(식 안의 함수)
 ;-------------------------------------------------------------------------------
 ;	예  2010/04/01 12:34:56  →  20100401123456
-;	식 나카노세키수판 CHKDATA의 RESULT에의 일시 취득 같은거 없었다…!
+;	식 안의 함수판 CHKDATA의 RESULT에의 일시 취득 같은거 없었다…!
 ;===============================================================================
 ;	ARGS = CHKDATA 직후의 RESULTS만 대응
 @CHKDATA_DATE(ARGS)
@@ -126,7 +126,7 @@ RETURNF LOCALS
 RETURNF TOINT(SUBSTRING(ARGS,0,4))*10000000000 + TOINT(SUBSTRING(ARGS,5,2))*100000000 + TOINT(SUBSTRING(ARGS,8,2))*1000000 + TOINT(SUBSTRING(ARGS,11,2))*10000 + TOINT(SUBSTRING(ARGS,14,2))*100 + TOINT(SUBSTRING(ARGS,17,2))
 
 ;-------------------------------------------------------------------------------
-;	세이브 데이터를 전검색해 가장 새로운 세이브 데이터 번호를 취득(식 나카노세키수)
+;	세이브 데이터를 전검색해 가장 새로운 세이브 데이터 번호를 취득(식 안의 함수)
 ;-------------------------------------------------------------------------------
 ;===============================================================================
 ;	ARGS = "NOAUTO"오토 세이브 포함하지 않는 / 그 외 오토 세이브 포함한다
@@ -157,7 +157,7 @@ RETURNF LOCAL:2
 ;	SAVE_AREA()-1번으로부터 역산해서까지 AUTOSAVE_AREA() 개
 ;	「겐, 오토 세이브 덧쓰기되어 버렸다!」사고 방지용
 ;===============================================================================
-;	LOCAL = COUNT  LOCAL:1 = DATE 일시 보존  LOCAL:2 =비교용 DATE  LOCAL:3 =최종
+;	LOCAL = COUNT  LOCAL:1 = DATE 일시 보존  LOCAL:2 =비교용 DATE  LOCAL:3 =최종 
 @SYSTEM_AUTOSAVE
 #LOCALSIZE 4
 VARSET LOCAL
@@ -341,7 +341,7 @@ IF NOWMODE < 0
 ELSEIF NOWMODE == 1 || NOWMODE == 2 || ( NOWMODE == 5 && ( COPYSELECT != -1 && COPYSELECT != LOCAL) )
 	SELECTCASE RESULT
 		CASE 0,2,3,4
-			CALL PRINT_DIALOG(@"\@ !RESULT ? 세이브 데이터가 존재합니다 덧쓰기합니까?# 불명한 데이터가 존재합니다 덧쓰기합니까?\@",1,1,1)
+			CALL PRINT_DIALOG(@"\@ !RESULT ? 세이브 데이터가 존재합니다 덧쓰기합니까?  # 불명한 데이터가 존재합니다 덧쓰기합니까?  \@",1,1,1)
 			CALL PRINT_CHOICE(,"네",1,"아니오",2,)
 			SIF RESULT == 2
 				GOTO REPRINT
@@ -398,7 +398,7 @@ ENDIF
 GOTO REPRINT
 
 ;-----------------------------------------------------------
-;	DATAMENU로 사용하는 라벨 표시용 함수(식 나카노세키수)
+;	DATAMENU로 사용하는 라벨 표시용 함수(식 안의 함수)
 ;===========================================================
 ;	ARG = NOWMODE  ARG:1 = HEADER용  ARG:2 =카피 모드의 HEADER용
 @DATAMENU_LABEL(ARG,ARG:1,ARG:2)
@@ -406,7 +406,7 @@ GOTO REPRINT
 SELECTCASE ARG
 	CASE 1, 2
 		SIF ARG:1
-			RETURNF @"세이브 - 몇 번에 세이브합니까?\@ ARG == 2 ? (코멘트 모드) # \@"
+			RETURNF @"세이브 - 몇 번에 세이브합니까?  \@ ARG == 2 ? (코멘트 모드) # \@"
 		RETURNF @"\@ARG == 1 ? %FORMCELL("세이브",PRINTCPERLENGTH(-10),2)% # %FORMCELL("코멘트 세이브",PRINTCPERLENGTH(-10),2)% \@"
 	CASE 0, 3
 		SIF ARG:1
@@ -418,7 +418,7 @@ SELECTCASE ARG
 		RETURNF FORMCELL("삭제",PRINTCPERLENGTH(-10),2)
 	CASE 5
 		SIF ARG:1
-			RETURNF @"\@ ARG:2 == -1 ? 카피 - 몇 번을 카피합니까?# 카피 - {ARG:2}차례를 몇 번에 카피합니까?\@"
+			RETURNF @"\@ ARG:2 == -1 ? 카피 - 몇 번을 카피합니까?  # 카피 - {ARG:2}차례를 몇 번에 카피합니까?  \@"
 		RETURNF FORMCELL("카피",PRINTCPERLENGTH(-10),2)
 	CASEELSE
 		RETURNF @"ERROR!{ARG,2}"

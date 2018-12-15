@@ -328,7 +328,7 @@ IF NOWEX:사정
 	SIF A_SEX()
 		TCVAR:장내사정후경과턴참조 = 1
 	TCVAR:사정후경과턴참조 = 1
-	CFLAG:사정회수            += 1
+	CFLAG:사정횟수            += 1
 ENDIF
 
 ;조교자의 발기
@@ -368,7 +368,7 @@ SIF NOWEX:사정
 ;사정시, 관련 플래그를 설정
 IF NOWEX:사정
 	CFLAG:(250 + NOWEX:사정) += 1
-	CFLAG:사정회수 += 1
+	CFLAG:사정횟수 += 1
 ENDIF
 ;절정 회수 플래그를 설정
 FOR LCOUNT, 0, 4
@@ -385,7 +385,7 @@ SIF PENIS(TARGET)
 EX:분유 += NOWEX:분유
 
 ;삶그렇게(잠정)
-;갈것같다가 아니고, 페니스가 있으면 발기하고 있는지, 페니스가 없을 때, 쾌c가 존재하면
+;가 그렇지 않고, 페니스가 있으면 발기하고 있는지, 페니스가 없을 때, 쾌c가 존재하면
 IF TCVAR:TARGET:갈것같다 == 0 && (!PENIS(TARGET) || TCVAR:발기 > 1) && CUP:쾌C > 0
 	;C감각이 낮으면보다 낮은 값으로 갈 것 같게, 또 이성 저하로 C치에 관계없이 살 것 같게 된다.
 	VARSET LOCAL
@@ -393,12 +393,12 @@ IF TCVAR:TARGET:갈것같다 == 0 && (!PENIS(TARGET) || TCVAR:발기 > 1) && CUP
 	LOCAL += (CUP:쾌C + PALAM:쾌C) >= MAX(GET_ABL(TARGET, "C감각") * 100, 1000)
 	;기능 > 이성 판정
 	LOCAL += GET_ABL(MASTER, "기교") - GET_ABL(TARGET, "기교") > RAND:(MAX(BASE:TARGET:이성 / 10, 1))
-	;이성이 전혀 없으면 무조건으로갈것같다에
+	;이성이 전혀 없으면 무조건으로 갈 것 같게
 	LOCAL += BASE:TARGET:이성 == 0
 	;어떤 것인가의 판정에 인소
 	IF LOCAL
 		TCVAR:TARGET:갈것같다 += 5
-		PRINTFORMW %CALLNAME:TARGET%는갈것같다가 되었다…
+		PRINTFORMW %CALLNAME:TARGET%는 갈 것 같게 되었다…
 	ENDIF
 ENDIF
 
@@ -423,7 +423,7 @@ FOR LCOUNT, 1, 3
 		BREAK
 	LOCAL++
 NEXT
-;갈것같다시, 쾌c가 있으면 C절정이 반드시 일어난다
+;행그렇게시, 쾌c가 있으면 C절정이 반드시 일어난다
 SIF (ARG == 0) && TCVAR:TARGET:갈것같다 && CUP:쾌C > 0
 	LOCAL = MAX(LOCAL, 1)
 ;절정시

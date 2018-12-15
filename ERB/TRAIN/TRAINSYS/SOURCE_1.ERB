@@ -135,7 +135,7 @@ ENDIF
 #DIM LCOUNT
 #DIM DYNAMIC 절정강도, 4
 #DIM DYNAMIC 인내강도
-#DIM DYNAMIC 초조하게함강도, 4
+#DIM DYNAMIC 초조하게해강도, 4
 #DIM DYNAMIC 쾌감부담
 #DIM DYNAMIC 사정부담
 #DIM DYNAMIC 분유부담
@@ -158,7 +158,7 @@ ENDIF
 ;변수의 리셋트
 VARSET 절정강도
 VARSET 인내강도
-VARSET 초조하게함강도
+VARSET 초조하게해강도
 VARSET 쾌감부담
 VARSET 사정부담
 VARSET 분유부담
@@ -175,22 +175,22 @@ LOCAL = CUP:MASTER:쾌C + PALAM:MASTER:쾌C
 
 ;페니스가 있다면 발기도가 높은, 페니스가 없으면 윤활이 높고 쾌C1000 이상 때
 ;각각 미약·로션으로 간단하게 보내지는 것도 또 좋다인가
-;갈것같다로 쾌C존재시
+;갈 것 같아 쾌C존재시
 IF ((TCVAR:MASTER:발기도 >= 1000 && PENIS(MASTER)) || (PALAM:MASTER:윤활 >= 250 && !PENIS(MASTER) && PALAM:MASTER:쾌C >= 1000)) && TCVAR:MASTER:갈것같다 && CUP:MASTER:쾌C > 0
-	;인내중, 갈것같다에 견딜 수 있을 뿐(만큼)의 ABL가 존재해, 가게해! COM는 아니고, 초조하게함 상태는 아니다
+	;인내중, 갈 것 같게 견딜 수 있을 뿐(만큼)의 ABL가 존재해, 가게해! COM는 아니고, 초조하게 해 상태는 아니다
 	IF (TCVAR:MASTER:인내 && TCVAR:MASTER:갈것같다 < ABL:MASTER:C감각 * 3) && SELECTCOM != 70 && TCVAR:MASTER:초조하게해번 == 0
-		;자극이 강하면갈것같다상태가 한계에 가까워진다
+		;자극이 강하면행그렇게 상태가 한계에 가까워진다
 		TCVAR:MASTER:갈것같다 += LOCAL / 2000
 		;인내 강도치에 이번 자극의 강함을 대입
 		인내강도 = MAX(LOCAL / 10000, 1)
-	;초조하게함 안
+	;초조하게 해 안
 	ELSEIF TCVAR:MASTER:초조하게해번 > 1
 		;초조하게해번을 1씩 줄인다
 		TCVAR:MASTER:초조하게해번 -= 1
 		;1미만은 되지 않는다
 		TCVAR:MASTER:초조하게해번 = MAX(TCVAR:MASTER:초조하게해번, 1)
-		;초조하게함 강도치에 이번 자극의 강함을 대입
-		초조하게함강도:0 = MAX(LOCAL / 10000, 1)
+		;초조하게 해 강도치에 이번 자극의 강함을 대입
+		초조하게해강도:0 = MAX(LOCAL / 10000, 1)
 	;절정 강도 처리
 	ELSE
 		절정강도:0 = CALC_SOURCE00_EX_P(0, LOCAL)
@@ -233,7 +233,7 @@ SIF IS_COMGRONAME("적극적 따른다/태연하게 따른다/받아들인다") 
 
 ;페니스 존재시
 IF PENIS(MASTER)
-	;절정 결정으로 발기도가 높고갈것같다
+	;절정 결정으로 발기도가 높게 갈 것 같다
 	IF 절정강도:0 > 0 && TCVAR:MASTER:발기도 >= 1000 && TCVAR:MASTER:갈것같다
 		;사정 게이지가 없다
 		IF BASE:MASTER:사정 == 0
@@ -277,7 +277,7 @@ IF PENIS(MASTER)
 		ENDIF
 	;전립선 고문 사정
 	ELSEIF TCVAR:MASTER:전립선자극
-		;갈것같다or쾌C8000 이상시, 대응 부위 절정 할까 전립선자극이 강하면 강제 사정
+		;행그렇게 or쾌C8000 이상시, 대응 부위 절정 할까 전립선자극이 강하면 강제 사정
 		IF (TCVAR:MASTER:갈것같다 ||PALAM:MASTER:쾌C >= 8000) && ((TALENT:MASTER:남자 && 절정강도:2 > 0) || (TALENT:MASTER:후타나리 && 절정강도:1 > 0) || TCVAR:MASTER:전립선자극 > 1)
 			;사정 게이지가 없다
 			IF BASE:MASTER:사정 == 0
@@ -614,7 +614,7 @@ IF NOWEX:MASTER:사정
 	TFLAG:사정후경과턴                  = 1
 	TCVAR:MASTER:사정후경과턴참조       = 1
 	CFLAG:MASTER:(250 + NOWEX:MASTER:사정) += 1
-	CFLAG:MASTER:사정회수                  += 1
+	CFLAG:MASTER:사정횟수                  += 1
 	TCVAR:MASTER:가게해거동제어용         = 0
 ENDIF
 ;절정 회수 플래그를 설정
@@ -655,7 +655,7 @@ ELSEIF TEQUIP:TARGET:페니스밴드 && (NOWEX:MASTER:C절정 || NOWEX:MASTER:V�
 ENDIF
 
 ;삶그렇게(잠정)
-;갈것같다가 아니고, 페니스가 있으면 발기도가 충분히 높은지, 페니스가 없으면 윤활이 충분히 높을 때, 쾌C가 존재하면
+;가 그렇지 않고, 페니스가 있으면 발기도가 충분히 높은지, 페니스가 없으면 윤활이 충분히 높을 때, 쾌C가 존재하면
 IF TCVAR:MASTER:갈것같다 == 0 && ((TCVAR:MASTER:발기도 >= 1000 && PENIS(MASTER)) || (PALAM:MASTER:윤활 >= 250 && !PENIS(MASTER) && PALAM:MASTER:쾌C >= 1000)) && CUP:MASTER:쾌C > 0
 	;C감각이 낮으면보다 낮은 값으로 갈 것 같게, 또 이성 저하로 C치에 관계없이 살 것 같게 된다.
 	VARSET LOCAL
@@ -663,12 +663,12 @@ IF TCVAR:MASTER:갈것같다 == 0 && ((TCVAR:MASTER:발기도 >= 1000 && PENIS(M
 	LOCAL += (CUP:MASTER:쾌C + PALAM:MASTER:쾌C) >= MAX(GET_ABL(MASTER, "C감각") * 100, 1000)
 	;기능 > 이성 판정
 	LOCAL += GET_ABL(TARGET, "기교") - GET_ABL(MASTER, "기교") > RAND:(MAX(BASE:MASTER:이성 / 10, 1))
-	;이성이 전혀 없으면 무조건으로갈것같다에
+	;이성이 전혀 없으면 무조건으로 갈 것 같게
 	LOCAL += BASE:MASTER:이성 == 0
 	;어떤 것인가의 판정에 인소
 	IF LOCAL
 		TCVAR:MASTER:갈것같다 += 5
-		PRINTFORMW %CALLNAME:MASTER%는갈것같다가 되었다…
+		PRINTFORMW %CALLNAME:MASTER%는 갈 것 같게 되었다…
 	ENDIF
 ENDIF
 
@@ -686,13 +686,13 @@ IF IS_NOWACTNAME("자위") && (GETBIT(TEQUIP:자위중, 0) || (GETBITAND(TEQUIP:
 	TCVAR:MASTER:초조하게해번 = 0
 ENDIF
 
-;초조하게함 안, 초조하게함에 성공
-IF TCVAR:MASTER:초조하게해번 > 1 || SUMARRAY(초조하게함강도) > 0
+;초조하게 해 안, 초조하게함에 성공
+IF TCVAR:MASTER:초조하게해번 > 1 || SUMARRAY(초조하게해강도) > 0
 	PRINTFORMW %CALLNAME:MASTER%는 절정 직전에 초조해 해지고 있다…
 ENDIF
 
 ;초조하게함
-;갈것같다로 초조하게함 안이 아니고 사정도 없고 벌 그 중에서 없다
+;갈 것 같아 초조하게 해 안이 아니고 사정도 없고 벌 그 중에서 없다
 IF TCVAR:MASTER:갈것같다 && !TCVAR:MASTER:초조하게해번 && !NOWEX:MASTER:사정 && !TFLAG:벌플래그
 	VARSET LOCAL
 	;보정치를 소질, ABL에 의해 증감
@@ -706,7 +706,7 @@ IF TCVAR:MASTER:갈것같다 && !TCVAR:MASTER:초조하게해번 && !NOWEX:MASTE
 	SIF TCVAR:MASTER:초조하게해번 > 1
 		{
 		PRINTFORMW %CALLNAME:TARGET%는\@ TALENT:심술쟁이 || TALENT:새디즘 || !ALI(0, TARGET) 
-                   ? 심술궂은# 못된 장난 같다\@미소를 띄우면%CALLNAME:MASTER%를 초조하게함 시작했다…
+                   ? 심술궂은 # 못된 장난 같다 \@미소를 띄우면%CALLNAME:MASTER%를 초조하게 하기 시작했다…
 		}
 ENDIF
 
@@ -731,7 +731,7 @@ FOR LCOUNT, 1, 3
 		BREAK
 	LOCAL++
 NEXT
-;갈것같다시, C절정이 반드시 일어난다
+;행그렇게시, C절정이 반드시 일어난다
 SIF (ARG == 0) && TCVAR:MASTER:갈것같다
 	LOCAL = MAX(LOCAL, 1)
 ;절정시
@@ -750,7 +750,7 @@ IF LOCAL >= 1
 	TFLAG:취득마력 += 50 * LOCAL
 	;CDOWN:MASTER:쾌X로 내려도 절정 이상이라면
 	;그 값-1이 되도록(듯이) 조정(10000으로 절정이라면 9999)
-	;※이것이 이 위치에 있는 것으로 초조하게함, 인내의 가치가
+	;※이것이 이 위치에 있는 것으로 초조하게 해, 인내의 가치가
 	;  상승하는 것은 아닐까 생각해 시험적으로 이동.
 	;  부당하게 가치가 상승해 버렸을 때는 IF 문장으로부터 보내는 것
 	SIF ARG:1 - CDOWN:MASTER:ARG >= 절정경계:1
@@ -766,7 +766,7 @@ RETURNF LOCAL
 ;인  수:ARG:0… 삽입 개소(0. V/1. A)
 ;　　　 ARG:1… 페니스밴드의 사용 유무(0. 미사용/1. 사용)
 ;반환값:뽑지않고 판정 결과를 나타내는 진위치(0이나 1). 0은 뽑는, 1은 뽑지않고(계속)
-;비  고:식 나카노세키수
+;비  고:식 안의 함수
 ;제변수 가산/세트 처리와 뽑지않고의 판정을 실시한다
 ;조금 개조@revkoishi(14/06/07)
 ;-------------------------------------------------

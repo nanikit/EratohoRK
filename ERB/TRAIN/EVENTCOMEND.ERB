@@ -135,7 +135,7 @@ CFLAG:호의 += T호의증감
 ;지문 표시
 IF T호의증감 != 0
 	IF TALENT:MASTER:독심술 == 1
-		PRINTFORML %CALLNAME:MASTER%에의 호감도가\@ T호의증감 >= 0 ? 오른 것 같다# 내린 것 같다\@
+		PRINTFORML %CALLNAME:MASTER%에의 호감도가\@ T호의증감 >= 0 ? 오른 것 같다 # 내린 것 같다 \@
 	ELSEIF TALENT:MASTER:독심술 == 2
 		PRINTFORML %CALLNAME:MASTER%에의 호감도\@ T호의증감 >= 0 ? + # \@{T호의증감}  (현재가{CFLAG:호의})
 	ENDIF
@@ -538,10 +538,10 @@ IF PENIS(MASTER)
 		LOCAL -= 5
 	;나머지 정력이 적게 되면 보정 가격인상승(0～9)
 	LOCAL += 9 - LIMIT(18 * BASE:MASTER:사정 / MAXBASE:MASTER:사정, 0, 9)
-	;나머지 정력이 0이라면 한층 더 보정치+1, 요점강부디기온
+	;나머지 정력이 0이라면 한층 더 보정치+1, 요점강제발기 온
 	IF BASE:MASTER:사정 == 0
 		LOCAL += 1
-		TCVAR:MASTER:요점강부디기 = 1
+		TCVAR:MASTER:요점강제발기 = 1
 	ENDIF
 	;나머지 체력이 적게 되면 보정 가격인상승(0～7)
 	LOCAL += 7 - LIMIT(14 * BASE:MASTER:체력 / MAXBASE:MASTER:체력, 0, 7)
@@ -568,8 +568,8 @@ IF TCVAR:MASTER:전립선자극 > 1
 ELSEIF TCVAR:MASTER:전립선자극 == 1
 	;고정치+100붙어 있는
 	TCVAR:MASTER:발기도 += 100 + TCVAR:MASTER:이번발기 * (20 - LOCAL) / 20
-;통상(요점강부디기는 아니다)
-ELSEIF !TCVAR:MASTER:요점강부디기
+;통상(요점강제발기는 아니다)
+ELSEIF !TCVAR:MASTER:요점강제발기
 	TCVAR:MASTER:발기도 += TCVAR:MASTER:이번발기 * (20 - LOCAL) / 20
 ENDIF
 
@@ -809,8 +809,8 @@ IF PENIS(MASTER)
 		ELSE
 			TIMES TCVAR:MASTER:발기도, 0.90
 		ENDIF
-		;요점강부디기시 게다가 0.9배
-		SIF TCVAR:MASTER:요점강부디기 == 1
+		;요점강제발기시 게다가 0.9배
+		SIF TCVAR:MASTER:요점강제발기 == 1
 				TIMES TCVAR:MASTER:발기도, 0.90
 	ENDIF
 ;남성기 비존재시는 발기도 초기화
@@ -1060,8 +1060,8 @@ ELSEIF TCVAR:MASTER:발기도 >= 200 && TCVAR:MASTER:전의발기도 < 200
 	ELSE
 		PRINTFORML %CALLNAME:MASTER%는 하반신에 천천히 피가 모이기 시작하는 것을 느꼈다….
 	ENDIF
-;요점강부디기
-ELSEIF TCVAR:MASTER:요점강부디기 && TCVAR:MASTER:발기도 <= 200 && TCVAR:MASTER:이번발기
+;요점강제발기
+ELSEIF TCVAR:MASTER:요점강제발기 && TCVAR:MASTER:발기도 <= 200 && TCVAR:MASTER:이번발기
 	PRINTFORML 정령 다했다%CALLNAME:MASTER%의 남성기는 흠칫도 반응하지 않는다….
 ENDIF
 ;윤활 묘사(남자 이외)
@@ -2244,7 +2244,7 @@ NEXT
 
 ;조교 대상의 쾌감 감쇠(쾌X상승 총계가 0, 5% 감쇠)
 IF !MAX(CUP:MASTER:쾌C, CUP:MASTER:쾌V, CUP:MASTER:쾌A, CUP:MASTER:쾌B)
-	;갈것같다인 경우쾌C를 제외
+	;갈 것 같은 경우쾌C를 제외
 	SIF TCVAR:MASTER:갈것같다 == 0
 		CDOWN:MASTER:쾌C += PALAM:MASTER:쾌C * 5 / 100
 	CDOWN:MASTER:쾌V += PALAM:MASTER:쾌V * 5 / 100
@@ -2253,7 +2253,7 @@ IF !MAX(CUP:MASTER:쾌C, CUP:MASTER:쾌V, CUP:MASTER:쾌A, CUP:MASTER:쾌B)
 ENDIF
 ;조교자의 쾌감 감쇠(쾌x상승 총계가 0, 5% 감쇠)
 IF !MAX(CUP:쾌C, CUP:쾌V, CUP:쾌A, CUP:쾌B)
-	;갈것같다인 경우쾌C를 제외
+	;갈 것 같은 경우쾌C를 제외
 	SIF TCVAR:TARGET:갈것같다 == 0
 		CDOWN:쾌C += PALAM:쾌C * 5 / 100
 	CDOWN:쾌V += PALAM:쾌V * 5 / 100
@@ -2261,7 +2261,7 @@ IF !MAX(CUP:쾌C, CUP:쾌V, CUP:쾌A, CUP:쾌B)
 	CDOWN:쾌B += PALAM:쾌B * 5 / 100
 ENDIF
 
-;갈것같다의 판정
+;행그렇게의 판정
 ;쾌C상승 0시는 반감
 IF !CUP:MASTER:쾌C
 	TCVAR:MASTER:갈것같다 /= 2
@@ -2511,8 +2511,8 @@ IF TEQUIP:조교대상C사용 && NOWEX:MASTER:사정
 				PRINTFORML %CALLNAME:TARGET%는 입술을 사그러들 수 있어 천천히 페니스로부터 입을 떼어 놓으면
 				{
 				PRINTFORMW \@ DEEP_THROAT 
-				? 입안에 부착한 정액을 손가락끝 (로) 건져 취해,%CALLNAME:MASTER%에 과시하도록(듯이) 혀로 빨아냈다
-				# %CALLNAME:MASTER%에 입안의 정액을 과시하고 나서 목을 울려 삼켰다\@…
+				? 입안에 부착한 정액을 손가락끝 (로) 건져 취해,%CALLNAME:MASTER%에 과시하도록(듯이) 혀로 빨아냈다 
+				# %CALLNAME:MASTER%에 입안의 정액을 과시하고 나서 목을 울려 삼켰다 \@…
 				}
 			;계속
 			ELSE

@@ -22,7 +22,7 @@ PRINTFORML %CALLNAME:MASTER%를%CALLNAME:TARGET%가 조교중
 SIF ASSI:1 >= 0
 	PRINTFORML   (조수 1:%CALLNAME:(ASSI:1)%)　\@ ASSI:2 >= 0 ? (조수 2:%CALLNAME:(ASSI:2)%) # \@
 PRINTFORML [LV {CFLAG:TARGET:0}　EXP {CFLAG:TARGET:1}/{CFLAG:TARGET:4}　NEXT {CFLAG:TARGET:4-CFLAG:TARGET:1}]
-PRINTFORML (나머지 마력{CFLAG:마력})
+PRINTFORML (나머지 마력 {CFLAG:마력})
 
 ;─
 ;이것까지 취득한 보너스의 표시
@@ -30,7 +30,7 @@ PRINTFORML (나머지 마력{CFLAG:마력})
 LINE_WIDTH = WIDTH()
 
 ;추가 조교자
-PRINTFORM \@ FLAG:추가조교자수 ? 추가된 조교자:{FLAG:11,2}인 \n # \@
+PRINTFORM \@ FLAG:추가조교자수 ? 추가된 조교자:{FLAG:11,2}인\n # \@
 
 ;도구. 기본적인 처리는 스테이터스의 소질 분류표시와 같습니다
 ;닮은 처리인 것으로 좀 더 머리 사용하면 함수화할 수 있을 것 같은 생각도 들지만, 지금이라면 좀 더 영리한 방식이 있을지도
@@ -154,15 +154,15 @@ IF FLAG:모드 != 1 || FLAG:디버그 || !(FLAG:AI자유도&1)
 	PRINTL [ 5] 외계의 성구를 연성 한다
 	PRINTL [ 6] 고문도구를 연성 한다
 ENDIF
-PRINTFORML \@ ITEM:9 ? [--] 도구는 이미 커스터마이즈 되고 있다# [10] 도구를 커스터마이즈 한다　　　　　　　　　　　　 마력 3000  요점[%TALENTNAME:59%] \@
+PRINTFORML \@ ITEM:9 ? [--] 도구는 이미 커스터마이즈 되고 있다 # [10] 도구를 커스터마이즈 한다　　　　　　　　　　　　 마력 3000  요점[%TALENTNAME:59%] \@
 SIF !TALENT:남자
-	PRINTFORML [11] \@ TALENT:후타나리 ? 양성화를 원래대로 되돌린다   # 양성화의 의식을 한다\@　　　　　　　　　　　　　　 마력 7000
+	PRINTFORML [11] \@ TALENT:후타나리 ? 양성화를 원래대로 되돌린다   # 양성화의 의식을 한다 \@　　　　　　　　　　　　　　 마력 7000
 SIF !TALENT:남자
-	PRINTFORML \@ TALENT:거유 ? [12] 더 이상 가슴은 크게 할 수 없다# [12] 풍부한 가슴의 의식을 한다　　　　　 \@　　　　　　　　　　 마력 5000
+	PRINTFORML \@ TALENT:거유 ? [12] 더 이상 가슴은 크게 할 수 없다 # [12] 풍부한 가슴의 의식을 한다　　　　　 \@　　　　　　　　　　 마력 5000
 SIF !TALENT:남자
-	PRINTFORML \@ TALENT:빈유 ? [13] 더 이상 가슴은 작게 할 수 없다# [13] 축흉의 의식을 한다　　　　　 \@　　　　　　　　　　 마력 1000
+	PRINTFORML \@ TALENT:빈유 ? [13] 더 이상 가슴은 작게 할 수 없다 # [13] 축흉의 의식을 한다　　　　　 \@　　　　　　　　　　 마력 1000
 SIF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
-	PRINTFORML \@ MAXBASE:MASTER:사정 < 2500 + CFLAG:MASTER:정력한계 * 500 ? [--] 노예의 정력은 단련하면 아직 늘릴 수 있을 것 같다# [16] 노예의 정력의 한계를 올린다　　　　　　　　　　　 마력{(MAXBASE:MASTER:사정 - 2500 - CFLAG:MASTER:정력한계 * 500) / 500 * 1000 + 1000} \@
+	PRINTFORML \@ MAXBASE:MASTER:사정 < 2500 + CFLAG:MASTER:정력한계 * 500 ? [--] 노예의 정력은 단련하면 아직 늘릴 수 있을 것 같다 # [16] 노예의 정력의 한계를 올린다　　　　　　　　　　　 마력{(MAXBASE:MASTER:사정 - 2500 - CFLAG:MASTER:정력한계 * 500) / 500 * 1000 + 1000} \@
 DRAWLINE
 
 ;─
@@ -409,18 +409,18 @@ SELECTCASE RESULT
 				GOTO INPUT_LOOP_SKILL2
 		ENDSELECT
 	CASE 5
-		;이벤트 구상:아이템 연성전
+		;이벤트 구상: 아이템 연성전
 		CALL KOJO_EVENT(110, 13)
 		PRINTFORML %CALLNAME%는 마력을 사용해 외계의 성구를 만들기로 했다…
 		PRINTL [ 0] - 그만둔다
-		PRINTFORML \@ ITEM:0  ? [--] 로터를 가지고 있습니다             # [ 1] 로터　　　　　　　　　　　　　　　　　　　 마력 200\@
-		PRINTFORML \@ ITEM:1  ? [--] 바이브를 가지고 있습니다               # [ 2] 바이브　　　　　　　　　　　　　　　　　　　　 마력 500\@
-		PRINTFORML \@ ITEM:2  ? [--] 애널비즈를 가지고 있습니다         # [ 3] 애널비즈　　　　　　　　　　　　　　　　　 마력 300\@
-		PRINTFORML \@ ITEM:3  ? [--] 페니스밴드를 가지고 있습니다         # [ 4] 페니스밴드　　　　　　　　　　　　　　　　　 마력 500\@
-		PRINTFORML \@ ITEM:11 ? [--] 애널바이브를 가지고 있습니다         # [ 5] 애널바이브　　　　　　　　　　　　　　　　　 마력 1000\@
-		PRINTFORML \@ ITEM:12 ? [--] 클리캡을 가지고 있습니다         # [ 6] 클리캡　　　　　　　　　　　　　　　　　 마력 600\@
-		PRINTFORML \@ ITEM:13 ? [--] 니플캡을 가지고 있습니다       # [ 7] 니플캡　　　　　　　　　　　　　　　　 마력 600\@
-		PRINTFORML \@ ITEM:14 ? [--] 오나홀을 가지고 있습니다           # [ 8] 오나홀　　　　　　　　　　　　　　　　　　 마력 600\@
+		PRINTFORML \@ ITEM:0  ? [--] 로터를 가지고 있습니다             # [ 1] 로터　　　　　　　　　　　　　　　　　　　 마력 200 \@
+		PRINTFORML \@ ITEM:1  ? [--] 바이브를 가지고 있습니다               # [ 2] 바이브　　　　　　　　　　　　　　　　　　　　 마력 500 \@
+		PRINTFORML \@ ITEM:2  ? [--] 애널비즈를 가지고 있습니다         # [ 3] 애널비즈　　　　　　　　　　　　　　　　　 마력 300 \@
+		PRINTFORML \@ ITEM:3  ? [--] 페니스밴드를 가지고 있습니다         # [ 4] 페니스밴드　　　　　　　　　　　　　　　　　 마력 500 \@
+		PRINTFORML \@ ITEM:11 ? [--] 애널바이브를 가지고 있습니다         # [ 5] 애널바이브　　　　　　　　　　　　　　　　　 마력 1000 \@
+		PRINTFORML \@ ITEM:12 ? [--] 클리캡을 가지고 있습니다         # [ 6] 클리캡　　　　　　　　　　　　　　　　　 마력 600 \@
+		PRINTFORML \@ ITEM:13 ? [--] 니플캡을 가지고 있습니다       # [ 7] 니플캡　　　　　　　　　　　　　　　　 마력 600 \@
+		PRINTFORML \@ ITEM:14 ? [--] 오나홀을 가지고 있습니다           # [ 8] 오나홀　　　　　　　　　　　　　　　　　　 마력 600 \@
 		$INPUT_LOOP_ITEM1
 		INPUT
 		SELECTCASE RESULT
@@ -579,15 +579,15 @@ SELECTCASE RESULT
 		CALL KOJO_EVENT(110, 22)
 		PRINTFORML %CALLNAME%는 마력을 사용해 고문도구를 만들기로 했다…
 		PRINTL [ 0] - 그만둔다
-		PRINTFORML \@ ITEM:20 ? [--] 아이마스크를 가지고 있습니다           # [ 1] 아이마스크　　　　　　　　　　　　　　　　　　 마력 300\@
-		PRINTFORML \@ ITEM:21 ? [--] 채찍을 가지고 있습니다                   # [ 2] 채찍　　　　　　　　　　　　　　　　　　　　　　 마력 500\@
-		PRINTFORML \@ ITEM:22 ? [--] 줄을 가지고 있습니다                   # [ 3] 줄　　　　　　　　　　　　　　　　　　　　　　 마력 300\@
-		PRINTFORML \@ ITEM:30 ? [--] 볼개그를 가지고 있습니다         # [ 4] 볼개그　　　　　　　　　　　　　　　　　 마력 300\@
-		PRINTFORML \@ ITEM:31 ? [--] 바늘을 가지고 있습니다                   # [ 5] 바늘　　　　　　　　　　　　　　　　　　　　　　 마력 500\@
-		PRINTFORML \@ ITEM:32 ? [--] 관장세트를 가지고 있습니다           # [ 6] 관장세트　　　　　　　　　　　　　　　　　　 마력 1000\@
-		PRINTFORML \@ ITEM:33 ? [--] 삼각목마를 가지고 있습니다             # [ 7] 삼각목마　　　　　　　　　　　　　　　　　　　 마력 2000\@
-		PRINTFORML \@ ITEM:40 ? [--] 대거울을 가지고 있습니다                 # [ 8] 대거울　　　　　　　　　　　　　　　　　　　　　 마력 1000\@
-		PRINTFORML \@ ITEM:42 ? [--] 목걸이를 가지고 있습니다                 # [ 9] 목걸이　　　　　　　　　　　　　　　　　　　　　 마력 1500\@
+		PRINTFORML \@ ITEM:20 ? [--] 아이마스크를 가지고 있습니다           # [ 1] 아이마스크　　　　　　　　　　　　　　　　　　 마력 300 \@
+		PRINTFORML \@ ITEM:21 ? [--] 채찍을 가지고 있습니다                   # [ 2] 채찍　　　　　　　　　　　　　　　　　　　　　　 마력 500 \@
+		PRINTFORML \@ ITEM:22 ? [--] 줄을 가지고 있습니다                   # [ 3] 줄　　　　　　　　　　　　　　　　　　　　　　 마력 300 \@
+		PRINTFORML \@ ITEM:30 ? [--] 볼개그를 가지고 있습니다         # [ 4] 볼개그　　　　　　　　　　　　　　　　　 마력 300 \@
+		PRINTFORML \@ ITEM:31 ? [--] 바늘을 가지고 있습니다                   # [ 5] 바늘　　　　　　　　　　　　　　　　　　　　　　 마력 500 \@
+		PRINTFORML \@ ITEM:32 ? [--] 관장세트를 가지고 있습니다           # [ 6] 관장세트　　　　　　　　　　　　　　　　　　 마력 1000 \@
+		PRINTFORML \@ ITEM:33 ? [--] 삼각목마를 가지고 있습니다             # [ 7] 삼각목마　　　　　　　　　　　　　　　　　　　 마력 2000 \@
+		PRINTFORML \@ ITEM:40 ? [--] 대거울을 가지고 있습니다                 # [ 8] 대거울　　　　　　　　　　　　　　　　　　　　　 마력 1000 \@
+		PRINTFORML \@ ITEM:42 ? [--] 목걸이를 가지고 있습니다                 # [ 9] 목걸이　　　　　　　　　　　　　　　　　　　　　 마력 1500 \@
 		$INPUT_LOOP_ITEM2
 		INPUT
 		SELECTCASE RESULT
@@ -620,7 +620,7 @@ SELECTCASE RESULT
 					REUSELASTLINE 마력이 부족한 것 같다…
 					GOTO INPUT_LOOP_ITEM2
 				ENDIF
-				CALL PRINT_DIALOG(@"「채찍」을 연성 합니다. 좋습니까?",1,1,1)
+				CALL PRINT_DIALOG(@"「채찍」를 연성 합니다. 좋습니까?",1,1,1)
 				CALL PRINT_CHOICE(,"네",1,"아니오",2,)
 				IF RESULT == 1
 					CFLAG:마력 -= 500
@@ -674,7 +674,7 @@ SELECTCASE RESULT
 					REUSELASTLINE 마력이 부족한 것 같다…
 					GOTO INPUT_LOOP_ITEM2
 				ENDIF
-				CALL PRINT_DIALOG(@"「바늘」을 연성 합니다. 좋습니까?",1,1,1)
+				CALL PRINT_DIALOG(@"「바늘」를 연성 합니다. 좋습니까?",1,1,1)
 				CALL PRINT_CHOICE(,"네",1,"아니오",2,)
 				IF RESULT == 1
 					CFLAG:마력 -= 500
@@ -799,7 +799,7 @@ SELECTCASE RESULT
 			CALL BASE_SETUP_PENIS(TARGET)
 			CALL KOJO_EVENT(110, 33)
 			CALL VOIDLINE_IF(RESULT)
-			PRINTFORMW %CALLNAME:TARGET%는\@ TALENT:후타나리 ? 후타나리# 여자 아이\@가 되었습니다
+			PRINTFORMW %CALLNAME:TARGET%는\@ TALENT:후타나리 ? 후타나리 # 여자 아이 \@가 되었습니다
 		ENDIF
 	CASE 12
 		SIF TALENT:남자 || TALENT:거유
@@ -818,7 +818,7 @@ SELECTCASE RESULT
 			TALENT:빈유 = 0
 			CALL KOJO_EVENT(110, 34)
 			CALL VOIDLINE_IF(RESULT)
-			PRINTFORMW %CALLNAME:TARGET%는\@ TALENT:거유 ? 거유# 보통 젖가슴\@가 되었습니다
+			PRINTFORMW %CALLNAME:TARGET%는\@ TALENT:거유 ? 거유 # 보통 젖가슴 \@가 되었습니다
 		ENDIF
 	CASE 13
 		SIF TALENT:남자 || TALENT:빈유
@@ -837,7 +837,7 @@ SELECTCASE RESULT
 			TALENT:거유 = 0
 			CALL KOJO_EVENT(110, 35)
 			CALL VOIDLINE_IF(RESULT)
-			PRINTFORMW %CALLNAME:TARGET%는\@ TALENT:빈유 ? 빈유# 보통 젖가슴\@가 되었습니다
+			PRINTFORMW %CALLNAME:TARGET%는\@ TALENT:빈유 ? 빈유 # 보통 젖가슴 \@가 되었습니다
 		ENDIF
 	CASE 16
 		SIF MAXBASE:MASTER:사정 < 2500 + CFLAG:MASTER:정력한계 * 500
