@@ -67,7 +67,7 @@ SOURCE:MASTER:공포 += 치정증감
 @CALC_SOURCE11
 
 ;성별, 동성 따위의 처리
-;남성혐오 때 사랑 SOURCE 감쇠
+;남성혐오시 사랑 SOURCE 감쇠
 SIF TALENT:MASTER:남자 && TALENT:남성혐오 && CFLAG:MASTER:조교레벨 + CFLAG:조교레벨 < 10
 	TIMES SOURCE:MASTER:사랑 , 0.60
 ;동성시, ABL에 의해 사랑 SOURCE 증감
@@ -100,7 +100,7 @@ SIF PALAM:MASTER:욕정 < 5000
 SIF TALENT:MASTER:억압 || TALENT:MASTER:반항적
 	CUP:MASTER:억울 += SOURCE:MASTER:성행동 * LINE_CALC(ABL:MASTER:봉사정신, "0→180, 5→30, LIMIT/30～180") / 500
 
-;성행동SOURCE로부터 보정치를 만든다
+;성행동 SOURCE로부터 보정치를 만든다
 LOCAL = SOURCE:MASTER:성행동 * (100 - CFLAG:MASTER:조교레벨) * (100 - CFLAG:조교레벨) / 20000
 LOCAL = LIMIT(LOCAL, 10, 500)
 
@@ -130,8 +130,8 @@ SIF TFLAG:벌플래그 > 0
 ;공포의 소스, 아픔에강함/약한 것 영향을 받아, 마조끼와 고통중독이 오르면 거의 사라집니다
 SOURCE:MASTER:공포 += SOURCE:MASTER:아픔 * (20 - ABL:MASTER:마조끼 - ABL:MASTER:고통중독 * 2 + TALENT:MASTER:아픔에약함 * 5 - TALENT:MASTER:아픔에강함 * 3) / 20
 
-;욕정, 마조끼와 고통중독, 드 M, 그리고 조교자의 새디즘을 본다
-CUP:MASTER:욕정 += SOURCE:MASTER:아픔 * (ABL:MASTER:마조끼 + ABL:MASTER:고통중독 * 2 + TALENT:MASTER:드M * 5) * (3 + TALENT:새디즘) / 60
+;욕정, 마조끼와 고통중독, 도M, 그리고 조교자의 새디즘을 본다
+CUP:MASTER:욕정 += SOURCE:MASTER:아픔 * (ABL:MASTER:마조끼 + ABL:MASTER:고통중독 * 2 + TALENT:MASTER:도M * 5) * (3 + TALENT:새디즘) / 60
 
 ;아픔 SOURCE로부터 보정치를 만든다
 LOCAL = 50 + (SOURCE:MASTER:아픔 - 50) * (50 - CFLAG:MASTER:조교레벨 - ABL:MASTER:순종 * 2) / 200
@@ -168,8 +168,8 @@ SIF LOCAL > 750 && RAND:4 > 0
 ;─
 @CALC_SOURCE14
 
-;욕정, 마조끼와 구속중독, 드 M, 그리고 조교자의 새디즘을 본다
-CUP:MASTER:욕정 += SOURCE:MASTER:구속 * (ABL:MASTER:마조끼 + ABL:MASTER:구속중독 * 2 + TALENT:MASTER:드M * 5) * (3 + TALENT:새디즘) / 60
+;욕정, 마조끼와 구속중독, 도M, 그리고 조교자의 새디즘을 본다
+CUP:MASTER:욕정 += SOURCE:MASTER:구속 * (ABL:MASTER:마조끼 + ABL:MASTER:구속중독 * 2 + TALENT:MASTER:도M * 5) * (3 + TALENT:새디즘) / 60
 
 ;굴복, 순종을 본다
 CUP:MASTER:굴복 += SOURCE:MASTER:구속 * (5 + ABL:MASTER:순종) / 25
@@ -178,13 +178,13 @@ CUP:MASTER:굴복 += SOURCE:MASTER:구속 * (5 + ABL:MASTER:순종) / 25
 CUP:MASTER:고통 += SOURCE:MASTER:구속 * (11 - ABL:MASTER:순종 * 2) / 50
 
 ;불쾌
-CUP:MASTER:불쾌 += SOURCE:MASTER:구속 * (61 - ABL:MASTER:마조끼 - ABL:MASTER:구속중독 * 3 - CFLAG:MASTER:조교레벨 - TALENT:MASTER:드M * 5) / 50
+CUP:MASTER:불쾌 += SOURCE:MASTER:구속 * (61 - ABL:MASTER:마조끼 - ABL:MASTER:구속중독 * 3 - CFLAG:MASTER:조교레벨 - TALENT:MASTER:도M * 5) / 50
 ;;불쾌 상승이 마이나스라면 0에 갈아넣는다
 SIF CUP:MASTER:불쾌 < 0
 	CUP:MASTER:불쾌 = 0
 
 ;억울
-CUP:MASTER:억울 += SOURCE:MASTER:구속 * (2 + TALENT:MASTER:비관적 - TALENT:MASTER:낙관적) / (3 + CFLAG:MASTER:조교레벨 + ABL:MASTER:구속중독 * 3 + TALENT:MASTER:드M * 10)
+CUP:MASTER:억울 += SOURCE:MASTER:구속 * (2 + TALENT:MASTER:비관적 - TALENT:MASTER:낙관적) / (3 + CFLAG:MASTER:조교레벨 + ABL:MASTER:구속중독 * 3 + TALENT:MASTER:도M * 10)
 
 ;조교 대상 체력, 기력
 LOCAL = SOURCE:MASTER:구속 * (50 - CFLAG:MASTER:조교레벨 - ABL:MASTER:순종 * 3) / 600

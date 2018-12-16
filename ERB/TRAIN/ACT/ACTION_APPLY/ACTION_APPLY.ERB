@@ -30,20 +30,20 @@ VARSET LOCALS
 
 ;거절 처리 호출
 
-;ACT분류가 성교계나 성교중에, REACT분류가 날뛰는 계였던 경우
+;ACT분류가 성교계나 성교중에, REACT분류가날뛴다계였던 경우
 IF (TFLAG:ACT분류 == 3 || TEQUIP:성교중) && IS_COMGRONAME("날뛴다")
 	;성교의 캔슬 처리를 호출해
 	LOCALS = CANCEL_INSERT_TO_M
-;ACT분류가 성교 봉사계인가 성교봉사중에, REACT분류가 날뛰는 계였던 경우		역레의 경우는 저항 할 수 없게@/L
+;ACT분류가 성교 봉사계나 성교봉사중에, REACT분류가날뛴다계였던 경우		역레의 경우는 저항 할 수 없게@/L
 ELSEIF (TFLAG:ACT분류 == 10 || TEQUIP:성교봉사중) && IS_COMGRONAME("날뛴다") && !IS_NOWACTNAME("역강간")
 	;성교 봉사의 캔슬 처리를 호출해
 	LOCALS = CANCEL_INSERT_TO_T
-;줄/아이마스크/볼개그 장착중에, REACT분류가 허가를청한다 계였던 경우
-ELSEIF (TEQUIP:줄 || TEQUIP:아이마스크 || TEQUIP:볼개그) && IS_COMGRONAME("허가를청한다")
+;줄/아이마스크/볼개그 장착중에, REACT분류가용서를빈다계였던 경우
+ELSEIF (TEQUIP:줄 || TEQUIP:아이마스크 || TEQUIP:볼개그) && IS_COMGRONAME("용서를빈다")
 	;구속 캔슬 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_RESTRAINT
-;삼각목마 사용중에, REACT분류가 허가를청한다 계였던 경우
-ELSEIF TEQUIP:삼각목마 && IS_COMGRONAME("허가를청한다")
+;삼각목마 사용중에, REACT분류가용서를빈다계였던 경우
+ELSEIF TEQUIP:삼각목마 && IS_COMGRONAME("용서를빈다")
 	;삼각목마 캔슬 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_W_HORSE
 ;--------------------------------------------------------------
@@ -52,17 +52,17 @@ ELSEIF TEQUIP:삼각목마 && IS_COMGRONAME("허가를청한다")
 
 [SKIPSTART]
 
-;야외플레이 안에, REACT분류가 허가를청한다 계였던 경우
-ELSEIF TEQUIP:야외플레이 && IS_COMGRONAME("허가를청한다")
+;야외플레이중에, REACT분류가용서를빈다계였던 경우
+ELSEIF TEQUIP:야외플레이 && IS_COMGRONAME("용서를빈다")
 	;야외플레이 캔슬 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_OUTDOOR
-;대거울 사용중에, REACT분류가 허가를청한다 계였던 경우
-ELSEIF TEQUIP:대거울 && IS_COMGRONAME("허가를청한다")
+;대거울 사용중에, REACT분류가용서를빈다계였던 경우
+ELSEIF TEQUIP:대거울 && IS_COMGRONAME("용서를빈다")
 	;대거울 캔슬 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_MIRROR
-;코스프레중에, REACT분류가 허가를청한다 계였던 경우
-ELSEIF TEQUIP:MASTER:코스프레 && IS_COMGRONAME("허가를청한다")
-	;코스프레캐셀 처리를 호출해
+;코스프레중에, REACT분류가용서를빈다계였던 경우
+ELSEIF TEQUIP:MASTER:코스프레 && IS_COMGRONAME("용서를빈다")
+	;코스프레 캔슬 처리를 호출해
 	LOCALS = CANCEL_TEQUIP_COSPLAY
 
 [SKIPEND]
@@ -76,16 +76,16 @@ ELSEIF TEQUIP:MASTER:코스프레 && IS_COMGRONAME("허가를청한다")
 ELSEIF IS_NOWACTNAME("공중육변기플레이")
 ;ACT가 옷을 벗어/옷을 입은 경우
 ELSEIF IS_NOWACTNAME("의상의변경을요구한다")
-;ACT가 쉬게한다의 경우
+;ACT가쉬게한다의 경우
 ELSEIF IS_NOWACTNAME("쉬게한다")
-;ACT가 영양제를먹인다의 경우
+;ACT가영양제를먹인다의 경우
 ELSEIF IS_NOWACTNAME("영양제를먹인다")
-;ACT가 치료하는 것 경우
+;ACT가치료한다의 경우
 ELSEIF IS_NOWACTNAME("치료한다")
 
 ;특수 상태변화 처리의 호출
 
-;조교 대상 자위중, 행그렇게 상태로 초조하게 해 종료/없음
+;조교 대상 자위중, 갈것같다상태로 초조하게해 종료/없음
 ELSEIF GETBIT(TEQUIP:자위중, 0) && TCVAR:MASTER:갈것같다 && TCVAR:MASTER:초조하게해번 < 2
 	;자위절정 처리를 호출해
 	LOCALS = ONANIE_EX
@@ -109,7 +109,7 @@ IF !STRCOUNT(LOCALS, "CANCEL")
 	CALL TRAIN_MESSAGE2
 ENDIF
 
-;리액션이 날뛰는 계였던 경우, 자세를 기립, 위치를 리셋트
+;리액션이날뛴다계였던 경우, 자세를 기립, 위치를 리셋트
 IF IS_COMGRONAME("날뛴다")
 	TCVAR:MASTER:REACT자세변화 = 1
 	TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세

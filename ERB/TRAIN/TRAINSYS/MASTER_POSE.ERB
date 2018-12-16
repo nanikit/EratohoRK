@@ -42,9 +42,9 @@ IF GETBIT(TEQUIP:자위중, 0)
 	TFLAG:P사용중++
 	TFLAG:손사용중++
 ENDIF
-;안면승마 안
+;안면승마중
 IF TEQUIP:안면승마 || TEQUIP:안면승마애널
-	TFLAG:구사용중 += 2
+	TFLAG:입사용중 += 2
 	;위로돌리고
 	TFLAG:위로돌리고 = 2
 ENDIF
@@ -63,7 +63,7 @@ TRYCALLFORM MASTER_POSE_ACT{TFLAG:ACT}
 
 ;안면승마, 밀어넘어뜨리기에 의한 강제 위로돌리고
 ;	//MASTER_POSE는 ACTION_APPLY보다 먼저 처리된다
-;	//그리고 성교, 성적봉사시의 TEQUIP:안면승마 등의 리셋트는 ACTION_APPLY내에서 행해진다(즉, 이 개소가 처리되는 시점에서는 리셋트되어 있지 않다)
+;	//그리고 성교, 성적봉사시의 TEQUIP:안면승마등의 리셋트는 ACTION_APPLY내에서 행해진다(즉, 이 개소가 처리되는 시점에서는 리셋트되어 있지 않다)
 ;	//이번 메뉴가 성교, 성적봉사라면 연주하도록(듯이) 하지 않으면 다양하게 맛이 없게 된다(ACT32:승마위시에 조교자가 위가 되거나 한다)
 ;	//자세 제어 함수 쇄신이 대기하고 있으므로, 우선 최소한의 수당만(2015/02/01)
 IF !MENUMATCH(TFLAG:ACT, "성교") && !MENUMATCH(TFLAG:ACT, "성적봉사") && (TEQUIP:안면승마 || TEQUIP:안면승마애널 || TEQUIP:밀어넘어뜨리기중 || IS_NOWACTNAME("밀어넘어뜨린다"))
@@ -177,7 +177,7 @@ ELSEIF TEQUIP:성교봉사중
 			TCVAR:MASTER:위치상하 = 0
 	ENDSELECT
 ;ACT마다의 자세 정보를 대입
-;다만 COM 나름으로는 변경이 된다(날뛴다 따위)
+;다만 COM 나름으로는 변경이 된다(날뛴다 등)
 ELSE
 	;ACT분류에 의한 설정
 	SELECTCASE MENU(GET_ACTM(TFLAG:ACT))
@@ -264,7 +264,7 @@ ELSE
 									TCVAR:MASTER:위치전후 = 1
 								;그 이외
 								CASEELSE
-									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
 									IF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
@@ -294,7 +294,7 @@ ELSE
 									TCVAR:MASTER:위치전후 = 1
 								;그 이외
 								CASEELSE
-									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
 									IF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
@@ -324,7 +324,7 @@ ELSE
 									TCVAR:MASTER:위치전후 = 1
 								;그 이외
 								CASEELSE
-									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
 									IF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
@@ -350,7 +350,7 @@ ELSE
 							SELECTCASE TCVAR:MASTER:전회의자세
 								;위로돌리고
 								CASE 1
-									;갈 것 같으면 3/4으로 안정도에 변화한다
+									;갈것같다라면 3/4으로 안정도에 변화한다
 									IF TCVAR:MASTER:갈것같다 && RAND:4
 										TCVAR:MASTER:자세 = 2
 										TCVAR:MASTER:위치상하 = 0
@@ -368,12 +368,12 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;갈 것 같으면 3/4으로 무릎서기에 변화한다
+									;갈것같다라면 3/4으로 무릎서기에 변화한다
 									IF TCVAR:MASTER:갈것같다 && RAND:4
 										TCVAR:MASTER:자세 = 10
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
-									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
 									ELSEIF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
@@ -438,7 +438,7 @@ ELSE
 							SELECTCASE TCVAR:MASTER:전회의자세
 								;위로돌리고
 								CASE 1
-									;갈 것 같으면 3/4으로 안정도에 변화한다
+									;갈것같다라면 3/4으로 안정도에 변화한다
 									IF TCVAR:MASTER:갈것같다 && RAND:4
 										TCVAR:MASTER:자세 = 2
 									;1/4로 안정도에 변화한다
@@ -452,10 +452,10 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;갈 것 같으면 3/4으로 무릎서기에 변화한다
+									;갈것같다라면 3/4으로 무릎서기에 변화한다
 									IF TCVAR:MASTER:갈것같다 && RAND:4
 										TCVAR:MASTER:자세 = 10
-									;C로 간 직후는 1/2으로 위로돌리고로 변화한다
+									;C로 간 직후는 1/2으로 위로 향해 변화한다
 									ELSEIF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
@@ -523,7 +523,7 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;B로 간 직후는 1/2으로 위로돌리고로 변화한다
+									;B로 간 직후는 1/2으로 위로 향해 변화한다
 									IF NOWEX:MASTER:B절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
@@ -599,7 +599,7 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;B로 간 직후는 1/2으로 위로돌리고로 변화한다
+									;B로 간 직후는 1/2으로 위로 향해 변화한다
 									IF NOWEX:MASTER:C절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
@@ -828,15 +828,15 @@ ELSEIF TCVAR:ARG:조수ACT == 32
 ELSEIF TCVAR:ARG:조수ACT == 40
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
-	TFLAG:구사용중 += 1
+	TFLAG:입사용중 += 1
 ;안면승마
 ELSEIF TCVAR:ARG:조수ACT == 41
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
-	TFLAG:구사용중 = 2
+	TFLAG:입사용중 = 2
 ;다리를빨게한다
 ELSEIF TCVAR:ARG:조수ACT == 42
-	TFLAG:구사용중 = 2
+	TFLAG:입사용중 = 2
 ENDIF
 
 
@@ -913,7 +913,7 @@ ENDIF
 @MASTER_POSE_ACT15
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:구사용중 += 1
+	TFLAG:입사용중 += 1
 ;─
 ;016, 조개 우려라/가랑이 하는(S/N)(쾌C, 접촉, 사랑, 성행동, 불결, 쾌c)
 ;─
@@ -1072,7 +1072,7 @@ ENDIF
 		TFLAG:위로돌리고 = 2
 	SIF TEQUIP:조교대상C사용 == 1 || TEQUIP:조교대상C사용 == 2 || TEQUIP:조교대상C사용 == 4
 		TFLAG:위로돌리고 = 2
-	TFLAG:구사용중 = 2
+	TFLAG:입사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
@@ -1096,14 +1096,14 @@ ENDIF
 ;055, 다리빨고강제(N/H/A)[벌](불결, 일탈, 트라우마)
 ;─
 @MASTER_POSE_ACT55
-	TFLAG:구사용중 = 2
+	TFLAG:입사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─
 ;056, 이라마치오(H/A)[벌](접촉, 사랑역, 성행동, 상해, 구속<=머리를 잡는 일, 불결, 일탈, 트라우마, 쾌c)
 ;─
 @MASTER_POSE_ACT56
-	TFLAG:구사용중 = 2
+	TFLAG:입사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 
@@ -1205,7 +1205,7 @@ ENDIF
 @MASTER_POSE_ACT302
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:구사용중 += 2
+	TFLAG:입사용중 += 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 ;─

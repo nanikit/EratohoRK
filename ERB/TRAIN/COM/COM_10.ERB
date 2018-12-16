@@ -1,5 +1,5 @@
 ﻿;─
-;010, 부끄러워한다(노출역, 굴종, 반항, 소극적 따르는, 벌포인트)
+;010, 부끄러워한다(노출역, 굴종, 반항, 소극적 따른다, 벌포인트)
 ;─
 @COM10
 LOCAL = 200 + MARK:반항각인 * 10 - CFLAG:MASTER:조교레벨 * 15
@@ -18,10 +18,10 @@ SIF LOCAL > 0 && BASE:초조 / 100 + RAND:5 > BASE:만족 / 100 + MARK:굴복각
 	TFLAG:벌포인트 += 1 + RAND:3
 ;쾌감에 의해 파생
 IF SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B > 10
-	;파생:쾌감에 부끄러워한다
+	;파생:쾌감에부끄러워한다
 	TFLAG:REACT파생 = 1
 ELSE
-	;파생:상황에 부끄러워한다
+	;파생:상황에부끄러워한다
 	TFLAG:REACT파생 = 0
 ENDIF
 ;COM 분류
@@ -32,7 +32,7 @@ RETURN 1
 
 
 ;─
-;011, 싫어한다(트라우마, 반항, 날뛰는, 벌포인트)
+;011, 싫어한다(트라우마, 반항, 날뛴다, 벌포인트)
 ;─
 @COM11
 ;트라우마화 가속
@@ -41,7 +41,7 @@ TIMES SOURCE:MASTER:트라우마 , 1.20
 LOCAL = 200 + SOURCE:MASTER:트라우마 / 3 - MARK:굴복각인 * 20 - GET_ABL(MASTER, "순종") * 5 + MARK:반항각인 * 20
 LOCAL = LIMIT(LOCAL, 0, 1000)
 SOURCE:MASTER:반항 += LOCAL
-;COM32가 날뛰는 것보다 판정이 약함
+;COM32의날뛴다보다 판정이 약함
 LOCAL:1 = MARK:반항각인 + BASE:MASTER:체력 / 150 + BASE:MASTER:기력 / 100 - TALENT:MASTER:작은체형 * 5 + TALENT:MASTER:장신 * 5 + PALAM:MASTER:반항 / 1000 - (TEQUIP:줄) * 3 - TEQUIP:아이마스크 * 4 - TEQUIP:볼개그
 LOCAL:3 = BASE:체력 / 120 + BASE:기력 / 80 - TALENT:작은체형 * 5 + TALENT:장신 * 5 + GET_TRAINLV(TARGET) * 2
 ;조수의 인원수와 체격
@@ -107,7 +107,7 @@ SIF ASSI > 0
 ;SP행동
 SIF TFLAG:SP행동 > 199
 	LOCAL:2 += 10
-;보정치를 만족하면		역강간 저항 할 수 없어 좋은 것 같으니까, 날뛰는 취급이 되지 않게 변경@/L
+;보정치를 만족하면		역강간 저항 할 수 없어 좋은 것 같으니까, 날뛴다취급이 되지 않게 변경@/L
 IF LOCAL:1 > LOCAL:2 + LOCAL:3 && TEQUIP:삼각목마 == 0 && !IS_NOWACTNAME("역강간")
 	;벌포인트 가산
 	TFLAG:벌포인트 += (LOCAL:1 - LOCAL:3) / 2 + 3
@@ -122,7 +122,7 @@ IF !IS_COMGRONAME("날뛴다") || IS_NOWACTNAME("역강간")
 	CALL SET_COMGRO("소극적 따른다")
 	;COM 인상
 	CALL SET_COMIMP("나쁜인상")
-	;파생:싫어하지만 ACT는 방해하지 않고
+	;파생:싫어한다가 ACT는 방해하지 않고
 	TFLAG:REACT파생 = 0
 ELSE
 	DOWNBASE:체력 += 5 * (4 + MARK:반항각인 + TALENT:MASTER:장신 * 2 - TALENT:MASTER:작은체형 * 2)
@@ -173,7 +173,7 @@ RETURN 1
 
 
 ;─
-;013, 겁없게웃는다(트라우마역, 반항, 소극적 따르는, 벌포인트)
+;013, 겁없게웃는다(트라우마역, 반항, 소극적 따른다, 벌포인트)
 ;─
 @COM13
 ;트라우마화 감속
@@ -217,7 +217,7 @@ TCVAR:MASTER:인내 = 3
 ;애원 성립의 판정
 IF SOURCE:MASTER:반항 < 500 && (TALENT:상냥함 * 5 - TALENT:심술쟁이 * 5 - BASE:초조 / 100 + BASE:만족 / 100 > 0 + CFLAG:아라이먼트 / 10) && TEQUIP:볼개그 == 0
 	;COM 분류
-	CALL SET_COMGRO("허가를청한다")
+	CALL SET_COMGRO("용서를빈다")
 	;COM 인상
 	CALL SET_COMIMP("0에가까워짐")
 	;파생:애원

@@ -134,17 +134,17 @@ ENDIF
 ;조교 대상의 반응에 의한 변동(처음은 이것이 없었지만보다 올바르게 조교 대상의 행위를 반응하기 위해(때문에) 그치는 유리한 구추가했습니다)
 ;─
 ;쾌감을받아들인다/안에내！
-IF IS_NOWCOMNAME("쾌감을받아들인다/안에내！/가게해!")
+IF IS_NOWCOMNAME("쾌감을받아들인다/안에내！/가게해！")
 	TIMES CUP:MASTER:공순 , 1.10
 	TIMES CUP:MASTER:불쾌 , 0.50
 	TIMES CUP:MASTER:억울 , 0.25
-;붙임성좋게응답한다/적극적한다
-ELSEIF IS_NOWCOMNAME("붙임성좋게응답한다/적극적한다")
+;붙임성좋게대답한다/적극적한다
+ELSEIF IS_NOWCOMNAME("붙임성좋게대답한다/적극적한다")
 	TIMES CUP:MASTER:반항 , 0.80
 	TIMES CUP:MASTER:불쾌 , 0.60
 	TIMES CUP:MASTER:억울 , 0.20
-;애정을담아준다/좀더하드하게해/기분좋게해
-ELSEIF IS_NOWCOMNAME("애정을담아준다/좀더하드하게해/기분좋다！/기분좋게해")
+;애정을담아준다/더하드하게/기분좋게해줘
+ELSEIF IS_NOWCOMNAME("애정을담아준다/더하드하게/기분좋다！/기분좋게해줘")
 	TIMES CUP:MASTER:공포 , 0.50
 	TIMES CUP:MASTER:공순 , 1.25
 	TIMES CUP:MASTER:불쾌 , 0.20
@@ -267,7 +267,7 @@ LOCAL = MAX(LOCAL:1, LOCAL:2, LOCAL:3, LOCAL:5)
 BASE:흥미 += LINE_CALC(LOCAL, "300→10, 1500→50, LIMIT/10～50") + (TALENT:호기심 - TALENT:무관심) * LINE_CALC(LOCAL, "300→5, 1500→20, LIMIT/5～20")
 
 ;조급함의 조교자는 부의 반응에 지긋지긋
-;조급함 때, 저항계계가 규정치에 이르고 있으면 흥미 감소
+;조급함시, 저항계계가 규정치에 이르고 있으면 흥미 감소
 SIF TALENT:조급함
 	BASE:흥미 -= LINE_CALC(LOCAL:4, "0→0, 1500→150, LIMIT/0～150")
 
@@ -295,7 +295,7 @@ DOWNBASE:초조 -= LIMIT(LOCAL:4 / 15, 20, 100) + (TALENT:조급함 - TALENT:신
 
 ;애원/날뛴다/요구를 거부
 ;(REACT시 소질에 의해 추가 보정)
-IF IS_COMGRONAME("허가를청한다")
+IF IS_COMGRONAME("용서를빈다")
 	DOWNBASE:초조 -= 25 - TALENT:상냥함 * 25 + TALENT:심술쟁이 * 10 + TALENT:새디즘 * 25 - TALENT:MASTER:연모 * 5 - TALENT:MASTER:예속 * 10 + PALAM:MASTER:반항 / 250
 ELSEIF IS_COMGRONAME("날뛴다")
 	DOWNBASE:초조 -= 50 + PALAM:MASTER:반항 / 200 - TALENT:신중 * 15 + TALENT:조급함 * 20 + TALENT:프라이드높음 * 20 + MARK:반항각인 * 2
@@ -307,7 +307,7 @@ ENDIF
 SIF TALENT:광기
 	DOWNBASE:초조 -= (10 - RAND:20) * (1 + RAND:10)
 
-;초조해 때, 조교 대상이 온순하면 만족도에 응해 초조 감쇠
+;초조시, 조교 대상이 온순하면 만족도에 응해 초조 감쇠
 SIF DOWNBASE:초조 > MAXBASE:초조 / 3 && CUP:MASTER:반항 < 10
 	DOWNBASE:초조 += BASE:만족 / 20
 

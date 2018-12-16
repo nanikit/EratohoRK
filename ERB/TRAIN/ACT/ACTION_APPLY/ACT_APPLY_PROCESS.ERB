@@ -106,7 +106,7 @@ SOURCE:MASTER:노출 /= 3
 ;대거울을 치운다
 TEQUIP:대거울 = 0
 
-;코스프레캐셀
+;코스프레 캔슬
 @CANCEL_TEQUIP_COSPLAY
 ;발생 카운트
 CALLF CANCEL_TEQUIP_COUNT("코스프레", "발생")
@@ -215,7 +215,7 @@ IF LOCAL > 0
 	LOCAL:1 = 40 - (TALENT:약학지식 * 5 + GET_TRAINLV(TARGET) + 1) * (4 + ABL:기교 + TALENT:금단의지식 * 2) / 8
 	;조수가 도왔을 경우, 조수 약학지식, 기교에 의해 경감
 	LOCAL:1 -= TFLAG:조수ACT == 71 ? LOCAL:1 / (4 - TALENT:ASSI:약학지식) + (TALENT:ASSI:약학지식 * 3 + RAND:2) * (ABL:ASSI:기교 + 1 + RAND:3) # 0
-	;현재미약히트가 정이면, 난수로 2-4를 추가
+	;현재 미약히트가 정이면, 난수로 2-4를 추가
 	LOCAL:1 += FLAG:미약히트 > 0 ? 2 + RAND:3 # 0
 	;미약히트에 가산, 이 때 0 이하이면 난수로 1-3을 가산
 	FLAG:미약히트 += LOCAL:1 < 1 ? 1 + RAND:3 # LOCAL:1
@@ -272,9 +272,9 @@ ENDSELECT
 ;(연속 사용을 억제한다)
 LOCAL -= FLAG:로시히트
 
-;윗도리가 아직 남아 있다(한편 강제탈의의 설정이나 줄장착이 없다)라면 강제탈의를 호출
+;윗도리가 아직 남아 있다(한편 강제탈의의 설정이나 줄장착이 없다)라면 강제탈의를 호출해
 IF (TEQUIP:MASTER:하반신윗도리 || TEQUIP:MASTER:상반신윗도리 || TEQUIP:MASTER:전신윗도리) && !TFLAG:강제탈의 && !TEQUIP:줄
-	;반반의 확률로 상＋시모카미착, 액세서리까지 강제탈의
+	;반반의 확률로 상＋시모카미착, 악세사리─까지 강제탈의
 	TFLAG:강제탈의 = 3 + (RAND:2 * 4)
 	;강제탈의 최적화
 	CALL KYOUSEI_DATUI
@@ -470,9 +470,9 @@ SOURCE:MASTER:쾌V += L_V
 SOURCE:MASTER:쾌A += L_A
 SOURCE:MASTER:쾌B += TALENT:MASTER:남자 ? 0 # L_B * 2
 
-;조교 대상 기교, 조교레벨, 바이브, 애널바이브 장착에 응해 성행동SOURCE 증가
+;조교 대상 기교, 조교레벨, 바이브, 애널바이브 장착에 응해 성행동 SOURCE 증가
 SOURCE:MASTER:성행동 += 50 + GET_ABL(MASTER, "기교") * 2 + CFLAG:MASTER:조교레벨 * 10 + TEQUIP:바이브 * 50 + TEQUIP:애널바이브 * 50
-;조교자 조교레벨, 야외플레이 안, 대거울 사용중, 부위 보정치에 응해 노출 보정 가격인상승
+;조교자 조교레벨, 야외플레이중, 대거울 사용중, 부위 보정치에 응해 노출 보정 가격인상승
 L_E = 150 + GET_TRAINLV(TARGET) * 10 + TEQUIP:야외플레이 * 200 + TEQUIP:대거울 * 150 + L_C / 2 + L_V / 3 + L_A / 3 + L_B / 2
 ;노출 보정치에 응해 노출 SOURCE 증가
 SOURCE:MASTER:노출 += L_E
@@ -524,7 +524,7 @@ ELSEIF TFLAG:LOCAL == 2 && !TEQUIP:ARG:하반신윗도리 && !TEQUIP:ARG:전신�
 	TFLAG:LOCAL = TEQUIP:ARG:하반신속옷 ? 5 # 0
 ;상＋시모카미 착탈의시, 하반신윗도리와 상반신윗도리, 전신윗도리가 존재하지 않는다
 ELSEIF TFLAG:LOCAL == 3 && !TEQUIP:ARG:하반신윗도리 && !TEQUIP:ARG:상반신윗도리 && !TEQUIP:ARG:전신윗도리
-	;상반신속옷/하반신속옷이 존재하면 액세서리까지 탈의, 그 이외는 탈의 하지 않는다
+	;상반신속옷/하반신속옷이 존재하면 악세사리─까지 탈의, 그 이외는 탈의 하지 않는다
 	TFLAG:LOCAL = TEQUIP:ARG:상반신속옷 || TEQUIP:ARG:하반신속옷 ? 7 # 0
 ;상반신 전부 탈의시, 상반신속옷과 상반신윗도리, 전신윗도리가 존재하지 않는다
 ELSEIF TFLAG:LOCAL == 4 && !TEQUIP:ARG:상반신속옷 && !TEQUIP:ARG:상반신윗도리 && !TEQUIP:ARG:전신윗도리
@@ -534,11 +534,11 @@ ELSEIF TFLAG:LOCAL == 4 && !TEQUIP:ARG:상반신속옷 && !TEQUIP:ARG:상반신�
 ELSEIF TFLAG:LOCAL == 5 && !TEQUIP:ARG:하반신속옷 && !TEQUIP:ARG:하반신윗도리 && !TEQUIP:ARG:전신윗도리
 	;탈의 하지 않는다
 	TFLAG:LOCAL = 0
-;액세서리 탈의시, 악세사리와 양말이 존재하지 않는다
+;악세사리─탈의시, 악세사리와 양말이 존재하지 않는다
 ELSEIF TFLAG:LOCAL == 6 && !TEQUIP:ARG:악세사리 && !TEQUIP:ARG:양말
 	;탈의 하지 않는다
 	TFLAG:LOCAL = 0
-;액세서리까지 탈의시
+;악세사리─까지 탈의시
 ELSEIF TFLAG:LOCAL == 7
 	;악세사리와 양말이 존재하지 않는 경우, 전라까지 탈의
 	SIF !TEQUIP:ARG:악세사리 && !TEQUIP:ARG:양말
@@ -548,7 +548,7 @@ ELSEIF TFLAG:LOCAL == 7
 		TFLAG:LOCAL = 0
 ;전라까지 탈의시, 하반신속옷과 상반신속옷, 하반신윗도리, 상반신윗도리, 전신윗도리가 존재하지 않는다
 ELSEIF TFLAG:LOCAL == 8 && !TEQUIP:ARG:하반신속옷 && !TEQUIP:ARG:상반신속옷 && !TEQUIP:ARG:하반신윗도리 && !TEQUIP:ARG:상반신윗도리 && !TEQUIP:ARG:전신윗도리
-	;악세사리와 양말이 존재하는 경우 액세서리 탈의, 그 이외는 탈의 하지 않는다
+	;악세사리와 양말이 존재하는 경우 악세사리─탈의, 그 이외는 탈의 하지 않는다
 	TFLAG:LOCAL = TEQUIP:ARG:악세사리 || TEQUIP:ARG:양말 ? 6 # 0
 ;속옷만 탈의시, 하반신속옷과 상반신속옷이 존재하지 않는다
 ELSEIF TFLAG:LOCAL == 9 && !TEQUIP:ARG:하반신속옷 && !TEQUIP:ARG:상반신속옷
@@ -591,7 +591,7 @@ ELSEIF TFLAG:강제탈의 == 2
 	;전신윗도리는 일률+2
 	SIF TEQUIP:MASTER:전신윗도리
 		LOCAL += 2
-;상＋시모카미착 강제탈의(+1～)
+;상＋시모카미착강제탈의(+1～)
 ELSEIF TFLAG:강제탈의 == 3
 	;하반신윗도리를 봐, 벗기기 어려운 것만큼 크게 가산(+1～)
 	LOCAL += 1 + TEQUIP:MASTER:하반신윗도리
@@ -602,7 +602,7 @@ ELSEIF TFLAG:강제탈의 == 3
 ELSEIF TFLAG:강제탈의 == 4
 	;2를 감산
 	LOCAL -= 2
-	;상반신윗도리인가 전신윗도리가 존재하면 일률+4
+	;상반신윗도리나 전신윗도리가 존재하면 일률+4
 	SIF TEQUIP:MASTER:상반신윗도리 || TEQUIP:MASTER:전신윗도리
 		LOCAL += 4
 ;하반신 전부 강제탈의(-2～)
@@ -615,10 +615,10 @@ ELSEIF TFLAG:강제탈의 == 5
 	;전신윗도리가 존재하면 일률+5
 	SIF TEQUIP:MASTER:전신윗도리
 		LOCAL += 5
-;액세서리 강제탈의(-3)
+;악세사리─강제탈의(-3)
 ELSEIF TFLAG:강제탈의 == 6
 	LOCAL -= 3
-;액세서리까지/전라까지 강제탈의(+2～)
+;악세사리─까지/전라까지 강제탈의(+2～)
 ELSEIF TFLAG:강제탈의 == 7 || TFLAG:강제탈의 == 8
 	;하반신윗도리를 봐, 벗기기 어려운 것만큼 크게 가산(+2～)
 	LOCAL += 2 + TEQUIP:MASTER:하반신윗도리
@@ -657,7 +657,7 @@ IF TEQUIP:삼각목마
 ELSEIF (ASSI:1 >= 0 && TCVAR:(ASSI:1):조수ACT == GET_ASSIACTNUM("탈의")) || (ASSI:2 >= 0 && TCVAR:(ASSI:2):조수ACT == GET_ASSIACTNUM("탈의"))
 	SIF LOCAL > 0
 		SOURCE:MASTER:구속 += (LOCAL + RAND:3) * 20
-;줄에 의한 실행 불가능 판정(예외로서 액세서리, 속옷만 탈의는 가능)
+;줄에 의한 실행 불가능 판정(예외로서 악세사리─, 속옷만 탈의는 가능)
 ELSEIF TEQUIP:줄 && TFLAG:강제탈의 != 6 && TFLAG:강제탈의 != 9
 	TFLAG:강제탈의 = 0
 ;난수로 성공 여부 판정(4이상으로 절대 실패, 0 이하로 절대 성공)
@@ -672,11 +672,11 @@ ENDIF
 
 ;강제탈의 성공시
 IF TFLAG:강제탈의 > 0
-	;야외플레이, 대거울 사용시, 강제탈의 내용, 조교 대상 부끄러워해, 수치심옅음 소질, 조교레벨에 응해 노출 SOURCE 증감
+	;야외플레이, 대거울 사용시, 강제탈의 내용, 조교 대상 수줍음, 수치심옅음 소질, 조교레벨에 응해 노출 SOURCE 증감
 	SOURCE:MASTER:노출 += 100 * (3 + TEQUIP:야외플레이 * 3 + TEQUIP:대거울 * 2) * (3 + TFLAG:강제탈의 + TALENT:MASTER:수줍음 * 2 - TALENT:MASTER:수치심옅음 * 2) / (5 + CFLAG:MASTER:조교레벨)
 	;강제탈의 내용, 조교 대상 트라우마(각인), 조교레벨, 온순하게 응해 트라우마 SOURCE 증감
 	SOURCE:MASTER:트라우마 += 50 * (TFLAG:강제탈의 + 5) * (5 + MARK:MASTER:트라우마) / (10 + CFLAG:MASTER:조교레벨 + ABL:MASTER:순종 * 2)
-	;액세서리/속옷만 강제탈의 때는 노출, 트라우마 SOURCE 경감
+	;악세사리─/속옷만 강제탈의시는 노출, 트라우마 SOURCE 경감
 	IF TFLAG:강제탈의 == 6
 		TIMES SOURCE:MASTER:노출 , 0.10
 		TIMES SOURCE:MASTER:트라우마 , 0.25
@@ -694,7 +694,7 @@ ENDIF
 ;장래적으로 강제탈의, 자주탈의를 비트로 취급할 수 있도록(듯이)
 ;---------------------------------------
 ;─
-;강제탈의, 자주탈의 때의 탈의 처리
+;강제탈의, 자주탈의시의 탈의 처리
 ;─
 ;※전제로서 자주탈의/강제탈의 최적화, 강제탈의 성공 여부 판정을 하고 있을 필요가 있다
 @DATUI_PROCESS
@@ -734,12 +734,12 @@ FOR LOCAL, 1, 3
 			SETBIT LOCAL:LOCAL, 2
 			SETBIT LOCAL:LOCAL, 4
 			SETBIT LOCAL:LOCAL, 6
-		;액세서리
+		;악세사리─
 		CASE 6
 			;악세사리/양말
 			SETBIT LOCAL:LOCAL, 0
 			SETBIT LOCAL:LOCAL, 1
-		;액세서리까지
+		;악세사리─까지
 		CASE 7
 			;하반신속옷/상반신속옷/하반신윗도리/상반신윗도리/전신윗도리
 			SETBIT LOCAL:LOCAL, 2
@@ -867,7 +867,7 @@ ELSEIF IS_NOWACTNAME("손으로애무")
 			ENDIF
 		ENDIF
 	ENDIF
-TFLAG:강제탈의는  3으로 속옷을 모두 벗긴다. 7으로 액세서리까지 전부 벗긴다. 8으로 전라까지 벗긴다
+TFLAG:강제탈의는  3으로 속옷을 모두 벗긴다. 7으로 악세사리─까지 전부 벗긴다. 8으로전라까지 벗긴다
 이 때는 A:1, 즉 TARGET의 욕망의 보정치와 A:30, 즉 조교레벨에 의한 보정치로 벗김의 대성공율을 보정하고 있습니다
 그 밖에 소스의 추가 따위에도 꽤 사용해지고 있는 것 같다
 호출이 많은 것은 1문자가 글로벌인 관계로 내용의 보전이 불안함 텅텅 있고

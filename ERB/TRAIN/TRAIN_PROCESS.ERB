@@ -2,7 +2,7 @@
 ;EDIT	001		kap			2011/10/14		STR의 번호를 비켜 놓은 것에 대응 
 ;											행동예약을 TCVAR로 변경
 ;EDIT	002		KOremi		2011/11/09		탈의 실행 처리의 분리 
-;EDIT	003		KOremi		2014/05/20		조교 중지 판정을 애니메이션 처리로부터 낸다
+;EDIT	003		KOremi		2014/05/20		조교중지판정을 애니메이션 처리로부터 낸다
 ;											또, 첫회만 판정하도록(듯이) 수정 
 ;EDIT	004		revkoishi	2014/05/28		쓸데없게 버튼화하는 것을 회피
 ;------------------------------------------------------------------------
@@ -83,10 +83,10 @@ FOR LOCAL, 0, 9
 NEXT
 ;-----------EDIT 003 START--------------
 ;-----------EDIT 001 START--------------
-;조교 중지의 판정 자체가 ACT를 결정한 뒤에
+;조교중지의 판정 자체가 ACT를 결정한 뒤에
 ;그 후에 내용을 전부 잡는다든가 하고 있었으므로 독립시킨다
 ;---------------------------------------
-;조교 중지의 판정
+;조교중지의 판정
 ;---------------------------------------
 SIF TFLAG:경과시간 == 0
 	CALL TRAIN_CANCEL
@@ -233,7 +233,7 @@ ENDIF
 ;ARG가 진정한 때, 혹은 AUTO가 텅텅때, AUTO를 갱신한다
 IF AUTO == "" || ARG
 	VARSET AUTO
-	SPLIT GLOBALS:@"오토모드 등록{FLAG:선택세트}", "_", RESULTS
+	SPLIT GLOBALS:@"오토모드등록{FLAG:선택세트}", "_", RESULTS
 	SPLIT RESULTS:1, "/", AUTO
 	SIF ARG
 		RETURN 0
@@ -286,7 +286,7 @@ ELSEIF CFLAG:소모 > 5
 		PRINTFORML 이번은 휴일이라고 말해 나갔다…
 	ENDIF
 	CALL _BEFORE_ACT_SUB1
-;SANDBOX 한정 처리 체력 부족해 조교 중지
+;SANDBOX 한정 처리 체력 부족해 조교중지
 ELSEIF CFLAG:MASTER:소모 > 5 || (FLAG:모드 == 1 && BASE:MASTER:체력 * 100 / MAXBASE:MASTER:체력 < 30)
 	;조교자 행동 서두·조교 대상의 피로에 의한 중지
 	CALL KOJO_EVENT(12, 2)
@@ -354,7 +354,7 @@ SIF TEQUIP:야외플레이
 SIF TEQUIP:대거울
 	PRINT  [대거울]
 SIF TCVAR:MASTER:초조하게해번 > 1
-	PRINT  [초조하게 해]
+	PRINT  [초조하게해]
 SIF TEQUIP:자위중 == 1
 	PRINTFORM  [%CALLNAME:MASTER%자위중]
 SIF TEQUIP:자위중 == 2
@@ -424,9 +424,9 @@ SELECTCASE TEQUIP:조교대상C사용
 		PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의\@ PENIS(MASTER) ? 귀두 # 비순 \@에 혀를 기게 하고 있다…
 ENDSELECT
 SIF TCVAR:MASTER:갈것같다
-	PRINTFORML %CALLNAME:MASTER%는 갈 것 같다…
+	PRINTFORML %CALLNAME:MASTER%는갈것같다다…
 SIF TCVAR:TARGET:갈것같다
-	PRINTFORML %CALLNAME:TARGET%는 갈 것 같다…
+	PRINTFORML %CALLNAME:TARGET%는갈것같다다…
 SIF TEQUIP:밀어넘어뜨리기중 || TEQUIP:안면승마 || TEQUIP:안면승마애널 || TEQUIP:야외플레이 || TEQUIP:대거울 || TCVAR:MASTER:초조하게해번 > 1 || TEQUIP:자위중 || TEQUIP:성교중 || TEQUIP:성교봉사중 || TEQUIP:촉수조교중 || TCVAR:MASTER:갈것같다 || TCVAR:TARGET:갈것같다
 	DRAWLINE
 

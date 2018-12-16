@@ -1,6 +1,6 @@
 ﻿;ACTAPPLY2를 빠져 왔을 경우에 표시한다
 @REACTION_MESSAGE
-;봉사계 ACT로, REACT분류받아들인다(쾌감을받아들인다, 기분좋다！, 기분좋게해, 좀더하드하게해, 자위하기시작한다)의 경우
+;봉사계 ACT로, REACT분류받아들인다(쾌감을받아들인다, 기분좋다！, 기분좋게해줘, 더하드하게, 자위하기시작한다)의 경우
 IF MENUMATCH(TFLAG:ACT, "봉사") && IS_COMGRONAME("받아들인다") && !IS_NOWACTNAME("이라마치오") && !IS_NOWCOMNAME("하는대로")
 	SELECTCASE GET_COM_RANK()
 		CASE "자연스러운 행동"
@@ -40,8 +40,8 @@ SELECTCASE TRAINNAME:SELECTCOM
 					PRINTFORML %CALLNAME:MASTER%는 기분이 안좋은 것 같게 침묵을 지킨 채였다…
 				ENDIF
 		ENDSELECT
-	CASE "심약구응답한다"               ;001, 심약구응답한다
-		IF IS_COMGRONAME("허가를청한다")            ;REACT파생:1:애원 한다
+	CASE "여리게대답한다"               ;001, 여리게대답한다
+		IF IS_COMGRONAME("용서를빈다")            ;REACT파생:1:애원 한다
 			SELECTCASE GET_COM_RANK()
 				CASE "자연스러운 행동"
 					PRINTFORML %CALLNAME:MASTER%는 심약구 작은 소리로, 기분을 엿보도록(듯이)하면서
@@ -57,7 +57,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 						PRINTFORML 이제(벌써) 이런 일 그만두고라고 말했다…
 					ENDIF
 			ENDSELECT
-		ELSEIF IS_COMGRONAME("소극적 따른다")        ;RAECT 파생:0:심약구응답한다
+		ELSEIF IS_COMGRONAME("소극적 따른다")        ;RAECT 파생:0:여리게대답한다
 			SELECTCASE GET_COM_RANK()
 				CASE "자연스러운 행동"
 					PRINTFORML %CALLNAME:MASTER%는 심약구 작은 소리로, 기분을 엿보도록(듯이)하면서 대답했다…
@@ -72,7 +72,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 					ENDIF
 			ENDSELECT
 		ENDIF
-	CASE "무뚝뚝하게응답한다"             ;002, 무뚝뚝하게응답한다
+	CASE "무뚝뚝하게대답한다"             ;002, 무뚝뚝하게대답한다
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%는 심지의 강한 눈동자로%CALLNAME%를 응시해 무뚝뚝하게 응했다…
@@ -86,7 +86,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 					PRINTFORML %CALLNAME:MASTER%는 힘껏의 저항을 담아 무뚝뚝하게 응했다…
 				ENDIF
 		ENDSELECT
-	CASE "붙임성좋게응답한다"             ;003, 붙임성좋게응답한다
+	CASE "붙임성좋게대답한다"             ;003, 붙임성좋게대답한다
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%는 기쁜듯이%CALLNAME%에 미소지어,
@@ -96,7 +96,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 			CASE "무리를 한 행동"
 				PRINTFORML %CALLNAME:MASTER%는 잘 비위를 맞추려고 만들기 웃는 얼굴로 응했다…
 		ENDSELECT
-	CASE "강하게응답한다"               ;004, 강하게응답한다
+	CASE "강하게대답한다"               ;004, 강하게대답한다
 		IF IS_NOWACTNAME("밀어넘어뜨린다")              ;REACT파생 1:밀어넘어뜨리기에 굽히지 않는다
 			;「무뚝뚝하게」 「붙임성 좋게」에 파생이 없고, 「강하게」만 파생 플래그가 세트 되어 있는 이유는,
 			;「강해 대답했다」와 「이제 그만두라고 강하게 말했다」의 뉘앙스가 다르기 (위해)때문에입니다.
@@ -134,7 +134,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 					PRINTFORML 말 있고는 했지만, 기분을 해치지 않은가 끊임없이 신경쓰고 있다…
 				ENDIF
 		ENDSELECT
-	CASE "좀더하드하게해"           ;006, 좀더하드하게해
+	CASE "더하드하게"           ;006, 더하드하게
 		;이 조건은 REACT파생를 반영한 것은 아니라고 말하는 일로@/L
 		IF SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B > 10
 			SELECTCASE GET_COM_RANK()
@@ -153,9 +153,9 @@ SELECTCASE TRAINNAME:SELECTCOM
 			SELECTCASE GET_COM_RANK()
 				CASE "자연스러운 행동"
 					PRINTFORML %CALLNAME:MASTER%는 좀 더 기분이 좋은 일을 해 주었으면 해져,
-					PRINTFORML 무심코 좀더하드하게해라고 말해 버렸다…
+					PRINTFORML 무심코 더하드하게라고 말해 버렸다…
 				CASE "무리가 없는 행동"
-					PRINTFORML %CALLNAME:MASTER%는 흥미 반으로, 좀더하드하게해도 좋다고 말해 보았다…
+					PRINTFORML %CALLNAME:MASTER%는 흥미 반으로, 더하드하게도 좋다고 말해 보았다…
 				CASE "무리를 한 행동"
 					IF COMCOR_POSI()                        ;실은 그렇지만도 않다
 						PRINTFORML %CALLNAME:MASTER%는 여러가지 기분을 정리하면서 말을 선택해,
@@ -168,7 +168,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 		ENDIF
 		SIF TFLAG:REACT파생                       ;REACT파생 1:「이 철면피의 암퇘지놈!」
 			PRINTFORML %CALLNAME:MASTER%의 철면피인 말투에,%CALLNAME%는 기분을 해친 것 같다…
-	CASE "허가를청한다"                   ;007, 허가를청한다
+	CASE "용서를빈다"                   ;007, 용서를빈다
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%는 눈물을 머금어%CALLNAME%에 이제(벌써) 허락해 주세요간원 했다…
@@ -184,13 +184,13 @@ SELECTCASE TRAINNAME:SELECTCOM
 		ENDSELECT
 		SIF IS_COMIMPNAME("0에서멀어짐")        ;REACT파생 1:「의견을 내다니 좋은 담력이구나!」
 			PRINTFORML %CALLNAME:MASTER%에 의견되어%CALLNAME%는 완전히 기분을 해친 것 같다…
-	CASE "기분좋게해"               ;008, 기분좋게해
+	CASE "기분좋게해줘"               ;008, 기분좋게해줘
 		IF SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B > 10
 			SELECTCASE GET_COM_RANK()
 				CASE "자연스러운 행동"
 					PRINTFORML %CALLNAME:MASTER%는 쾌감에 빠져, 좀 더 자주(잘) 해와 졸랐다…
 				CASE "무리가 없는 행동"
-					PRINTFORML %CALLNAME:MASTER%는 좀 더 기분좋게해계속 이라고 말했다…
+					PRINTFORML %CALLNAME:MASTER%는 좀 더기분좋게해줘계속 이라고 말했다…
 				CASE "무리를 한 행동"
 					IF COMCOR_POSI()                        ;실은 그렇지만도 않다
 						PRINTFORML %CALLNAME:MASTER%는 부끄러운 기분을 누르면서, 좀 더 하고라고 말했다…
@@ -203,7 +203,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 				CASE "자연스러운 행동"
 					PRINTFORML %CALLNAME:MASTER%는 정욕의 포로가 된 것처럼, 좀 더 기분 좋은 일 해라고 호소했다…
 				CASE "무리가 없는 행동"
-					PRINTFORML %CALLNAME:MASTER%는 기분좋게해라고 말하기 시작했다…
+					PRINTFORML %CALLNAME:MASTER%는기분좋게해줘라고 말하기 시작했다…
 				CASE "무리를 한 행동"
 					IF COMCOR_POSI()                        ;실은 그렇지만도 않다
 						PRINTFORML %CALLNAME:MASTER%는 부끄러운 기분을 누르면서, 욕망에 정직하게
@@ -218,7 +218,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 			PRINTFORML %CALLNAME:MASTER%의 철면피인 말투에,%CALLNAME%는 기분을 해친 것 같다…
 	CASE "부끄러워한다"                 ;010, 부끄러워한다
 		IF SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B > 10
-			                                      ;REACT파생 1:쾌감에 부끄러워한다
+			                                      ;REACT파생 1:쾌감에부끄러워한다
 			SELECTCASE GET_COM_RANK()
 				CASE "자연스러운 행동"
 					PRINTFORML %CALLNAME:MASTER%는 쾌감으로 소리를 흘려, 깜짝 놀란 것처럼 숨을 삼키면
@@ -234,7 +234,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 						PRINTFORML 몸을 움츠러들게 해 부끄러워했다…
 					ENDIF
 			ENDSELECT
-		ELSE                                      ;REACT파생 0:상황에 부끄러워한다
+		ELSE                                      ;REACT파생 0:상황에부끄러워한다
 			SELECTCASE GET_COM_RANK()
 				CASE "자연스러운 행동"
 					PRINTFORML %CALLNAME:MASTER%는%CALLNAME%가 빠는 것 같은 시선을 느껴
@@ -252,7 +252,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 			ENDSELECT
 		ENDIF
 	CASE "싫어한다"                       ;011, 싫어한다
-		IF !IS_COMGRONAME("날뛴다")               ;REACT파생 0:싫어하지만 ACT는 방해하지 않고
+		IF !IS_COMGRONAME("날뛴다")               ;REACT파생 0:싫어한다가 ACT는 방해하지 않고
 			SELECTCASE GET_COM_RANK()
 				;자연스러운 행동
 				CASE "자연스러운 행동"
@@ -320,7 +320,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 				ENDIF
 		ENDSELECT
 	CASE "쾌감을참는다"               ;014, 쾌감을참는다
-		IF IS_COMGRONAME("허가를청한다")            ;REACT파생 1:애원
+		IF IS_COMGRONAME("용서를빈다")            ;REACT파생 1:애원
 			SELECTCASE GET_COM_RANK()
 				CASE "자연스러운 행동"
 					PRINTFORML %CALLNAME:MASTER%는 쾌감을 참으면서 허가를 바라고 있다…
@@ -621,7 +621,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 					PRINTFORML %CALLNAME:MASTER%는 신체를 내던져, 되는 대로 되어 있다…
 				ENDIF
 		ENDSELECT
-	CASE "가게해!"                   ;070, 가게해!
+	CASE "가게해！"                   ;070, 가게해！
 		PRINTFORM %CALLNAME:TARGET%는
 		IF TCVAR:MASTER:초조하게해번 == 1             ;REACT파생 1:가게해 준다
 			IF GETBIT(TEQUIP:자위중, 0) || (GETBITAND(TEQUIP:자위중, 0, 1))
@@ -633,7 +633,7 @@ SELECTCASE TRAINNAME:SELECTCOM
 			IF GETBIT(TEQUIP:자위중, 0) || (GETBITAND(TEQUIP:자위중, 0, 1))
 				PRINTFORML 자위에서의 절정을 조른다%CALLNAME:MASTER%가 가는 것을 허락하지 않았다…
 			ELSE
-				PRINTFORML 심술궂은 미소를 띄우면%CALLNAME:MASTER%를 초조하게 하기 시작했다
+				PRINTFORML 심술궂은 미소를 띄우면%CALLNAME:MASTER%를 초조하게해 시작했다
 			ENDIF
 		ELSE                                      ;REACT파생 0:「흐음」
 			PRINTFORML 못된 장난 같은 미소를 띄우면서,%CALLNAME:MASTER%의 요구를 들은체 만체 했다…

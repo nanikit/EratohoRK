@@ -116,10 +116,10 @@ CALLFORM %LOCALS%_FIRST
 CALL CHA_CRI_VAR, "대거울 소지 보너스"
 CALLFORM %LOCALS%_MILLER
 
-CALL CHA_CRI_VAR, "좀더하드하게해"
+CALL CHA_CRI_VAR, "더하드하게"
 CALLFORM %LOCALS%_PLEASE_HARD
 
-CALL CHA_CRI_VAR, "허가를청한다"
+CALL CHA_CRI_VAR, "용서를빈다"
 CALLFORM %LOCALS%_PLEASE_HELP
 
 CALL CHA_CRI_VAR, "기분 좋게 해"
@@ -200,7 +200,7 @@ CALLFORM %LOCALS%_OSHIOKI
 CALL CHA_CRI_VAR, "삽입 보정"
 CALLFORM %LOCALS%_INSERT
 
-CALL CHA_CRI_VAR, "초조하게 해 안"
+CALL CHA_CRI_VAR, "초조하게해중"
 CALLFORM %LOCALS%_IRRITATE
 
 CALL CHA_CRI_VAR, "A섹스 회피"
@@ -374,7 +374,7 @@ ELSEIF TALENT:LOCAL:해방
 	CALL ADD_CRI_VAR("성적봉사",   3)
 ENDIF
 
-;조교자가 부끄러워해/수치심옅음
+;조교자가 수줍음/수치심옅음
 IF TALENT:LOCAL:수줍음
 	CALL ADD_CRI_VAR("수치", -9)
 	CALL ADD_CRI_VAR("성적봉사", -6)
@@ -675,9 +675,9 @@ IF TALENT:LOCAL:남자 && TALENT:(LOCAL:1):남자 && !TALENT:LOCAL:양도
 ENDIF
 ;조교자에게 양도가 없고, 여자 아이끼리
 IF !TALENT:LOCAL:남자 && !TALENT:(LOCAL:1):남자 && !TALENT:LOCAL:양도
-	;조교자의 레즈끼가[0→-2, 2→-1, 4→0]을 가산(-2～0)
+	;조교자 레즈끼가[0→-2, 2→-1, 4→0]을 가산(-2～0)
 	CALL ADD_CRI_VAR("봉사", LINE_CALC(ABL:LOCAL:레즈끼, "0→-2, 4→0, LIMIT/-2～0"))
-	;조교자의 레즈끼가[0→-4, 1→-3, 2→-2, 3→-1, 4→0]을 가산(-4～0)
+	;조교자 레즈끼가[0→-4, 1→-3, 2→-2, 3→-1, 4→0]을 가산(-4～0)
 	CALL ADD_CRI_VAR("애무", LINE_CALC(ABL:LOCAL:레즈끼, "0→-4, 4→0, LIMIT/-4～0"))
 	CALL ADD_CRI_VAR("성교", LINE_CALC(ABL:LOCAL:레즈끼, "0→-4, 4→0, LIMIT/-4～0"))
 	CALL ADD_CRI_VAR("성적봉사", LINE_CALC(ABL:LOCAL:레즈끼, "0→-4, 4→0, LIMIT/-4～0"))
@@ -745,7 +745,7 @@ SELECTCASE POLICY("오늘")
 		CALL ADD_CRI_VAR("봉사",   8)
 		CALL ADD_CRI_VAR("가학",  10)
 	CASE "러브러브"
-		;조교 대상이 여자인가개 페니스밴드 소지의 경우는 성적봉사계를 유발하도록(듯이)
+		;조교 대상이 여자인가개페니스밴드 소지의 경우는 성적봉사계를 유발하도록(듯이)
 		IF (CFLAG:M호의 + CFLAG:호의 >= 10000) && (ITEM:페니스밴드 && !PENIS(MASTER))
 			CALL ADD_CRI_VAR("회화",  -7)
 			CALL ADD_CRI_VAR("애무",  -8)
@@ -870,7 +870,7 @@ LOCAL:1 = LINE_CALC(PALAM:LOCAL:윤활, "0→-6, 3000→0, LIMIT/-6～0")
 ;조교자가 신중하면보다 감산
 IF TALENT:신중
 	LOCAL:1 = LOCAL:1 * 8 / 5
-;조교자가 조급함이라면 경감
+;조교자가 성격이 급하면 경감
 ELSEIF TALENT:조급함
 	LOCAL:1 = LOCAL:1 * 2 / 5
 ENDIF
@@ -1227,11 +1227,11 @@ SIF ITEM:대거울
 ;상황이나 전회의 커맨드에 의한 변동
 ;직전의 조교 대상의 반응
 ;-------------------------------------
-;좀더하드하게해
+;더하드하게
 ;-------------------------------------
 @ACT_MENU_PLEASE_HARD
 
-IF IS_NOWCOMNAME("좀더하드하게해")
+IF IS_NOWCOMNAME("더하드하게")
 	CALL ADD_CRI_VAR("애무", -2)
 	CALL ADD_CRI_VAR("성교", -1)
 	CALL ADD_CRI_VAR("봉사", -1)
@@ -1240,12 +1240,12 @@ IF IS_NOWCOMNAME("좀더하드하게해")
 ENDIF
 
 ;-------------------------------------
-;허가를청한다
+;용서를빈다
 ;새디즘 OR심술쟁이
 ;-------------------------------------
 @ACT_MENU_PLEASE_HELP
 
-IF IS_NOWCOMNAME("허가를청한다")
+IF IS_NOWCOMNAME("용서를빈다")
 	;조교 대상이 울적 이외
 	IF TCVAR:상태변화 < 8
 		CALL ADD_CRI_VAR("가학", -5, (TALENT:새디즘 || TALENT:심술쟁이) ? 4 # 0)
@@ -1258,7 +1258,7 @@ ENDIF
 ;-------------------------------------
 @ACT_MENU_PLEASE_PREASURE
 
-IF IS_NOWCOMNAME("기분좋게해")
+IF IS_NOWCOMNAME("기분좋게해줘")
 	CALL ADD_CRI_VAR("애무", 2)
 	CALL ADD_CRI_VAR("도구", 3)
 	CALL ADD_CRI_VAR("성교", 2)
@@ -1288,7 +1288,7 @@ IF IS_NOWCOMNAME("도구를제외한다")
 ENDIF
 
 ;-------------------------------------
-;밀어넘어뜨리기 때의 연속 애무 보정
+;밀어넘어뜨리기시의 연속 애무 보정
 ;-------------------------------------
 @ACT_MENU_PETTING_CONTINUE
 
@@ -1713,13 +1713,13 @@ IF TEQUIP:성교중 || TEQUIP:성교봉사중
 ENDIF
 
 ;----------------------------------------------------------
-;초조하게 해 안, C자극을 중단하지 않도록
+;초조하게해중, C자극을 중단하지 않도록
 ;----------------------------------------------------------
 @ACT_MENU_IRRITATE
 
-;초조하게 해 안
+;초조하게해중
 IF TCVAR:MASTER:초조하게해번
-	;초조하게 해 종료의 순간은 거기에 집중. 혹은 성교봉사중이 아닌 경우
+	;초조하게해 종료의 순간은 거기에 집중. 혹은 성교봉사중이 아닌 경우
 	;(성교 봉사에 관해서는 삽입 보정의 내용으로 문제 없는 것이 아닐까)
 	IF TCVAR:MASTER:초조하게해번 == 1 || !TEQUIP:성교봉사중
 		;향후 재고의 필요유리카
@@ -1747,7 +1747,7 @@ IF IS_POLICY("지금", "이상") && RAND:2
 ENDIF
 
 ;----------------------------------------------------------
-;애널섹스 안, 소프트 방침으로 다른 체위로 변경하지 않도록
+;애널섹스중, 소프트 방침으로 다른 체위로 변경하지 않도록
 ;----------------------------------------------------------
 @ACT_MENU_ASEX_LIMITATION
 

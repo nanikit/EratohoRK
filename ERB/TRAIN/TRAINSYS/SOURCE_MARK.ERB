@@ -37,7 +37,7 @@ LTEMP:2 = RESULT
 ;(이번 조교 대상의 반응이 온순하면 판정하지 않는다)
 IF !IS_COMGRONAME("소극적 따른다") && !IS_COMGRONAME("태연하게 따른다/적극적 따른다/받아들인다")
 	LOCAL = CUP:MASTER:반항 > (MARK:반항각인 + 1) * 400
-	;조교자의 평시 아라이먼트가 충분히 높면(S튼) 각인 취득을 중단
+	;조교자의 평시아 라이먼트가 충분히 높면(S튼) 각인 취득을 중단
 	SIF MARK:반항각인 > 10 - MARK:5
 		LOCAL = 0
 	;10-굴복+고통/2을 넘지 않는다
@@ -72,7 +72,7 @@ FOR LOCAL, 0, 5
 	IF ARG:LOCAL
 		;각인 취득 표시
 		PRINTFORML %MARKNAME:LOCAL%는{ARG:LOCAL}가 되었다
-		;굴복각인취득 때, 굴복P2가 굴복각인의 제곱에 응해 상승
+		;굴복각인취득시, 굴복P2가 굴복각인의 제곱에 응해 상승
 		SIF LOCAL == 2
 			CFLAG:MASTER:굴복P2 += POWER(LOCAL:LOCAL, 2) - POWER(LOCAL:LOCAL - 1, 2)
 		;고통각인 Lv9 취득시, 기장을 잃는다
@@ -132,8 +132,8 @@ ENDIF
 ;─
 ;각인:굴복각인
 ;─
-;뽑지않고의 2발와 뽑지않고의세발은 SOURCE_1. ERB에 이동. 결단적으로 신사양에 목수일＋α@revkoishi(14/05/28)
-;뽑지않고의 2발와 뽑지않고의세발의 처리를 환송해. SOURCE_1의 처리를 고쳤으므로 여기서 좋다고 말하는 일로@/L(2014/06/05)
+;뽑지않고의2발와 뽑지않고의세발은 SOURCE_1. ERB에 이동. 결단적으로 신사양에 목수일＋α@revkoishi(14/05/28)
+;뽑지않고의2발와 뽑지않고의세발의 처리를 환송해. SOURCE_1의 처리를 고쳤으므로 여기서 좋다고 말하는 일로@/L(2014/06/05)
 @MARK_CHECK_SOURCE_SURRENDER
 #DIM LCOUNT
 
@@ -147,8 +147,8 @@ SIF MENUMATCH(TFLAG:ACT, "봉사") && IS_COMGRONAME("적극적 따른다")
 	CALL MARK_CHECK_GET("적극봉사")		;【굴복:29】적극봉사(ACT분류가 봉사계중에 적극적으로 따른다)
 SIF ((SEX_INITIATIVE(MASTER) && IS_COMGRONAME("적극적 따른다")) || (SEX_INITIATIVE(TARGET) && IS_COMGRONAME("받아들인다"))) ;&& ! IS_NOWCOMNAME("하는대로")
 	CALL MARK_CHECK_GET("허리를흔든다")		;【굴복:31】허리를흔든다(성교중 적극적으로 따른다)
-SIF IS_NOWCOMNAME("가게해!")
-	CALL MARK_CHECK_GET("가게해")		;【굴복:49】가게해!
+SIF IS_NOWCOMNAME("가게해！")
+	CALL MARK_CHECK_GET("가게해")		;【굴복:49】가게해！
 
 ;-------------------------------------------------
 ;조교 대상 쾌감에 의한 굴복
@@ -191,7 +191,7 @@ SIF NOWEX:MASTER:C절정 && NOWEX:MASTER:V절정 && NOWEX:MASTER:A절정 && NOWE
 ;-------------------------------------------------
 ;사정에 의한 굴복
 ;-------------------------------------------------
-;뽑지않고의 2발/뽑지않고의세발의 조정@revkoishi(14/06/07)
+;뽑지않고의2발/뽑지않고의세발의 조정@revkoishi(14/06/07)
 SIF NOWEX:MASTER:사정 > 1
 	CALL MARK_CHECK_GET("사정")			;【굴복:19】사정
 SIF NOWEX:MASTER:사정 == 3
@@ -214,13 +214,13 @@ SIF TFLAG:전회질내사정 == 5
 	CALL MARK_CHECK_GET("피항내사정")	;【굴복:42】애널에 사정된다
 ;드라이사정에서의 뽑지않고는 우선 인정하는 것으로 한다@/L
 SIF IS_UNEXTRACTION(MASTER) && GROUPMATCH(TFLAG:전회질내사정, 2, 4, 6, 8) > 0
-	CALL MARK_CHECK_GET("뽑지않고의 2발")	;【굴복:43】뽑지않고의 2발(사정 후 삽입을 중단하지 않고 사정)
+	CALL MARK_CHECK_GET("뽑지않고의2발")	;【굴복:43】뽑지않고의2발(사정 후 삽입을 중단하지 않고 사정)
 SIF NOWEX:MASTER:사정 == 1
 	CALL MARK_CHECK_GET("드라이사정")		;【굴복:44】드라이사정
 SIF NOWEX:MASTER:사정 == 5
 	CALL MARK_CHECK_GET("전립선사정")	;【굴복:45】전립선사정
 SIF IS_UNEXTRACTION(MASTER) > 1 && GROUPMATCH(TFLAG:전회질내사정, 2, 4, 6, 8) > 0
-	CALL MARK_CHECK_GET("뽑지않고의세발")	;【굴복:55】뽑지않고의세발(뽑지않고의 2발 후 삽입을 중단하지 않고 사정)
+	CALL MARK_CHECK_GET("뽑지않고의세발")	;【굴복:55】뽑지않고의세발(뽑지않고의2발 후 삽입을 중단하지 않고 사정)
 
 ;-------------------------------------------------
 ;조교 대상치정에 의한 굴복
@@ -233,7 +233,7 @@ SIF TEQUIP:야외플레이
 	CALL MARK_CHECK_GET("야외")			;【굴복:16】야외플레이
 SIF TEQUIP:대거울
 	CALL MARK_CHECK_GET("대거울")			;【굴복:17】수치플레이
-;리액션이 수용인 경우로 한정한다. 방뇨의 경우, 허가를청한다는 거부 취급@/L
+;리액션이 수용인 경우로 한정한다. 방뇨의 경우, 용서를빈다는 거부 취급@/L
 SIF IS_NOWACTNAME("방뇨") && IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다")
 	CALL MARK_CHECK_GET("방뇨")			;【굴복:18】방뇨시킨(조교 대상이 따르는 계를 선택) L
 SIF TEQUIP:관장기＋플러그
@@ -241,7 +241,7 @@ SIF TEQUIP:관장기＋플러그
 SIF TFLAG:실금
 	CALL MARK_CHECK_GET("실금")			;【굴복:36】실금
 SIF IS_NOWACTNAME("관장세트") && TFLAG:ACT파생 == 1
-	CALL MARK_CHECK_GET("배설")			;【굴복:50】배설(관장기＋플러그 해제시)
+	CALL MARK_CHECK_GET("배설")			;【굴복:50】배설(관장기＋플러그해제시)
 
 ;-------------------------------------------------
 ;조교 대상 고통에 의한 굴복
@@ -261,7 +261,7 @@ SIF TEQUIP:삼각목마
 ;결정적 상황에 의한 굴복
 ;-------------------------------------------------
 ;리액션이 수용인 경우에 한정@/L
-SIF IS_NOWACTNAME("키스") && IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다/허가를청한다")
+SIF IS_NOWACTNAME("키스") && IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다/용서를빈다")
 	CALL MARK_CHECK_GET("키스")			;【굴복:11】키스
 SIF TEQUIP:바이브
 	CALL MARK_CHECK_GET("바이브")		;【굴복:23】바이브
@@ -278,16 +278,16 @@ SIF TEQUIP:성교봉사중 == 6
 SIF IS_NOWACTNAME("공중육변기플레이") && GROUPMATCH(TFLAG:ACT파생, 2, 3)
 	CALL MARK_CHECK_GET("공중변소")		;【굴복:51】공중변소(공중육변기플레이 수용시)
 SIF IS_NOWACTNAME("피스트퍽/양구멍피스트")
-	CALL MARK_CHECK_GET("V확장")		;【굴복:53】V확장(피스트/양구멍피스트 때)
+	CALL MARK_CHECK_GET("V확장")		;【굴복:53】V확장(피스트/양구멍피스트시)
 SIF IS_NOWACTNAME("애널피스트/양구멍피스트")
-	CALL MARK_CHECK_GET("A확장")		;【굴복:54】A확장(A피스트/양구멍피스트 때)
+	CALL MARK_CHECK_GET("A확장")		;【굴복:54】A확장(A피스트/양구멍피스트시)
 SIF NOWEX:MASTER:물총
 	CALL MARK_CHECK_GET("물총")		;【굴복:59】물총
 
 ;-------------------------------------------------
 ;구상 독자적인 굴복
 ;-------------------------------------------------
-;구상독자실적 용리저브 X
+;구상독자실적용 리저브 X
 ;【굴복:112】【굴복:113】【굴복:114】【굴복:115】【굴복:116】【굴복:117】【굴복:118】【굴복:119】
 ;【굴복:120】【굴복:121】【굴복:122】【굴복:123】【굴복:124】【굴복:125】【굴복:126】【굴복:127】
 TRYCALLFORM KOJO_CHECK_SURRENDER_K{NO:TARGET}
