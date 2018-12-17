@@ -1,6 +1,6 @@
-﻿;─
-;도구(로터 20/바이 21/A바이 22/A비 23/C사랑 24/니풀 25/P대 26/관장 68)
-;─
+﻿;────────────────────────────────────
+;도구(로터 20/바이 21/A바이 22/A비 23/Ｃ사랑 24/니풀 25/Ｐ대 26/관장 68)
+;────────────────────────────────────
 @ACT_M2(ARG = 0)
 ;1이상이라면 판정을 실시하지 않는다
 #DIM LCOUNT, 1
@@ -86,9 +86,9 @@ SIF ARG
 CALL CHA_CRI_VAR, "실행 판정"
 CALLFORM %LOCALS%_ABLE
 
-;─
+;────────────────────────────────────
 ;최종 판정
-;─
+;────────────────────────────────────
 CALL DEF_CRI_VAR("최대 전자")
 LOCAL = GET_CRI_VAR("결정")
 IF LOCAL == -1
@@ -112,25 +112,25 @@ CALL ADD_CRI_VAR("로터", 10)
 CALL ADD_CRI_VAR("바이브", 12 - TEQUIP:바이브 * 3)
 CALL ADD_CRI_VAR("애널바이브", 10 - TEQUIP:애널바이브 * 3)
 CALL ADD_CRI_VAR("애널비즈", 10 + TEQUIP:애널비즈 * 2)
-CALL ADD_CRI_VAR("C애무도구", 15 - TEQUIP:클리캡 * 5 - TEQUIP:오나홀 * 5)
+CALL ADD_CRI_VAR("Ｃ애무도구", 15 - TEQUIP:클리캡 * 5 - TEQUIP:오나홀 * 5)
 CALL ADD_CRI_VAR("니플캡", 15 - TEQUIP:니플캡 * 5)
 CALL ADD_CRI_VAR("관장세트", 4 + TEQUIP:관장기＋플러그 * 2)
 [SKIPEND]
 
 ;-------------------------------------------------------------
 ;오늘의 방침
-;오늘의 방침(0=언제나 대로/1=A개발/2=벌/3=하드/4=러브러브/5=이상/6=야외/7=이상/8=휴게)
+;오늘의 방침(0=언제나 대로/1=A개발/2=벌/3=하드/4=러브러브/5=이상/6=야외/7=이상/8=휴식)
 ;-------------------------------------------------------------
 @ACT_ACTM2_POLYCY
 
-;오늘의 방침이 A개발
+;오늘의 방침이Ａ개발
 IF TFLAG:오늘의방침 == 1
 	CALL ADD_CRI_VAR("애널바이브", 10)
 	CALL ADD_CRI_VAR("애널비즈", 10)
 ENDIF
 
 ;-------------------------------------------------------------------------
-;조교 방침(1=휴게/2=소프트/3=노멀/4=하드/5=이상)
+;조교 방침(1=휴식/2=소프트/3=노멀/4=하드/5=이상)
 ;-------------------------------------------------------------------------
 @ACT_ACTM2_MENU
 SELECTCASE POLICY("지금")
@@ -189,11 +189,11 @@ SIF TALENT:광기
 ;조교 대상이음핵／음경
 IF TALENT:MASTER:음핵／음경
 	CALL ADD_CRI_VAR("로터", 3, 3)
-	CALL ADD_CRI_VAR("C애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 4, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 5)
+	CALL ADD_CRI_VAR("Ｃ애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 4, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 5)
 ENDIF
 
-;조교 대상이 음 단지
-SIF TALENT:MASTER:음단지
+;조교 대상이 음호
+SIF TALENT:MASTER:음호
 	CALL ADD_CRI_VAR("바이브", TEQUIP:바이브 ? 0 # 4, TEQUIP:바이브 ? 0 # 5)
 
 ;조교 대상이 음고
@@ -208,50 +208,50 @@ IF TALENT:MASTER:음유
 	CALL ADD_CRI_VAR("니플캡", TEQUIP:니플캡 ? 0 # 4, TEQUIP:니플캡 ? 0 # 5)
 ENDIF
 
-;조교 대상이 C민감/둔감
-IF TALENT:MASTER:C민감
+;조교 대상이Ｃ민감/둔감
+IF TALENT:MASTER:Ｃ민감
 	CALL ADD_CRI_VAR("로터", 3, 2)
-	CALL ADD_CRI_VAR("C애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 1, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 6)
-ELSEIF TALENT:MASTER:C둔감
+	CALL ADD_CRI_VAR("Ｃ애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 1, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 6)
+ELSEIF TALENT:MASTER:Ｃ둔감
 	CALL ADD_CRI_VAR("로터", -3, -3)
-	CALL ADD_CRI_VAR("C애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # -1, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 6)
+	CALL ADD_CRI_VAR("Ｃ애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # -1, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 6)
 ENDIF
 
-;조교 대상이 V민감/둔감
-IF TALENT:MASTER:V민감
+;조교 대상이Ｖ민감/둔감
+IF TALENT:MASTER:Ｖ민감
 	CALL ADD_CRI_VAR("바이브", TEQUIP:바이브 ? 0 # 4, TEQUIP:바이브 ? 0 # 2)
 	CALL ADD_CRI_VAR("페니스밴드", TEQUIP:페니스밴드 ? 0 # 3, TEQUIP:페니스밴드 ? 0 # 1)
-ELSEIF TALENT:MASTER:V둔감
+ELSEIF TALENT:MASTER:Ｖ둔감
 	CALL ADD_CRI_VAR("바이브", TEQUIP:바이브 ? 0 # -4, TEQUIP:바이브 ? 0 # -2)
 	CALL ADD_CRI_VAR("페니스밴드", TEQUIP:페니스밴드 ? 0 # -3, TEQUIP:페니스밴드 ? 0 # -1)
 ENDIF
 
-;조교자가 V민감/둔감
-IF TALENT:TARGET:V민감
+;조교자가Ｖ민감/둔감
+IF TALENT:TARGET:Ｖ민감
 	CALL ADD_CRI_VAR("페니스밴드", TEQUIP:페니스밴드 ? 0 # 3, TEQUIP:페니스밴드 ? 0 # 1)
-ELSEIF TALENT:TARGET:V둔감
+ELSEIF TALENT:TARGET:Ｖ둔감
 	CALL ADD_CRI_VAR("페니스밴드", TEQUIP:페니스밴드 ? 0 # -3, TEQUIP:페니스밴드 ? 0 # -1)
 ENDIF
 
-;조교 대상이 A민감/둔감
-IF TALENT:MASTER:A민감
+;조교 대상이Ａ민감/둔감
+IF TALENT:MASTER:Ａ민감
 	CALL ADD_CRI_VAR("애널바이브", TEQUIP:애널바이브 ? 0 # 3, TEQUIP:애널바이브 ? 0 # 2)
 	CALL ADD_CRI_VAR("애널비즈", 2, 4)
-ELSEIF TALENT:MASTER:A둔감
+ELSEIF TALENT:MASTER:Ａ둔감
 	CALL ADD_CRI_VAR("애널바이브", TEQUIP:애널바이브 ? 0 # -3, TEQUIP:애널바이브 ? 0 # -2)
 	CALL ADD_CRI_VAR("애널비즈", -2, -4)
 ENDIF
 
-;조교 대상이 B민감/둔감
-IF TALENT:MASTER:B민감
+;조교 대상이Ｂ민감/둔감
+IF TALENT:MASTER:Ｂ민감
 	CALL ADD_CRI_VAR("니플캡", TEQUIP:니플캡 ? 0 # 3, TEQUIP:니플캡 ? 0 # 3)
-ELSEIF TALENT:MASTER:B둔감
+ELSEIF TALENT:MASTER:Ｂ둔감
 	CALL ADD_CRI_VAR("니플캡", TEQUIP:니플캡 ? 0 # -3, TEQUIP:니플캡 ? 0 # -3)
 ENDIF
 
 ;조교 대상이 후타나리
 SIF TALENT:MASTER:후타나리
-	CALL ADD_CRI_VAR("C애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # TALENT:호기심 * 3 - TALENT:무관심, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 2)
+	CALL ADD_CRI_VAR("Ｃ애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # TALENT:호기심 * 3 - TALENT:무관심, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 2)
 
 ;-----------------------------------------
 ;조교 대상이 처녀
@@ -276,27 +276,27 @@ CALL ADD_CRI_VAR("관장세트", LINE_CALC(ABL:가학, "0→0, 5→5, LIMIT/0～
 ;-------------------------------------------------------------------------
 @ACT_ACTM2_ABL_M
 
-;조교 대상의 C감각이[0→0～1, 4→0～9]를 가산(0～9)
-CALL ADD_CRI_VAR("로터", , LINE_CALC(ABL:MASTER:C감각, "0→1, 4→9, LIMIT/0～9"))
-;조교 대상의 C감각이[0→1, 5→6]을 가산(1～6)(클리캡, 오나홀 모두 비착용시)
+;조교 대상의Ｃ감각이[0→0～1, 4→0～9]를 가산(0～9)
+CALL ADD_CRI_VAR("로터", , LINE_CALC(ABL:MASTER:Ｃ감각, "0→1, 4→9, LIMIT/0～9"))
+;조교 대상의Ｃ감각이[0→1, 5→6]을 가산(1～6)(클리캡, 오나홀 모두 비착용시)
 SIF !TEQUIP:클리캡 && !TEQUIP:오나홀
-	CALL ADD_CRI_VAR("C애무도구", LINE_CALC(ABL:MASTER:C감각, "0→1, 5→6, LIMIT/1～6"))
+	CALL ADD_CRI_VAR("Ｃ애무도구", LINE_CALC(ABL:MASTER:Ｃ감각, "0→1, 5→6, LIMIT/1～6"))
 
-;조교 대상의 V감각이[0→0, 1→1～2, 5→3～8]을 가산(0～8)(바이브비착용시)
+;조교 대상의Ｖ감각이[0→0, 1→1～2, 5→3～8]을 가산(0～8)(바이브비착용시)
 IF !TEQUIP:바이브
-	CALL ADD_CRI_VAR("바이브", LINE_CALC(ABL:MASTER:V감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:V감각, "0→0, 5→5, LIMIT/0～5"))
-	CALL ADD_CRI_VAR("페니스밴드", LINE_CALC(ABL:MASTER:V감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:V감각, "0→0, 5→5, LIMIT/0～5"))
+	CALL ADD_CRI_VAR("바이브", LINE_CALC(ABL:MASTER:Ｖ감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:Ｖ감각, "0→0, 5→5, LIMIT/0～5"))
+	CALL ADD_CRI_VAR("페니스밴드", LINE_CALC(ABL:MASTER:Ｖ감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:Ｖ감각, "0→0, 5→5, LIMIT/0～5"))
 ENDIF
 
-;조교 대상의 A감각이[0→0, 1→1～2, 5→3～8]을 가산(0～8)
-CALL ADD_CRI_VAR("애널비즈", LINE_CALC(ABL:MASTER:A감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:A감각, "0→0, 5→5, LIMIT/0～5"))
-;조교 대상의 A감각이[0→0, 1→1～2, 5→3～8]을 가산(0～8)(A바이브비착용시)
+;조교 대상의Ａ감각이[0→0, 1→1～2, 5→3～8]을 가산(0～8)
+CALL ADD_CRI_VAR("애널비즈", LINE_CALC(ABL:MASTER:Ａ감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:Ａ감각, "0→0, 5→5, LIMIT/0～5"))
+;조교 대상의Ａ감각이[0→0, 1→1～2, 5→3～8]을 가산(0～8)(A바이브비착용시)
 SIF !TEQUIP:애널바이브
-	CALL ADD_CRI_VAR("애널바이브", LINE_CALC(ABL:MASTER:A감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:A감각, "0→0, 5→5, LIMIT/0～5"))
+	CALL ADD_CRI_VAR("애널바이브", LINE_CALC(ABL:MASTER:Ａ감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:Ａ감각, "0→0, 5→5, LIMIT/0～5"))
 
-;조교 대상의 B감각이[0→0, 1→1～2, 5→3～8]을 가산(0～8)(B캡비착용시)
+;조교 대상의Ｂ감각이[0→0, 1→1～2, 5→3～8]을 가산(0～8)(B캡비착용시)
 SIF !TEQUIP:니플캡
-	CALL ADD_CRI_VAR("니플캡", LINE_CALC(ABL:MASTER:B감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:B감각, "0→0, 5→5, LIMIT/0～5"))
+	CALL ADD_CRI_VAR("니플캡", LINE_CALC(ABL:MASTER:Ｂ감각, "1→1, 5→3, LIMIT/0～3"), LINE_CALC(ABL:MASTER:Ｂ감각, "0→0, 5→5, LIMIT/0～5"))
 
 ;-------------------------------------------------------------------------
 ;PALAM군
@@ -339,9 +339,9 @@ CALL ADD_CRI_VAR("로터", LINE_CALC(CFLAG:아라이먼트, "-50→-3, 50→3, L
 ;아라이먼트가[-50→3, 50→-3]을 가산(-3～3)
 CALL ADD_CRI_VAR("관장세트", LINE_CALC(CFLAG:아라이먼트, "-50→3, 50→-3, LIMIT/-3～3"))
 
-;─
+;────────────────────────────────────
 ;게이지나 상태에 의한 변동
-;─
+;────────────────────────────────────
 ;-------------------------------------
 ;조교 대상의 체력
 ;-------------------------------------
@@ -362,7 +362,7 @@ LOCAL = TEQUIP:애널비즈 ? 2 # -1
 CALL ADD_CRI_VAR("애널비즈", LOCAL * LINE_CALC(BASE:MASTER:체력, "0→4, 50→2, 250→0, LIMIT/0～4"))
 ;조교 대상의 체력이[0→+-3, 50→+-1, 250→0]을 가산(-3～3)
 LOCAL = TEQUIP:클리캡 ? 1 # -1
-CALL ADD_CRI_VAR("C애무도구", LOCAL * LINE_CALC(BASE:MASTER:체력, "0→3, 50→1, 250→0, LIMIT/0～3"))
+CALL ADD_CRI_VAR("Ｃ애무도구", LOCAL * LINE_CALC(BASE:MASTER:체력, "0→3, 50→1, 250→0, LIMIT/0～3"))
 LOCAL = TEQUIP:니플캡 ? 1 # -1
 CALL ADD_CRI_VAR("니플캡", LOCAL * LINE_CALC(BASE:MASTER:체력, "0→3, 50→1, 250→0, LIMIT/0～3"))
 ;조교 대상의 체력이[0→-7/14, 50→-5/10, 250→-2/4]를 가산(-7～14)
@@ -381,16 +381,16 @@ SELECTCASE GET_CONDITION(TARGET)
 		CALL ADD_CRI_VAR("페니스밴드", TEQUIP:페니스밴드 ? 5 # 0)
 		CALL ADD_CRI_VAR("애널바이브", TEQUIP:애널바이브 ? 5 # 0)
 		CALL ADD_CRI_VAR("애널비즈", TEQUIP:애널비즈 ? 5 # 0, TEQUIP:애널비즈 ? 4 # 0)
-		CALL ADD_CRI_VAR("C애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 5 # 0)
+		CALL ADD_CRI_VAR("Ｃ애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 5 # 0)
 		CALL ADD_CRI_VAR("니플캡", TEQUIP:니플캡 ? 5 # 0)
 		CALL ADD_CRI_VAR("관장세트", TEQUIP:관장기＋플러그 ? 5 # 0, TEQUIP:관장기＋플러그 ? 4 # 0)
 	CASE "울적"
 		CALL ADD_CRI_VAR("관장세트", , 10)
 ENDSELECT
 
-;─
+;────────────────────────────────────
 ;전회의 행동이나 상황에 의한 변동
-;─
+;────────────────────────────────────
 ;-------------------------------------
 ;조교 대상이 자위중
 ;-------------------------------------
@@ -400,7 +400,7 @@ IF GETBIT(TEQUIP:자위중, 0)
 	CALL ADD_CRI_VAR("바이브", TEQUIP:바이브 ? 0 # 3, TEQUIP:바이브 ? 0 # 6)
 	CALL ADD_CRI_VAR("페니스밴드", TEQUIP:페니스밴드 ? 0 # 3, TEQUIP:페니스밴드 ? 0 # 6)
 	CALL ADD_CRI_VAR("애널바이브", TEQUIP:애널바이브 ? 0 # 1, TEQUIP:애널바이브 ? 0 # 8)
-	CALL ADD_CRI_VAR("C애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 4, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 5)
+	CALL ADD_CRI_VAR("Ｃ애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 4, (TEQUIP:클리캡 || TEQUIP:오나홀) ? 0 # 5)
 	CALL ADD_CRI_VAR("니플캡", TEQUIP:니플캡 ? 0 # 4, TEQUIP:니플캡 ? 0 # 5)
 ENDIF
 
@@ -430,14 +430,14 @@ IF IS_NOWCOMNAME("용서를빈다") && TCVAR:상태변화 < 8
 	CALL ADD_CRI_VAR("페니스밴드", TEQUIP:페니스밴드 ? 3 # 0)
 	CALL ADD_CRI_VAR("애널바이브", TEQUIP:애널바이브 ? 3 # 0)
 	CALL ADD_CRI_VAR("애널비즈", TEQUIP:애널비즈 ? 5 # 0)
-	CALL ADD_CRI_VAR("C애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 2 # 0)
+	CALL ADD_CRI_VAR("Ｃ애무도구", (TEQUIP:클리캡 || TEQUIP:오나홀) ? 2 # 0)
 	CALL ADD_CRI_VAR("니플캡", TEQUIP:니플캡 ? 2 # 0)
 	CALL ADD_CRI_VAR("관장세트", TEQUIP:관장기＋플러그 > 1 ? 5 # 0)
 ENDIF
 
-;─
+;────────────────────────────────────
 ;같은 행동 연속 실행의 확률을 다운합니다
-;─
+;────────────────────────────────────
 @ACT_ACTM2_PREV
 
 SELECTCASE TFLAG:전ACT
@@ -445,9 +445,9 @@ SELECTCASE TFLAG:전ACT
 		CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:전ACT), -3 * TFLAG:동일행동보너스, -4 * TFLAG:동일행동보너스)
 ENDSELECT
 
-;─
+;────────────────────────────────────
 ;TEQUIP 처리
-;─
+;────────────────────────────────────
 ;도구는 벽통과로 투과 할 수 없기로 한다.
 ;--------------------------------------
 ;조교 대상의 복장
@@ -457,7 +457,7 @@ ENDSELECT
 ;조교 대상의 하반신윗도리에 방해될 때
 IF CLOTHESTYPE(1, 1) == 2
 	CALL ADD_CRI_VAR("로터", -3)
-	CALL ADD_CRI_VAR("C애무도구", -5)
+	CALL ADD_CRI_VAR("Ｃ애무도구", -5)
 ;조교 대상의 하반신윗도리가 있을 때
 ELSEIF CLOTHESTYPE(1, 1)
 	CALL ADD_CRI_VAR("로터", -1)
@@ -465,7 +465,7 @@ ELSEIF CLOTHESTYPE(1, 1)
 	CALL ADD_CRI_VAR("페니스밴드", -3)
 	CALL ADD_CRI_VAR("애널바이브", -3)
 	CALL ADD_CRI_VAR("애널비즈", -2)
-	CALL ADD_CRI_VAR("C애무도구", -1)
+	CALL ADD_CRI_VAR("Ｃ애무도구", -1)
 	CALL ADD_CRI_VAR("관장세트", -2)
 ENDIF
 
@@ -480,7 +480,7 @@ IF CLOTHESTYPE(1, 0)
 	CALL ADD_CRI_VAR("페니스밴드", -3)
 	CALL ADD_CRI_VAR("애널바이브", -3)
 	CALL ADD_CRI_VAR("애널비즈", -2)
-	CALL ADD_CRI_VAR("C애무도구", -1)
+	CALL ADD_CRI_VAR("Ｃ애무도구", -1)
 ENDIF
 
 ;조교 대상의 상반신속옷이 있을 때
@@ -495,9 +495,9 @@ SIF CLOTHESTYPE(1, 2)
 SIF TFLAG:벌플래그
 	CALL ADD_CRI_VAR("관장세트", 3, 3)
 
-;─
+;────────────────────────────────────
 ;보정치 계산
-;─
+;────────────────────────────────────
 @ACT_ACTM2_CORRECTION(ARG)
 #DIM LCOUNT
 
@@ -512,9 +512,9 @@ ELSE
 	CALL ACT_ACTM_CORRECTION(2)
 ENDIF
 
-;─
+;────────────────────────────────────
 ;그 외 변동이나 실행 불가능의 판정
-;─
+;────────────────────────────────────
 @ACT_ACTM2_ABLE
 #DIM LCOUNT
 

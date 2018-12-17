@@ -1,7 +1,7 @@
 ﻿
-;─
+;────────────────────────────────────
 ;각인 취득의 체크, 그리고 각인에 의한 소질 변동(조건 설정은 꽤 적당… 조정이 필요라고 생각한다면 연락해 주세요)
-;─
+;────────────────────────────────────
 @MARK_CHECK_SOURCE
 #DIM LTEMP, 5
 
@@ -23,7 +23,7 @@ LOCAL = 0
 ;각인:쾌락각인 지금의 사양에서는 쾌락각인이 와작와작 오르므로 조정  요점 검토
 ;굴복각인보다 먼저는 오르지 않는다(굴복각인 이하의 레벨이 된다)
 ;쾌감이 규정량을 돌파하면 각인 취득
-SIF (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B) > (800 * (MARK:MASTER:쾌락각인 + 1))
+SIF (CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ) > (800 * (MARK:MASTER:쾌락각인 + 1))
 	LOCAL ++
 ;굴복각인 LV를 넘지 않는다. 또 10 LV가 상한
 SIF LOCAL && (MARK:MASTER:쾌락각인 < MARK:굴복각인) && (MARK:MASTER:쾌락각인 < 10)
@@ -35,7 +35,7 @@ LTEMP:2 = RESULT
 
 ;각인:반항각인
 ;(이번 조교 대상의 반응이 온순하면 판정하지 않는다)
-IF !IS_COMGRONAME("소극적 따른다") && !IS_COMGRONAME("태연하게 따른다/적극적 따른다/받아들인다")
+IF !IS_COMGRONAME("소극적으로 한다") && !IS_COMGRONAME("태연하게 한다/적극적으로 한다/받아들인다")
 	LOCAL = CUP:MASTER:반항 > (MARK:반항각인 + 1) * 400
 	;조교자의 평시아 라이먼트가 충분히 높면(S튼) 각인 취득을 중단
 	SIF MARK:반항각인 > 10 - MARK:5
@@ -56,9 +56,9 @@ ENDIF
 
 CALL MARK_CHECK_SOURCE_MESSAGE(LTEMP:0, LTEMP:1, LTEMP:2, LTEMP:3, LTEMP:4)
 
-;─
+;────────────────────────────────────
 ;각인 취득 구상과 표시
-;─
+;────────────────────────────────────
 @MARK_CHECK_SOURCE_MESSAGE(ARG:0, ARG:1, ARG:2, ARG:3, ARG:4)
 ;각인 취득시 개행
 SIF ARG:0 || ARG:1 || ARG:2 || ARG:3 || ARG:4
@@ -87,10 +87,10 @@ FOR LOCAL, 0, 5
 		ELSEIF LOCAL == 1 && ARG:1 == 7 && TALENT:MASTER:억압
 			TALENT:MASTER:억압 = 0
 			PRINTFORMW 그리고%CALLNAME:MASTER%는[억압]을 잃었다
-		;쾌락각인 Lv10 취득시, 쾌감에순수를 얻는다
-		ELSEIF LOCAL == 1 && ARG:1 == 10 && !TALENT:MASTER:쾌감에순수
-			TALENT:MASTER:쾌감에순수 = 1
-			PRINTFORMW 그리고%CALLNAME:MASTER%는[쾌감에순수]를 얻었다
+		;쾌락각인 Lv10 취득시, 쾌감에솔직을 얻는다
+		ELSEIF LOCAL == 1 && ARG:1 == 10 && !TALENT:MASTER:쾌감에솔직
+			TALENT:MASTER:쾌감에솔직 = 1
+			PRINTFORMW 그리고%CALLNAME:MASTER%는[쾌감에솔직]을 얻었다
 		;굴복각인 Lv7 취득시, 반항적을 잃는다
 		ELSEIF LOCAL == 2 && ARG:2 == 7 && TALENT:MASTER:반항적
 			TALENT:MASTER:반항적 = 0
@@ -129,23 +129,23 @@ IF MARK:반항각인 > 10-((MARK:굴복각인+MARK:MASTER:고통각인)/2)
 	PRINTFORMW 반항각인은{MARK:반항각인}가 되었다
 ENDIF
 
-;─
+;────────────────────────────────────
 ;각인:굴복각인
-;─
-;뽑지않고의2발와 뽑지않고의세발은 SOURCE_1. ERB에 이동. 결단적으로 신사양에 목수일＋α@revkoishi(14/05/28)
-;뽑지않고의2발와 뽑지않고의세발의 처리를 환송해. SOURCE_1의 처리를 고쳤으므로 여기서 좋다고 말하는 일로@/L(2014/06/05)
+;────────────────────────────────────
+;뽑지않고두발와 뽑지않고세발은 SOURCE_1. ERB에 이동. 결단적으로 신사양에 목수일＋α@revkoishi(14/05/28)
+;뽑지않고두발와 뽑지않고세발의 처리를 환송해. SOURCE_1의 처리를 고쳤으므로 여기서 좋다고 말하는 일로@/L(2014/06/05)
 @MARK_CHECK_SOURCE_SURRENDER
 #DIM LCOUNT
 
 ;-------------------------------------------------
 ;협력적 조교 대상 행동에 의한 굴복
 ;-------------------------------------------------
-SIF IS_COMGRONAME("적극적 따른다/받아들인다/태연하게 따른다") && !IS_NOWCOMNAME("하는대로") && !IS_COMIMPNAME("약간나쁜인상")
+SIF IS_COMGRONAME("적극적으로 한다/받아들인다/태연하게 한다") && !IS_NOWCOMNAME("하는대로") && !IS_COMIMPNAME("약간나쁜인상")
 	CALL MARK_CHECK_GET("호의적반응")	;【굴복:0】호의적반응(조교 대상이 적극적 따르는 계를 선택)
-;다리빨고강제/이라마치오가 다른 ACT분류로부터 파생했을 경우에서도 MENUMATCH라면 줍는 것이 가능@/L
-SIF MENUMATCH(TFLAG:ACT, "봉사") && IS_COMGRONAME("적극적 따른다")
+;밟핥기강제/이라마치오가 다른 ACT분류로부터 파생했을 경우에서도 MENUMATCH라면 줍는 것이 가능@/L
+SIF MENUMATCH(TFLAG:ACT, "봉사") && IS_COMGRONAME("적극적으로 한다")
 	CALL MARK_CHECK_GET("적극봉사")		;【굴복:29】적극봉사(ACT분류가 봉사계중에 적극적으로 따른다)
-SIF ((SEX_INITIATIVE(MASTER) && IS_COMGRONAME("적극적 따른다")) || (SEX_INITIATIVE(TARGET) && IS_COMGRONAME("받아들인다"))) ;&& ! IS_NOWCOMNAME("하는대로")
+SIF ((SEX_INITIATIVE(MASTER) && IS_COMGRONAME("적극적으로 한다")) || (SEX_INITIATIVE(TARGET) && IS_COMGRONAME("받아들인다"))) ;&& ! IS_NOWCOMNAME("하는대로")
 	CALL MARK_CHECK_GET("허리를흔든다")		;【굴복:31】허리를흔든다(성교중 적극적으로 따른다)
 SIF IS_NOWCOMNAME("가게해！")
 	CALL MARK_CHECK_GET("가게해")		;【굴복:49】가게해！
@@ -157,41 +157,41 @@ SIF TCVAR:MASTER:발기도 >= 1000
 	CALL MARK_CHECK_GET("발기")			;【굴복:2】발기시켰다(발기도 1000 돌파)
 FOR LCOUNT, 0, 4
 	SIF PALAM:MASTER:LCOUNT >= 1000
-		CALL MARK_CHECK_GET(TOSTR(3 + LCOUNT))	;【굴복:3】【굴복:4】【굴복:5】【굴복:6】쾌X를 1000이상 주었다
+		CALL MARK_CHECK_GET(TOSTR(3 + LCOUNT))	;【굴복:3】【굴복:4】【굴복:5】【굴복:6】쾌Ｘ를 1000이상 주었다
 NEXT
 SIF IS_CONDITION(MASTER, "정욕")
 	CALL MARK_CHECK_GET("정욕")			;【굴복:32】정욕(조교 대상 상태가 정욕)
-SIF TCVAR:MASTER:초조하게해번 > 1
-	CALL MARK_CHECK_GET("초조하게함")		;【굴복:33】초조하게해플레이
+SIF TCVAR:MASTER:애태움수 > 1
+	CALL MARK_CHECK_GET("초조하게함")		;【굴복:33】애태움플레이
 SIF PALAM:MASTER:윤활 >= 1000 && !TALENT:MASTER:남자
-	CALL MARK_CHECK_GET("젖었다")		;【굴복:62】젖었다(윤활 1000 돌파)
+	CALL MARK_CHECK_GET("젖음")		;【굴복:62】젖음(윤활 1000 돌파)
 
 ;-------------------------------------------------
 ;절정에 의한 굴복
 ;-------------------------------------------------
 FOR LCOUNT, 0, 4
 	SIF NOWEX:MASTER:LCOUNT
-		CALL MARK_CHECK_GET(TOSTR(12 + LCOUNT))	;【굴복:12】【굴복:13】【굴복:14】【굴복:15】X절정
+		CALL MARK_CHECK_GET(TOSTR(12 + LCOUNT))	;【굴복:12】【굴복:13】【굴복:14】【굴복:15】Ｘ절정
 NEXT
-SIF (NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정 || NOWEX:MASTER:A절정 || NOWEX:MASTER:B절정) && GETBIT(TEQUIP:자위중, 0)
+SIF (NOWEX:MASTER:Ｃ절정 || NOWEX:MASTER:Ｖ절정 || NOWEX:MASTER:Ａ절정 || NOWEX:MASTER:Ｂ절정) && GETBIT(TEQUIP:자위중, 0)
 	CALL MARK_CHECK_GET("자위절정")		;【굴복:26】자위절정
-SIF (NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정 || NOWEX:MASTER:A절정 || NOWEX:MASTER:B절정) && TEQUIP:줄
+SIF (NOWEX:MASTER:Ｃ절정 || NOWEX:MASTER:Ｖ절정 || NOWEX:MASTER:Ａ절정 || NOWEX:MASTER:Ｂ절정) && TEQUIP:줄
 	CALL MARK_CHECK_GET("구속절정")		;【굴복:34】구속절정
-SIF ((NOWEX:MASTER:C절정 != 0) + (NOWEX:MASTER:V절정 != 0) + (NOWEX:MASTER:A절정 != 0) + (NOWEX:MASTER:B절정 != 0)) > 1
+SIF ((NOWEX:MASTER:Ｃ절정 != 0) + (NOWEX:MASTER:Ｖ절정 != 0) + (NOWEX:MASTER:Ａ절정 != 0) + (NOWEX:MASTER:Ｂ절정 != 0)) > 1
 	CALL MARK_CHECK_GET("다중절정")		;【굴복:37】다중절정(복수 개소 동시절정)
-SIF (NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정 || NOWEX:MASTER:A절정 || NOWEX:MASTER:B절정) && (NOWEX:C절정 || NOWEX:V절정 || NOWEX:A절정 || NOWEX:B절정)
+SIF (NOWEX:MASTER:Ｃ절정 || NOWEX:MASTER:Ｖ절정 || NOWEX:MASTER:Ａ절정 || NOWEX:MASTER:Ｂ절정) && (NOWEX:Ｃ절정 || NOWEX:Ｖ절정 || NOWEX:Ａ절정 || NOWEX:Ｂ절정)
 	CALL MARK_CHECK_GET("동시절정")		;【굴복:38】동시절정(조교 대상, 조교자 동시절정)
-SIF ((TEQUIP:성교중 && (NOWEX:MASTER:V절정 || NOWEX:MASTER:A절정) && (NOWEX:사정 || NOWEX:C절정)) || (TEQUIP:성교봉사중 && (NOWEX:MASTER:사정 || NOWEX:MASTER:C절정) && (NOWEX:V절정 || NOWEX:A절정)))
+SIF ((TEQUIP:성교중 && (NOWEX:MASTER:Ｖ절정 || NOWEX:MASTER:Ａ절정) && (NOWEX:사정 || NOWEX:Ｃ절정)) || (TEQUIP:성교봉사중 && (NOWEX:MASTER:사정 || NOWEX:MASTER:Ｃ절정) && (NOWEX:Ｖ절정 || NOWEX:Ａ절정)))
 	CALL MARK_CHECK_GET("성교동시절정")	;【굴복:39】성교동시절정(성교중, 삽입자 사정시에 피삽입자가 A/V절정)
-SIF TFLAG:전회질내사정 == 1 && NOWEX:MASTER:V절정
-	CALL MARK_CHECK_GET("피질쏘아맞히고V절정")	;【굴복:60】질내사정 V절정(조교자에게 질내사정 되었다고 동시에 조교 대상이 V절정)
-SIF NOWEX:MASTER:C절정 && NOWEX:MASTER:V절정 && NOWEX:MASTER:A절정 && NOWEX:MASTER:B절정
+SIF TFLAG:전회질내사정 == 1 && NOWEX:MASTER:Ｖ절정
+	CALL MARK_CHECK_GET("역질내Ｖ절정")	;【굴복:60】질내사정Ｖ절정(조교자에게 질내사정 되었다고 동시에 조교 대상이Ｖ절정)
+SIF NOWEX:MASTER:Ｃ절정 && NOWEX:MASTER:Ｖ절정 && NOWEX:MASTER:Ａ절정 && NOWEX:MASTER:Ｂ절정
 	CALL MARK_CHECK_GET("사중절정")		;【굴복:61】사중절정
 
 ;-------------------------------------------------
 ;사정에 의한 굴복
 ;-------------------------------------------------
-;뽑지않고의2발/뽑지않고의세발의 조정@revkoishi(14/06/07)
+;뽑지않고두발/뽑지않고세발의 조정@revkoishi(14/06/07)
 SIF NOWEX:MASTER:사정 > 1
 	CALL MARK_CHECK_GET("사정")			;【굴복:19】사정
 SIF NOWEX:MASTER:사정 == 3
@@ -199,42 +199,42 @@ SIF NOWEX:MASTER:사정 == 3
 SIF NOWEX:MASTER:사정 == 4
 	CALL MARK_CHECK_GET("조루사정")		;【굴복:21】사정(조루)
 SIF TFLAG:전회질내사정 == 1
-	CALL MARK_CHECK_GET("피질내사정")	;【굴복:22】질내사정 되었다
+	CALL MARK_CHECK_GET("역질내사정")	;【굴복:22】질내사정 되었다
 SIF TFLAG:전회질내사정 == 2
 	CALL MARK_CHECK_GET("질내사정")		;【굴복:25】질내사정
 ;드라이사정은 연주한다. 일견 알기 어렵기 때문에@PENIS를+@/L
 SIF PENIS(TARGET) && IS_NOWACTNAME("입으로애무를강제/이라마치오") && NOWEX:사정 > 1
-	CALL MARK_CHECK_GET("피입안사정")	;【굴복:27】입안사정 되었다(페라/이라마중에 조교자가 사정)
+	CALL MARK_CHECK_GET("역구강사정")	;【굴복:27】구강사정 되었다(페라/이라마중에 조교자가 사정)
 ;드라이사정은 연주한다. 일견 알기 어렵기 때문에@PENIS를+@/L
-SIF PENIS(MASTER) && (IS_NOWACTNAME("입으로애무") || TEQUIP:조교대상C사용 == 2) && NOWEX:MASTER:사정 > 1
-	CALL MARK_CHECK_GET("입안사정")		;【굴복:28】입안사정(조교자 페라중에 사정)
+SIF PENIS(MASTER) && (IS_NOWACTNAME("입으로애무") || TEQUIP:조교대상Ｃ사용 == 2) && NOWEX:MASTER:사정 > 1
+	CALL MARK_CHECK_GET("구강사정")		;【굴복:28】구강사정(조교자 페라중에 사정)
 SIF TFLAG:전회질내사정 == 6
 	CALL MARK_CHECK_GET("항내사정")		;【굴복:41】애널에 사정
 SIF TFLAG:전회질내사정 == 5
-	CALL MARK_CHECK_GET("피항내사정")	;【굴복:42】애널에 사정된다
+	CALL MARK_CHECK_GET("역항내사정")	;【굴복:42】애널에 사정된다
 ;드라이사정에서의 뽑지않고는 우선 인정하는 것으로 한다@/L
 SIF IS_UNEXTRACTION(MASTER) && GROUPMATCH(TFLAG:전회질내사정, 2, 4, 6, 8) > 0
-	CALL MARK_CHECK_GET("뽑지않고의2발")	;【굴복:43】뽑지않고의2발(사정 후 삽입을 중단하지 않고 사정)
+	CALL MARK_CHECK_GET("뽑지않고두발")	;【굴복:43】뽑지않고두발(사정 후 삽입을 중단하지 않고 사정)
 SIF NOWEX:MASTER:사정 == 1
 	CALL MARK_CHECK_GET("드라이사정")		;【굴복:44】드라이사정
 SIF NOWEX:MASTER:사정 == 5
 	CALL MARK_CHECK_GET("전립선사정")	;【굴복:45】전립선사정
 SIF IS_UNEXTRACTION(MASTER) > 1 && GROUPMATCH(TFLAG:전회질내사정, 2, 4, 6, 8) > 0
-	CALL MARK_CHECK_GET("뽑지않고의세발")	;【굴복:55】뽑지않고의세발(뽑지않고의2발 후 삽입을 중단하지 않고 사정)
+	CALL MARK_CHECK_GET("뽑지않고세발")	;【굴복:55】뽑지않고세발(뽑지않고두발 후 삽입을 중단하지 않고 사정)
 
 ;-------------------------------------------------
 ;조교 대상치정에 의한 굴복
 ;-------------------------------------------------
 SIF !(TEQUIP:MASTER:코스프레 || TEQUIP:MASTER:하반신속옷 || TEQUIP:MASTER:상반신속옷 || TEQUIP:MASTER:하반신윗도리 || TEQUIP:MASTER:상반신윗도리 || TEQUIP:MASTER:전신윗도리)
 	CALL MARK_CHECK_GET("전라")			;【굴복:1】알몸에 벗겼다(MASTER의 의복이 없어진다)(※양말등은 착의에 세지 않는다)
-SIF CUP:MASTER:쾌A
-	CALL MARK_CHECK_GET("A조교")		;【굴복:9】애널 조교(쾌A발생)
+SIF CUP:MASTER:쾌Ａ
+	CALL MARK_CHECK_GET("Ａ조교")		;【굴복:9】애널 조교(쾌A발생)
 SIF TEQUIP:야외플레이
 	CALL MARK_CHECK_GET("야외")			;【굴복:16】야외플레이
 SIF TEQUIP:대거울
 	CALL MARK_CHECK_GET("대거울")			;【굴복:17】수치플레이
 ;리액션이 수용인 경우로 한정한다. 방뇨의 경우, 용서를빈다는 거부 취급@/L
-SIF IS_NOWACTNAME("방뇨") && IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다")
+SIF IS_NOWACTNAME("방뇨") && IS_COMGRONAME("소극적으로 한다/태연하게 한다/적극적으로 한다/받아들인다")
 	CALL MARK_CHECK_GET("방뇨")			;【굴복:18】방뇨시킨(조교 대상이 따르는 계를 선택) L
 SIF TEQUIP:관장기＋플러그
 	CALL MARK_CHECK_GET("관장")			;【굴복:35】관장
@@ -261,28 +261,28 @@ SIF TEQUIP:삼각목마
 ;결정적 상황에 의한 굴복
 ;-------------------------------------------------
 ;리액션이 수용인 경우에 한정@/L
-SIF IS_NOWACTNAME("키스") && IS_COMGRONAME("소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다/용서를빈다")
+SIF IS_NOWACTNAME("키스") && IS_COMGRONAME("소극적으로 한다/태연하게 한다/적극적으로 한다/받아들인다/용서를빈다")
 	CALL MARK_CHECK_GET("키스")			;【굴복:11】키스
 SIF TEQUIP:바이브
 	CALL MARK_CHECK_GET("바이브")		;【굴복:23】바이브
 SIF TEQUIP:애널바이브 || TEQUIP:애널비즈
-	CALL MARK_CHECK_GET("A도구")		;【굴복:24】애널바이브, 비즈
+	CALL MARK_CHECK_GET("Ａ도구")		;【굴복:24】애널바이브, 비즈
 SIF TEQUIP:성교중 || TEQUIP:성교봉사중
 	CALL MARK_CHECK_GET("성교")			;【굴복:30】성교
 SIF NOWEX:MASTER:분유
 	CALL MARK_CHECK_GET("분유")			;【굴복:40】분유
 SIF TEQUIP:성교중 == 6
-	CALL MARK_CHECK_GET("A성교·수")	;【굴복:46】애널섹스(접수)
+	CALL MARK_CHECK_GET("Ａ성교·수")	;【굴복:46】애널섹스(접수)
 SIF TEQUIP:성교봉사중 == 6
-	CALL MARK_CHECK_GET("A성교·공")	;【굴복:47】애널섹스(공격)
+	CALL MARK_CHECK_GET("Ａ성교·공")	;【굴복:47】애널섹스(공격)
 SIF IS_NOWACTNAME("공중육변기플레이") && GROUPMATCH(TFLAG:ACT파생, 2, 3)
 	CALL MARK_CHECK_GET("공중변소")		;【굴복:51】공중변소(공중육변기플레이 수용시)
 SIF IS_NOWACTNAME("피스트퍽/양구멍피스트")
-	CALL MARK_CHECK_GET("V확장")		;【굴복:53】V확장(피스트/양구멍피스트시)
+	CALL MARK_CHECK_GET("Ｖ확장")		;【굴복:53】Ｖ확장(피스트/양구멍피스트시)
 SIF IS_NOWACTNAME("애널피스트/양구멍피스트")
-	CALL MARK_CHECK_GET("A확장")		;【굴복:54】A확장(A피스트/양구멍피스트시)
-SIF NOWEX:MASTER:물총
-	CALL MARK_CHECK_GET("물총")		;【굴복:59】물총
+	CALL MARK_CHECK_GET("Ａ확장")		;【굴복:54】Ａ확장(A피스트/양구멍피스트시)
+SIF NOWEX:MASTER:분수
+	CALL MARK_CHECK_GET("분수")		;【굴복:59】분수
 
 ;-------------------------------------------------
 ;구상 독자적인 굴복
@@ -339,11 +339,11 @@ SIF LOCAL && (MARK:굴복각인 < 10)
 
 RETURN 0
 
-;─
+;────────────────────────────────────
 ;굴복각인취득 함수 이벤트제입니다. 특정의 조건으로 턴 엔드 하면 굴복 포인트가 저점점 농락 되어 갑니다
 ;ARGS:0 굴복 실적명 또는 캐릭터 라인 형식의 굴복 실적 번호(0～127)
 ;결단적으로 신사양에 목수일(14/05/26). 성별로 유효 판정하도록(듯이) 가드@revkoishi(14/06/01)
-;─
+;────────────────────────────────────
 @MARK_CHECK_GET(ARGS:0)
 LOCAL:1 = RESULT
 LOCAL:0 = ISNUMERIC(ARGS:0) ? TOINT(ARGS:0) # GET_SURRENDER_NUM(ARGS:0)

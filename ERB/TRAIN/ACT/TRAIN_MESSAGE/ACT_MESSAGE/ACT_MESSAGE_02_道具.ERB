@@ -4,22 +4,22 @@
 
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-;─
+;────────────────────────────────────
 ;020, 로터
-;─
+;────────────────────────────────────
 ;★리액션전★
 @TRAIN_MESSAGE_20
 IF TCVAR:MASTER:위치전후 == 1                     ;전부터 애무
 	IF TCVAR:MASTER:갈것같다  ;조교 대상이갈것같다
-		SELECTCASE TCVAR:MASTER:초조하게해번
-			CASE IS > 1                 ;초조하게해중
+		SELECTCASE TCVAR:MASTER:애태움수
+			CASE IS > 1                 ;애태움중
 				IF TEQUIP:안면승마 || TEQUIP:안면승마애널           ;안면승마중
 					PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의 안면에\@ TEQUIP:안면승마 ? 성기를 문질러 바르고 # 아누스를 강압하고 \@면서
 				ELSE                                                  ;그 외
 					PRINTFORML %CALLNAME:TARGET%는%TARGET_DESCRIPTION("")%절정의 예감에 허리를 실룩거리게 한다%CALLNAME:MASTER%의 허리를 억눌러,
 				ENDIF
 				PRINTFORML 코드를 가지고 매단 로터를 당장 튈 것 같은\@ PENIS(MASTER) ? 귀두 # 음핵 \@에 맞히거나 떼어 놓거나 했다…
-			CASEELSE                    ;초조하게함 없음·초조하게해 종료
+			CASEELSE                    ;초조하게함 없음·애태움 종료
 				IF TEQUIP:안면승마 || TEQUIP:안면승마애널           ;안면승마중
 					PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의 안면에\@ TEQUIP:안면승마 ? 성기를 문질러 바르고 # 아누스를 강압하고 \@면서
 				ELSE                                                  ;그 외
@@ -48,11 +48,11 @@ IF TCVAR:MASTER:위치전후 == 1                     ;전부터 애무
 	ENDIF
 ELSE                                              ;뒤로부터 애무
 	IF TCVAR:MASTER:갈것같다  ;조교 대상이갈것같다
-		SELECTCASE TCVAR:MASTER:초조하게해번
-			CASE IS > 1                 ;초조하게해중
+		SELECTCASE TCVAR:MASTER:애태움수
+			CASE IS > 1                 ;애태움중
 				PRINTFORML %CALLNAME:TARGET%는%TARGET_DESCRIPTION("")%절정의 예감에 허리를 실룩거리게 한다%CALLNAME:MASTER%의 허리를 꽉 껴안아
 				PRINTFORML 코드를 가지고 매단 로터를 당장 튈 것 같은\@ PENIS(MASTER) ? 귀두 # 음핵 \@에 맞히거나 떼어 놓거나 했다…
-			CASEELSE                    ;초조하게함 없음·초조하게해 종료
+			CASEELSE                    ;초조하게함 없음·애태움 종료
 				PRINTFORML %CALLNAME:TARGET%는%TARGET_DESCRIPTION("면서")%%CALLNAME:MASTER%의 허리를 등으로부터 안아,
 				PRINTFORML 로터의 진동을 강하게 해, 충혈했다\@ PENIS(MASTER) ? 귀두 # 음핵 \@의 뒤에 강하게 꽉 눌렀다…
 		ENDSELECT
@@ -82,10 +82,10 @@ ENDIF
 SELECTCASE COMGRONAME(TFLAG:REACT분류)
 	CASE "받아들인다"
 		IF TCVAR:MASTER:갈것같다        ;갈것같다상태
-			IF TCVAR:MASTER:초조하게해번 > 1          ;초조하게해중
+			IF TCVAR:MASTER:애태움수 > 1          ;애태움중
 				PRINTFORML %CALLNAME:MASTER%는 무심코 허리를 구불거리게 할 수 있어 쾌감의 저림을 뒤쫓지만,
 				PRINTFORML %CALLNAME%는 재미있어하도록(듯이) 로터를 흔들고 있다…
-			ELSE                                  ;초조하게해 종료·초조하게해 없음
+			ELSE                                  ;애태움 종료·애태움 없음
 				PRINTFORML %CALLNAME:MASTER%는 강한 쾌락에\@ TALENT:MASTER:남자 ? 눌러 참은 신음소리 # 달콤하게 녹은 것 같은 외침 \@를 올렸지만,
 				PRINTFORML %CALLNAME%는 상관하지 않고 로터를 동글동글 계속 강압했다…
 			ENDIF
@@ -102,7 +102,7 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 			ENDSELECT
 		ENDIF
 		RETURN 2
-	CASE "적극적 따른다", "태연하게 따른다"
+	CASE "적극적으로 한다", "태연하게 한다"
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%는%CALLNAME%의 방해가 되지 않도록, 날뛴다 허리를 스스로 억눌렀다…
@@ -136,7 +136,7 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 				ENDIF
 		ENDSELECT
 		RETURN 2
-	CASE "소극적 따른다"
+	CASE "소극적으로 한다"
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%는 로터의 진동이 강제적으로 주는 낯간지러운 것 같은 쾌락을,
@@ -155,9 +155,9 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 		RETURN 2
 ENDSELECT
 
-;─
+;────────────────────────────────────
 ;021, 바이브
-;─
+;────────────────────────────────────
 ;★리액션전★
 @TRAIN_MESSAGE_21
 IF TFLAG:ACT파생 == 0         ;장착시
@@ -176,9 +176,9 @@ IF !TFLAG:ACT파생 && TALENT:MASTER:후타나리       ;장착시, 후타나리
 	RETURN 2
 ENDIF
 
-;─
+;────────────────────────────────────
 ;022, 애널바이브
-;─
+;────────────────────────────────────
 ;★리액션전★
 @TRAIN_MESSAGE_22
 IF TFLAG:ACT파생 == 0         ;장착시
@@ -197,9 +197,9 @@ IF !TFLAG:ACT파생 && TALENT:MASTER:남자         ;장착시, 남자만 지문
 	RETURN 2
 ENDIF
 
-;─
+;────────────────────────────────────
 ;023, 애널비즈
-;─
+;────────────────────────────────────
 ;★리액션전★
 @TRAIN_MESSAGE_23
 SELECTCASE TFLAG:ACT파생
@@ -218,7 +218,7 @@ ENDSELECT
 @TRAIN_MESSAGE2_23
 IF TFLAG:ACT파생 == 1                             ;해제시만 지문 변화
 	;남자로, 전립선으로갈것같다(해제시는 전립선자극 2가 붙는다)
-	IF TALENT:MASTER:남자 && (TCVAR:MASTER:갈것같다 || PALAM:MASTER:쾌C >= 8000)
+	IF TALENT:MASTER:남자 && (TCVAR:MASTER:갈것같다 || PALAM:MASTER:쾌Ｃ >= 8000)
 		IF BASE:MASTER:사정 == 0        ;사정 게이지가 없다
 			PRINTFORML 뽑아 내지는 비즈가%CALLNAME:MASTER%의 팡팡 부푼 전립선을 빠득빠득 자극한다…
 			PRINTFORML %CALLNAME:MASTER%는 시든 정액을 한층 더 짜려고 하는 고문에 외침을 올렸다…
@@ -239,7 +239,7 @@ IF TFLAG:ACT파생 == 1                             ;해제시만 지문 변화
 				PRINTFORML , 라고 공이 항문을 빠져 나갈 때마다, 눈동자로부터 이성의 빛이 사라져 간다…
 		ENDSELECT
 		RETURN 2
-	ELSEIF IS_COMGRONAME("적극적 따른다/태연하게 따른다")
+	ELSEIF IS_COMGRONAME("적극적으로 한다/태연하게 한다")
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%가 항문이 힘을 빼면,%CALLNAME%는 비즈를 단번에 뽑아 냈다…
@@ -274,7 +274,7 @@ IF TFLAG:ACT파생 == 1                             ;해제시만 지문 변화
 				ENDIF
 		ENDSELECT
 		RETURN 2
-	ELSEIF IS_COMGRONAME("소극적 따른다")
+	ELSEIF IS_COMGRONAME("소극적으로 한다")
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%는 아누스로부터 솟구치는 요염한 감각에 마음을 어지럽혀져
@@ -297,9 +297,9 @@ IF TFLAG:ACT파생 == 1                             ;해제시만 지문 변화
 	ENDIF
 ENDIF
 
-;─
+;────────────────────────────────────
 ;024, 클리캡/오나홀
-;─
+;────────────────────────────────────
 @TRAIN_MESSAGE_24
 SELECTCASE TFLAG:ACT파생
 	CASE 0                    ;클리캡 장착
@@ -316,9 +316,9 @@ SELECTCASE TFLAG:ACT파생
 		PRINTFORML \@ GET_STAIN("페니스", "정액", MASTER) ? 정액을 포함했다 # \@오나홀을 제외하려고 했다…
 ENDSELECT
 
-;─
+;────────────────────────────────────
 ;025, 니플캡
-;─
+;────────────────────────────────────
 @TRAIN_MESSAGE_25
 IF TFLAG:ACT파생 == 0         ;장착시
 	PRINTFORML %CALLNAME:TARGET%는%TARGET_DESCRIPTION("개개,")%%CALLNAME:MASTER%의 유두에
@@ -328,9 +328,9 @@ ELSE                          ;해제시
 	PRINTFORML 클립 로터를 떼어내려고 했다…
 ENDIF
 
-;─
+;────────────────────────────────────
 ;026, 페니스밴드
-;─
+;────────────────────────────────────
 @TRAIN_MESSAGE_26
 IF TFLAG:ACT파생 == 0         ;장착시
 	PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%에 쌍두의 페니스밴드를 장착 시키려고 했다…

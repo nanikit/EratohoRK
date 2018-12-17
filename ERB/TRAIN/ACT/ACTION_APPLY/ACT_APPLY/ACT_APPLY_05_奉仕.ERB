@@ -1,12 +1,12 @@
-﻿;─
+﻿;────────────────────────────────────
 ;050, 자위/애무 강제
-;─
-;리액션전(S/N)(불결)
+;────────────────────────────────────
+;리액션전(Ｓ/Ｎ)(불결)
 @ACTION_APPLY_50
 ;봉사계의 행동은 거부할 수 있으므로, 반응이 나올 때까지 신체의 접촉이 없도록 해 둡니다
 ;탈의의 처리
-;조교 대상이 악세사리 장착중,1/3의 확률이나 조교자 C둔감시 악세사리─강제탈의
-SIF TEQUIP:MASTER:악세사리 && (!RAND:3 || TALENT:C둔감)
+;조교 대상이 악세사리 장착중,1/3의 확률이나 조교자Ｃ둔감시 악세사리─강제탈의
+SIF TEQUIP:MASTER:악세사리 && (!RAND:3 || TALENT:Ｃ둔감)
 	TFLAG:강제탈의 = 6
 ;조교자 착의플레이선호 소질이 있는 경우
 IF TALENT:착의플레이선호
@@ -52,7 +52,7 @@ TEQUIP:자위중 &= ~1
 TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
 TFLAG:경과시간 += 2
 
-;리액션 후(S/N)(불결)
+;리액션 후(Ｓ/Ｎ)(불결)
 @ACTION_APPLY2_50
 ;REACT분류가 요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("거부/날뛴다/도망친다")
@@ -85,39 +85,39 @@ ELSE
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL:1 / 10
 	;쾌c용 보정치에 응해 사랑, 쾌cSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL:1 / 5
-	SOURCE:쾌C += LOCAL:1 * 2
+	SOURCE:쾌Ｃ += LOCAL:1 * 2
 	;애무시
 	IF !TFLAG:ACT파생
 		;쾌b용 보정치에 응해 쾌bSOURCE 증가
-		SOURCE:쾌B += LOCAL:4 * 2
+		SOURCE:쾌Ｂ += LOCAL:4 * 2
 		;조교 대상 기교가 높은 경우
 		SIF ABL:MASTER:기교 > 2
 			;쾌a용 보정치에 응해 쾌aSOURCE 증가
-			SOURCE:쾌A += LOCAL:3 * 2
+			SOURCE:쾌Ａ += LOCAL:3 * 2
 	ENDIF
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
 	;적극적·태연하게 따르는 것 경우
-	IF IS_COMGRONAME("적극적 따른다/태연하게 따른다")
+	IF IS_COMGRONAME("적극적으로 한다/태연하게 한다")
 		;2/3로 앉아 자세가 무릎서기에 변화
 		IF TCVAR:MASTER:자세 == 2 && RAND:3
 			TCVAR:MASTER:REACT자세변화 = 1
-			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:전회자세 = TCVAR:MASTER:자세
 			TCVAR:MASTER:자세 = 10
 		ENDIF
 		;위로돌리고가 아니면,1/2그리고 뒤로부터 애무하도록(듯이)
 		IF TCVAR:MASTER:자세 != 1 && RAND:2 && TCVAR:MASTER:위치전후 != 3
 			TCVAR:MASTER:REACT자세변화 = 1
-			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:전회자세 = TCVAR:MASTER:자세
 			TCVAR:MASTER:위치전후 = 3
 		ENDIF
 	ENDIF
 ENDIF
 
-;─
+;────────────────────────────────────
 ;051, 펠라치오/쿤닐링구스 강제
-;─
-;리액션전(S/N/H)(불결)
+;────────────────────────────────────
+;리액션전(Ｓ/Ｎ/Ｈ)(불결)
 @ACTION_APPLY_51
 ;탈의의 처리
 ;조교자 착의플레이선호 소질이 있는 경우
@@ -177,7 +177,7 @@ TEQUIP:자위중 &= ~2
 TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
 TFLAG:경과시간 += 2
 
-;리액션 후(S/N/H)(불결)
+;리액션 후(Ｓ/Ｎ/Ｈ)(불결)
 @ACTION_APPLY2_51
 ;REACT분류가 요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("거부/날뛴다/도망친다")
@@ -198,31 +198,31 @@ ELSE
 	SELECTCASE TFLAG:ACT파생
 		;펠라치오 강제
 		CASE 1
-			;애무 보정, 조교 대상 순종, 혀사용, 고양이혀 소질에 의해 보정 가격인상승
-			LOCAL = 250 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 900
+			;애무 보정, 조교 대상 순종, 혀사용, 거친혀 소질에 의해 보정 가격인상승
+			LOCAL = 250 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:거친혀) / 900
 			;더러움이 서로 옮긴다
-			STAIN:MASTER:구 |= STAIN:페니스
-			STAIN:페니스 |= STAIN:MASTER:구
+			STAIN:MASTER:입 |= STAIN:페니스
+			STAIN:페니스 |= STAIN:MASTER:입
 			;보정치에 응해 쾌cSOURCE 증가
-			SOURCE:쾌C = LOCAL * 2
+			SOURCE:쾌Ｃ = LOCAL * 2
 		;안면승마애널
 		CASE 3
-			;애무 보정, 조교 대상 순종, 혀사용, 고양이혀 소질에 의해 보정 가격인상승
-			LOCAL = 250 + ACT_TO(TARGET, 3) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 900
+			;애무 보정, 조교 대상 순종, 혀사용, 거친혀 소질에 의해 보정 가격인상승
+			LOCAL = 250 + ACT_TO(TARGET, 3) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:거친혀) / 900
 			;더러움이 서로 옮긴다
-			STAIN:MASTER:구 |= STAIN:애널
-			STAIN:애널 |= STAIN:MASTER:구
+			STAIN:MASTER:입 |= STAIN:애널
+			STAIN:애널 |= STAIN:MASTER:입
 			;보정치에 응해 쾌aSOURCE 증가
-			SOURCE:쾌A = LOCAL * 2
+			SOURCE:쾌Ａ = LOCAL * 2
 		;상기 이외(쿤닐링구스 강제/안면승마)
 		CASEELSE
-			;애무 보정, 조교 대상 순종, 혀사용, 고양이혀 소질에 의해 보정 가격인상승
-			LOCAL = 250 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 900
+			;애무 보정, 조교 대상 순종, 혀사용, 거친혀 소질에 의해 보정 가격인상승
+			LOCAL = 250 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:혀사용 + TALENT:MASTER:거친혀) / 900
 			;더러움이 서로 옮긴다
-			STAIN:MASTER:구 |= STAIN:바기나
-			STAIN:바기나 |= STAIN:MASTER:구
+			STAIN:MASTER:입 |= STAIN:바기나
+			STAIN:바기나 |= STAIN:MASTER:입
 			;보정치에 응해 쾌cSOURCE 증가
-			SOURCE:쾌C = LOCAL * 2
+			SOURCE:쾌Ｃ = LOCAL * 2
 	ENDSELECT
 	;조교 대상 조교레벨, 보정치에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
@@ -231,20 +231,20 @@ ELSE
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
 	;적극적/태연하게 따르는 것 경우
-	IF IS_COMGRONAME("적극적 따른다/태연하게 따른다") && TFLAG:ACT파생 == 1
+	IF IS_COMGRONAME("적극적으로 한다/태연하게 한다") && TFLAG:ACT파생 == 1
 		;2/3로 앉아 자세가 무릎서기에 변화
 		IF TCVAR:MASTER:자세 == 2 && RAND:3
 			TCVAR:MASTER:REACT자세변화 = 1
-			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:전회자세 = TCVAR:MASTER:자세
 			TCVAR:MASTER:자세 = 10
 		ENDIF
 	ENDIF
 ENDIF
 
-;─
+;────────────────────────────────────
 ;052, 파이즈리
-;─
-;리액션전(S/N/H)(불결)
+;────────────────────────────────────
+;리액션전(Ｓ/Ｎ/Ｈ)(불결)
 @ACTION_APPLY_52
 ;탈의의 처리
 ;반반의 확률로 상반신윗도리, 상반신 전부 강제탈의
@@ -278,7 +278,7 @@ TEQUIP:자위중 = 0
 TCVAR:MASTER:이번발기 += 100 + GET_ABL(TARGET, "욕망")
 TFLAG:경과시간 += 3
 
-;리액션 후(S/N/H)(불결)
+;리액션 후(Ｓ/Ｎ/Ｈ)(불결)
 @ACTION_APPLY2_52
 ;REACT분류가 요구에 응하지 않는 것 경우(거절)
 IF IS_COMGRONAME("거부/날뛴다/도망친다")
@@ -300,8 +300,8 @@ IF IS_COMGRONAME("거부/날뛴다/도망친다")
 	ENDIF
 ;그 외의 경우(수용)
 ELSE
-	;애무 보정에 응해 쾌BSOURCE 증가
-	SOURCE:MASTER:쾌B += 20 + (ACT_FROM(TARGET, 4) / 2) * (TALENT:허리사용 + 1) / 3
+	;애무 보정에 응해 쾌ＢSOURCE 증가
+	SOURCE:MASTER:쾌Ｂ += 20 + (ACT_FROM(TARGET, 4) / 2) * (TALENT:허리사용 + 1) / 3
 	;애무 보정, 조교 대상 순종, 거유, 빈유소질에 의해 보정 가격인상승
 	LOCAL = 50 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:거유 - TALENT:MASTER:빈유) / 900
 	;더러움이 서로 옮긴다
@@ -311,15 +311,15 @@ ELSE
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
 	;보정치에 응해 사랑, 쾌cSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
-	SOURCE:쾌C += LOCAL * 2
+	SOURCE:쾌Ｃ += LOCAL * 2
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
 ENDIF
 
-;─
+;────────────────────────────────────
 ;053, 가랑이
-;─
-;리액션전(S/N/H)(불결)
+;────────────────────────────────────
+;리액션전(Ｓ/Ｎ/Ｈ)(불결)
 @ACTION_APPLY_53
 ;탈의의 처리
 ;벽통과가 있으면 3/4로 무시한다
@@ -376,8 +376,8 @@ IF IS_COMGRONAME("거부/날뛴다/도망친다")
 	ENDIF
 ;그 외의 경우(수용)
 ELSE
-	;애무 보정, 조교 대상 젖기쉬움, 젖기어려움 소질에 응해 쾌BSOURCE 증가
-	SOURCE:MASTER:쾌C += 20 + (ACT_FROM(TARGET, 4) / 2) * (3 + TALENT:MASTER:젖기쉬움 - TALENT:MASTER:젖기어려움) * (TALENT:허리사용 + 1) / 9
+	;애무 보정, 조교 대상 젖기쉬움, 젖기어려움 소질에 응해 쾌ＢSOURCE 증가
+	SOURCE:MASTER:쾌Ｃ += 20 + (ACT_FROM(TARGET, 4) / 2) * (3 + TALENT:MASTER:젖기쉬움 - TALENT:MASTER:젖기어려움) * (TALENT:허리사용 + 1) / 9
 	;애무 보정, 조교 대상 순종, 젖기쉬움, 젖기어려움 소질에 의해 보정치
 	LOCAL = 200 + ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:젖기쉬움 - TALENT:MASTER:젖기어려움) / 900
 	;더러움이 서로 옮긴다
@@ -387,15 +387,15 @@ ELSE
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
 	;보정치에 응해 사랑, 쾌cSOURCE 증가
 	SOURCE:MASTER:사랑 += LOCAL / 5
-	SOURCE:쾌C += LOCAL * (TALENT:MASTER:허리사용*2 + 2)
+	SOURCE:쾌Ｃ += LOCAL * (TALENT:MASTER:허리사용*2 + 2)
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
 ENDIF
 
-;─
-;055, 다리빨고강제
-;─
-;리액션전(N/H/A)[벌](불결, 일탈, 트라우마)
+;────────────────────────────────────
+;055, 밟핥기강제
+;────────────────────────────────────
+;리액션전(Ｎ/Ｈ/Ａ)[벌](불결, 일탈, 트라우마)
 @ACTION_APPLY_55
 ;조교 대상이 양말을 신고 있을 때
 SIF TEQUIP:양말
@@ -403,10 +403,10 @@ SIF TEQUIP:양말
 	TFLAG:자주탈의 = 6 * RAND:2
 SOURCE:MASTER:불결 = 180
 ;조교자의 다리에 정액/애널 더러움이 존재하면 불결 SOURCE 나카마시가
-SIF STAIN:다리 & (4 + 8)
+SIF STAIN:발 & (4 + 8)
 	SOURCE:MASTER:불결 += 360
 ;조교자의 다리에 피/점액 더러움이 존재하면 불결 SOURCE 오마스가
-SIF STAIN:다리 & (32 + 64)
+SIF STAIN:발 & (32 + 64)
 	SOURCE:MASTER:불결 += 800
 ;조교 대상 순종, 마조끼, 프라이드낮음, 프라이드높음 소질, 반항강도, 반항각인, 불결 SOURCE, 조교레벨에 응해 일탈 SOURCE 증감
 SOURCE:MASTER:일탈 = (35 - GET_ABL(MASTER, "순종") * 4 / 10 - GET_ABL(MASTER, "마조끼") / 5 - TALENT:MASTER:프라이드낮음 * 5 + TALENT:MASTER:프라이드높음 * 5) * (50 + CFLAG:MASTER:반항강도 * 3 + MARK:반항각인 * 2 + SOURCE:MASTER:불결 / 50) / (5 + CFLAG:MASTER:조교레벨)
@@ -449,11 +449,11 @@ IF IS_COMGRONAME("거부/날뛴다/도망친다")
 	ENDIF
 ;그 외의 경우(수용)
 ELSE
-	;조교 대상 기교, 애무 보정, 조교 대상 순종, 미각 소질에 의해 보정치 생성
-	LOCAL = 40 + (GET_ABL(MASTER, "기교") - 30) * ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:미각) / 4500
+	;조교 대상 기교, 애무 보정, 조교 대상 순종, 각선미 소질에 의해 보정치 생성
+	LOCAL = 40 + (GET_ABL(MASTER, "기교") - 30) * ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * (3 + TALENT:MASTER:각선미) / 4500
 	;더러움이 서로 옮긴다
-	STAIN:MASTER:다리 |= STAIN:페니스
-	STAIN:페니스 |= STAIN:MASTER:다리
+	STAIN:MASTER:발 |= STAIN:페니스
+	STAIN:페니스 |= STAIN:MASTER:발
 	;조교 대상 조교레벨, 보정치에 응해 접촉 SOURCE 증가
 	SOURCE:MASTER:접촉 += CFLAG:MASTER:조교레벨 * 10 + LOCAL / 10
 	;보정치에 응해 사랑, 굴종 SOURCE 증가
@@ -464,19 +464,19 @@ ELSE
 	;불결 SOURCE 증가
 	TIMES SOURCE:MASTER:불결 , 1.20
 	;적극적/태연하게 따르는 것 경우
-	IF IS_COMGRONAME("적극적 따른다/태연하게 따른다")
+	IF IS_COMGRONAME("적극적으로 한다/태연하게 한다")
 		;2/3로 앉아 자세가 무릎서기에 변화
 		IF TCVAR:MASTER:자세 == 2 && RAND:3
 			TCVAR:MASTER:REACT자세변화 = 1
-			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:전회자세 = TCVAR:MASTER:자세
 			TCVAR:MASTER:자세 = 10
 		ENDIF
 	ENDIF
 ENDIF
 
-;─
-;056, 이라마치오(H/A)[벌](접촉, 사랑역, 성행동, 상해, 구속<=머리를 잡는 일, 불결, 일탈, 트라우마, 쾌c)
-;─
+;────────────────────────────────────
+;056, 이라마치오(Ｈ/Ａ)[벌](접촉, 사랑역, 성행동, 상해, 구속<=머리를 잡는 일, 불결, 일탈, 트라우마, 쾌c)
+;────────────────────────────────────
 @ACTION_APPLY_56
 ;반반의 확률로 하반신윗도리, 하반신 전부 자주탈의
 TFLAG:자주탈의 = 2 + RAND:2 * 3
@@ -514,10 +514,10 @@ SIF CFLAG:MASTER:트라우마 == 56
 ;접촉, 불결, 트라우마 SOURCE에 응해 사랑 SOURCE 감소
 SOURCE:MASTER:사랑 -= SOURCE:MASTER:접촉 / 5 + SOURCE:MASTER:불결 / 5 + SOURCE:MASTER:트라우마 / 5
 ;애무 보정치에 응해 쾌cSOURCE 증가
-SOURCE:쾌C += 300 + ACT_TO(TARGET, 1)
+SOURCE:쾌Ｃ += 300 + ACT_TO(TARGET, 1)
 ;더러움이 서로 옮긴다
-STAIN:MASTER:구 |= STAIN:페니스
-STAIN:페니스 |= STAIN:MASTER:구
+STAIN:MASTER:입 |= STAIN:페니스
+STAIN:페니스 |= STAIN:MASTER:입
 ;안면승마계 해제
 CALL FACESITTING_SET(0)
 ;조교자, 조교 대상 자위를 중단
@@ -526,10 +526,10 @@ TEQUIP:자위중 = 0
 TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20)
 TFLAG:경과시간 += 3
 
-;─
+;────────────────────────────────────
 ;057, 가슴애무강제
-;─
-;리액션전(S/N/H)
+;────────────────────────────────────
+;리액션전(Ｓ/Ｎ/Ｈ)
 @ACTION_APPLY_57
 ;상반신 전부 자주탈의
 TFLAG:자주탈의 = 4
@@ -552,21 +552,21 @@ CALL FACESITTING_SET(0)
 TCVAR:MASTER:이번발기 += 80 + (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 3
 TFLAG:경과시간 += 2
 
-;리액션 후(S/N/H)
+;리액션 후(Ｓ/Ｎ/Ｈ)
 @ACTION_APPLY2_57
 ;REACT분류에 의해 분기
 SELECTCASE COMGRONAME(TFLAG:REACT분류)
-	CASE "소극적 따른다", "적극적 따른다", "받아들인다", "태연하게 따른다"
+	CASE "소극적으로 한다", "적극적으로 한다", "받아들인다", "태연하게 한다"
 		;2/3로 앉아 자세가 무릎서기에 변화
 		IF TCVAR:MASTER:자세 == 2 && RAND:3
 			TCVAR:MASTER:REACT자세변화 = 1
-			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:전회자세 = TCVAR:MASTER:자세
 			TCVAR:MASTER:자세 = 10
 		ENDIF
 		;위로돌리고가 아니고, ACT파생가 입으로애무가 아닌 경우,1/2그리고 뒤로부터 애무하도록(듯이)
 		IF TCVAR:MASTER:자세 != 1 && RAND:2 && TCVAR:MASTER:위치전후 != 3 && TFLAG:ACT파생 != 2
 			TCVAR:MASTER:REACT자세변화 = 1
-			TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+			TCVAR:MASTER:전회자세 = TCVAR:MASTER:자세
 			TCVAR:MASTER:위치전후 = 3
 		ENDIF
 	;REACT분류가날뛴다/도망치는 것 경우
@@ -579,8 +579,8 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 			;입으로애무 강제의 경우		ACT파생를 보지 않았기 때문에 분리한다@/L
 			IF TFLAG:ACT파생 == 2
 				;더러움이 서로 옮긴다
-				STAIN:MASTER:구 |= STAIN:가슴
-				STAIN:가슴 |= STAIN:MASTER:구
+				STAIN:MASTER:입 |= STAIN:가슴
+				STAIN:가슴 |= STAIN:MASTER:입
 			;손으로애무 강제의 경우		손을 잡아 이끈, 말하는 취급이니까 더러운 이동해도 좋은 것이 아닐까
 			ELSE
 				;더러움이 서로 옮긴다
@@ -599,7 +599,7 @@ LOCAL = 30 + ACT_TO(TARGET, 4) * (3 + TALENT:MASTER:기묘한손가락) / 4
 ;보정치에 응해 성행동, 달성, 쾌bSOURCE 증가
 SOURCE:MASTER:성행동 += 50 + LOCAL / 8
 SOURCE:MASTER:달성 += LOCAL / 4
-SOURCE:쾌B += LOCAL
+SOURCE:쾌Ｂ += LOCAL
 ;더러움이 서로 옮긴다
 STAIN:MASTER:(TFLAG:ACT파생 ? 0 # 1) |= STAIN:가슴
 STAIN:가슴 |= STAIN:MASTER:(TFLAG:ACT파생 ? 0 # 1)

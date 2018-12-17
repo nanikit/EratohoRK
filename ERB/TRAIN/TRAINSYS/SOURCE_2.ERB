@@ -1,6 +1,6 @@
-﻿;─
+﻿;────────────────────────────────────
 ;접촉의 소스(공포 소스, 욕정, 공순, 치정, 불쾌, 호감도)
-;─
+;────────────────────────────────────
 @CALC_SOURCE10
 #DIM 치정증감
 #DIM 욕정증감
@@ -61,9 +61,9 @@ CUP:MASTER:불쾌 += 불쾌증감
 ;치정증감량과 같다공포 SOURCE 증감
 SOURCE:MASTER:공포 += 치정증감
 
-;─
+;────────────────────────────────────
 ;사랑의 소스(열락 소스, 공순, 욕정, 호감도)
-;─
+;────────────────────────────────────
 @CALC_SOURCE11
 
 ;성별, 동성 따위의 처리
@@ -86,9 +86,9 @@ SOURCE:MASTER:열락 += SOURCE:MASTER:사랑 * (ABL:MASTER:욕망 + 5) / 10
 ;호감도(M→T) 증감
 TFLAG:호감도업 += LINE_CALC(SOURCE:MASTER:사랑, "0→0, 2500→10, LIMIT/0～10")
 
-;─
+;────────────────────────────────────
 ;성행동의 소스(불쾌, 억울, 체력, 기력, 호감도, 경험치 추가)
-;─
+;────────────────────────────────────
 @CALC_SOURCE12
 
 ;욕망이 낮은 경우는 PALAM:MASTER:불쾌가 오른다
@@ -115,9 +115,9 @@ TFLAG:호감도업 += LIMIT(LOCAL / 250, 0, 12)
 ;경험치 추가
 TFLAG:경험치업 += SOURCE:MASTER:성행동 / 200
 
-;─
+;────────────────────────────────────
 ;아픔의 소스(달성 소스, 공포 소스, 욕정, 고통, 체력, 기력, 이성, 출혈)
-;─
+;────────────────────────────────────
 @CALC_SOURCE13
 
 ;고통. 작은체형 체형이나 거구시, 속박되고 있을 때에 보정
@@ -130,14 +130,14 @@ SIF TFLAG:벌플래그 > 0
 ;공포의 소스, 아픔에강함/약한 것 영향을 받아, 마조끼와 고통중독이 오르면 거의 사라집니다
 SOURCE:MASTER:공포 += SOURCE:MASTER:아픔 * (20 - ABL:MASTER:마조끼 - ABL:MASTER:고통중독 * 2 + TALENT:MASTER:아픔에약함 * 5 - TALENT:MASTER:아픔에강함 * 3) / 20
 
-;욕정, 마조끼와 고통중독, 도M, 그리고 조교자의 새디즘을 본다
-CUP:MASTER:욕정 += SOURCE:MASTER:아픔 * (ABL:MASTER:마조끼 + ABL:MASTER:고통중독 * 2 + TALENT:MASTER:도M * 5) * (3 + TALENT:새디즘) / 60
+;욕정, 마조끼와 고통중독, 도M, 그리고 조교자의 새드를 본다
+CUP:MASTER:욕정 += SOURCE:MASTER:아픔 * (ABL:MASTER:마조끼 + ABL:MASTER:고통중독 * 2 + TALENT:MASTER:도M * 5) * (3 + TALENT:새드) / 60
 
 ;아픔 SOURCE로부터 보정치를 만든다
 LOCAL = 50 + (SOURCE:MASTER:아픔 - 50) * (50 - CFLAG:MASTER:조교레벨 - ABL:MASTER:순종 * 2) / 200
 ;500를 돌파하면 상승 하기 어려워지는 처리
 ;필요한가 어떤가를 지켜보기 (위해)때문에 시험적으로 comment out@이것 보고
-;B = (A - 500) / 3
+;B = (A - 500)/3
 ;SIF B > 0
 ;	A = 500 + RAND:B
 LOCAL = MAX(LOCAL, 10)
@@ -156,20 +156,20 @@ TFLAG:고통에의한이성저하 = 1
 SIF LOCAL > 500 && RAND:3 > 0
 	STAIN:MASTER:입 |= 32
 SIF LOCAL > 500 && RAND:4 > 0
-	STAIN:MASTER:다리 |= 32
+	STAIN:MASTER:발 |= 32
 SIF LOCAL > 750 && RAND:3 > 0
 	STAIN:MASTER:가슴 |= 32
 SIF LOCAL > 750 && RAND:4 > 0
 	STAIN:MASTER:손 |= 32
 [SKIPEND]
 
-;─
+;────────────────────────────────────
 ;구속의 소스(욕정, 굴복, 고통, 불쾌, 억울, 체력, 기력)
-;─
+;────────────────────────────────────
 @CALC_SOURCE14
 
-;욕정, 마조끼와 구속중독, 도M, 그리고 조교자의 새디즘을 본다
-CUP:MASTER:욕정 += SOURCE:MASTER:구속 * (ABL:MASTER:마조끼 + ABL:MASTER:구속중독 * 2 + TALENT:MASTER:도M * 5) * (3 + TALENT:새디즘) / 60
+;욕정, 마조끼와 구속중독, 도M, 그리고 조교자의 새드를 본다
+CUP:MASTER:욕정 += SOURCE:MASTER:구속 * (ABL:MASTER:마조끼 + ABL:MASTER:구속중독 * 2 + TALENT:MASTER:도M * 5) * (3 + TALENT:새드) / 60
 
 ;굴복, 순종을 본다
 CUP:MASTER:굴복 += SOURCE:MASTER:구속 * (5 + ABL:MASTER:순종) / 25

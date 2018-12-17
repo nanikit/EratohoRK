@@ -1,6 +1,6 @@
-﻿;─
+﻿;────────────────────────────────────
 ;030, 아픔을참는다(아픔, 구속, 반항, 공포)
-;─
+;────────────────────────────────────
 @COM30
 ;상해, 구속 SOURCE 감소
 TIMES SOURCE:MASTER:아픔 , 0.85
@@ -12,13 +12,13 @@ SIF SOURCE:MASTER:반항 < 0
 ;공포 SOURCE 증가
 SOURCE:MASTER:공포 += SOURCE:MASTER:아픔 * (MARK:MASTER:트라우마 + 10) * (11 - MARK:MASTER:고통각인) * (11 - MARK:반항각인) / 1000
 ;COM 분류
-CALL SET_COMGRO("소극적 따른다")
+CALL SET_COMGRO("소극적으로 한다")
 ;COM 인상
 CALL SET_COMIMP("약간좋은인상")
 
 ;REACTION_MESSAGE에서는 쾌SOURCE로 분기 하고 있어, COM측의 수정 누락이라고 생각되었으므로 우선@/L
 ;COMIMP/COMGRO는 그대로 좋은 것 같은 생각도 들었으므로 보류
-IF SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B > 10
+IF SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ > 10
 	;파생:아프지만기분좋다！
 	TFLAG:REACT파생 = 1
 ELSE
@@ -28,16 +28,16 @@ ENDIF
 RETURN 1
 
 
-;─
+;────────────────────────────────────
 ;031, 비명을올린다(굴종, 달성, 공포)
-;─
+;────────────────────────────────────
 @COM31
 ;굴종, 달성, 공포 SOURCE 증가
 SOURCE:MASTER:굴종 += 200 + SOURCE:MASTER:아픔 * (CFLAG:MASTER:조교레벨 + 1) * (MARK:굴복각인 + 10) / 100
-SOURCE:MASTER:달성 += (SOURCE:MASTER:아픔 / 3 + SOURCE:MASTER:굴종 / 2) * (3 + TALENT:새디즘 + TALENT:심술쟁이 - TALENT:상냥함) / 5
+SOURCE:MASTER:달성 += (SOURCE:MASTER:아픔 / 3 + SOURCE:MASTER:굴종 / 2) * (3 + TALENT:새드 + TALENT:심술쟁이 - TALENT:상냥함) / 5
 SOURCE:MASTER:공포 += 200 + SOURCE:MASTER:아픔 * (200 - GET_ABL(MASTER, "마조끼")) * (MARK:MASTER:트라우마 + 10) / 2000
 ;COM 분류
-CALL SET_COMGRO("소극적 따른다")
+CALL SET_COMGRO("소극적으로 한다")
 ;COM 인상
 CALL SET_COMIMP("0에서멀어짐")
 IF SOURCE:MASTER:아픔 > 500 || SOURCE:MASTER:아픔 > PALAM:MASTER:공포 * 2
@@ -50,9 +50,9 @@ ENDIF
 RETURN 1
 
 
-;─
+;────────────────────────────────────
 ;032, 날뛴다(아픔, 구속, 달성역, 반항, 공포, 날뛴다, 벌포인트)
-;─
+;────────────────────────────────────
 @COM32
 ;줄구속중은 아프다
 IF TEQUIP:줄 && !IS_NOWACTNAME("줄")
@@ -102,7 +102,7 @@ ELSEIF IS_NOWACTNAME("정상위") || TEQUIP:성교중 == 1
 	LOCAL:2 = 12
 ELSEIF IS_NOWACTNAME("후배위") || TEQUIP:성교중 == 2
 	LOCAL:2 = 18
-ELSEIF IS_NOWACTNAME("승마위") || TEQUIP:성교중 == 3
+ELSEIF IS_NOWACTNAME("기승위") || TEQUIP:성교중 == 3
 	LOCAL:2 = 7
 ELSEIF IS_NOWACTNAME("대면좌위") || TEQUIP:성교중 == 4
 	LOCAL:2 = 15
@@ -143,7 +143,7 @@ IF LOCAL > LOCAL:1 + LOCAL:2 && TEQUIP:삼각목마 == 0 && !IS_NOWACTNAME("역�
 		TEQUIP:애널바이브 = 0
 	SIF IS_NOWACTNAME("애널비즈")
 		TEQUIP:애널비즈 = 0
-	IF IS_NOWACTNAME("C애무도구")
+	IF IS_NOWACTNAME("Ｃ애무도구")
 		TEQUIP:클리캡 = 0
 		TEQUIP:오나홀 = 0
 	ENDIF
@@ -162,7 +162,7 @@ IF LOCAL > LOCAL:1 + LOCAL:2 && TEQUIP:삼각목마 == 0 && !IS_NOWACTNAME("역�
 	TFLAG:REACT파생 = 0
 ELSE
 	;COM 분류
-	CALL SET_COMGRO("소극적 따른다")
+	CALL SET_COMGRO("소극적으로 한다")
 	;반항 SOURCE 감소
 	TIMES SOURCE:MASTER:반항 , 0.10
 	IF TEQUIP:줄 && !IS_NOWACTNAME("줄")
@@ -183,15 +183,15 @@ TFLAG:벌포인트 += IS_COMGRONAME("날뛴다")? 8 # 2 + BASE:흥미 / 200 + BA
 RETURN 1
 
 
-;─
+;────────────────────────────────────
 ;033, 무서워한다(굴종, 공포, 애원, 벌포인트)
-;─
+;────────────────────────────────────
 @COM33
 ;굴종, 공포 SOURCE 증가
 SOURCE:MASTER:굴종 += 200 + MARK:굴복각인 * MARK:MASTER:트라우마 * 10
 SOURCE:MASTER:공포 += SOURCE:MASTER:아픔 / 3 + SOURCE:MASTER:구속 / 5 + SOURCE:MASTER:일탈 / 4 + SOURCE:MASTER:트라우마 / 3
 ;의견을 내다니 좋은 담력이구나! 라든지 말하면서 벌이 됩니다
-LOCAL = BASE:초조 / 80 - BASE:이성 / 100 - CFLAG:아라이먼트 / 10 + PALAM:MASTER:반항 / 1000 + TALENT:새디즘 * 5 + TALENT:심술쟁이 * 5 - TALENT:상냥함 * 5 - MARK:MASTER:트라우마 / 2
+LOCAL = BASE:초조 / 80 - BASE:이성 / 100 - CFLAG:아라이먼트 / 10 + PALAM:MASTER:반항 / 1000 + TALENT:새드 * 5 + TALENT:심술쟁이 * 5 - TALENT:상냥함 * 5 - MARK:MASTER:트라우마 / 2
 SIF IS_POLICY("지금", "이상")
 	LOCAL += RAND:7
 ;결국 대답이 없기 때문에, 자신이 납득할 수 있는 형태에 만지작거립니다@/L
@@ -213,15 +213,15 @@ ENDIF
 RETURN 1
 
 
-;─
+;────────────────────────────────────
 ;각 행동의 반항 난이도, 현재미사용
-;─
+;────────────────────────────────────
 ;@COUNTER_CHECK
 [SKIPSTART]
 LOCAL:2 = 0
 SIF IS_NOWACTNAME("손으로애무/입으로애무")
 	LOCAL:2 += 2
-SIF IS_NOWACTNAME("애널애무/애널빨고")
+SIF IS_NOWACTNAME("애널애무/애널핥기")
 	LOCAL:2 += 3
 SIF IS_NOWACTNAME("키스")
 	LOCAL:2 += 2

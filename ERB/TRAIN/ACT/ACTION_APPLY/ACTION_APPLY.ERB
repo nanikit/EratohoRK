@@ -1,22 +1,22 @@
 ﻿
-;─
+;────────────────────────────────────
 ;조교자 행동 기본 처리(리액션전)
 ;
 ;조교자 행동에 응해 파라미터를 변동시킨다
 ;여기서 설정된 값을 기본으로 한층 더 보정을 하는 점에 주의
-;─
+;────────────────────────────────────
 @ACTION_APPLY
 
 ;조교 항목 마다의 기본 처리를 호출해
 TRYCALLFORM ACTION_APPLY_{TFLAG:ACT}
 
-;─
+;────────────────────────────────────
 ;조교자 행동 기본 처리(리액션 후)
 ;
 ;지연 된 조교자 행동의 실행. 조교 대상의 반항이나 소원으로 캔슬되는 행동도 여기서 처리
 ;여기서 설정된 값을 기본으로 한층 더 보정을 하는 점에 주의
 ;여기의 처리로 지문이 발생하지 않았으면 0을 돌려준다(뒤로 범용 지문이 불려 간다)
-;─
+;────────────────────────────────────
 @ACTION_APPLY2
 
 [SKIPSTART]
@@ -85,8 +85,8 @@ ELSEIF IS_NOWACTNAME("치료한다")
 
 ;특수 상태변화 처리의 호출
 
-;조교 대상 자위중, 갈것같다상태로 초조하게해 종료/없음
-ELSEIF GETBIT(TEQUIP:자위중, 0) && TCVAR:MASTER:갈것같다 && TCVAR:MASTER:초조하게해번 < 2
+;조교 대상 자위중, 갈것같다상태로 애태움 종료/없음
+ELSEIF GETBIT(TEQUIP:자위중, 0) && TCVAR:MASTER:갈것같다 && TCVAR:MASTER:애태움수 < 2
 	;자위절정 처리를 호출해
 	LOCALS = ONANIE_EX
 ENDIF
@@ -112,16 +112,16 @@ ENDIF
 ;리액션이날뛴다계였던 경우, 자세를 기립, 위치를 리셋트
 IF IS_COMGRONAME("날뛴다")
 	TCVAR:MASTER:REACT자세변화 = 1
-	TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
-	TCVAR:MASTER:전회의위치전후 = TCVAR:MASTER:위치전후
-	TCVAR:MASTER:전회의위치상하 = TCVAR:MASTER:위치상하
+	TCVAR:MASTER:전회자세 = TCVAR:MASTER:자세
+	TCVAR:MASTER:전회위치전후 = TCVAR:MASTER:위치전후
+	TCVAR:MASTER:전회위치상하 = TCVAR:MASTER:위치상하
 	TCVAR:MASTER:자세 = 4
 	TCVAR:MASTER:위치전후 = 0
 	TCVAR:MASTER:위치상하 = 0
 ENDIF
 RETURN RESULT
 
-;─
+;────────────────────────────────────
 ;조교자 행동 기본 처리(행동마다)
 ;
 ;리액션전, 리액션 후의 보정을 1개소에 정리했다
@@ -131,5 +131,5 @@ RETURN RESULT
 ;	요점강제발기:조교 대상의 정력이 다한 상태.
 ;	　　　　　　이번발기 플래그를 무시한다(통상의 조건에서는 발기하지 않는다)
 ;	　　　　　　강제 발기 효과가 있는 경우, 발기도에 직접 가산한다
-;─
+;────────────────────────────────────
 ;ACT분류 마다 파일을 분리. 개별의 파일은 ACT_APPLY 폴더에 이전@/L

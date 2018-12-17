@@ -1,13 +1,13 @@
-﻿;─
+﻿;────────────────────────────────────
 ;조교 유별의 판정(회화 0/애무 1/도구 2/성교 3/수치 4/봉사 5/가학 6/이상 7/사역 8/성적봉사 10)
-;─
+;────────────────────────────────────
 @ACT_MENU
 #DIM LCOUNT
 
 ;변수를 초기화
 CALL SET_CRI_VAR
 FOR LCOUNT, 0, 11
-	;휴게를 튕긴다
+	;휴식을 튕긴다
 	;사역은 처리하지 않는다
 	SIF LCOUNT == 8 || LCOUNT == 9
 		CONTINUE
@@ -131,7 +131,7 @@ CALLFORM %LOCALS%_VIOLENT
 CALL CHA_CRI_VAR, "도구 해제"
 CALLFORM %LOCALS%_UNEQUIP
 
-CALL CHA_CRI_VAR, "밀어넘어뜨리기 연속 애무 보정"
+CALL CHA_CRI_VAR, "쓰러트리기 연속 애무 보정"
 CALLFORM %LOCALS%_PETTING_CONTINUE
 
 CALL CHA_CRI_VAR, "식스나인 유발"
@@ -200,13 +200,13 @@ CALLFORM %LOCALS%_OSHIOKI
 CALL CHA_CRI_VAR, "삽입 보정"
 CALLFORM %LOCALS%_INSERT
 
-CALL CHA_CRI_VAR, "초조하게해중"
+CALL CHA_CRI_VAR, "애태움중"
 CALLFORM %LOCALS%_IRRITATE
 
-CALL CHA_CRI_VAR, "A섹스 회피"
+CALL CHA_CRI_VAR, "Ａ섹스 회피"
 CALLFORM %LOCALS%_AGUARD
 
-CALL CHA_CRI_VAR, "A섹스 체위 제한"
+CALL CHA_CRI_VAR, "Ａ섹스 체위 제한"
 CALLFORM %LOCALS%_ASEX_LIMITATION
 
 CALL CHA_CRI_VAR, "구상 보정"
@@ -220,7 +220,7 @@ CALLFORM %LOCALS%_ABLE
 TFLAG:가능한ACT계열수 = 0
 ;가능한ACT계열수세트
 FOR LCOUNT, 0, 11
-	;휴게를 튕긴다
+	;휴식을 튕긴다
 	;사역은 처리하지 않는다
 	SIF LCOUNT == 8 || LCOUNT == 9
 		CONTINUE
@@ -235,20 +235,20 @@ CALLFORM %LOCALS%_HEAT
 CALL CHA_CRI_VAR, "ACT 보정치"
 CALLFORM %LOCALS%_CORRECTION
 
-;─
+;──────────────────────────────
 ;최종 판정
-;─
+;──────────────────────────────
 CALL DEF_CRI_VAR("최대 우선 지정-애무/성적봉사/성교/도구/봉사/수치/가학/사역/이상/회화")
 CALLF GET_CRI_VAR("누계")
 CALL ACT_MENU_RESULT()
 CALL ANA_CRI_VAR()
 
-;─
+;──────────────────────────────
 ;ACT분류판정
 ;갈라 놓을 때의 우선순서는 애무 1＞성적봉사 10＞성교 3＞도구 2＞봉사 5＞수치 4＞가학 6＞사역 8＞이상 7＞회화 0
 ;
 ;ARG = 0:기준치 보존 1:분류 호출 2:ARGS로 지정한 만큼 종류를 무효화
-;─
+;──────────────────────────────
 @ACT_MENU_RESULT(ARG = 0, ARGS)
 #DIM LCOUNT
 #DIM LTEMP, 2
@@ -391,8 +391,8 @@ SIF TALENT:LOCAL:혀사용
 SIF TALENT:LOCAL:바느질 && ITEM:바늘
 	CALL ADD_CRI_VAR("가학", 9)
 
-;조교자가 고양이혀
-SIF TALENT:LOCAL:고양이혀
+;조교자가 거친혀
+SIF TALENT:LOCAL:거친혀
 	CALL ADD_CRI_VAR("애무", -9)
 
 ;조교자가 요령 있는 손가락
@@ -425,8 +425,8 @@ SIF TALENT:LOCAL:헌신적
 SIF TALENT:LOCAL:수동
 	CALL ADD_CRI_VAR("봉사", 9)
 
-;조교자가 쾌감에순수/부정
-IF TALENT:LOCAL:쾌감에순수
+;조교자가 쾌감에솔직/부정
+IF TALENT:LOCAL:쾌감에솔직
 	CALL ADD_CRI_VAR("성교",  9)
 	CALL ADD_CRI_VAR("봉사",  6)
 	CALL ADD_CRI_VAR("성적봉사",  9)
@@ -554,8 +554,8 @@ IF TALENT:(LOCAL:1):처녀 && !CFLAG:LOCAL:합의 && !TALENT:(LOCAL:1):후타나
 	;조교자가 기장/충동적/조급함, 또는 조교자 상태가 정욕/분노/싫증/광기의 언젠가
 	SIF TALENT:LOCAL:기장 || TALENT:LOCAL:충동적 || TALENT:LOCAL:조급함 || TCVAR:상태변화 > 4
 		CALL ADD_CRI_VAR("성교", , 6)
-	;뒤를 사용할 수 있는 상태라면 패널티를 경감(조교 대상의 A경험 3이상)
-	SIF EXP:(LOCAL:1):A경험 > 2
+	;뒤를 사용할 수 있는 상태라면 패널티를 경감(조교 대상의Ａ경험 3이상)
+	SIF EXP:(LOCAL:1):Ａ경험 > 2
 		CALL ADD_CRI_VAR("성교", 3)
 	;조교자의 조교 Lv가 1이상
 	SIF CFLAG:LOCAL:조교레벨 > 0
@@ -578,8 +578,8 @@ IF TALENT:(LOCAL:1):동정 && !CFLAG:합의 && (TALENT:(LOCAL:1):남자 || TALEN
 	;조교자가 기장/충동적/조급함, 또는 조교자 상태가 정욕/분노/싫증/광기의 언젠가
 	SIF TALENT:LOCAL:기장 || TALENT:LOCAL:충동적 || TALENT:LOCAL:조급함 || TCVAR:상태변화 > 4
 		CALL ADD_CRI_VAR("성교", , 3)
-	;뒤를 사용할 수 있는 상태라면 패널티를 경감(조교 대상의 A경험 2이상)
-	SIF EXP:(LOCAL:1):A경험 > 1
+	;뒤를 사용할 수 있는 상태라면 패널티를 경감(조교 대상의Ａ경험 2이상)
+	SIF EXP:(LOCAL:1):Ａ경험 > 1
 		CALL ADD_CRI_VAR("성교", 2)
 	;조교자의 조교 Lv가 1이상
 	SIF CFLAG:LOCAL:조교레벨 > 0
@@ -607,15 +607,15 @@ FOR LCOUNT, 0, 11
 	CALL ADD_CRI_VAR(MENU(LCOUNT), GET_ABL(LOCAL, ABLNAME:(20 + LCOUNT)) * 2 / 10)
 NEXT
 
-;CV감각의 합계치가[0→0, 1→1, 4→2, 7→3]을 가산(0～3)
-CALL ADD_CRI_VAR("성교", LINE_CALC(ABL:LOCAL:C감각 + ABL:LOCAL:V감각, "1→1, 7→3, LIMIT/0～3"))
+;ＣＶ감각의 합계치가[0→0, 1→1, 4→2, 7→3]을 가산(0～3)
+CALL ADD_CRI_VAR("성교", LINE_CALC(ABL:LOCAL:Ｃ감각 + ABL:LOCAL:Ｖ감각, "1→1, 7→3, LIMIT/0～3"))
 
-;조교자의 V감각
-CALL ADD_CRI_VAR("성적봉사", GET_ABL(LOCAL, "V감각") / 20)
+;조교자의Ｖ감각
+CALL ADD_CRI_VAR("성적봉사", GET_ABL(LOCAL, "Ｖ감각") / 20)
 
-;조교자의 노출버릇
-SIF ABL:LOCAL:노출버릇
-	CALL ADD_CRI_VAR("수치", GET_ABL(LOCAL, "노출버릇") / 20)
+;조교자의 노출증
+SIF ABL:LOCAL:노출증
+	CALL ADD_CRI_VAR("수치", GET_ABL(LOCAL, "노출증") / 20)
 
 [SKIPEND]
 
@@ -631,21 +631,21 @@ CALL ADD_CRI_VAR("봉사", LINE_CALC(ABL:LOCAL:순종 + ABL:LOCAL:봉사정신, 
 ;조교 대상의 순종과 봉사정신의 합계치가[1→0, 4→1, 7→2]를 가산(0～2)
 CALL ADD_CRI_VAR("성적봉사", LINE_CALC(ABL:LOCAL:순종 + ABL:LOCAL:봉사정신, "4→1, 7→2, LIMIT/0～2"))
 
-;조교 대상의 CV감각의 합계치가[0→0, 1→0～1, 4→0～2, 7→0～3]을 가산(0～3)
-CALL ADD_CRI_VAR("도구", , LINE_CALC(ABL:LOCAL:C감각 + ABL:LOCAL:V감각, "1→1, 7→3, LIMIT/0～3"))
-CALL ADD_CRI_VAR("성교", , LINE_CALC(ABL:LOCAL:C감각 + ABL:LOCAL:V감각, "1→1, 7→3, LIMIT/0～3"))
+;조교 대상의ＣＶ감각의 합계치가[0→0, 1→0～1, 4→0～2, 7→0～3]을 가산(0～3)
+CALL ADD_CRI_VAR("도구", , LINE_CALC(ABL:LOCAL:Ｃ감각 + ABL:LOCAL:Ｖ감각, "1→1, 7→3, LIMIT/0～3"))
+CALL ADD_CRI_VAR("성교", , LINE_CALC(ABL:LOCAL:Ｃ감각 + ABL:LOCAL:Ｖ감각, "1→1, 7→3, LIMIT/0～3"))
 
-;조교 대상의 A감각이[0→0～1, 1→0～2, 3→0～4, 5→0～6]을 가산(0～6)
-CALL ADD_CRI_VAR("도구", , LINE_CALC(ABL:LOCAL:A감각, "1→2, 5→6, LIMIT/1～6"))
-;조교 대상의 A감각이[0→0, 1→0～1, 3→0～3, 5→0～5]를 가산(0～5)
-CALL ADD_CRI_VAR("이상", , LINE_CALC(ABL:LOCAL:A감각, "1→1, 5→5, LIMIT/0～5"))
-;조교 대상의 A감각이[0→0, 3→1, 5→2]를 가산(0～2)
-CALL ADD_CRI_VAR("성교", LINE_CALC(ABL:LOCAL:A감각, "3→1, 5→2, LIMIT/0～2"))
+;조교 대상의Ａ감각이[0→0～1, 1→0～2, 3→0～4, 5→0～6]을 가산(0～6)
+CALL ADD_CRI_VAR("도구", , LINE_CALC(ABL:LOCAL:Ａ감각, "1→2, 5→6, LIMIT/1～6"))
+;조교 대상의Ａ감각이[0→0, 1→0～1, 3→0～3, 5→0～5]를 가산(0～5)
+CALL ADD_CRI_VAR("이상", , LINE_CALC(ABL:LOCAL:Ａ감각, "1→1, 5→5, LIMIT/0～5"))
+;조교 대상의Ａ감각이[0→0, 3→1, 5→2]를 가산(0～2)
+CALL ADD_CRI_VAR("성교", LINE_CALC(ABL:LOCAL:Ａ감각, "3→1, 5→2, LIMIT/0～2"))
 
-;조교 대상의 B감각이[0→0, 3→0～1, 5→0～2]를 가산(0～2)
-CALL ADD_CRI_VAR("애무", , LINE_CALC(ABL:LOCAL:B감각, "3→1, 5→2, LIMIT/0～2"))
-;조교 대상의 B감각이[0→0, 1→0, 3→0～1]을 가산(0～1)
-CALL ADD_CRI_VAR("봉사", , LINE_CALC(ABL:LOCAL:B감각, "1→0, 3→1, LIMIT/0～1"))
+;조교 대상의Ｂ감각이[0→0, 3→0～1, 5→0～2]를 가산(0～2)
+CALL ADD_CRI_VAR("애무", , LINE_CALC(ABL:LOCAL:Ｂ감각, "3→1, 5→2, LIMIT/0～2"))
+;조교 대상의Ｂ감각이[0→0, 1→0, 3→0～1]을 가산(0～1)
+CALL ADD_CRI_VAR("봉사", , LINE_CALC(ABL:LOCAL:Ｂ감각, "1→0, 3→1, LIMIT/0～1"))
 
 ;조교 대상의 마조 상관 능력(마조끼/고통중독/구속중독의 합계)
 ;※왠지 레즈끼를 보고 있었으므로 마조끼로 변경
@@ -665,16 +665,16 @@ CALL ADD_CRI_VAR("사역", , LINE_CALC(ABL:LOCAL:마조끼 + ABL:LOCAL:고통중
 LOCAL = ARG == -1 ? TARGET # ARG
 LOCAL:1 = ARG == -1 ? MASTER # ARG:1
 
-;조교자에게 양도가 없고, 남자끼리
-IF TALENT:LOCAL:남자 && TALENT:(LOCAL:1):남자 && !TALENT:LOCAL:양도
-	;조교자의 ＢＬ끼이[0→-2, 2→-1, 4→0]을 가산(-2～0)
+;조교자에게 바이가 없고, 남자끼리
+IF TALENT:LOCAL:남자 && TALENT:(LOCAL:1):남자 && !TALENT:LOCAL:바이
+	;조교자의ＢＬ끼이[0→-2, 2→-1, 4→0]을 가산(-2～0)
 	CALL ADD_CRI_VAR("봉사", LINE_CALC(ABL:LOCAL:ＢＬ끼, "0→-2, 4→0, LIMIT/-2～0"))
-	;조교자의 ＢＬ끼이[0→-4, 1→-3, 2→-2, 3→-1, 4→0]을 가산(-4～0)
+	;조교자의ＢＬ끼이[0→-4, 1→-3, 2→-2, 3→-1, 4→0]을 가산(-4～0)
 	CALL ADD_CRI_VAR("애무", LINE_CALC(ABL:LOCAL:ＢＬ끼, "0→-4, 4→0, LIMIT/-4～0"))
 	CALL ADD_CRI_VAR("성교", LINE_CALC(ABL:LOCAL:ＢＬ끼, "0→-4, 4→0, LIMIT/-4～0"))
 ENDIF
-;조교자에게 양도가 없고, 여자 아이끼리
-IF !TALENT:LOCAL:남자 && !TALENT:(LOCAL:1):남자 && !TALENT:LOCAL:양도
+;조교자에게 바이가 없고, 여자 아이끼리
+IF !TALENT:LOCAL:남자 && !TALENT:(LOCAL:1):남자 && !TALENT:LOCAL:바이
 	;조교자 레즈끼가[0→-2, 2→-1, 4→0]을 가산(-2～0)
 	CALL ADD_CRI_VAR("봉사", LINE_CALC(ABL:LOCAL:레즈끼, "0→-2, 4→0, LIMIT/-2～0"))
 	;조교자 레즈끼가[0→-4, 1→-3, 2→-2, 3→-1, 4→0]을 가산(-4～0)
@@ -710,7 +710,7 @@ ENDIF
 	5=이상         (망가질 때까지 해)
 	6=야외         (밖에 나가고 싶다)
 	7=아이 만들기       (임신하게 하고 싶다)
-	8=휴게         (쉬게 해)
+	8=휴식         (쉬게 해)
 	9=안아       (안기고 싶다)
 	10= 봉사      (봉사하고 싶다)
 	11=귀여워해  (귀여워해)
@@ -958,7 +958,7 @@ ENDIF
 LOCAL = ARG == -1 ? TARGET # ARG
 
 ;조교자 쾌감의 합계를 계산
-LOCAL:1 = PALAM:쾌C + PALAM:쾌V + PALAM:쾌A + PALAM:쾌B
+LOCAL:1 = PALAM:쾌Ｃ + PALAM:쾌Ｖ + PALAM:쾌Ａ + PALAM:쾌Ｂ
 ;합계가[0→0, 600→1, 1200→2, 1800→3, 2400→4]를 가산(0～4)
 CALL ADD_CRI_VAR("봉사", LINE_CALC(LOCAL:1, "0→0, 2400→4, LIMIT/0～4"))
 CALL ADD_CRI_VAR("성적봉사", LINE_CALC(LOCAL:1, "0→0, 2400→4, LIMIT/0～4"))
@@ -1180,8 +1180,8 @@ TGT = ARG == -1 ? TARGET # ARG
 
 ;조교 대상 상태가 정욕
 IF IS_CONDITION(TARGET, "정욕")
-	;조교자가 반항적/자제적/쾌감을부정/새디즘/심술쟁이중 2개 이상 소지
-	IF TRUECHECK(TALENT:TGT:반항적, TALENT:TGT:자제적, TALENT:TGT:쾌감을부정, TALENT:TGT:새디즘, TALENT:TGT:심술쟁이) > 1
+	;조교자가 반항적/자제적/쾌감을부정/새드/심술쟁이중 2개 이상 소지
+	IF TRUECHECK(TALENT:TGT:반항적, TALENT:TGT:자제적, TALENT:TGT:쾌감을부정, TALENT:TGT:새드, TALENT:TGT:심술쟁이) > 1
 		CALL ADD_CRI_VAR("수치", 2)
 		CALL ADD_CRI_VAR("봉사", 1)
 		CALL ADD_CRI_VAR("성적봉사", 4)
@@ -1223,7 +1223,7 @@ SIF !TFLAG:경과시간
 SIF ITEM:대거울
 	CALL ADD_CRI_VAR("수치", , 3)
 
-;─
+;──────────────────────────────
 ;상황이나 전회의 커맨드에 의한 변동
 ;직전의 조교 대상의 반응
 ;-------------------------------------
@@ -1241,15 +1241,15 @@ ENDIF
 
 ;-------------------------------------
 ;용서를빈다
-;새디즘 OR심술쟁이
+;새드 OR심술쟁이
 ;-------------------------------------
 @ACT_MENU_PLEASE_HELP
 
 IF IS_NOWCOMNAME("용서를빈다")
 	;조교 대상이 울적 이외
 	IF TCVAR:상태변화 < 8
-		CALL ADD_CRI_VAR("가학", -5, (TALENT:새디즘 || TALENT:심술쟁이) ? 4 # 0)
-		CALL ADD_CRI_VAR("이상", -5, (TALENT:새디즘 || TALENT:심술쟁이) ? 4 # 0)
+		CALL ADD_CRI_VAR("가학", -5, (TALENT:새드 || TALENT:심술쟁이) ? 4 # 0)
+		CALL ADD_CRI_VAR("이상", -5, (TALENT:새드 || TALENT:심술쟁이) ? 4 # 0)
 	ENDIF
 ENDIF
 
@@ -1288,12 +1288,12 @@ IF IS_NOWCOMNAME("도구를제외한다")
 ENDIF
 
 ;-------------------------------------
-;밀어넘어뜨리기시의 연속 애무 보정
+;쓰러트리기시의 연속 애무 보정
 ;-------------------------------------
 @ACT_MENU_PETTING_CONTINUE
 
-;밀어넘어뜨리기중으로, 전의 턴의 메뉴가 애무
-IF TEQUIP:밀어넘어뜨리기중 && TFLAG:전ACT분류 == 1
+;쓰러트리기중으로, 전의 턴의 메뉴가 애무
+IF TEQUIP:쓰러트리기중 && TFLAG:전ACT분류 == 1
 	CALL ADD_CRI_VAR("애무", 20)
 ENDIF
 
@@ -1453,7 +1453,7 @@ IF TEQUIP:바이브
 	CALL ADD_CRI_VAR("도구", ,  6)
 	CALL ADD_CRI_VAR("성교", , -9)
 	SIF ASSI >= 0
-		CALL ADD_CRI_VAR("성교", GET_ABL(ASSI, "A감각"))
+		CALL ADD_CRI_VAR("성교", GET_ABL(ASSI, "Ａ감각"))
 	CALL ADD_CRI_VAR("수치", 7)
 	CALL ADD_CRI_VAR("가학", , 2)
 ENDIF
@@ -1614,7 +1614,7 @@ SIF TEQUIP:대거울
 ;도구 해제 제한
 ;체력이 있는데 풀 아머 하고 있다면 도구 메뉴를 선택하지 않도록 (도구 해제가 되기 때문에)
 ;조금 처리를 바꾸어 보는 테스트. 변변치않았으면 미안해요.
-;·남자라면 V계 없음에서도 풀 아머로 간주하도록(듯이)
+;·남자라면Ｖ계 없음에서도 풀 아머로 간주하도록(듯이)
 ;-------------------------------------
 @ACT_MENU_KILL_UNEQUIP, ARG = -1
 #LOCALSIZE 1
@@ -1668,9 +1668,9 @@ IF TFLAG:벌플래그
 	CALL ADD_CRI_VAR("봉사", -999)
 ENDIF
 
-;─
+;──────────────────────────────
 ;실행 불가능의 판정
-;─
+;──────────────────────────────
 ;-------------------------------------
 ;삽입
 ;우선, 현행의 삽입 속행 사양(pa0903판 시점)에 맞춘다(COMABLE로 속행하지 않는 커맨드를 차는 것 낸다)
@@ -1713,15 +1713,15 @@ IF TEQUIP:성교중 || TEQUIP:성교봉사중
 ENDIF
 
 ;----------------------------------------------------------
-;초조하게해중, C자극을 중단하지 않도록
+;애태움중, Ｃ자극을 중단하지 않도록
 ;----------------------------------------------------------
 @ACT_MENU_IRRITATE
 
-;초조하게해중
-IF TCVAR:MASTER:초조하게해번
-	;초조하게해 종료의 순간은 거기에 집중. 혹은 성교봉사중이 아닌 경우
+;애태움중
+IF TCVAR:MASTER:애태움수
+	;애태움 종료의 순간은 거기에 집중. 혹은 성교봉사중이 아닌 경우
 	;(성교 봉사에 관해서는 삽입 보정의 내용으로 문제 없는 것이 아닐까)
-	IF TCVAR:MASTER:초조하게해번 == 1 || !TEQUIP:성교봉사중
+	IF TCVAR:MASTER:애태움수 == 1 || !TEQUIP:성교봉사중
 		;향후 재고의 필요유리카
 		CALL ADD_CRI_VAR("회화", -999)
 		CALL ADD_CRI_VAR("도구", -999)
@@ -1741,8 +1741,8 @@ ENDIF
 
 ;조교 방침이 이상의 경우,50%의 확률로 판정을 실시한다
 IF IS_POLICY("지금", "이상") && RAND:2
-	;AS 가능이지만, 익숙해지지 않기 때문에 가드 한다. 다만 50%(?!)
-	SIF EXP:MASTER:A경험 < 2 && !TEQUIP:애널바이브 && !TEQUIP:애널비즈 && !TEQUIP:관장기＋플러그
+	;ＡＳ가능이지만, 익숙해지지 않기 때문에 가드 한다. 다만 50%(?!)
+	SIF EXP:MASTER:Ａ경험 < 2 && !TEQUIP:애널바이브 && !TEQUIP:애널비즈 && !TEQUIP:관장기＋플러그
 		CALL ADD_CRI_VAR("성교", -999)
 ENDIF
 
@@ -1780,7 +1780,7 @@ NEXT
 FOR LCOUNT, 0, 11
 	SIF LCOUNT == 9
 		CONTINUE
-	LOCAL = TFLAG:(@"%MENU(LCOUNT)%의히트") * LIMIT(TFLAG:가능한ACT계열수 - 1, 0, 4) / 4
+	LOCAL = TFLAG:(@"%MENU(LCOUNT)%히트") * LIMIT(TFLAG:가능한ACT계열수 - 1, 0, 4) / 4
 	CALL ADD_CRI_VAR(MENU(LCOUNT), -LOCAL)
 NEXT
 

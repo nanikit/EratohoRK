@@ -1,7 +1,7 @@
-﻿;─
+﻿;────────────────────────────────────
 ;바이브 따위 붙이고 있을 뿐 아이템의 체크
 ;여기에서는 COM 선택전의 가산 처리를 실시한다
-;─
+;────────────────────────────────────
 @EQUIP_CHECK
 ;인플레 사양
 ;ABL와 GET_ABL()와의 대응, 대체로 원가의 10배 정도, 100을 넘지 않는 값
@@ -18,9 +18,9 @@
 ;	9	64.29
 ;	10	66.67
 
-;─
+;────────────────────────────────────
 ;로션(윤활 추가)
-;─
+;────────────────────────────────────
 IF TEQUIP:로션
 	IF PALAM:MASTER:윤활 < 500
 		CUP:MASTER:윤활 += 200
@@ -33,9 +33,9 @@ IF TEQUIP:로션
 	ENDIF
 ENDIF
 
-;─
+;────────────────────────────────────
 ;미약(욕정 추가, 이성)
-;─
+;────────────────────────────────────
 IF TEQUIP:미약
 	IF PALAM:MASTER:욕정 < 1000
 		CUP:MASTER:욕정 += 500
@@ -52,14 +52,14 @@ IF TEQUIP:미약
 	ENDIF
 ENDIF
 
-;─
-;바이브 장착중(쾌V, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
+;바이브 장착중(쾌Ｖ, 중독충족, 트라우마)
+;────────────────────────────────────
 IF TEQUIP:바이브 && !IS_NOWACTNAME("바이브")
 	A = 100 * (2 + ITEM:9 + TALENT:도구사용) / 2
-	SOURCE:MASTER:쾌V += A
-	SIF ABL:MASTER:V감각 > 2
-		SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * (ITEM:9 + 1) / 10 + A / 5
+	SOURCE:MASTER:쾌Ｖ += A
+	SIF ABL:MASTER:Ｖ감각 > 2
+		SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｖ감각") * (GET_ABL(MASTER, "Ｖ감각") - 20) * (ITEM:9 + 1) / 10 + A / 5
 	SIF CFLAG:MASTER:트라우마 == 21
 		SOURCE:MASTER:트라우마 += 20 + GET_ABL(TARGET, "도구") + ITEM:9 * 100 + (TALENT:도구사용 + 1) * GET_ABL(TARGET, "기교") * GET_ABL(TARGET, "도구") / 20
 	TCVAR:MASTER:전립선자극 += 1
@@ -69,57 +69,57 @@ IF TEQUIP:바이브 && !IS_NOWACTNAME("바이브")
 	TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
 ENDIF
 
-;─
-;애널바이브 장착중(쾌A, 일탈, 중독충족)
-;─
+;────────────────────────────────────
+;애널바이브 장착중(쾌Ａ, 일탈, 중독충족)
+;────────────────────────────────────
 IF TEQUIP:애널바이브 && !IS_NOWACTNAME("애널바이브")
 	A = 100 * (2 + ITEM:9 + TALENT:도구사용) / 2
-	SOURCE:MASTER:쾌A += A
+	SOURCE:MASTER:쾌Ａ += A
 	;경험 부족
-	IF EXP:MASTER:A경험 < 1
+	IF EXP:MASTER:Ａ경험 < 1
 		SOURCE:MASTER:일탈 += 1500
-	ELSEIF EXP:MASTER:A경험 < 6
-		SOURCE:MASTER:일탈 += 800 - EXP:MASTER:A경험 * 100
-	ELSEIF EXP:MASTER:A경험 < 11
-		SOURCE:MASTER:일탈 += 200 - EXP:MASTER:A경험 * 15
-	ELSEIF EXP:MASTER:A경험 < 21
-		SOURCE:MASTER:일탈 += 40 - EXP:MASTER:A경험 * 2
+	ELSEIF EXP:MASTER:Ａ경험 < 6
+		SOURCE:MASTER:일탈 += 800 - EXP:MASTER:Ａ경험 * 100
+	ELSEIF EXP:MASTER:Ａ경험 < 11
+		SOURCE:MASTER:일탈 += 200 - EXP:MASTER:Ａ경험 * 15
+	ELSEIF EXP:MASTER:Ａ경험 < 21
+		SOURCE:MASTER:일탈 += 40 - EXP:MASTER:Ａ경험 * 2
 	ENDIF
-	SIF ABL:MASTER:A감각 > 2
-		SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "A감각") + 1) * (GET_ABL(MASTER, "A감각") - 20) * (ITEM:9 + 1) / 4 + A / 5
+	SIF ABL:MASTER:Ａ감각 > 2
+		SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "Ａ감각") + 1) * (GET_ABL(MASTER, "Ａ감각") - 20) * (ITEM:9 + 1) / 4 + A / 5
 	SIF TALENT:MASTER:남자
 		TCVAR:MASTER:전립선자극 += 1
 ENDIF
 
-;─
-;애널비즈 장착중(쾌A, 일탈, 중독충족)
-;─
+;────────────────────────────────────
+;애널비즈 장착중(쾌Ａ, 일탈, 중독충족)
+;────────────────────────────────────
 IF TEQUIP:애널비즈 && !IS_NOWACTNAME("애널비즈")
 	A = 30 * (2 + ITEM:9 + TALENT:도구사용 + TEQUIP:애널비즈) / 3
-	SOURCE:MASTER:쾌A += A
+	SOURCE:MASTER:쾌Ａ += A
 	;경험 부족
-	IF EXP:MASTER:A경험 < 1
+	IF EXP:MASTER:Ａ경험 < 1
 		SOURCE:MASTER:일탈 += 500
-	ELSEIF EXP:MASTER:A경험 < 6
-		SOURCE:MASTER:일탈 += 300 - EXP:MASTER:A경험 * 20
-	ELSEIF EXP:MASTER:A경험 < 11
-		SOURCE:MASTER:일탈 += 90 - EXP:MASTER:A경험 * 6
-	ELSEIF EXP:MASTER:A경험 < 21
-		SOURCE:MASTER:일탈 += 20 - EXP:MASTER:A경험 * 2
+	ELSEIF EXP:MASTER:Ａ경험 < 6
+		SOURCE:MASTER:일탈 += 300 - EXP:MASTER:Ａ경험 * 20
+	ELSEIF EXP:MASTER:Ａ경험 < 11
+		SOURCE:MASTER:일탈 += 90 - EXP:MASTER:Ａ경험 * 6
+	ELSEIF EXP:MASTER:Ａ경험 < 21
+		SOURCE:MASTER:일탈 += 20 - EXP:MASTER:Ａ경험 * 2
 	ENDIF
-	SIF ABL:MASTER:A감각 > 2
-		SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "A감각") + 10) * (GET_ABL(MASTER, "A감각") - 20) / 4 + A / 5
+	SIF ABL:MASTER:Ａ감각 > 2
+		SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "Ａ감각") + 10) * (GET_ABL(MASTER, "Ａ감각") - 20) / 4 + A / 5
 ENDIF
 
-;─
+;────────────────────────────────────
 ;관장＋애널 플러그 장착중
-;─
+;────────────────────────────────────
 IF TEQUIP:관장기＋플러그 && !IS_NOWACTNAME("관장세트")
 	A = 20 * (CFLAG:MASTER:조교레벨 + 1) + (GET_ABL(MASTER, "기교") - 30) * GET_ABL(MASTER, "마조끼") * (TALENT:도구사용 + TALENT:MASTER:도M + TEQUIP:관장기＋플러그) * 30 / 100
 	SIF A < 0
 		A = 0
 	B = 200 + TEQUIP:관장기＋플러그 * 100
-	SOURCE:MASTER:쾌A += A
+	SOURCE:MASTER:쾌Ａ += A
 	SOURCE:MASTER:아픔 += B
 	SOURCE:MASTER:구속 += 50 + TEQUIP:관장기＋플러그 * 100
 	C = A / 2 + B / 2 - CFLAG:MASTER:조교레벨 * 20 - GET_ABL(MASTER, "마조끼") * 10
@@ -127,7 +127,7 @@ IF TEQUIP:관장기＋플러그 && !IS_NOWACTNAME("관장세트")
 		C = 0
 	SOURCE:MASTER:일탈 += C
 	SIF ABL:MASTER:마조끼 > 3
-		SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "마조끼") - 30) * GET_ABL(MASTER, "A감각") * 25 * A / 10000
+		SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "마조끼") - 30) * GET_ABL(MASTER, "Ａ감각") * 25 * A / 10000
 
 ENDIF
 
@@ -137,24 +137,24 @@ ENDIF
 
 [SKIPSTART]
 
-;─
-;클리캡 장착중(쾌C, 중독충족)
-;─
-IF TEQUIP:클리캡 && ! IS_NOWACTNAME("C애무도구")
+;────────────────────────────────────
+;클리캡 장착중(쾌Ｃ, 중독충족)
+;────────────────────────────────────
+IF TEQUIP:클리캡 && ! IS_NOWACTNAME("Ｃ애무도구")
 	A = 100 * (2 + ITEM:9 + TALENT:도구사용) / 2
-	SOURCE:MASTER:쾌C += A
-	SIF ABL:MASTER:C감각 > 1
-		SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "C감각") * (GET_ABL(MASTER, "C감각") - 10) * (ITEM:9 + 1) / 5 + A / 5
+	SOURCE:MASTER:쾌Ｃ += A
+	SIF ABL:MASTER:Ｃ감각 > 1
+		SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｃ감각") * (GET_ABL(MASTER, "Ｃ감각") - 10) * (ITEM:9 + 1) / 5 + A / 5
 ENDIF
 
-;─
-;오나홀 장착중(쾌C, 중독충족)
-;─
-IF TEQUIP:오나홀 && ! IS_NOWACTNAME("C애무도구")
+;────────────────────────────────────
+;오나홀 장착중(쾌Ｃ, 중독충족)
+;────────────────────────────────────
+IF TEQUIP:오나홀 && ! IS_NOWACTNAME("Ｃ애무도구")
 	A = 150 * (2 + ITEM:9 + TALENT:도구사용) / 2
-	SOURCE:MASTER:쾌C += A
-	SIF ABL:MASTER:C감각 > 1
-		SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "C감각") * (GET_ABL(MASTER, "C감각") - 10) * (ITEM:9 + 1) / 5 + A / 5
+	SOURCE:MASTER:쾌Ｃ += A
+	SIF ABL:MASTER:Ｃ감각 > 1
+		SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｃ감각") * (GET_ABL(MASTER, "Ｃ감각") - 10) * (ITEM:9 + 1) / 5 + A / 5
 	TCVAR:MASTER:이번발기 += 100
 ENDIF
 
@@ -162,30 +162,30 @@ ENDIF
 [SKIPEND]
 
 
-;─
-;니플캡 장착중(쾌B, 중독충족)
-;─
+;────────────────────────────────────
+;니플캡 장착중(쾌Ｂ, 중독충족)
+;────────────────────────────────────
 IF TEQUIP:니플캡 && !IS_NOWACTNAME("니플캡")
 	A = 100 * (2 + ITEM:9 + TALENT:도구사용) / 2
-	SOURCE:MASTER:쾌B += A
-	SIF ABL:MASTER:B감각 > 2
-		SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "B감각") - 10) * (GET_ABL(MASTER, "B감각") - 20) * (ITEM:9 + 1) * 35 / 100 + A / 5
+	SOURCE:MASTER:쾌Ｂ += A
+	SIF ABL:MASTER:Ｂ감각 > 2
+		SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "Ｂ감각") - 10) * (GET_ABL(MASTER, "Ｂ감각") - 20) * (ITEM:9 + 1) * 35 / 100 + A / 5
 	TCVAR:MASTER:이번발기 += 30
 ENDIF
 
-;─
+;────────────────────────────────────
 ;줄로 긴박중(구속, 중독충족)
-;─
+;────────────────────────────────────
 IF TEQUIP:줄
-	A = 200 + (GET_ABL(MASTER, "C감각") / 10 + GET_TRAINLV(TARGET)) * (GET_ABL(TARGET, "기교") + 10) * (TALENT:결박능숙 * 3 + 2) / 2
+	A = 200 + (GET_ABL(MASTER, "Ｃ감각") / 10 + GET_TRAINLV(TARGET)) * (GET_ABL(TARGET, "기교") + 10) * (TALENT:결박능숙 * 3 + 2) / 2
 	SOURCE:MASTER:구속 += A
 	SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "구속중독") - 10) * (GET_ABL(MASTER, "구속중독") + 10) * A / 100000
 	TCVAR:MASTER:이번발기 += (GET_ABL(MASTER, "마조끼") - 20) * 3
 ENDIF
 
-;─
+;────────────────────────────────────
 ;아이마스크 장착중(구속, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
 IF TEQUIP:아이마스크 && !IS_NOWACTNAME("아이마스크")
 	A = 100 + (GET_ABL(TARGET, "가학") / 10 + GET_TRAINLV(TARGET)) * (GET_ABL(TARGET, "기교") + 10) * (TALENT:결박능숙 + 2) / 2
 	B = 0
@@ -201,9 +201,9 @@ IF TEQUIP:아이마스크 && !IS_NOWACTNAME("아이마스크")
 	TCVAR:MASTER:이번발기 += (GET_ABL(MASTER, "마조끼") - 20) * 2
 ENDIF
 
-;─
+;────────────────────────────────────
 ;볼개그 장착중(구속, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
 IF TEQUIP:볼개그 && !IS_NOWACTNAME("볼개그")
 	A = 350 + (GET_ABL(TARGET, "가학") / 10 + GET_TRAINLV(TARGET)) * 10 * (TALENT:결박능숙 + 1)
 	B = 0
@@ -219,12 +219,12 @@ IF TEQUIP:볼개그 && !IS_NOWACTNAME("볼개그")
 	TCVAR:MASTER:이번발기 += (GET_ABL(MASTER, "마조끼") - 20)
 ENDIF
 
-;─
-;삼각목마 승마중(쾌V, 사랑역, 상해, 구속, 일탈, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
+;삼각목마 승마중(쾌Ｖ, 사랑역, 상해, 구속, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 IF TEQUIP:삼각목마
 	A = 0
-	B = 1000 + GET_ABL(TARGET, "가학") * GET_ABL(TARGET, "기교") / 2 + GET_TRAINLV(TARGET) * (TALENT:새디즘 * 3 + 2) * 20
+	B = 1000 + GET_ABL(TARGET, "가학") * GET_ABL(TARGET, "기교") / 2 + GET_TRAINLV(TARGET) * (TALENT:새드 * 3 + 2) * 20
 	C = 50 + (MARK:반항각인 + 1) * (GET_ABL(TARGET, "기교") + 10) 
 	D = 1800 + B / 2 - CFLAG:MASTER:조교레벨 * 50 - GET_ABL(MASTER, "마조끼") * 20 - GET_ABL(MASTER, "고통중독") * 60
 	E = 0
@@ -232,7 +232,7 @@ IF TEQUIP:삼각목마
 	G = 0
 	SIF ABL:MASTER:마조끼 > 3
 		A = (GET_ABL(MASTER, "마조끼") - 30) * GET_ABL(MASTER, "고통중독") * (TALENT:MASTER:도M + 2) / 2
-	SOURCE:MASTER:쾌V += A
+	SOURCE:MASTER:쾌Ｖ += A
 	SOURCE:MASTER:아픔 += B
 	SOURCE:MASTER:구속 += C
 	SIF D < 0
@@ -253,29 +253,29 @@ IF TEQUIP:삼각목마
 	;MASTER가 처녀라면, 처녀상실이 일어난다
 	TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
 ENDIF
-;─
-;안면승마중(쾌C, 중독충족)
-;─
+;────────────────────────────────────
+;안면승마중(쾌Ｃ, 중독충족)
+;────────────────────────────────────
 IF TEQUIP:안면승마
 	SOURCE:MASTER:불결 += 100
-	SOURCE:쾌C += 150 +ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * ( 3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 500
+	SOURCE:쾌Ｃ += 150 +ACT_TO(TARGET, 1) * GET_ABL(MASTER, "순종") * ( 3 + TALENT:MASTER:혀사용 + TALENT:MASTER:거친혀) / 500
 ENDIF
-;─
-;안면승마애널(쾌C, 중독충족)
-;─
+;────────────────────────────────────
+;안면승마애널(쾌Ｃ, 중독충족)
+;────────────────────────────────────
 IF TEQUIP:안면승마애널
 	SOURCE:MASTER:불결 += 300
-	SOURCE:쾌A += 150 +ACT_TO(TARGET, 3) * GET_ABL(MASTER, "순종") * ( 3 + TALENT:MASTER:혀사용 + TALENT:MASTER:고양이혀) / 500
+	SOURCE:쾌Ａ += 150 +ACT_TO(TARGET, 3) * GET_ABL(MASTER, "순종") * ( 3 + TALENT:MASTER:혀사용 + TALENT:MASTER:거친혀) / 500
 ENDIF
-;─
+;────────────────────────────────────
 ;야외플레이중(구속, 노출, 일탈, 트라우마)
-;─
+;────────────────────────────────────
 IF TEQUIP:야외플레이 && !IS_NOWACTNAME("야외플레이")
 	SOURCE:MASTER:구속 += 50 + MARK:반항각인 * 15
 	SOURCE:MASTER:노출 += 300
 	SIF TEQUIP:자위중 != 2
 		SOURCE:MASTER:노출 += TEQUIP:자위중 * 200
-	A = 150 + SOURCE:MASTER:구속 - GET_ABL(MASTER, "노출버릇") * 3 - CFLAG:MASTER:조교레벨 * 10
+	A = 150 + SOURCE:MASTER:구속 - GET_ABL(MASTER, "노출증") * 3 - CFLAG:MASTER:조교레벨 * 10
 	B = TALENT:MASTER:겁쟁이 * 150 - TALENT:MASTER:무관심 * 50 + TALENT:MASTER:억압 * 150 - TALENT:MASTER:해방 * 50 + TALENT:MASTER:수줍음 * 250 - TALENT:MASTER:수치심옅음 * 150
 	IF A > 0
 		SOURCE:MASTER:일탈 += A
@@ -285,22 +285,22 @@ IF TEQUIP:야외플레이 && !IS_NOWACTNAME("야외플레이")
 		SOURCE:MASTER:트라우마 += B
 	SIF CFLAG:MASTER:트라우마 == 44
 		TIMES SOURCE:MASTER:트라우마 , 1.50
-		TCVAR:MASTER:이번발기 += GET_ABL(MASTER, "노출버릇") * 5
+		TCVAR:MASTER:이번발기 += GET_ABL(MASTER, "노출증") * 5
 ENDIF
 
-;─
+;────────────────────────────────────
 ;수치플레이중(노출)
-;─
+;────────────────────────────────────
 IF TEQUIP:대거울 && !IS_NOWACTNAME("수치플레이")
 	SOURCE:MASTER:노출 += 200
 	SIF TEQUIP:자위중 != 2
 		SOURCE:MASTER:노출 += TEQUIP:자위중 * 150
-		TCVAR:MASTER:이번발기 += GET_ABL(MASTER, "노출버릇") * 3
+		TCVAR:MASTER:이번발기 += GET_ABL(MASTER, "노출증") * 3
 ENDIF
 
-;─
-;조교 대상이 자위중(쾌C, 쾌V, 쾌A, 쾌B, 성행동, 노출, 일탈, 중독충족)
-;─
+;────────────────────────────────────
+;조교 대상이 자위중(쾌Ｃ, 쾌Ｖ, 쾌Ａ, 쾌Ｂ, 성행동, 노출, 일탈, 중독충족)
+;────────────────────────────────────
 ;이 턴으로 자위가 명령을 내렸을 경우는 거부될 가능성이 있으므로 처리를 뒷전 합니다
 IF (TEQUIP:자위중 == 1 || TEQUIP:자위중 == 3) && !IS_NOWACTNAME("자위")
 	A = 20 + GET_ABL(MASTER, "욕망") * (GET_ABL(MASTER, "기교") + 10) * CFLAG:MASTER:조교레벨 / 50 + GET_ABL(MASTER, "기교") * 25 * (TALENT:MASTER:기묘한손가락 + 1) / 10
@@ -311,9 +311,9 @@ IF (TEQUIP:자위중 == 1 || TEQUIP:자위중 == 3) && !IS_NOWACTNAME("자위")
 	;바이브 사용
 	IF TEQUIP:바이브
 		B = 50 + GET_ABL(MASTER, "욕망") * (CFLAG:MASTER:조교레벨 + 1) / 2 + (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * (ITEM:9 + 1) * 3
-		SOURCE:MASTER:쾌V += B
+		SOURCE:MASTER:쾌Ｖ += B
 		TIMES A , 0.80
-		;후타나리는 V자극으로 강제 발기
+		;후타나리는Ｖ자극으로 강제 발기
 		IF TALENT:MASTER:후타나리
 			IF !TCVAR:MASTER:요점강제발기
 				TCVAR:MASTER:이번발기 += 300
@@ -323,11 +323,11 @@ IF (TEQUIP:자위중 == 1 || TEQUIP:자위중 == 3) && !IS_NOWACTNAME("자위")
 		ENDIF
 	ENDIF
 	;애널바이브 사용
-	IF TEQUIP:애널바이브 && ABL:MASTER:A감각 > 1
+	IF TEQUIP:애널바이브 && ABL:MASTER:Ａ감각 > 1
 		C = (GET_ABL(MASTER, "욕망") + 10) * (CFLAG:MASTER:조교레벨 + 1) * 6 / 10 + (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * (ITEM:9 + 1) * 25 / 10
-		SOURCE:MASTER:쾌A += C
+		SOURCE:MASTER:쾌Ａ += C
 		TIMES E , 0.60
-		;남자는 A자극으로 강제 발기
+		;남자는Ａ자극으로 강제 발기
 		IF TALENT:MASTER:남자
 			IF !TCVAR:MASTER:요점강제발기
 				TCVAR:MASTER:이번발기 += 300
@@ -336,21 +336,21 @@ IF (TEQUIP:자위중 == 1 || TEQUIP:자위중 == 3) && !IS_NOWACTNAME("자위")
 			ENDIF
 		ENDIF
 	ENDIF
-	SOURCE:MASTER:쾌C += A
+	SOURCE:MASTER:쾌Ｃ += A
 	SIF TALENT:MASTER:남자 == 0
-		SOURCE:MASTER:쾌B += E
+		SOURCE:MASTER:쾌Ｂ += E
 	SOURCE:MASTER:성행동 += 50 + GET_ABL(MASTER, "기교") * 2 + CFLAG:MASTER:조교레벨 * 10 + TEQUIP:바이브 * 50 + TEQUIP:애널바이브 * 50
 	D = 150 + GET_TRAINLV(TARGET) * 10 + TEQUIP:야외플레이 * 200 + TEQUIP:대거울 * 150 + A / 2 + B / 3 + C / 3 + E / 2
 	SOURCE:MASTER:노출 += D
-	SOURCE:MASTER:일탈 += D / 2 - GET_ABL(MASTER, "노출버릇") * 2 - CFLAG:MASTER:조교레벨 * 10
+	SOURCE:MASTER:일탈 += D / 2 - GET_ABL(MASTER, "노출증") * 2 - CFLAG:MASTER:조교레벨 * 10
 	SOURCE:MASTER:중독충족 += (A + E + B + C + D) * (50 + GET_ABL(MASTER, "자위중독")) / 500
 	TCVAR:MASTER:이번발기 += 100
 ENDIF
 
-;─
+;────────────────────────────────────
 ;조교자가 자위중(일탈, 욕정 추가, 쾌c, 쾌v, 쾌b)
-;─
-IF TEQUIP:자위중 > 1 && !IS_NOWACTNAME("자위과시하고")
+;────────────────────────────────────
+IF TEQUIP:자위중 > 1 && !IS_NOWACTNAME("자위과시")
 	A = 50 + GET_ABL(TARGET, "욕망") * GET_ABL(TARGET, "기교") * GET_TRAINLV(TARGET) / 50 + GET_ABL(MASTER, "기교") * 25 * (TALENT:MASTER:기묘한손가락 + 1) / 10
 	B = A
 	C = 0
@@ -360,10 +360,10 @@ IF TEQUIP:자위중 > 1 && !IS_NOWACTNAME("자위과시하고")
 		TIMES A , 0.80
 	ENDIF
 	D = A + B + C
-	SOURCE:쾌C += A
-	SOURCE:쾌V += C
+	SOURCE:쾌Ｃ += A
+	SOURCE:쾌Ｖ += C
 	SIF TALENT:남자 == 0
-		SOURCE:쾌B += B
+		SOURCE:쾌Ｂ += B
 	;조교레벨과 욕망을 본다
 	IF CFLAG:MASTER:조교레벨 < 1 || ABL:MASTER:욕망 < 1
 		TIMES D , 0.10
@@ -378,15 +378,15 @@ IF TEQUIP:자위중 > 1 && !IS_NOWACTNAME("자위과시하고")
 	ENDIF
 	CUP:MASTER:욕정 += D / 5
 	;일탈의 계산, 조교의 진행에 응해 경감
-	D -= GET_ABL(MASTER, "노출버릇") * 15 / 10 - CFLAG:MASTER:조교레벨 * 5
+	D -= GET_ABL(MASTER, "노출증") * 15 / 10 - CFLAG:MASTER:조교레벨 * 5
 	SIF D > 0
 		SOURCE:MASTER:일탈 += D
 	TCVAR:MASTER:이번발기 += 50
 ENDIF
 
-;─
-;조교자 삽입중(쾌C, 쾌V, 쾌A, 접촉, 사랑, 성행동, 상해, 노출, 일탈, 중독충족, 트라우마, 쾌c, 쾌v)
-;─
+;────────────────────────────────────
+;조교자 삽입중(쾌Ｃ, 쾌Ｖ, 쾌Ａ, 접촉, 사랑, 성행동, 상해, 노출, 일탈, 중독충족, 트라우마, 쾌c, 쾌v)
+;────────────────────────────────────
 ;이 턴의 행동도 성교라면 ACT_APPLY.ERB로 처리합니다. 회화나 가슴애무 따위 삽입하면서 실시하는 행동만 여기를 봅니다
 IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 	A = 0
@@ -410,21 +410,21 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			C += 100
 		ENDIF
 		;경험 부족
-		IF EXP:MASTER:V경험 < 2
+		IF EXP:MASTER:Ｖ경험 < 2
 			TIMES A , 0.30
 			C += 1000
 			SOURCE:MASTER:일탈 += 1000
-		ELSEIF EXP:MASTER:V경험 < 6 && EXP:MASTER:성교경험 < 5
+		ELSEIF EXP:MASTER:Ｖ경험 < 6 && EXP:MASTER:성교경험 < 5
 			TIMES A , 0.80
 			C += 150
 			SOURCE:MASTER:일탈 += 250
-		ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
+		ELSEIF EXP:MASTER:Ｖ경험 < 11 && EXP:MASTER:성교경험 < 9
 			TIMES A , 0.95
 			C += 50
 			SOURCE:MASTER:일탈 += 50
 		ENDIF
-		SOURCE:MASTER:쾌V += A
-		SOURCE:쾌C += B
+		SOURCE:MASTER:쾌Ｖ += A
+		SOURCE:쾌Ｃ += B
 		SOURCE:MASTER:접촉 += 250 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 100 + GET_TRAINLV(TARGET) * 2
 		SOURCE:MASTER:아픔 += C
@@ -433,8 +433,8 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			TIMES SOURCE:MASTER:트라우마 , 1.50
 		ENDIF
 		SOURCE:MASTER:사랑 += A / 5 - SOURCE:MASTER:트라우마 - C
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:V감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｖ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｖ감각") * (GET_ABL(MASTER, "Ｖ감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 	ELSEIF TEQUIP:성교중 == 2
 		A = (300 +ACT_FROM(TARGET, 5) * 3 / 2) / 2
@@ -454,21 +454,21 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			C += 150
 		ENDIF
 		;경험 부족
-		IF EXP:MASTER:V경험 < 2
+		IF EXP:MASTER:Ｖ경험 < 2
 			TIMES A , 0.30
 			C += 1200
 			SOURCE:MASTER:일탈 += 1500
-		ELSEIF EXP:MASTER:V경험 < 6 && EXP:MASTER:성교경험 < 5
+		ELSEIF EXP:MASTER:Ｖ경험 < 6 && EXP:MASTER:성교경험 < 5
 			TIMES A , 0.70
 			C += 350
 			SOURCE:MASTER:일탈 += 750
-		ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
+		ELSEIF EXP:MASTER:Ｖ경험 < 11 && EXP:MASTER:성교경험 < 9
 			TIMES A , 0.90
 			C += 90
 			SOURCE:MASTER:일탈 += 250
 		ENDIF
-		SOURCE:MASTER:쾌V += A
-		SOURCE:쾌C += B
+		SOURCE:MASTER:쾌Ｖ += A
+		SOURCE:쾌Ｃ += B
 		SOURCE:MASTER:접촉 += 200 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 90 + GET_TRAINLV(TARGET) * 2
 		SOURCE:MASTER:아픔 += C
@@ -477,8 +477,8 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			TIMES SOURCE:MASTER:트라우마 , 1.50
 		ENDIF
 		SOURCE:MASTER:사랑 += A / 7 - SOURCE:MASTER:트라우마
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:V감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｖ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｖ감각") * (GET_ABL(MASTER, "Ｖ감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 7
 	ELSEIF TEQUIP:성교중 == 3
 		A = (100 +ACT_FROM(TARGET, 5) * 2) / 2
@@ -498,21 +498,21 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			C += 50
 		ENDIF
 		;경험 부족
-		IF EXP:MASTER:V경험 < 2
+		IF EXP:MASTER:Ｖ경험 < 2
 			TIMES A , 0.35
 			C += 700
 			SOURCE:MASTER:일탈 += 1200
-		ELSEIF EXP:MASTER:V경험 < 6 && EXP:MASTER:성교경험 < 5
+		ELSEIF EXP:MASTER:Ｖ경험 < 6 && EXP:MASTER:성교경험 < 5
 			TIMES A , 0.75
 			C += 200
 			SOURCE:MASTER:일탈 += 700
-		ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
+		ELSEIF EXP:MASTER:Ｖ경험 < 11 && EXP:MASTER:성교경험 < 9
 			TIMES A , 0.95
 			C += 30
 			SOURCE:MASTER:일탈 += 150
 		ENDIF
-		SOURCE:MASTER:쾌V += A
-		SOURCE:쾌C += B
+		SOURCE:MASTER:쾌Ｖ += A
+		SOURCE:쾌Ｃ += B
 		SOURCE:MASTER:접촉 += 200 + CFLAG:MASTER:조교레벨 * 10
 		SOURCE:MASTER:성행동 += 90 + CFLAG:MASTER:조교레벨 * 2
 		SOURCE:MASTER:아픔 += C
@@ -521,8 +521,8 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			TIMES SOURCE:MASTER:트라우마 , 1.50
 		ENDIF
 		SOURCE:MASTER:사랑 += A / 5 - SOURCE:MASTER:트라우마 - C
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:V감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｖ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｖ감각") * (GET_ABL(MASTER, "Ｖ감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 7 + SOURCE:MASTER:성행동 / 5
 	ELSEIF TEQUIP:성교중 == 4
 		A = (100 +ACT_FROM(TARGET, 5)) / 2
@@ -542,21 +542,21 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			C += 100
 		ENDIF
 		;경험 부족
-		IF EXP:MASTER:V경험 < 2
+		IF EXP:MASTER:Ｖ경험 < 2
 			TIMES A , 0.30
 			C += 1200
 			SOURCE:MASTER:일탈 += 1200
-		ELSEIF EXP:MASTER:V경험 < 6 && EXP:MASTER:성교경험 < 5
+		ELSEIF EXP:MASTER:Ｖ경험 < 6 && EXP:MASTER:성교경험 < 5
 			TIMES A , 0.80
 			C += 250
 			SOURCE:MASTER:일탈 += 350
-		ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
+		ELSEIF EXP:MASTER:Ｖ경험 < 11 && EXP:MASTER:성교경험 < 9
 			TIMES A , 0.95
 			C += 50
 			SOURCE:MASTER:일탈 += 100
 		ENDIF
-		SOURCE:MASTER:쾌V += A
-		SOURCE:쾌C += B
+		SOURCE:MASTER:쾌Ｖ += A
+		SOURCE:쾌Ｃ += B
 		SOURCE:MASTER:접촉 += 400 + GET_TRAINLV(TARGET) * 8 + CFLAG:MASTER:조교레벨 * 8
 		SOURCE:MASTER:성행동 += 130 + GET_TRAINLV(TARGET) * 2 + CFLAG:MASTER:조교레벨 * 2
 		SOURCE:MASTER:아픔 += C
@@ -565,8 +565,8 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			TIMES SOURCE:MASTER:트라우마 , 1.50
 		ENDIF
 		SOURCE:MASTER:사랑 += A / 4 - SOURCE:MASTER:트라우마 - C * 2
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:V감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｖ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｖ감각") * (GET_ABL(MASTER, "Ｖ감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 	ELSEIF TEQUIP:성교중 == 5
 		A = (50 +ACT_FROM(TARGET, 5)) / 2
@@ -586,21 +586,21 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			C += 150
 		ENDIF
 		;경험 부족
-		IF EXP:MASTER:V경험 < 2
+		IF EXP:MASTER:Ｖ경험 < 2
 			TIMES A , 0.30
 			C += 1250
 			SOURCE:MASTER:일탈 += 1600
-		ELSEIF EXP:MASTER:V경험 < 6 && EXP:MASTER:성교경험 < 5
+		ELSEIF EXP:MASTER:Ｖ경험 < 6 && EXP:MASTER:성교경험 < 5
 			TIMES A , 0.70
 			C += 380
 			SOURCE:MASTER:일탈 += 800
-		ELSEIF EXP:MASTER:V경험 < 11 && EXP:MASTER:성교경험 < 9
+		ELSEIF EXP:MASTER:Ｖ경험 < 11 && EXP:MASTER:성교경험 < 9
 			TIMES A , 0.90
 			C += 100
 			SOURCE:MASTER:일탈 += 350
 		ENDIF
-		SOURCE:MASTER:쾌V += A
-		SOURCE:쾌C += B
+		SOURCE:MASTER:쾌Ｖ += A
+		SOURCE:쾌Ｃ += B
 		SOURCE:MASTER:접촉 += 500 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 150 + GET_TRAINLV(TARGET) * 2
 		SOURCE:MASTER:아픔 += C
@@ -612,8 +612,8 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			TIMES SOURCE:MASTER:트라우마 , 1.50
 		ENDIF
 		SOURCE:MASTER:사랑 += A / 7 - SOURCE:MASTER:트라우마
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:V감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "V감각") * (GET_ABL(MASTER, "V감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｖ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｖ감각") * (GET_ABL(MASTER, "Ｖ감각") - 20) * SOURCE:MASTER:사랑 / 100 + A / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 7
 	ELSEIF TEQUIP:성교중 == 6
 		A = (300 +ACT_FROM(TARGET, 6) * 2) / 2
@@ -633,28 +633,28 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			C += 250
 		ENDIF
 		;경험 부족
-		IF EXP:MASTER:A경험 < 2
+		IF EXP:MASTER:Ａ경험 < 2
 			TIMES A , 0.40
 			C += 1500
 			SOURCE:MASTER:일탈 += 2500
 			SOURCE:MASTER:트라우마 += 1000
-		ELSEIF EXP:MASTER:A경험 < 6 && EXP:MASTER:성교경험 < 11
+		ELSEIF EXP:MASTER:Ａ경험 < 6 && EXP:MASTER:성교경험 < 11
 			TIMES A , 0.55
 			C += 1000
 			SOURCE:MASTER:일탈 += 1500
 			SOURCE:MASTER:트라우마 += 500
-		ELSEIF EXP:MASTER:A경험 < 13 && EXP:MASTER:성교경험 < 21
+		ELSEIF EXP:MASTER:Ａ경험 < 13 && EXP:MASTER:성교경험 < 21
 			TIMES A , 0.70
 			C += 600
 			SOURCE:MASTER:일탈 += 500
 			SOURCE:MASTER:트라우마 += 100
-		ELSEIF EXP:MASTER:A경험 < 26 && EXP:MASTER:성교경험 < 31
+		ELSEIF EXP:MASTER:Ａ경험 < 26 && EXP:MASTER:성교경험 < 31
 			TIMES A , 0.85
 			C += 200
 			SOURCE:MASTER:일탈 += 150
 		ENDIF
-		SOURCE:MASTER:쾌A += A
-		SOURCE:쾌C += B
+		SOURCE:MASTER:쾌Ａ += A
+		SOURCE:쾌Ｃ += B
 		SOURCE:MASTER:접촉 += 200 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 40 + GET_TRAINLV(TARGET) * 2
 		SOURCE:MASTER:아픔 += C
@@ -663,16 +663,16 @@ IF TEQUIP:성교중 && TFLAG:ACT분류 != 3
 			TIMES SOURCE:MASTER:트라우마 , 1.50
 		ENDIF
 		SOURCE:MASTER:사랑 += A / 5 - C / 5 - SOURCE:MASTER:트라우마 / 5
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:A감각 > 4
-			SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "A감각") + 10) * (GET_ABL(MASTER, "A감각") - 30) * SOURCE:MASTER:사랑 / 100 + A / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ａ감각 > 4
+			SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "Ａ감각") + 10) * (GET_ABL(MASTER, "Ａ감각") - 30) * SOURCE:MASTER:사랑 / 100 + A / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 	ENDIF
-TFLAG:V사용중 = 2
+TFLAG:Ｖ사용중 = 2
 
 ENDIF
-;─
-;조교 대상 삽입중(쾌C, 쾌V, 쾌A, 접촉, 사랑, 성행동, 상해, 노출, 일탈, 중독충족, 트라우마, 쾌c, 쾌v)
-;─
+;────────────────────────────────────
+;조교 대상 삽입중(쾌Ｃ, 쾌Ｖ, 쾌Ａ, 접촉, 사랑, 성행동, 상해, 노출, 일탈, 중독충족, 트라우마, 쾌c, 쾌v)
+;────────────────────────────────────
 ;이 턴의 행동도 성교라면 ACT_APPLY.ERB로 처리합니다. 회화나 가슴애무 따위 삽입하면서 실시하는 행동만 여기를 봅니다
 IF TEQUIP:성교봉사중 && TFLAG:ACT분류 != 10
 	A = 0
@@ -695,13 +695,13 @@ IF TEQUIP:성교봉사중 && TFLAG:ACT분류 != 10
 			TIMES B , 0.95
 			C += 100
 		ENDIF
-		SOURCE:MASTER:쾌C += B
-		SOURCE:쾌V += A
+		SOURCE:MASTER:쾌Ｃ += B
+		SOURCE:쾌Ｖ += A
 		SOURCE:MASTER:접촉 += 250 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 100 + GET_TRAINLV(TARGET) * 2
 		SOURCE:MASTER:사랑 += B / 5 - SOURCE:MASTER:트라우마 - C
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:C감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "C감각") * (GET_ABL(MASTER, "C감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｃ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｃ감각") * (GET_ABL(MASTER, "Ｃ감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 	ELSEIF TEQUIP:성교봉사중 == 2
 		A = 300 +ACT_FROM(TARGET, 7)
@@ -720,13 +720,13 @@ IF TEQUIP:성교봉사중 && TFLAG:ACT분류 != 10
 			TIMES B , 0.95
 			C += 100
 		ENDIF
-		SOURCE:MASTER:쾌C += B
-		SOURCE:쾌V += A
+		SOURCE:MASTER:쾌Ｃ += B
+		SOURCE:쾌Ｖ += A
 		SOURCE:MASTER:접촉 += 200 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 90 + GET_TRAINLV(TARGET) * 2
 		SOURCE:MASTER:사랑 += B / 7 - SOURCE:MASTER:트라우마 - C
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:C감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "C감각") * (GET_ABL(MASTER, "C감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｃ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｃ감각") * (GET_ABL(MASTER, "Ｃ감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 7
 	ELSEIF TEQUIP:성교봉사중 == 3
 		A = 300 + 2 *ACT_FROM(TARGET, 7)
@@ -745,13 +745,13 @@ IF TEQUIP:성교봉사중 && TFLAG:ACT분류 != 10
 			TIMES B , 0.95
 			C += 100
 		ENDIF
-		SOURCE:MASTER:쾌C += B
-		SOURCE:쾌V += A
+		SOURCE:MASTER:쾌Ｃ += B
+		SOURCE:쾌Ｖ += A
 		SOURCE:MASTER:접촉 += 200 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 40 + GET_TRAINLV(TARGET) * 2
 		SOURCE:MASTER:사랑 += B / 5 - SOURCE:MASTER:트라우마 - C
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:C감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "C감각") * (GET_ABL(MASTER, "C감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｃ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｃ감각") * (GET_ABL(MASTER, "Ｃ감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 	ELSEIF TEQUIP:성교봉사중 == 4
 		A = 300 +ACT_FROM(TARGET, 7)
@@ -770,13 +770,13 @@ IF TEQUIP:성교봉사중 && TFLAG:ACT분류 != 10
 			TIMES B , 0.95
 			C += 100
 		ENDIF
-		SOURCE:MASTER:쾌C += B
-		SOURCE:쾌V += A
+		SOURCE:MASTER:쾌Ｃ += B
+		SOURCE:쾌Ｖ += A
 		SOURCE:MASTER:접촉 += 200 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 40 + GET_TRAINLV(TARGET) * 2
 		SOURCE:MASTER:사랑 += B / 5 - SOURCE:MASTER:트라우마 - C
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:C감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "C감각") * (GET_ABL(MASTER, "C감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｃ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｃ감각") * (GET_ABL(MASTER, "Ｃ감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 	ELSEIF TEQUIP:성교봉사중 == 5
 		A = 100 +ACT_FROM(TARGET, 7)
@@ -795,16 +795,16 @@ IF TEQUIP:성교봉사중 && TFLAG:ACT분류 != 10
 			TIMES B , 0.90
 			C += 100
 		ENDIF
-		SOURCE:MASTER:쾌C += B
-		SOURCE:쾌V += A
+		SOURCE:MASTER:쾌Ｃ += B
+		SOURCE:쾌Ｖ += A
 		SOURCE:MASTER:접촉 += 200 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 40 + GET_TRAINLV(TARGET) * 2
 		;혼란 모란의 처리
 		SIF TEQUIP:대거울
 			SOURCE:MASTER:노출 += 200 + A / 5
 		SOURCE:MASTER:사랑 += B / 7 - SOURCE:MASTER:트라우마 - C
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:C감각 > 2
-			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "C감각") * (GET_ABL(MASTER, "C감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ｃ감각 > 2
+			SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "Ｃ감각") * (GET_ABL(MASTER, "Ｃ감각") - 20) * SOURCE:MASTER:사랑 / 100 + B / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 7
 	ELSEIF TEQUIP:성교봉사중 == 6
 		A = 500 +ACT_FROM(TARGET, 8) * 2
@@ -823,13 +823,13 @@ IF TEQUIP:성교봉사중 && TFLAG:ACT분류 != 10
 			TIMES B , 0.80
 			C += 250
 		ENDIF
-		SOURCE:쾌A += A
-		SOURCE:MASTER:쾌C += B
+		SOURCE:쾌Ａ += A
+		SOURCE:MASTER:쾌Ｃ += B
 		SOURCE:MASTER:접촉 += 200 + GET_TRAINLV(TARGET) * 10
 		SOURCE:MASTER:성행동 += 40 + GET_TRAINLV(TARGET) * 2
 		SOURCE:MASTER:사랑 += A / 5 - C / 5 - SOURCE:MASTER:트라우마 / 5
-		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:A감각 > 4
-			SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "A감각") + 10) * (GET_ABL(MASTER, "A감각") - 30) * SOURCE:MASTER:사랑 / 100 + A / 5
+		SIF SOURCE:MASTER:사랑 > 0 && ABL:MASTER:Ａ감각 > 4
+			SOURCE:MASTER:중독충족 += (GET_ABL(MASTER, "Ａ감각") + 10) * (GET_ABL(MASTER, "Ａ감각") - 30) * SOURCE:MASTER:사랑 / 100 + A / 5
 		SOURCE:MASTER:사랑 += SOURCE:MASTER:중독충족 / 5
 	ENDIF
 ENDIF
@@ -842,46 +842,46 @@ ENDIF
 SIF TEQUIP:성교중 || TEQUIP:성교봉사중
 	PALAM:MASTER:윤활 += 50
 	
-;─
+;────────────────────────────────────
 ;촉수조교중(미실장)
-;─
+;────────────────────────────────────
 
-;─
+;────────────────────────────────────
 ;C애무중(잠정)
-;─
-IF TEQUIP:조교대상C사용
-	SOURCE:MASTER:쾌C += 40 +ACT_FROM(TARGET, 1) * (2 + TALENT:기묘한손가락) / 10
+;────────────────────────────────────
+IF TEQUIP:조교대상Ｃ사용
+	SOURCE:MASTER:쾌Ｃ += 40 +ACT_FROM(TARGET, 1) * (2 + TALENT:기묘한손가락) / 10
 	SOURCE:MASTER:접촉 += 50 + GET_TRAINLV(TARGET) * 3
-	SOURCE:MASTER:성행동 += 30 + SOURCE:MASTER:쾌C / 20
+	SOURCE:MASTER:성행동 += 30 + SOURCE:MASTER:쾌Ｃ / 20
 	SOURCE:MASTER:사랑 += SOURCE:MASTER:접촉 / 4 + GET_ABL(TARGET, "봉사정신") * 3
 	TCVAR:MASTER:이번발기 += 20 + (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 2
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;바이브 따위 붙이고 있을 뿐 아이템의 체크 2
 ;쾌SOURCE 계산 직전에 부르므로 곱셈의 처리는 이쪽에서
-;─
+;────────────────────────────────────
 @EQUIP_CHECK2
 
-;─
-;미약(쾌CVAB)
-;─
+;────────────────────────────────────
+;미약(쾌ＣＶＡＢ)
+;────────────────────────────────────
 IF TEQUIP:미약
 	IF TALENT:약학지식
-		TIMES SOURCE:MASTER:쾌C , 1.30
-		TIMES SOURCE:MASTER:쾌V , 1.30
-		TIMES SOURCE:MASTER:쾌A , 1.30
-		TIMES SOURCE:MASTER:쾌B , 1.30
+		TIMES SOURCE:MASTER:쾌Ｃ , 1.30
+		TIMES SOURCE:MASTER:쾌Ｖ , 1.30
+		TIMES SOURCE:MASTER:쾌Ａ , 1.30
+		TIMES SOURCE:MASTER:쾌Ｂ , 1.30
 	ELSE
-		TIMES SOURCE:MASTER:쾌C , 1.15
-		TIMES SOURCE:MASTER:쾌V , 1.15
-		TIMES SOURCE:MASTER:쾌A , 1.15
-		TIMES SOURCE:MASTER:쾌B , 1.15
+		TIMES SOURCE:MASTER:쾌Ｃ , 1.15
+		TIMES SOURCE:MASTER:쾌Ｖ , 1.15
+		TIMES SOURCE:MASTER:쾌Ａ , 1.15
+		TIMES SOURCE:MASTER:쾌Ｂ , 1.15
 	ENDIF
 ENDIF
 
-;클리캡·오나홀 장비중은 쾌C가 올라간다
+;클리캡·오나홀 장비중은 쾌Ｃ가 올라간다
 ;다만 애무자의 기교·애무 스킬이 오를수록 차이는 작아진다(도구 스킬로 상쇄한다)
 IF TEQUIP:클리캡 || TEQUIP:오나홀
 	;애무자를 대입
@@ -900,29 +900,29 @@ IF TEQUIP:클리캡 || TEQUIP:오나홀
 			LOCAL = -1
 	ENDSELECT
 	IF LOCAL >= 0
-		SOURCE:MASTER:쾌C *= 100+((MAX(50/MAX(ABL:LOCAL:기교+ABL:LOCAL:애무-(ABL:LOCAL:도구*2), 1), 5)*(ITEM:커스텀도구+1)))
+		SOURCE:MASTER:쾌Ｃ *= 100+((MAX(50/MAX(ABL:LOCAL:기교+ABL:LOCAL:애무-(ABL:LOCAL:도구*2), 1), 5)*(ITEM:커스텀도구+1)))
 	ELSE
-		SOURCE:MASTER:쾌C *= 100+(30*(ITEM:커스텀도구+1))
+		SOURCE:MASTER:쾌Ｃ *= 100+(30*(ITEM:커스텀도구+1))
 	ENDIF
-	SOURCE:MASTER:쾌C /= 100
+	SOURCE:MASTER:쾌Ｃ /= 100
 ENDIF
 
-;페니스밴드 장비중은 쾌C가 쾌V에 변환
-;변환율… 쾌C를 20％로 해, 나머지의 값에 V감각+1/C감각+1을 걸어 2로 나누어 쾌V에 가산한다
+;페니스밴드 장비중은 쾌Ｃ가 쾌Ｖ에 변환
+;변환율… 쾌Ｃ를 20％로 해, 나머지의 값에Ｖ감각+1/Ｃ감각+1을 걸어 2로 나누어 쾌Ｖ에 가산한다
 IF TEQUIP:페니스밴드
-	SOURCE:MASTER:쾌V += (SOURCE:MASTER:쾌C*8*(((ABL:MASTER:V감각+1)*100)/(ABL:MASTER:C감각+1)))/2000
-	TIMES SOURCE:MASTER:쾌C, 0.20
+	SOURCE:MASTER:쾌Ｖ += (SOURCE:MASTER:쾌Ｃ*8*(((ABL:MASTER:Ｖ감각+1)*100)/(ABL:MASTER:Ｃ감각+1)))/2000
+	TIMES SOURCE:MASTER:쾌Ｃ, 0.20
 	IF ITEM:커스텀도구
-		TIMES SOURCE:MASTER:쾌C, 1.20
-		TIMES SOURCE:MASTER:쾌V, 1.20
+		TIMES SOURCE:MASTER:쾌Ｃ, 1.20
+		TIMES SOURCE:MASTER:쾌Ｖ, 1.20
 	ENDIF
 ENDIF
 IF TEQUIP:조교자페니스밴드
-	SOURCE:쾌V += (SOURCE:쾌C*8*(((ABL:V감각+1)*100)/(ABL:C감각+1)))/2000
-	TIMES SOURCE:쾌C, 0.20
+	SOURCE:쾌Ｖ += (SOURCE:쾌Ｃ*8*(((ABL:Ｖ감각+1)*100)/(ABL:Ｃ감각+1)))/2000
+	TIMES SOURCE:쾌Ｃ, 0.20
 	IF ITEM:커스텀도구
-		TIMES SOURCE:쾌C, 1.20
-		TIMES SOURCE:쾌V, 1.20
+		TIMES SOURCE:쾌Ｃ, 1.20
+		TIMES SOURCE:쾌Ｖ, 1.20
 	ENDIF
 ENDIF
 

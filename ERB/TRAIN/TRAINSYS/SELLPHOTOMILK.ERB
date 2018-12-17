@@ -1,23 +1,23 @@
-﻿;─
+﻿;────────────────────────────────────
 ;사진의 가치를 계산
-;─
+;────────────────────────────────────
 @SELL_PHOTO
 
 ;득점을 이하의 조건으로 가산해 나간다
 VARSET LOCAL
 
-;쾌X * 5
-LOCAL += (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B) * 5
-;X절정 * 1500
-LOCAL += (NOWEX:MASTER:C절정 + NOWEX:MASTER:V절정 + NOWEX:MASTER:A절정 + NOWEX:MASTER:B절정) * 1500
+;쾌Ｘ * 5
+LOCAL += (CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ) * 5
+;Ｘ절정 * 1500
+LOCAL += (NOWEX:MASTER:Ｃ절정 + NOWEX:MASTER:Ｖ절정 + NOWEX:MASTER:Ａ절정 + NOWEX:MASTER:Ｂ절정) * 1500
 ;분유+사정 * 1000, 방뇨 * 450
 LOCAL += (NOWEX:MASTER:분유 + NOWEX:MASTER:사정) * 1000 + NOWEX:MASTER:방뇨 * 450
-;윤활 / 10
+;윤활/10
 LOCAL += CUP:MASTER:윤활 / 10
 ;욕정
-;자제심+4, 충동적-3, 쾌감을부정+3, 쾌감에순수-2
+;자제심+4, 충동적-3, 쾌감을부정+3, 쾌감에솔직-2
 ;최대로-5되므로 정말로 유지하기 위해서(때문에)+6
-LOCAL += CUP:MASTER:욕정 * (6 + TALENT:MASTER:자제적 * 4 - TALENT:MASTER:충동적 * 3 + TALENT:MASTER:쾌감을부정 * 3 - TALENT:MASTER:쾌감에순수 * 2)
+LOCAL += CUP:MASTER:욕정 * (6 + TALENT:MASTER:자제적 * 4 - TALENT:MASTER:충동적 * 3 + TALENT:MASTER:쾌감을부정 * 3 - TALENT:MASTER:쾌감에솔직 * 2)
 ;굴복
 ;기장+3, 반항적+2, 겁쟁이-2, 순수-1, 프라이드높음+3, 프라이드낮음-2
 ;최대로-3되므로 정말로 유지하기 위해서(때문에)+4
@@ -31,11 +31,11 @@ LOCAL += CUP:MASTER:공포 * (5 - TALENT:MASTER:감정결핍 + TALENT:MASTER:감
 ;최대로-2이지만, 전체 보정은+5
 LOCAL += CUP:MASTER:공순 * (5 + TALENT:MASTER:반항적 * 2 - TALENT:MASTER:순수 + TALENT:MASTER:거만함 * 3 - TALENT:MASTER:얌전함)
 ;반항
-;3 + 반항각인 / 3
+;3 + 반항각인/3
 LOCAL += CUP:MASTER:반항 * (3 + MARK:반항각인 / 3)
 ;고통
-;조교자가 새디즘 실 2배
-LOCAL += CUP:MASTER:고통 * (1 + TALENT:새디즘)
+;조교자가 새드 실 2배
+LOCAL += CUP:MASTER:고통 * (1 + TALENT:새드)
 ;치정
 ;수줍음+5, 수치심옅음-5
 ;최대로-5되므로 정말로 유지하기 위해서(때문에)+6
@@ -47,8 +47,8 @@ LOCAL += CUP:MASTER:억울 * 2
 
 ;이후 보정 처리
 
-;(조수 기교+1) * (조수 성교 기능+조교레벨+1) * (100+조교 대상 피사경효험)를 걸쳐 10000으로 나눈다
-LOCAL *= (ABL:ASSI:기교 + 1) * (ABL:ASSI:성교 + CFLAG:ASSI:조교레벨 + 1) * (100 + EXP:MASTER:피사경효험) / 10000
+;(조수 기교+1) * (조수 성교 기능+조교레벨+1) * (100+조교 대상 피사계경험)를 걸쳐 10000으로 나눈다
+LOCAL *= (ABL:ASSI:기교 + 1) * (ABL:ASSI:성교 + CFLAG:ASSI:조교레벨 + 1) * (100 + EXP:MASTER:피사계경험) / 10000
 
 ;조수가 사진을 신문의 기사로 했을 경우
 ;노출, 일탈 SOURCE를 더해, 조수 기교+7를 걸쳐 6으로 나눈다
@@ -76,30 +76,30 @@ ELSE
 	PRINTL 
 ENDIF
 
-;─
+;────────────────────────────────────
 ;밀크의 가치를 계산
-;─
+;────────────────────────────────────
 @SELL_MILK
-;조교시간, B절정, 분유*3, 헌신적*2, 매혹*5, 조교레벨의 총계를 마력으로서 얻는다
-LOCAL = TFLAG:조교시간 + EX:MASTER:B절정 + EX:MASTER:분유 * 3 + TALENT:MASTER:헌신적 * 2 + TALENT:MASTER:매혹 * 5 + CFLAG:MASTER:조교레벨
+;조교시간, Ｂ절정, 분유*3, 헌신적*2, 매혹*5, 조교레벨의 총계를 마력으로서 얻는다
+LOCAL = TFLAG:조교시간 + EX:MASTER:Ｂ절정 + EX:MASTER:분유 * 3 + TALENT:MASTER:헌신적 * 2 + TALENT:MASTER:매혹 * 5 + CFLAG:MASTER:조교레벨
 CFLAG:마력 += LOCAL
 PRINTFORML %CALLNAME:MASTER%로부터 짠 밀크는{LOCAL}의 마력으로서%CALLNAME%에 흡수되었다
 
 ;조교시간 리셋트
 TFLAG:조교시간 = 0
 
-;─
+;────────────────────────────────────
 ;모유체질 취득의 체크
-;─
+;────────────────────────────────────
 @MILK_CHECK
 
 ;기준치를 생성
 VARSET LOCAL
-;쾌B/100의 평방근을 가산(0-5)
-LOCAL:1 = SQRT(CUP:MASTER:쾌B / 100)
+;쾌Ｂ/100의 평방근을 가산(0-5)
+LOCAL:1 = SQRT(CUP:MASTER:쾌Ｂ / 100)
 LOCAL += LIMIT(LOCAL:1, 0, 5)
-;조교 대상 B경험/4의 평방근을 가산(0-5)
-LOCAL:1 = SQRT(EXP:MASTER:B경험 / 4)
+;조교 대상Ｂ경험/4의 평방근을 가산(0-5)
+LOCAL:1 = SQRT(EXP:MASTER:Ｂ경험 / 4)
 LOCAL += LIMIT(LOCAL:1, 0, 5)
 
 ;(기준치+조교시간)가(12+(0-4)-조교 대상 헌신적-유치*2)를 웃돌면

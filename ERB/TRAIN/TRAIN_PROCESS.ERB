@@ -6,9 +6,9 @@
 ;											또, 첫회만 판정하도록(듯이) 수정 
 ;EDIT	004		revkoishi	2014/05/28		쓸데없게 버튼화하는 것을 회피
 ;------------------------------------------------------------------------
-;─
+;────────────────────────────────────
 ;메인 조교 화면의 표시, 조교자 행동을 호출해, 그리고 COMABLE전의 필요한 처리
-;─
+;────────────────────────────────────
 @SHOW_STATUS
 #DIM LINE
 #DIM PREV_BASE_M, 9
@@ -32,7 +32,7 @@ DRAWLINE
 ;-----------EDIT 004 START--------------;쓸데없게 버튼화하는 것을 회피@revkoishi(14/05/28)
 PRINTPLAINFORM {DAY + 1}일째(%GET_TIME()%)  경과시간[{TFLAG:경과시간}]　
 SIF TALENT:MASTER:독심술 > 1
-	PRINTPLAINFORM /  벌\@ TFLAG:벌플래그 ? 모드 # 포인트[{TFLAG:벌포인트}]\@
+	PRINTPLAINFORM /벌\@ TFLAG:벌플래그 ? 모드 # 포인트[{TFLAG:벌포인트}]\@
 PRINTL 
 ;-----------EDIT 004 END  --------------
 FOR LOCAL, 0, 9
@@ -248,10 +248,10 @@ FOR LOCAL, 0, 100
 	BREAK
 NEXT
 RETURN GETNUM(TRAINNAME, "하는대로")
-;─
+;────────────────────────────────────
 ;행동 전판정(EVETRAIN보다 이동)
-;2011/10/14		휴게에 의한 종료를 떼어내 별함수로 한다
-;─
+;2011/10/14		휴식에 의한 종료를 떼어내 별함수로 한다
+;────────────────────────────────────
 @BEFORE_ACT
 ;조교자 행동 서두
 CALL BEFORE_ACT_MESSAGE
@@ -261,12 +261,12 @@ IF RESULT
 ELSE
 	WAIT
 ENDIF
-;─
+;────────────────────────────────────
 ;행동 전판정(EVETRAIN보다 이동)
 ;2011/10/14		BEFORE_ACT로부터 잘라 독립한 함수로 변경
-;─
+;────────────────────────────────────
 @TRAIN_CANCEL
-IF IS_POLICY("오늘", "휴게")
+IF IS_POLICY("오늘", "휴식")
 	;조교자 행동 서두· 포상에 의한 중지
 	CALL KOJO_EVENT(12, 3)
 	IF RESULT < 2
@@ -310,9 +310,9 @@ TFLAG:ACT = -1
 TFLAG:한번휴식 = 1
 
 
-;─
+;────────────────────────────────────
 ;더러운 표시
-;─
+;────────────────────────────────────
 @STAIN_INFO
 CALL _STAIN_INFO_SUB1(MASTER)
 CALL _STAIN_INFO_SUB1(TARGET)
@@ -326,9 +326,9 @@ WAIT
 SIF ARG < 0
 	RETURN 0
 SIF !STRLENS(LOCALS)
-	SPLIT "구/손/P/V/A/B/다리 /V/P/정령 /A/유/혈/점액", "/", LOCALS
+	SPLIT "입/손/Ｐ/Ｖ/Ａ/Ｂ/발/Ｖ/Ｐ/정령/Ａ/유/혈/점액", "/", LOCALS
 FOR LOCAL, 0, 7
-	;페니스가 없는 경우, P는 처리하지 않는다. 남자의 경우, V와 B는 처리하지 않는다
+	;페니스가 없는 경우, Ｐ는 처리하지 않는다. 남자의 경우, Ｖ와Ｂ는 처리하지 않는다
 	SIF (LOCAL == 2 && !PENIS(ARG)) || ((LOCAL == 3 || LOCAL == 5) && TALENT:ARG:남자)
 		CONTINUE
 	PRINTFORM %CALLNAME:ARG%의%LOCALS:LOCAL%:
@@ -339,13 +339,13 @@ FOR LOCAL, 0, 7
 NEXT
 
 
-;─
+;────────────────────────────────────
 ;상황의 표시
-;─
+;────────────────────────────────────
 @SHOW_EQUIP_2
 SIF TFLAG:위로돌리고
 	PRINT  [앙향]
-SIF TEQUIP:밀어넘어뜨리기중
+SIF TEQUIP:쓰러트리기중
 	PRINT  [압도]
 SIF TEQUIP:안면승마 || TEQUIP:안면승마애널
 	PRINT  [안면승마]
@@ -353,8 +353,8 @@ SIF TEQUIP:야외플레이
 	PRINT  [야외]
 SIF TEQUIP:대거울
 	PRINT  [대거울]
-SIF TCVAR:MASTER:초조하게해번 > 1
-	PRINT  [초조하게해]
+SIF TCVAR:MASTER:애태움수 > 1
+	PRINT  [애태움]
 SIF TEQUIP:자위중 == 1
 	PRINTFORM  [%CALLNAME:MASTER%자위중]
 SIF TEQUIP:자위중 == 2
@@ -391,7 +391,7 @@ IF TEQUIP:야외플레이
 ENDIF
 SIF TEQUIP:대거울
 	PRINTFORML 눈앞의 거울에는%CALLNAME:TARGET%와%CALLNAME:MASTER%의 치태가 비치고 있다…
-SIF TCVAR:MASTER:초조하게해번 > 1
+SIF TCVAR:MASTER:애태움수 > 1
 	PRINTFORML %CALLNAME:MASTER%는%CALLNAME:TARGET%에 초조해 해져 허덕이고 있다…
 SIF TEQUIP:자위중 == 1
 	PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%가 자위하는 모습을 웃음을 띄워 바라보고 있다…
@@ -399,7 +399,7 @@ SIF TEQUIP:자위중 == 2
 	PRINTFORML %CALLNAME:TARGET%\@ TEQUIP:아이마스크 ? 의 손가락과 애액이 연주하는 추잡한 물소리가, 시야를 빼앗겼다%CALLNAME:MASTER%의 귓전에 닿는다 # 는%CALLNAME:MASTER%에 스스로의 치태를 과시하고 있다 \@…
 SIF TEQUIP:자위중 == 3
 	PRINTFORML %CALLNAME:MASTER%와%CALLNAME:TARGET%는 서로\@ TEQUIP:아이마스크 ? 에 마주 봄 # 의 치태를 응시하고 \@면서 자위를 하고 있다…
-SIF TEQUIP:밀어넘어뜨리기중
+SIF TEQUIP:쓰러트리기중
 	PRINTFORML %CALLNAME:MASTER%는%CALLNAME:TARGET%에 밀어 넘어뜨려져 동작이 잡히지 않는다…
 SIF TEQUIP:성교중
 	PRINTFORML %CALLNAME:TARGET%의\@ TEQUIP:조교자페니스밴드 ? 모조품의 # \@페니스는 근원까지%CALLNAME:MASTER%에 삽입되고 있다…
@@ -413,7 +413,7 @@ IF TEQUIP:성교봉사중
 ENDIF
 SIF TEQUIP:촉수조교중
 	PRINTFORML %CALLNAME:MASTER%는 꿈틀거리는 촉수에 얽어매지고 있다…
-SELECTCASE TEQUIP:조교대상C사용
+SELECTCASE TEQUIP:조교대상Ｃ사용
 	CASE 1
 		IF PENIS(MASTER) || TEQUIP:페니스밴드
 			PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%의\@ TEQUIP:페니스밴드 ? 의욕형 # 페니스 \@를 잡아 천천히 상하시키고 있다…
@@ -427,7 +427,7 @@ SIF TCVAR:MASTER:갈것같다
 	PRINTFORML %CALLNAME:MASTER%는갈것같다다…
 SIF TCVAR:TARGET:갈것같다
 	PRINTFORML %CALLNAME:TARGET%는갈것같다다…
-SIF TEQUIP:밀어넘어뜨리기중 || TEQUIP:안면승마 || TEQUIP:안면승마애널 || TEQUIP:야외플레이 || TEQUIP:대거울 || TCVAR:MASTER:초조하게해번 > 1 || TEQUIP:자위중 || TEQUIP:성교중 || TEQUIP:성교봉사중 || TEQUIP:촉수조교중 || TCVAR:MASTER:갈것같다 || TCVAR:TARGET:갈것같다
+SIF TEQUIP:쓰러트리기중 || TEQUIP:안면승마 || TEQUIP:안면승마애널 || TEQUIP:야외플레이 || TEQUIP:대거울 || TCVAR:MASTER:애태움수 > 1 || TEQUIP:자위중 || TEQUIP:성교중 || TEQUIP:성교봉사중 || TEQUIP:촉수조교중 || TCVAR:MASTER:갈것같다 || TCVAR:TARGET:갈것같다
 	DRAWLINE
 
 @POSE_PRINT(ARG)
@@ -473,9 +473,9 @@ ELSE
 	PRINTSL LOCALS
 ENDIF
 
-;─
+;────────────────────────────────────
 ;사용중의 도구를 표시
-;─
+;────────────────────────────────────
 @SHOW_EQUIP_1
 IF TEQUIP:로션 || TEQUIP:미약 || TEQUIP:이뇨제 || TEQUIP:스즈란의독 || TEQUIP:바이브 || TEQUIP:애널바이브 || TEQUIP:애널비즈 || TEQUIP:관장기＋플러그 || TEQUIP:클리캡 || TEQUIP:오나홀 || TEQUIP:니플캡 || TEQUIP:줄 || TEQUIP:아이마스크 || TEQUIP:볼개그 || TEQUIP:삼각목마
 	PRINT 사용중　
@@ -514,10 +514,10 @@ IF TEQUIP:로션 || TEQUIP:미약 || TEQUIP:이뇨제 || TEQUIP:스즈란의독 
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;복장의 표시
 ;인수 1이라면 조교자, 2라면 조교 대상만 표시. 생략이라면 양쪽 모두
-;─
+;────────────────────────────────────
 @SHOW_EQUIP_3(ARG)
 IF ARG == 1 || !ARG
 	PRINTFORM %CALLNAME:TARGET%의 의상:
@@ -530,7 +530,7 @@ IF ARG == 2 || !ARG
 	PRINTFORML \@ TEQUIP:MASTER:하반신속옷 ? [%INNER_B(MASTER)%] # \@\@ TEQUIP:MASTER:양말 ? [%SOCKS(MASTER)%] # \@\@ TEQUIP:MASTER:악세사리 ? [%GLOVES(MASTER)%] # \@\@ TEQUIP:MASTER:코스프레 ? [%COSPLAY(MASTER)%] # \@
 ENDIF
 
-;─
+;────────────────────────────────────
 ;행동전
-;─
+;────────────────────────────────────
 @BEFORE_ACT_MESSAGE

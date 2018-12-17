@@ -1,6 +1,6 @@
-﻿;─
+﻿;────────────────────────────────────
 ;조교자 쾌감의 소스와 절정의 처리(쾌c, 쾌v, 쾌a, 쾌b, 체력, 기력, 사정, 모유, 이성, 흥미)
-;─
+;────────────────────────────────────
 @CALC_SOURCE40
 
 LOCALS = CALC_SOURCE40
@@ -8,31 +8,31 @@ LOCALS = CALC_SOURCE40
 ;최초의 변동
 CALLFORM %LOCALS%_TALENT
 
-;쾌감(CVAB)의 상승
+;쾌감(ＣＶＡＢ)의 상승
 CALLFORM %LOCALS%_PLEASURE
 
 ;절정, 체력, 기력, 사정, 모유, 소변욕 따위의 처리
 CALLFORM %LOCALS%_EX
 
-;─
+;────────────────────────────────────
 ;최초의 변동
-;─
+;────────────────────────────────────
 @CALC_SOURCE40_TALENT
 #DIM LCOUNT
 ;페니스밴드 장비중은 쾌c가 쾌v에 변환
-;변환율… 쾌c를 20％로 해, 나머지의 값에 v감각+1/c감각+1을 걸어 2로 나누어 쾌V에 가산한다
+;변환율… 쾌c를 20％로 해, 나머지의 값에 v감각+1/c감각+1을 걸어 2로 나누어 쾌Ｖ에 가산한다
 IF TEQUIP:조교자페니스밴드
-	SOURCE:쾌V += (SOURCE:쾌C*8*(((ABL:V감각+1)*100)/(ABL:C감각+1)))/2000
-	TIMES SOURCE:쾌C, 0.20
+	SOURCE:쾌Ｖ += (SOURCE:쾌Ｃ*8*(((ABL:Ｖ감각+1)*100)/(ABL:Ｃ감각+1)))/2000
+	TIMES SOURCE:쾌Ｃ, 0.20
 ENDIF
 
-;CVAB 부위에 대해서
+;ＣＶＡＢ부위에 대해서
 FOR LCOUNT, 0, 4
 	;민감과 둔감은 최초로 처리
-	;X민감
+	;Ｘ민감
 	SIF TALENT:(100 + LCOUNT * 2)
 		TIMES SOURCE:LCOUNT, 1.50
-	;X둔감
+	;Ｘ둔감
 	SIF TALENT:(101 + LCOUNT * 2)
 		TIMES SOURCE:LCOUNT, 0.70
 	;조교자 상태
@@ -48,9 +48,9 @@ FOR LCOUNT, 0, 4
 	ENDIF
 NEXT
 
-;─
-;쾌감(CVAB)의 상승
-;─
+;────────────────────────────────────
+;쾌감(ＣＶＡＢ)의 상승
+;────────────────────────────────────
 @CALC_SOURCE40_PLEASURE
 #DIM LCOUNT
 
@@ -59,13 +59,13 @@ LOCAL = LIMIT(GET_REVISION_SQRT(PALAM:MASTER:욕정, 5000, 8) + 4, 4, 12)
 FOR LCOUNT, 0, 4
 	;연속 보너스(연속 회수배에 증가하는 보너스)
 	CUP:LCOUNT += SOURCE:LCOUNT * LOCAL * TFLAG:동일행동보너스 / 10
-	;조교중에 집중적으로 책와 약해질 생각이 든다(쾌X보정 처리)
+	;조교중에 집중적으로 책와 약해질 생각이 든다(쾌Ｘ보정 처리)
 	CUP:LCOUNT = CUP:LCOUNT * CFLAG:(30 + LCOUNT) / 50
 NEXT
 
-;─
+;────────────────────────────────────
 ;절정, 체력, 기력, 사정, 모유, 소변욕 따위의 처리
-;─
+;────────────────────────────────────
 @CALC_SOURCE40_EX
 #DIM LCOUNT
 #DIM DYNAMIC 절정강도, 4
@@ -74,24 +74,24 @@ NEXT
 #DIM DYNAMIC 분유부담
 #DIM DYNAMIC 절정부담
 
-;절정 C
+;절정Ｃ
 SIF (!PENIS(TARGET) || TCVAR:발기 > 1)
-	절정강도:0 = CALC_SOURCE40_EX_P(0, CUP:쾌C + PALAM:쾌C)
+	절정강도:0 = CALC_SOURCE40_EX_P(0, CUP:쾌Ｃ + PALAM:쾌Ｃ)
 
-;절정 V
-절정강도:1 = CALC_SOURCE40_EX_P(1, CUP:쾌V + PALAM:쾌V)
+;절정Ｖ
+절정강도:1 = CALC_SOURCE40_EX_P(1, CUP:쾌Ｖ + PALAM:쾌Ｖ)
 
-;절정 A
-절정강도:2 = CALC_SOURCE40_EX_P(2, CUP:쾌A + PALAM:쾌A)
+;절정Ａ
+절정강도:2 = CALC_SOURCE40_EX_P(2, CUP:쾌Ａ + PALAM:쾌Ａ)
 
-;절정 B
-절정강도:3 = CALC_SOURCE40_EX_P(3, CUP:쾌B + PALAM:쾌B)
+;절정Ｂ
+절정강도:3 = CALC_SOURCE40_EX_P(3, CUP:쾌Ｂ + PALAM:쾌Ｂ)
 
 ;절정 강도 합계로부터 절정 부담을 계산
 절정부담 = 1000 * SUMARRAY(절정강도)
 
 ;쾌감에 의한 체력 기력 이성 소모
-;쾌XSOURCE 합계가[0→0, 2000→44, 4000→63, 6000→77, 8000→89, 10000→100]을 쾌감 부담에
+;쾌ＸSOURCE 합계가[0→0, 2000→44, 4000→63, 6000→77, 8000→89, 10000→100]을 쾌감 부담에
 쾌감부담 = GET_REVISION_SQRT(SUMARRAY(SOURCE, 40, 44), 10000, 100)
 
 ;조교의 정도에 의한 경감
@@ -129,10 +129,10 @@ IF PENIS(TARGET)
 	;하늘이 아닌 사정시
 	IF NOWEX:사정 > 1
 		;정액 더러움의 추가
-		;─
+		;────────────────────────────────────
 		;ACT가 파생하면 애무물이 바뀌는 경우가 있으므로@IS_NOWACTNAME는 아니고@TC_PLAYER로
 		;하나 하나 ACT파생도 참조하는 것은 귀찮고!
-		;─
+		;────────────────────────────────────
 		;조교자의 페니스
 		CALL SET_STAIN("페니스", "정액", TARGET)
 		;조교 대상의
@@ -145,14 +145,14 @@ IF PENIS(TARGET)
 		;손
 		SIF TC_PLAYER(1) == 2
 			CALL SET_STAIN("손", "정액", MASTER)
-		;구
+		;입
 		SIF TC_PLAYER(1) == 1
-			CALL SET_STAIN("구", "정액", MASTER)
+			CALL SET_STAIN("입", "정액", MASTER)
 		;가슴
 		SIF TC_PLAYER(1) == 6
 			CALL SET_STAIN("가슴", "정액", MASTER)
 		[SKIPSTART]
-		V/A는 질내사정 판정 이후에 처리를 이전
+		Ｖ/Ａ는 질내사정 판정 이후에 처리를 이전
 		;바기나
 		SIF TC_PLAYER(1) == 4
 			CALL SET_STAIN("바기나", "정액", MASTER)
@@ -180,7 +180,7 @@ IF TEQUIP:성교중 && NOWEX:사정
 	ENDIF
 	;질내사정시
 	IF LOCAL
-		;V성교
+		;Ｖ성교
 		IF TEQUIP:성교중 < 6
 			;더러운 추가(드라이사정시 제외함)
 			STAIN:MASTER:바기나 |= (BASE:사정 == 1 ? 0 # 4)
@@ -190,7 +190,7 @@ IF TEQUIP:성교중 && NOWEX:사정
 			CFLAG:M질정 += DOWNBASE:사정
 			;조교 대상의 바기나에 정액 더러움을 추가
 			CALL SET_STAIN("바기나", "정액", MASTER)
-		;A성교
+		;Ａ성교
 		ELSE
 			;더러운 추가(드라이사정시 제외함)
 			STAIN:MASTER:애널 |= (BASE:사정 == 1 ? 0 # 4)
@@ -202,7 +202,7 @@ IF TEQUIP:성교중 && NOWEX:사정
 	ENDIF
 ENDIF
 
-;B절정시, 모유체질이면
+;Ｂ절정시, 모유체질이면
 IF 절정강도:3 && TALENT:모유체질
 	;모유 부족
 	IF BASE:모유 < 50 + RAND:5 * 10
@@ -213,7 +213,7 @@ IF 절정강도:3 && TALENT:모유체질
 		NOWEX:분유 = 1
 		TCVAR:분유 = 1
 		;NOWEX:분유에서는 『드라이분유』라고 통상의 분유에 1을 할당해 버리고 있으므로, TCVAR:분유와 번호가 어긋난다
-		;현상 NOWEX의 번호를 비켜 놓고 싶지 않기 때문에, TCVAR:분유만 수당 해 두기로 한다@(2014/11/08) /L
+		;현상 NOWEX의 번호를 비켜 놓고 싶지 않기 때문에, TCVAR:분유만 수당 해 두기로 한다@(2014/11/08)/L
 	;강절정
 	ELSEIF 절정강도:3 == 2
 		STR:1045 = 대량분유(조교자)
@@ -233,9 +233,9 @@ IF 절정강도:3 && TALENT:모유체질
 	;손
 	SIF TB_PLAYER(1) == 2
 		CALL SET_STAIN("손", "모유", MASTER)
-	;구
+	;입
 	SIF TB_PLAYER(1) == 1
-		CALL SET_STAIN("구", "모유", MASTER)
+		CALL SET_STAIN("입", "모유", MASTER)
 	;페니스
 	SIF TB_PLAYER(1) == 3
 		CALL SET_STAIN("페니스", "모유", MASTER)
@@ -244,7 +244,7 @@ ENDIF
 ;STR:1046(절정 표시용 캐릭터 라인) 초기화
 STR:1046 = 
 ;절정종을 순서에 기입
-SPLIT "＆C/＆V/＆A/＆B", "/", LOCALS
+SPLIT "＆Ｃ/＆Ｖ/＆Ａ/＆Ｂ", "/", LOCALS
 FOR LCOUNT, 0, 4
 	SIF 절정강도:LCOUNT
 		STR:1046 += LOCALS:LCOUNT
@@ -312,19 +312,19 @@ FOR LCOUNT, 0, 4
 NEXT
 
 ;NOWEX를 TCVAR 절정계에 보존
-TCVAR:C절정 = NOWEX:C절정
-TCVAR:V절정 = NOWEX:V절정
-TCVAR:A절정 = NOWEX:A절정
-TCVAR:B절정 = NOWEX:B절정
+TCVAR:Ｃ절정 = NOWEX:Ｃ절정
+TCVAR:Ｖ절정 = NOWEX:Ｖ절정
+TCVAR:Ａ절정 = NOWEX:Ａ절정
+TCVAR:Ｂ절정 = NOWEX:Ｂ절정
 
 ;사정시, 관련 플래그를 설정
 IF NOWEX:사정
 	;조교자 사정후경과턴참조 계 플래그를 리셋트
 	VARSET TCVAR:0, 0, 90, 100
-	;V성교시
+	;Ｖ성교시
 	SIF V_SEX()
 		TCVAR:질내사정후경과턴참조 = 1
-	;A성교시
+	;Ａ성교시
 	SIF A_SEX()
 		TCVAR:장내사정후경과턴참조 = 1
 	TCVAR:사정후경과턴참조 = 1
@@ -333,8 +333,8 @@ ENDIF
 
 ;조교자의 발기
 
-;쾌감계 소스를 받는지, 키스인가, 다리빨고강제시.
-SIF (SOURCE:쾌C || SOURCE:쾌V || SOURCE:쾌A || SOURCE:쾌B || IS_NOWACTNAME("키스/다리빨고강제 /W키스")) && PENIS(TARGET)
+;쾌감계 소스를 받는지, 키스인가, 밟핥기강제시.
+SIF (SOURCE:쾌Ｃ || SOURCE:쾌Ｖ || SOURCE:쾌Ａ || SOURCE:쾌Ｂ || IS_NOWACTNAME("키스/밟핥기강제/Ｗ키스")) && PENIS(TARGET)
 	TCVAR:발기++
 ;팬티·성기 보이고 탈의시.
 SIF P_DATUICHECK(1) > 1 && PENIS(TARGET)
@@ -343,10 +343,10 @@ SIF P_DATUICHECK(1) > 1 && PENIS(TARGET)
 SIF B_DATUICHECK(1) > 1 && PENIS(TARGET)
 	TCVAR:발기++
 ;조교 대상 절정시.
-SIF (NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정 || NOWEX:MASTER:A절정 || NOWEX:MASTER:B절정 || NOWEX:MASTER:사정 || NOWEX:MASTER:분유 || NOWEX:MASTER:물총 || NOWEX:MASTER:방뇨) && PENIS(TARGET)
+SIF (NOWEX:MASTER:Ｃ절정 || NOWEX:MASTER:Ｖ절정 || NOWEX:MASTER:Ａ절정 || NOWEX:MASTER:Ｂ절정 || NOWEX:MASTER:사정 || NOWEX:MASTER:분유 || NOWEX:MASTER:분수 || NOWEX:MASTER:방뇨) && PENIS(TARGET)
 	TCVAR:발기++
-;새디즘의 경우, 가학계 ACT시.
-SIF MENU(TFLAG:ACT분류) == "가학" && TALENT:새디즘 && PENIS(TARGET)
+;새드의 경우, 가학계 ACT시.
+SIF MENU(TFLAG:ACT분류) == "가학" && TALENT:새드 && PENIS(TARGET)
 	TCVAR:발기++
 ;헌신적의 경우, 애무계 ACT시.
 SIF MENU(TFLAG:ACT분류) == "애무" && TALENT:헌신적 && PENIS(TARGET)
@@ -386,11 +386,11 @@ EX:분유 += NOWEX:분유
 
 ;삶그렇게(잠정)
 ;갈것같다가 아니고, 페니스가 있으면 발기하고 있는지, 페니스가 없을 때, 쾌c가 존재하면
-IF TCVAR:TARGET:갈것같다 == 0 && (!PENIS(TARGET) || TCVAR:발기 > 1) && CUP:쾌C > 0
+IF TCVAR:TARGET:갈것같다 == 0 && (!PENIS(TARGET) || TCVAR:발기 > 1) && CUP:쾌Ｃ > 0
 	;C감각이 낮으면보다 낮은 값으로 갈 것 같게, 또 이성 저하로 C치에 관계없이 살 것 같게 된다.
 	VARSET LOCAL
 	;C자극 > C감각 판정
-	LOCAL += (CUP:쾌C + PALAM:쾌C) >= MAX(GET_ABL(TARGET, "C감각") * 100, 1000)
+	LOCAL += (CUP:쾌Ｃ + PALAM:쾌Ｃ) >= MAX(GET_ABL(TARGET, "Ｃ감각") * 100, 1000)
 	;기능 > 이성 판정
 	LOCAL += GET_ABL(MASTER, "기교") - GET_ABL(TARGET, "기교") > RAND:(MAX(BASE:TARGET:이성 / 10, 1))
 	;이성이 전혀 없으면 무조건으로갈것같다에
@@ -403,7 +403,7 @@ IF TCVAR:TARGET:갈것같다 == 0 && (!PENIS(TARGET) || TCVAR:발기 > 1) && CUP
 ENDIF
 
 ;절정 강도 처리
-;ARG:0 =쾌X종(CVAB)
+;ARG:0 =쾌Ｘ종(ＣＶＡＢ)
 ;ARG:1 =이번 도달 강도
 ;RESULT =절정 강도
 @CALC_SOURCE40_EX_P(ARG, ARG:1)
@@ -423,8 +423,8 @@ FOR LCOUNT, 1, 3
 		BREAK
 	LOCAL++
 NEXT
-;갈것같다시, 쾌c가 있으면 C절정이 반드시 일어난다
-SIF (ARG == 0) && TCVAR:TARGET:갈것같다 && CUP:쾌C > 0
+;갈것같다시, 쾌c가 있으면Ｃ절정이 반드시 일어난다
+SIF (ARG == 0) && TCVAR:TARGET:갈것같다 && CUP:쾌Ｃ > 0
 	LOCAL = MAX(LOCAL, 1)
 ;절정시
 IF LOCAL >= 1
@@ -438,7 +438,7 @@ IF LOCAL >= 1
 		STR:(1040 + ARG) += "강"
 	;절정종을 기입
 	STR:(1040 + ARG) += EXNAME:ARG + "(조교자)"
-	;CDOWN:쾌X로 내려도 절정 이상이라면
+	;CDOWN:쾌Ｘ로 내려도 절정 이상이라면
 	;그 값-1이 되도록(듯이) 조정(10000으로 절정이라면 9999)
 	SIF ARG:1 - CDOWN:ARG >= 절정경계:1
 		CDOWN:ARG = ARG:1 - 절정경계:1 + 1

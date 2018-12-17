@@ -1,9 +1,9 @@
 ﻿
 ;※조교자의 ABLUP 처리는 존재하지 않는 파라미터가 있기 (위해)때문에 군데군데 타협하고 있다
 
-;─
+;────────────────────────────────────
 ;능력 상승 처리
-;─
+;────────────────────────────────────
 ;-------------------------------------------------
 ;순종 ABL
 ;-------------------------------------------------
@@ -59,11 +59,11 @@ CALL ABLUP_1(TARGET)
 #DIM 욕망보정
 
 ;욕망 난이도 설정
-욕망난이도 = POWER(2, ABL:ARG:욕망) * (100 - TALENT:ARG:쾌감에순수 * 20 + TALENT:ARG:쾌감을부정 * 20)
+욕망난이도 = POWER(2, ABL:ARG:욕망) * (100 - TALENT:ARG:쾌감에솔직 * 20 + TALENT:ARG:쾌감을부정 * 20)
 ;욕망 EXP 취득(고도의 EXP(정도)만큼 보정치가 크다)
-욕망EXP = EXP:ARG:C경험 + EXP:ARG:B경험 + EXP:ARG:성지식
-욕망EXP += EXP:ARG:V경험 * 2 + EXP:ARG:A경험 * 2 + EXP:ARG:절정경험 * 2 + EXP:ARG:사정경험 * 2
-욕망EXP += EXP:ARG:자위경험 * 3 + EXP:ARG:분유경험 * 4 + EXP:ARG:이상경험 * 4 + EXP:ARG:V확장경험 * 5 + EXP:ARG:A확장경험 * 5
+욕망EXP = EXP:ARG:Ｃ경험 + EXP:ARG:Ｂ경험 + EXP:ARG:성지식
+욕망EXP += EXP:ARG:Ｖ경험 * 2 + EXP:ARG:Ａ경험 * 2 + EXP:ARG:절정경험 * 2 + EXP:ARG:사정경험 * 2
+욕망EXP += EXP:ARG:자위경험 * 3 + EXP:ARG:분유경험 * 4 + EXP:ARG:이상경험 * 4 + EXP:ARG:Ｖ확장경험 * 5 + EXP:ARG:Ａ확장경험 * 5
 ;조교 대상
 IF ARG == MASTER
 	;쾌락각인이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
@@ -82,7 +82,7 @@ IF ARG == MASTER
 		CALL ABLUP_RISE(MASTER, 1)
 ;조교자(타협)
 ELSE
-	SIF (CUP:ARG:쾌C + CUP:ARG:쾌V + CUP:ARG:쾌A + CUP:ARG:쾌B + 욕망EXP * 10 / 욕망보정) > (욕망난이도 * ABLUP_DIFFICULTY(1))
+	SIF (CUP:ARG:쾌Ｃ + CUP:ARG:쾌Ｖ + CUP:ARG:쾌Ａ + CUP:ARG:쾌Ｂ + 욕망EXP * 10 / 욕망보정) > (욕망난이도 * ABLUP_DIFFICULTY(1))
 		CALL ABLUP_RISE(TARGET, 1)
 ENDIF
 
@@ -117,13 +117,13 @@ LOCAL = (CFLAG:ARG:조교레벨 >= 10) ? 0 # (ABL:ARG:기교 * 2 - 1 - CFLAG:ARG
 기교보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
 ;기교 달성 판정
-LOCAL = CUP:상대:쾌C + CUP:상대:쾌V + CUP:상대:쾌A + CUP:상대:쾌B
+LOCAL = CUP:상대:쾌Ｃ + CUP:상대:쾌Ｖ + CUP:상대:쾌Ａ + CUP:상대:쾌Ｂ
 SIF (LOCAL / 3 + 기교EXP * 10 / 기교보정) > (기교난이도 * ABLUP_DIFFICULTY(2))
 	CALL ABLUP_RISE(ARG, 2)
 
 
 ;-------------------------------------------------
-;X감각 ABL
+;Ｘ감각 ABL
 ;-------------------------------------------------
 @ABLUP_3M
 CALL ABLUP_SENSITIVITY(MASTER, 3)
@@ -150,19 +150,19 @@ CALL ABLUP_SENSITIVITY(TARGET, 6)
 #DIM 대상
 
 부위 = ARG - 3
-SPLIT "C/V/A/B", "/", LOCALS
+SPLIT "Ｃ/Ｖ/Ａ/Ｂ", "/", LOCALS
 
 ;감각 난이도 설정
 감각난이도 = POWER(2, ABL:대상:@"%LOCALS:부위%감각") * (100 - TALENT:대상:@"%LOCALS:부위%민감" * 20 + TALENT:대상:@"%LOCALS:부위%둔감" * 20)
 ;감각 EXP 취득
 감각EXP = EXP:대상:@"%LOCALS:부위%경험" * 2 + EXP:대상:절정경험
-SIF LOCALS:부위 == "C"
+SIF LOCALS:부위 == "Ｃ"
 	감각EXP += EXP:대상:절정경험
-SIF LOCALS:부위 == "V"
-	감각EXP += EXP:대상:V확장경험 * 4 + EXP:대상:성교경험 * 2
-SIF LOCALS:부위 == "A"
-	감각EXP += EXP:대상:A확장경험 * 4 + EXP:대상:성교경험 + EXP:대상:이상경험
-SIF LOCALS:부위 == "B"
+SIF LOCALS:부위 == "Ｖ"
+	감각EXP += EXP:대상:Ｖ확장경험 * 4 + EXP:대상:성교경험 * 2
+SIF LOCALS:부위 == "Ａ"
+	감각EXP += EXP:대상:Ａ확장경험 * 4 + EXP:대상:성교경험 + EXP:대상:이상경험
+SIF LOCALS:부위 == "Ｂ"
 	감각EXP += EXP:대상:분유경험 * 3
 ;조교 대상
 IF ARG == MASTER
@@ -214,24 +214,24 @@ ENDIF
 
 
 ;-------------------------------------------------
-;노출버릇 ABL
+;노출증 ABL
 ;-------------------------------------------------
 @ABLUP_8M
 CALL ABLUP_8(MASTER)
 @ABLUP_8T
-;TARGET에는 노출버릇 ABL 상승이 없다(타협)
+;TARGET에는 노출증 ABL 상승이 없다(타협)
 
 @ABLUP_8(ARG)
-#DIM 노출버릇난이도
-#DIM 노출버릇EXP
+#DIM 노출증난이도
+#DIM 노출증EXP
 
-;노출버릇 난이도 설정
-노출버릇난이도 = POWER(2, ABL:ARG:노출버릇) * (100 - TALENT:ARG:해방 * 20 + TALENT:ARG:억압 * 20)
-;노출버릇 EXP 취득
-노출버릇EXP = EXP:ARG:노출경험 * 3 + EXP:ARG:절정경험
+;노출증 난이도 설정
+노출증난이도 = POWER(2, ABL:ARG:노출증) * (100 - TALENT:ARG:해방 * 20 + TALENT:ARG:억압 * 20)
+;노출증 EXP 취득
+노출증EXP = EXP:ARG:노출경험 * 3 + EXP:ARG:절정경험
 
-;노출버릇 달성 판정
-SIF (CUP:ARG:치정 + 노출버릇EXP * 10) > (노출버릇난이도 * ABLUP_DIFFICULTY(8))
+;노출증 달성 판정
+SIF (CUP:ARG:치정 + 노출증EXP * 10) > (노출증난이도 * ABLUP_DIFFICULTY(8))
 	CALL ABLUP_RISE(ARG, 8)
 
 
@@ -248,7 +248,7 @@ CALL ABLUP_9(TARGET)
 #DIM 레즈끼EXP
 
 ;레즈끼 난이도 설정
-레즈끼난이도 = POWER(2, ABL:ARG:레즈끼) * (100 - TALENT:ARG:양도 * 20)
+레즈끼난이도 = POWER(2, ABL:ARG:레즈끼) * (100 - TALENT:ARG:바이 * 20)
 ;레즈끼 EXP 취득
 레즈끼EXP = EXP:ARG:백합경험
 
@@ -270,9 +270,9 @@ CALL ABLUP_10(TARGET)
 #DIM ＢＬ끼EXP
 
 ;ＢＬ끼 난이도 설정
-ＢＬ끼난이도 = POWER(2, ABL:ARG:ＢＬ끼) * (100 - TALENT:ARG:양도 * 20)
+ＢＬ끼난이도 = POWER(2, ABL:ARG:ＢＬ끼) * (100 - TALENT:ARG:바이 * 20)
 ;ＢＬ끼 EXP 취득
-ＢＬ끼EXP = EXP:ARG:BL경험
+ＢＬ끼EXP = EXP:ARG:ＢＬ경험
 
 ;ＢＬ끼 달성 판정
 SIF (SOURCE:ARG:사랑 + SOURCE:ARG:열락 + ＢＬ끼EXP * 20) > (ＢＬ끼난이도 * ABLUP_DIFFICULTY(10))
@@ -309,11 +309,11 @@ SIF (CUP:MASTER:고통 + CUP:MASTER:불쾌 - CUP:MASTER:억울 + 마조끼EXP * 
 ;자위중독 EXP 취득
 자위중독EXP = EXP:MASTER:자위경험 + EXP:MASTER:조교자위경험
 ;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
-LOCAL = ((ABL:MASTER:욕망 + ABL:MASTER:노출버릇) >= 20) ? 0 # (ABL:MASTER:자위중독 * 2 - 1 - (ABL:MASTER:욕망 + ABL:MASTER:노출버릇))
+LOCAL = ((ABL:MASTER:욕망 + ABL:MASTER:노출증) >= 20) ? 0 # (ABL:MASTER:자위중독 * 2 - 1 - (ABL:MASTER:욕망 + ABL:MASTER:노출증))
 자위중독보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
 ;자위중독 달성 판정
-SIF (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B + 자위중독EXP * 10 / 자위중독보정) > (자위중독난이도 * ABLUP_DIFFICULTY(12))
+SIF (CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ + 자위중독EXP * 10 / 자위중독보정) > (자위중독난이도 * ABLUP_DIFFICULTY(12))
 	CALL ABLUP_RISE(MASTER, 12)
 
 
@@ -357,7 +357,7 @@ CALL ABLUP_14(TARGET)
 #DIM 레즈중독보정
 
 ;레즈중독 난이도 설정
-레즈중독난이도 = POWER(2, ABL:ARG:레즈중독) * (100 - TALENT:ARG:양도 * 20)
+레즈중독난이도 = POWER(2, ABL:ARG:레즈중독) * (100 - TALENT:ARG:바이 * 20)
 ;레즈중독 EXP 취득
 레즈중독EXP = EXP:ARG:백합경험
 ;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
@@ -418,9 +418,9 @@ SIF (CUP:MASTER:불쾌 + 구속중독EXP * 10 / 구속중독보정) > (구속중
 	CALL ABLUP_RISE(MASTER, 16)
 
 
-;─
+;────────────────────────────────────
 ;조교 능력의 상승
-;─
+;────────────────────────────────────
 ;-------------------------------------------------
 ;회화 ABL
 ;-------------------------------------------------
@@ -460,7 +460,7 @@ LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:애무 * 2 - 1 - CFLAG:조교레�
 애무보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
 ;애무 달성 판정
-LOCAL = CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B - CUP:MASTER:억울
+LOCAL = CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ - CUP:MASTER:억울
 SIF (LOCAL / 3 + 애무EXP * 20 / 애무보정) > (애무난이도 * ABLUP_DIFFICULTY(21))
 	CALL ABLUP_RISE(TARGET, 21)
 
@@ -482,7 +482,7 @@ LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:도구 * 2 - 1 - CFLAG:조교레�
 도구보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
 ;도구 달성 판정
-SIF (CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B - CUP:MASTER:불쾌 + 도구EXP * 20 / 도구보정) > (도구난이도 * ABLUP_DIFFICULTY(22))
+SIF (CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ - CUP:MASTER:불쾌 + 도구EXP * 20 / 도구보정) > (도구난이도 * ABLUP_DIFFICULTY(22))
 	CALL ABLUP_RISE(TARGET, 22)
 
 
@@ -503,7 +503,7 @@ LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:성교 * 2 - 1 - CFLAG:조교레�
 성교보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)
 
 ;성교 달성 판정
-LOCAL = CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:욕정 + CUP:MASTER:공순 - CUP:MASTER:공포 - CUP:MASTER:억울
+LOCAL = CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:욕정 + CUP:MASTER:공순 - CUP:MASTER:공포 - CUP:MASTER:억울
 SIF (LOCAL / 3 + 성교EXP * 20 / 성교보정) > (성교난이도 * ABLUP_DIFFICULTY(23))
 	CALL ABLUP_RISE(TARGET, 23)
 
@@ -563,7 +563,7 @@ SIF (CUP:MASTER:굴복 + CUP:MASTER:공순 - CUP:MASTER:반항 + 봉사EXP * 10 
 ;가학 난이도 설정
 가학난이도 = POWER(2, ABL:가학) * (100 - TALENT:습득빠름 * 20 + TALENT:습득느림 * 20)
 ;가학 EXP 취득
-가학EXP = EXP:MASTER:긴박경험 + EXP:MASTER:고통쾌락경험 * 2 + EXP:MASTER:V확장경험 * 4 + EXP:MASTER:A확장경험 * 4
+가학EXP = EXP:MASTER:긴박경험 + EXP:MASTER:고통쾌락경험 * 2 + EXP:MASTER:Ｖ확장경험 * 4 + EXP:MASTER:Ａ확장경험 * 4
 ;조교레벨이 부족하면 EXP 보정을 줄인다(1 Lv에 대해 1/2)
 LOCAL = (CFLAG:조교레벨 >= 20) ? 0 # (ABL:가학 * 2 - 1 - CFLAG:조교레벨)
 가학보정 = POWER(2, LOCAL < 0 ? 0 # LOCAL)

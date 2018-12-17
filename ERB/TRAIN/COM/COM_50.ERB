@@ -1,13 +1,13 @@
-﻿;─
+﻿;────────────────────────────────────
 ;050, 자위하기시작한다(자위, 열락, 반항, 벌포인트)
-;─
+;────────────────────────────────────
 @COM50
 ;자위 처리
 CALL ONANIE_APPLY
 ;열락, 굴종 SOURCE 증가
-SOURCE:MASTER:열락 += (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B) / 1000
-SOURCE:MASTER:굴종 += 250 + (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B) * (GET_ABL(MASTER, "욕망") + 10) / 300
-LOCAL = (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B) * (3 + TALENT:심술쟁이) / 50
+SOURCE:MASTER:열락 += (SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ) / 1000
+SOURCE:MASTER:굴종 += 250 + (SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ) * (GET_ABL(MASTER, "욕망") + 10) / 300
+LOCAL = (SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ) * (3 + TALENT:심술쟁이) / 50
 SIF LOCAL > 100
 	LOCAL = 100
 ;-------------------------------------------------
@@ -41,29 +41,29 @@ TCVAR:MASTER:인내 = 0
 RETURN 1
 
 
-;─
-;051, 도구를제외한다(쾌C, 쾌A, 달성역, 반항, 벌포인트)
-;─
+;────────────────────────────────────
+;051, 도구를제외한다(쾌Ｃ, 쾌Ａ, 달성역, 반항, 벌포인트)
+;────────────────────────────────────
 @COM51
 ;달성 SOURCE 감소
-SOURCE:MASTER:달성 -= 100 + (CFLAG:M호의 - 500) * (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A) / 1000
+SOURCE:MASTER:달성 -= 100 + (CFLAG:M호의 - 500) * (SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ) / 1000
 ;반항 SOURCE 증가
-SOURCE:MASTER:반항 += 250 + SOURCE:MASTER:쾌V / 2 + SOURCE:MASTER:쾌A / 2 + (CFLAG:MASTER:조교레벨 + 1) * (GET_ABL(MASTER, "기교") + 10) * CFLAG:M호의 / 100
+SOURCE:MASTER:반항 += 250 + SOURCE:MASTER:쾌Ｖ / 2 + SOURCE:MASTER:쾌Ａ / 2 + (CFLAG:MASTER:조교레벨 + 1) * (GET_ABL(MASTER, "기교") + 10) * CFLAG:M호의 / 100
 ;도구를제외한다의 우선순서 판정. 한 번은 1개까지. 처음은 랜덤 1～3제외할 예정이었지만 왠지 귀찮아
 ;제외한 도구의 TEQUIP 번호가 REACT파생에 들어간다
 IF TEQUIP:아이마스크
 	TEQUIP:아이마스크 = 0
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "아이마스크")
 ELSEIF TEQUIP:관장기＋플러그
-	SOURCE:MASTER:쾌A = 500 * TEQUIP:관장기＋플러그 * (100 + RAND:11 - RAND:11) / 100
+	SOURCE:MASTER:쾌Ａ = 500 * TEQUIP:관장기＋플러그 * (100 + RAND:11 - RAND:11) / 100
 	TEQUIP:관장기＋플러그 = 0
-	;남자는 A로 전립선자극
+	;남자는Ａ로 전립선자극
 	SIF TALENT:MASTER:남자
 		TCVAR:MASTER:전립선자극 += 1
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "관장기＋플러그")
 ELSEIF TEQUIP:애널바이브
 	TEQUIP:애널바이브 = 0
-	;남자는 A로 전립선자극
+	;남자는Ａ로 전립선자극
 	SIF TALENT:MASTER:남자
 		TCVAR:MASTER:전립선자극 += 1
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "애널바이브")
@@ -72,11 +72,11 @@ ELSEIF TEQUIP:바이브
 	TCVAR:MASTER:전립선자극 += 1
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "바이브")
 ELSEIF TEQUIP:오나홀
-	SOURCE:MASTER:쾌C = 50 * (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * CFLAG:MASTER:조교레벨 / 10
+	SOURCE:MASTER:쾌Ｃ = 50 * (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * CFLAG:MASTER:조교레벨 / 10
 	TEQUIP:오나홀 = 0
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "오나홀")
 ELSEIF TEQUIP:클리캡
-	SOURCE:MASTER:쾌C = 50 * (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * CFLAG:MASTER:조교레벨 / 10
+	SOURCE:MASTER:쾌Ｃ = 50 * (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * CFLAG:MASTER:조교레벨 / 10
 	TEQUIP:클리캡 = 0
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "클리캡")
 ELSEIF TEQUIP:볼개그
@@ -90,9 +90,9 @@ ELSEIF TEQUIP:페니스밴드
 	TCVAR:MASTER:전립선자극 += 1
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "페니스밴드")
 ELSE
-	SOURCE:MASTER:쾌A = 50 * TEQUIP:애널비즈 + 50 * TEQUIP:애널비즈 + (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * CFLAG:MASTER:조교레벨 * (TEQUIP:애널비즈 - 1) / 10
+	SOURCE:MASTER:쾌Ａ = 50 * TEQUIP:애널비즈 + 50 * TEQUIP:애널비즈 + (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * CFLAG:MASTER:조교레벨 * (TEQUIP:애널비즈 - 1) / 10
 	TEQUIP:애널비즈 = 0
-	;남자는 A로 전립선자극
+	;남자는Ａ로 전립선자극
 	SIF TALENT:MASTER:남자
 		TCVAR:MASTER:전립선자극 += 2
 	TFLAG:REACT파생 = GETNUM(TEQUIP, "애널비즈")
@@ -114,25 +114,25 @@ CALL ADD_DEPEND(-3, -10)
 RETURN 1
 
 
-;─
+;────────────────────────────────────
 ;052, 하는대로(효과 없음. 실행할 수 있는 반응이 한 개도 없을 때의 구제, 필요한가 어떤가는 모릅니다만)
 ;필요하게 되어 버렸으므로 개명해, 다소 내용을 정비.
-;─
+;────────────────────────────────────
 @COM52
 ;파성의 처리
 ;한번휴식
 IF TFLAG:한번휴식 == 1
 	TFLAG:REACT파생 = -1
 ;성교계 ACT·역강간
-ELSEIF MENUMATCH(TFLAG:ACT, "성교") && !IS_NOWACTNAME("승마위") || IS_NOWACTNAME("역강간")
+ELSEIF MENUMATCH(TFLAG:ACT, "성교") && !IS_NOWACTNAME("기승위") || IS_NOWACTNAME("역강간")
 	;무저항에 범해진다
 	TFLAG:REACT파생 = 1
 	;COM 분류
 	CALL SET_COMGRO("받아들인다")
 	;의존도 변화
 	CALL ADD_DEPEND(+4, +10)
-;성교 봉사계 ACT·승마위
-ELSEIF MENUMATCH(TFLAG:ACT, "성적봉사") && !IS_NOWACTNAME("역강간") || IS_NOWACTNAME("승마위")
+;성교 봉사계 ACT·기승위
+ELSEIF MENUMATCH(TFLAG:ACT, "성적봉사") && !IS_NOWACTNAME("역강간") || IS_NOWACTNAME("기승위")
 	;빠진 것처럼허리를흔드는
 	TFLAG:REACT파생 = 2
 	;COM 분류
@@ -170,17 +170,17 @@ ELSEIF IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/고함�
 		CALL ADD_DEPEND(+2, +10)
 	ENDIF
 	;COM 분류
-	CALL SET_COMGRO("소극적 따른다")
+	CALL SET_COMGRO("소극적으로 한다")
 ;가학계 ACT·또는 고통이 크다
 ELSEIF SOURCE:MASTER:아픔 > 400 || MENUMATCH(TFLAG:ACT, "가학")
 	;소리가 되지 않는 비명을 올려 몸부림쳐 뒹군다
 	TFLAG:REACT파생 = 7
 	;COM 분류
-	CALL SET_COMGRO("소극적 따른다")
+	CALL SET_COMGRO("소극적으로 한다")
 	;의존도 변화
 	CALL ADD_DEPEND(+8, +10)
 ;쾌감이 있다
-ELSEIF SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B > 10
+ELSEIF SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ > 10
 	;회화계 ACT
 	IF MENUMATCH(TFLAG:ACT, "회화")
 		;자위중
@@ -227,19 +227,19 @@ ELSE
 ENDIF
 
 ;쾌감계 보정
-IF SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B > 10
-	;쾌XSOURCE 증가
-	TIMES SOURCE:MASTER:쾌C , 1.20
-	TIMES SOURCE:MASTER:쾌V , 1.20
-	TIMES SOURCE:MASTER:쾌A , 1.20
-	TIMES SOURCE:MASTER:쾌B , 1.20
+IF SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ > 10
+	;쾌ＸSOURCE 증가
+	TIMES SOURCE:MASTER:쾌Ｃ , 1.20
+	TIMES SOURCE:MASTER:쾌Ｖ , 1.20
+	TIMES SOURCE:MASTER:쾌Ａ , 1.20
+	TIMES SOURCE:MASTER:쾌Ｂ , 1.20
 	;일탈 SOURCE 감소
 	TIMES SOURCE:MASTER:일탈 , 0.70
 	;트라우마화 가속
 	TIMES SOURCE:MASTER:트라우마 , 1.30
 	;굴종, 열락 SOURCE 증가
-	SOURCE:MASTER:굴종 += 50 + (MARK:MASTER:쾌락각인 + 1) * (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B) * CFLAG:MASTER:조교레벨 / 200
-	SOURCE:MASTER:열락 += 100 + SOURCE:MASTER:쾌C / 25 + SOURCE:MASTER:쾌V / 25 + SOURCE:MASTER:쾌A / 25 + SOURCE:MASTER:쾌B / 25
+	SOURCE:MASTER:굴종 += 50 + (MARK:MASTER:쾌락각인 + 1) * (SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ) * CFLAG:MASTER:조교레벨 / 200
+	SOURCE:MASTER:열락 += 100 + SOURCE:MASTER:쾌Ｃ / 25 + SOURCE:MASTER:쾌Ｖ / 25 + SOURCE:MASTER:쾌Ａ / 25 + SOURCE:MASTER:쾌Ｂ / 25
 ENDIF
 
 ;굴복계 보정

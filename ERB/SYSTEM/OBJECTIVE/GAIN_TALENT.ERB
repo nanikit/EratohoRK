@@ -1,8 +1,8 @@
 ﻿
-;─
+;────────────────────────────────────
 ;기능 취득·방폐 처리
 ;※ARG는 요구 편차(0을 기준에 큰 만큼 이 종별로 마력을 소비 하고 싶어한다)
-;─
+;────────────────────────────────────
 @GAIN_TALENT_AI()
 #DIM LCOUNT
 #DIM 기능수
@@ -12,16 +12,16 @@
 #DIMS 결정종
 
 ;취득(방폐) 가능 기능을 기능명에 격납한다
-전기능명 = 약학지식/매혹/금단의지식/도구사용/촬영기술/혀사용/기묘한손가락/결박능숙/새디즘/불결무시/종단
+전기능명 = 약학지식/매혹/금단의지식/도구사용/촬영기술/혀사용/기묘한손가락/결박능숙/새드/불결무시/종단
 SPLIT 전기능명, "/", 기능명
 
 ;기능에 대한 해설@이것 보고_201205
 ;『약학지식』
-;미약·로션의 약효 상승, 또 휴게계 영양제ACT의 회복량 상승
+;미약·로션의 약효 상승, 또 휴식계 영양제ACT의 회복량 상승
 ;『매혹』
 ;조교 대상의 긍정적 행동에 대한 장벽이 낮아진다, 또 호감도 상승도 커진다
 ;『금단의지식』
-;휴게계 영양제ACT의 회복량 상승 정도. 현재는 불우
+;휴식계 영양제ACT의 회복량 상승 정도. 현재는 불우
 ;『도구사용』
 ;전반적인 도구 효과의 상승, 또 도구 커스터마이즈가 가능하게
 ;『촬영기술』
@@ -32,7 +32,7 @@ SPLIT 전기능명, "/", 기능명
 ;손가락을 이용하는 행동의 효과가 높아진다
 ;『결박능숙』
 ;줄을 이용하는 행동의 효과가 높아진다. 그것 뿐
-;『새디즘』
+;『새드』
 ;고통을 주는 일에 대해서 저항이 없어져, 효과도 오릅니다
 ;『불결무시』
 ;더러움에 의한 디메리트를 경감. 현재는 약간 불우
@@ -43,7 +43,7 @@ SPLIT 전기능명, "/", 기능명
 ;이 가격을 웃도는 기능이 존재하면 파탄한다
 LOCAL = 1000000
 FOR LCOUNT, 0, 기능수
-	SIF TALENT:(기능명:LCOUNT) == 0 && 기능명:LCOUNT != "새디즘"
+	SIF TALENT:(기능명:LCOUNT) == 0 && 기능명:LCOUNT != "새드"
 		LOCAL = MIN(LOCAL, GAIN_TALENT_V(기능명:LCOUNT, 0))
 NEXT
 ;사용 가능 마력 판정
@@ -67,7 +67,7 @@ ENDIF
 ;변수를 초기화
 CALL SET_CRI_VAR
 FOR LCOUNT, 0, 기능수
-	SIF TALENT:(기능명:LCOUNT) == 0 && 기능명:LCOUNT != "새디즘"
+	SIF TALENT:(기능명:LCOUNT) == 0 && 기능명:LCOUNT != "새드"
 		CALL SET_CRI_VAR, 기능명:LCOUNT, 1
 NEXT
 
@@ -103,7 +103,7 @@ $GAIN_TALENT
 ;취득 상황에 의한 판정(이미 취득, 마력 부족)
 ;판정 처리
 FOR LCOUNT, 0, 기능수
-	IF TALENT:(기능명:LCOUNT) == 1 && 기능명:LCOUNT != "새디즘"
+	IF TALENT:(기능명:LCOUNT) == 1 && 기능명:LCOUNT != "새드"
 		CALL DIM_CRI_VAR(기능명:LCOUNT, -999)
 		CONTINUE
 	ENDIF
@@ -173,9 +173,9 @@ ENDIF
 
 ;조교자가 억압/해방
 IF TALENT:억압
-	CALL ADD_CRI_VAR("새디즘", TALENT:새디즘 ? 6 # -6)
+	CALL ADD_CRI_VAR("새드", TALENT:새드 ? 6 # -6)
 ELSEIF TALENT:해방
-	CALL ADD_CRI_VAR("새디즘", TALENT:새디즘 ? -6 # 6)
+	CALL ADD_CRI_VAR("새드", TALENT:새드 ? -6 # 6)
 ENDIF
 
 ;조교자가 헌신적
@@ -191,11 +191,11 @@ SIF TALENT:헌신적
 IF TALENT:MASTER:반항적
 	CALL ADD_CRI_VAR("매혹", 6)
 	CALL ADD_CRI_VAR("결박능숙", 3)
-	CALL ADD_CRI_VAR("새디즘", 3)
+	CALL ADD_CRI_VAR("새드", 3)
 ELSEIF TALENT:MASTER:순수
 	CALL ADD_CRI_VAR("매혹", -6)
 	CALL ADD_CRI_VAR("결박능숙", -3)
-	CALL ADD_CRI_VAR("새디즘", -3)
+	CALL ADD_CRI_VAR("새드", -3)
 ENDIF
 
 ;조교 대상이 무관심/호기심
@@ -240,10 +240,10 @@ ENDIF
 ;조교 대상이 아픔에약함/아픔에강함
 IF TALENT:MASTER:아픔에약함
 	CALL ADD_CRI_VAR("결박능숙", 6)
-	CALL ADD_CRI_VAR("새디즘", 6)
+	CALL ADD_CRI_VAR("새드", 6)
 ELSEIF TALENT:MASTER:아픔에강함
 	CALL ADD_CRI_VAR("결박능숙", -3)
-	CALL ADD_CRI_VAR("새디즘", -3)
+	CALL ADD_CRI_VAR("새드", -3)
 ENDIF
 
 ;조교 대상이 젖기쉬움/젖기어려움
@@ -263,8 +263,8 @@ SIF TALENT:MASTER:약물내성
 SIF TALENT:MASTER:자위쉬움
 	CALL ADD_CRI_VAR("결박능숙", 3)
 
-;조교 대상이 쾌감에순수/쾌감을부정
-IF TALENT:MASTER:쾌감에순수
+;조교 대상이 쾌감에솔직/쾌감을부정
+IF TALENT:MASTER:쾌감에솔직
 	CALL ADD_CRI_VAR("매혹", -3)
 ELSEIF TALENT:MASTER:쾌감을부정
 	CALL ADD_CRI_VAR("매혹", 3)
@@ -273,12 +273,12 @@ ENDIF
 ;조교 대상이도M
 IF TALENT:MASTER:도M
 	CALL ADD_CRI_VAR("결박능숙", 3)
-	CALL ADD_CRI_VAR("새디즘", 3)
+	CALL ADD_CRI_VAR("새드", 3)
 ENDIF
 
 ;조교 대상이 도착적
 SIF TALENT:MASTER:도착적
-	CALL ADD_CRI_VAR("새디즘", 6)
+	CALL ADD_CRI_VAR("새드", 6)
 
 ;조교 대상이 회복빠름/회복느림
 IF TALENT:MASTER:회복빠름
@@ -305,7 +305,7 @@ SPLIT ARGS, "/", 기능명
 기능수 = FINDELEMENT(기능명, "종단")
 
 FOR LCOUNT, 0, 기능수
-	SIF TALENT:(기능명:LCOUNT) == 0 && 기능명:LCOUNT != "새디즘"
+	SIF TALENT:(기능명:LCOUNT) == 0 && 기능명:LCOUNT != "새드"
 		CALL MUL_CRI_VAR(기능명:LCOUNT, -50, 100)
 NEXT
 
@@ -337,8 +337,8 @@ NEXT
 ;------------------------------------------
 @GAIN_TALENT_ABLE
 
-;현사양에서는 새디즘 소질을 붙이거나 제외하거나를 반복할 수도 있기 때문에
-CALL DIM_CRI_VAR("새디즘", -999)
+;현사양에서는 새드 소질을 붙이거나 제외하거나를 반복할 수도 있기 때문에
+CALL DIM_CRI_VAR("새드", -999)
 CALL DIM_CRI_VAR("착의플레이선호", -999)
 
 ;------------------------------------------

@@ -4,9 +4,9 @@
 
 ;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
 
-;─
+;────────────────────────────────────
 ;000, 지금의기분을얘기한다
-;─
+;────────────────────────────────────
 ;★리액션전★
 @TRAIN_MESSAGE_0
 PRINTFORML %CALLNAME:TARGET%는%TARGET_DESCRIPTION("개개,")%%EQUIPACTION_DESCRIPTION()%지금의 기분에 대해 들어 보았다…
@@ -84,9 +84,9 @@ SELECTCASE TFLAG:ACT파생
 		RETURN 1
 ENDSELECT
 
-;─
+;────────────────────────────────────
 ;001, 자신의 일을 어떻게 생각할까를 얘기한다
-;─
+;────────────────────────────────────
 ;★리액션전★
 @TRAIN_MESSAGE_1
 PRINTFORML %CALLNAME:TARGET%는%TARGET_DESCRIPTION("뭐,")%%EQUIPACTION_DESCRIPTION()%자신의 일을 어떻게 생각할까 (들)물어 보았다…
@@ -163,27 +163,27 @@ SELECTCASE TFLAG:ACT파생
 		RETURN 1
 ENDSELECT
 
-;─
+;────────────────────────────────────
 ;002, 성에대한이야기를한다
-;─
+;────────────────────────────────────
 @TRAIN_MESSAGE_2
 PRINTFORML %CALLNAME:TARGET%는%TARGET_DESCRIPTION("면서,")%%EQUIPACTION_DESCRIPTION()%성에 대한 지식을 말하기 시작했다…
 
-;─
+;────────────────────────────────────
 ;003, 상냥하게위로한다
-;─
+;────────────────────────────────────
 @TRAIN_MESSAGE_3
 PRINTFORML %TARGET_DESCRIPTION("뭐,")%%CALLNAME:TARGET%는%EQUIPACTION_DESCRIPTION()%상냥한 말로 위로해 보았다…
 
-;─
+;────────────────────────────────────
 ;004, 엄격하게위협한다
-;─
+;────────────────────────────────────
 @TRAIN_MESSAGE_4
 PRINTFORML %CALLNAME:TARGET%는%TARGET_DESCRIPTION("개개,")%%CALLNAME:MASTER%를 어려운 말로 위협해 보았다…
 
-;─
+;────────────────────────────────────
 ;005, 옷을 벗어/옷을 입어와 명한다
-;─
+;────────────────────────────────────
 ;★리액션전★
 @TRAIN_MESSAGE_5
 IF TFLAG:ACT파생                        ;착의 지시
@@ -198,7 +198,7 @@ ENDIF
 PRINTL 
 IF TFLAG:ACT파생 == 0                   ;옷을 벗은 경우
 	SELECTCASE COMGRONAME(TFLAG:REACT분류)
-		CASE "소극적 따른다", "받아들인다"           ;소극적 따른다/받아들인다면 한 장 벗는다
+		CASE "소극적으로 한다", "받아들인다"           ;소극적으로 한다/받아들인다면 한 장 벗는다
 			IF (TEQUIP:MASTER:악세사리 + TEQUIP:MASTER:양말 + TEQUIP:MASTER:하반신속옷 + TEQUIP:MASTER:상반신속옷 + TEQUIP:MASTER:하반신윗도리 + TEQUIP:MASTER:상반신윗도리 + TEQUIP:MASTER:전신윗도리) == 0
 				IF IS_COMGRONAME("받아들인다")
 					PRINTFORML %CALLNAME:MASTER%는전라가 되어, 기대와 흥분으로 피부가 달아오르는 것을 느꼈다…
@@ -212,13 +212,13 @@ IF TFLAG:ACT파생 == 0                   ;옷을 벗은 경우
 					PRINTFORML %CALLNAME:MASTER%는 어쩔 수 없이 옷을 한 장 벗어 던졌다…
 				ENDIF
 			ENDIF
-		CASE "적극적 따른다", "태연하게 따른다"           ;적극적 따른다/태연하게 따른다면 2매 벗는다
+		CASE "적극적으로 한다", "태연하게 한다"           ;적극적으로 한다/태연하게 따른다면 2매 벗는다
 			IF (TEQUIP:MASTER:악세사리 + TEQUIP:MASTER:양말 + TEQUIP:MASTER:하반신속옷 + TEQUIP:MASTER:상반신속옷 + TEQUIP:MASTER:하반신윗도리 + TEQUIP:MASTER:상반신윗도리 + TEQUIP:MASTER:전신윗도리) == 0
-				PRINTFORML %CALLNAME:MASTER%는\@ IS_COMGRONAME("적극적 따른다") ? 적극적으로 # 솜씨 자주(잘) \@옷을 벗어 던져, 전라가 되었다…
+				PRINTFORML %CALLNAME:MASTER%는\@ IS_COMGRONAME("적극적으로 한다") ? 적극적으로 # 솜씨 자주(잘) \@옷을 벗어 던져, 전라가 되었다…
 				PRINTFORML 기대와 흥분으로 상기 한 그 피부는, 촉촉히 땀흘리고 있다…
 			;ELSEIF ACTION_APPLY2_5 V(-1) == 2
 			;	PRINTFORML %CALLNAME:MASTER%는 옷을 2매 벗어 던졌다…
-			ELSEIF IS_COMGRONAME("적극적 따른다")
+			ELSEIF IS_COMGRONAME("적극적으로 한다")
 				PRINTFORML %CALLNAME:MASTER%는 적극적으로 옷을 벗어 던졌다…
 			ELSE
 				PRINTFORML %CALLNAME:MASTER%는 솜씨 좋게 옷을 벗어 던졌다…
@@ -232,9 +232,9 @@ IF TFLAG:ACT파생 == 0                   ;옷을 벗은 경우
 	ENDSELECT
 ELSE                                    ;옷을 입은 경우
 	SELECTCASE COMGRONAME(TFLAG:REACT분류)
-		CASE "소극적 따른다", "받아들인다"           ;소극적 따른다/받아들인다면 한 장 입는다
+		CASE "소극적으로 한다", "받아들인다"           ;소극적으로 한다/받아들인다면 한 장 입는다
 			PRINTFORML %CALLNAME:MASTER%는 명령 대로에 옷을 한 장 입었다…
-		CASE "적극적 따른다", "태연하게 따른다"           ;적극적 따른다/태연하게 따른다면 2매 입는다
+		CASE "적극적으로 한다", "태연하게 한다"           ;적극적으로 한다/태연하게 따른다면 2매 입는다
 			PRINTFORML %CALLNAME:MASTER%는 명령 대로에 옷을 입었다…
 		CASEELSE                                  ;그 외 리액션이라면 입지 않는다
 			PRINTFORMW %CALLNAME:MASTER%는 싫어해%CALLNAME:TARGET%의 요구에 응하지 않았다.%CALLNAME:TARGET%는 불만인 것 같다…
@@ -246,9 +246,9 @@ WAIT
 RETURN 1
 ;RETURN 0
 
-;─
+;────────────────────────────────────
 ;006, 합의를요구한다
-;─
+;────────────────────────────────────
 ;★리액션전★
 @TRAIN_MESSAGE_6
 PRINTFORML %TARGET_DESCRIPTION("면서,")%%CALLNAME:TARGET%는%CALLNAME:MASTER%에 처음을 받아도 괜찮을까 (들)물어 보았다…
@@ -256,7 +256,7 @@ PRINTFORML %TARGET_DESCRIPTION("면서,")%%CALLNAME:TARGET%는%CALLNAME:MASTER%�
 ;☆리액션 후☆
 @TRAIN_MESSAGE2_6
 SELECTCASE COMGRONAME(TFLAG:REACT분류)
-	CASE "소극적 따른다"                             ;REACT분류가 소극적 따르는 것 경우
+	CASE "소극적으로 한다"                             ;REACT분류가 소극적 따르는 것 경우
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%는 각오를 결정한 것처럼, 작은 소리로 승낙했다…
@@ -269,7 +269,7 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 					PRINTFORML %CALLNAME:MASTER%는 분함에 얼굴을 비뚤어지게 하면서도 승낙했다…
 				ENDIF
 		ENDSELECT
-	CASE "태연하게 따른다"                             ;REACT분류가 태연하게 따르는 것 경우
+	CASE "태연하게 한다"                             ;REACT분류가 태연하게 따르는 것 경우
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%는%CALLNAME:TARGET%에 별로 싫지 않다고 말했다…
@@ -282,7 +282,7 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 					PRINTFORML %CALLNAME:MASTER%는%CALLNAME:TARGET%에 마음대로 하면 좋다고 대답했다…
 				ENDIF
 		ENDSELECT
-	CASE "적극적 따른다"                             ;REACT분류가 적극적 따르는 것 경우
+	CASE "적극적으로 한다"                             ;REACT분류가 적극적 따르는 것 경우
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORML %CALLNAME:MASTER%는%CALLNAME:TARGET%에 처음을 줄 수 있어 기쁘다고 대답했다…
@@ -309,20 +309,20 @@ SELECTCASE COMGRONAME(TFLAG:REACT분류)
 ENDSELECT
 RETURN 1
 
-;─
+;────────────────────────────────────
 ;007, 벌이라고선언한다
-;─
+;────────────────────────────────────
 @TRAIN_MESSAGE_7
 PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%에 지금부터 벌 한다고 말하기 시작했다…
 
-;─
+;────────────────────────────────────
 ;008, 고함친다
-;─
+;────────────────────────────────────
 @TRAIN_MESSAGE_8
 PRINTFORML %CALLNAME:TARGET%는%CALLNAME:MASTER%를 큰 소리로 고함쳤다…
 
-;─
+;────────────────────────────────────
 ;009, 기분나쁘게웃는다
-;─
+;────────────────────────────────────
 @TRAIN_MESSAGE_9
 PRINTFORML %CALLNAME:TARGET%는%TARGET_DESCRIPTION("개개,")%%CALLNAME:MASTER%에 향해 기분 나쁜 미소를 띄웠다…

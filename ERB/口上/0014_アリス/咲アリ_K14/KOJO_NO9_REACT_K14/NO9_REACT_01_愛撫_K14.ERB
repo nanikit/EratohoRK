@@ -52,7 +52,7 @@
 ;	SELECTCOM:서투르다고매도한다 PERCENT(100)
 ;	SELECTCOM:쾌감을참는다 PERCENT(100)
 ;	SELECTCOM:쾌감을받아들인다 PERCENT(100)
-;NO9_REACT14, "애널빨고"
+;NO9_REACT14, "애널핥기"
 ;	SELECTCOM:부끄러워한다 PERCENT(100)
 ;	SELECTCOM:서투르다고매도한다 PERCENT(100)
 ;	SELECTCOM:쾌감을참는다 PERCENT(100)
@@ -69,7 +69,7 @@
 ;	SELECTCOM:쾌감을받아들인다 PERCENT(100)
 ;NO9_REACT17, "파이즈리한다" ※미사용
 ;NO9_REACT18, "풋잡한다" ※미사용
-;NO9_REACT27, "밀어넘어뜨린다"
+;NO9_REACT27, "쓰러트린다"
 ;COM 파일이 완성하면 개소에 따라서는 확률을 변경해, REACT와 COM로 서로 보완하는 형태로 할 예정
 ;이 근처의 조정 작업은 귀찮지만 싫지 않아. 오히려 즐겁다
 ;===================================================
@@ -89,7 +89,7 @@
 ;·여기에 조건 없음 분기가 있으면, 리액션에 관련되지 않고, 모두 주워 버려 범용 리액션에 흐르지 않습니다
 ;·요컨데, 상정된 시스템의 파괴에 연결됩니다
 ;-------------------------------------------------
-;  기본적으로 지문은 TFLAG:REACT분류(받아들인다/적극적 따른다/태연하게 따른다/용서를빈다/소극적 따른다)로 분기 해,
+;  기본적으로 지문은 TFLAG:REACT분류(받아들인다/적극적으로 한다/태연하게 한다/용서를빈다/소극적으로 한다)로 분기 해,
 ;  각 REACT분류내에서 TFLAG:REACT부하(자연스러운 행동/무리가 없는 행동/무리를 한 행동)으로 파생
 ;  ACT_MESSAGE.ERB를 참조하면서의 작업을 추천합니다
 ;-------------------------------------------------
@@ -98,8 +98,8 @@
 ;TFLAG:REACT인상, 각 SELECTCOM의 상대에게로의 심상(0=영향없음/1=좋은인상/2=약간좋은인상/3=나쁜인상/4=약간나쁜인상/5=0으로부터 원 자리인가
 ;TFLAG:ACT파생 해당 ACT에서의 패턴 변화
 ;
-;TFLAG:REACT분류 (0=없음/1=소극적 따른다/2=태연하게 따른다/3=적극적 따른다/4=받아들인다/5=용서를빈다/6=날뛴다/7=요구에 응하지 않는, 거부/8=도망치는, 발버둥 친다)
-;IS_COMGRONAME("없음/소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다/용서를빈다/날뛴다/거부/도망친다")
+;TFLAG:REACT분류 (0=없음/1=소극적으로 한다/2=태연하게 한다/3=적극적으로 한다/4=받아들인다/5=용서를빈다/6=날뛴다/7=요구에 응하지 않는, 거부/8=도망치는, 발버둥 친다)
+;IS_COMGRONAME("없음/소극적으로 한다/태연하게 한다/적극적으로 한다/받아들인다/용서를빈다/날뛴다/거부/도망친다")
 ;
 ;FIRSTREACT
 ;첫회 ACT 판정 함수
@@ -110,9 +110,9 @@
 ;그 외의 사양은 거의 FIRSTREACT와 같이
 ;=================================================
 
-;─
+;────────────────────────────────────
 ;NO9_REACT10, 손으로애무·개별 리액션
-;─
+;────────────────────────────────────
 ;·TFLAG:ACT파생(0=애무/1=자위/2=페니스밴드 자위)
 ;-------------------------------------------------
 ;상정되는 COM…
@@ -125,7 +125,7 @@
 ;-------------------------------------------------
 ;애무의 지문은 ACT_MESSAGE에는 존재하지 않고, REACTION_MESSAGE로 COM마다 처리된다
 ;자위의 지문은 ACT_MESSAGE에 존재하지만, 대상 한정에는 무관계
-;(IS_NOWCOMNAME("쾌감을참는다") /SELECTCOM == 14)는 기본적으로 REACT분류 == 1("소극적 따른다")이지만
+;(IS_NOWCOMNAME("쾌감을참는다")/SELECTCOM == 14)는 기본적으로 REACT분류 == 1("소극적으로 한다")이지만
 ;확률로 REACT분류 == 3("용서를빈다")에 파생하는 경우 있어. 지문도 거기에 맞추어 변화한다
 ;-------------------------------------------------
 @KOJO_NO9_MS_REACT_K14_10
@@ -143,7 +143,7 @@ IF 구상기입체크(100) && IS_PREVACTNAME("스팽킹/채찍")
 	;=================================================
 	;쾌감을참는다
 	;=================================================
-	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다")
+	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다")
 		PRINTFORMDL 앨리스는 사쿠야의 반응을 물으면서\@ IS_PREVACTNAME("스팽킹") ? 타척의 자국을 # 채찍의 상흔을 \@정중하게 더듬었다…
 		SELECTCASE ABL:MASTER:마조끼 ;마조끼 파생
 			CASE IS > 4
@@ -314,7 +314,7 @@ ENDIF
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 ;쾌감을참는다 75%
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 구상기입체크(75) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다")
+IF 구상기입체크(75) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다")
 	;SELECTCOM 분기에서 연속 실행소분기라든지 생각났지만 죽을 것 같게 되므로 그만둔다
 	;에서도 REACT가 아니고 COM, 혹은 통괄 범용 REACT든지로 한다는 것은 있을지도 모른다
 	;그 손간을 생각하면 현기증이 하지만
@@ -327,9 +327,9 @@ IF 구상기입체크(75) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참는
 		CALL FADE(20, COLOR_K14("white"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("애무"), 1)%")
 		CLEARLINE 1
 		CALL QUAKE(2)
-		;초조하게해번 파생 처리
-		SELECTCASE TCVAR:MASTER:초조하게해번
-			;초조하게해중
+		;애태움수 파생 처리
+		SELECTCASE TCVAR:MASTER:애태움수
+			;애태움중
 			CASE IS > 1
 				SELECTCASE RANDREACT(2, 0)
 					CASE 0
@@ -343,7 +343,7 @@ IF 구상기입체크(75) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참는
 						PRINTFORM 「그렇다면 당신을 어디까지 견딜 수 있는지, 차분히 시험해 주어요…
 						CALL PRINT_SYMBOL_K14
 				ENDSELECT
-			;초조하게해 종료
+			;애태움 종료
 			CASE 1
 				SELECTCASE RANDREACT(2, 1)
 					CASE 0
@@ -357,7 +357,7 @@ IF 구상기입체크(75) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참는
 						CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"), "  나, 거기 만지작거려지면!」")
 						PRINTFORMW 「후후, 여기까지. 이봐요, 가세요. 사쿠야…」
 				ENDSELECT
-			;초조하게해 없음
+			;애태움 없음
 			CASEELSE
 				SELECTCASE RANDREACT(2, 2)
 					CASE 0
@@ -430,8 +430,8 @@ IF 구상기입체크(75) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참는
 	;정욕/울적/몽롱
 	;=================================================
 	IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-		;조교 대상쾌C파생 처리
-		SELECTCASE PALAM:MASTER:쾌C
+		;조교 대상쾌Ｃ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ｃ
 			CASE IS >= 7000
 				PRINTFORMDL 앨리스의 손가락이%CLITORIS_DESCRIPTION(MASTER)%민감한 부위에 접할 때,
 				PRINTFORMDW 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%, 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
@@ -504,8 +504,8 @@ IF 구상기입체크(75) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참는
 	;통상
 	;=================================================
 	IF 구상기입체크(100) && T_COND("통상")
-		;조교 대상쾌C파생 처리
-		SELECTCASE PALAM:MASTER:쾌C
+		;조교 대상쾌Ｃ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ｃ
 			CASE IS >= 7000
 				PRINTFORMDL 앨리스의 손가락이%CLITORIS_DESCRIPTION(MASTER)%민감한 부위에 접할 때,
 				PRINTFORMDW 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%, 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
@@ -558,9 +558,9 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 	;확률로 하위의 분기에
 	;-------------------------------------------------
 	IF 구상기입체크(75) && TCVAR:MASTER:갈것같다
-		;초조하게해번 파생 처리
-		SELECTCASE TCVAR:MASTER:초조하게해번
-			;초조하게해중
+		;애태움수 파생 처리
+		SELECTCASE TCVAR:MASTER:애태움수
+			;애태움중
 			CASE IS > 1
 				PRINTFORMDW 앨리스의 손가락끝은 사쿠야의 민감한 개소를 교묘하게 피해, 그 주위를 초조하게 하는것 같이 애무하고 있다…
 				;조교자 만족도 파생 처리
@@ -579,10 +579,10 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 						CALL PRINT_SYMBOL_K14
 					CASE "낮다"
 						CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「시, 싫닷! 이래서야, 안타까워서!」")
-						PRINTFORM 「이 정도 초조하게해(분)편이 갈 때 기분 좋은거야? 당신이기 때문에이기도 하기 때문에 참아 줘…
+						PRINTFORM 「이 정도 애태움(분)편이 갈 때 기분 좋은거야? 당신이기 때문에이기도 하기 때문에 참아 줘…
 						CALL PRINT_SYMBOL_K14
 				ENDSELECT
-			;초조하게해 종료
+			;애태움 종료
 			CASE 1
 				;조교자 만족도 파생 처리
 				SELECTCASE TENSION(TARGET, 8)
@@ -609,7 +609,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 						CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"), "  아!」")
 						PRINTFORMW 「좋아요. 이대로 가세요, 사쿠야…」
 				ENDSELECT
-			;초조하게해 없음
+			;애태움 없음
 			CASEELSE
 				;조교자 만족도 파생 처리
 				SELECTCASE TENSION(TARGET, 8)
@@ -659,8 +659,8 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 		CLEARLINE 1
 		;젖고 있다
 		IF PALAM:MASTER:윤활 >= 500
-			;조교 대상쾌C파생 처리
-			SELECTCASE PALAM:MASTER:쾌C
+			;조교 대상쾌Ｃ파생 처리
+			SELECTCASE PALAM:MASTER:쾌Ｃ
 				CASE IS >= 7000
 					CALL QUAKE(2)
 					CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「아, 앗")
@@ -682,8 +682,8 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 			ENDSELECT
 		;젖지 않았다
 		ELSE
-			;조교 대상쾌C파생 처리
-			SELECTCASE PALAM:MASTER:쾌C
+			;조교 대상쾌Ｃ파생 처리
+			SELECTCASE PALAM:MASTER:쾌Ｃ
 				CASE IS >= 7000
 					CALL QUAKE(1)
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하아, 하아… 앗, 얏! 응아… 아앗!」")
@@ -717,8 +717,8 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 	;정욕/울적/몽롱
 	;=================================================
 	IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-		;조교 대상쾌C파생 처리
-		SELECTCASE PALAM:MASTER:쾌C
+		;조교 대상쾌Ｃ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ｃ
 			CASE IS >= 7000
 				CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「후앗, 앗")
 				CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"), "  나, 기다려 앨리스! 그렇게 되면!」")
@@ -784,8 +784,8 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 	;통상
 	;=================================================
 	IF 구상기입체크(100) && T_COND("통상")
-		;조교 대상쾌C파생 처리
-		SELECTCASE PALAM:MASTER:쾌C
+		;조교 대상쾌Ｃ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ｃ
 			CASE IS >= 7000
 				CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「응읏, 쿠웃! 저기, 앨리스… 좀 더 부탁…」")
 				PRINTFORM 「아맡김 저것…
@@ -810,9 +810,9 @@ RETURN 0
 ENDIF
 ;NO9_REACT10, 손으로애무
 
-;─
+;────────────────────────────────────
 ;NO9_REACT11, 가슴애무·개별 리액션
-;─
+;────────────────────────────────────
 ;·TFLAG:ACT파생(0=가슴애무/1=유두 들이마셔/2=몸싸움/3=유두 고문)
 ;-------------------------------------------------
 ;상정되는 COM
@@ -825,7 +825,7 @@ ENDIF
 ;-------------------------------------------------
 ;·지문은 ACT파생 2, 몸싸움과 그 외로 분기
 ;·ACTION_APPLY2에 있어서, ACT파생 2의 경우는 수용, 거부의 판정 처리 있어
-;·ACT파생 2, 몸싸움에 대해 REACT분류(소극적 따른다/태연하게 따른다/적극적 따른다/받아들인다) 이외는 "거부"취급
+;·ACT파생 2, 몸싸움에 대해 REACT분류(소극적으로 한다/태연하게 한다/적극적으로 한다/받아들인다) 이외는 "거부"취급
 ;-------------------------------------------------
 @KOJO_NO9_MS_REACT_K14_11
 ;-------------------------------------------------
@@ -993,11 +993,11 @@ IF 구상기입체크(70) && TFLAG:ACT파생 == 1
 	;=================================================
 	;쾌감을참는다
 	;=================================================
-	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다")
+	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다")
 		PRINTFORMDL 앨리스가%NIPPLE_DESCRIPTION(MASTER)%첨단의 꽃봉오리를 혀끝에서 연주할 때,
 		PRINTFORMD 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%、
-		;조교 대상쾌B파생
-		SELECTCASE PALAM:MASTER:쾌B
+		;조교 대상쾌Ｂ파생
+		SELECTCASE PALAM:MASTER:쾌Ｂ
 			CASE IS >= 8500
 				PRINTFORMDW 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
 				PRINTL
@@ -1032,8 +1032,8 @@ IF 구상기입체크(70) && TFLAG:ACT파생 == 1
 	IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다") && TFLAG:REACT부하 < 2 && !TFLAG:REACT파생
 		PRINTFORMDL 앨리스가%NIPPLE_DESCRIPTION(MASTER)%첨단의 꽃봉오리를 혀끝에서 연주할 때,
 		PRINTFORMD 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%、
-		;조교 대상쾌B파생
-		SELECTCASE PALAM:MASTER:쾌B
+		;조교 대상쾌Ｂ파생
+		SELECTCASE PALAM:MASTER:쾌Ｂ
 			CASE IS >= 8500
 				PRINTFORMDW 미칠 듯할 만큼의 관능의 고조됨에, 허덕여 몸부림치고 있다…
 				CALL QUAKE(1)
@@ -1076,7 +1076,7 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 2
 	;=================================================
 	;REACT분류:용서를빈다에 파생했을 경우, 거부 취급이 되므로 REACT분류로 결정하고 쳐 한다. 뭐 REACT파생라도 좋지만
 	;---------------------------------------------
-	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다")
+	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다")
 		;-------------------------------------------------
 		;상반신 복장이 요점 밀치고
 		;-------------------------------------------------
@@ -1119,8 +1119,8 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 2
 		;정욕/울적/몽롱
 		;-------------------------------------------------
 		IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-			;조교 대상쾌B파생
-			SELECTCASE PALAM:MASTER:쾌B
+			;조교 대상쾌Ｂ파생
+			SELECTCASE PALAM:MASTER:쾌Ｂ
 				CASE IS >= 8500
 					;확률로 표시
 					IF !RAND:3
@@ -1198,8 +1198,8 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 2
 		;통상
 		;-------------------------------------------------
 		IF 구상기입체크(0) && T_COND("통상")
-			;조교 대상쾌B파생
-			SELECTCASE PALAM:MASTER:쾌B
+			;조교 대상쾌Ｂ파생
+			SELECTCASE PALAM:MASTER:쾌Ｂ
 				CASE IS >= 8500
 					;1/3의 확률로 표시
 					IF !RAND:3
@@ -1312,11 +1312,11 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 2
 		;정욕/울적/몽롱
 		;-------------------------------------------------
 		IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-			;조교 대상쾌B파생
-			SELECTCASE PALAM:MASTER:쾌B
+			;조교 대상쾌Ｂ파생
+			SELECTCASE PALAM:MASTER:쾌Ｂ
 				CASE IS >= 8500
 					;조교자가갈것같다
-					IF PALAM:쾌B >= 8500
+					IF PALAM:쾌Ｂ >= 8500
 						CALL QUAKE(1)
 						PRINTFORM 「후앗, 앗
 						CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "  , 어젯밤! 그것, 기분 좋다…」")
@@ -1337,7 +1337,7 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 2
 					ENDIF
 				CASE IS >= 4000
 					;조교자가갈것같다
-					IF PALAM:쾌B >= 8500
+					IF PALAM:쾌Ｂ >= 8500
 						PRINTFORMW 「사쿠야에 손놀림, 추잡하다… 응읏! 앗, 야앗!」
 						CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「기뻐해 받고 있는 것 같고 최상이어요…♪」")
 						PRINTFORMW 「이제(벌써)! 얼버무리지 말아요, 바보 사쿠야…」
@@ -1350,7 +1350,7 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 2
 					ENDIF
 				CASEELSE
 					;조교자가갈것같다
-					IF PALAM:쾌B >= 8500
+					IF PALAM:쾌Ｂ >= 8500
 						PRINTFORM 「후앗, 앗
 						CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "  나, 나다 이것! 내가 먼저 가게 되어 버린닷!」")
 						CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「뭐야, 자신만큼 좋아져 버려」")
@@ -1405,14 +1405,14 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 2
 		;통상
 		;-------------------------------------------------
 		IF 구상기입체크(0) && T_COND("통상")
-			;조교 대상쾌B파생
-			SELECTCASE PALAM:MASTER:쾌B
+			;조교 대상쾌Ｂ파생
+			SELECTCASE PALAM:MASTER:쾌Ｂ
 				CASE IS >= 8500
 					CALL QUAKE(1)
 					CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「앗, 하앗! 야… 나, 나, 이제 안됏! 아")
 					CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"), "  아!」")
 					;조교자도갈것같다
-					IF PALAM:쾌B >= 8500
+					IF PALAM:쾌Ｂ >= 8500
 						PRINTFORMW 「시, 싫닷! 나도, 안될지도…」
 						CALL QUAKE(1)
 						PRINTFORM 「아, 앗
@@ -1426,9 +1426,9 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 2
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하아, 하아… 앗, 얏! 응아… 아앗!」")
 					PRINTFORMW 「읏! 나쁘고, 없어요… 좀 더 자주(잘) 해 주기 때문에, 당신도…」
 					;조교자가갈것같다
-					;PALAM:쾌C 이외의 경우, 8500이상으로갈것같다라고 해석한다. 별로 기준이 되는 것도, 지침이 되는 것도 없는 단순한 개인적인 해석
+					;PALAM:쾌Ｃ이외의 경우, 8500이상으로갈것같다라고 해석한다. 별로 기준이 되는 것도, 지침이 되는 것도 없는 단순한 개인적인 해석
 					;라고는 해도, 타당한 수치이다고는 생각하고 있다
-					SIF PALAM:쾌B >= 8500
+					SIF PALAM:쾌Ｂ >= 8500
 						PRINTFORMW 「그렇지만 이것, 내가 먼저 가게 되어 버릴지도… 앗, 나다 사쿠야! 그것, 기분 좋다…」
 				CASEELSE
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「읏, 후웃… 핫, 아읏! 거, 거기! 아아…」")
@@ -1516,11 +1516,11 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 3
 	;=================================================
 	;쾌감을참는다
 	;=================================================
-	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다")
+	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다")
 		PRINTFORMDL 앨리스에%NIPPLE_DESCRIPTION(MASTER)%첨단의 꽃봉오리를 손가락끝으로 희롱해져
 		PRINTFORMD 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%、
-		;조교 대상쾌B파생
-		SELECTCASE PALAM:MASTER:쾌B
+		;조교 대상쾌Ｂ파생
+		SELECTCASE PALAM:MASTER:쾌Ｂ
 			CASE IS >= 8500
 				PRINTFORMDW 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
 				PRINTL
@@ -1556,8 +1556,8 @@ IF 구상기입체크(75) && TFLAG:ACT파생 == 3
 	;쾌감을받아들인다
 	;=================================================
 	IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋다！") && TFLAG:REACT부하 < 2 && !TFLAG:REACT파생
-		;조교 대상쾌B파생
-		SELECTCASE PALAM:MASTER:쾌B
+		;조교 대상쾌Ｂ파생
+		SELECTCASE PALAM:MASTER:쾌Ｂ
 			CASE IS >= 8500
 				CALL QUAKE(1)
 				CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「아…… 아아…… 아, 앗")
@@ -1620,7 +1620,7 @@ IF 구상기입체크(70) && !TFLAG:ACT파생
 	;=================================================
 	;쾌감을참는다
 	;=================================================
-	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다")
+	IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다")
 		;-------------------------------------------------
 		;상반신 복장이 요점 밀치고
 		;-------------------------------------------------
@@ -1664,8 +1664,8 @@ IF 구상기입체크(70) && !TFLAG:ACT파생
 		IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
 			PRINTFORMDL 앨리스에 유방을 주물러져 때때로%NIPPLE_DESCRIPTION(MASTER)%첨단에 자극이 주어질 때,
 			PRINTFORMD 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%、
-			;조교 대상쾌B파생
-			SELECTCASE PALAM:MASTER:쾌B
+			;조교 대상쾌Ｂ파생
+			SELECTCASE PALAM:MASTER:쾌Ｂ
 				CASE IS >= 8500
 					PRINTFORMDW 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
 					PRINTL
@@ -1755,8 +1755,8 @@ IF 구상기입체크(70) && !TFLAG:ACT파생
 		IF 구상기입체크(100) && T_COND("통상")
 			PRINTFORMDL 앨리스에 유방을 주물러져 때때로%NIPPLE_DESCRIPTION(MASTER)%첨단에 자극이 주어질 때,
 			PRINTFORMD 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%、
-			;조교 대상쾌B파생
-			SELECTCASE PALAM:MASTER:쾌B
+			;조교 대상쾌Ｂ파생
+			SELECTCASE PALAM:MASTER:쾌Ｂ
 				CASE IS >= 8500
 					PRINTFORMDW 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
 					PRINTL
@@ -1835,8 +1835,8 @@ IF 구상기입체크(70) && !TFLAG:ACT파생
 		;정욕/울적/몽롱
 		;-------------------------------------------------
 		IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-			;조교 대상쾌B파생
-			SELECTCASE PALAM:MASTER:쾌B
+			;조교 대상쾌Ｂ파생
+			SELECTCASE PALAM:MASTER:쾌Ｂ
 				CASE IS >= 8500
 					CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「후앗! 아읏")
 					CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"), "  나, 싫닷! 나, 이제(벌써)…」")
@@ -1914,8 +1914,8 @@ IF 구상기입체크(70) && !TFLAG:ACT파생
 		;통상
 		;-------------------------------------------------
 		IF 구상기입체크(100) && T_COND("통상")
-			;조교 대상쾌B파생
-			SELECTCASE PALAM:MASTER:쾌B
+			;조교 대상쾌Ｂ파생
+			SELECTCASE PALAM:MASTER:쾌Ｂ
 				CASE IS >= 8500
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「기, 기다려 앨리스! 그렇게 되면… 이, 이제(벌써)!」")
 					PRINTFORMW 「어떻게 되어 버리는 거야? 이봐요, 입다물고 있어서는 알지 않아요」
@@ -1952,9 +1952,9 @@ RETURN 0
 ENDIF
 ;NO9_REACT11, 가슴애무_통상의 가슴애무
 
-;─
+;────────────────────────────────────
 ;REACT12, 입으로애무·개별 리액션
-;─
+;────────────────────────────────────
 ;·TFLAG:ACT파생(0=쿤닐링구스/1=페라)
 ;-------------------------------------------------
 ;상정되는 COM…
@@ -2161,14 +2161,14 @@ ENDIF
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 ;쾌감을참는다 85% RANDREACT(0)(1)(2)
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 구상기입체크(85) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다")
+IF 구상기입체크(85) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다")
 	;=================================================
 	;조교 대상이갈것같다
 	;=================================================
 	IF 구상기입체크(100) && TCVAR:MASTER:갈것같다
-		;초조하게해번 파생 처리
-		SELECTCASE TCVAR:MASTER:초조하게해번
-			;초조하게해중
+		;애태움수 파생 처리
+		SELECTCASE TCVAR:MASTER:애태움수
+			;애태움중
 			CASE IS > 1
 				CALL QUAKE(1)
 				SELECTCASE RANDREACT(2, 0)
@@ -2182,7 +2182,7 @@ IF 구상기입체크(85) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT
 						PRINTFORMW 「허리까지 떠 버리고 있는데 노력해요, 사쿠야?」
 						PRINTFORMW 「그렇다면 당신을 어디까지 견딜 수 있는지, 차분히 시험해 주어요…♪」
 				ENDSELECT
-			;초조하게해 종료
+			;애태움 종료
 			CASE 1
 				SELECTCASE RANDREACT(2, 1)
 					CASE 0
@@ -2197,7 +2197,7 @@ IF 구상기입체크(85) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT
 						CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"), "  나, 거기 만지작거려지면!」")
 						PRINTFORMW 「후후, 여기까지. 이봐요, 가세요. 사쿠야…」
 				ENDSELECT
-			;초조하게해 없음
+			;애태움 없음
 			CASEELSE
 				SELECTCASE RANDREACT(2, 2)
 					CASE 0
@@ -2276,8 +2276,8 @@ IF 구상기입체크(85) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT
 	;정욕/울적/몽롱
 	;=================================================
 	IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-		;조교 대상쾌C파생 처리
-		SELECTCASE PALAM:MASTER:쾌C
+		;조교 대상쾌Ｃ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ｃ
 			CASE IS >= 7000
 				PRINTFORMDL 앨리스의 혀가%CLITORIS_DESCRIPTION(MASTER)%민감한 부위에 접할 때,
 				PRINTFORMDW 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%, 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
@@ -2366,8 +2366,8 @@ IF 구상기입체크(85) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT
 	;통상
 	;=================================================
 	IF 구상기입체크(100) && T_COND("통상")
-		;조교 대상쾌C파생 처리
-		SELECTCASE PALAM:MASTER:쾌C
+		;조교 대상쾌Ｃ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ｃ
 			CASE IS >= 7000
 				PRINTFORMDL 앨리스의 혀가%CLITORIS_DESCRIPTION(MASTER)%민감한 부위에 접할 때,
 				PRINTFORMDW 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%, 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
@@ -2421,9 +2421,9 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	;이것은 지금 보면 잘게 썰기 싶어지는군
 	;-------------------------------------------------
 	IF 구상기입체크(80) && TCVAR:MASTER:갈것같다
-		;초조하게해번 파생 처리
-		SELECTCASE TCVAR:MASTER:초조하게해번
-			;초조하게해중
+		;애태움수 파생 처리
+		SELECTCASE TCVAR:MASTER:애태움수
+			;애태움중
 			CASE IS > 1
 				PRINTFORMDW 앨리스의 혀끝은 사쿠야의 민감한 개소를 교묘하게 피해, 그 주위를 초조하게 하는것 같이 애무하고 있다…
 				;조교자 만족도 파생 처리
@@ -2441,10 +2441,10 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 						PRINTFORMW 「나쁘지만 좀 더 즐겁게 해 받기 때문에…♪」
 					CASE "낮다"
 						CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「시, 싫닷! 이래서야, 안타까워서!」")
-						PRINTFORM 「이 정도 초조하게해(분)편이 갈 때 기분 좋은거야? 당신이기 때문에이기도 하기 때문에 참아 줘…
+						PRINTFORM 「이 정도 애태움(분)편이 갈 때 기분 좋은거야? 당신이기 때문에이기도 하기 때문에 참아 줘…
 						CALL PRINT_SYMBOL_K14
 				ENDSELECT
-			;초조하게해 종료
+			;애태움 종료
 			CASE 1
 				CALL QUAKE(2)
 				;조교자 만족도 파생 처리
@@ -2474,7 +2474,7 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 						CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"), "  아!」")
 						PRINTFORMW 「좋아요. 이대로 가세요, 사쿠야…」
 				ENDSELECT
-			;초조하게해 없음
+			;애태움 없음
 			CASEELSE
 				;조교자 만족도 파생 처리
 				SELECTCASE TENSION(TARGET, 8)
@@ -2570,8 +2570,8 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	;정욕/울적/몽롱
 	;=================================================
 	IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-		;조교 대상쾌C파생 처리
-		SELECTCASE PALAM:MASTER:쾌C
+		;조교 대상쾌Ｃ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ｃ
 			CASE IS >= 7000
 				CALL QUAKE(2)
 				CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「후앗! 시, 싫다…… 거기! 조크는!」")
@@ -2660,8 +2660,8 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	;통상
 	;=================================================
 	IF 구상기입체크(100) && T_COND("통상")
-		;조교 대상쾌C파생 처리
-		SELECTCASE PALAM:MASTER:쾌C
+		;조교 대상쾌Ｃ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ｃ
 			CASE IS >= 7000
 				CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이, 이나다 앨리스! 그것…… 기분 있고! 후앗!」")
 				PRINTFORMW (후후, 사쿠야도 완전히 올라 왔군요. 좋아, 그러면……)
@@ -2702,9 +2702,9 @@ RETURN 0
 ENDIF
 ;NO9_REACT12, 입으로애무_쾌감을받아들인다
 
-;─
+;────────────────────────────────────
 ;NO9_REACT13, 애널애무·개별 리액션
-;─
+;────────────────────────────────────
 ;·TFLAG:ACT파생(0=애널애무/1=전립선자극/2=애널바이브 출납)
 ;-------------------------------------------------
 ;상정되는 COM
@@ -2718,7 +2718,7 @@ ENDIF
 @KOJO_NO9_MS_REACT_K14_13
 ;-------------------------------------------------
 ;·지문은 ACT파생로 분기. ACT파생 1, 2 분기내의 파생 없음
-;·ACT파생 0, 애널애무만 REACT분류(받아들인다/적극적 따른다, 태연하게 따른다/용서를빈다/소극적 따른다)로 파생 처리된다
+;·ACT파생 0, 애널애무만 REACT분류(받아들인다/적극적으로 한다, 태연하게 한다/용서를빈다/소극적으로 한다)로 파생 처리된다
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 ;부끄러워한다
@@ -2744,8 +2744,8 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("부끄러워한다") && (!TEQUIP:�
 	;쾌감에 대해서부끄러워한다
 	;=================================================
 	IF 구상기입체크(100) && TFLAG:REACT파생 == 1
-		;조교 대상쾌A파생
-		SELECTCASE PALAM:MASTER:쾌A
+		;조교 대상쾌Ａ파생
+		SELECTCASE PALAM:MASTER:쾌Ａ
 			CASE IS >= 8500
 				PRINTFORMW 「저기……, 부끄러워해 보이고 있지만, 사실은 이제(벌써)갈것같다가 아니야?」
 				CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그, 그런 일! 없, 어요……」")
@@ -2849,7 +2849,7 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("서투르다고매도한다") && TF
 		;-------------------------------------------------
 		;서투름이라든지 말하면서 절정!?
 		;-------------------------------------------------
-		IF 구상기입체크(100) && NOWEX:MASTER:A절정
+		IF 구상기입체크(100) && NOWEX:MASTER:Ａ절정
 			PRINTFORMW 「그것은 좋지만…, 사람의 일아주 서툼 부르면서, 갈것같다라는 것은 어떻게 말하는 일인 것일까?」
 			CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「그, 그런 일…! 없, 어요……」")
 			PRINTFORMW 「그래요? 그런 일 말하면서 가게 되어 버린다든가, 받아들이기 어려워요?」
@@ -2895,7 +2895,7 @@ ENDIF
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 ;쾌감을참는다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다") && !TFLAG:ACT파생
+IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다") && !TFLAG:ACT파생
 	;=================================================
 	;하반신 복장이 요점 밀치고
 	;=================================================
@@ -2906,8 +2906,8 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REAC
 		;윗도리를 걷어 올리고
 		IF LOWERJACKET(1) == 1
 			PRINTFORMDL 앨리스는 옷을 풀어헤친 사쿠야의%ANUS_DESCRIPTION(MASTER)%를 열심히 애무하고 있다…
-			;조교 대상쾌A파생
-			SELECTCASE PALAM:MASTER:쾌A
+			;조교 대상쾌Ａ파생
+			SELECTCASE PALAM:MASTER:쾌Ａ
 				CASE IS >= 8500
 					CALL QUAKE(2)
 					CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「응읏! 앗")
@@ -2933,8 +2933,8 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REAC
 		;속옷 너머로
 		ELSEIF LOWERUNDER(1)
 			PRINTFORMDL 앨리스는%INNER_B(MASTER)% 너머로 사쿠야의%ANUS_DESCRIPTION(MASTER)%를 열심히 애무하고 있다…
-			;조교 대상쾌A파생
-			SELECTCASE PALAM:MASTER:쾌A
+			;조교 대상쾌Ａ파생
+			SELECTCASE PALAM:MASTER:쾌Ａ
 				CASE IS >= 8500
 					CALL QUAKE(2)
 					CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「후앗! 아앗")
@@ -2965,8 +2965,8 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REAC
 	;정욕/울적/몽롱
 	;=================================================
 	IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-		;조교 대상쾌A파생
-		SELECTCASE PALAM:MASTER:쾌A
+		;조교 대상쾌Ａ파생
+		SELECTCASE PALAM:MASTER:쾌Ａ
 			CASE IS >= 8500
 				CALL QUAKE(2)
 				CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「아앗… 앗")
@@ -3044,8 +3044,8 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REAC
 	;통상
 	;=================================================
 	IF 구상기입체크(100) && T_COND("통상")
-		;조교 대상쾌A파생
-		SELECTCASE PALAM:MASTER:쾌A
+		;조교 대상쾌Ａ파생
+		SELECTCASE PALAM:MASTER:쾌Ａ
 			CASE IS >= 8500
 				CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「아…… 아아…… 아, 앗")
 				CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"))
@@ -3062,7 +3062,7 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REAC
 				PRINTFORML 「이봐요, 소리가 나와 있어요, 사쿠야. 좀 더 노력해 참지 않으면」
 				PRINTFORMW 「『기분 좋다』라는 일은 인정하고 싶지 않을테, 니까…♪」
 			CASEELSE
-				SELECTCASE ABL:MASTER:A감각
+				SELECTCASE ABL:MASTER:Ａ감각
 					CASE IS > 4
 						PRINTFORMW 「이미 이렇게 친숙해 지고 있는데, 그런 태도 했다고 속일 수 없어요?」
 						CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「무, 무엇을 속이고 있다 라고 하는거야…」")
@@ -3092,8 +3092,8 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	IF 구상기입체크(100) && PANTSCHECK(1, 1)
 		;윗도리를 걷어 올리고
 		IF LOWERJACKET(1) == 1
-			;조교 대상쾌A파생
-			SELECTCASE PALAM:MASTER:쾌A
+			;조교 대상쾌Ａ파생
+			SELECTCASE PALAM:MASTER:쾌Ａ
 				CASE IS >= 8500
 					CALL QUAKE(2)
 					CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「아, 앗")
@@ -3119,8 +3119,8 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 			ENDSELECT
 		;속옷 너머로
 		ELSEIF LOWERUNDER(1)
-			;조교 대상쾌A파생
-			SELECTCASE PALAM:MASTER:쾌A
+			;조교 대상쾌Ａ파생
+			SELECTCASE PALAM:MASTER:쾌Ａ
 				CASE IS >= 8500
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「쿳, 아…… 아아… 히앗, 아″!」")
 					PRINTFORMW 「입은 채로 만지작거려져 그렇게 좋아져 버리는 거네? 이봐요, 이런 것은 어떨까?」
@@ -3153,8 +3153,8 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	;정욕/울적/몽롱
 	;=================================================
 	IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-		;조교 대상쾌A파생
-		SELECTCASE PALAM:MASTER:쾌A
+		;조교 대상쾌Ａ파생
+		SELECTCASE PALAM:MASTER:쾌Ａ
 			CASE IS >= 8500
 				CALL QUAKE(2)
 				CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「아…")
@@ -3225,8 +3225,8 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	;통상
 	;=================================================
 	IF 구상기입체크(0) && T_COND("통상")
-		;조교 대상쾌A파생
-		SELECTCASE PALAM:MASTER:쾌A
+		;조교 대상쾌Ａ파생
+		SELECTCASE PALAM:MASTER:쾌Ａ
 			CASE IS >= 8500
 				CALL QUAKE(2)
 				CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「아…")
@@ -3241,8 +3241,8 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 				PRINTFORMW 「후후, 사쿠야가 엉덩이 만지작거려져 그런 소리 내 버리다니」
 				PRINTFORMW 「이봐요, 사양은 필요하지 않아요. 좀 더 사랑스러운 소리, 듣게 해 줘…」
 			CASEELSE
-				;조교 대상 A감각 파생
-				SELECTCASE ABL:MASTER:A감각
+				;조교 대상Ａ감각 파생
+				SELECTCASE ABL:MASTER:Ａ감각
 					CASE IS > 4
 						PRINTFORML 「조금 만지작거린 것 뿐인데 굉장하네요…」
 						PRINTFORMW 「\@ !TFLAG:ACT파생 ? 나의 손가락 # 바이브 \@를 삼키려고 하고 있는 것 같다. 후훗」
@@ -3259,9 +3259,9 @@ RETURN 0
 ENDIF
 ;NO9_REACT13, 애널애무
 
-;─
-;REACT14, 애널빨고·개별 리액션
-;─
+;────────────────────────────────────
+;REACT14, 애널핥기·개별 리액션
+;────────────────────────────────────
 ;·ACT파생없음. ACTION_APPLY2의 처리 없음
 ;-------------------------------------------------
 ;상정되는 COM
@@ -3274,7 +3274,7 @@ ENDIF
 ;-------------------------------------------------
 @KOJO_NO9_MS_REACT_K14_14
 ;-------------------------------------------------
-;·지문은 REACT분류(받아들인다/적극적 따른다/태연하게 따른다/용서를빈다/소극적 따른다)로 분기
+;·지문은 REACT분류(받아들인다/적극적으로 한다/태연하게 한다/용서를빈다/소극적으로 한다)로 분기
 ;-------------------------------------------------
 ;사실상의 죽음에 분기. 입을 사용한 애무는 우선 발생하지 않기 때문에w
 ;-------------------------------------------------
@@ -3368,7 +3368,7 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("부끄러워한다") && (!TEQUIP:�
 	ENDIF
 RETURN 0
 ENDIF
-;NO9_REACT14, 애널빨고
+;NO9_REACT14, 애널핥기
 
 ;부하 2는 연주한다. REACT파생는 결정하고 쳐 한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
@@ -3441,13 +3441,13 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("서투르다고매도한다") && TF
 	ENDIF
 RETURN 0
 ENDIF
-;NO9_REACT14, 애널빨고
+;NO9_REACT14, 애널핥기
 
 ;REACT분류가 파생하면 연주한다. 부하 2는 연주한다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 ;쾌감을참는다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다")
+IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다")
 	;=================================================
 	;하반신 복장이 요점 밀치고
 	;=================================================
@@ -3505,13 +3505,13 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REAC
 	;이하, 조교자 상태변화
 	;-------------------------
 	
-	;쾌C 이외는 TCVAR:MASTER:갈것같다상당한의 것이 없기 때문에 PALAM:MASTER:쾌A >= 8500을갈것같다로서 처리
+	;쾌Ｃ이외는 TCVAR:MASTER:갈것같다상당한의 것이 없기 때문에 PALAM:MASTER:쾌Ａ >= 8500을갈것같다로서 처리
 	;=================================================
 	;정욕/울적/몽롱
 	;=================================================
 	IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-		;조교 대상쾌A파생 처리
-		SELECTCASE PALAM:MASTER:쾌A
+		;조교 대상쾌Ａ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ａ
 			CASE IS >= 8500
 				PRINTFORMDL 앨리스의 혀가%ANUS_DESCRIPTION(MASTER)%에 접할 때,
 				PRINTFORMDL 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%, 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
@@ -3598,8 +3598,8 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REAC
 	;통상
 	;=================================================
 	IF 구상기입체크(100) && T_COND("통상")
-		;조교 대상쾌A파생 처리
-		SELECTCASE PALAM:MASTER:쾌A
+		;조교 대상쾌Ａ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ａ
 			CASE IS >= 8500
 				PRINTFORMDL 앨리스의 혀가%ANUS_DESCRIPTION(MASTER)%에 접할 때,
 				PRINTFORMDL 사쿠야는%PLEASURE_DESCRIPTION(MASTER)%, 미칠 듯할 만큼의 관능의 고조됨에 필사적으로 참고 있다…
@@ -3638,7 +3638,7 @@ IF 구상기입체크(100) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REAC
 	ENDIF
 RETURN 0
 ENDIF
-;;NO9_REACT14, 애널빨고
+;;NO9_REACT14, 애널핥기
 
 ;부하 2는 연주한다. 유사한 COM를 병렬처리 한다. REACT파생를 결정하고 쳐 한다
 ;하반신 복장과 조교자의 상태변화로 분기 시킨다
@@ -3707,8 +3707,8 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	;정욕/울적/몽롱
 	;=================================================
 	IF 구상기입체크(100) && GROUPMATCH(GET_CONDITION(TARGET), "정욕", "울적", "몽롱") > 0
-		;조교 대상쾌A파생 처리
-		SELECTCASE PALAM:MASTER:쾌A
+		;조교 대상쾌Ａ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ａ
 			CASE IS >= 8500
 				CALL QUAKE(2)
 				CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「후앗! 시, 싫다…… 거기! 조크는!」")
@@ -3798,12 +3798,12 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	;통상
 	;=================================================
 	IF 구상기입체크(100) && T_COND("통상")
-		;조교 대상쾌A파생 처리
-		SELECTCASE PALAM:MASTER:쾌A
+		;조교 대상쾌Ａ파생 처리
+		SELECTCASE PALAM:MASTER:쾌Ａ
 			CASE IS >= 8500
 				CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이, 이나다 앨리스! 그것…… 기분 있고! 후앗!」")
 				PRINTFORMW (후후, 사쿠야도 완전히 올라 왔군요. 좋아, 그러면……)
-				PRINTFORMDL 앨리스는 혀끝에서\@ ABL:MASTER:A감각 < 4 ? 아직도 서투른 # 녹진녹진 풀렸다 \@사쿠야의 아누스를 비틀어 열면,
+				PRINTFORMDL 앨리스는 혀끝에서\@ ABL:MASTER:Ａ감각 < 4 ? 아직도 서투른 # 녹진녹진 풀렸다 \@사쿠야의 아누스를 비틀어 열면,
 				PRINTFORMDL 그 얕은 부분을 희롱해, 사쿠야의 반응을 규…
 				PRINTL
 				CALL QUAKE(2)
@@ -3837,11 +3837,11 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	ENDIF
 RETURN 0
 ENDIF
-;NO9_REACT14, 애널빨고
+;NO9_REACT14, 애널핥기
 
-;─
+;────────────────────────────────────
 ;NO9_REACT15, 키스·개별 리액션
-;─
+;────────────────────────────────────
 ;·ACT파생없음. ACTION_APPLY2의 처리 없음
 ;-------------------------------------------------
 ;상정되는 COM
@@ -3856,8 +3856,8 @@ ENDIF
 ;-------------------------------------------------
 @KOJO_NO9_MS_REACT_K14_15
 ;-------------------------------------------------
-;·지문은 REACT분류(적극적 따른다/받아들인다/태연하게 따른다/용서를빈다/소극적 따른다)로 분기
-;·TEQUIP:성교중은 체위마다, TEQUIP:성교봉사중은 TCVAR:MASTER:초조하게해번으로 파생한다
+;·지문은 REACT분류(적극적으로 한다/받아들인다/태연하게 한다/용서를빈다/소극적으로 한다)로 분기
+;·TEQUIP:성교중은 체위마다, TEQUIP:성교봉사중은 TCVAR:MASTER:애태움수로 파생한다
 ;-------------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 ;부끄러워한다
@@ -3967,7 +3967,7 @@ ENDIF
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 ;쾌감을참는다 80%
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-IF 구상기입체크(80) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적 따른다")
+IF 구상기입체크(80) && (IS_NOWCOMNAME("쾌감을참는다") && TFLAG:REACT부하 < 2) && IS_COMGRONAME("소극적으로 한다")
 	;조교자의 상태변화 마다의 파생
 	;=================================================
 	;정욕/울적/몽롱
@@ -4135,7 +4135,7 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 		ENDIF
 		
 		;-------------------------------------------------
-		;승마위
+		;기승위
 		;-------------------------------------------------
 		IF 구상기입체크(100) && TRUECHECK(TEQUIP:성교중 == 3, TEQUIP:성교봉사중 == 3) > 0
 			PRINTFORM 「키스 할 때에 안이 쿨쿨 해 버리는 거네? 후후, 사랑스러워요…
@@ -4219,11 +4219,11 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 	;성교봉사중
 	;===================================================
 	IF 구상기입체크(100) && TEQUIP:성교봉사중
-		;TCVAR:초조하게해번으로 체위 마다의 파생을 보는 것은 힘들기 때문에 범용적으로 사용할 수 있도록(듯이)
+		;TCVAR:애태움수로 체위 마다의 파생을 보는 것은 힘들기 때문에 범용적으로 사용할 수 있도록(듯이)
 		;-------------------------------------------------
-		;초조하게해중
+		;애태움중
 		;-------------------------------------------------
-		IF 구상기입체크(100) && TCVAR:MASTER:초조하게해번 > 1
+		IF 구상기입체크(100) && TCVAR:MASTER:애태움수 > 1
 			CALL FADE(22, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%KOJO_RAND_K14(("키스"), 1)%」")
 			;행 삭제
 			CLEARLINE 1
@@ -4236,9 +4236,9 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 		ENDIF
 		
 		;-------------------------------------------------
-		;초조하게해 종료
+		;애태움 종료
 		;-------------------------------------------------
-		IF 구상기입체크(100) && TCVAR:MASTER:초조하게해번 == 1
+		IF 구상기입체크(100) && TCVAR:MASTER:애태움수 == 1
 			CALL PRINTCOLORW(COLOR_K14("사쿠야"), @"「%RAND_SPLIT("… 쿠웃! 핫, 후~/응읏! 아… 아아")%…… 앨리스, 나, 나!」")
 			PRINTFORMW 「좋아요, 사쿠야. 키스 하면서가게해 준다……」
 			CALL FADE(22, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%KOJO_RAND_K14(("키스"), 1)%」")
@@ -4248,11 +4248,11 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 			RETURN 1
 		ENDIF
 		
-		;초조하게해 없음은 체위 마다의 파생을 본다
+		;애태움 없음은 체위 마다의 파생을 본다
 		;-------------------------------------------------
-		;초조하게해 없음
+		;애태움 없음
 		;-------------------------------------------------
-		IF 구상기입체크(100) && TCVAR:MASTER:초조하게해번 < 1
+		IF 구상기입체크(100) && TCVAR:MASTER:애태움수 < 1
 			CALL FADE(22, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「%KOJO_RAND_K14(("키스"), 1)%」")
 			;행 삭제
 			CLEARLINE 1
@@ -4262,7 +4262,7 @@ IF 구상기입체크(100) && IS_NOWCOMNAME("쾌감을받아들인다/기분좋�
 				CASE 2
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「이봐요 앨리스…, 여기를 향해」")
 					PRINTFORMW 「아……, 사쿠야…… 읏!」
-				;승마위
+				;기승위
 				CASE 3
 					PRINTFORMW 「하아, 하아…… 사쿠야… 좋아해, 좋아해!」
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「아, 앨리스…… 응읏!」")
@@ -4393,9 +4393,9 @@ RETURN 0
 ENDIF
 ;NO9_REACT15, 키스
 
-;─
+;────────────────────────────────────
 ;NO9_REACT16, 성기를서로켠다·개별 리액션
-;─
+;────────────────────────────────────
 ;·TFLAG:ACT파생(=0, 조개 우려라/=1, 가랑이/=2, 페니스밴드 가랑이)
 ;-------------------------------------------------
 ;상정되는 COM
@@ -4408,7 +4408,7 @@ ENDIF
 ;-------------------------------------------------
 @KOJO_NO9_MS_REACT_K14_16
 ;-------------------------------------------------
-;·지문은 ACT파생 마다 REACT분류(받아들인다/적극적 따른다/태연하게 따른다/용서를빈다, 소극적 따른다)로 분기
+;·지문은 ACT파생 마다 REACT분류(받아들인다/적극적으로 한다/태연하게 한다/용서를빈다, 소극적으로 한다)로 분기
 ;-------------------------------------------------
 ;MASTER가 페니스 첨부의 경우는 가랑이, 없음의 경우는 짝 맞추기 놀이에 TFLAG:ACT파생로 분기 한다
 ;한정 없음 구상의 경우 이 함수내에서 분기 시키는 (분)편이 베타?
@@ -4612,9 +4612,9 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참�
 		;페이드 아웃
 		CALL FADE(22, COLOR_K14("white"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("애무"), 1)%")
 		CLEARLINE 1
-		;초조하게해번 파생 처리
-		SELECTCASE TCVAR:MASTER:초조하게해번
-			;초조하게해중
+		;애태움수 파생 처리
+		SELECTCASE TCVAR:MASTER:애태움수
+			;애태움중
 			CASE IS > 1
 				CALL QUAKE(1)
 				SELECTCASE RANDREACT(2, 0)
@@ -4632,7 +4632,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참�
 				;조교자도갈것같다
 				SIF TCVAR:TARGET:갈것같다
 					PRINTFORMW (그렇지만…… 내가 먼저 가 버릴지도…)
-			;초조하게해 종료
+			;애태움 종료
 			CASE 1
 				CALL QUAKE(2)
 				SELECTCASE RANDREACT(2, 1)
@@ -4647,7 +4647,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참�
 						CALL PRINT_HEARTCBW_K14(COLOR_K14("red"), , , COLOR2_K14("SAKUYA"), "  나, 거기 만지작거려지면!」")
 						PRINTFORMW 「후후, 여기까지. 이봐요, 가세요. 사쿠야…」
 				ENDSELECT
-			;초조하게해 없음
+			;애태움 없음
 			CASEELSE
 				CALL QUAKE(2)
 				SELECTCASE RANDREACT(2, 2)
@@ -4689,7 +4689,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참�
 		;REACT파생 1, 내구(소극적으로 따른다)의 경우
 		;-------------------------------------------------
 		IF 구상기입체크(100) && !TFLAG:REACT파생
-			SELECTCASE PALAM:MASTER:쾌C
+			SELECTCASE PALAM:MASTER:쾌Ｃ
 				CASE IS >= 7000
 					IF TCVAR:TARGET:갈것같다 ;조교자가갈것같다
 						PRINTFORMDL 앨리스는 자신의 절정의 예감에 당황하면서도,
@@ -4826,8 +4826,8 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을참�
 		;REACT파생 1, 내구(소극적으로 따른다)의 경우
 		;-------------------------------------------------
 		IF 구상기입체크(100) && !TFLAG:REACT파생
-			;조교 대상 PALAM쾌C파생
-			SELECTCASE PALAM:MASTER:쾌C
+			;조교 대상 PALAM쾌Ｃ파생
+			SELECTCASE PALAM:MASTER:쾌Ｃ
 				CASE IS >= 7000
 					;조교자가갈것같다
 					IF TCVAR:TARGET:갈것같다
@@ -4893,9 +4893,9 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 	;조교 대상이갈것같다
 	;=================================================
 	IF 구상기입체크(80) && TCVAR:MASTER:갈것같다
-		;초조하게해번 파생 처리
-		SELECTCASE TCVAR:MASTER:초조하게해번
-			;초조하게해중
+		;애태움수 파생 처리
+		SELECTCASE TCVAR:MASTER:애태움수
+			;애태움중
 			CASE IS > 1
 				;조교자 만족도 파생
 				SELECTCASE TENSION(TARGET, 8)
@@ -4923,7 +4923,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 						SIF TCVAR:TARGET:갈것같다
 							PRINTFORMW (더 이상 하면, 내가 먼저갈것같다라는 것은 비밀……)
 				ENDSELECT
-			;초조하게해 종료
+			;애태움 종료
 			CASE 1
 				;조교자 만족도 파생
 				SELECTCASE TENSION(TARGET, 8)
@@ -4959,7 +4959,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 						;행 삭제
 						CLEARLINE 1
 				ENDSELECT
-			;초조하게해 없음
+			;애태움 없음
 			CASEELSE
 				;만족도 파생 처리
 				SELECTCASE TENSION(TARGET, 8)
@@ -5014,8 +5014,8 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 		;조교자가갈것같다
 		;-------------------------------------------------
 		IF 구상기입체크(80) && TCVAR:갈것같다
-			;조교 대상쾌C파생
-			SELECTCASE PALAM:MASTER:쾌C
+			;조교 대상쾌Ｃ파생
+			SELECTCASE PALAM:MASTER:쾌Ｃ
 				;이 단계에서 TCVAR:MASTER:갈것같다가 되지 않는 것은, 어느 정도 이상 진행했을 경우에 한정될 것
 				CASE IS >= 7000
 					;페이드 아웃 _T
@@ -5053,15 +5053,15 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 		ENDIF
 		
 		;TCVAR:갈것같다가 없는 시대에 만든 개소이니까, 단순하게 MASTER와 TARGET의 PALAM를 비교하고 있다
-		;조교자가갈것같다상태를 PALAM:쾌C > 8500으로 보고 있었던 여운 고로, 상황에 따라서는 정합성 무너진다고 예상
+		;조교자가갈것같다상태를 PALAM:쾌Ｃ > 8500으로 보고 있었던 여운 고로, 상황에 따라서는 정합성 무너진다고 예상
 		;라고 할까, ABL가 상응하게 성장하지 않으면 기능하지 않는 개소 나오지마…
 		;-------------------------------------------------
-		;조교 대상쾌C7000
+		;조교 대상쾌Ｃ7000
 		;-------------------------------------------------
-		IF 구상기입체크(100) && PALAM:MASTER:쾌C >= 7000
-			;조교자 PALAM쾌C파생
-			SELECTCASE PALAM:쾌C
-				;PALAM:MASTER:쾌C > PALAM:쾌C
+		IF 구상기입체크(100) && PALAM:MASTER:쾌Ｃ >= 7000
+			;조교자 PALAM쾌Ｃ파생
+			SELECTCASE PALAM:쾌Ｃ
+				;PALAM:MASTER:쾌Ｃ > PALAM:쾌Ｃ
 				CASE IS >= 4000
 					CALL QUAKE(2)
 					CALL PRINTCOLOR(COLOR_K14("사쿠야"), "「읏, 아앗! 아, 아")
@@ -5093,12 +5093,12 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 		ENDIF
 		
 		;-------------------------------------------------
-		;조교 대상쾌C4000
+		;조교 대상쾌Ｃ4000
 		;-------------------------------------------------
-		IF 구상기입체크(100) && PALAM:MASTER:쾌C >= 4000
-			;조교자 PALAM쾌C파생
-			SELECTCASE PALAM:쾌C
-				;PALAM:MASTER:쾌C == PALAM:쾌C
+		IF 구상기입체크(100) && PALAM:MASTER:쾌Ｃ >= 4000
+			;조교자 PALAM쾌Ｃ파생
+			SELECTCASE PALAM:쾌Ｃ
+				;PALAM:MASTER:쾌Ｃ == PALAM:쾌Ｃ
 				CASE IS >= 4000
 					;페이드 아웃 _M
 					CALL FADE(20, COLOR_K14("white"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("애무"), 1)%")
@@ -5111,7 +5111,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 					CALL FADE(20, COLOR_K14("white"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("애무"), 2)%")
 					CLEARLINE 1
 					PRINTFORMDW 얽히는 두 명이 허리를 구불거리게 할 수 있을 때에, 방에는 추잡한 물소리가 울려 퍼졌다…
-				;PALAM:MASTER:쾌C > PALAM:쾌C
+				;PALAM:MASTER:쾌Ｃ > PALAM:쾌Ｃ
 				CASEELSE
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하…… 아″! 앨리스…… 거, 거기…! 읏응, 아앗!」")
 					PRINTFORMW 「여기가 좋은거야? 사쿠야」
@@ -5132,9 +5132,9 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 		;---------------------
 		;그 외를 처리
 		;---------------------
-		;조교자 PALAM쾌C파생
-		SELECTCASE PALAM:쾌C
-			;PALAM:MASTER:쾌C < PALAM:쾌C
+		;조교자 PALAM쾌Ｃ파생
+		SELECTCASE PALAM:쾌Ｃ
+			;PALAM:MASTER:쾌Ｃ < PALAM:쾌Ｃ
 			CASE IS >= 4000
 				CALL QUAKE(2)
 				PRINTFORMW 「응웃! 하, 하…… 아″! 아아앗!」
@@ -5142,7 +5142,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 				CALL PRINTCOLORL(COLOR_K14("사쿠야"), "「……(가)왔군요」")
 				CALL PRINTCOLORW(COLOR_K14("사쿠야"), @"「그런\@ !TEQUIP:아이마스크 ? 모습 보이고들 # 소리 문우산 \@등, 나도 억제할 수 없게 되지 않아…」")
 				PRINTFORMDW 정욕에 빠지는 앨리스의 모습에, 사쿠야는 자신의 관능의 욱신거림의 고조를 느끼고 있다…
-			;PALAM:MASTER:쾌C == PALAM:쾌C
+			;PALAM:MASTER:쾌Ｃ == PALAM:쾌Ｃ
 			CASEELSE
 				;페이드 아웃 _T
 				CALL FADE(20, COLOR_K14("white"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("애무"), 1)%")
@@ -5198,8 +5198,8 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 		;조교자가갈것같다
 		;-------------------------------------------------
 		IF 구상기입체크(100) && TCVAR:갈것같다
-			;조교 대상쾌C파생
-			SELECTCASE PALAM:MASTER:쾌C
+			;조교 대상쾌Ｃ파생
+			SELECTCASE PALAM:MASTER:쾌Ｃ
 				CASE IS >= 7000
 					PRINTFORM 「아″! 거, 거기! 아″, 후아앗
 					CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"))
@@ -5238,11 +5238,11 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 		ENDIF
 		
 		;-------------------------------------------------
-		;조교 대상쾌C7000
+		;조교 대상쾌Ｃ7000
 		;-------------------------------------------------
-		IF 구상기입체크(100) && PALAM:MASTER:쾌C >= 7000
-			;조교자쾌C파생
-			SELECTCASE PALAM:쾌C
+		IF 구상기입체크(100) && PALAM:MASTER:쾌Ｃ >= 7000
+			;조교자쾌Ｃ파생
+			SELECTCASE PALAM:쾌Ｃ
 				CASE IS >= 4000
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「하앗, 아아아! 저기, 앨리스…… 거기, 좀 더…」")
 					PRINTFORMW 「…… 응, 알았다. 이봐요, 코코?」
@@ -5273,12 +5273,12 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 		ENDIF
 		
 		;-------------------------------------------------
-		;조교 대상쾌C4000
+		;조교 대상쾌Ｃ4000
 		;-------------------------------------------------
-		IF 구상기입체크(100) && PALAM:MASTER:쾌C >= 4000
-			;조교자쾌C파생
-			SELECTCASE PALAM:쾌C
-				;PALAM:MASTER:쾌C == PALAM:쾌C
+		IF 구상기입체크(100) && PALAM:MASTER:쾌Ｃ >= 4000
+			;조교자쾌Ｃ파생
+			SELECTCASE PALAM:쾌Ｃ
+				;PALAM:MASTER:쾌Ｃ == PALAM:쾌Ｃ
 				CASE IS >= 4000
 					;페이드 아웃 _T
 					CALL FADE(20, COLOR_K14("white"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("애무"), 1)%")
@@ -5288,7 +5288,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「후…… 아…… 읏, 아앗!」")
 					PRINTFORMW 「읏! (이)나다 이것…… 굉장히 좋다…. 이봐요 사쿠야, 좀 더…」
 					PRINTFORMDW 얽히는 두 명이 허리를 구불거리게 할 수 있을 때에, 방에는 추잡한 물소리가 울려 퍼졌다…
-				;PALAM:MASTER:쾌C > PALAM:쾌C
+				;PALAM:MASTER:쾌Ｃ > PALAM:쾌Ｃ
 				CASEELSE
 					CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「응…… 응응…! 야, 그렇게 되면!」")
 					PRINTFORM 「자신으로부터 허리 흔들어 버리고 있는 주제에……. 그렇지만, 좋은 느낌이야…
@@ -5307,9 +5307,9 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 		;---------------------
 		;그 외를 처리
 		;---------------------
-		;조교자쾌C파생
-		SELECTCASE PALAM:쾌C
-			;PALAM:MASTER:쾌C < PALAM:쾌C
+		;조교자쾌Ｃ파생
+		SELECTCASE PALAM:쾌Ｃ
+			;PALAM:MASTER:쾌Ｃ < PALAM:쾌Ｃ
 			CASE IS >= 4000
 				;페이드 아웃 _M
 				CALL FADE(20, COLOR_K14("white"), COLOR_K14("black"), @"　　　　　%KOJO_RAND_K14(("애무"), 2)%")
@@ -5318,7 +5318,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생 && (IS_NOWCOMNAME("쾌감을받�
 				CALL PRINT_HEARTCBW_K14(COLOR2_K14("pink"), , , COLOR2_K14("ALICE"), "  좋은 곳이, 스쳐……」")
 				CALL PRINTCOLORW(COLOR_K14("사쿠야"), "「코코가 약한거네, 앨리스…… 이봐요, 좀 더 비비어 주어요」")
 				PRINTFORMDW 사쿠야는 앨리스의%CLITORIS_DESCRIPTION(TARGET)%음핵을 중심으로, 보다 격렬하게 몰아세웠다…
-			;PALAM:MASTER:쾌C == PALAM:쾌C
+			;PALAM:MASTER:쾌Ｃ == PALAM:쾌Ｃ
 			CASEELSE
 				SELECTCASE RANDREACT(2, 3)
 					CASE 0
@@ -5337,9 +5337,9 @@ RETURN 0
 ENDIF
 ;NO9_REACT16, 성기를서로켠다
 
-;─
+;────────────────────────────────────
 ;NO9_REACT17, 파이즈리한다·개별 리액션
-;─
+;────────────────────────────────────
 ;·ACT파생없음
 ;-------------------------------------------------
 ;상정되는 COM
@@ -5354,9 +5354,9 @@ ENDIF
 ;-------------------------------------------------
 ;대상 한정에서는 불요
 
-;─
+;────────────────────────────────────
 ;NO9_REACT18, 풋잡한다·개별 리액션
-;─
+;────────────────────────────────────
 ;·ACT파생없음
 ;-------------------------------------------------
 ;상정되는 COM
@@ -5369,10 +5369,10 @@ ENDIF
 ;-------------------------------------------------
 ;대상 한정에서는 불요
 
-;─
+;────────────────────────────────────
 ;NO9_REACT19, 손가락삽입해라
-;─
-;·TFLAG:ACT파생(0=손가락삽입해라/1=G스팟 자극/2=바이브 출납)
+;────────────────────────────────────
+;·TFLAG:ACT파생(0=손가락삽입해라/1=Ｇ스팟 자극/2=바이브 출납)
 ;-------------------------------------------------
 ;상정되는 COM
 ;애무계 반응
@@ -5396,7 +5396,7 @@ IF 구상 기입 체크(0) && TFLAG:ACT파생 == 2
 ENDIF
 
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;NO9_REACT19_1, G스팟 자극
+;NO9_REACT19_1, Ｇ스팟 자극
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 ;·지문은 조교 대상 캔버스 선반 리카 아닌가로 분기
 ;·REACT분류에 의한 분기는 없고, 내용은 범용적인 것
@@ -5407,16 +5407,16 @@ ENDIF
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 ;NO9_REACT19_0, 손가락삽입해라
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;·지문은 REACT분류(받아들인다/적극적 따른다/태연하게 따른다/용서를빈다, 소극적 따른다)로 분기
+;·지문은 REACT분류(받아들인다/적극적으로 한다/태연하게 한다/용서를빈다, 소극적으로 한다)로 분기
 ;-------------------------------------------------
 IF 구상 기입 체크(0) && ! TFLAG:ACT파생
 ENDIF
 [SKIPEND]
 
-;─
-;NO9_REACT27, 밀어넘어뜨린다·개별 리액션
-;─
-;TFLAG:ACT파생(=0, 밀어넘어뜨린다/=1, 밀어넘어뜨리기 종료)
+;────────────────────────────────────
+;NO9_REACT27, 쓰러트린다·개별 리액션
+;────────────────────────────────────
+;TFLAG:ACT파생(=0, 쓰러트린다/=1, 쓰러트리기 종료)
 ;-------------------------------------------------
 ;상정되는 COM
 ;회화계 반응
@@ -5426,14 +5426,14 @@ ENDIF
 ;-------------------------------------------------
 @KOJO_NO9_MS_REACT_K14_27
 ;-------------------------------------------------
-;지문은 REACT분류(받아들인다/적극적 따른다, 태연하게 따른다/용서를빈다/소극적 따른다)로 분기
+;지문은 REACT분류(받아들인다/적극적으로 한다, 태연하게 한다/용서를빈다/소극적으로 한다)로 분기
 ;ACT파생 마다의 분기는 없음 한편, 내용적으로는 ACT파생 0의 것
 ;ACT파생 1의 경우는 정합성이 무너진다고 생각된다
 ;아무튼@TRAIN_MESSAGE2_27은 ACT파생로 나눌 수 있어야 할 것이다
 ;파생 1은 REACT분류:날뛴다와 그 외로 나누지만 타당할 것일까. 귀찮고!
 ;--------------------------------------------
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;NO9_REACT27_0 파생:밀어넘어뜨린다
+;NO9_REACT27_0 파생:쓰러트린다
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 IF 구상기입체크(100) && !TFLAG:ACT파생
 	;================================================
@@ -5452,7 +5452,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생
 	IF 구상기입체크(100) && IS_NOWCOMNAME("허리를흔드는") && TEQUIP:성교봉사중
 		PRINTFORM 「%RAND_SPLIT("아, 아/만난다/쿠, 아/응/우아… 아/하웃, 아… 아″/아… 아″! 야")%…
 		CALL AUTOHEARTCB_K14
-		SELECTCASE V_SEX(MASTER) ? PALAM:쾌V # PALAM:쾌A
+		SELECTCASE V_SEX(MASTER) ? PALAM:쾌Ｖ # PALAM:쾌Ａ
 			CASE IS >= 8500
 				PRINTFORMW   지금, 그렇게 되면…」
 				PRINTFORMW 「조금 이것, 위험해, 일지도……」
@@ -5489,9 +5489,9 @@ IF 구상기입체크(100) && !TFLAG:ACT파생
 	ENDIF
 	
 	;=================================================
-	;REACT분류가 적극적 따르는/태연하게 따른다
+	;REACT분류가 적극적 따르는/태연하게 한다
 	;=================================================
-	IF 구상기입체크(100) && IS_COMGRONAME("적극적 따른다/태연하게 따른다")
+	IF 구상기입체크(100) && IS_COMGRONAME("적극적으로 한다/태연하게 한다")
 		;부하 0으로 1은 정리해 버린다
 		IF GROUPMATCH(TFLAG:REACT부하, 0, 1) > 0
 			PRINTFORMW 「아라, 상당히 솔직하지 않아. 사랑스러워요…」
@@ -5546,7 +5546,7 @@ IF 구상기입체크(100) && !TFLAG:ACT파생
 	;=================================================
 	;REACT분류가 소극적 따른다
 	;=================================================
-	IF 구상기입체크(100) && IS_COMGRONAME("소극적 따른다")
+	IF 구상기입체크(100) && IS_COMGRONAME("소극적으로 한다")
 		SELECTCASE GET_COM_RANK()
 			CASE "자연스러운 행동"
 				PRINTFORMW 「아라, 그렇게무서워한다일 없어요?」
@@ -5575,12 +5575,12 @@ ENDIF
 
 ;우수리에 보완하면 미묘하게 되므로 RESUTN 1으로 끝
 ;━━━━━━━━━━━━━━━━━━━━━━━━
-;NO9_REACT27_1 파생:밀어넘어뜨리기 종료
+;NO9_REACT27_1 파생:쓰러트리기 종료
 ;━━━━━━━━━━━━━━━━━━━━━━━━
 IF 구상기입체크(100) && TFLAG:ACT파생 == 1
 	RETURN 1
 ENDIF
-;NO9_REACT27, 밀어넘어뜨린다
+;NO9_REACT27, 쓰러트린다
 
 ;-------------------------------------------------
 ;범용 처리
@@ -5594,7 +5594,7 @@ SELECTCASE TEQUIP:성교중 || TEQUIP:성교봉사중
 	;후배위
 	CASE 2
 		PRINTD 달콤한 한숨을 흘리면서, 서로의 입술을 서로 탐내고
-	;승마위
+	;기승위
 	CASE 3
 		PRINTD 서로 겹친 채로 혀를 서로 걸어, 활활 타오르는 정욕의 불길에 그 몸을 맡겼다
 	;대면좌위
@@ -5603,7 +5603,7 @@ SELECTCASE TEQUIP:성교중 || TEQUIP:성교봉사중
 	;배면좌위
 	CASE 5
 		PRINTD 달콤한 한숨을 흘리면서 그 몸을 비틀면서, 서로의 입술을 서로 탐냈다
-	;A섹스
+	;Ａ섹스
 	CASE 6
 		PRINTD 도착적인 섹스에 넋을 잃어, 열중해 서로의 입술을 서로 탐냈다
 ENDSELECT

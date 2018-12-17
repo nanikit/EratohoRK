@@ -1,7 +1,7 @@
-﻿;─
+﻿;────────────────────────────────────
 ;000, 지금의기분을얘기한다
-;─
-;리액션전(S/N/H)[벌](소스 없음, 조교 대상의 반응만을 본다)
+;────────────────────────────────────
+;리액션전(Ｓ/Ｎ/Ｈ)[벌](소스 없음, 조교 대상의 반응만을 본다)
 @ACTION_APPLY_0
 TFLAG:경과시간 += 1
 
@@ -22,15 +22,15 @@ ELSEIF IS_NOWCOMNAME("빈정거린다")
 	;REACT분류에 요구에 응하지 않는 것을 세트
 	CALL SET_COMGRO("거부")
 ;REACT분류가 소극적 따르는 것 경우
-ELSEIF IS_COMGRONAME("소극적 따른다")
+ELSEIF IS_COMGRONAME("소극적으로 한다")
 	;ACT파생에 말씨 나쁘게 질문에 답했다를 세트
 	TFLAG:ACT파생 = 0
 ;REACT분류가 태연하게 따르는 것 경우
-ELSEIF IS_COMGRONAME("태연하게 따른다")
+ELSEIF IS_COMGRONAME("태연하게 한다")
 	;ACT파생에 그저 나쁘지는 않다고 말했다를 세트
 	TFLAG:ACT파생 = 4
 ;REACT분류가 적극적 따르는 것 경우
-ELSEIF IS_COMGRONAME("적극적 따른다")
+ELSEIF IS_COMGRONAME("적극적으로 한다")
 	;ACT파생에 분명히 지금의 기분을 고했다를 세트
 	TFLAG:ACT파생 = 3
 	;굴복각인에 응해 공포 SOURCE 증가
@@ -43,10 +43,10 @@ ELSEIF IS_COMGRONAME("받아들인다")
 	SOURCE:MASTER:열락 += 50 + MARK:쾌락각인 * 20
 ENDIF
 
-;─
+;────────────────────────────────────
 ;001, 자신의 일을 어떻게 생각할까를 얘기한다
-;─
-;리액션전(S/N/H)(사랑)
+;────────────────────────────────────
+;리액션전(Ｓ/Ｎ/Ｈ)(사랑)
 @ACTION_APPLY_1
 ;조교 대상 순종*2, 조교자 회화 기능에 응해 사랑 SOURCE 증가
 SOURCE:MASTER:사랑 = 50 + ABL:MASTER:순종 * 2 + ABL:회화
@@ -73,19 +73,19 @@ ELSEIF IS_NOWCOMNAME("빈정거린다")
 	;REACT분류에 요구에 응하지 않는 것을 세트
 	CALL SET_COMGRO("거부")
 ;REACT분류가 소극적 따르는 것 경우
-ELSEIF IS_COMGRONAME("소극적 따른다")
+ELSEIF IS_COMGRONAME("소극적으로 한다")
 	;ACT파생에 싫지 않은… 일지도 모르는… 을 세트
 	TFLAG:ACT파생 = 0
 	;조교자 회화에 응해 사랑 SOURCE 증가
 	SOURCE:MASTER:사랑 += 100 + GET_ABL(TARGET, "회화") * 2
 ;REACT분류가 적극적 따르는 것으로, 조교 대상 호의가 적은지, REACT분류가 태연하게 따른다
-ELSEIF (IS_COMGRONAME("적극적 따른다") && CFLAG:M호의 < 1000) || IS_COMGRONAME("태연하게 따른다")
+ELSEIF (IS_COMGRONAME("적극적으로 한다") && CFLAG:M호의 < 1000) || IS_COMGRONAME("태연하게 한다")
 	;ACT파생에 이제(벌써) 심한 일 하지 않으면, 좀 더 좋아하게 될 수 있을지도 모르는 것을 세트
 	TFLAG:ACT파생 = 3
 	;조교자 회화에 응해 사랑 SOURCE 증가
 	SOURCE:MASTER:사랑 += 150 + GET_ABL(TARGET, "회화") * 25 / 10
 ;REACT분류가 적극적 따르는 것으로, 조교 대상 호의가 많다
-ELSEIF IS_COMGRONAME("적극적 따른다") && CFLAG:M호의 >= 1000
+ELSEIF IS_COMGRONAME("적극적으로 한다") && CFLAG:M호의 >= 1000
 	;ACT파생에 분명히 좋아라고 고했다를 세트
 	TFLAG:ACT파생 = 4
 	;조교자 회화에 응해 사랑 SOURCE 증가
@@ -102,9 +102,9 @@ ELSEIF IS_COMGRONAME("받아들인다")
 	SOURCE:MASTER:중독충족 += 150 + GET_ABL(MASTER, "마조끼") * 2
 ENDIF
 
-;─
-;002, 성에대한이야기를한다(S/N/H)(조교 대상의 성지식)
-;─
+;────────────────────────────────────
+;002, 성에대한이야기를한다(Ｓ/Ｎ/Ｈ)(조교 대상의 성지식)
+;────────────────────────────────────
 @ACTION_APPLY_2
 ;발기도 상승
 TCVAR:MASTER:이번발기 += 50
@@ -112,9 +112,9 @@ TFLAG:경과시간 += 1
 ;화제 『지식』을 기출로 한다
 TFLAG:기출의화제 |= 2
 
-;─
-;003, 상냥하게위로한다(S/N)(트라우마역)
-;─
+;────────────────────────────────────
+;003, 상냥하게위로한다(Ｓ/Ｎ)(트라우마역)
+;────────────────────────────────────
 @ACTION_APPLY_3
 ;조교자 회화 기능에 응해 트라우마 SOURCE 감소
 SOURCE:MASTER:트라우마 = -50 - ABL:회화 * 5
@@ -124,9 +124,9 @@ TFLAG:경과시간 += 1
 ;화제 『농락해라』를 기출로 한다
 TFLAG:기출의화제 |= 4
 
-;─
-;004, 엄격하게위협한다(N/H)(트라우마)
-;─
+;────────────────────────────────────
+;004, 엄격하게위협한다(Ｎ/Ｈ)(트라우마)
+;────────────────────────────────────
 @ACTION_APPLY_4
 ;조교자 가학 기능에 응해 트라우마 SOURCE 증가
 SOURCE:MASTER:트라우마 = 80 + ABL:가학 * 5
@@ -139,10 +139,10 @@ TFLAG:경과시간 += 1
 ;화제 『위협한다』를 기출로 한다
 TFLAG:기출의화제 |= 8
 
-;─
+;────────────────────────────────────
 ;005, 옷을 벗어/옷을 입어와 명한다
-;─
-;리액션전(S/N/H/A)[벌](노출)
+;────────────────────────────────────
+;리액션전(Ｓ/Ｎ/Ｈ/Ａ)[벌](노출)
 @ACTION_APPLY_5
 ;자주탈의의 처리
 ;억압/수줍음/착의플레이선호 소질이 없는 경우
@@ -178,7 +178,7 @@ CALLF CLOTHE_SAVE(MASTER)
 IF TFLAG:ACT파생 == 0
 	;성교중, 원피스나 기모노는 벗겨지지만 스커트는 무리의 원리
 	;소극적한다라면 한 장 벗는다
-	IF IS_COMGRONAME("소극적 따른다/받아들인다")
+	IF IS_COMGRONAME("소극적으로 한다/받아들인다")
 		IF TEQUIP:MASTER:상반신윗도리 || TEQUIP:MASTER:전신윗도리
 			TEQUIP:MASTER:상반신윗도리 = 0
 			TEQUIP:MASTER:전신윗도리 = 0
@@ -198,7 +198,7 @@ IF TFLAG:ACT파생 == 0
 			SOURCE:MASTER:노출 += 100
 		ENDIF
 	;적극적한다라면 2매 벗는다
-	ELSEIF IS_COMGRONAME("적극적 따른다/태연하게 따른다")
+	ELSEIF IS_COMGRONAME("적극적으로 한다/태연하게 한다")
 		IF TEQUIP:MASTER:상반신윗도리 || TEQUIP:MASTER:전신윗도리
 			IF GETINSERT()
 				TEQUIP:MASTER:상반신속옷 = 0
@@ -235,7 +235,7 @@ IF TFLAG:ACT파생 == 0
 ;옷을 입은 경우
 ELSE
 	;소극적한다라면 한 장 입는다
-	IF IS_COMGRONAME("소극적 따른다/받아들인다")
+	IF IS_COMGRONAME("소극적으로 한다/받아들인다")
 		;성교중은 악세사리보다 브라 우선
 		IF TEQUIP:MASTER:상반신속옷 != EQUIP:MASTER:상반신속옷 && GETINSERT()
 			TEQUIP:MASTER:상반신속옷 = EQUIP:MASTER:상반신속옷
@@ -253,7 +253,7 @@ ELSE
 			TEQUIP:MASTER:전신윗도리 = EQUIP:MASTER:전신윗도리
 		ENDIF
 	;적극적한다라면 2매 입는다
-	ELSEIF IS_COMGRONAME("적극적 따른다/태연하게 따른다")
+	ELSEIF IS_COMGRONAME("적극적으로 한다/태연하게 한다")
 		;성교중은 악세사리보다 브라 우선
 		IF TEQUIP:MASTER:상반신속옷 != EQUIP:MASTER:상반신속옷 && GETINSERT()
 			TEQUIP:MASTER:상반신속옷 = EQUIP:MASTER:상반신속옷
@@ -304,10 +304,10 @@ SIF ARG != -1
 	LOCAL = ARG
 RETURNF LOCAL
 
-;─
+;────────────────────────────────────
 ;006, 합의를요구한다
-;─
-;리액션전(S/N/H)(사랑)
+;────────────────────────────────────
+;리액션전(Ｓ/Ｎ/Ｈ)(사랑)
 @ACTION_APPLY_6
 ;사랑 SOURCE 증가
 SOURCE:MASTER:사랑 = 200
@@ -318,13 +318,13 @@ TFLAG:기출의화제 |= 16
 ;리액션 후
 @ACTION_APPLY2_6
 ;REACT분류가 소극적 따르는·태연하게 따르는 것 경우
-IF IS_COMGRONAME("소극적 따른다/태연하게 따른다")
+IF IS_COMGRONAME("소극적으로 한다/태연하게 한다")
 	;조교자 회화에 응해 공포 SOURCE 증가
 	SOURCE:MASTER:공포 += 100 + GET_ABL(TARGET, "회화") * 2
 	;합의 형성
 	CFLAG:합의 = 1
 ;REACT분류가 적극적 따르는·받아들이는 것 경우
-ELSEIF IS_COMGRONAME("적극적 따른다/받아들인다")
+ELSEIF IS_COMGRONAME("적극적으로 한다/받아들인다")
 	;조교자 회화에 응해 사랑 SOURCE 증가
 	SOURCE:MASTER:사랑 += 400 + GET_ABL(TARGET, "회화") * 5
 	;조교 대상 호의에 응해 공포 SOURCE 증가
@@ -337,9 +337,9 @@ ELSE
 	CALL SET_COMGRO("거부")
 ENDIF
 
-;─
-;007, 벌이라고선언한다(N/H)[벌](트라우마)
-;─
+;────────────────────────────────────
+;007, 벌이라고선언한다(Ｎ/Ｈ)[벌](트라우마)
+;────────────────────────────────────
 @ACTION_APPLY_7
 ;트라우마(각인)에 응해 트라우마 SOURCE 증가
 SOURCE:MASTER:트라우마 = 100 + MARK:MASTER:트라우마 * 50
@@ -350,9 +350,9 @@ SIF CFLAG:MASTER:트라우마 == 7
 TEQUIP:자위중 &= ~2
 TFLAG:경과시간 += 1
 
-;─
-;008, 고함친다(H/A)(사랑역, 트라우마)
-;─
+;────────────────────────────────────
+;008, 고함친다(Ｈ/Ａ)(사랑역, 트라우마)
+;────────────────────────────────────
 @ACTION_APPLY_8
 ;사랑 SOURCE 감소, 트라우마 SOURCE 증가
 SOURCE:MASTER:사랑 = -150
@@ -364,9 +364,9 @@ SIF CFLAG:MASTER:트라우마 == 8
 TEQUIP:자위중 &= ~2
 TFLAG:경과시간 += 1
 
-;─
-;009, 기분나쁘게웃는다(A)[벌](일탈, 트라우마)
-;─
+;────────────────────────────────────
+;009, 기분나쁘게웃는다(Ａ)[벌](일탈, 트라우마)
+;────────────────────────────────────
 @ACTION_APPLY_9
 ;1/2의 확률로 악세사리─강제탈의
 SIF RAND:2

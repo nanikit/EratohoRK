@@ -13,9 +13,9 @@
 ;·조교자에게로의 애무를 포함한 행동으로 볼 수 있다
 ;·ACT분류:봉사+트리거 이벤트제
 ;-------------------------------------------------
-;─
+;────────────────────────────────────
 ;COM40, 거부한다
-;─
+;────────────────────────────────────
 ;·REACT분류:거부
 ;·REACT인상:약간나쁜인상
 ;·벌포인트 추가
@@ -29,16 +29,16 @@
 ;ACT분류:2:도구
 ;	ACT:
 ;ACT분류:3:성교
-;	ACT:승마위
+;	ACT:기승위
 ;ACT분류:4:수치
 ;	ACT:자위/방뇨
 ;ACT분류:5:봉사
-;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/다리빨고강제/가슴애무강제
+;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/밟핥기강제/가슴애무강제
 ;ACT분류:6:가학
 ;	ACT:매도
 ;ACT분류:7:이상
 ;	ACT:
-;ACT분류:9:휴게
+;ACT분류:9:휴식
 ;	ACT:영양제를먹인다
 ;ACT분류:10:성교 봉사
 ;	ACT:정상위시킨다/후배위시킨다/대면좌위시킨다/배면좌위시킨다/애널섹스시킨다
@@ -207,10 +207,10 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 	RETURN 1
 ENDIF
 
-;─
+;──────────────────────────────────
 ;COM41, 소극적한다
-;─
-;·REACT분류:소극적 따른다
+;──────────────────────────────────
+;·REACT분류:소극적으로 한다
 ;·REACT파생 1는 "소극적인의가 마음에 들지 않는다"되어 벌포인트 추가
 ;·REACT인상:약간좋은인상
 ;-------------------------------------------------
@@ -228,16 +228,16 @@ ENDIF
 ;ACT분류:2:도구
 ;	ACT:
 ;ACT분류:3:성교
-;	ACT:승마위
+;	ACT:기승위
 ;ACT분류:4:수치
 ;	ACT:자위/방뇨
 ;ACT분류:5:봉사
-;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/다리빨고강제/이라마치오/가슴애무강제
+;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/밟핥기강제/이라마치오/가슴애무강제
 ;ACT분류:6:가학
 ;	ACT:
 ;ACT분류:7:이상
 ;	ACT:
-;ACT분류:9:휴게
+;ACT분류:9:휴식
 ;	ACT:
 ;ACT분류:10:성교 봉사
 ;	ACT:정상위시킨다/후배위시킨다/대면좌위시킨다/후배위시킨다/애널섹스시킨다
@@ -253,7 +253,7 @@ ENDIF
 ;-------------------------------------------------
 IF 구상기입체크(100) && GROUPMATCH(TFLAG:REACT파생, 0, 1) > 0
 	;=================================================
-	;ACT분류가 성교		승마위는 연주한다
+	;ACT분류가 성교		기승위는 연주한다
 	;=================================================
 	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "성교") && SEX_INITIATIVE(MASTER)
 		;-------------------------------------------------
@@ -428,17 +428,17 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:REACT파생, 0, 1) > 0
 	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "봉사")
 		LOCALS = \@ TALENT:MASTER:남자 ? 개 # 암캐 \@
 		;ACT가 입에 의한 봉사인 경우		함수에 의한 처리를 종단으로 모으고 싶었기 때문에 새기지 않는다. 라고 할까 새겨 기술한 것을 나중에 통합했다
-		IF IS_NOWACTNAME("입으로애무를강제/다리빨고강제/이라마치오") || (IS_NOWACTNAME("가슴애무강제") && TFLAG:ACT파생 == 2)
+		IF IS_NOWACTNAME("입으로애무를강제/밟핥기강제/이라마치오") || (IS_NOWACTNAME("가슴애무강제") && TFLAG:ACT파생 == 2)
 			SELECTCASE GET_COM_RANK()
 				CASE "자연스러운 행동"
 					;파생:소극적인의가 마음에 들지 않는다
 					IF TFLAG:REACT파생
 						PRINTFORMW 「이것 또 상당히%RAND_SPLIT("열이 가득차지 않았다/일시 모면적인")%봉사다 일」
-						PRINTFORMW 「%CNAME(MASTER, TARGET)%…、%RAND_SPLIT("나를 화나게 하고 싶은거야? /그 정도로 속일 수 있다고 생각하면 큰 실수야")%」
+						PRINTFORMW 「%CNAME(MASTER, TARGET)%…、%RAND_SPLIT("나를 화나게 하고 싶은거야?/그 정도로 속일 수 있다고 생각하면 큰 실수야")%」
 					;파생:소극적이지만 좋은가
 					ELSE
 						PRINTFORMW 「후후, 그래그래. 얌전하게 따라서 있으면 좋은거야」
-						PRINTFORMW 「주인님에\@ IS_NOWACTNAME("다리빨고강제") ? 혀로 # 구를 사용해 \@봉사할 수 있다니%CNAME(MASTER, TARGET)%와 같은%LOCALS%에 있어서는, 이 이상 없는 행복하겠지요?」
+						PRINTFORMW 「주인님에\@ IS_NOWACTNAME("밟핥기강제") ? 혀로 # 구를 사용해 \@봉사할 수 있다니%CNAME(MASTER, TARGET)%와 같은%LOCALS%에 있어서는, 이 이상 없는 행복하겠지요?」
 						;BASE:8 만족
 						PRINTFORMW 「비유하고 어쩔 수 없는 똥개였다고 해도, 말야\@ TENSION(TARGET, 8) == "높다" ? # … \@」
 					ENDIF
@@ -454,7 +454,7 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:REACT파생, 0, 1) > 0
 							PRINTFORMW 「%CNAME(MASTER, TARGET)%…、%LOCALS%로서의 자각이 부족한거야!」
 						;파생:소극적이지만 좋은가
 						ELSE
-							PRINTFORMW 「혹시%CNAME(MASTER, TARGET)%…, 아직%LOCALS%로서의 자각이 부족한 것일까%RAND_SPLIT(". 저기? /")%」
+							PRINTFORMW 「혹시%CNAME(MASTER, TARGET)%…, 아직%LOCALS%로서의 자각이 부족한 것일까%RAND_SPLIT(". 저기?/")%」
 						ENDIF
 					;실은 싫어
 					ELSE
@@ -612,10 +612,10 @@ IF 구상기입체크(100) && GROUPMATCH(TFLAG:REACT파생, 0, 1) > 0
 	RETURN 1
 ENDIF
 
-;─
+;──────────────────────────────────
 ;COM42, 적극적한다
-;─
-;·REACT분류:적극적 따른다
+;──────────────────────────────────
+;·REACT분류:적극적으로 한다
 ;·REACT인상:좋은인상
 ;·인내 플래그 해소
 ;-------------------------------------------------
@@ -627,16 +627,16 @@ ENDIF
 ;ACT분류:2:도구
 ;	ACT:
 ;ACT분류:3:성교
-;	ACT:승마위
+;	ACT:기승위
 ;ACT분류:4:수치
 ;	ACT:자위/방뇨
 ;ACT분류:5:봉사
-;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/다리빨고강제/이라마치오/가슴애무강제
+;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/밟핥기강제/이라마치오/가슴애무강제
 ;ACT분류:6:가학
 ;	ACT:
 ;ACT분류:7:이상
 ;	ACT:
-;ACT분류:9:휴게
+;ACT분류:9:휴식
 ;	ACT:
 ;ACT분류:10:성교 봉사
 ;	ACT:정상위시킨다/후배위시킨다/대면좌위시킨다/후배위시킨다/애널섹스시킨다
@@ -656,7 +656,7 @@ IF 구상기입체크(100)
 	;=================================================
 	;무리를 한 행동
 	;=================================================
-	IF 구상기입체크(100) && (GET_COM_RANK() == "무리를 한 행동" && (!TCVAR:갈것같다 || PALAM:쾌V < 8500 || PALAM:쾌A < 8500 || PALAM:쾌B < 8500))
+	IF 구상기입체크(100) && (GET_COM_RANK() == "무리를 한 행동" && (!TCVAR:갈것같다 || PALAM:쾌Ｖ < 8500 || PALAM:쾌Ａ < 8500 || PALAM:쾌Ｂ < 8500))
 		SELECTCASE TENSION(TARGET, 8)
 			CASE "높다"
 				PRINTFORMW 「무리하고 있는 것이 보이고 보여라. 뭐 그렇지만…」
@@ -676,12 +676,12 @@ IF 구상기입체크(100)
 		RETURN 1
 	ENDIF
 	
-	;승마위는 MENUMATCH로 주울 가능성이 있으므로, 조건 추가해 연주한다
+	;기승위는 MENUMATCH로 주울 가능성이 있으므로, 조건 추가해 연주한다
 	;똥 장황한 조건은 바람직하지 않지만, 테두리를 신설하는 것도 귀찮은 것으로 타협한다
 	;=================================================
 	;봉사
 	;=================================================
-	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "봉사") && (!IS_NOWACTNAME("승마위") || TEQUIP:성교중 != 3) && (SOURCE:쾌C + SOURCE:쾌V + SOURCE:쾌A + SOURCE:쾌B > 10)
+	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "봉사") && (!IS_NOWACTNAME("기승위") || TEQUIP:성교중 != 3) && (SOURCE:쾌Ｃ + SOURCE:쾌Ｖ + SOURCE:쾌Ａ + SOURCE:쾌Ｂ > 10)
 		;쓴 것은 끝까지 기능해 받을 자세
 		IF AFFECTION("상사상애") && PERCENT(80)
 			SELECTCASE RANDCOM(2, 0)
@@ -713,12 +713,12 @@ IF 구상기입체크(100)
 		RETURN 1
 	ENDIF
 	
-	;성교의 승마위는 봉사계 반응이 나온다. 테두리 신설이 귀찮아서 여기에 떨어져 받는다
+	;성교의 기승위는 봉사계 반응이 나온다. 테두리 신설이 귀찮아서 여기에 떨어져 받는다
 	;=================================================
-	;성교 봉사＆승마위(성교)
+	;성교 봉사＆기승위(성교)
 	;=================================================
-	IF 구상기입체크(100) && ((MENUMATCH(TFLAG:ACT, "성적봉사") || IS_NOWACTNAME("승마위") || TEQUIP:성교봉사중 || TEQUIP:성교중 == 3) && (SOURCE:쾌C + SOURCE:쾌V + SOURCE:쾌A + SOURCE:쾌B > 10))
-		IF TEQUIP:성교중 == 3 || IS_NOWACTNAME("승마위")
+	IF 구상기입체크(100) && ((MENUMATCH(TFLAG:ACT, "성적봉사") || IS_NOWACTNAME("기승위") || TEQUIP:성교봉사중 || TEQUIP:성교중 == 3) && (SOURCE:쾌Ｃ + SOURCE:쾌Ｖ + SOURCE:쾌Ａ + SOURCE:쾌Ｂ > 10))
+		IF TEQUIP:성교중 == 3 || IS_NOWACTNAME("기승위")
 			PRINTFORM 「후후, 좋은 느낌이야. 지금의%CNAME(MASTER, TARGET)%, 매우 사랑스러워요…
 			CALL PRINT_SYMBOL_K14
 			PRINTFORMW 「이봐요, 좀 더 좋은 소리를 듣게 해 줘…」
@@ -770,11 +770,11 @@ IF 구상기입체크(100)
 	RETURN 1
 ENDIF
 
-;─
+;──────────────────────────────────
 ;COM43, 애정을담아준다
-;─
+;──────────────────────────────────
 ;·일정 이상의 호감도, 조교레벨이 필요
-;·REACT분류:적극적 따른다
+;·REACT분류:적극적으로 한다
 ;·REACT인상:좋은인상
 ;·인내 플래그 해소
 ;·반발 각인이 있으면 튕겨진다
@@ -788,16 +788,16 @@ ENDIF
 ;ACT분류:2:도구
 ;	ACT:
 ;ACT분류:3:성교
-;	ACT:승마위
+;	ACT:기승위
 ;ACT분류:4:수치
 ;	ACT:
 ;ACT분류:5:봉사
-;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/다리빨고강제/이라마치오/가슴애무강제
+;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/밟핥기강제/이라마치오/가슴애무강제
 ;ACT분류:6:가학
 ;	ACT:
 ;ACT분류:7:이상
 ;	ACT:
-;ACT분류:9:휴게
+;ACT분류:9:휴식
 ;	ACT:
 ;ACT분류:10:성교 봉사
 ;	ACT:정상위시킨다/후배위시킨다/대면좌위시킨다/후배위시킨다/애널섹스시킨다
@@ -826,7 +826,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 	ENDIF
 	
 	;=================================================
-	;ACT분류가 성교(승마위)
+	;ACT분류가 성교(기승위)
 	;=================================================
 	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "성교") && TEQUIP:성교중 == 3
 		IF CFLAG:TARGET:의존도 > 4000
@@ -850,9 +850,9 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 	;=================================================
 	IF 구상기입체크(100) && MENUMATCH(TFLAG:ACT, "봉사")
 		;-------------------------------------------------
-		;ACT 다리빨고강제
+		;ACT 밟핥기강제
 		;-------------------------------------------------
-		IF 구상기입체크(100) && IS_NOWACTNAME("다리빨고강제")
+		IF 구상기입체크(100) && IS_NOWACTNAME("밟핥기강제")
 			;BASE:8, 만족 파생
 			SELECTCASE TENSION(TARGET, 8)
 				;50% 이상
@@ -908,7 +908,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 		;---------------------
 		LOCALS = %RAND_SPLIT("/하/아/응/후~/아/후아")%
 		;조교자가갈것같다
-		IF TCVAR:갈것같다 || PALAM:쾌V > 8500 || PALAM:쾌A > 8500 || PALAM:쾌B > 8500
+		IF TCVAR:갈것같다 || PALAM:쾌Ｖ > 8500 || PALAM:쾌Ａ > 8500 || PALAM:쾌Ｂ > 8500
 			SELECTCASE RANDCOM(2, 13)
 				CASE 0
 					PRINTFORM 「%RAND_SPLIT("/하")%…… 아
@@ -1048,7 +1048,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 				CALL SET_KISS
 			CASE "배면좌위시킨다"
 				CALL QUAKE(4)
-				PRINTFORM 「%RAND_SPLIT("/응/후")%…… 아\@ PALAM:쾌V > 6000 ? # \@
+				PRINTFORM 「%RAND_SPLIT("/응/후")%…… 아\@ PALAM:쾌Ｖ > 6000 ? # \@
 				CALL AUTOHEARTCB_K14
 				PRINTFORM 　%RAND_SPLIT("는/아")%…,%RAND_SPLIT("/아/응")%
 				CALL PRINT_SYMBOL2_K14
@@ -1071,7 +1071,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 				PRINTFORM 「%RAND_SPLIT("아/하/응")%응
 				CALL AUTOHEARTCB_K14
 				PRINTFORMW   응…… 아앗! 상당히 상냥하게 시라고 주는 거네…」
-				IF ABL:A감각 >= 4
+				IF ABL:Ａ감각 >= 4
 					PRINTFORMW 「엉덩이로 섹스 하고 있기 때문에, 나를 신경써 주고 있는 거야?」
 					PRINTFORMW 「나는 괜찮기 때문에,%CNAME(MASTER, TARGET)%가 바랄 뿐(만큼) 격렬하게 해도 되는거야」
 					PRINTFORMW 「%CNAME(MASTER, TARGET)%에라면, 오히려 그렇게 되고 싶다고…, 나는 생각하기 때문에……」
@@ -1140,10 +1140,10 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 	RETURN 1
 ENDIF
 
-;─
+;────────────────────────────────────
 ;COM44, 태연하게한다
-;─
-;·REACT분류:태연하게 따른다
+;────────────────────────────────────
+;·REACT분류:태연하게 한다
 ;·REACT인상:약간좋은인상
 ;·의존도 변화(+2, -2)
 ;-------------------------------------------------
@@ -1155,16 +1155,16 @@ ENDIF
 ;ACT분류:2:도구
 ;	ACT:
 ;ACT분류:3:성교
-;	ACT:승마위
+;	ACT:기승위
 ;ACT분류:4:수치
 ;	ACT:자위/방뇨
 ;ACT분류:5:봉사
-;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/다리빨고강제/이라마치오/가슴애무강제
+;	ACT:손으로애무를강제/입으로애무를강제/파이즈리/가랑이/밟핥기강제/이라마치오/가슴애무강제
 ;ACT분류:6:가학
 ;	ACT:
 ;ACT분류:7:이상
 ;	ACT:
-;ACT분류:9:휴게
+;ACT분류:9:휴식
 ;	ACT:
 ;ACT분류:10:성교 봉사
 ;	ACT:정상위시킨다/후배위시킨다/대면좌위시킨다/후배위시킨다/애널섹스시킨다
@@ -1188,16 +1188,16 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 		;갈것같다상태
 		;-------------------------------------------------
 		IF 구상기입체크(100) && TCVAR:MASTER:갈것같다
-			;초조하게해번 파생
-			SELECTCASE TCVAR:MASTER:초조하게해번
-				;초조하게해중
+			;애태움수 파생
+			SELECTCASE TCVAR:MASTER:애태움수
+				;애태움중
 				CASE IS > 1
 					PRINTFORMW 「%RAND_SPLIT("하, 하/응읏! 구/하아, 하아")%… 안 돼요. 간단하게는 가게 하지 않아요」
 					PRINTFORMW 「내가 만족할 때까지, 좀 더 교제해 받기 때문에…」
 					;실은 조교자도갈것같다
-					SIF TCVAR:갈것같다 || PALAM:쾌V > 8500 || PALAM:쾌A > 8500 || PALAM:쾌B > 8500
+					SIF TCVAR:갈것같다 || PALAM:쾌Ｖ > 8500 || PALAM:쾌Ａ > 8500 || PALAM:쾌Ｂ > 8500
 						PRINTFORMW (뭐라고 말하면서, 실은 내가 가게 되어 버릴 것 같은 것은 비밀…)
-				;그 외(초조하게해 없음)
+				;그 외(애태움 없음)
 				CASEELSE
 					PRINTFORM 「아%RANDTEXT_K14("", "응", "＿")%
 					CALL AUTOHEARTCB_K14
@@ -1207,7 +1207,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 					PRINTFORM 「아앙
 					CALL AUTOHEARTCB_K14
 					PRINTFORM   아…,%RAND_SPLIT("//응")%아!
-					PRINTFORMW \@ TCVAR:갈것같다 || PALAM:쾌V > 8500 || PALAM:쾌A > 8500 ?   나다, 이래서야 나도… 가 버리는, 가게 되어 버린다!  # \@」
+					PRINTFORMW \@ TCVAR:갈것같다 || PALAM:쾌Ｖ > 8500 || PALAM:쾌Ａ > 8500 ?   나다, 이래서야 나도… 가 버리는, 가게 되어 버린다!  # \@」
 			ENDSELECT
 			RETURN 1
 		ENDIF
@@ -1224,7 +1224,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 					CASE "역강간", "정상위시킨다", "후배위시킨다", "배면좌위시킨다"
 						PRINTFORM 「%LOCALS%…
 						CALL AUTOHEARTCB_K14
-						PRINTFORMW 　%RAND_SPLIT("나다 이것! 오슬오슬 햇…! /거, 거기… 약한데…!")%」
+						PRINTFORMW 　%RAND_SPLIT("나다 이것! 오슬오슬 햇…!/거, 거기… 약한데…!")%」
 						PRINTFORM 「\@ T_COND("정욕") ? 나…, 머릿속…… 새하얗게! 아앗# 아, 아아…!  \@
 						CALL PRINT_SYMBOL2_K14
 					CASE "대면좌위시킨다"
@@ -1240,7 +1240,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 						PRINTFORM 「%LOCALS%
 						CALL AUTOHEARTCB_K14
 						PRINTFORMW   뭐야…, 상당히 상냥함\@ TENSION(TARGET, 8) == "높다" ? 가 아니다 # 의 것 \@……」
-						PRINTFORMW 「그렇지만 이것…\@ ABL:A감각 < 4 ? 아직 위화감 있어요…… # 어째서 엉덩이로, 이렇게…!  \@」
+						PRINTFORMW 「그렇지만 이것…\@ ABL:Ａ감각 < 4 ? 아직 위화감 있어요…… # 어째서 엉덩이로, 이렇게…!  \@」
 				ENDSELECT
 			CASE "무리가 없는 행동"
 				SELECTCASE GET_ACTNAME(TFLAG:ACT)
@@ -1261,7 +1261,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 						PRINTFORM 「\@ TENSION(TARGET, 8) == "높다" ? 응은, 아앗! 그것…, 안돼 # 응… 하아…… 아, 아 \@
 						CALL PRINT_SYMBOL2_K14
 					CASE "애널섹스시킨다"
-						PRINTFORMW 「%LOCALS%! 　\@ ABL:A감각 < 4 ? 너무 격렬해요 # 는, 격렬함 \@!」
+						PRINTFORMW 「%LOCALS%! 　\@ ABL:Ａ감각 < 4 ? 너무 격렬해요 # 는, 격렬함 \@!」
 						PRINTFORM 「이렇게 되면, 나, 나%RAND_SPLIT("/")%! 응앗, 아앗
 						CALL PRINT_SYMBOL_K14
 					CASE "역강간"
@@ -1276,7 +1276,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 						;실은 그렇지만도 않다
 						IF COMCOR_POSI()
 							PRINTFORMW 「뭐야 그것…, 페이스%RAND_SPLIT("다운/를 떨어뜨리자")%라는 것?」
-							PRINTFORMW 「응읏! 그렇지만 그것치고……\@ PALAM:쾌V > 5000 ? 기분 좋은 곳 더듬어 찾을 수 있어 버려, 조금 적이군요 # 좋은 곳에 해당되어요 \@…」
+							PRINTFORMW 「응읏! 그렇지만 그것치고……\@ PALAM:쾌Ｖ > 5000 ? 기분 좋은 곳 더듬어 찾을 수 있어 버려, 조금 적이군요 # 좋은 곳에 해당되어요 \@…」
 						;실은 싫어
 						ELSE
 							PRINTFORMW 「조금 저항은 있어도, 결국은 따르는 거네?」
@@ -1307,7 +1307,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 						;실은 그렇지만도 않다
 						IF COMCOR_POSI()
 							PRINTFORMW 「%LOCALS%…!  \@ ABL:MASTER:기교 > 4 ? 손놀림이 미덥지 않지만, 나쁘지 않아요… # 사실, 추잡한 손놀림이군요… \@」
-							PRINTFORMW 「\@ TCVAR:갈것같다 || PALAM:쾌V > 8500 || PALAM:쾌B > 8500 ? 이래서야…, 손만으로 가게 되어 버릴 것 같다…… # 다만…, 허리의 움직임이 멈추어 있는 것이 속상함%RAND_SPLIT("의/와")%야… \@」
+							PRINTFORMW 「\@ TCVAR:갈것같다 || PALAM:쾌Ｖ > 8500 || PALAM:쾌Ｂ > 8500 ? 이래서야…, 손만으로 가게 되어 버릴 것 같다…… # 다만…, 허리의 움직임이 멈추어 있는 것이 속상함%RAND_SPLIT("의/와")%야… \@」
 						;실은 싫어
 						ELSE
 							PRINTFORMW 「강제당하는 것은 싫은소리 도미이지만…」
@@ -1318,9 +1318,9 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 						IF COMCOR_POSI()
 							PRINTFORMW 「%LOCALS%…!  %CNAME(MASTER, TARGET)%나름대로 신경을 써 주고 있는 거네」
 							IF IS_NOWACTNAME("애널섹스시킨다")
-								PRINTFORMW 「그렇지만\@ ABL:A감각 < 4 ? 이 느낌, 아직 익숙해지지 않아요 # , 조금 안타깝네요. 이래서야 \@…」
+								PRINTFORMW 「그렇지만\@ ABL:Ａ감각 < 4 ? 이 느낌, 아직 익숙해지지 않아요 # , 조금 안타깝네요. 이래서야 \@…」
 							ELSE
-								PRINTFORMW 「그렇지만\@ ABL:V감각 < 4 ? 이 느낌, 아직 익숙해지지 않아요 # , 조금 안타깝네요. 이래서야 \@…」
+								PRINTFORMW 「그렇지만\@ ABL:Ｖ감각 < 4 ? 이 느낌, 아직 익숙해지지 않아요 # , 조금 안타깝네요. 이래서야 \@…」
 							ENDIF
 						;실은 싫어
 						ELSE
@@ -1349,13 +1349,13 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 					PRINTFORMW 「그렇지만 그렇구나…, 그 여유의 표정이%RAND_SPLIT("아니꼽게 거슬려요/조금 건방지구나")%」
 					PRINTFORMW 「뭐, 제멋대로 하는 모양 이 이상 없는 이야기인 것은 알고 있을 생각이야. 후후…」
 				CASE "일반"
-					PRINTFORMW 「뭐, 이 정도는 되어있고 당연해요%RAND_SPLIT("? /")%」
+					PRINTFORMW 「뭐, 이 정도는 되어있고 당연해요%RAND_SPLIT("?/")%」
 					PRINTFORMW 「라고 할까 정직…, 지금의%CNAME(MASTER, TARGET)%라면 좀 더 할 수 있을 것이라고 생각하지만」
 					SIF !RAND:3
 						PRINTFORMW 「그근처 어떨까. 저기?」
 				CASE "낮다"
 					PRINTFORMW 「%RAND_SPLIT("에/어머나/흐음")%, 상당히 여유%RAND_SPLIT("가 있다/")%가 아니다」
-					PRINTFORMW 「이것이라면,%CNAME(MASTER, TARGET)%에는 좀 더 여러가지 요구해도 좋은 것 같구나%RAND_SPLIT("? /")%」
+					PRINTFORMW 「이것이라면,%CNAME(MASTER, TARGET)%에는 좀 더 여러가지 요구해도 좋은 것 같구나%RAND_SPLIT("?/")%」
 					CALL FADE(20, COLOR2_K14("ALICE"), COLOR_K14("black"), @"「\@ AFFECTION("상사상애") ? 킥킥 # 우후후 \@…」")
 					CLEARLINE 1
 			ENDSELECT
@@ -1366,7 +1366,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 					CALL PRINT_SYMBOL_K14
 					PRINTFORMW 「그렇지만 지금의%CNAME(MASTER, TARGET)%라면, 좀 더 할 수 있는 것이 아닐까. 저기?」
 				CASE "일반"
-					PRINTFORMW 「\@ AFFECTION("몹시 사랑함") ? 후후 # 후후 \@…, 나의 환심을 사려고 필사같구나%RAND_SPLIT("? /")%」
+					PRINTFORMW 「\@ AFFECTION("몹시 사랑함") ? 후후 # 후후 \@…, 나의 환심을 사려고 필사같구나%RAND_SPLIT("?/")%」
 					PRINTFORM 「뭐 그렇지만……, 그 자세는 평가 해 주어요
 					CALL PRINT_SYMBOL_K14
 				CASE "낮다"
@@ -1376,7 +1376,7 @@ IF 구상기입체크(100) && !TFLAG:REACT파생
 		CASE "무리를 한 행동"
 			;실은 그렇지만도 않다
 			IF COMCOR_POSI()
-				PRINTFORMW 「아무것도 아닌 것 같은 얼굴 하고 있지만, 사실은 다르겠지요%RAND_SPLIT("? /")%」
+				PRINTFORMW 「아무것도 아닌 것 같은 얼굴 하고 있지만, 사실은 다르겠지요%RAND_SPLIT("?/")%」
 				PRINTFORM 「그러한 것은 전원%RAND_SPLIT("/라고 끝낸다")%의 것이군요.\@ TENSION(TARGET, 8) == "높다" ? 더··네· # 유감 \@이지만
 				CALL PRINT_SYMBOL_K14
 				;의존도 변화

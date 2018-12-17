@@ -1,11 +1,11 @@
-﻿;─
-;일반 추가행동(C애무 1/V애무 2/A애무 3/B애무 4)
-;─
+﻿;────────────────────────────────────
+;일반 추가행동(Ｃ애무 1/Ｖ애무 2/Ａ애무 3/Ｂ애무 4)
+;────────────────────────────────────
 @ACT_EXTRA_M0
-LOCAL:1 = (10 + ABL:MASTER:C감각) * RAND:100
-LOCAL:2 = (10 + ABL:MASTER:V감각) * RAND:100
-LOCAL:3 = (10 + ABL:MASTER:A감각) * RAND:100
-LOCAL:4 = (10 + ABL:MASTER:B감각) * RAND:100
+LOCAL:1 = (10 + ABL:MASTER:Ｃ감각) * RAND:100
+LOCAL:2 = (10 + ABL:MASTER:Ｖ감각) * RAND:100
+LOCAL:3 = (10 + ABL:MASTER:Ａ감각) * RAND:100
+LOCAL:4 = (10 + ABL:MASTER:Ｂ감각) * RAND:100
 
 FOR LOCAL:0, 1, 5
 	CALLFORM ACT_EXTRA_ABLE{LOCAL:0}
@@ -24,13 +24,13 @@ SELECTCASE MAX(LOCAL:1, LOCAL:2, LOCAL:3, LOCAL:4)
 		TFLAG:추가행동 = 0
 	CASE LOCAL:1
 		TFLAG:추가행동 = 1
-		TFLAG:P사용중 += 1
+		TFLAG:Ｐ사용중 += 1
 	CASE LOCAL:2
 		TFLAG:추가행동 = 2
-		TFLAG:V사용중 += 1
+		TFLAG:Ｖ사용중 += 1
 	CASE LOCAL:3
 		TFLAG:추가행동 = 3
-		TFLAG:A사용중 += 1
+		TFLAG:Ａ사용중 += 1
 	CASE LOCAL:4
 		TFLAG:추가행동 = 4
 		TFLAG:가슴사용중 += 1
@@ -42,25 +42,25 @@ RETURN TFLAG:추가행동
 SELECTCASE TFLAG:추가행동
 	CASE 1
 		PRINTFORML 한층 더%CALLNAME:TARGET%는%CALLNAME:MASTER%의\@ PENIS(MASTER) ? 남성기를 애무해 # 체를 만지작거려 \@시작했다…
-		SOURCE:MASTER:쾌C += 75 + ACT_FROM(TARGET, 1) * (2 + TALENT:기묘한손가락) / 8
+		SOURCE:MASTER:쾌Ｃ += 75 + ACT_FROM(TARGET, 1) * (2 + TALENT:기묘한손가락) / 8
 		TCVAR:MASTER:이번발기 += (100 + GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 2
 	CASE 2
 		PRINTFORML 한층 더%CALLNAME:TARGET%는%CALLNAME:MASTER%의 비순에 손가락을 삽입해, 안을 휘저었다…
-		SOURCE:MASTER:쾌V +=  100 + ACT_FROM(TARGET, 2) * (2 + TALENT:기묘한손가락) / 4
-		;후타나리는 V로 전립선자극
+		SOURCE:MASTER:쾌Ｖ +=  100 + ACT_FROM(TARGET, 2) * (2 + TALENT:기묘한손가락) / 4
+		;후타나리는Ｖ로 전립선자극
 		SIF TALENT:MASTER:후타나리
 			TCVAR:MASTER:전립선자극 += 1
 		TCVAR:MASTER:이번발기 += (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 4
 	CASE 3
 		PRINTFORML 한층 더%CALLNAME:TARGET%는%CALLNAME:MASTER%의 아누스를 애무하기 시작했다…
-		SOURCE:MASTER:쾌A += 60 + ACT_FROM(TARGET, 3) * (2 + TALENT:기묘한손가락) / 4
-		;남자는 A로 전립선자극
+		SOURCE:MASTER:쾌Ａ += 60 + ACT_FROM(TARGET, 3) * (2 + TALENT:기묘한손가락) / 4
+		;남자는Ａ로 전립선자극
 		SIF TALENT:MASTER:남자
 			TCVAR:MASTER:전립선자극 += 1
-		TCVAR:MASTER:이번발기 += (100 + GET_ABL(MASTER, "A감각") + GET_ABL(MASTER, "마조끼") * GET_ABL(TARGET, "기교") / 50) / 2
+		TCVAR:MASTER:이번발기 += (100 + GET_ABL(MASTER, "Ａ감각") + GET_ABL(MASTER, "마조끼") * GET_ABL(TARGET, "기교") / 50) / 2
 	CASE 4
 		PRINTFORML 한층 더%CALLNAME:TARGET%는%CALLNAME:MASTER%의 유두를 애무하기 시작했다…
-		SOURCE:MASTER:쾌B += 75 + ACT_FROM(TARGET, 4) * (2 + TALENT:기묘한손가락) / 6
+		SOURCE:MASTER:쾌Ｂ += 75 + ACT_FROM(TARGET, 4) * (2 + TALENT:기묘한손가락) / 6
 		TCVAR:MASTER:이번발기 += 40 + (GET_ABL(TARGET, "기교") + GET_ABL(TARGET, "애무") + TALENT:기묘한손가락 * 50) / 6
 ENDSELECT
 
@@ -72,8 +72,8 @@ ENDSELECT
 ;조교 메뉴가 애무/도구 이외
 SIF MENUMATCH(TFLAG:ACT, "애무") !| MENUMATCH(TFLAG:ACT, "도구")
 	RETURN 0
-;조교 행동이풋잡한다/밀어넘어뜨린다의 경우는 무리
-SIF IS_NOWACTNAME("풋잡한다/밀어넘어뜨린다")
+;조교 행동이풋잡한다/쓰러트린다의 경우는 무리
+SIF IS_NOWACTNAME("풋잡한다/쓰러트린다")
 	RETURN 0
 FOR LOCAL:0, 1, 5
 	CALLFORM ACT_EXTRA_ABLE{LOCAL:0}
@@ -83,20 +83,20 @@ NEXT
 RETURN 0
 
 ;-----------------------------------------------------------
-;C애무의 실행 판정
+;Ｃ애무의 실행 판정
 ;-----------------------------------------------------------
 @ACT_EXTRA_ABLE1
-;P가 막히고 있다(P삽입중/P사용중/성교봉사중/오나홀/MASTER가 조수에삽입중)
-SIF TFLAG:P삽입중 || TFLAG:P사용중 || TEQUIP:성교봉사중 || TEQUIP:오나홀 || TFLAG:조수에삽입중
+;Ｐ가 막히고 있다(Ｐ삽입중/Ｐ사용중/성교봉사중/오나홀/MASTER가 조수에삽입중)
+SIF TFLAG:Ｐ삽입중 || TFLAG:Ｐ사용중 || TEQUIP:성교봉사중 || TEQUIP:오나홀 || TFLAG:조수에삽입중
 	RETURN 0
 RETURN 1
 
 ;-----------------------------------------------------------
-;V애무의 실행 판정
+;Ｖ애무의 실행 판정
 ;-----------------------------------------------------------
 @ACT_EXTRA_ABLE2
-;V가 막히고 있다(V사용중/바이브/V성교)
-SIF TFLAG:V사용중 || TEQUIP:바이브 || V_SEX() || TEQUIP:페니스밴드
+;Ｖ가 막히고 있다(Ｖ사용중/바이브/Ｖ성교)
+SIF TFLAG:Ｖ사용중 || TEQUIP:바이브 || V_SEX() || TEQUIP:페니스밴드
 	RETURN 0
 ;조교자에게 벽통과가 없다
 IF !TALENT:벽통과
@@ -113,11 +113,11 @@ SIF TALENT:MASTER:남자
 RETURN 1
 
 ;-----------------------------------------------------------
-;A애무의 실행 판정
+;Ａ애무의 실행 판정
 ;-----------------------------------------------------------
 @ACT_EXTRA_ABLE3
-;A가 막히고 있다(A사용중/애널바이브/애널비즈/관장기＋플러그/A성교)
-SIF TFLAG:A사용중 || TEQUIP:애널바이브 || TEQUIP:애널비즈 || TEQUIP:관장기＋플러그 || TEQUIP:성교중 == 6 || TEQUIP:페니스밴드
+;Ａ가 막히고 있다(Ａ사용중/애널바이브/애널비즈/관장기＋플러그/Ａ성교)
+SIF TFLAG:Ａ사용중 || TEQUIP:애널바이브 || TEQUIP:애널비즈 || TEQUIP:관장기＋플러그 || TEQUIP:성교중 == 6 || TEQUIP:페니스밴드
 	RETURN 0
 ;조교자에게 벽통과가 없다
 IF !TALENT:벽통과
@@ -128,7 +128,7 @@ IF !TALENT:벽통과
 	SIF CLOTHESTYPE(1, 0)
 		RETURN 0
 ENDIF
-;성교봉사중으로, 몸의 자세적으로 무리한 체위(후배위/승마위/대면좌위/배면좌위)
+;성교봉사중으로, 몸의 자세적으로 무리한 체위(후배위/기승위/대면좌위/배면좌위)
 SIF GROUPMATCH(TEQUIP:성교봉사중, 2, 3, 4, 5) > 0
 	RETURN 0
 ;ACT가 파이즈리
@@ -137,14 +137,14 @@ SIF IS_NOWACTNAME("파이즈리한다")
 RETURN 1
 
 ;-----------------------------------------------------------
-;B애무의 실행 판정
+;Ｂ애무의 실행 판정
 ;-----------------------------------------------------------
 @ACT_EXTRA_ABLE4
-;B가 막히고 있다(B사용중/니플캡)
+;Ｂ가 막히고 있다(Ｂ사용중/니플캡)
 SIF TFLAG:가슴사용중 || TEQUIP:니플캡
 	RETURN 0
 ;페라중 따위는 무리
-SIF IS_NOWACTNAME("입으로애무") || TEQUIP:조교대상C사용 == 2
+SIF IS_NOWACTNAME("입으로애무") || TEQUIP:조교대상Ｃ사용 == 2
 	RETURN 0
 ;안면승마중
 SIF TEQUIP:안면승마 || TEQUIP:안면승마애널

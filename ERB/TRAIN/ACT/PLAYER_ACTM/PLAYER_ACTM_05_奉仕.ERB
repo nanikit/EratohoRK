@@ -1,6 +1,6 @@
-﻿;─
+﻿;────────────────────────────────────
 ;봉사(손으로 50/입으로 51/가슴으로 52/가랑이 53/족지 55/이라 56/승마 32/가슴을 57)
-;─
+;────────────────────────────────────
 @ACT_M5(ARG = 0)
 ;1이상이라면 판정을 실시하지 않는다
 #DIM LCOUNT, 1
@@ -97,9 +97,9 @@ SIF ARG
 CALL CHA_CRI_VAR, "실행 판정"
 CALLFORM %LOCALS%_ABLE
 
-;─
+;────────────────────────────────────
 ;최종 판정
-;─
+;────────────────────────────────────
 CALL DEF_CRI_VAR("최대 전자")
 LOCAL = GET_CRI_VAR("결정")
 IF LOCAL == -1
@@ -123,9 +123,9 @@ CALL ADD_CRI_VAR("손으로애무를강제", 10)
 CALL ADD_CRI_VAR("입으로애무를강제", 10)
 CALL ADD_CRI_VAR("파이즈리", 10)
 CALL ADD_CRI_VAR("가랑이", 10)
-CALL ADD_CRI_VAR("다리빨고강제", 2)
+CALL ADD_CRI_VAR("밟핥기강제", 2)
 CALL ADD_CRI_VAR("이라마치오", 0)
-CALL ADD_CRI_VAR("승마위", 5)
+CALL ADD_CRI_VAR("기승위", 5)
 CALL ADD_CRI_VAR("가슴애무강제", 10)
 [SKIPEND]
 
@@ -133,7 +133,7 @@ CALL ADD_CRI_VAR("가슴애무강제", 10)
 ;이번 조교 방침
 ;------------------------------------------
 @ACT_ACTM5_COURCE
-;턴방침(1=휴게/2=소프트/3=노멀/4=하드/5=이상)
+;턴방침(1=휴식/2=소프트/3=노멀/4=하드/5=이상)
 SELECTCASE POLICY("지금")
 	CASE "소프트"
 		CALL ADD_CRI_VAR("가슴애무강제", IS_POLICY("오늘", "러브러브")? 15 # 3)
@@ -146,10 +146,10 @@ SELECTCASE POLICY("지금")
 		CALL ADD_CRI_VAR("입으로애무를강제", -3)
 		CALL ADD_CRI_VAR("파이즈리"      ,  3)
 		CALL ADD_CRI_VAR("가랑이"          ,  2)
-		CALL ADD_CRI_VAR("다리빨고강제"    ,  5)
+		CALL ADD_CRI_VAR("밟핥기강제"    ,  5)
 		CALL ADD_CRI_VAR("이라마치오"    , 10)
 	CASE "이상"
-		CALL ADD_CRI_VAR("다리빨고강제", 15)
+		CALL ADD_CRI_VAR("밟핥기강제", 15)
 		CALL ADD_CRI_VAR("이라마치오",  5)
 ENDSELECT
 
@@ -166,43 +166,43 @@ ENDIF
 
 ;조교자가 얌전하다/거만함
 IF TALENT:얌전함
-	CALL ADD_CRI_VAR("다리빨고강제", -2, -2)
+	CALL ADD_CRI_VAR("밟핥기강제", -2, -2)
 ELSEIF TALENT:거만함
-	CALL ADD_CRI_VAR("다리빨고강제", 2, 2)
+	CALL ADD_CRI_VAR("밟핥기강제", 2, 2)
 ENDIF
 
 ;조교자가 프라이드높음/낮다
 IF TALENT:프라이드높음
-	CALL ADD_CRI_VAR("다리빨고강제", 1, 6)
-	CALL ADD_CRI_VAR("승마위"    , , -2)
+	CALL ADD_CRI_VAR("밟핥기강제", 1, 6)
+	CALL ADD_CRI_VAR("기승위"    , , -2)
 ELSEIF TALENT:프라이드낮음
-	CALL ADD_CRI_VAR("다리빨고강제", -5)
-	CALL ADD_CRI_VAR("승마위", , 2)
+	CALL ADD_CRI_VAR("밟핥기강제", -5)
+	CALL ADD_CRI_VAR("기승위", , 2)
 ENDIF
 
 ;조교자가 선을그음
 SIF TALENT:선을그음
-	CALL ADD_CRI_VAR("다리빨고강제", -3)
+	CALL ADD_CRI_VAR("밟핥기강제", -3)
 
 ;조교자가튀고싶어함
 SIF TALENT:튀고싶어함
-	CALL ADD_CRI_VAR("다리빨고강제", 3)
+	CALL ADD_CRI_VAR("밟핥기강제", 3)
 
 ;조교자가 억압/해방
 IF TALENT:억압
 	CALL ADD_CRI_VAR("손으로애무를강제", , 4)
-	CALL ADD_CRI_VAR("다리빨고강제", -3)
+	CALL ADD_CRI_VAR("밟핥기강제", -3)
 	CALL ADD_CRI_VAR("이라마치오", -3)
 ELSEIF TALENT:해방
 	CALL ADD_CRI_VAR("파이즈리"  , , 4)
 	CALL ADD_CRI_VAR("가랑이"      , , 4)
-	CALL ADD_CRI_VAR("다리빨고강제", , 4)
-	CALL ADD_CRI_VAR("승마위"    , , 4)
+	CALL ADD_CRI_VAR("밟핥기강제", , 4)
+	CALL ADD_CRI_VAR("기승위"    , , 4)
 ENDIF
 
 ;조교자가 수동
 IF TALENT:수동
-	CALL ADD_CRI_VAR("승마위"        , , 5)
+	CALL ADD_CRI_VAR("기승위"        , , 5)
 	CALL ADD_CRI_VAR("손으로애무를강제", , 4)
 	CALL ADD_CRI_VAR("입으로애무를강제", , 3)
 	CALL ADD_CRI_VAR("가슴애무강제"    , , 4)
@@ -210,24 +210,24 @@ ENDIF
 
 ;조교자가 쾌감을부정
 SIF TALENT:쾌감을부정
-	CALL ADD_CRI_VAR("다리빨고강제", , 5)
+	CALL ADD_CRI_VAR("밟핥기강제", , 5)
 
-;조교자가 새디즘
-IF TALENT:새디즘
-	CALL ADD_CRI_VAR("다리빨고강제", ,  4)
+;조교자가 새드
+IF TALENT:새드
+	CALL ADD_CRI_VAR("밟핥기강제", ,  4)
 	CALL ADD_CRI_VAR("이라마치오", ,  4)
 	CALL ADD_CRI_VAR("가슴애무강제", , -4)
 ENDIF
 
 ;조교자가 심술쟁이/상냥함
 IF TALENT:심술쟁이
-	CALL ADD_CRI_VAR("다리빨고강제", ,  4)
+	CALL ADD_CRI_VAR("밟핥기강제", ,  4)
 	CALL ADD_CRI_VAR("가슴애무강제", , -2)
-	CALL ADD_CRI_VAR("승마위"    , , 4)
+	CALL ADD_CRI_VAR("기승위"    , , 4)
 ELSEIF TALENT:상냥함
-	CALL ADD_CRI_VAR("다리빨고강제", -3)
+	CALL ADD_CRI_VAR("밟핥기강제", -3)
 	CALL ADD_CRI_VAR("가슴애무강제",  3)
-	CALL ADD_CRI_VAR("승마위"    , -3)
+	CALL ADD_CRI_VAR("기승위"    , -3)
 ENDIF
 
 ;조교자가 유치
@@ -238,15 +238,15 @@ ENDIF
 
 ;조교자가 광기
 SIF TALENT:유치
-	CALL ADD_CRI_VAR("다리빨고강제", 5)
+	CALL ADD_CRI_VAR("밟핥기강제", 5)
 
-;조교자가 C민감
-SIF TALENT:C민감
-	CALL ADD_CRI_VAR("다리빨고강제", , -8)
+;조교자가Ｃ민감
+SIF TALENT:Ｃ민감
+	CALL ADD_CRI_VAR("밟핥기강제", , -8)
 
 ;조교자가 작은체형 체형
 SIF TALENT:작은체형
-	CALL ADD_CRI_VAR("승마위", -2, -4)
+	CALL ADD_CRI_VAR("기승위", -2, -4)
 
 ;조교자가 빈유
 SIF TALENT:빈유
@@ -260,16 +260,16 @@ SIF TALENT:거유
 SIF TALENT:모유체질
 	CALL ADD_CRI_VAR("가슴애무강제", 8)
 
-;조교자가 미각
-SIF TALENT:미각
-	CALL ADD_CRI_VAR("다리빨고강제", , 4)
+;조교자가 각선미
+SIF TALENT:각선미
+	CALL ADD_CRI_VAR("밟핥기강제", , 4)
 
 ;-------------------------------------------------------------------------
 ;조교 대상의 소질을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM5_TALENT_M
-;조교 대상이 고양이혀
-SIF TALENT:MASTER:고양이혀
+;조교 대상이 거친혀
+SIF TALENT:MASTER:거친혀
 	CALL ADD_CRI_VAR("입으로애무를강제", -10 + TALENT:도착적 * 2 - TALENT:도M * 5)
 
 ;조교 대상이 혀사용
@@ -282,11 +282,11 @@ SIF TALENT:MASTER:기묘한손가락
 
 ;조교 대상이 허리사용
 SIF TALENT:MASTER:허리사용
-	CALL ADD_CRI_VAR("승마위", 5)
+	CALL ADD_CRI_VAR("기승위", 5)
 
-;조교 대상이 음 단지
-SIF TALENT:MASTER:음단지
-	CALL ADD_CRI_VAR("승마위", 3, 4)
+;조교 대상이 음호
+SIF TALENT:MASTER:음호
+	CALL ADD_CRI_VAR("기승위", 3, 4)
 
 ;조교 대상이 음유
 SIF TALENT:MASTER:음유
@@ -304,18 +304,18 @@ SIF TALENT:MASTER:거유
 ;조교자의 성별의 기호를 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM5_GENDER_T
-;조교자에게 양도가 없고, 여자 아이끼리
-IF !TALENT:남자 && !TALENT:MASTER:남자 && !TALENT:양도
+;조교자에게 바이가 없고, 여자 아이끼리
+IF !TALENT:남자 && !TALENT:MASTER:남자 && !TALENT:바이
 	;조교자 레즈끼가[0→-2, 2→2]를 가산(-2～2)
 	CALL ADD_CRI_VAR("손으로애무를강제", LINE_CALC(ABL:레즈끼, "0→-2, 2→2, LIMIT/-2～2"))
-	CALL ADD_CRI_VAR("다리빨고강제", LINE_CALC(ABL:레즈끼, "0→-2, 2→0, LIMIT/-2～0"))
+	CALL ADD_CRI_VAR("밟핥기강제", LINE_CALC(ABL:레즈끼, "0→-2, 2→0, LIMIT/-2～0"))
 	;조교자 레즈끼가[0→-4, 4→0]을 가산(-4～0)
 	CALL ADD_CRI_VAR("가랑이", LINE_CALC(ABL:레즈끼, "0→-4, 4→0, LIMIT/-4～0"))
 	;조교자 레즈끼가[0→-5, 5→3]을 가산(-5～3)
 	CALL ADD_CRI_VAR("입으로애무를강제", LINE_CALC(ABL:레즈끼, "0→-5, 5→3, LIMIT/-5～3"))
 	CALL ADD_CRI_VAR("파이즈리", LINE_CALC(ABL:레즈끼, "0→-5, 5→0, LIMIT/-5～0"))
 	CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:레즈끼, "0→-5, 5→0, LIMIT/-5～0"))
-	CALL ADD_CRI_VAR("승마위", LINE_CALC(ABL:레즈끼, "0→-5, 5→0, LIMIT/-5～0"))
+	CALL ADD_CRI_VAR("기승위", LINE_CALC(ABL:레즈끼, "0→-5, 5→0, LIMIT/-5～0"))
 	
 	;조교자의 레즈중독이[0→0, 5→8]을 가산(0～8)
 	CALL ADD_CRI_VAR("입으로애무를강제", , LINE_CALC(ABL:레즈중독, "0→0, 5→8, LIMIT/0～8"))
@@ -323,14 +323,14 @@ IF !TALENT:남자 && !TALENT:MASTER:남자 && !TALENT:양도
 	CALL ADD_CRI_VAR("가랑이", , LINE_CALC(ABL:레즈중독, "0→0, 5→8, LIMIT/0～8"))
 ENDIF
 
-;조교자에게 양도가 없고, 남자끼리
-IF TALENT:남자 && TALENT:MASTER:남자 && !TALENT:양도
-	;조교자의 ＢＬ끼이[0→-3, 3→0]을 가산(-3～0)
+;조교자에게 바이가 없고, 남자끼리
+IF TALENT:남자 && TALENT:MASTER:남자 && !TALENT:바이
+	;조교자의ＢＬ끼이[0→-3, 3→0]을 가산(-3～0)
 	CALL ADD_CRI_VAR("손으로애무를강제", LINE_CALC(ABL:ＢＬ끼, "0→-3, 3→0, LIMIT/-3～0"))
-	CALL ADD_CRI_VAR("다리빨고강제", LINE_CALC(ABL:ＢＬ끼, "0→-3, 3→0, LIMIT/-3～0"))
-	;조교자의 ＢＬ끼이[0→-4, 4→0]을 가산(-4～0)
+	CALL ADD_CRI_VAR("밟핥기강제", LINE_CALC(ABL:ＢＬ끼, "0→-3, 3→0, LIMIT/-3～0"))
+	;조교자의ＢＬ끼이[0→-4, 4→0]을 가산(-4～0)
 	CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:ＢＬ끼, "0→-4, 4→0, LIMIT/-4～0"))
-	;조교자의 ＢＬ끼이[0→-5, 5→0]을 가산(-5～0)
+	;조교자의ＢＬ끼이[0→-5, 5→0]을 가산(-5～0)
 	CALL ADD_CRI_VAR("입으로애무를강제", LINE_CALC(ABL:ＢＬ끼, "0→-5, 5→0, LIMIT/-5～0"))
 ENDIF
 
@@ -338,38 +338,38 @@ ENDIF
 IF TALENT:남성혐오 && TALENT:MASTER:남자
 	CALL ADD_CRI_VAR("손으로애무를강제", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -1 # -3)
 	CALL ADD_CRI_VAR("입으로애무를강제", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -3 # -5)
-	CALL ADD_CRI_VAR("다리빨고강제", , CFLAG:M호의 + CFLAG:호의 >= 10000 ? 1 # 4)
+	CALL ADD_CRI_VAR("밟핥기강제", , CFLAG:M호의 + CFLAG:호의 >= 10000 ? 1 # 4)
 ENDIF
 
-;─
+;────────────────────────────────────
 ;능력, 파라미터에 의한 변동
-;─
+;────────────────────────────────────
 ;-------------------------------------------------------------------------
 ;조교자의 능력을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM5_ABL_T
 
-;조교자의 C감각이[0→0, 3→4, 6→7]을 가산(0～4)
-CALL ADD_CRI_VAR("입으로애무를강제", LINE_CALC(ABL:C감각, "0→0, 3→4, 6→7, LIMIT/0～7"))
-;조교자의 C감각이[1→0, 5→4]를 가산(0～4)
-CALL ADD_CRI_VAR("파이즈리", LINE_CALC(ABL:C감각, "1→0, 5→4, LIMIT/0～4"))
-CALL ADD_CRI_VAR("가랑이", LINE_CALC(ABL:C감각, "1→0, 5→4, LIMIT/0～4"))
-;조교자의 C감각이[2→0, 5→3～5]를 가산(0～5)
-CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:C감각, "2→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:C감각, "2→0, 5→2, LIMIT/0～2"))
-CALL ADD_CRI_VAR("승마위", LINE_CALC(ABL:C감각, "2→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:C감각, "2→0, 5→2, LIMIT/0～2"))
-;조교자의 C감각이[0→0, 2→3, 5→5]를 가산(0～5)
-CALL ADD_CRI_VAR("손으로애무를강제", LINE_CALC(ABL:C감각, "0→0, 2→3, 5→5, LIMIT/0～5"))
+;조교자의Ｃ감각이[0→0, 3→4, 6→7]을 가산(0～4)
+CALL ADD_CRI_VAR("입으로애무를강제", LINE_CALC(ABL:Ｃ감각, "0→0, 3→4, 6→7, LIMIT/0～7"))
+;조교자의Ｃ감각이[1→0, 5→4]를 가산(0～4)
+CALL ADD_CRI_VAR("파이즈리", LINE_CALC(ABL:Ｃ감각, "1→0, 5→4, LIMIT/0～4"))
+CALL ADD_CRI_VAR("가랑이", LINE_CALC(ABL:Ｃ감각, "1→0, 5→4, LIMIT/0～4"))
+;조교자의Ｃ감각이[2→0, 5→3～5]를 가산(0～5)
+CALL ADD_CRI_VAR("이라마치오", LINE_CALC(ABL:Ｃ감각, "2→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:Ｃ감각, "2→0, 5→2, LIMIT/0～2"))
+CALL ADD_CRI_VAR("기승위", LINE_CALC(ABL:Ｃ감각, "2→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:Ｃ감각, "2→0, 5→2, LIMIT/0～2"))
+;조교자의Ｃ감각이[0→0, 2→3, 5→5]를 가산(0～5)
+CALL ADD_CRI_VAR("손으로애무를강제", LINE_CALC(ABL:Ｃ감각, "0→0, 2→3, 5→5, LIMIT/0～5"))
 
 ;조교자의 성교가[0→0, 5→3～5]를 가산(0～5)
-CALL ADD_CRI_VAR("승마위", LINE_CALC(ABL:성교, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:성교, "0→0, 5→2, LIMIT/0～2"))
+CALL ADD_CRI_VAR("기승위", LINE_CALC(ABL:성교, "0→0, 5→3, LIMIT/0～3"), LINE_CALC(ABL:성교, "0→0, 5→2, LIMIT/0～2"))
 
 ;-------------------------------------------------------------------------
 ;조교 대상의 능력을 참조
 ;-------------------------------------------------------------------------
 @ACT_ACTM5_ABL_M
 
-;조교 대상의 V감각이[0→0, 5→2～8]을 가산(0～8)
-CALL ADD_CRI_VAR("승마위", LINE_CALC(ABL:MASTER:V감각, "0→0, 5→2, LIMIT/0～2"), LINE_CALC(ABL:MASTER:V감각, "0→0, 5→6, LIMIT/0～6"))
+;조교 대상의Ｖ감각이[0→0, 5→2～8]을 가산(0～8)
+CALL ADD_CRI_VAR("기승위", LINE_CALC(ABL:MASTER:Ｖ감각, "0→0, 5→2, LIMIT/0～2"), LINE_CALC(ABL:MASTER:Ｖ감각, "0→0, 5→6, LIMIT/0～6"))
 
 ;-------------------------------------
 ;조교자의 죄악감
@@ -379,7 +379,7 @@ CALL ADD_CRI_VAR("승마위", LINE_CALC(ABL:MASTER:V감각, "0→0, 5→2, LIMIT
 ;죄악감이[60→0, 100→-2]를 가산(-2～0)
 CALL ADD_CRI_VAR("풋잡", LINE_CALC(CFLAG:죄악감, "60→0, 100→-2, LIMIT/-2～0"))
 ;죄악감이[40→0, 100→-3]을 가산(-3～0)
-CALL ADD_CRI_VAR("다리빨고강제", LINE_CALC(CFLAG:죄악감, "40→0, 100→-3, LIMIT/-3～0"))
+CALL ADD_CRI_VAR("밟핥기강제", LINE_CALC(CFLAG:죄악감, "40→0, 100→-3, LIMIT/-3～0"))
 ;죄악감이[0→0, 100→-5]를 가산(-5～0)
 CALL ADD_CRI_VAR("이라마치오", LINE_CALC(CFLAG:죄악감, "0→0, 100→-5, LIMIT/-5～0"))
 
@@ -395,9 +395,9 @@ CALL ADD_CRI_VAR("이라마치오", LINE_CALC(CFLAG:아라이먼트, "-50→3, 5
 ;아라이먼트가[-50→-6, 0→0]을 가산(-6～0)
 CALL ADD_CRI_VAR("가슴애무강제", LINE_CALC(CFLAG:아라이먼트, "-50→-6, 0→0, LIMIT/-6～0"))
 
-;─
+;────────────────────────────────────
 ;게이지나 상태에 의한 변동
-;─
+;────────────────────────────────────
 ;-------------------------------------
 ;조교자의 사정치
 ;-------------------------------------
@@ -407,7 +407,7 @@ CALL ADD_CRI_VAR("가슴애무강제", LINE_CALC(CFLAG:아라이먼트, "-50→-
 CALL ADD_CRI_VAR("손으로애무를강제", LINE_CALC(BASE:사정, "4000→0, 8000→3, LIMIT/0～3"))
 CALL ADD_CRI_VAR("파이즈리", LINE_CALC(BASE:사정, "4000→0, 8000→3, LIMIT/0～3"))
 CALL ADD_CRI_VAR("가랑이", LINE_CALC(BASE:사정, "4000→0, 8000→3, LIMIT/0～3"))
-CALL ADD_CRI_VAR("승마위", LINE_CALC(BASE:사정, "4000→0, 8000→3, LIMIT/0～3"))
+CALL ADD_CRI_VAR("기승위", LINE_CALC(BASE:사정, "4000→0, 8000→3, LIMIT/0～3"))
 ;조교자의 사정치가[4000→0, 8000→5]를 가산(0～5)
 CALL ADD_CRI_VAR("입으로애무를강제", LINE_CALC(BASE:사정, "4000→0, 8000→5, LIMIT/0～5"))
 CALL ADD_CRI_VAR("이라마치오", LINE_CALC(BASE:사정, "4000→0, 8000→5, LIMIT/0～5"))
@@ -418,7 +418,7 @@ CALL ADD_CRI_VAR("이라마치오", LINE_CALC(BASE:사정, "4000→0, 8000→5, 
 @ACT_ACTM5_PREASURE_B_T
 
 ;조교자의 쾌B가[0→0, 5000→3]을 가산(0～3)
-CALL ADD_CRI_VAR("가슴애무강제", LINE_CALC(PALAM:쾌B, "0→0, 5000→3, LIMIT/0～3"))
+CALL ADD_CRI_VAR("가슴애무강제", LINE_CALC(PALAM:쾌Ｂ, "0→0, 5000→3, LIMIT/0～3"))
 
 ;-------------------------------------
 ;조교 대상의 체력
@@ -429,7 +429,7 @@ CALL ADD_CRI_VAR("가슴애무강제", LINE_CALC(PALAM:쾌B, "0→0, 5000→3, L
 CALL ADD_CRI_VAR("파이즈리", LINE_CALC(BASE:MASTER:체력, "0→-3, 1000→0, LIMIT/-3～0"))
 ;조교 대상의 체력이[0→-5, 1500→0]을 가산(-5～0)
 CALL ADD_CRI_VAR("이라마치오", LINE_CALC(BASE:MASTER:체력, "0→-5, 1500→0, LIMIT/-5～0"))
-CALL ADD_CRI_VAR("승마위", LINE_CALC(BASE:MASTER:체력, "0→-5, 1500→0, LIMIT/-5～0"))
+CALL ADD_CRI_VAR("기승위", LINE_CALC(BASE:MASTER:체력, "0→-5, 1500→0, LIMIT/-5～0"))
 
 ;-------------------------------------
 ;조교 대상의 기력
@@ -439,7 +439,7 @@ CALL ADD_CRI_VAR("승마위", LINE_CALC(BASE:MASTER:체력, "0→-5, 1500→0, L
 ;조교 대상의 기력이[0→-3, 500→0]을 가산(-3～0)
 CALL ADD_CRI_VAR("입으로애무를강제", LINE_CALC(BASE:MASTER:기력, "0→-3, 500→0, LIMIT/-3～0"))
 ;조교 대상의 기력이[0→-5, 750→0]을 가산(-5～0)
-CALL ADD_CRI_VAR("다리빨고강제", LINE_CALC(BASE:MASTER:기력, "0→-5, 750→0, LIMIT/-5～0"))
+CALL ADD_CRI_VAR("밟핥기강제", LINE_CALC(BASE:MASTER:기력, "0→-5, 750→0, LIMIT/-5～0"))
 
 ;-------------------------------------
 ;조교자 상태
@@ -454,7 +454,7 @@ SELECTCASE GET_CONDITION(TARGET)
 		CALL ADD_CRI_VAR("파이즈리", -2 - TFLAG:조교자소모도)
 		CALL ADD_CRI_VAR("가랑이", -3 - TFLAG:조교자소모도)
 		CALL ADD_CRI_VAR("이라마치오", -3 - TFLAG:조교자소모도 * 2)
-		CALL ADD_CRI_VAR("승마위", -1 - TFLAG:조교자소모도 * 2)
+		CALL ADD_CRI_VAR("기승위", -1 - TFLAG:조교자소모도 * 2)
 	CASE "정욕"
 		CALL ADD_CRI_VAR("입으로애무를강제", 3, 6)
 		CALL ADD_CRI_VAR("가슴애무강제", 2, 4)
@@ -462,24 +462,24 @@ SELECTCASE GET_CONDITION(TARGET)
 		CALL ADD_CRI_VAR("이라마치오", 3, 6)
 	CASE "지루함"
 		CALL ADD_CRI_VAR("가랑이", , 2)
-		CALL ADD_CRI_VAR("다리빨고강제", , 4)
+		CALL ADD_CRI_VAR("밟핥기강제", , 4)
 	CASE "울적"
-		CALL ADD_CRI_VAR("다리빨고강제", 1, 4)
+		CALL ADD_CRI_VAR("밟핥기강제", 1, 4)
 		CALL ADD_CRI_VAR("이라마치오", 1, 4)
 ENDSELECT
 
-;─
+;────────────────────────────────────
 ;전회의 행동이나 상황에 의한 변동
-;─
+;────────────────────────────────────
 ;식스나인에의 경향
 @ACT_ACTM5_69
 
 IF TEQUIP:안면승마 || TEQUIP:안면승마애널
 	CALL ADD_CRI_VAR("가랑이", -5)
-	CALL ADD_CRI_VAR("다리빨고강제", -5)
-	CALL ADD_CRI_VAR("승마위", -5)
+	CALL ADD_CRI_VAR("밟핥기강제", -5)
+	CALL ADD_CRI_VAR("기승위", -5)
 ENDIF
-IF TEQUIP:조교대상C사용 == 2
+IF TEQUIP:조교대상Ｃ사용 == 2
 	CALL ADD_CRI_VAR("입으로애무를강제", 5)
 ENDIF
 
@@ -488,33 +488,33 @@ ENDIF
 
 IF !TALENT:불결무시
 	;조교 대상의 입
-	;<정령><A>의 몇개의 더러움이 있다
-	IF STAIN:MASTER:구 & 0b00001100
+	;<정령><Ａ>의 몇개의 더러움이 있다
+	IF STAIN:MASTER:입 & 0b00001100
 		CALL ADD_CRI_VAR("입으로애무를강제", -2)
-		CALL ADD_CRI_VAR("다리빨고강제", -1)
+		CALL ADD_CRI_VAR("밟핥기강제", -1)
 		CALL ADD_CRI_VAR("이라마치오", -2)
 	ENDIF
 	;<피><점액>의 몇개의 더러움이 있다
-	IF STAIN:MASTER:구 & 0b01100000
+	IF STAIN:MASTER:입 & 0b01100000
 		CALL ADD_CRI_VAR("입으로애무를강제", -5)
-		CALL ADD_CRI_VAR("다리빨고강제", -3)
+		CALL ADD_CRI_VAR("밟핥기강제", -3)
 		CALL ADD_CRI_VAR("이라마치오", -5)
 	ENDIF
 	;조교 대상의 손
-	;<정령><A>의 몇개의 더러움이 있다
+	;<정령><Ａ>의 몇개의 더러움이 있다
 	SIF STAIN:MASTER:손 & 0b00001100
 		CALL ADD_CRI_VAR("손으로애무를강제", -2)
 	;<피><점액>의 몇개의 더러움이 있다
 	SIF STAIN:MASTER:손 & 0b01100000
 		CALL ADD_CRI_VAR("손으로애무를강제", -5)
-	;조교 대상의 V
+	;조교 대상의Ｖ
 	;<피><점액>의 몇개의 더러움이 있다
 	IF STAIN:MASTER:바기나 & 0b01100000
 		CALL ADD_CRI_VAR("파이즈리", -5)
-		CALL ADD_CRI_VAR("승마위", -3)
+		CALL ADD_CRI_VAR("기승위", -3)
 	ENDIF
-	;조교 대상의 B
-	;<정령><A>의 몇개의 더러움이 있다
+	;조교 대상의Ｂ
+	;<정령><Ａ>의 몇개의 더러움이 있다
 	SIF STAIN:MASTER:가슴 & 0b00001100
 		CALL ADD_CRI_VAR("가랑이", -2)
 	;<피><점액>의 몇개의 더러움이 있다
@@ -547,7 +547,7 @@ IF TEQUIP:아이마스크
 	CALL ADD_CRI_VAR("입으로애무를강제", -2)
 	CALL ADD_CRI_VAR("파이즈리", -5)
 	CALL ADD_CRI_VAR("가랑이", -5)
-	CALL ADD_CRI_VAR("승마위", -7)
+	CALL ADD_CRI_VAR("기승위", -7)
 	CALL ADD_CRI_VAR("가슴애무강제", -3)
 ENDIF
 
@@ -565,7 +565,7 @@ SIF GETBIT(TEQUIP:자위중, 0)
 @ACT_ACTM5_INSERT
 
 IF TEQUIP:성교중
-	CALL ADD_CRI_VAR("승마위", 10)
+	CALL ADD_CRI_VAR("기승위", 10)
 	CALL ADD_CRI_VAR("가슴애무강제", 10)
 ELSEIF TEQUIP:성교봉사중
 	CALL ADD_CRI_VAR("가슴애무강제", 10)
@@ -583,7 +583,7 @@ SIF TEQUIP:MASTER:악세사리 == 1
 ;조교 대상이 하반신속옷을 입고 있을 때
 IF CLOTHESTYPE(1, 0)
 	CALL ADD_CRI_VAR("가랑이", -5)
-	CALL ADD_CRI_VAR("승마위", -5)
+	CALL ADD_CRI_VAR("기승위", -5)
 ENDIF
 
 ;조교 대상이 상반신속옷을 입고 있을 때
@@ -603,26 +603,26 @@ SIF CLOTHESTYPE(1, 1) == 2
 SIF IS_NOWCOMNAME("용서를빈다") && TCVAR:상태변화 < 8
 	CALL ADD_CRI_VAR("이라마치오", -5)
 
-;─
+;────────────────────────────────────
 ;체위 관련
-;─
+;────────────────────────────────────
 @ACT_ACTM5_S_POSITION
 
 ;체위 변경의 허들
-SIF IS_PREVACTNAME("승마위")
+SIF IS_PREVACTNAME("기승위")
 	CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:전ACT), 5, 4)
 
-;─
+;────────────────────────────────────
 ;같은 행동 연속 실행의 확률을 다운합니다
-;─
+;────────────────────────────────────
 @ACT_ACTM5_PREV
 
 SIF INRANGE(TFLAG:ACT, 50, 57)
 	CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:전ACT), -3 * TFLAG:동일행동보너스, -4 * TFLAG:동일행동보너스)
 
-;─
+;────────────────────────────────────
 ;보정치 계산
-;─
+;────────────────────────────────────
 @ACT_ACTM5_CORRECTION(ARG)
 #DIM LCOUNT
 
@@ -637,17 +637,17 @@ ELSE
 	CALL ACT_ACTM_CORRECTION(5)
 ENDIF
 
-;─
+;────────────────────────────────────
 ;그 외 변동이나 실행 불가능의 판정
-;─
+;────────────────────────────────────
 @ACT_ACTM5_ABLE
 #DIM LCOUNT
 
 ;불가능 판정
 CALL ACT_ACTM_ABLE(5)
 
-;봉사계 승마위를 일단 실행 불가에.
+;봉사계 기승위를 일단 실행 불가에.
 ;성교계 보정을 고려하는 것이 지난했던 싶은
 ;ACTM_NUM도 하는 김에 죽이고 있다
-CALL DIM_CRI_VAR("승마위", -999)
+CALL DIM_CRI_VAR("기승위", -999)
 

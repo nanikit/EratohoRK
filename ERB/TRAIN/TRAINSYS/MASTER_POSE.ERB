@@ -4,9 +4,9 @@
 ;eratoho. 등의 실장과 달리, 전의 자세를 고려는 하지 않는 노선
 ;　　였던 것입니다만, 메세지 표시 후에서만 고려하는 일로 변경
 ;현재의 위치 정보를 전회의 위치에 전송
-TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
-TCVAR:MASTER:전회의위치전후 = TCVAR:MASTER:위치전후
-TCVAR:MASTER:전회의위치상하 = TCVAR:MASTER:위치상하
+TCVAR:MASTER:전회자세 = TCVAR:MASTER:자세
+TCVAR:MASTER:전회위치전후 = TCVAR:MASTER:위치전후
+TCVAR:MASTER:전회위치상하 = TCVAR:MASTER:위치상하
 ;한 번 초기화한다
 TCVAR:MASTER:자세 = 0
 TCVAR:MASTER:위치전후 = 0
@@ -15,22 +15,22 @@ TCVAR:MASTER:REACT자세변화 = 0
 
 ;강제탈의가 발생하고 있으면 자세를 보정
 IF TFLAG:강제탈의
-	;전회의자세에 의해 보정
-	SELECTCASE TCVAR:MASTER:전회의자세
+	;전회자세에 의해 보정
+	SELECTCASE TCVAR:MASTER:전회자세
 		;네발로 엎드림은 자유롭게 되돌린다
 		CASE 3
-			TCVAR:MASTER:전회의자세 = 0
+			TCVAR:MASTER:전회자세 = 0
 		;무릎서기는 앉게 한다
 		CASE 10
-			TCVAR:MASTER:전회의자세 = 2
+			TCVAR:MASTER:전회자세 = 2
 	ENDSELECT
 		;외는 계속한다
 ENDIF
 
 ;자주탈의가 발생하고 있으면 위치를 리셋트
 IF TFLAG:자주탈의
-	TCVAR:MASTER:전회의위치전후 = 0
-	TCVAR:MASTER:전회의위치상하 = 0
+	TCVAR:MASTER:전회위치전후 = 0
+	TCVAR:MASTER:전회위치상하 = 0
 ENDIF
 
 VARSET TCVAR:MASTER, 0, 1, 5
@@ -39,7 +39,7 @@ SIF BASE:MASTER:체력 <= 0
 	TFLAG:위로돌리고 = 2
 ;자위중
 IF GETBIT(TEQUIP:자위중, 0)
-	TFLAG:P사용중++
+	TFLAG:Ｐ사용중++
 	TFLAG:손사용중++
 ENDIF
 ;안면승마중
@@ -49,9 +49,9 @@ IF TEQUIP:안면승마 || TEQUIP:안면승마애널
 	TFLAG:위로돌리고 = 2
 ENDIF
 
-;C애무
-SIF TEQUIP:조교대상C사용
-	TFLAG:P사용중++
+;Ｃ애무
+SIF TEQUIP:조교대상Ｃ사용
+	TFLAG:Ｐ사용중++
 
 ;ACT마다의 POSE 정보를 부른다
 ;※요점 수정
@@ -61,14 +61,14 @@ TRYCALLFORM MASTER_POSE_ACT{TFLAG:ACT}
 ;라고는 말하지만 함수화하지 않는 편이 설정하기 쉽지요 여기…
 ;이하 자세의 설정  . 추가 부분
 
-;안면승마, 밀어넘어뜨리기에 의한 강제 위로돌리고
+;안면승마, 쓰러트리기에 의한 강제 위로돌리고
 ;	//MASTER_POSE는 ACTION_APPLY보다 먼저 처리된다
 ;	//그리고 성교, 성적봉사시의 TEQUIP:안면승마등의 리셋트는 ACTION_APPLY내에서 행해진다(즉, 이 개소가 처리되는 시점에서는 리셋트되어 있지 않다)
-;	//이번 메뉴가 성교, 성적봉사라면 연주하도록(듯이) 하지 않으면 다양하게 맛이 없게 된다(ACT32:승마위시에 조교자가 위가 되거나 한다)
+;	//이번 메뉴가 성교, 성적봉사라면 연주하도록(듯이) 하지 않으면 다양하게 맛이 없게 된다(ACT32:기승위시에 조교자가 위가 되거나 한다)
 ;	//자세 제어 함수 쇄신이 대기하고 있으므로, 우선 최소한의 수당만(2015/02/01)
-IF !MENUMATCH(TFLAG:ACT, "성교") && !MENUMATCH(TFLAG:ACT, "성적봉사") && (TEQUIP:안면승마 || TEQUIP:안면승마애널 || TEQUIP:밀어넘어뜨리기중 || IS_NOWACTNAME("밀어넘어뜨린다"))
+IF !MENUMATCH(TFLAG:ACT, "성교") && !MENUMATCH(TFLAG:ACT, "성적봉사") && (TEQUIP:안면승마 || TEQUIP:안면승마애널 || TEQUIP:쓰러트리기중 || IS_NOWACTNAME("쓰러트린다"))
 	TCVAR:MASTER:자세 = 1
-	;TCVAR:MASTER:위치전후 = TEQUIP:밀어넘어뜨리기중 || IS_NOWACTNAME("밀어넘어뜨린다") ? 1 # 0
+	;TCVAR:MASTER:위치전후 = TEQUIP:쓰러트리기중 || IS_NOWACTNAME("쓰러트린다") ? 1 # 0
 	TCVAR:MASTER:위치전후 = 1
 	TCVAR:MASTER:위치상하 = 1
 ;성교·성적봉사계 ACT는 먼저 처리
@@ -83,7 +83,7 @@ ELSEIF MENUMATCH(TFLAG:ACT, "성교") || MENUMATCH(TFLAG:ACT, "성적봉사")
 			TCVAR:MASTER:자세 = 3
 			TCVAR:MASTER:위치전후 = 2
 			TCVAR:MASTER:위치상하 = 0
-		CASE "승마위"
+		CASE "기승위"
 			TCVAR:MASTER:자세 = 10
 			TCVAR:MASTER:위치전후 = 0
 			TCVAR:MASTER:위치상하 = 2
@@ -130,7 +130,7 @@ ELSEIF TEQUIP:성교중
 			TCVAR:MASTER:자세 = 3
 			TCVAR:MASTER:위치전후 = 2
 			TCVAR:MASTER:위치상하 = 0
-		;승마위
+		;기승위
 		CASE 3
 			TCVAR:MASTER:자세 = 10
 			TCVAR:MASTER:위치전후 = 0
@@ -160,7 +160,7 @@ ELSEIF TEQUIP:성교봉사중
 			TCVAR:MASTER:자세 = 10
 			TCVAR:MASTER:위치전후 = 3
 			TCVAR:MASTER:위치상하 = 0
-		;승마위(역강간)
+		;기승위(역강간)
 		CASE 3
 			TCVAR:MASTER:자세 = 1
 			TCVAR:MASTER:위치전후 = 0
@@ -184,7 +184,7 @@ ELSE
 		CASE "애무", "도구"
 			;어디를 애무하고 있을까
 			SELECTCASE CARESS_SPOT(TARGET)
-				;A
+				;Ａ
 				CASE 3
 					;구로 하고 있다
 					IF MA_PLAYER(1) == 1
@@ -207,14 +207,14 @@ ELSE
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의자세에 의해 보정
+							;전회자세에 의해 보정
 							;구와 달라, 전후·상하의 지정은 없습니다
-							SELECTCASE TCVAR:MASTER:전회의자세
+							SELECTCASE TCVAR:MASTER:전회자세
 								;기립·무릎서기
 								CASE 4, 10
 									;3/4로 계속
 									IF RAND:4
-										TCVAR:MASTER:자세 = TCVAR:MASTER:전회의자세
+										TCVAR:MASTER:자세 = TCVAR:MASTER:전회자세
 									;그렇지 않으면 네발로 엎드림
 									ELSE
 										TCVAR:MASTER:자세 = 3
@@ -240,7 +240,7 @@ ELSE
 							ENDSELECT
 						ENDIF
 					ENDIF
-				;C, V
+				;Ｃ, Ｖ
 				CASE 1, 2
 					;성기끼리로 하고 있다
 					IF GROUPMATCH(MC_PLAYER(1), 3, 8) || GROUPMATCH(MV_PLAYER(1), 3, 8)
@@ -255,8 +255,8 @@ ELSE
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 3
 						ELSE
-							;전회의자세에 의해 보정
-							SELECTCASE TCVAR:MASTER:전회의자세
+							;전회자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회자세
 								;위로돌리고는 계속
 								CASE 1
 									TCVAR:MASTER:자세 = 1
@@ -264,8 +264,8 @@ ELSE
 									TCVAR:MASTER:위치전후 = 1
 								;그 이외
 								CASEELSE
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
-									IF NOWEX:MASTER:C절정 && RAND:2
+									;Ｃ로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:Ｃ절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
 										TCVAR:MASTER:위치전후 = 1
@@ -285,8 +285,8 @@ ELSE
 							TCVAR:MASTER:위치상하 = 1
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의자세에 의해 보정
-							SELECTCASE TCVAR:MASTER:전회의자세
+							;전회자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회자세
 								;위로돌리고는 계속
 								CASE 1
 									TCVAR:MASTER:자세 = 1
@@ -294,8 +294,8 @@ ELSE
 									TCVAR:MASTER:위치전후 = 1
 								;그 이외
 								CASEELSE
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
-									IF NOWEX:MASTER:C절정 && RAND:2
+									;Ｃ로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:Ｃ절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
 										TCVAR:MASTER:위치전후 = 1
@@ -315,8 +315,8 @@ ELSE
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의자세에 의해 보정
-							SELECTCASE TCVAR:MASTER:전회의자세
+							;전회자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회자세
 								;위로돌리고는 계속
 								CASE 1
 									TCVAR:MASTER:자세 = 1
@@ -324,8 +324,8 @@ ELSE
 									TCVAR:MASTER:위치전후 = 1
 								;그 이외
 								CASEELSE
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
-									IF NOWEX:MASTER:C절정 && RAND:2
+									;Ｃ로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:Ｃ절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
@@ -346,8 +346,8 @@ ELSE
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의자세에 의해 보정
-							SELECTCASE TCVAR:MASTER:전회의자세
+							;전회자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회자세
 								;위로돌리고
 								CASE 1
 									;갈것같다라면 3/4으로 안정도에 변화한다
@@ -373,8 +373,8 @@ ELSE
 										TCVAR:MASTER:자세 = 10
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
-									ELSEIF NOWEX:MASTER:C절정 && RAND:2
+									;Ｃ로 간 직후는 1/2으로 위로 향해 변화한다
+									ELSEIF NOWEX:MASTER:Ｃ절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
@@ -399,8 +399,8 @@ ELSE
 									ENDIF
 								;기립
 								CASE 4
-									;C로 간 직후는 무릎서기에 변화한다
-									IF NOWEX:MASTER:C절정
+									;Ｃ로 간 직후는 무릎서기에 변화한다
+									IF NOWEX:MASTER:Ｃ절정
 										TCVAR:MASTER:자세 = 10
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
@@ -412,8 +412,8 @@ ELSE
 									ENDIF
 								;무릎서기
 								CASE 10
-									;C로 간 직후는 안정도에 변화한다
-									IF NOWEX:MASTER:C절정
+									;Ｃ로 간 직후는 안정도에 변화한다
+									IF NOWEX:MASTER:Ｃ절정
 										TCVAR:MASTER:자세 = 2
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
@@ -433,9 +433,9 @@ ELSE
 							TCVAR:MASTER:위치상하 = 0
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의자세에 의해 보정
+							;전회자세에 의해 보정
 							;구와 달라, 전후·상하의 지정은 없습니다
-							SELECTCASE TCVAR:MASTER:전회의자세
+							SELECTCASE TCVAR:MASTER:전회자세
 								;위로돌리고
 								CASE 1
 									;갈것같다라면 3/4으로 안정도에 변화한다
@@ -455,8 +455,8 @@ ELSE
 									;갈것같다라면 3/4으로 무릎서기에 변화한다
 									IF TCVAR:MASTER:갈것같다 && RAND:4
 										TCVAR:MASTER:자세 = 10
-									;C로 간 직후는 1/2으로 위로 향해 변화한다
-									ELSEIF NOWEX:MASTER:C절정 && RAND:2
+									;Ｃ로 간 직후는 1/2으로 위로 향해 변화한다
+									ELSEIF NOWEX:MASTER:Ｃ절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
@@ -477,8 +477,8 @@ ELSE
 									ENDIF
 								;기립
 								CASE 4
-									;C로 간 직후는 무릎서기에 변화한다
-									IF NOWEX:MASTER:C절정
+									;Ｃ로 간 직후는 무릎서기에 변화한다
+									IF NOWEX:MASTER:Ｃ절정
 										TCVAR:MASTER:자세 = 10
 									;그렇지 않으면 계속
 									ELSE
@@ -486,8 +486,8 @@ ELSE
 									ENDIF
 								;무릎서기
 								CASE 10
-									;C로 간 직후는 안정도에 변화한다
-									IF NOWEX:MASTER:C절정
+									;Ｃ로 간 직후는 안정도에 변화한다
+									IF NOWEX:MASTER:Ｃ절정
 										TCVAR:MASTER:자세 = 2
 									;그렇지 않으면 계속
 									ELSE
@@ -496,7 +496,7 @@ ELSE
 							ENDSELECT
 						ENDIF
 					ENDIF
-				;B
+				;Ｂ
 				CASE 4
 					;구로 하고 있는, or 젖의 몸싸움
 					IF MB_PLAYER(1) == 1 || TB_PLAYER(0) == 1
@@ -506,8 +506,8 @@ ELSE
 							TCVAR:MASTER:위치상하 = 1
 							TCVAR:MASTER:위치전후 = 0
 						ELSE
-							;전회의자세에 의해 보정
-							SELECTCASE TCVAR:MASTER:전회의자세
+							;전회자세에 의해 보정
+							SELECTCASE TCVAR:MASTER:전회자세
 								;위로돌리고
 								CASE 1
 									;1/4로 안정도에 변화한다
@@ -523,8 +523,8 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;B로 간 직후는 1/2으로 위로 향해 변화한다
-									IF NOWEX:MASTER:B절정 && RAND:2
+									;Ｂ로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:Ｂ절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
 										TCVAR:MASTER:위치전후 = 0
@@ -549,8 +549,8 @@ ELSE
 									ENDIF
 								;기립
 								CASE 4
-									;B로 간 직후는 무릎서기에 변화한다
-									IF NOWEX:MASTER:B절정
+									;Ｂ로 간 직후는 무릎서기에 변화한다
+									IF NOWEX:MASTER:Ｂ절정
 										TCVAR:MASTER:자세 = 10
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
@@ -562,8 +562,8 @@ ELSE
 									ENDIF
 								;무릎서기
 								CASE 10
-									;B로 간 직후는 안정도에 변화한다
-									IF NOWEX:MASTER:B절정
+									;Ｂ로 간 직후는 안정도에 변화한다
+									IF NOWEX:MASTER:Ｂ절정
 										TCVAR:MASTER:자세 = 2
 										TCVAR:MASTER:위치상하 = 0
 										TCVAR:MASTER:위치전후 = 1
@@ -583,9 +583,9 @@ ELSE
 							TCVAR:MASTER:위치상하 = 1
 							TCVAR:MASTER:위치전후 = 1
 						ELSE
-							;전회의자세에 의해 보정
+							;전회자세에 의해 보정
 							;구와 달라, 전후·상하의 지정은 없습니다
-							SELECTCASE TCVAR:MASTER:전회의자세
+							SELECTCASE TCVAR:MASTER:전회자세
 								;위로돌리고
 								CASE 1
 									;1/4로 안정도에 변화한다
@@ -599,8 +599,8 @@ ELSE
 									ENDIF
 								;앉아, 자유
 								CASE 2, 0
-									;B로 간 직후는 1/2으로 위로 향해 변화한다
-									IF NOWEX:MASTER:C절정 && RAND:2
+									;Ｂ로 간 직후는 1/2으로 위로 향해 변화한다
+									IF NOWEX:MASTER:Ｃ절정 && RAND:2
 										TCVAR:MASTER:자세 = 1
 										TCVAR:MASTER:위치상하 = 1
 										TCVAR:MASTER:위치전후 = 1
@@ -621,8 +621,8 @@ ELSE
 									ENDIF
 								;기립
 								CASE 4
-									;B로 간 직후는 무릎서기에 변화한다
-									IF NOWEX:MASTER:B절정
+									;Ｂ로 간 직후는 무릎서기에 변화한다
+									IF NOWEX:MASTER:Ｂ절정
 										TCVAR:MASTER:자세 = 10
 									;그렇지 않으면 계속
 									ELSE
@@ -630,8 +630,8 @@ ELSE
 									ENDIF
 								;무릎서기
 								CASE 10
-									;B로 간 직후는 안정도에 변화한다
-									IF NOWEX:MASTER:B절정
+									;Ｂ로 간 직후는 안정도에 변화한다
+									IF NOWEX:MASTER:Ｂ절정
 										TCVAR:MASTER:자세 = 2
 									;그렇지 않으면 계속
 									ELSE
@@ -648,8 +648,8 @@ ELSE
 				TCVAR:MASTER:위치전후 = 0
 				TCVAR:MASTER:위치상하 = 1
 			ELSE
-				;전회의자세에 의해 보정
-				SELECTCASE TCVAR:MASTER:전회의자세
+				;전회자세에 의해 보정
+				SELECTCASE TCVAR:MASTER:전회자세
 					;위로돌리고… 아래로부터 손댄다
 					CASE 1
 						TCVAR:MASTER:자세 = 1
@@ -674,24 +674,24 @@ ELSE
 					;키스
 					CASE 15
 						;자유의 경우 앉게 한다
-						TCVAR:MASTER:자세 = TCVAR:MASTER:전회의자세 ? TCVAR:MASTER:전회의자세 # 2
+						TCVAR:MASTER:자세 = TCVAR:MASTER:전회자세 ? TCVAR:MASTER:전회자세 # 2
 						;자유의 경우전에
-						TCVAR:MASTER:위치전후 = TCVAR:MASTER:전회의위치전후 ? TCVAR:MASTER:전회의위치전후 # 1
+						TCVAR:MASTER:위치전후 = TCVAR:MASTER:전회위치전후 ? TCVAR:MASTER:전회위치전후 # 1
 					;자위, 방뇨
 					CASE 40, 45
 						;자유의 경우 앉게 할 뿐
-						TCVAR:MASTER:자세 = TCVAR:MASTER:전회의자세 ? TCVAR:MASTER:전회의자세 # 2
+						TCVAR:MASTER:자세 = TCVAR:MASTER:전회자세 ? TCVAR:MASTER:전회자세 # 2
 					;비패개장
 					CASE 41
 						;안정도 대면
 						TCVAR:MASTER:자세 = 2
 						TCVAR:MASTER:위치전후 = 1
 						TCVAR:MASTER:위치상하 = 0
-					;자위과시하고, 페니스밴드장착
+					;자위과시, 페니스밴드장착
 					CASE 42, 75
 						;대면
 						TCVAR:MASTER:위치전후 = 1
-					;대거울, 야외플레이, 코스프레, 휴게, 영양제
+					;대거울, 야외플레이, 코스프레, 휴식, 영양제
 					CASE 43, 44, 46, 90, 91
 						;리셋트
 						TCVAR:MASTER:자세 = 0
@@ -700,7 +700,7 @@ ELSE
 					;방치플레이, 공중변소 플레이
 					CASE 45, 74
 						;위치 리셋트, 자세 1/2로 자유,1/2그리고 계속
-						TCVAR:MASTER:자세 = RAND:2 ? TCVAR:MASTER:전회의자세 # 0
+						TCVAR:MASTER:자세 = RAND:2 ? TCVAR:MASTER:전회자세 # 0
 						TCVAR:MASTER:위치전후 = 0
 						TCVAR:MASTER:위치상하 = 0
 					;스팽킹, 채찍, 피스트류
@@ -727,18 +727,18 @@ ELSE
 ENDIF
 
 ;페라 계속중의 경우, 전후 위치를 앞에 고정
-SIF TEQUIP:조교대상C사용 == 2
+SIF TEQUIP:조교대상Ｃ사용 == 2
 	TCVAR:MASTER:위치전후 = 1
 
 ;여기까지로 자유 자세였던 경우
 IF !TCVAR:MASTER:자세
-	;성교중·P사용중·자위중이라면 전회의자세·위치를 답습
-	IF TEQUIP:성교중 || TEQUIP:성교봉사중 || TEQUIP:조교대상C사용 || GETBIT(TEQUIP:자위중, 0)
-		TCVAR:MASTER:자세 = TCVAR:MASTER:전회의자세
+	;성교중·Ｐ사용중·자위중이라면 전회자세·위치를 답습
+	IF TEQUIP:성교중 || TEQUIP:성교봉사중 || TEQUIP:조교대상Ｃ사용 || GETBIT(TEQUIP:자위중, 0)
+		TCVAR:MASTER:자세 = TCVAR:MASTER:전회자세
 		SIF !TCVAR:MASTER:위치전후
-			TCVAR:MASTER:위치전후 = TCVAR:MASTER:전회의위치전후
+			TCVAR:MASTER:위치전후 = TCVAR:MASTER:전회위치전후
 		SIF !TCVAR:MASTER:위치상하
-			TCVAR:MASTER:위치상하 = TCVAR:MASTER:전회의위치상하
+			TCVAR:MASTER:위치상하 = TCVAR:MASTER:전회위치상하
 	ENDIF
 ENDIF
 
@@ -751,7 +751,7 @@ IF !TCVAR:MASTER:위치전후 && !TCVAR:MASTER:위치상하
 ENDIF
 
 ;조수의 성교를 캔슬
-IF TFLAG:P사용중 || TFLAG:P삽입중
+IF TFLAG:Ｐ사용중 || TFLAG:Ｐ삽입중
 	TFLAG:조수에삽입중 = 0
 	TFLAG:조수연속교합 = 0
 ENDIF
@@ -762,52 +762,52 @@ ENDIF
 IF TCVAR:ARG:조수ACT == 7
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 ;쿤닐링구스, 페라
 ELSEIF TCVAR:ARG:조수ACT == 1
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 ;조개 대면시켜 가랑이
 ELSEIF TCVAR:ARG:조수ACT == 2
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 ;파이즈리
 ELSEIF TCVAR:ARG:조수ACT == 3
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 ;풋잡
 ELSEIF TCVAR:ARG:조수ACT == 4
 	SIF TFLAG:위로돌리고 == 0
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 ;로터, 오나홀
 ELSEIF TCVAR:ARG:조수ACT == 5
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 ;역강간
 ELSEIF TCVAR:ARG:조수ACT == 6
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
-	TFLAG:P삽입중 = 1
+	TFLAG:Ｐ삽입중 = 1
 ;애널애무
 ELSEIF TCVAR:ARG:조수ACT == 10
-	TFLAG:A사용중 = 2
-;애널빨고
+	TFLAG:Ａ사용중 = 2
+;애널핥기
 ELSEIF TCVAR:ARG:조수ACT == 11
-	TFLAG:A사용중 = 2
+	TFLAG:Ａ사용중 = 2
 ;애널로터
 ELSEIF TCVAR:ARG:조수ACT == 12
-	TFLAG:A사용중 = 2
+	TFLAG:Ａ사용중 = 2
 ;애널바이브
 ELSEIF TCVAR:ARG:조수ACT == 13
-	TFLAG:A사용중 = 2
+	TFLAG:Ａ사용중 = 2
 ;가슴애무
 ELSEIF TCVAR:ARG:조수ACT == 20
 	TFLAG:가슴사용중 = 1
 
-;유두빨고
+;유두핥기
 ELSEIF TCVAR:ARG:조수ACT == 21
 	TFLAG:가슴사용중 = 1
 ;유두로터
@@ -815,15 +815,15 @@ ELSEIF TCVAR:ARG:조수ACT == 22
 	TFLAG:가슴사용중 = 1
 ;손가락삽입
 ELSEIF TCVAR:ARG:조수ACT == 30
-	TFLAG:V사용중 = 2
+	TFLAG:Ｖ사용중 = 2
 ;바이브
 ELSEIF TCVAR:ARG:조수ACT == 31
-	TFLAG:V사용중 = 2
+	TFLAG:Ｖ사용중 = 2
 ;성교
 ELSEIF TCVAR:ARG:조수ACT == 32
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
-	TFLAG:V사용중 = 1
+	TFLAG:Ｖ사용중 = 1
 ;키스
 ELSEIF TCVAR:ARG:조수ACT == 40
 	SIF TFLAG:위로돌리고
@@ -840,7 +840,7 @@ ELSEIF TCVAR:ARG:조수ACT == 42
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;ACT마다의 POSE 정보. 주로 MASTER에 대해
 ;현상 MASTER측만이 정보를 가지고 있습니다. 확장성이기 때문에 TCVAR를 이용
 ;모두, =0은 정보 없음·자유라고 하는 일로. 회화라든지 그런 느낌입니다
@@ -857,9 +857,9 @@ ENDIF
 ;＠TCVAR:MASTER:2(위치전후)
 ;	MASTER와 TARGET의 전후 위치 정보만 격납. 현상 MASTER측만이 가지고 있습니다
 ;	=0은 자유
-;	=1으로 대면(M→←T)
-;	=2로 MASTER의 배후(T→M→)
-;	=3으로 MASTER가 배후(M→T→)
+;	=1으로 대면(Ｍ→←Ｔ)
+;	=2로 MASTER의 배후(Ｔ→Ｍ→)
+;	=3으로 MASTER가 배후(Ｍ→Ｔ→)
 ;
 ;＠TCVAR:MASTER:3(위치상하)
 ;	MASTER와 TARGET의 상하 위치 정보. 현상 MASTER측만이 가지고 있습니다
@@ -867,303 +867,303 @@ ENDIF
 ;	=2로 역정도(MASTER가 TARGET를 깔아누르고 있다)
 
 ;이것으로 우선, 대략적으로는 나타낼 수 있습니다.
-;─
-;010, 애무/자위 하는(S/N/H)(쾌C, 쾌B, 접촉, 사랑, 성행동, 불결)
-;─
+;────────────────────────────────────
+;010, 애무/자위 하는(Ｓ/Ｎ/Ｈ)(쾌Ｃ, 쾌Ｂ, 접촉, 사랑, 성행동, 불결)
+;────────────────────────────────────
 @MASTER_POSE_ACT10
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 
-;─
-;011, 가슴애무/유두 들이마셔/젖의 몸싸움(S/N/H)(쾌B, 접촉, 사랑, 성행동, 상해, 불결)
-;─
+;────────────────────────────────────
+;011, 가슴애무/유두 들이마셔/젖의 몸싸움(Ｓ/Ｎ/Ｈ)(쾌Ｂ, 접촉, 사랑, 성행동, 상해, 불결)
+;────────────────────────────────────
 @MASTER_POSE_ACT11
 	TFLAG:가슴사용중 = 1
 	;유두 들이마셔, 젖의 몸싸움은 대면
 	SIF GROUPMATCH(TFLAG:ACT파생, 1, 2)
 		TCVAR:MASTER:위치전후 = 1
 
-;─
-;012, 쿤닐링구스/페라하는(S/N/H)(쾌C, 접촉, 사랑, 성행동, 상해, 불결)
-;─
+;────────────────────────────────────
+;012, 쿤닐링구스/페라하는(Ｓ/Ｎ/Ｈ)(쾌Ｃ, 접촉, 사랑, 성행동, 상해, 불결)
+;────────────────────────────────────
 @MASTER_POSE_ACT12
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 	SIF !PENIS(MASTER)
-		TFLAG:V사용중 = 2
+		TFLAG:Ｖ사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;013, 애널애무(N/H)[벌](쾌A, 접촉, 성행동, 상해, 불결, 일탈)
-;─
+;────────────────────────────────────
+;013, 애널애무(Ｎ/Ｈ)[벌](쾌Ａ, 접촉, 성행동, 상해, 불결, 일탈)
+;────────────────────────────────────
 @MASTER_POSE_ACT13
-	TFLAG:A사용중 += 1
-;─
-;014, 애널빨고(N/H)[벌](쾌A, 접촉, 성행동, 상해, 불결, 일탈)
-;─
+	TFLAG:Ａ사용중 += 1
+;────────────────────────────────────
+;014, 애널핥기(Ｎ/Ｈ)[벌](쾌Ａ, 접촉, 성행동, 상해, 불결, 일탈)
+;────────────────────────────────────
 @MASTER_POSE_ACT14
-	TFLAG:A사용중 += 1
+	TFLAG:Ａ사용중 += 1
 	;배후
 	TCVAR:MASTER:위치전후 = 2
-;─
-;015, 키스(S/N)(접촉, 사랑, 성행동, 상해, 불결)
-;─
+;────────────────────────────────────
+;015, 키스(Ｓ/Ｎ)(접촉, 사랑, 성행동, 상해, 불결)
+;────────────────────────────────────
 @MASTER_POSE_ACT15
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
 	TFLAG:입사용중 += 1
-;─
-;016, 조개 우려라/가랑이 하는(S/N)(쾌C, 접촉, 사랑, 성행동, 불결, 쾌c)
-;─
+;────────────────────────────────────
+;016, 조개 우려라/가랑이 하는(Ｓ/Ｎ)(쾌Ｃ, 접촉, 사랑, 성행동, 불결, 쾌c)
+;────────────────────────────────────
 @MASTER_POSE_ACT16
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
-	TFLAG:V사용중 = 2
+	TFLAG:Ｐ사용중 += 1
+	TFLAG:Ｖ사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;017, 파이즈리한다(S/N)(쾌C, 접촉, 사랑, 상해, 성행동, 불결, 쾌b)
-;─
+;────────────────────────────────────
+;017, 파이즈리한다(Ｓ/Ｎ)(쾌Ｃ, 접촉, 사랑, 상해, 성행동, 불결, 쾌b)
+;────────────────────────────────────
 @MASTER_POSE_ACT17
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;018, 풋잡한다(S/N/H)[벌](쾌C, 접촉, 사랑, 성행동, 불결, 일탈)
-;─
+;────────────────────────────────────
+;018, 풋잡한다(Ｓ/Ｎ/Ｈ)[벌](쾌Ｃ, 접촉, 사랑, 성행동, 불결, 일탈)
+;────────────────────────────────────
 @MASTER_POSE_ACT18
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 1
+	TFLAG:Ｐ사용중 += 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
+;────────────────────────────────────
 ;018, 손가락삽입해라
-;─
+;────────────────────────────────────
 @MASTER_POSE_ACT19
-	TFLAG:V사용중 += 1
-;─
-;020, 로터(S/N)(쾌C, 중독충족)
-;─
+	TFLAG:Ｖ사용중 += 1
+;────────────────────────────────────
+;020, 로터(Ｓ/Ｎ)(쾌Ｃ, 중독충족)
+;────────────────────────────────────
 @MASTER_POSE_ACT20
-	TFLAG:P사용중 = 6
-;─
-;021, 바이브(S/N/H)[벌](쾌V, 상해, 일탈, 중독충족, 트라우마)
-;─
+	TFLAG:Ｐ사용중 = 6
+;────────────────────────────────────
+;021, 바이브(Ｓ/Ｎ/Ｈ)[벌](쾌Ｖ, 상해, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 @MASTER_POSE_ACT21
-	TFLAG:V사용중 = 2
-;─
-;022, 애널바이브(N/H)[벌](쾌A, 상해, 일탈, 중독충족)
-;─
+	TFLAG:Ｖ사용중 = 2
+;────────────────────────────────────
+;022, 애널바이브(Ｎ/Ｈ)[벌](쾌Ａ, 상해, 일탈, 중독충족)
+;────────────────────────────────────
 @MASTER_POSE_ACT22
-	TFLAG:A사용중 = 2
-;─
-;023, 애널비즈(S/N/H)(쾌A, 상해, 일탈, 중독충족)
-;─
+	TFLAG:Ａ사용중 = 2
+;────────────────────────────────────
+;023, 애널비즈(Ｓ/Ｎ/Ｈ)(쾌Ａ, 상해, 일탈, 중독충족)
+;────────────────────────────────────
 @MASTER_POSE_ACT23
-	TFLAG:A사용중 = 2
-;─
-;024, 클리캡/오나홀(S/N)(쾌C, 중독충족)
-;─
+	TFLAG:Ａ사용중 = 2
+;────────────────────────────────────
+;024, 클리캡/오나홀(Ｓ/Ｎ)(쾌Ｃ, 중독충족)
+;────────────────────────────────────
 @MASTER_POSE_ACT24
-	TFLAG:P사용중 = 5
-;─
+	TFLAG:Ｐ사용중 = 5
+;────────────────────────────────────
 ;025, 니플캡
-;─
+;────────────────────────────────────
 @MASTER_POSE_ACT25
 	TFLAG:가슴사용중 = 1
-;─
+;────────────────────────────────────
 ;026, 페니스밴드
-;─
+;────────────────────────────────────
 @MASTER_POSE_ACT26
-	TFLAG:P사용중 = 6
-	TFLAG:A사용중 = 2
-	TFLAG:V사용중 = 1
+	TFLAG:Ｐ사용중 = 6
+	TFLAG:Ａ사용중 = 2
+	TFLAG:Ｖ사용중 = 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;030, 정상위(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
-;─
+;────────────────────────────────────
+;030, 정상위(Ｓ/Ｎ)(쾌Ｖ, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
+;────────────────────────────────────
 @MASTER_POSE_ACT30
 	TFLAG:위로돌리고 = 2
-	TFLAG:V사용중 = 1
+	TFLAG:Ｖ사용중 = 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;031, 후배위(N/H)[벌](쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
-;─
+;────────────────────────────────────
+;031, 후배위(Ｎ/Ｈ)[벌](쾌Ｖ, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
+;────────────────────────────────────
 @MASTER_POSE_ACT31
 	TFLAG:위로돌리고 = 0
-	TFLAG:V사용중 = 1
+	TFLAG:Ｖ사용중 = 1
 	;배후
 	TCVAR:MASTER:위치전후 = 2
-;─
-;032, 승마위(S/N)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
-;─
+;────────────────────────────────────
+;032, 기승위(Ｓ/Ｎ)(쾌Ｖ, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
+;────────────────────────────────────
 @MASTER_POSE_ACT32
 	TFLAG:위로돌리고 = 0
-	TFLAG:V사용중 = 1
+	TFLAG:Ｖ사용중 = 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;033, 대면좌위(S/N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
-;─
+;────────────────────────────────────
+;033, 대면좌위(Ｓ/Ｎ/Ｈ)(쾌Ｖ, 접촉, 사랑, 성행동, 상해, 중독충족, 트라우마, 쾌c)
+;────────────────────────────────────
 @MASTER_POSE_ACT33
 	TFLAG:위로돌리고 = 0
-	TFLAG:V사용중 = 1
+	TFLAG:Ｖ사용중 = 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;034, 배면좌위(N/H)(쾌V, 접촉, 사랑, 성행동, 상해, 노출, 중독충족, 트라우마, 쾌c)
-;─
+;────────────────────────────────────
+;034, 배면좌위(Ｎ/Ｈ)(쾌Ｖ, 접촉, 사랑, 성행동, 상해, 노출, 중독충족, 트라우마, 쾌c)
+;────────────────────────────────────
 @MASTER_POSE_ACT34
 	TFLAG:위로돌리고 = 0
-	TFLAG:V사용중 = 1
+	TFLAG:Ｖ사용중 = 1
 	;배후
 	TCVAR:MASTER:위치전후 = 2
-;─
-;035, 애널섹스(N/H/A)[벌](쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌c)
-;─
+;────────────────────────────────────
+;035, 애널섹스(Ｎ/Ｈ/Ａ)[벌](쾌Ａ, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌c)
+;────────────────────────────────────
 @MASTER_POSE_ACT35
-	TFLAG:A사용중 = 2
+	TFLAG:Ａ사용중 = 2
 	;배후
 	TCVAR:MASTER:위치전후 = 2
-;─
-;103, 역강간(N/H/A)[벌](쾌C, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌v)
-;─
+;────────────────────────────────────
+;103, 역강간(Ｎ/Ｈ/Ａ)[벌](쾌Ｃ, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마, 쾌v)
+;────────────────────────────────────
 @MASTER_POSE_ACT103
 	TFLAG:위로돌리고 = 2
-	TFLAG:P삽입중 = 1
+	TFLAG:Ｐ삽입중 = 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;041, 비패개장(S/N/H)(쾌C, 노출, 일탈)
-;─
+;────────────────────────────────────
+;041, 비패개장(Ｓ/Ｎ/Ｈ)(쾌Ｃ, 노출, 일탈)
+;────────────────────────────────────
 @MASTER_POSE_ACT41
-	TFLAG:V사용중 = 2
+	TFLAG:Ｖ사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;045, 방뇨(N/H/A)[벌](노출, 일탈, 트라우마)
-;─
+;────────────────────────────────────
+;045, 방뇨(Ｎ/Ｈ/Ａ)[벌](노출, 일탈, 트라우마)
+;────────────────────────────────────
 @MASTER_POSE_ACT45
-	TFLAG:P사용중 = 3
-	TFLAG:V사용중 = 2
-;─
-;050, 자위/애무 강제(S/N)(불결)
-;─
+	TFLAG:Ｐ사용중 = 3
+	TFLAG:Ｖ사용중 = 2
+;────────────────────────────────────
+;050, 자위/애무 강제(Ｓ/Ｎ)(불결)
+;────────────────────────────────────
 ;봉사계의 행동은 거부할 수 있으므로, 반응이 나올 때까지 신체의 접촉이 없도록 해 둡니다
 @MASTER_POSE_ACT50
-	TFLAG:다리사용중 += 1
+	TFLAG:발사용중 += 1
 	;대면(조수에 사전에 전을 열게 하기 (위해)때문에)
 	TCVAR:MASTER:위치전후 = 1
-;─
-;051, 펠라치오/쿤닐링구스 강제(S/N/H)(불결)
-;─
+;────────────────────────────────────
+;051, 펠라치오/쿤닐링구스 강제(Ｓ/Ｎ/Ｈ)(불결)
+;────────────────────────────────────
 @MASTER_POSE_ACT51
 	SIF TFLAG:위로돌리고
 		TFLAG:위로돌리고 = 2
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	SIF TEQUIP:조교대상C사용 == 1 || TEQUIP:조교대상C사용 == 2 || TEQUIP:조교대상C사용 == 4
+	SIF TEQUIP:조교대상Ｃ사용 == 1 || TEQUIP:조교대상Ｃ사용 == 2 || TEQUIP:조교대상Ｃ사용 == 4
 		TFLAG:위로돌리고 = 2
 	TFLAG:입사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;052, 파이즈리(S/N/H)(불결)
-;─
+;────────────────────────────────────
+;052, 파이즈리(Ｓ/Ｎ/Ｈ)(불결)
+;────────────────────────────────────
 @MASTER_POSE_ACT52
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
 	TFLAG:가슴사용중 = 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;053, 가랑이(S/N/H)(불결)
-;─
+;────────────────────────────────────
+;053, 가랑이(Ｓ/Ｎ/Ｈ)(불결)
+;────────────────────────────────────
 @MASTER_POSE_ACT53
-	TFLAG:P사용중 = 4
-	TFLAG:V사용중 = 2
+	TFLAG:Ｐ사용중 = 4
+	TFLAG:Ｖ사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;055, 다리빨고강제(N/H/A)[벌](불결, 일탈, 트라우마)
-;─
+;────────────────────────────────────
+;055, 밟핥기강제(Ｎ/Ｈ/Ａ)[벌](불결, 일탈, 트라우마)
+;────────────────────────────────────
 @MASTER_POSE_ACT55
 	TFLAG:입사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;056, 이라마치오(H/A)[벌](접촉, 사랑역, 성행동, 상해, 구속<=머리를 잡는 일, 불결, 일탈, 트라우마, 쾌c)
-;─
+;────────────────────────────────────
+;056, 이라마치오(Ｈ/Ａ)[벌](접촉, 사랑역, 성행동, 상해, 구속<=머리를 잡는 일, 불결, 일탈, 트라우마, 쾌c)
+;────────────────────────────────────
 @MASTER_POSE_ACT56
 	TFLAG:입사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
 
-;─
-;070, 피스트퍽(H/A)[벌](쾌V, 접촉, 상해, 일탈, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
+;070, 피스트퍽(Ｈ/Ａ)[벌](쾌Ｖ, 접촉, 상해, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 @MASTER_POSE_ACT70
-	TFLAG:V사용중 = 2
+	TFLAG:Ｖ사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;071, 애널피스트(H/A)[벌](쾌A, 접촉, 상해, 일탈, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
+;071, 애널피스트(Ｈ/Ａ)[벌](쾌Ａ, 접촉, 상해, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 @MASTER_POSE_ACT71
-	TFLAG:A사용중 = 2
+	TFLAG:Ａ사용중 = 2
 	;배후
 	TCVAR:MASTER:위치전후 = 2
-;─
-;072, 양구멍피스트(A)[벌](쾌V, 쾌A, 접촉, 상해, 일탈, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
+;072, 양구멍피스트(Ａ)[벌](쾌Ｖ, 쾌Ａ, 접촉, 상해, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 @MASTER_POSE_ACT72
-	TFLAG:A사용중 = 2
-	TFLAG:V사용중 = 2
+	TFLAG:Ａ사용중 = 2
+	TFLAG:Ｖ사용중 = 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;095, 정상위시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v)
-;─
+;────────────────────────────────────
+;095, 정상위시킨다(Ｎ/Ｈ/Ａ)[접촉](쾌Ｃ, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v)
+;────────────────────────────────────
 @MASTER_POSE_ACT95
 	TFLAG:위로돌리고 = 0
-	TFLAG:P삽입중 = 1
+	TFLAG:Ｐ삽입중 = 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;096, 후배위시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v)
-;─
+;────────────────────────────────────
+;096, 후배위시킨다(Ｎ/Ｈ/Ａ)[접촉](쾌Ｃ, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v)
+;────────────────────────────────────
 @MASTER_POSE_ACT96
 	TFLAG:위로돌리고 = 0
-	TFLAG:P삽입중 = 1
+	TFLAG:Ｐ삽입중 = 1
 	;배면
 	TCVAR:MASTER:위치전후 = 3
-;─
-;097, 대면좌위시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c)
-;─
+;────────────────────────────────────
+;097, 대면좌위시킨다(Ｎ/Ｈ/Ａ)[접촉](쾌Ｃ, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c)
+;────────────────────────────────────
 @MASTER_POSE_ACT97
 	TFLAG:위로돌리고 = 0
-	TFLAG:P삽입중 = 1
+	TFLAG:Ｐ삽입중 = 1
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;098, 배면좌위시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
-;─
+;────────────────────────────────────
+;098, 배면좌위시킨다(Ｎ/Ｈ/Ａ)[접촉](쾌Ｃ, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
+;────────────────────────────────────
 @MASTER_POSE_ACT98
 	TFLAG:위로돌리고 = 0
-	TFLAG:P삽입중 = 1
+	TFLAG:Ｐ삽입중 = 1
 	;배면
 	TCVAR:MASTER:위치전후 = 3
-;─
-;099, 애널섹스시킨다(N/H/A)[접촉](쾌C, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
-;─
+;────────────────────────────────────
+;099, 애널섹스시킨다(Ｎ/Ｈ/Ａ)[접촉](쾌Ｃ, 접촉, 사랑, 성행동, 중독충족, 달성, 열락, 쾌v, 쾌c, 쾌b)
+;────────────────────────────────────
 @MASTER_POSE_ACT99
 	IF	TFLAG:위로돌리고 == 0
 		SIF RAND:2 == 0
@@ -1171,117 +1171,117 @@ ENDIF
 	ELSE
 		TFLAG:위로돌리고 = 2
 	ENDIF
-	TFLAG:P삽입중 = 1
+	TFLAG:Ｐ삽입중 = 1
 	;배면
 	TCVAR:MASTER:위치전후 = 3
 
 ;※요점 수정
-;↑여기까지 그다지 만지작거리지 않습니다. P사용중 플래그의 대입이라든지 많이 이상합니다만 현재 상태로서는 실제 손해 없기 때문에 방치
+;↑여기까지 그다지 만지작거리지 않습니다Ｐ사용중 플래그의 대입이라든지 많이 이상합니다만 현재 상태로서는 실제 손해 없기 때문에 방치
 ;그 중 고치는 태스크라고 하는 일로
 
-;─
-;300, W자위
-;─
+;────────────────────────────────────
+;300, Ｗ수음
+;────────────────────────────────────
 @MASTER_POSE_ACT300
 	;위로돌리고 판정은 자위와 같음
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	;W로 P사용중
-	TFLAG:P사용중 += 2
+	;Ｗ로Ｐ사용중
+	TFLAG:Ｐ사용중 += 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;301, W페라
-;─
+;────────────────────────────────────
+;301, Ｗ페라
+;────────────────────────────────────
 @MASTER_POSE_ACT301
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 2
+	TFLAG:Ｐ사용중 += 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;302, W키스
-;─
+;────────────────────────────────────
+;302, Ｗ키스
+;────────────────────────────────────
 @MASTER_POSE_ACT302
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
 	TFLAG:입사용중 += 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;303, W가랑이
-;─
+;────────────────────────────────────
+;303, Ｗ가랑이
+;────────────────────────────────────
 @MASTER_POSE_ACT303
-	TFLAG:P사용중 += 2
-	TFLAG:V사용중 += 2
+	TFLAG:Ｐ사용중 += 2
+	TFLAG:Ｖ사용중 += 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;304, W파이즈리
-;─
+;────────────────────────────────────
+;304, Ｗ파이즈리
+;────────────────────────────────────
 @MASTER_POSE_ACT304
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 2
+	TFLAG:Ｐ사용중 += 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
-;305, W풋잡
-;─
+;────────────────────────────────────
+;305, Ｗ풋잡
+;────────────────────────────────────
 @MASTER_POSE_ACT305
 	SIF RAND:(10 + ABL:욕망 + ABL:기교) > RAND:(10 + ABL:MASTER:기교)
 		TFLAG:위로돌리고 = 2
-	TFLAG:P사용중 += 2
+	TFLAG:Ｐ사용중 += 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
+;────────────────────────────────────
 ;306, 승마 두 구멍 고문
-;─
+;────────────────────────────────────
 @MASTER_POSE_ACT306
 	TFLAG:위로돌리고 = 0
-	TFLAG:V사용중++
-	TFLAG:A사용중++
+	TFLAG:Ｖ사용중++
+	TFLAG:Ａ사용중++
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
+;────────────────────────────────────
 ;307, 대면 두 구멍 고문
-;─
+;────────────────────────────────────
 @MASTER_POSE_ACT307
 	TFLAG:위로돌리고 = 0
-	TFLAG:V사용중++
-	TFLAG:A사용중++
+	TFLAG:Ｖ사용중++
+	TFLAG:Ａ사용중++
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
+;────────────────────────────────────
 ;308, 변칙혼란모란
-;─
+;────────────────────────────────────
 @MASTER_POSE_ACT308
 	TFLAG:위로돌리고 = 0
-	TFLAG:V사용중++
+	TFLAG:Ｖ사용중++
 	;배후
 	TCVAR:MASTER:위치전후 = 2
-;─
+;────────────────────────────────────
 ;309, 애널 두 구멍 고문
-;─
+;────────────────────────────────────
 @MASTER_POSE_ACT309
 	TFLAG:위로돌리고 = 0
-	TFLAG:V사용중++
-	TFLAG:A사용중++
+	TFLAG:Ｖ사용중++
+	TFLAG:Ａ사용중++
 	;배후
 	TCVAR:MASTER:위치전후 = 2
-;─
-;310, W역강간
-;─
+;────────────────────────────────────
+;310, Ｗ역강간
+;────────────────────────────────────
 @MASTER_POSE_ACT310
 	TFLAG:위로돌리고 = 2
-	TFLAG:P삽입중 += 2
+	TFLAG:Ｐ삽입중 += 2
 	;대면
 	TCVAR:MASTER:위치전후 = 1
-;─
+;────────────────────────────────────
 ;311, 골짜기를건너감
-;─
+;────────────────────────────────────
 @MASTER_POSE_ACT311
 	TFLAG:위로돌리고 = 0
-	TFLAG:P삽입중 += 2
+	TFLAG:Ｐ삽입중 += 2
 	;배면
 	TCVAR:MASTER:위치전후 = 3

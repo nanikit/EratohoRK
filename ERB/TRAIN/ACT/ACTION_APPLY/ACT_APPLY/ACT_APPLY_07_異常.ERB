@@ -1,41 +1,41 @@
-﻿;─
-;070, 피스트퍽(H/A)[벌](쾌V, 접촉, 상해, 일탈, 중독충족, 트라우마)
-;─
+﻿;────────────────────────────────────
+;070, 피스트퍽(Ｈ/Ａ)[벌](쾌Ｖ, 접촉, 상해, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 @ACTION_APPLY_70
 ;하반신 전부 강제탈의
 TFLAG:강제탈의 = 5
 ;필요하면 로션을 사용
 CALL LOTION_USE
-;애무 보정치, 마조끼에 응해 쾌VSOURCE 증가
-SOURCE:MASTER:쾌V = 200 + ACT_FROM(TARGET, 2) * (ABL:MASTER:마조끼 + 5) / 5
+;애무 보정치, 마조끼에 응해 쾌ＶSOURCE 증가
+SOURCE:MASTER:쾌Ｖ = 200 + ACT_FROM(TARGET, 2) * (ABL:MASTER:마조끼 + 5) / 5
 ;접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 300
-;V경험 /V확장경험가 적을 정도 쾌VSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
+;Ｖ경험/Ｖ확장경험가 적을 정도 쾌ＶSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
 ;아픔 SOURCE는 체격차이에 의해도 증감한다
-IF EXP:MASTER:V경험 < 20 || EXP:MASTER:V확장경험 < 1
-	TIMES SOURCE:MASTER:쾌V , 0.10
+IF EXP:MASTER:Ｖ경험 < 20 || EXP:MASTER:Ｖ확장경험 < 1
+	TIMES SOURCE:MASTER:쾌Ｖ , 0.10
 	SOURCE:MASTER:아픔 = 3000 + TALENT:MASTER:작은체형 * 500 - TALENT:MASTER:장신 * 500 - TALENT:작은체형 * 250 + TALENT:장신 * 250
 	SOURCE:MASTER:일탈 = 2500
-ELSEIF EXP:MASTER:V경험 < 25 || EXP:MASTER:V확장경험 < 2
-	TIMES SOURCE:MASTER:쾌V , 0.25
+ELSEIF EXP:MASTER:Ｖ경험 < 25 || EXP:MASTER:Ｖ확장경험 < 2
+	TIMES SOURCE:MASTER:쾌Ｖ , 0.25
 	SOURCE:MASTER:아픔 = 2500 + TALENT:MASTER:작은체형 * 400 - TALENT:MASTER:장신 * 400 - TALENT:작은체형 * 200 + TALENT:장신 * 200
 	SOURCE:MASTER:일탈 = 2000
-ELSEIF EXP:MASTER:V경험 < 30 || EXP:MASTER:V확장경험 < 4
-	TIMES SOURCE:MASTER:쾌V , 0.45
+ELSEIF EXP:MASTER:Ｖ경험 < 30 || EXP:MASTER:Ｖ확장경험 < 4
+	TIMES SOURCE:MASTER:쾌Ｖ , 0.45
 	SOURCE:MASTER:아픔 = 1800 + TALENT:MASTER:작은체형 * 300 - TALENT:MASTER:장신 * 300 - TALENT:작은체형 * 150 + TALENT:장신 * 150
 	SOURCE:MASTER:일탈 = 1200
-ELSEIF EXP:MASTER:V확장경험 < 6
-	TIMES SOURCE:MASTER:쾌V , 0.70
+ELSEIF EXP:MASTER:Ｖ확장경험 < 6
+	TIMES SOURCE:MASTER:쾌Ｖ , 0.70
 	SOURCE:MASTER:아픔 = 1000 + TALENT:MASTER:작은체형 * 200 - TALENT:MASTER:장신 * 200 - TALENT:작은체형 * 100 + TALENT:장신 * 100
 	SOURCE:MASTER:일탈 = 500
 ELSE
 	SOURCE:MASTER:아픔 = 500 + TALENT:MASTER:작은체형 * 100 - TALENT:MASTER:장신 * 100 - TALENT:작은체형 * 50 + TALENT:장신 * 50
 	SOURCE:MASTER:일탈 = 150
 ENDIF
-;윤활 부족시, 쾌VSOURCE에 감소 보정, 아픔 SOURCE 증가
-CALL SHORTAGE_LUBRICATION("2000/M쾌V, T, 40/M 상해, A, 1500")
-;쾌VSOURCE에 응해 중독충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
-SOURCE:MASTER:중독충족 = SOURCE:MASTER:쾌V - SOURCE:MASTER:일탈
+;윤활 부족시, 쾌ＶSOURCE에 감소 보정, 아픔 SOURCE 증가
+CALL SHORTAGE_LUBRICATION("2000/M쾌Ｖ, T, 40/M 상해, A, 1500")
+;쾌ＶSOURCE에 응해 중독충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
+SOURCE:MASTER:중독충족 = SOURCE:MASTER:쾌Ｖ - SOURCE:MASTER:일탈
 ;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
 ;상해, 일탈 SOURCE에 응해 중독충족 SOURCE 증가
@@ -57,44 +57,44 @@ TFLAG:경과시간 += 4
 ;MASTER가 처녀라면, 처녀상실이 일어난다
 TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
 
-;─
-;071, 애널피스트(H/A)[벌](쾌A, 접촉, 상해, 일탈, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
+;071, 애널피스트(Ｈ/Ａ)[벌](쾌Ａ, 접촉, 상해, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 @ACTION_APPLY_71
 ;하반신 전부 강제탈의
 TFLAG:강제탈의 = 5
 ;필요하면 로션을 사용
 CALL LOTION_USE
-;애무 보정치, 마조끼에 응해 쾌ASOURCE 증가
-SOURCE:MASTER:쾌A = 200 + ACT_FROM(TARGET, 3) * (ABL:MASTER:마조끼 + 5) / 5
+;애무 보정치, 마조끼에 응해 쾌ＡSOURCE 증가
+SOURCE:MASTER:쾌Ａ = 200 + ACT_FROM(TARGET, 3) * (ABL:MASTER:마조끼 + 5) / 5
 ;접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 300
-;A경험 /A확장경험가 적을 정도 쾌ASOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
+;Ａ경험/Ａ확장경험가 적을 정도 쾌ＡSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
 ;아픔 SOURCE는 체격차이에 의해도 증감한다
-IF EXP:MASTER:A경험 < 20 || EXP:MASTER:A확장경험 < 1
-	TIMES SOURCE:MASTER:쾌A , 0.10
+IF EXP:MASTER:Ａ경험 < 20 || EXP:MASTER:Ａ확장경험 < 1
+	TIMES SOURCE:MASTER:쾌Ａ , 0.10
 	SOURCE:MASTER:아픔 = 4000 + TALENT:MASTER:작은체형 * 700 - TALENT:MASTER:장신 * 700 - TALENT:작은체형 * 500 + TALENT:장신 * 500
 	SOURCE:MASTER:일탈 = 5000
-ELSEIF EXP:MASTER:A경험 < 25 || EXP:MASTER:A확장경험 < 2
-	TIMES SOURCE:MASTER:쾌A , 0.20
+ELSEIF EXP:MASTER:Ａ경험 < 25 || EXP:MASTER:Ａ확장경험 < 2
+	TIMES SOURCE:MASTER:쾌Ａ , 0.20
 	SOURCE:MASTER:아픔 = 3000 + TALENT:MASTER:작은체형 * 600 - TALENT:MASTER:장신 * 600 - TALENT:작은체형 * 420 + TALENT:장신 * 420
 	SOURCE:MASTER:일탈 = 4000
-ELSEIF EXP:MASTER:A경험 < 30 || EXP:MASTER:A확장경험 < 4
-	TIMES SOURCE:MASTER:쾌A , 0.35
+ELSEIF EXP:MASTER:Ａ경험 < 30 || EXP:MASTER:Ａ확장경험 < 4
+	TIMES SOURCE:MASTER:쾌Ａ , 0.35
 	SOURCE:MASTER:아픔 = 2000 + TALENT:MASTER:작은체형 * 500 - TALENT:MASTER:장신 * 500 - TALENT:작은체형 * 350 + TALENT:장신 * 350
 	SOURCE:MASTER:일탈 = 3000
-ELSEIF EXP:MASTER:A확장경험 < 6
-	TIMES SOURCE:MASTER:쾌A , 0.60
+ELSEIF EXP:MASTER:Ａ확장경험 < 6
+	TIMES SOURCE:MASTER:쾌Ａ , 0.60
 	SOURCE:MASTER:아픔 = 1000 + TALENT:MASTER:작은체형 * 380 - TALENT:MASTER:장신 * 380 - TALENT:작은체형 * 280 + TALENT:장신 * 280
 	SOURCE:MASTER:일탈 = 2000
 ELSE
 	SOURCE:MASTER:아픔 = 500 + TALENT:MASTER:작은체형 * 250 - TALENT:MASTER:장신 * 250 - TALENT:작은체형 * 200 + TALENT:장신 * 200
 	SOURCE:MASTER:일탈 = 1000
 ENDIF
-;윤활 부족시, 쾌ASOURCE에 감소 보정, 아픔 SOURCE 증가
-CALL SHORTAGE_LUBRICATION("2000/M쾌A, T, 40/M 상해, A, 1500")
-;쾌ASOURCE에 응해 중독충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
-SOURCE:MASTER:중독충족 = SOURCE:MASTER:쾌A - SOURCE:MASTER:일탈
+;윤활 부족시, 쾌ＡSOURCE에 감소 보정, 아픔 SOURCE 증가
+CALL SHORTAGE_LUBRICATION("2000/M쾌Ａ, T, 40/M 상해, A, 1500")
+;쾌ＡSOURCE에 응해 중독충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
+SOURCE:MASTER:중독충족 = SOURCE:MASTER:쾌Ａ - SOURCE:MASTER:일탈
 ;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
 ;상해, 일탈 SOURCE에 응해 중독충족 SOURCE 증가
@@ -112,67 +112,67 @@ TEQUIP:자위중 = 0
 TCVAR:MASTER:이번발기 += 50 + (GET_ABL(MASTER, "마조끼") - 20) * 4
 TFLAG:경과시간 += 4
 
-;─
-;072, 양구멍피스트(A)[벌](쾌V, 쾌A, 접촉, 상해, 일탈, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
+;072, 양구멍피스트(Ａ)[벌](쾌Ｖ, 쾌Ａ, 접촉, 상해, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 @ACTION_APPLY_72
 ;하반신 전부 강제탈의
 TFLAG:강제탈의 = 5
 ;필요하면 로션을 사용
 CALL LOTION_USE
-;애무 보정치, 마조끼에 응해 쾌V, 쾌ASOURCE 증가
-SOURCE:MASTER:쾌V = 200 + ACT_FROM(TARGET, 2) * (ABL:MASTER:마조끼 + 5) / 5
-SOURCE:MASTER:쾌A = 200 + ACT_FROM(TARGET, 3) * (ABL:MASTER:마조끼 + 5) / 5
+;애무 보정치, 마조끼에 응해 쾌Ｖ, 쾌ＡSOURCE 증가
+SOURCE:MASTER:쾌Ｖ = 200 + ACT_FROM(TARGET, 2) * (ABL:MASTER:마조끼 + 5) / 5
+SOURCE:MASTER:쾌Ａ = 200 + ACT_FROM(TARGET, 3) * (ABL:MASTER:마조끼 + 5) / 5
 ;접촉 SOURCE 증가
 SOURCE:MASTER:접촉 = 500
-;V경험 /V확장경험가 적을 정도 쾌VSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
+;Ｖ경험/Ｖ확장경험가 적을 정도 쾌ＶSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
 ;아픔 SOURCE는 체격차이에 의해도 증감한다
-IF EXP:MASTER:V경험 < 20 || EXP:MASTER:V확장경험 < 1
-	TIMES SOURCE:MASTER:쾌V , 0.10
+IF EXP:MASTER:Ｖ경험 < 20 || EXP:MASTER:Ｖ확장경험 < 1
+	TIMES SOURCE:MASTER:쾌Ｖ , 0.10
 	SOURCE:MASTER:아픔 = 3000 + TALENT:MASTER:작은체형 * 500 - TALENT:MASTER:장신 * 500 - TALENT:작은체형 * 250 + TALENT:장신 * 250
 	SOURCE:MASTER:일탈 = 2500
-ELSEIF EXP:MASTER:V경험 < 25 || EXP:MASTER:V확장경험 < 2
-	TIMES SOURCE:MASTER:쾌V , 0.25
+ELSEIF EXP:MASTER:Ｖ경험 < 25 || EXP:MASTER:Ｖ확장경험 < 2
+	TIMES SOURCE:MASTER:쾌Ｖ , 0.25
 	SOURCE:MASTER:아픔 = 2500 + TALENT:MASTER:작은체형 * 400 - TALENT:MASTER:장신 * 400 - TALENT:작은체형 * 200 + TALENT:장신 * 200
 	SOURCE:MASTER:일탈 = 2000
-ELSEIF EXP:MASTER:V경험 < 30 || EXP:MASTER:V확장경험 < 4
-	TIMES SOURCE:MASTER:쾌V , 0.45
+ELSEIF EXP:MASTER:Ｖ경험 < 30 || EXP:MASTER:Ｖ확장경험 < 4
+	TIMES SOURCE:MASTER:쾌Ｖ , 0.45
 	SOURCE:MASTER:아픔 = 1800 + TALENT:MASTER:작은체형 * 300 - TALENT:MASTER:장신 * 300 - TALENT:작은체형 * 150 + TALENT:장신 * 150
 	SOURCE:MASTER:일탈 = 1200
-ELSEIF EXP:MASTER:V확장경험 < 6
-	TIMES SOURCE:MASTER:쾌V , 0.70
+ELSEIF EXP:MASTER:Ｖ확장경험 < 6
+	TIMES SOURCE:MASTER:쾌Ｖ , 0.70
 	SOURCE:MASTER:아픔 = 1000 + TALENT:MASTER:작은체형 * 200 - TALENT:MASTER:장신 * 200 - TALENT:작은체형 * 100 + TALENT:장신 * 100
 	SOURCE:MASTER:일탈 = 500
 ELSE
 	SOURCE:MASTER:아픔 = 500 + TALENT:MASTER:작은체형 * 100 - TALENT:MASTER:장신 * 100 - TALENT:작은체형 * 50 + TALENT:장신 * 50
 	SOURCE:MASTER:일탈 = 150
 ENDIF
-;A경험 /A확장경험가 적을 정도 쾌ASOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
+;Ａ경험/Ａ확장경험가 적을 정도 쾌ＡSOURCE가 감쇠해, 상해, 일탈 SOURCE가 증가한다
 ;아픔 SOURCE는 체격차이에 의해도 증감한다
-IF EXP:MASTER:A경험 < 20 || EXP:MASTER:A확장경험 < 1
-	TIMES SOURCE:MASTER:쾌A , 0.10
+IF EXP:MASTER:Ａ경험 < 20 || EXP:MASTER:Ａ확장경험 < 1
+	TIMES SOURCE:MASTER:쾌Ａ , 0.10
 	SOURCE:MASTER:아픔 += 4000 + TALENT:MASTER:작은체형 * 700 - TALENT:MASTER:장신 * 700 - TALENT:작은체형 * 500 + TALENT:장신 * 500
 	SOURCE:MASTER:일탈 += 5000
-ELSEIF EXP:MASTER:A경험 < 25 || EXP:MASTER:A확장경험 < 2
-	TIMES SOURCE:MASTER:쾌A , 0.20
+ELSEIF EXP:MASTER:Ａ경험 < 25 || EXP:MASTER:Ａ확장경험 < 2
+	TIMES SOURCE:MASTER:쾌Ａ , 0.20
 	SOURCE:MASTER:아픔 += 3000 + TALENT:MASTER:작은체형 * 600 - TALENT:MASTER:장신 * 600 - TALENT:작은체형 * 420 + TALENT:장신 * 420
 	SOURCE:MASTER:일탈 += 4000
-ELSEIF EXP:MASTER:A경험 < 30 || EXP:MASTER:A확장경험 < 4
-	TIMES SOURCE:MASTER:쾌A , 0.35
+ELSEIF EXP:MASTER:Ａ경험 < 30 || EXP:MASTER:Ａ확장경험 < 4
+	TIMES SOURCE:MASTER:쾌Ａ , 0.35
 	SOURCE:MASTER:아픔 += 2000 + TALENT:MASTER:작은체형 * 500 - TALENT:MASTER:장신 * 500 - TALENT:작은체형 * 350 + TALENT:장신 * 350
 	SOURCE:MASTER:일탈 += 3000
-ELSEIF EXP:MASTER:A확장경험 < 6
-	TIMES SOURCE:MASTER:쾌A , 0.60
+ELSEIF EXP:MASTER:Ａ확장경험 < 6
+	TIMES SOURCE:MASTER:쾌Ａ , 0.60
 	SOURCE:MASTER:아픔 += 1000 + TALENT:MASTER:작은체형 * 380 - TALENT:MASTER:장신 * 380 - TALENT:작은체형 * 280 + TALENT:장신 * 280
 	SOURCE:MASTER:일탈 += 2000
 ELSE
 	SOURCE:MASTER:아픔 += 500 + TALENT:MASTER:작은체형 * 250 - TALENT:MASTER:장신 * 250 - TALENT:작은체형 * 200 + TALENT:장신 * 200
 	SOURCE:MASTER:일탈 += 1000
 ENDIF
-;윤활 부족시, 쾌V, 쾌ASOURCE에 감소 보정, 아픔 SOURCE 증가
-CALL SHORTAGE_LUBRICATION("2000/M쾌V, T, 40/M쾌A, T, 40/M 상해, A, 3000")
-;쾌V, 쾌ASOURCE에 응해 중독충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
-SOURCE:MASTER:중독충족 = SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A - SOURCE:MASTER:일탈
+;윤활 부족시, 쾌Ｖ, 쾌ＡSOURCE에 감소 보정, 아픔 SOURCE 증가
+CALL SHORTAGE_LUBRICATION("2000/M쾌Ｖ, T, 40/M쾌Ａ, T, 40/M 상해, A, 3000")
+;쾌Ｖ, 쾌ＡSOURCE에 응해 중독충족 SOURCE 증가, 일탈 SOURCE에 의해 감소
+SOURCE:MASTER:중독충족 = SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ - SOURCE:MASTER:일탈
 ;중독충족 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:중독충족 = SOURCE:MASTER:중독충족 < 0 ? 0 # SOURCE:MASTER:중독충족
 ;상해, 일탈 SOURCE에 응해 중독충족 SOURCE 증가
@@ -194,26 +194,26 @@ TFLAG:경과시간 += 4
 ;MASTER가 처녀라면, 처녀상실이 일어난다
 TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
 
-;─
-;073, 방치플레이(H/A)[벌](노출, 일탈)
-;─
+;────────────────────────────────────
+;073, 방치플레이(Ｈ/Ａ)[벌](노출, 일탈)
+;────────────────────────────────────
 @ACTION_APPLY_73
 ;필요하면 미약을 사용
 CALL LOVEPOTION_USE
 ;이상, 수치, 조교레벨에 응해 노출 SOURCE 증가
 SOURCE:MASTER:노출 = 100 + (GET_ABL(TARGET, "이상") + 50) * (GET_ABL(TARGET, "수치") + 10) * GET_TRAINLV(TARGET) / 100
-;노출 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 조교레벨, 노출버릇에 의해 감소
-SOURCE:MASTER:일탈 = 500 + SOURCE:MASTER:노출 - CFLAG:MASTER:조교레벨 * 80 - GET_ABL(MASTER, "노출버릇") * 16
+;노출 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 조교레벨, 노출증에 의해 감소
+SOURCE:MASTER:일탈 = 500 + SOURCE:MASTER:노출 - CFLAG:MASTER:조교레벨 * 80 - GET_ABL(MASTER, "노출증") * 16
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
 ;안면승마계 해제
 CALL FACESITTING_SET(0)
 TFLAG:경과시간 += 2
 
-;─
+;────────────────────────────────────
 ;074, 공중육변기플레이
-;─
-;리액션전(A)[벌](사랑역, 구속, 노출, 일탈, 트라우마)
+;────────────────────────────────────
+;리액션전(Ａ)[벌](사랑역, 구속, 노출, 일탈, 트라우마)
 ;용서를빈다일로 캔슬할 수 있기 때문에, 여기에서는 조교자가 돌아간 후의 처리를 실시하지 않습니다
 @ACTION_APPLY_74
 ;반반의 확률로 악세사리─까지, 전라까지 강제탈의
@@ -228,8 +228,8 @@ SOURCE:MASTER:사랑 = SOURCE:MASTER:사랑 < 0 ? 0 # SOURCE:MASTER:사랑
 SOURCE:MASTER:구속 = 150 + (MARK:반항각인 + 1) * (GET_ABL(TARGET, "기교") + 10) * (TALENT:결박능숙 + 1)
 ;이상, 수치, 구속 SOURCE에 응해 노출 SOURCE 증가
 SOURCE:MASTER:노출 = 500 + (GET_ABL(TARGET, "이상") + 50) * (GET_ABL(TARGET, "수치") + 10) * SOURCE:MASTER:구속 / 10000
-;노출 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 조교레벨, 노출버릇, 욕망, 음란 소질에 의해 감소
-SOURCE:MASTER:일탈 = 5000 + SOURCE:MASTER:노출 - CFLAG:MASTER:조교레벨 * 100 - GET_ABL(MASTER, "노출버릇") * 30 - GET_ABL(MASTER, "욕망") * 20 - TALENT:MASTER:음란 * 2000
+;노출 SOURCE에 응해 일탈 SOURCE 증가, 조교 대상 조교레벨, 노출증, 욕망, 음란 소질에 의해 감소
+SOURCE:MASTER:일탈 = 5000 + SOURCE:MASTER:노출 - CFLAG:MASTER:조교레벨 * 100 - GET_ABL(MASTER, "노출증") * 30 - GET_ABL(MASTER, "욕망") * 20 - TALENT:MASTER:음란 * 2000
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
 ;일탈 SOURCE를 그대로 트라우마 SOURCE로 한다
@@ -255,7 +255,7 @@ CALL FACESITTING_SET(0)
 TEQUIP:자위중 = 0
 TFLAG:경과시간 += 60
 
-;리액션 후(쾌C, 쾌V, 쾌A, 쾌B, 사랑역, 상해, 구속, 노출, 불결, 일탈, 중독충족, 트라우마)
+;리액션 후(쾌Ｃ, 쾌Ｖ, 쾌Ａ, 쾌Ｂ, 사랑역, 상해, 구속, 노출, 불결, 일탈, 중독충족, 트라우마)
 @ACTION_APPLY2_74
 ;REACT분류가용서를빈다였던 경우 캔슬
 IF IS_COMGRONAME("용서를빈다")
@@ -272,24 +272,24 @@ IF IS_COMGRONAME("용서를빈다")
 ELSE
 	;2/3의 확률로 발견된다
 	IF RAND:3
-		;쾌C, 쾌V, 쾌A, 쾌B, 상해, 구속, 불결 SOURCE 증가
-		;(남자이면 쾌V, 쾌B는 발생하지 않는다)
-		SOURCE:MASTER:쾌C += 2000 + (RAND:100 + 1) * 10
-		SOURCE:MASTER:쾌V += TALENT:MASTER:남자 ? 0 # 3000 + (RAND:30 + 1) * 50
-		SOURCE:MASTER:쾌A += 2500 + (RAND:100 + 1) * 10
-		SOURCE:MASTER:쾌B += TALENT:MASTER:남자 ? 0 # 2000 + (RAND:100 + 1) * 10
-		SOURCE:MASTER:아픔 += 1000 + (RAND:150 + 1) * 15 + (ABL:MASTER:A감각 < 2 ? SOURCE:MASTER:쾌A / 3 # 0)
+		;쾌Ｃ, 쾌Ｖ, 쾌Ａ, 쾌Ｂ, 상해, 구속, 불결 SOURCE 증가
+		;(남자이면 쾌Ｖ, 쾌Ｂ는 발생하지 않는다)
+		SOURCE:MASTER:쾌Ｃ += 2000 + (RAND:100 + 1) * 10
+		SOURCE:MASTER:쾌Ｖ += TALENT:MASTER:남자 ? 0 # 3000 + (RAND:30 + 1) * 50
+		SOURCE:MASTER:쾌Ａ += 2500 + (RAND:100 + 1) * 10
+		SOURCE:MASTER:쾌Ｂ += TALENT:MASTER:남자 ? 0 # 2000 + (RAND:100 + 1) * 10
+		SOURCE:MASTER:아픔 += 1000 + (RAND:150 + 1) * 15 + (ABL:MASTER:Ａ감각 < 2 ? SOURCE:MASTER:쾌Ａ / 3 # 0)
 		SOURCE:MASTER:구속 += 500 + (RAND:20 + 1) * 20
 		SOURCE:MASTER:불결 += 1500 + (RAND:10 + 1) * 50
 		;전신에 정액 더러운 추가
 		;(페니스, 바기나는 존재시만)
-		STAIN:MASTER:구 |= 4
+		STAIN:MASTER:입 |= 4
 		STAIN:MASTER:손 |= 4
 		STAIN:MASTER:페니스 |= (TALENT:MASTER:후타나리 || TALENT:MASTER:남자) ? 4 # 0
 		STAIN:MASTER:바기나 |= TALENT:MASTER:남자 ? 0 # 4
 		STAIN:MASTER:애널 |= 4
 		STAIN:MASTER:가슴 |= 4
-		STAIN:MASTER:다리 |= 4
+		STAIN:MASTER:발 |= 4
 		;음란의 경우
 		IF TALENT:MASTER:음란
 			;중독충족 SOURCE 증가
@@ -318,9 +318,9 @@ ELSE
 	ENDIF
 ENDIF
 
-;─
-;075, 페니스밴드장착(N/H)[벌](트라우마)
-;─
+;────────────────────────────────────
+;075, 페니스밴드장착(Ｎ/Ｈ)[벌](트라우마)
+;────────────────────────────────────
 @ACTION_APPLY_75
 ;트라우마(각인)에 응해 트라우마 SOURCE 증가
 SOURCE:MASTER:트라우마 = 100 + MARK:MASTER:트라우마 * 50
@@ -337,23 +337,23 @@ ELSE
 	TFLAG:자주탈의 = 5
 ENDIF
 ;조교자 욕망, 조교레벨, 도구사용 소질, 기교, 도구 강화에 응해 쾌vSOURCE 증가
-SOURCE:쾌V = 150 + GET_ABL(TARGET, "욕망") * (GET_TRAINLV(TARGET) + 1) * 5 / 10 + (TALENT:도구사용 + 1) * GET_ABL(TARGET, "기교") * (ITEM:9 + 1) * 3
-;조교 대상 조교레벨과 욕망을 봐, 어느 쪽인지가 낮으면 SOURCE:쾌V경감
+SOURCE:쾌Ｖ = 150 + GET_ABL(TARGET, "욕망") * (GET_TRAINLV(TARGET) + 1) * 5 / 10 + (TALENT:도구사용 + 1) * GET_ABL(TARGET, "기교") * (ITEM:9 + 1) * 3
+;조교 대상 조교레벨과 욕망을 봐, 어느 쪽인지가 낮으면 SOURCE:쾌Ｖ경감
 IF CFLAG:MASTER:조교레벨 < 1 || ABL:MASTER:욕망 < 1
-	TIMES SOURCE:쾌V, 0.10
+	TIMES SOURCE:쾌Ｖ, 0.10
 ELSEIF CFLAG:MASTER:조교레벨 < 3 || ABL:MASTER:욕망 < 2
-	TIMES SOURCE:쾌V, 0.25
+	TIMES SOURCE:쾌Ｖ, 0.25
 ELSEIF CFLAG:MASTER:조교레벨 < 5 || ABL:MASTER:욕망 < 3
-	TIMES SOURCE:쾌V, 0.40
+	TIMES SOURCE:쾌Ｖ, 0.40
 ELSEIF CFLAG:MASTER:조교레벨 < 8 || ABL:MASTER:욕망 < 4
-	TIMES SOURCE:쾌V, 0.60
+	TIMES SOURCE:쾌Ｖ, 0.60
 ELSEIF CFLAG:MASTER:조교레벨 < 11 || ABL:MASTER:욕망 < 5
-	TIMES SOURCE:쾌V, 0.85
+	TIMES SOURCE:쾌Ｖ, 0.85
 ENDIF
-;SOURCE:쾌V의 것 1/5만 조교자 욕정이 증가
-CUP:MASTER:욕정 += SOURCE:쾌V / 5
-;SOURCE:쾌V에 응해 일탈 SOURCE 증가, 조교 대상 노출버릇, 조교레벨에 의해 감소
-SOURCE:MASTER:일탈 = SOURCE:쾌V - GET_ABL(MASTER, "노출버릇") * 2 - CFLAG:MASTER:조교레벨 * 5
+;SOURCE:쾌Ｖ의 것 1/5만 조교자 욕정이 증가
+CUP:MASTER:욕정 += SOURCE:쾌Ｖ / 5
+;SOURCE:쾌Ｖ에 응해 일탈 SOURCE 증가, 조교 대상 노출증, 조교레벨에 의해 감소
+SOURCE:MASTER:일탈 = SOURCE:쾌Ｖ - GET_ABL(MASTER, "노출증") * 2 - CFLAG:MASTER:조교레벨 * 5
 ;일탈 SOURCE가 부의 값을 받지 않게 조정
 SOURCE:MASTER:일탈 = SOURCE:MASTER:일탈 < 0 ? 0 # SOURCE:MASTER:일탈
 ;안면승마계 해제

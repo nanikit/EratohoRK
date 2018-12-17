@@ -583,9 +583,9 @@ RESETCOLOR
 #DIM RED,2
 #DIM GREEN,2
 #DIM BLUE,2
-#DIMS M전회의자세, 1
+#DIMS M전회자세, 1
 #DIMS M이번자세, 1
-#DIMS T전회의자세, 1
+#DIMS T전회자세, 1
 #DIMS T이번자세, 1
 VARSET RED
 VARSET GREEN
@@ -608,19 +608,19 @@ SELECTCASE TCVAR:MASTER:자세
 	CASEELSE
 		M이번자세 = 편하게하고있다
 ENDSELECT
-SELECTCASE TCVAR:MASTER:전회의자세
+SELECTCASE TCVAR:MASTER:전회자세
 	CASE 1
-		M전회의자세 = 위로돌리고
+		M전회자세 = 위로돌리고
 	CASE 2
-		M전회의자세 = 앉아있다
+		M전회자세 = 앉아있다
 	CASE 3
-		M전회의자세 = 네발로엎드림
+		M전회자세 = 네발로엎드림
 	CASE 4
-		M전회의자세 = 직립
+		M전회자세 = 직립
 	CASE 10
-		M전회의자세 = 무릎서기
+		M전회자세 = 무릎서기
 	CASEELSE
-		M전회의자세 = 편하게하고있다
+		M전회자세 = 편하게하고있다
 ENDSELECT
 ;주인
 SELECTCASE TCVAR:MASTER:위치상하
@@ -640,21 +640,21 @@ SELECTCASE TCVAR:MASTER:위치상하
 				T이번자세 = %CALLNAME:MASTER%를 보고 찰
 		ENDSELECT
 ENDSELECT
-SELECTCASE TCVAR:MASTER:전회의위치상하
+SELECTCASE TCVAR:MASTER:전회위치상하
 	CASE 1
-		T전회의자세 = %CALLNAME:MASTER%위
+		T전회자세 = %CALLNAME:MASTER%위
 	CASE 2
-		T전회의자세 = %CALLNAME:MASTER%아래
+		T전회자세 = %CALLNAME:MASTER%아래
 	CASEELSE
-		SELECTCASE TCVAR:MASTER:전회의위치전후
+		SELECTCASE TCVAR:MASTER:전회위치전후
 			CASE 1
-				T전회의자세 = %CALLNAME:MASTER%의 정면
+				T전회자세 = %CALLNAME:MASTER%의 정면
 			CASE 2
-				T전회의자세 = %CALLNAME:MASTER%의 배후
+				T전회자세 = %CALLNAME:MASTER%의 배후
 			CASE 3
-				T전회의자세 = %CALLNAME:MASTER%에 등을 돌리고 있다
+				T전회자세 = %CALLNAME:MASTER%에 등을 돌리고 있다
 			CASEELSE
-				T전회의자세 = %CALLNAME:MASTER%를 보고 찰
+				T전회자세 = %CALLNAME:MASTER%를 보고 찰
 		ENDSELECT
 ENDSELECT
 
@@ -681,18 +681,18 @@ GREEN:1 = MAX(1, (GREEN-GETGREEN(0x0000))/4)
 BLUE:1 = MAX(1, (BLUE-GETBLUE(0x0000))/4)
 
 ;원래의 자세를 표시한다
-PRINTFORMDL 현재의 자세:[%CALLNAME:MASTER%:%M전회의자세%][%CALLNAME%:%T전회의자세%]
+PRINTFORMDL 현재의 자세:[%CALLNAME:MASTER%:%M전회자세%][%CALLNAME%:%T전회자세%]
 PRINTL 
 
 ;자세의 변화가 있는지 없는지를 LOCAL:0~1
 ;변화한 문자수를 LOCAL:10~11에 보존한다
-IF M전회의자세 != M이번자세
+IF M전회자세 != M이번자세
 	LOCAL:0 = 1
-	LOCAL:10 = STRLENS(M이번자세)-STRLENS(M전회의자세)
+	LOCAL:10 = STRLENS(M이번자세)-STRLENS(M전회자세)
 ENDIF
-IF T전회의자세 != T이번자세
+IF T전회자세 != T이번자세
 	LOCAL:1 = 1
-	LOCAL:11 = STRLENS(T이번자세)-STRLENS(T전회의자세)
+	LOCAL:11 = STRLENS(T이번자세)-STRLENS(T전회자세)
 ENDIF
 ;어느쪽이나 변함없으면 돌아온다. 만약을 위해
 IF !LOCAL:0 && !LOCAL:1
@@ -710,16 +710,16 @@ FOR LCOUNT, 0, 4
 	PRINTFORMD 현재의 자세:[%CALLNAME:MASTER%:
 	;조교 대상
 	IF LOCAL:0
-		PRINTFORM %M전회의자세%
+		PRINTFORM %M전회자세%
 	ELSE
-		PRINTFORMD %M전회의자세%
+		PRINTFORMD %M전회자세%
 	ENDIF
 	PRINTFORMD ][%CALLNAME%:
 	;조교자
 	IF LOCAL:1
-		PRINTFORM %T전회의자세%
+		PRINTFORM %T전회자세%
 	ELSE
-		PRINTFORMD %T전회의자세%
+		PRINTFORMD %T전회자세%
 	ENDIF
 	PRINTDL ]
 	PRINTL
@@ -735,9 +735,9 @@ FOR LCOUNT, 0, MAX(ABS(LOCAL:10), ABS(LOCAL:11))
 	ELSEIF ABS(LOCAL:10) <= LCOUNT
 		PRINTFORMD %" "*(STRLENS(M이번자세))%
 	ELSEIF LOCAL:10 < 0
-		PRINTFORMD %" "*(STRLENS(M전회의자세)-LCOUNT-1)%
+		PRINTFORMD %" "*(STRLENS(M전회자세)-LCOUNT-1)%
 	ELSE
-		PRINTFORMD %" "*(STRLENS(M전회의자세)+LCOUNT+1)%
+		PRINTFORMD %" "*(STRLENS(M전회자세)+LCOUNT+1)%
 	ENDIF
 	PRINTFORMD ][%CALLNAME%:
 	;조교자
@@ -746,9 +746,9 @@ FOR LCOUNT, 0, MAX(ABS(LOCAL:10), ABS(LOCAL:11))
 	ELSEIF ABS(LOCAL:11) <= LCOUNT
 		PRINTFORMD %" "*(STRLENS(T이번자세))%
 	ELSEIF LOCAL:11 < 0
-		PRINTFORMD %" "*(STRLENS(T전회의자세)-LCOUNT-1)%
+		PRINTFORMD %" "*(STRLENS(T전회자세)-LCOUNT-1)%
 	ELSE
-		PRINTFORMD %" "*(STRLENS(T전회의자세)+LCOUNT+1)%
+		PRINTFORMD %" "*(STRLENS(T전회자세)+LCOUNT+1)%
 	ENDIF
 	PRINTDL ]
 	PRINTL

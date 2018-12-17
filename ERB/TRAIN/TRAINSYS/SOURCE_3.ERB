@@ -1,6 +1,6 @@
-﻿;─
+﻿;────────────────────────────────────
 ;노출의 소스(욕정, 치정, 불쾌, 억울, 기력, 흥미)
-;─
+;────────────────────────────────────
 @CALC_SOURCE20
 
 ;수줍음과 수치심옅음은 여기서 처리
@@ -13,8 +13,8 @@ SIF TALENT:MASTER:수치심옅음
 SIF EXP:성지식 < 10 || TALENT:MASTER:유치
 	TIMES SOURCE:MASTER:노출 , 0.80
 
-;욕정, 노출버릇과 조교 정도를 본다
-CUP:MASTER:욕정 += SOURCE:MASTER:노출 * (10 + GET_ABL(MASTER, "노출버릇") * 2 + CFLAG:MASTER:조교레벨 * 10) / 250
+;욕정, 노출증과 조교 정도를 본다
+CUP:MASTER:욕정 += SOURCE:MASTER:노출 * (10 + GET_ABL(MASTER, "노출증") * 2 + CFLAG:MASTER:조교레벨 * 10) / 250
 
 ;치정, PALAM:MASTER:치정을 본다
 CUP:MASTER:치정 += SOURCE:MASTER:노출 * LINE_CALC(PALAM:MASTER:치정, "0→100,10000→0") / 100
@@ -39,11 +39,11 @@ SIF IS_NOWCOMNAME("애정을담아준다")
 SIF IS_NOWCOMNAME("자위하기시작한다")
 	TIMES LOCAL , 0.25
 
-;순종과 노출버릇을 본다
+;순종과 노출증을 본다
 IF LOCAL > 0
-	CUP:MASTER:불쾌 += SOURCE:MASTER:노출 * (400 - GET_ABL(MASTER, "순종") * 4) * (200 - GET_ABL(MASTER, "노출버릇") * 2) / 20000
+	CUP:MASTER:불쾌 += SOURCE:MASTER:노출 * (400 - GET_ABL(MASTER, "순종") * 4) * (200 - GET_ABL(MASTER, "노출증") * 2) / 20000
 ELSE
-	CUP:MASTER:억울 += SOURCE:MASTER:노출 * (200 - GET_ABL(MASTER, "순종") * 2) * (400 - GET_ABL(MASTER, "노출버릇") * 4) / 20000
+	CUP:MASTER:억울 += SOURCE:MASTER:노출 * (200 - GET_ABL(MASTER, "순종") * 2) * (400 - GET_ABL(MASTER, "노출증") * 4) / 20000
 ENDIF
 
 ;노출 SOURCE로부터 보정치를 만든다
@@ -55,9 +55,9 @@ DOWNBASE:MASTER:기력 += LOCAL * 2
 ;흥미
 BASE:흥미 += LOCAL * (3 + TALENT:호기심 - TALENT:무관심) / 2
 
-;─
+;────────────────────────────────────
 ;불결의 소스(불쾌, 억울, 기력)
-;─
+;────────────────────────────────────
 @CALC_SOURCE21
 
 ;관련 소질의 처리
@@ -82,9 +82,9 @@ ENDIF
 ;기력
 DOWNBASE:MASTER:기력 += SOURCE:MASTER:불결 / 20
 
-;─
+;────────────────────────────────────
 ;일탈의 소스(반항 소스, 공포 소스, 기력, 흥미)
-;─
+;────────────────────────────────────
 @CALC_SOURCE22
 
 ;호기심과 감수성은 여기서 처리
@@ -113,9 +113,9 @@ DOWNBASE:MASTER:기력 += SOURCE:MASTER:일탈 / 30
 ;흥미
 BASE:흥미 += SOURCE:MASTER:일탈 / 50 + 1
 
-;─
+;────────────────────────────────────
 ;중독충족의 소스(욕정, 공순, 이성, 호감도)
-;─
+;────────────────────────────────────
 @CALC_SOURCE23
 
 ;욕정을 본다
@@ -128,9 +128,9 @@ DOWNBASE:MASTER:이성 += SOURCE:MASTER:중독충족 / 50 + 1
 ;호감도 변동
 TFLAG:호감도업 += LINE_CALC(SOURCE:MASTER:중독충족, "0→0, 5000→25, LIMIT/0～25")
 
-;─
+;────────────────────────────────────
 ;트라우마의 소스(반항 소스, 공포 소스, 굴복, 불쾌, 억울, 기력, 호감도)
-;─
+;────────────────────────────────────
 @CALC_SOURCE24
 
 ;트라우마 각인, 순종과 조교 정도를 본다

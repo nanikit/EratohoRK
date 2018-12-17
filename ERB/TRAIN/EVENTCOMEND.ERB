@@ -31,33 +31,33 @@
 ;조교 계속 기준치
 #DIM 계속기준치
 
-;─
+;────────────────────────────────────
 ;절정계 전회 턴 참조 플래그의 리셋트
-;─
+;────────────────────────────────────
 ;LOCAL 초기화
 VARSET LOCAL
 FOR LCOUNT, 0, CHARANUM
 	VARSET TCVAR:LCOUNT:0, 0, 80, 90
 NEXT
 
-;─
+;────────────────────────────────────
 ;모유와 사진의 계산
-;─
+;────────────────────────────────────
 ;조수ACT가 사진촬영
 SIF TFLAG:조수ACT == 52
 	CALL SELL_PHOTO
 
 
-;─
+;────────────────────────────────────
 ;호감도의 계산(조교 대상)
-;─
+;────────────────────────────────────
 ;LOCAL 초기화
 VARSET LOCAL
 
 ;호감도업, 매혹 소질을 바탕으로 증감치의 종을 재배한다
 M호의증감 = TFLAG:호감도업 + TALENT:매혹 * (RAND:3 + 1)
 
-;CUP:MASTER:쾌X에 의해 증감치 증가
+;CUP:MASTER:쾌Ｘ에 의해 증감치 증가
 FOR LCOUNT, 0, 4
 	SIF CUP:MASTER:LCOUNT > 100
 		M호의증감 += 1 + CUP:MASTER:LCOUNT / 1000
@@ -81,14 +81,14 @@ SIF M호의증감 != 0
 	PRINTFORML %CALLNAME:TARGET%에의 호감도\@ M호의증감 >= 0 ? + # \@{M호의증감}  (현재가{CFLAG:M호의})
 
 
-;─
+;────────────────────────────────────
 ;호감도의 계산(조교자)
-;─
+;────────────────────────────────────
 ;LOCAL 초기화
 VARSET LOCAL
 
 ;PALAM 상승등을 바탕으로 증감치의 종을 재배한다
-T호의증감 = BASE:만족 / 200 + (CUP:쾌C + CUP:쾌V + CUP:쾌A + CUP:쾌B) / 250 + (CUP:MASTER:욕정 + CUP:MASTER:굴복 - CUP:MASTER:반항) / 150 + (SOURCE:MASTER:사랑 + SOURCE:MASTER:달성) / 100 + (NOWEX:C절정 + NOWEX:V절정 + NOWEX:A절정 + NOWEX:B절정 + NOWEX:분유 + NOWEX:사정) * 2
+T호의증감 = BASE:만족 / 200 + (CUP:쾌Ｃ + CUP:쾌Ｖ + CUP:쾌Ａ + CUP:쾌Ｂ) / 250 + (CUP:MASTER:욕정 + CUP:MASTER:굴복 - CUP:MASTER:반항) / 150 + (SOURCE:MASTER:사랑 + SOURCE:MASTER:달성) / 100 + (NOWEX:Ｃ절정 + NOWEX:Ｖ절정 + NOWEX:Ａ절정 + NOWEX:Ｂ절정 + NOWEX:분유 + NOWEX:사정) * 2
 
 ;조교 대상 호감도 상승중 또한 리액션이 온순하면 추가로 증가
 SIF M호의증감 > 0 && TFLAG:REACT분류 < 5
@@ -142,9 +142,9 @@ IF T호의증감 != 0
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;경험치의 계산(조교 대상)
-;─
+;────────────────────────────────────
 ;LOCAL 초기화
 VARSET LOCAL
 
@@ -176,10 +176,10 @@ M경험상승 -= LIMIT(CUP:MASTER:억울 / 240, 0, 5)
 ;봉사의 추가 경험치
 IF TFLAG:ACT분류 == 5
 	;REACT분류가 소극적 따른다
-	SIF IS_COMGRONAME("소극적 따른다")
+	SIF IS_COMGRONAME("소극적으로 한다")
 		M경험상승 += 4
 	;REACT분류가 적극적 따른다
-	SIF IS_COMGRONAME("적극적 따른다")
+	SIF IS_COMGRONAME("적극적으로 한다")
 		M경험상승 += 7
 ENDIF
 
@@ -217,9 +217,9 @@ IF M경험상승 > 0
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;경험치의 계산(조교자)
-;─
+;────────────────────────────────────
 ;상승치 초기화
 T경험상승 = 0
 
@@ -254,10 +254,10 @@ T경험상승 -= LIMIT(9 * CUP:MASTER:억울 / 2500, 0, 9)
 
 ;조교 대상의 반응에 의한 변동
 ;REACT분류가 소극적 따른다
-SIF IS_COMGRONAME("소극적 따른다")
+SIF IS_COMGRONAME("소극적으로 한다")
 	T경험상승 += 2
 ;REACT분류가 적극적 따른다
-SIF IS_COMGRONAME("적극적 따른다")
+SIF IS_COMGRONAME("적극적으로 한다")
 	T경험상승 += 5
 ;REACT분류가용서를빈다
 SIF IS_COMGRONAME("용서를빈다")
@@ -300,9 +300,9 @@ IF T경험상승 > 0
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;죄악감과 아라이먼트변동
-;─
+;────────────────────────────────────
 
 ;이른바 업치
 
@@ -316,8 +316,8 @@ VARSET LOCAL
 SIF (CUP:MASTER:공포 + CUP:MASTER:억울) > 1000
 	죄악감상승 += RAND:2
 
-;새디즘, 벌모드, 조교 대상의 반항이 격렬한, 1개에서도 채우면 고통과 불쾌는 업에 가산하지 않습니다
-IF !TALENT:새디즘 && (MARK:반항각인 * 150 < CUP:MASTER:반항) && !TFLAG:벌플래그
+;새드, 벌모드, 조교 대상의 반항이 격렬한, 1개에서도 채우면 고통과 불쾌는 업에 가산하지 않습니다
+IF !TALENT:새드 && (MARK:반항각인 * 150 < CUP:MASTER:반항) && !TFLAG:벌플래그
 	;공포와 억울을 본다(1/300상승, 상한 4)
 	죄악감상승 += LIMIT((CUP:MASTER:고통 + CUP:MASTER:불쾌) / 300, 0, 4)
 	;한층 더 RAND:(1/600) 상승(0～2)
@@ -332,7 +332,7 @@ SIF (TALENT:얌전함 || TALENT:상냥함) && (TFLAG:턴방침 > 3 || TFLAG:ACT�
 ;소질에 의한 보정
 SIF TALENT:얌전함 || TALENT:상냥함
 	TIMES 죄악감상승 , 1.50
-SIF TALENT:거만함 || TALENT:새디즘 || TALENT:심술쟁이
+SIF TALENT:거만함 || TALENT:새드 || TALENT:심술쟁이
 	TIMES 죄악감상승 , 0.50
 
 ;죄악감 증가
@@ -450,9 +450,9 @@ ENDIF
 CFLAG:아라이먼트 += 아라변동 / 100
 
 
-;─
+;────────────────────────────────────
 ;벌관련의 처리
-;─
+;────────────────────────────────────
 
 ;LOCAL 초기화
 VARSET LOCAL
@@ -499,13 +499,13 @@ IF TFLAG:벌플래그 > 0
 		ENDIF
 	ENDIF
 ;조금 복잡한 계산을 하고 있는 것 같지만, 벌포인트를 100까지 모으면 벌모드라고 하는 인식으로 괜찮습니다.
-ELSEIF TFLAG:벌포인트 + RAND:40 - RAND:10 > 100 + TALENT:심술쟁이 * 3 - TALENT:상냥함 * RAND:5 - TALENT:새디즘 * 5 - TALENT:프라이드높음 * (1 + RAND:3) + TALENT:프라이드낮음 * (1 + RAND:2)
+ELSEIF TFLAG:벌포인트 + RAND:40 - RAND:10 > 100 + TALENT:심술쟁이 * 3 - TALENT:상냥함 * RAND:5 - TALENT:새드 * 5 - TALENT:프라이드높음 * (1 + RAND:3) + TALENT:프라이드낮음 * (1 + RAND:2)
 	;벌개시
 	TFLAG:벌플래그 = 1
 	;벌포인트 반감
 	TFLAG:벌포인트 /= 2
-	;밀어넘어뜨리기, 성교 해제
-	TEQUIP:밀어넘어뜨리기중 = 0
+	;쓰러트리기, 성교 해제
+	TEQUIP:쓰러트리기중 = 0
 	TEQUIP:성교중 = 0
 	TEQUIP:성교봉사중 = 0
 ENDIF
@@ -515,15 +515,15 @@ IF TFLAG:오늘의방침 == 2
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;TEQUIP 처리
-;─
+;────────────────────────────────────
 CALL EVENT_EQUIP
 
 
-;─
+;────────────────────────────────────
 ;발기 계산
-;─
+;────────────────────────────────────
 ;나머지 정력이 적으면 발기 하기 어려워지도록(듯이)
 
 ;LOCAL 초기화
@@ -556,7 +556,7 @@ IF PENIS(MASTER)
 		LOCAL = 19
 ENDIF
 ;현재의 발기도를 기억
-TCVAR:MASTER:전의발기도 = TCVAR:MASTER:발기도
+TCVAR:MASTER:전발기도 = TCVAR:MASTER:발기도
 ;보정치가 큰 만큼 발기도 상승을 감쇠
 
 ;발기의 처리
@@ -601,10 +601,10 @@ IF NOWEX:MASTER:사정
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;피폐의 처리, 게이지의 음수 방지
-;─
-;휴게 따위로 피폐가 음수가 되면 여기서 리셋트
+;────────────────────────────────────
+;휴식 따위로 피폐가 음수가 되면 여기서 리셋트
 SIF TFLAG:조교자소모도 < 0
 	TFLAG:조교자소모도 = 0
 SIF TFLAG:소모도 < 0
@@ -657,17 +657,17 @@ NEXT
 
 
 
-;─
+;────────────────────────────────────
 ;조교 대상 기력 0에 의한 저항불능의 처리
-;─
+;────────────────────────────────────
 IF !TFLAG:저항불능 && BASE:MASTER:기력 <= 0
 	PRINTFORMW 너무 긴장시켰다%CALLNAME:MASTER%는, 이제(벌써) 기력이 한계인 것 같다…
 	TFLAG:저항불능 = 1
 ENDIF
 
-;─
+;────────────────────────────────────
 ;체력, 기력, 이성의 자연 회복, 게이지의 한계 돌파 방지
-;─
+;────────────────────────────────────
 ;이 턴으로 격렬한 소모가 없으면 체력과 기력은 조금씩 자연 회복
 
 ;기초 회복량을 설정
@@ -699,18 +699,18 @@ BASE:체력 += T체력회복
 BASE:기력 += T기력회복
 
 
-;─
+;────────────────────────────────────
 ;저항불능의 회복 처리
-;─
+;────────────────────────────────────
 IF TFLAG:저항불능 && BASE:MASTER:기력 >= MAXBASE:MASTER:기력/2
 	PRINTFORMW 하는대로였다%CALLNAME:MASTER%는, 다소 기력을 되찾은 것 같다…
 	TFLAG:저항불능 = 0
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;대만족 보너스
-;─
+;────────────────────────────────────
 ;만족이 상한 돌파
 IF BASE:만족 >= MAXBASE:만족
 	;지문 표시
@@ -744,9 +744,9 @@ ELSEIF BASE:만족 > MAXBASE:만족 / 3
 		BASE:만족 = 0
 ENDIF
 
-;─
+;────────────────────────────────────
 ;이성의 자연 회복, 게이지의 한계 돌파 방지
-;─
+;────────────────────────────────────
 
 
 ;지문 표시(이성 묘사)
@@ -776,15 +776,15 @@ IF TFLAG:고통에의한이성저하 > 0
 	TFLAG:고통에의한이성저하 = 0
 ;쾌락에의한이성저하. 자연 해소하는 것은 늦습니다만, 절정 하면 단번에 해소합니다. 즉 말하면 다음의 턴으로부터 이성 회복할 수 있습니다
 ELSEIF TFLAG:쾌락에의한이성저하 > 0
-	;쾌X가 어느 정도 존재하면 해소 속도 감소(0～1)
-	IF CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B > 50
+	;쾌Ｘ가 어느 정도 존재하면 해소 속도 감소(0～1)
+	IF CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ > 50
 		TFLAG:쾌락에의한이성저하 -= RAND:2
 	;쾌락에의한이성저하 해소(1～2)
 	ELSE
 		TFLAG:쾌락에의한이성저하 -= 1 + RAND:2
 	ENDIF
 	;절정시 완전 해소
-	SIF NOWEX:MASTER:C절정 + NOWEX:MASTER:V절정 + NOWEX:MASTER:A절정 + NOWEX:MASTER:B절정 > 0
+	SIF NOWEX:MASTER:Ｃ절정 + NOWEX:MASTER:Ｖ절정 + NOWEX:MASTER:Ａ절정 + NOWEX:MASTER:Ｂ절정 > 0
 		TFLAG:쾌락에의한이성저하 = 0
 ;상의 조건+상태변화시에 들어맞지 않으면 이성 회복(60～100)
 ELSEIF TCVAR:MASTER:상태변화 == 0
@@ -833,9 +833,9 @@ FOR LCOUNT, 0, 8
 NEXT
 
 
-;─
+;────────────────────────────────────
 ;조교 대상의 상태변화
-;─
+;────────────────────────────────────
 ;이상 상태중(0=통상/1=피폐/2=쇠약/3=무기력/4=몽롱/5=정욕/6=분노/7=싫증/8=울적)
 IF TCVAR:MASTER:상태변화 > 0
 	IF !(--TCVAR:MASTER:상태변화지속)
@@ -867,7 +867,7 @@ IF BASE:MASTER:기력 < 0 && (PALAM:MASTER:억울 > 500 + RAND:500 || RAND:3 > 1
 ENDIF
 
 ;절정계가 체력계를 웃돌 때
-IF BASE:MASTER:체력 + BASE:MASTER:기력 + BASE:MASTER:이성 - NOWEX:MASTER:C절정 * 100 - NOWEX:MASTER:V절정 * 150 - NOWEX:MASTER:A절정 * 120 - NOWEX:MASTER:B절정 * 80 - NOWEX:MASTER:분유 * 80 - NOWEX:MASTER:사정 * 150 < 1000
+IF BASE:MASTER:체력 + BASE:MASTER:기력 + BASE:MASTER:이성 - NOWEX:MASTER:Ｃ절정 * 100 - NOWEX:MASTER:Ｖ절정 * 150 - NOWEX:MASTER:Ａ절정 * 120 - NOWEX:MASTER:Ｂ절정 * 80 - NOWEX:MASTER:분유 * 80 - NOWEX:MASTER:사정 * 150 < 1000
 	;몽롱
 	TCVAR:MASTER:상태변화 = 4
 	TCVAR:MASTER:상태변화지속 = 3
@@ -901,7 +901,7 @@ IF LOCAL < 0
 ENDIF
 
 ;PALAM 상승량이 어릴 때
-IF CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B + CUP:MASTER:욕정 + CUP:MASTER:공포 + CUP:MASTER:고통 + CUP:MASTER:치정 + CUP:MASTER:불쾌 < 500 + BASE:MASTER:이성 + CFLAG:MASTER:조교레벨 * (200 - MARK:굴복각인 * 10) && TFLAG:경과시간 > 15 && RAND:5 > 3
+IF CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ + CUP:MASTER:욕정 + CUP:MASTER:공포 + CUP:MASTER:고통 + CUP:MASTER:치정 + CUP:MASTER:불쾌 < 500 + BASE:MASTER:이성 + CFLAG:MASTER:조교레벨 * (200 - MARK:굴복각인 * 10) && TFLAG:경과시간 > 15 && RAND:5 > 3
 	;지루함
 	TCVAR:MASTER:상태변화 = 7
 	TCVAR:MASTER:상태변화지속 = 3
@@ -918,9 +918,9 @@ ENDIF
 
 $DECIDE_CONDITION_M
 
-;─
+;────────────────────────────────────
 ;조교자의 상태변화
-;─
+;────────────────────────────────────
 ;이상 상태중
 IF TCVAR:상태변화 > 0
 	IF !(--TCVAR:상태변화지속)
@@ -952,7 +952,7 @@ IF BASE:기력 < 100 && (BASE:초조 < 100 + RAND:100 || RAND:3 > 1)
 ENDIF
 
 ;절정계가 체력계를 웃돌 때
-IF BASE:체력 + BASE:기력 + BASE:이성 - NOWEX:C절정 * 100 - NOWEX:V절정 * 150 - NOWEX:A절정 * 120 - NOWEX:B절정 * 80 - NOWEX:분유 * 80 - NOWEX:사정 * 150 < 1000
+IF BASE:체력 + BASE:기력 + BASE:이성 - NOWEX:Ｃ절정 * 100 - NOWEX:Ｖ절정 * 150 - NOWEX:Ａ절정 * 120 - NOWEX:Ｂ절정 * 80 - NOWEX:분유 * 80 - NOWEX:사정 * 150 < 1000
 	;몽롱
 	TCVAR:상태변화 = 4
 	TCVAR:상태변화지속 = 3
@@ -960,7 +960,7 @@ IF BASE:체력 + BASE:기력 + BASE:이성 - NOWEX:C절정 * 100 - NOWEX:V절정
 ENDIF
 
 ;고쾌x시
-IF PALAM:쾌C + PALAM:쾌V + PALAM:쾌A + PALAM:쾌B > 12000 && RAND:3 > 1
+IF PALAM:쾌Ｃ + PALAM:쾌Ｖ + PALAM:쾌Ａ + PALAM:쾌Ｂ > 12000 && RAND:3 > 1
 	;정욕
 	TCVAR:상태변화 = 5
 	TCVAR:상태변화지속 = 3
@@ -1011,9 +1011,9 @@ ENDIF
 $DECIDE_CONDITION_T
 
 
-;─
+;────────────────────────────────────
 ;상태변화 구상과 텍스트의 표시
-;─
+;────────────────────────────────────
 ;상태변화 구상을 부른다
 RESULT = 0
 SIF TCVAR:MASTER:상태변화지속 > 2
@@ -1032,7 +1032,7 @@ SIF TCVAR:상태변화 && TCVAR:상태변화지속 > 2
 	;CALL KOJO_EVENT(22, 0)
 ;발기 묘사
 ;강발기
-IF TCVAR:MASTER:발기도 >= 1300 && TCVAR:MASTER:전의발기도 < 1300
+IF TCVAR:MASTER:발기도 >= 1300 && TCVAR:MASTER:전발기도 < 1300
 	IF TCVAR:MASTER:전립선자극 > 1
 		PRINTFORML 안쪽에서 수컷 기능을 희롱해져%CALLNAME:MASTER%의 남성기가 의사와 무관계하게 반응한다….
 		PRINTFORML 검붉게 충혈해 우뚝 솟은 페니스를 봐,%CALLNAME:TARGET%는 혀 핥음을 했다….
@@ -1042,19 +1042,19 @@ IF TCVAR:MASTER:발기도 >= 1300 && TCVAR:MASTER:전의발기도 < 1300
 		PRINTFORML %CALLNAME:MASTER%의 남성기는 배를 뒤따를 것 같을 정도 뒤로 젖혀, 격렬하게 맥박치고 있다….
 	ENDIF
 ;중 발기
-ELSEIF TCVAR:MASTER:발기도 >= 1000 && TCVAR:MASTER:전의발기도 < 1000
+ELSEIF TCVAR:MASTER:발기도 >= 1000 && TCVAR:MASTER:전발기도 < 1000
 	IF TCVAR:MASTER:전립선자극
 		PRINTFORML 안쪽으로부터 근원의 뒤편을 비비어져%CALLNAME:MASTER%의 남성기가 팽창해 나간다….
 	ELSE
 		PRINTFORML %CALLNAME:MASTER%의 남성기는 지금 융성하게 머리를 쳐들고 있다….
 	ENDIF
 ;약발기
-ELSEIF TCVAR:MASTER:발기도 >= 200 && TCVAR:MASTER:전의발기도 < 200
+ELSEIF TCVAR:MASTER:발기도 >= 200 && TCVAR:MASTER:전발기도 < 200
 	;급속
-	IF TCVAR:MASTER:발기도 - TCVAR:MASTER:전의발기도 > 200
+	IF TCVAR:MASTER:발기도 - TCVAR:MASTER:전발기도 > 200
 		PRINTFORML %CALLNAME:MASTER%는 하반신에 급속히 피가 모이는 것을 느꼈다….
 	;상속
-	ELSEIF TCVAR:MASTER:발기도 - TCVAR:MASTER:전의발기도 > 50
+	ELSEIF TCVAR:MASTER:발기도 - TCVAR:MASTER:전발기도 > 50
 		PRINTFORML %CALLNAME:MASTER%는 하반신에 피가 모이기 시작하는 것을 느꼈다….
 	;완속
 	ELSE
@@ -1067,14 +1067,14 @@ ENDIF
 ;윤활 묘사(남자 이외)
 IF !TALENT:MASTER:남자
 	;윤활 충분히
-	IF PALAM:MASTER:윤활 >= 1000 && TCVAR:MASTER:전의윤활 < 1000
+	IF PALAM:MASTER:윤활 >= 1000 && TCVAR:MASTER:전윤활 < 1000
 		IF TEQUIP:로션
 			PRINTFORML %CALLNAME:MASTER%의 샘으로부터는 끝 없게 애액이 흘러넘쳐, 이미 로션의 의미가 없다….
 		ELSE
 			PRINTFORML %CALLNAME:MASTER%의 샘으로부터는 끝 없게 애액이 흘러넘쳐, 홍수와 같이 되어 있다….
 		ENDIF
 	;강윤활
-	ELSEIF PALAM:MASTER:윤활 >= 500 && TCVAR:MASTER:전의윤활 < 500
+	ELSEIF PALAM:MASTER:윤활 >= 500 && TCVAR:MASTER:전윤활 < 500
 		IF TEQUIP:로션
 			PRINTFORML %CALLNAME:MASTER%의 여성기는 로션에 애액이 섞여 미끈미끈이 되어 있다….
 		ELSEIF MV_PLAYER(1) > 1
@@ -1083,7 +1083,7 @@ IF !TALENT:MASTER:남자
 			PRINTFORML %CALLNAME:MASTER%의 여성기는 꿀을 늘어뜨려, 삽입을 기다려 바래 실룩거리고 있다….
 		ENDIF
 	;중 윤활
-	ELSEIF PALAM:MASTER:윤활 >= 250 && TCVAR:MASTER:전의윤활 < 250
+	ELSEIF PALAM:MASTER:윤활 >= 250 && TCVAR:MASTER:전윤활 < 250
 		IF TEQUIP:로션 == 1
 			PRINTFORML %CALLNAME:MASTER%의 여성기는 말라 내기의 로션에 대신해 스스로도 애액을 분비하고 있다….
 		ELSEIF TEQUIP:로션
@@ -1094,7 +1094,7 @@ IF !TALENT:MASTER:남자
 			PRINTFORML %CALLNAME:MASTER%는 비순으로부터 따뜻한 애액이 늘어지고 떨어지는 것을 느껴 등골을 진동시켰다….
 		ENDIF
 	;약윤활
-	ELSEIF PALAM:MASTER:윤활 >= 100 && TCVAR:MASTER:전의윤활 < 100
+	ELSEIF PALAM:MASTER:윤활 >= 100 && TCVAR:MASTER:전윤활 < 100
 		IF TEQUIP:로션
 			PRINTFORML %CALLNAME:MASTER%의 사타구니는 로션으로 싫은 것 같게 빛나고 있다….
 		ELSEIF MV_PLAYER(1) > 1
@@ -1119,9 +1119,9 @@ IF TALENT:MASTER:소변버릇
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;약력의 소멸, 약제의 쿨 다운
-;─
+;────────────────────────────────────
 ;로션
 ;약물내성 존재시는 추가 감소(1～2)
 SIF TEQUIP:로션 > 0 && TALENT:MASTER:약물내성
@@ -1163,14 +1163,14 @@ FOR LCOUNT, 20, 25
 NEXT
 
 
-;─
+;────────────────────────────────────
 ;히트 축적과 쿨 다운의 처리. 이 시스템을 성공할 수 있을까의 열쇠입니다만, 이건 또 복잡한 구조가 되었어요…
-;─
-;조교 방침의히트 축적
+;────────────────────────────────────
+;조교 방침히트 축적
 ;이번 방침에 대해 처리를 실시한다
 
-;밀어넘어뜨리기중은 축적하지 않는다
-IF TEQUIP:밀어넘어뜨리기중 != 1
+;쓰러트리기중은 축적하지 않는다
+IF TEQUIP:쓰러트리기중 != 1
 	;LOCAL에 히트 상승량을 확보
 	LOCAL = 0
 	;LOCAL:1에 변수 포인터를 설정
@@ -1190,8 +1190,8 @@ ENDIF
 ;조교 방침의 쿨 다운(히트치 존재시 처리를 실시한다)
 ;변수 『쿨치』에 감소량 보존
 
-;휴게의 쿨 다운
-IF TFLAG:휴게방침의히트 > 0
+;휴식의 쿨 다운
+IF TFLAG:휴식방침히트 > 0
 	;초기치(3)
 	쿨치 = 3
 	;전회 실행으로(-1)
@@ -1223,14 +1223,14 @@ IF TFLAG:휴게방침의히트 > 0
 		쿨치 += 1
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:휴게방침의히트 -= 쿨치
+		TFLAG:휴식방침히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:휴게방침의히트 < 0
-		TFLAG:휴게방침의히트 = 0
+	SIF TFLAG:휴식방침히트 < 0
+		TFLAG:휴식방침히트 = 0
 ENDIF
 
 ;소프트의 쿨 다운
-IF TFLAG:소프트방침의히트 > 0
+IF TFLAG:소프트방침히트 > 0
 	;초기치(3～4)
 	쿨치 = 3 + RAND:2
 	;전회 실행으로(-1)
@@ -1276,14 +1276,14 @@ IF TFLAG:소프트방침의히트 > 0
 	쿨치 += LIMIT(CFLAG:아라이먼트 / 25, 0, 2)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:소프트방침의히트 -= 쿨치
+		TFLAG:소프트방침히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:소프트방침의히트 < 0
-		TFLAG:소프트방침의히트 = 0
+	SIF TFLAG:소프트방침히트 < 0
+		TFLAG:소프트방침히트 = 0
 ENDIF
 
 ;노멀의 쿨 다운
-IF TFLAG:노멀방침의히트 > 0
+IF TFLAG:노멀방침히트 > 0
 	;초기치(5)
 	쿨치 = 5
 	;전회비실행으로(+1～3)
@@ -1322,14 +1322,14 @@ IF TFLAG:노멀방침의히트 > 0
 	쿨치 += 2 - LIMIT(LOCAL / 12, 0, 2)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:노멀방침의히트 -= 쿨치
+		TFLAG:노멀방침히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:노멀방침의히트 < 0
-		TFLAG:노멀방침의히트 = 0
+	SIF TFLAG:노멀방침히트 < 0
+		TFLAG:노멀방침히트 = 0
 ENDIF
 
 ;하드의 쿨 다운
-IF TFLAG:하드방침의히트 > 0
+IF TFLAG:하드방침히트 > 0
 	;초기치(3～5)
 	쿨치 = 3 + RAND:3
 	;전회 실행으로(-2)
@@ -1366,7 +1366,7 @@ IF TFLAG:하드방침의히트 > 0
 		쿨치 -= 1
 	SIF TALENT:해방
 		쿨치 += 1
-	SIF TALENT:새디즘
+	SIF TALENT:새드
 		쿨치 += 2
 	SIF TALENT:신중 && CFLAG:MASTER:조교레벨 < 6
 		쿨치 -= 3 - CFLAG:MASTER:조교레벨 / 2
@@ -1379,14 +1379,14 @@ IF TFLAG:하드방침의히트 > 0
 		쿨치 += 2
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:하드방침의히트 -= 쿨치
+		TFLAG:하드방침히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:하드방침의히트 < 0
-		TFLAG:하드방침의히트 = 0
+	SIF TFLAG:하드방침히트 < 0
+		TFLAG:하드방침히트 = 0
 ENDIF
 
 ;이상의 쿨 다운
-IF TFLAG:이상방침의히트 > 0
+IF TFLAG:이상방침히트 > 0
 	;초기치(0～5)
 	쿨치 = RAND:6
 	;전회비실행으로(+0～2)
@@ -1427,18 +1427,18 @@ IF TFLAG:이상방침의히트 > 0
 		쿨치 += 1
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:이상방침의히트 -= 쿨치
+		TFLAG:이상방침히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:이상방침의히트 < 0
-		TFLAG:이상방침의히트 = 0
+	SIF TFLAG:이상방침히트 < 0
+		TFLAG:이상방침히트 = 0
 ENDIF
 
 ;조교 메뉴의히트 축적
 ;이번 ACT분류에 대해 처리를 실시한다
 
-;밀어넘어뜨리기중은 축적하지 않는다
-;또, 휴게에는 메뉴 히트가 존재하지 않는다
-IF TEQUIP:밀어넘어뜨리기중 != 1 && TFLAG:ACT분류 != 9
+;쓰러트리기중은 축적하지 않는다
+;또, 휴식에는 메뉴 히트가 존재하지 않는다
+IF TEQUIP:쓰러트리기중 != 1 && TFLAG:ACT분류 != 9
 	;LOCAL에 히트 상승량을 확보
 	LOCAL = 0
 	;LOCAL:1에 이번 ACT분류에 의해 변수 포인터를 설정
@@ -1465,7 +1465,7 @@ ENDIF
 ;변수 『쿨치』에 감소량 보존
 
 ;회화의 쿨 다운
-IF TFLAG:회화의히트 > 0
+IF TFLAG:회화히트 > 0
 	;기능에 응해 쿨치를 설정(4～)
 	쿨치 = 4 + (GET_ABL(TARGET, "회화") + 10) / 20
 	;전회 실행으로(-3)
@@ -1496,14 +1496,14 @@ IF TFLAG:회화의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:회화의히트 -= 쿨치
+		TFLAG:회화히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:회화의히트 < 0
-		TFLAG:회화의히트 = 0
+	SIF TFLAG:회화히트 < 0
+		TFLAG:회화히트 = 0
 ENDIF
 
 ;애무의 쿨 다운
-IF TFLAG:애무의히트 > 0
+IF TFLAG:애무히트 > 0
 	;기능에 응해 쿨치를 설정(4～)
 	쿨치 = 4 + RAND:3 + (GET_ABL(TARGET, "애무") + 10) / 20
 	;전회 실행으로(-1)
@@ -1552,14 +1552,14 @@ IF TFLAG:애무의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:애무의히트 -= 쿨치
+		TFLAG:애무히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:애무의히트 < 0
-		TFLAG:애무의히트 = 0
+	SIF TFLAG:애무히트 < 0
+		TFLAG:애무히트 = 0
 ENDIF
 
 ;도구의 쿨 다운
-IF TFLAG:도구의히트 > 0
+IF TFLAG:도구히트 > 0
 	;기능에 응해 쿨치를 설정(4～)
 	쿨치 = 4 + (GET_ABL(TARGET, "도구") + 10) * 2 / 30
 	;전회 실행으로(-3)
@@ -1597,14 +1597,14 @@ IF TFLAG:도구의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:도구의히트 -= 쿨치
+		TFLAG:도구히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:도구의히트 < 0
-		TFLAG:도구의히트 = 0
+	SIF TFLAG:도구히트 < 0
+		TFLAG:도구히트 = 0
 ENDIF
 
 ;성교의 쿨 다운
-IF TFLAG:성교의히트 > 0
+IF TFLAG:성교히트 > 0
 	;기능에 응해 쿨치를 설정(2～)
 	쿨치 = 2 + (GET_ABL(TARGET, "성교") + 10) / 20
 	;전회 실행으로(-1)
@@ -1633,14 +1633,14 @@ IF TFLAG:성교의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:성교의히트 -= 쿨치
+		TFLAG:성교히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:성교의히트 < 0
-		TFLAG:성교의히트 = 0
+	SIF TFLAG:성교히트 < 0
+		TFLAG:성교히트 = 0
 ENDIF
 
 ;수치의 쿨 다운
-IF TFLAG:수치의히트 > 0
+IF TFLAG:수치히트 > 0
 	;기능에 응해 쿨치를 설정(4～)
 	쿨치 = 4 + (GET_ABL(TARGET, "수치") + 10) / 20
 	;전회 실행으로(-2)
@@ -1685,14 +1685,14 @@ IF TFLAG:수치의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:수치의히트 -= 쿨치
+		TFLAG:수치히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:수치의히트 < 0
-		TFLAG:수치의히트 = 0
+	SIF TFLAG:수치히트 < 0
+		TFLAG:수치히트 = 0
 ENDIF
 
 ;봉사의 쿨 다운
-IF TFLAG:봉사의히트 > 0
+IF TFLAG:봉사히트 > 0
 	;기능에 응해 쿨치를 설정(5～)
 	쿨치 = 5 + (GET_ABL(TARGET, "봉사") + 10) / 20
 	;전회 실행으로(-2)
@@ -1729,7 +1729,7 @@ IF TFLAG:봉사의히트 > 0
 		쿨치 -= 1
 	SIF TALENT:수동
 		쿨치 += 1 + RAND:2
-	SIF TALENT:쾌감에순수
+	SIF TALENT:쾌감에솔직
 		쿨치 += 2
 	SIF TALENT:쾌감을부정
 		쿨치 -= 2
@@ -1746,14 +1746,14 @@ IF TFLAG:봉사의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:봉사의히트 -= 쿨치
+		TFLAG:봉사히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:봉사의히트 < 0
-		TFLAG:봉사의히트 = 0
+	SIF TFLAG:봉사히트 < 0
+		TFLAG:봉사히트 = 0
 ENDIF
 
 ;가학의 쿨 다운
-IF TFLAG:가학의히트 > 0
+IF TFLAG:가학히트 > 0
 	;기능에 응해 쿨치를 설정(4～)
 	쿨치 = 4 + (GET_ABL(TARGET, "가학") + 10) / 20
 	;전회 실행으로(-2)
@@ -1793,7 +1793,7 @@ IF TFLAG:가학의히트 > 0
 		쿨치 += 1
 	SIF TALENT:결박능숙
 		쿨치 += 1
-	SIF TALENT:새디즘
+	SIF TALENT:새드
 		쿨치 += 2
 	SIF TALENT:심술쟁이
 		쿨치 += 1
@@ -1806,14 +1806,14 @@ IF TFLAG:가학의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:가학의히트 -= 쿨치
+		TFLAG:가학히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:가학의히트 < 0
-		TFLAG:가학의히트 = 0
+	SIF TFLAG:가학히트 < 0
+		TFLAG:가학히트 = 0
 ENDIF
 
 ;이상 행위의 쿨 다운
-IF TFLAG:이상의히트 > 0
+IF TFLAG:이상히트 > 0
 	;기능에 응해 쿨치를 설정(1～)
 	쿨치 = 1 + (GET_ABL(TARGET, "사역") + 10) * 2 / 30
 	;전회비실행으로(+0～3)
@@ -1861,14 +1861,14 @@ IF TFLAG:이상의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:이상의히트 -= 쿨치
+		TFLAG:이상히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:이상의히트 < 0
-		TFLAG:이상의히트 = 0
+	SIF TFLAG:이상히트 < 0
+		TFLAG:이상히트 = 0
 ENDIF
 
 ;사역의 쿨 다운
-IF TFLAG:사역의히트 > 0
+IF TFLAG:사역히트 > 0
 	;기능에 응해 쿨치를 설정(1～)
 	쿨치 = 1 + RAND:2 + (GET_ABL(TARGET, "사역") + 10) * 2 / 30
 	;전회 실행으로(-1)
@@ -1905,14 +1905,14 @@ IF TFLAG:사역의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:사역의히트 -= 쿨치
+		TFLAG:사역히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:사역의히트 < 0
-		TFLAG:사역의히트 = 0
+	SIF TFLAG:사역히트 < 0
+		TFLAG:사역히트 = 0
 ENDIF
 
 ;성교(봉사)의 쿨 다운
-IF TFLAG:성적봉사의히트 > 0
+IF TFLAG:성적봉사히트 > 0
 	;초기치를 설정(2)
 	쿨치 = 2
 	;전회 실행으로(-1)
@@ -1944,17 +1944,17 @@ IF TFLAG:성적봉사의히트 > 0
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
 	SIF 쿨치 > 0
-		TFLAG:성적봉사의히트 -= 쿨치
+		TFLAG:성적봉사히트 -= 쿨치
 	;하한 돌파를 방지
-	SIF TFLAG:성적봉사의히트 < 0
-		TFLAG:성적봉사의히트 = 0
+	SIF TFLAG:성적봉사히트 < 0
+		TFLAG:성적봉사히트 = 0
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;성교계 동일 체위 억제 처리
 ;PLAYER_ACTM계로부터 이동@이것 보고
-;─
+;────────────────────────────────────
 ;성교계
 FOR LCOUNT, 0, 5
 	;해당 체위라면+100
@@ -1978,9 +1978,9 @@ FOR LCOUNT, 0, 5
 	ENDIF
 NEXT
 
-;─
+;────────────────────────────────────
 ;가게 하는, 초조하게 한다
-;─
+;────────────────────────────────────
 ;범용 연속행동 플래그(ACT분류예약, 행동예약이 이미 있는 경우 무시)
 IF TFLAG:연속행동 && TFLAG:ACT분류예약 == -1 && TCVAR:행동예약 == -1
 	;ACT분류, ACT를 예약한다
@@ -1990,32 +1990,32 @@ ENDIF
 ;연속행동 플래그 해제
 TFLAG:연속행동 = 0
 
-;C절정시
-IF NOWEX:MASTER:사정 || NOWEX:MASTER:C절정
+;Ｃ절정시
+IF NOWEX:MASTER:사정 || NOWEX:MASTER:Ｃ절정
 	;갈것같다·초조하게함의 리셋트
 	TCVAR:MASTER:갈것같다 = 0
-	TCVAR:MASTER:초조하게해번 = 0
+	TCVAR:MASTER:애태움수 = 0
 ENDIF
-SIF NOWEX:C절정
+SIF NOWEX:Ｃ절정
 	TCVAR:TARGET:갈것같다 = 0
 	
-;조교 대상으로 남성기가 존재하지 않을 때에 C절정
-IF !PENIS(MASTER) && NOWEX:MASTER:C절정
+;조교 대상으로 남성기가 존재하지 않을 때에Ｃ절정
+IF !PENIS(MASTER) && NOWEX:MASTER:Ｃ절정
 	;초조하게함의 리셋트
-	TCVAR:MASTER:초조하게해번 = 0
+	TCVAR:MASTER:애태움수 = 0
 ENDIF
 ;벌시, 초조하게함의 리셋트
 SIF TFLAG:벌플래그
-	TCVAR:MASTER:초조하게해번 = 0
+	TCVAR:MASTER:애태움수 = 0
 
-;─
+;────────────────────────────────────
 ;ACT 보정치 감소, 감쇠 처리
-;─
+;────────────────────────────────────
 CFLAG:(400 + TFLAG:ACT) /= 2
 
-;─
+;────────────────────────────────────
 ;데이타베이스의 등록, 턴의 리셋트
-;─
+;────────────────────────────────────
 ;데이타베이스 등록
 CALL DATABASE_INPUT
 
@@ -2032,13 +2032,13 @@ TFLAG:전턴성교 = TEQUIP:성교중
 TFLAG:전턴성교봉사 = TEQUIP:성교봉사중
 ;안면승마
 TFLAG:전턴안면승마 = TEQUIP:안면승마
-TFLAG:전턴A안면승마 = TEQUIP:안면승마애널
+TFLAG:전턴Ａ안면승마 = TEQUIP:안면승마애널
 
 ;인내 플래그
 ;인내중은
 IF TCVAR:MASTER:인내
 	;절정에서 인내 리셋트
-	IF NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정 || NOWEX:MASTER:A절정 || NOWEX:MASTER:B절정
+	IF NOWEX:MASTER:Ｃ절정 || NOWEX:MASTER:Ｖ절정 || NOWEX:MASTER:Ａ절정 || NOWEX:MASTER:Ｂ절정
 		TCVAR:MASTER:인내 = 0
 	;그렇지 않으면 카운트를-1
 	ELSE
@@ -2046,9 +2046,9 @@ IF TCVAR:MASTER:인내
 	ENDIF
 ENDIF
 
-;─
-;사정 후의 턴수가산에 대해 by /L
-;─
+;────────────────────────────────────
+;사정 후의 턴수가산에 대해 by/L
+;────────────────────────────────────
 ;2014/11/08시점에서는 TFLAG:사정후경과턴과 TFLAG와 TCVAR가 혼재해 조금 알기 어려운 상태
 ;라고는 해도, 갑자기 TFLAG:사정후경과턴 등을 삭제해 버릴 수도 없다고 생각하므로
 ;403xx series 근처까지는 이대로라고 하는 일로. 그리고 장내사정후경과턴이라든지 개인적 취미()로 추가했습니다
@@ -2116,7 +2116,7 @@ TFLAG:전ACT = TFLAG:ACT
 TFLAG:조수의전행동 = TFLAG:조수의방침
 
 ;윤활의 보존
-TCVAR:MASTER:전의윤활 = PALAM:MASTER:윤활
+TCVAR:MASTER:전윤활 = PALAM:MASTER:윤활
 
 ;조교자행동제 보고의 플래그를 리셋트
 TFLAG:조교자행동제 = 0
@@ -2136,7 +2136,7 @@ TFLAG:경험치업 = 0
 
 ;위로돌리고 상태의 재설정
 IF TFLAG:위로돌리고 > 0
-	IF TEQUIP:밀어넘어뜨리기중 || TEQUIP:안면승마 || TEQUIP:안면승마애널
+	IF TEQUIP:쓰러트리기중 || TEQUIP:안면승마 || TEQUIP:안면승마애널
 		TFLAG:위로돌리고 = 1
 	ELSE
 		TFLAG:위로돌리고 = 0
@@ -2157,13 +2157,13 @@ TCVAR:MASTER:전립선자극 = 0
 CALL SET_COMIMP("영향없음")
 
 ;조수 플레이시의 TEQUIP를 리셋트
-TFLAG:P삽입중 = 0
-TFLAG:P사용중 = 0
-TFLAG:A사용중 = 0
+TFLAG:Ｐ삽입중 = 0
+TFLAG:Ｐ사용중 = 0
+TFLAG:Ａ사용중 = 0
 TFLAG:입사용중 = 0
 TFLAG:가슴사용중 = 0
-TFLAG:V사용중 = 0
-TFLAG:다리사용중 = 0
+TFLAG:Ｖ사용중 = 0
+TFLAG:발사용중 = 0
 TFLAG:손사용중 = 0
 
 ;추가행동 플래그의 리셋트
@@ -2182,21 +2182,21 @@ TFLAG:미약등사용지문스킵 = 0
 TSTR:전조교지령 = %TSTR:조교지령%
 
 ;절정의 기록
-TCVAR:MASTER:전회턴C절정 = TCVAR:MASTER:C절정
-TCVAR:MASTER:전회턴V절정 = TCVAR:MASTER:V절정
-TCVAR:MASTER:전회턴A절정 = TCVAR:MASTER:A절정
-TCVAR:MASTER:전회턴B절정 = TCVAR:MASTER:B절정
-TCVAR:MASTER:전회턴물총 = TCVAR:MASTER:물총
+TCVAR:MASTER:전회턴Ｃ절정 = TCVAR:MASTER:Ｃ절정
+TCVAR:MASTER:전회턴Ｖ절정 = TCVAR:MASTER:Ｖ절정
+TCVAR:MASTER:전회턴Ａ절정 = TCVAR:MASTER:Ａ절정
+TCVAR:MASTER:전회턴Ｂ절정 = TCVAR:MASTER:Ｂ절정
+TCVAR:MASTER:전회턴분수 = TCVAR:MASTER:분수
 TCVAR:MASTER:전회턴드라이사정 = TCVAR:MASTER:드라이사정
 TCVAR:MASTER:전회턴분유   = TCVAR:MASTER:분유
 TCVAR:MASTER:전회턴사정   = TCVAR:MASTER:사정
 TCVAR:MASTER:전회턴방뇨   = TCVAR:MASTER:방뇨
 
-TCVAR:전회턴C절정        = TCVAR:C절정
-TCVAR:전회턴V절정        = TCVAR:V절정
-TCVAR:전회턴A절정        = TCVAR:A절정
-TCVAR:전회턴B절정        = TCVAR:B절정
-TCVAR:전회턴물총        = TCVAR:물총
+TCVAR:전회턴Ｃ절정        = TCVAR:Ｃ절정
+TCVAR:전회턴Ｖ절정        = TCVAR:Ｖ절정
+TCVAR:전회턴Ａ절정        = TCVAR:Ａ절정
+TCVAR:전회턴Ｂ절정        = TCVAR:Ｂ절정
+TCVAR:전회턴분수        = TCVAR:분수
 TCVAR:전회턴드라이사정        = TCVAR:드라이사정
 TCVAR:전회턴분유          = TCVAR:분유
 TCVAR:전회턴사정          = TCVAR:사정
@@ -2211,14 +2211,14 @@ FOR LCOUNT, 0, CHARANUM
 	VARSET TCVAR:LCOUNT:0, 0, 70, 80
 NEXT
 
-;─
+;────────────────────────────────────
 ;파라미터의 상승＆표시(DOWN도 여기서)
-;─
+;────────────────────────────────────
 ;-----------------------------------------
 ;PALAM 보정치 변동 처리
 ;CUP가 있던 것은 증가, 없었던 것은 감쇠한다
 ;-----------------------------------------
-;쾌X/x보정 가격인상승(쾌X/x상승시, 보정치+10)
+;쾌Ｘ/x보정 가격인상승(쾌Ｘ/x상승시, 보정치+10)
 FOR LCOUNT, 0, 4
 	SIF CUP:MASTER:LCOUNT
 		CFLAG:MASTER:(30 + LCOUNT) += 10
@@ -2226,7 +2226,7 @@ FOR LCOUNT, 0, 4
 		CFLAG:(30 + LCOUNT) += 10
 NEXT
 	
-;쾌X/x보정치 감쇠(50 초과시, 1 T마다-1)
+;쾌Ｘ/x보정치 감쇠(50 초과시, 1 T마다-1)
 FOR LCOUNT, 0, CHARANUM
 	FOR LCOUNT:1, 30, 34
 		SIF CFLAG:LCOUNT:(LCOUNT:1) > 50
@@ -2239,31 +2239,31 @@ NEXT
 ;CUP가 없었던 것은 감쇠한다
 ;-----------------------------------------
 ;쾌감의 자연 감쇠
-;합계 0의 경우는 5%씩 감쇠(갈 것 같은 경우, 쾌C는 제외)
+;합계 0의 경우는 5%씩 감쇠(갈 것 같은 경우, 쾌Ｃ는 제외)
 ;쾌감계 PALAM는 몇개의 증가가 있었을 때는 감쇠하지 않는다
 
-;조교 대상의 쾌감 감쇠(쾌X상승 총계가 0, 5% 감쇠)
-IF !MAX(CUP:MASTER:쾌C, CUP:MASTER:쾌V, CUP:MASTER:쾌A, CUP:MASTER:쾌B)
-	;갈것같다인 경우쾌C를 제외
+;조교 대상의 쾌감 감쇠(쾌Ｘ상승 총계가 0, 5% 감쇠)
+IF !MAX(CUP:MASTER:쾌Ｃ, CUP:MASTER:쾌Ｖ, CUP:MASTER:쾌Ａ, CUP:MASTER:쾌Ｂ)
+	;갈것같다인 경우쾌Ｃ를 제외
 	SIF TCVAR:MASTER:갈것같다 == 0
-		CDOWN:MASTER:쾌C += PALAM:MASTER:쾌C * 5 / 100
-	CDOWN:MASTER:쾌V += PALAM:MASTER:쾌V * 5 / 100
-	CDOWN:MASTER:쾌A += PALAM:MASTER:쾌A * 5 / 100
-	CDOWN:MASTER:쾌B += PALAM:MASTER:쾌B * 5 / 100
+		CDOWN:MASTER:쾌Ｃ += PALAM:MASTER:쾌Ｃ * 5 / 100
+	CDOWN:MASTER:쾌Ｖ += PALAM:MASTER:쾌Ｖ * 5 / 100
+	CDOWN:MASTER:쾌Ａ += PALAM:MASTER:쾌Ａ * 5 / 100
+	CDOWN:MASTER:쾌Ｂ += PALAM:MASTER:쾌Ｂ * 5 / 100
 ENDIF
 ;조교자의 쾌감 감쇠(쾌x상승 총계가 0, 5% 감쇠)
-IF !MAX(CUP:쾌C, CUP:쾌V, CUP:쾌A, CUP:쾌B)
-	;갈것같다인 경우쾌C를 제외
+IF !MAX(CUP:쾌Ｃ, CUP:쾌Ｖ, CUP:쾌Ａ, CUP:쾌Ｂ)
+	;갈것같다인 경우쾌Ｃ를 제외
 	SIF TCVAR:TARGET:갈것같다 == 0
-		CDOWN:쾌C += PALAM:쾌C * 5 / 100
-	CDOWN:쾌V += PALAM:쾌V * 5 / 100
-	CDOWN:쾌A += PALAM:쾌A * 5 / 100
-	CDOWN:쾌B += PALAM:쾌B * 5 / 100
+		CDOWN:쾌Ｃ += PALAM:쾌Ｃ * 5 / 100
+	CDOWN:쾌Ｖ += PALAM:쾌Ｖ * 5 / 100
+	CDOWN:쾌Ａ += PALAM:쾌Ａ * 5 / 100
+	CDOWN:쾌Ｂ += PALAM:쾌Ｂ * 5 / 100
 ENDIF
 
 ;갈것같다의 판정
-;쾌C상승 0시는 반감
-IF !CUP:MASTER:쾌C
+;쾌Ｃ상승 0시는 반감
+IF !CUP:MASTER:쾌Ｃ
 	TCVAR:MASTER:갈것같다 /= 2
 ;그 이외에서는 1.2배
 ELSE
@@ -2271,25 +2271,25 @@ ELSE
 ENDIF
 
 ;쾌c상승 0시는 반감
-IF !CUP:쾌C
+IF !CUP:쾌Ｃ
 	TCVAR:TARGET:갈것같다 /= 2
 ;그 이외에서는 1.2배
 ELSE
 	TIMES TCVAR:TARGET:갈것같다 , 1.20
 ENDIF
 
-TCVAR:MASTER:갈것같다（그쳐라） = TCVAR:MASTER:갈것같다 < ABL:MASTER:C감각 * 2 ? 1 # 0
-TCVAR:TARGET:갈것같다（그쳐라） = TCVAR:TARGET:갈것같다 < ABL:TARGET:C감각 * 2 ? 1 # 0
+TCVAR:MASTER:갈것같다（그쳐라） = TCVAR:MASTER:갈것같다 < ABL:MASTER:Ｃ감각 * 2 ? 1 # 0
+TCVAR:TARGET:갈것같다（그쳐라） = TCVAR:TARGET:갈것같다 < ABL:TARGET:Ｃ감각 * 2 ? 1 # 0
 
 ;로션비사용시는 윤활 감쇠(5%)
 CDOWN:MASTER:윤활 += TEQUIP:로션 ? 0 # PALAM:MASTER:윤활 * 5 / 100
 
-;X절정시
-IF MAX(NOWEX:MASTER:C절정, NOWEX:MASTER:V절정, NOWEX:MASTER:A절정, NOWEX:MASTER:B절정)
+;Ｘ절정시
+IF MAX(NOWEX:MASTER:Ｃ절정, NOWEX:MASTER:Ｖ절정, NOWEX:MASTER:Ａ절정, NOWEX:MASTER:Ｂ절정)
 	;욕정의 30～60% 감쇠(욕정이 큰 만큼 감쇠)
 	CDOWN:MASTER:욕정 += PALAM:MASTER:욕정 * LIMIT(PALAM:MASTER:욕정, 4000, 8000) * 3 / 40000
-;쾌X상승 총계가 어릴 때
-ELSEIF CUP:MASTER:쾌C + CUP:MASTER:쾌V + CUP:MASTER:쾌A + CUP:MASTER:쾌B < 20
+;쾌Ｘ상승 총계가 어릴 때
+ELSEIF CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ < 20
 	;욕정의 0～10% 감쇠(욕정이 큰 만큼 감쇠)
 	CDOWN:MASTER:욕정 += PALAM:MASTER:욕정 * LIMIT(PALAM:MASTER:욕정, 0, 6000) / 60000
 ENDIF
@@ -2336,7 +2336,7 @@ FOR LCOUNT, 0, 50
 		;초과량을 확인해, PALAM를 상한으로 설정
 		LOCAL = PALAM:MASTER:LCOUNT - 9999
 		PALAM:MASTER:LCOUNT = 9999
-		;쾌X 이외의 때, 이상경험이 적으면
+		;쾌Ｘ이외의 때, 이상경험이 적으면
 		IF LCOUNT > 4 && LOCAL > EXP:MASTER:이상경험 * 50
 			;이상경험 가산
 			EXP:MASTER:이상경험 += 1
@@ -2352,9 +2352,9 @@ NEXT
 ;파라미터변동을 종료
 TFLAG:파라미터변동 = 0
 
-;─
+;────────────────────────────────────
 ;조교 종료의 판정
-;─
+;────────────────────────────────────
 
 ;리셋트 되는 개소가 없기 때문에 여기서 초기화
 FLAG:일상제어 = 0
@@ -2460,9 +2460,9 @@ ELSEIF TFLAG:경과시간 > 10
 	ENDIF
 ENDIF
 
-;─
+;────────────────────────────────────
 ;절정이나 시간 경과등에 의한 TEQUIP의 해제
-;─
+;────────────────────────────────────
 ;※BEGIN의 해결은 그 시점에서 실행할 수 있는 모든 코드의 처리가 끝난 다음에 처음으로 행해집니다
 ;※TEQUIP 해제는 이 타이밍이 아니면, 조교 종료 구상으로부터 체위의 참조등을 할 수 없습니다
 ;※기본적으로는 전부의 TEQUIP 해제는 빠듯이까지 이끄는 것이 편리할지도 모릅니다만…
@@ -2473,24 +2473,24 @@ TEQUIP:성교중 = NOWEX:사정 ? 0 # TEQUIP:성교중
 ;조교 대상 사정(계속 없음)에 의한 성교 봉사 해제
 TEQUIP:성교봉사중 = NOWEX:MASTER:사정 && !TFLAG:뽑지않고 ? 0 # TEQUIP:성교봉사중
 ;조교자가 페니스밴드 사용시, 각종 절정에 의한 성교 해제
-TEQUIP:성교중 = TEQUIP:조교자페니스밴드 && (NOWEX:C절정 || NOWEX:V절정) ? 0 # TEQUIP:성교중
+TEQUIP:성교중 = TEQUIP:조교자페니스밴드 && (NOWEX:Ｃ절정 || NOWEX:Ｖ절정) ? 0 # TEQUIP:성교중
 ;조교 대상이 페니스밴드 사용시, 각종 절정에 의한 성교 해제
-TEQUIP:성교봉사중 = TEQUIP:페니스밴드 && (NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정) && !TFLAG:뽑지않고 ? 0 # TEQUIP:성교봉사중
+TEQUIP:성교봉사중 = TEQUIP:페니스밴드 && (NOWEX:MASTER:Ｃ절정 || NOWEX:MASTER:Ｖ절정) && !TFLAG:뽑지않고 ? 0 # TEQUIP:성교봉사중
 
 ;비성교 봉사시, 뽑지않고를 해제
 TFLAG:뽑지않고 = !TEQUIP:성교봉사중 ? 0 # TFLAG:뽑지않고
 ;조교 대상 사정(계속 없음)에 의한 C애무 해제
-IF TEQUIP:조교대상C사용 && NOWEX:MASTER:사정
-	SELECTCASE TEQUIP:조교대상C사용
+IF TEQUIP:조교대상Ｃ사용 && NOWEX:MASTER:사정
+	SELECTCASE TEQUIP:조교대상Ｃ사용
 		;자위시
 		CASE 1
 			;드라이사정시
 			IF NOWEX:MASTER:사정 == 1
-				TEQUIP:조교대상C사용 = 0
+				TEQUIP:조교대상Ｃ사용 = 0
 				TEQUIP:접촉손가락 = 0
 			;1/2의 확률로 종료
 			ELSEIF RAND:2
-				TEQUIP:조교대상C사용 = 0
+				TEQUIP:조교대상Ｃ사용 = 0
 				TEQUIP:접촉손가락 = 0
 				PRINTFORMW %CALLNAME:TARGET%는 손에 부착한다%CALLNAME:MASTER%의 정액을 맛있을 것 같게 빨아내고 있다…
 			;계속
@@ -2502,12 +2502,12 @@ IF TEQUIP:조교대상C사용 && NOWEX:MASTER:사정
 		CASE 2
 			;드라이사정시
 			IF NOWEX:MASTER:사정 == 1
-				TEQUIP:조교대상C사용 = 0
-				TEQUIP:접촉구 = 0
+				TEQUIP:조교대상Ｃ사용 = 0
+				TEQUIP:접촉입 = 0
 			;1/2의 확률로 종료
 			ELSEIF RAND:2
-				TEQUIP:조교대상C사용 = 0
-				TEQUIP:접촉구 = 0
+				TEQUIP:조교대상Ｃ사용 = 0
+				TEQUIP:접촉입 = 0
 				PRINTFORML %CALLNAME:TARGET%는 입술을 사그러들 수 있어 천천히 페니스로부터 입을 떼어 놓으면
 				{
 				PRINTFORMW \@ DEEP_THROAT 
@@ -2520,16 +2520,16 @@ IF TEQUIP:조교대상C사용 && NOWEX:MASTER:사정
 				PRINTFORMW 귀두에 입맞춤 분뇨 도내의 정액을 빨아 올리고 있다…
 			ENDIF
 	ENDSELECT
-;여자 아이 조교 대상 C절정에 의한 C애무 해제
-ELSEIF TEQUIP:조교대상C사용 && NOWEX:MASTER:C절정 && !PENIS(MASTER)
-	SELECTCASE TEQUIP:조교대상C사용
+;여자 아이 조교 대상Ｃ절정에 의한다Ｃ애무 해제
+ELSEIF TEQUIP:조교대상Ｃ사용 && NOWEX:MASTER:Ｃ절정 && !PENIS(MASTER)
+	SELECTCASE TEQUIP:조교대상Ｃ사용
 		;애무시
 		CASE 1
 			;페니스밴드 자위
 			IF TEQUIP:페니스밴드
 				;1/2의 확률로 종료
 				IF RAND:2
-					TEQUIP:조교대상C사용 = 0
+					TEQUIP:조교대상Ｃ사용 = 0
 					TEQUIP:접촉손가락 = 0
 					PRINTFORMW %CALLNAME:TARGET%는 진짜의 페니스와 같이 뛴다%CALLNAME:MASTER%의 장형으로부터 손을 떼어 놓았다…
 				;계속
@@ -2541,7 +2541,7 @@ ELSEIF TEQUIP:조교대상C사용 && NOWEX:MASTER:C절정 && !PENIS(MASTER)
 			ELSE
 				;1/2의 확률로 종료
 				IF RAND:2
-					TEQUIP:조교대상C사용 = 0
+					TEQUIP:조교대상Ｃ사용 = 0
 					TEQUIP:접촉손가락 = 0
 					PRINTFORMW %CALLNAME:TARGET%는 손에 부착한다%CALLNAME:MASTER%의 애액을 맛있을 것 같게 빨아내고 있다…
 				;계속
@@ -2554,8 +2554,8 @@ ELSEIF TEQUIP:조교대상C사용 && NOWEX:MASTER:C절정 && !PENIS(MASTER)
 		CASE 2
 			;1/2의 확률로 종료
 			IF RAND:2
-				TEQUIP:조교대상C사용 = 0
-				TEQUIP:접촉구 = 0
+				TEQUIP:조교대상Ｃ사용 = 0
+				TEQUIP:접촉입 = 0
 				PRINTFORML %CALLNAME:TARGET%는 키스를 하도록(듯이) 천천히 클리토리스를 빨아
 				PRINTFORMW 서운한 듯이 간신히 입을 떼어 놓았다…
 			;계속
@@ -2566,10 +2566,10 @@ ELSEIF TEQUIP:조교대상C사용 && NOWEX:MASTER:C절정 && !PENIS(MASTER)
 	ENDSELECT
 ENDIF
 ;조교 대상 절정에 의한 조교자 자위 해제
-SIF NOWEX:MASTER:C절정 || NOWEX:MASTER:V절정 || NOWEX:MASTER:A절정 || NOWEX:MASTER:B절정 || NOWEX:MASTER:사정
+SIF NOWEX:MASTER:Ｃ절정 || NOWEX:MASTER:Ｖ절정 || NOWEX:MASTER:Ａ절정 || NOWEX:MASTER:Ｂ절정 || NOWEX:MASTER:사정
 	CLEARBIT TEQUIP:자위중, 0
 ;조교자 절정에 의한 조교자 자위 해제
-SIF NOWEX:C절정 || NOWEX:V절정 || NOWEX:A절정 || NOWEX:B절정
+SIF NOWEX:Ｃ절정 || NOWEX:Ｖ절정 || NOWEX:Ａ절정 || NOWEX:Ｂ절정
 	CLEARBIT TEQUIP:자위중, 1
 IF FLAG:오토모드표시설정 == 1 && FLAG:오토모드 > 0
 	SKIPDISP 0
@@ -2638,12 +2638,12 @@ ELSE
 ENDIF
 
 
-;─
+;────────────────────────────────────
 ;쿨치의 계산
-;─
+;────────────────────────────────────
 ;리액션 분류에 의한 쿨치 배율의 처리
 ;원칙, 호의적인 반응을 하고 있으면 히트치가 모이기 어렵다.
-;주인님이 새디즘이나 충분하고 욕구 불만이라면 심술쟁이인 대응이 되도록(듯이)해도 될지도?
+;주인님이 새드나 충분하고 욕구 불만이라면 심술쟁이인 대응이 되도록(듯이)해도 될지도?
 ;잠정적인 것으로 요점 조정인가. REACT분류를 사용해도 괜찮은가?
 @COOL_BYREACT(ARG)
 #FUNCTION

@@ -1,6 +1,6 @@
-﻿;─
+﻿;────────────────────────────────────
 ;보너스 취득의 메뉴. 보너스의 종류와 필요 포인트는 가짜의 설정입니다
-;─
+;────────────────────────────────────
 @BONUS_GAIN
 #DIM DAYONCE = -1
 
@@ -24,7 +24,7 @@ SIF ASSI:1 >= 0
 PRINTFORML [LV {CFLAG:TARGET:0}　EXP {CFLAG:TARGET:1}/{CFLAG:TARGET:4}　NEXT {CFLAG:TARGET:4-CFLAG:TARGET:1}]
 PRINTFORML (나머지 마력 {CFLAG:마력})
 
-;─
+;────────────────────────────────────
 ;이것까지 취득한 보너스의 표시
 ;처리가 거의 SQR인 채로, 표시 정보가 부족했으므로 처리 변경. 미조정@revkoishi(14/05/26)
 LINE_WIDTH = WIDTH()
@@ -118,7 +118,7 @@ IF VARSIZE("TALENT_SIZE") - MATCH(TALENT_SIZE, 0)
 	ENDIF
 ENDIF
 
-;─
+;────────────────────────────────────
 ;보너스 메뉴의 표시
 ;이름의 여백분
 LOCAL = MAX(8 - STRLENSU(CALLNAME:TARGET), 0)
@@ -165,7 +165,7 @@ SIF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
 	PRINTFORML \@ MAXBASE:MASTER:사정 < 2500 + CFLAG:MASTER:정력한계 * 500 ? [--] 노예의 정력은 단련하면 아직 늘릴 수 있을 것 같다 # [16] 노예의 정력의 한계를 올린다　　　　　　　　　　　 마력{(MAXBASE:MASTER:사정 - 2500 - CFLAG:MASTER:정력한계 * 500) / 500 * 1000 + 1000} \@
 DRAWLINE
 
-;─
+;────────────────────────────────────
 ;입력 처리
 $INPUT_LOOP
 INPUT
@@ -311,7 +311,7 @@ SELECTCASE RESULT
 		PRINTFORML \@ TALENT:기묘한손가락      ? %"[--] [기묘한손가락]를 가지고 있습니다", 51, LEFT% # %"[ 2] [기묘한손가락]를 체득"        , 51, LEFT   % 마력{GAIN_TALENT_V("기묘한손가락"    , 0), 5} 요점 LV{GAIN_TALENT_V("기묘한손가락"    , 1)} \@
 		PRINTFORML \@ TALENT:허리사용          ? %"[--] [허리사용]을 가지고 있습니다    ", 51, LEFT% # %"[ 3] [허리사용]을 보다 싫은 것 같고"    , 51, LEFT   % 마력{GAIN_TALENT_V("허리사용"        , 0), 5} 요점 LV{GAIN_TALENT_V("허리사용"        , 1)} \@
 		PRINTFORML \@ TALENT:결박능숙        ? %"[--] [결박능숙]을 가지고 있습니다"  , 51, LEFT% # %"[ 4] [결박능숙]에 손을 댄다"    , 51, LEFT   % 마력{GAIN_TALENT_V("결박능숙"      , 0), 5} 요점 LV{GAIN_TALENT_V("결박능숙"      , 1)} \@
-		PRINTFORML \@ TALENT:새디즘            ? %"[ 5] [새디즘]의 길로부터 손을 뗀다"    , 51, LEFT% # %"[ 5] [새디즘]의 기쁨을 안다"        , 51, LEFT% \@ 마력{GAIN_TALENT_V("새디즘"          , 0), 5} 요점 LV{GAIN_TALENT_V("새디즘"          , 1)}
+		PRINTFORML \@ TALENT:새드            ? %"[ 5] [새드]의 길로부터 손을 뗀다"    , 51, LEFT% # %"[ 5] [새드]의 기쁨을 안다"        , 51, LEFT% \@ 마력{GAIN_TALENT_V("새드"          , 0), 5} 요점 LV{GAIN_TALENT_V("새드"          , 1)}
 		PRINTFORML \@ TALENT:착의플레이선호  ? %"[ 6] [착의플레이선호]를 그만둔다"  , 51, LEFT% # %"[ 6] [착의플레이선호]에 눈을 뜬다", 51, LEFT% \@ 마력{GAIN_TALENT_V("착의플레이선호", 0), 5} 요점 LV{GAIN_TALENT_V("착의플레이선호", 1)}
 		PRINTFORML \@ TALENT:불결무시        ? %"[--] [불결무시]를 가지고 있습니다"  , 51, LEFT% # %"[ 7] [불결무시]를 할 수 있도록(듯이)"  , 51, LEFT   % 마력{GAIN_TALENT_V("불결무시"      , 0), 5} 요점 LV{GAIN_TALENT_V("불결무시"      , 1)} \@
 		$INPUT_LOOP_SKILL2
@@ -338,8 +338,8 @@ SELECTCASE RESULT
 					LOCALS:1 = 구속방법의 비법에 이르려면, 아직 경험이 부족한 것 같다…
 					LOCAL = 10
 				ELSEIF RESULT == 5
-					LOCALS:0 = 새디즘
-					IF TALENT:새디즘
+					LOCALS:0 = 새드
+					IF TALENT:새드
 						LOCALS:1 = 가학 취미를 그만두는 것으로 해도, 아직 조금 놀아 부족하다…
 					ELSE
 						LOCALS:1 = 새디스트가 되려면, 좀 더 학대하는 기쁨을 알 필요가 있을 것이다…
@@ -358,7 +358,7 @@ SELECTCASE RESULT
 					LOCALS:1 = 더러움을 무시할 수 있게 되려면, 좀 더 행위에 익숙하지 않으면 안 될 것이다…
 					LOCAL = 12
 				ENDIF
-				IF TALENT:LOCALS && LOCALS != "새디즘" && LOCALS != "착의플레이선호"
+				IF TALENT:LOCALS && LOCALS != "새드" && LOCALS != "착의플레이선호"
 					CLEARLINE 1
 					GOTO INPUT_LOOP_SKILL2
 				ENDIF
@@ -793,7 +793,7 @@ SELECTCASE RESULT
 			CFLAG:마력 -= 7000
 			TALENT:후타나리 = !TALENT:후타나리
 			;동정인가 어떤가
-			TALENT:동정 = !CFLAG:동정상실이끝난상태 && TALENT:후타나리
+			TALENT:동정 = !CFLAG:동정상실됨 && TALENT:후타나리
 			;사정 게이지의 초기화
 			;초기화 함수를 통일@이것 보고
 			CALL BASE_SETUP_PENIS(TARGET)
@@ -861,15 +861,15 @@ ENDSELECT
 RESTART
 
 
-;─
+;────────────────────────────────────
 ;벌써 취득한 보너스를 새로운 조교자에게 적용
-;─
+;────────────────────────────────────
 @BONUS_APPLY
 
-;─
+;────────────────────────────────────
 ;기교 상승 처리
 ;돌아가 값 = 0:성공 1:마력 부족 2:조교레벨 부족 3:기교 상한
-;─
+;────────────────────────────────────
 @RIZE_ABL
 
 ;마력 소비량을 돌려준다
@@ -905,10 +905,10 @@ ELSE
 	RETURNF ABL:기교 * ABL:기교
 ENDIF
 
-;─
+;────────────────────────────────────
 ;기능 취득·방폐 처리
 ;돌아가 값 = 0:성공 1:마력 부족 2:조교레벨 부족
-;─
+;────────────────────────────────────
 @GAIN_TALENT(ARGS)
 
 ;마력 소비량을 돌려준다
@@ -992,7 +992,7 @@ SELECTCASE ARGS
 		ELSE
 			RETURNF 10
 		ENDIF
-	CASE "새디즘"
+	CASE "새드"
 		IF ARG == 0
 			RETURNF 10000
 		ELSE

@@ -1,11 +1,11 @@
 ﻿
-;─
+;────────────────────────────────────
 ;COMABLE 관리 함수(COMABLEn 함수를 호출해, 결과를 기억한다)
 ;※하는대로 처리라든지를 위해서(때문에), COMABLE 실행순서를 조정하고 싶었다
 ;  그리고, 기력 소비량이라든지 몇번도 계산하고 싶지 않았고@이것 보고
 ;
 ;ARG = -1이라면 COMABLE 처리, COM 번호라면 가(1) 부(0)를 돌려준다
-;─
+;────────────────────────────────────
 @COMABLE(ARG)
 #LOCALSIZE 100
 #LOCALSSIZE 1
@@ -55,9 +55,9 @@ RESULT = 0
 TRYCALLFORM COMABLE{ARG}
 RETURN RESULT
 
-;─
+;────────────────────────────────────
 ;COM 기력 소비량 관리(COMABLE 관리)의 리스트 작성 함수
-;─
+;────────────────────────────────────
 @SET_COM_VITALITY
 #LOCALSIZE 100
 #DIM LCOUNT
@@ -99,7 +99,7 @@ FOR LCOUNT, 0, 100
 NEXT
 CALLF COM_VITALITY, "순위수설정"
 
-;─
+;────────────────────────────────────
 ;COM 기력 소비량 관리(COMABLE 관리)
 ;ARGS   =처리 내용
 ;	"취득"   지정 COM의 소비량 취득(초기치)
@@ -117,7 +117,7 @@ CALLF COM_VITALITY, "순위수설정"
 ;LRANK	COM 번호가 소비 기력이 많은 순서에 들어가 있다
 ;		LRANK:0 = 0이라면침묵한다가 제일 소비 기력이 크고, LOCAL:0이 그 소비 기력의 값이 된다
 ;
-;─
+;────────────────────────────────────
 @COM_VITALITY(ARGS = "", ARGS:1 = "", ARG = 0)
 #FUNCTION
 #LOCALSIZE 100
@@ -186,9 +186,9 @@ ELSE
 ENDIF
 RETURNF 1
 
-;─
+;────────────────────────────────────
 ;범용 처리
-;─
+;────────────────────────────────────
 ;COMABLE 일괄처리
 @GLOBAL_COMABLE(ARG)
 #FUNCTION
@@ -227,26 +227,26 @@ RETURNF 0
 @ABLE_KAIKAN
 #FUNCTION
 FOR LOCAL, 0, 4
-	;LOCAL:1-4에 쾌CVAB 를 각각 대입
+	;LOCAL:1-4에 쾌ＣＶＡＢ 를 각각 대입
 	LOCAL:(LOCAL + 1) = SOURCE:MASTER:LOCAL
 	;민감시 1.2배, 둔감시 0.8배
 	SIF TALENT:MASTER:(100 + (LOCAL * 2))
 		TIMES LOCAL:(LOCAL + 1) , 1.20
 	SIF TALENT:MASTER:(101 + (LOCAL * 2))
 		TIMES LOCAL:(LOCAL + 1) , 0.80
-	;음핵·음경/음 단지/음고/음유시, 대응 감각 1.3배
+	;음핵·음경/음호/음고/음유시, 대응 감각 1.3배
 	SIF TALENT:MASTER:(72 + LOCAL)
 		TIMES LOCAL:(LOCAL + 1) , 1.30
-	;X감각에 의해 1～1.5배
+	;Ｘ감각에 의해 1～1.5배
 	LOCAL:(LOCAL + 1) = LOCAL:(LOCAL + 1) * (10 + LIMIT(ABL:MASTER:(LOCAL + 3), 0, 5)) / 10
 NEXT
 ;LOCAL:1-4의 합계를 LOCAL에 대입
 LOCAL = LOCAL:1 + LOCAL:2 + LOCAL:3 + LOCAL:4
-;키스는 CVAB의 소스가 들어가지 않기 때문에 예외로서 처리합니다
+;키스는ＣＶＡＢ의 소스가 들어가지 않기 때문에 예외로서 처리합니다
 SIF IS_NOWACTNAME("키스")
 	LOCAL = SOURCE:MASTER:사랑 + SOURCE:MASTER:성행동
-;쾌감에순수/부정
-SIF TALENT:MASTER:쾌감에순수
+;쾌감에솔직/부정
+SIF TALENT:MASTER:쾌감에솔직
 	TIMES LOCAL, 1.20
 SIF TALENT:MASTER:쾌감을부정
 	TIMES LOCAL, 0.80
@@ -274,9 +274,9 @@ LOCAL = LOCAL * LIMIT(LOCAL:3, 15000, 19500) / 15000
 ;LOCAL를 돌려준다
 RETURNF LOCAL
 
-;─
+;────────────────────────────────────
 ;침묵한다
-;─
+;────────────────────────────────────
 @COMABLE0
 ;-------------------------------------------------
 ;가부 판정
@@ -317,9 +317,9 @@ CALL COMABLE_CORRECTION("침묵한다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;여리게대답한다
-;─
+;────────────────────────────────────
 @COMABLE1
 ;-------------------------------------------------
 ;가부 판정
@@ -331,7 +331,7 @@ SIF GLOBAL_COMABLE(1)
 IF 0
 ELSEIF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을얘기한다/성에대한이야기를한다/상냥하게위로한다")
 ELSEIF IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/고함친다/기분나쁘게웃는다/매도")
-ELSEIF IS_NOWACTNAME("의상의변경을요구한다/합의를요구한다/밀어넘어뜨린다/페니스밴드장착")
+ELSEIF IS_NOWACTNAME("의상의변경을요구한다/합의를요구한다/쓰러트린다/페니스밴드장착")
 ELSEIF IS_NOWACTNAME("방치플레이")
 ELSEIF IS_NOWACTNAME("쉬게한다/영양제를먹인다/치료한다")
 ELSE
@@ -355,9 +355,9 @@ CALL COMABLE_CORRECTION("여리게대답한다", "적극_5/반항_-10/활기_-20
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;무뚝뚝하게대답한다
-;─
+;────────────────────────────────────
 @COMABLE2
 ;-------------------------------------------------
 ;가부 판정
@@ -369,7 +369,7 @@ SIF GLOBAL_COMABLE(2)
 IF 0
 ELSEIF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을얘기한다/성에대한이야기를한다/상냥하게위로한다")
 ELSEIF IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/고함친다/기분나쁘게웃는다/매도")
-ELSEIF IS_NOWACTNAME("의상의변경을요구한다/합의를요구한다/밀어넘어뜨린다/페니스밴드장착")
+ELSEIF IS_NOWACTNAME("의상의변경을요구한다/합의를요구한다/쓰러트린다/페니스밴드장착")
 ELSEIF IS_NOWACTNAME("쉬게한다/영양제를먹인다/치료한다")
 ELSE
 	RETURN 0
@@ -392,9 +392,9 @@ CALL COMABLE_CORRECTION("무뚝뚝하게대답한다", "적극_-10/반항_20/활
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;붙임성좋게대답한다
-;─
+;────────────────────────────────────
 @COMABLE3
 ;-------------------------------------------------
 ;가부 판정
@@ -406,7 +406,7 @@ SIF GLOBAL_COMABLE(3)
 IF 0
 ELSEIF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을얘기한다/성에대한이야기를한다/상냥하게위로한다")
 ELSEIF IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/매도")
-ELSEIF IS_NOWACTNAME("의상의변경을요구한다/합의를요구한다/밀어넘어뜨린다/페니스밴드장착")
+ELSEIF IS_NOWACTNAME("의상의변경을요구한다/합의를요구한다/쓰러트린다/페니스밴드장착")
 ELSEIF IS_NOWACTNAME("방치플레이")
 ELSEIF IS_NOWACTNAME("쉬게한다/영양제를먹인다/치료한다")
 ELSE
@@ -430,9 +430,9 @@ CALL COMABLE_CORRECTION("붙임성좋게대답한다", "적극_10/반항_-40/활
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;강하게대답한다
-;─
+;────────────────────────────────────
 @COMABLE4
 ;-------------------------------------------------
 ;가부 판정
@@ -444,7 +444,7 @@ SIF GLOBAL_COMABLE(4)
 IF 0
 ELSEIF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을얘기한다/성에대한이야기를한다/상냥하게위로한다")
 ELSEIF IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/고함친다/기분나쁘게웃는다/매도")
-ELSEIF IS_NOWACTNAME("의상의변경을요구한다/합의를요구한다/밀어넘어뜨린다/페니스밴드장착")
+ELSEIF IS_NOWACTNAME("의상의변경을요구한다/합의를요구한다/쓰러트린다/페니스밴드장착")
 ELSEIF IS_NOWACTNAME("방치플레이")
 ELSEIF IS_NOWACTNAME("쉬게한다/영양제를먹인다/치료한다")
 ELSE
@@ -468,9 +468,9 @@ CALL COMABLE_CORRECTION("강하게대답한다", "적극_-20/반항_20/활기_-3
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;빈정거린다
-;─
+;────────────────────────────────────
 @COMABLE5
 ;-------------------------------------------------
 ;가부 판정
@@ -508,9 +508,9 @@ LOCAL = RESULT
 ;소비 기력 대입
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;더하드하게
-;─
+;────────────────────────────────────
 @COMABLE6
 ;-------------------------------------------------
 ;가부 판정
@@ -524,7 +524,7 @@ ELSEIF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을
 ELSEIF IS_NOWACTNAME("벌이라고선언한다")
 ELSEIF IS_NOWACTNAME("손으로애무/가슴애무/입으로애무/키스")
 ELSEIF IS_NOWACTNAME("성기를서로켠다/파이즈리한다")
-ELSEIF IS_NOWACTNAME("C애무도구/니플캡")
+ELSEIF IS_NOWACTNAME("Ｃ애무도구/니플캡")
 ELSEIF IS_NOWACTNAME("정상위")
 ELSEIF IS_NOWACTNAME("수치플레이/야외플레이/줄/아이마스크/볼개그/삼각목마")
 ELSEIF IS_NOWACTNAME("스팽킹/방치플레이/페니스밴드장착")
@@ -551,9 +551,9 @@ LOCAL = RESULT
 ;소비 기력 대입
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;용서를빈다
-;─
+;────────────────────────────────────
 @COMABLE7
 ;-------------------------------------------------
 ;가부 판정
@@ -565,14 +565,14 @@ SIF GLOBAL_COMABLE(7)
 IF 0
 ELSEIF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을얘기한다/성에대한이야기를한다/상냥하게위로한다")
 ELSEIF IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/고함친다/기분나쁘게웃는다")
-ELSEIF IS_NOWACTNAME("밀어넘어뜨린다")
-ELSEIF IS_NOWACTNAME("애널애무/애널빨고")
+ELSEIF IS_NOWACTNAME("쓰러트린다")
+ELSEIF IS_NOWACTNAME("애널애무/애널핥기")
 ELSEIF IS_NOWACTNAME("애널바이브/애널비즈")
 ELSEIF IS_NOWACTNAME("후배위/배면좌위/애널섹스/역강간")
 ELSEIF IS_NOWACTNAME("자위/비패개장")
 ELSEIF IS_NOWACTNAME("수치플레이/야외플레이/줄/아이마스크/삼각목마")
 ELSEIF IS_NOWACTNAME("방뇨/관장세트") || (IS_NOWACTNAME("페니스밴드장착") && !TFLAG:ACT파생) || IS_NOWACTNAME("페니스밴드")
-ELSEIF IS_NOWACTNAME("다리빨고강제")
+ELSEIF IS_NOWACTNAME("밟핥기강제")
 ELSEIF IS_NOWACTNAME("스팽킹/채찍/바늘/방치플레이")
 ELSEIF IS_NOWACTNAME("피스트퍽/애널피스트/양구멍피스트")
 ELSEIF IS_NOWACTNAME("공중육변기플레이")
@@ -598,9 +598,9 @@ CALL COMABLE_CORRECTION("용서를빈다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;기분좋게해줘
-;─
+;────────────────────────────────────
 @COMABLE8
 ;-------------------------------------------------
 ;가부 판정
@@ -612,8 +612,8 @@ SIF GLOBAL_COMABLE(8)
 IF 0
 ELSEIF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을얘기한다/성에대한이야기를한다/상냥하게위로한다")
 ELSEIF IS_NOWACTNAME("매도")
-ELSEIF IS_NOWACTNAME("합의를요구한다/밀어넘어뜨린다")
-ELSEIF IS_NOWACTNAME("자위과시하고/페니스밴드장착/페니스밴드")
+ELSEIF IS_NOWACTNAME("합의를요구한다/쓰러트린다")
+ELSEIF IS_NOWACTNAME("자위과시/페니스밴드장착/페니스밴드")
 ELSEIF IS_NOWACTNAME("수치플레이/야외플레이")
 ELSEIF IS_NOWACTNAME("방뇨")
 ELSEIF IS_NOWACTNAME("방치플레이")
@@ -639,9 +639,9 @@ CALL COMABLE_CORRECTION("기분좋게해줘", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;부끄러워한다
-;─
+;────────────────────────────────────
 @COMABLE10
 ;-------------------------------------------------
 ;가부 판정
@@ -675,9 +675,9 @@ CALL COMABLE_CORRECTION("부끄러워한다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;싫어한다
-;─
+;────────────────────────────────────
 @COMABLE11
 ;-------------------------------------------------
 ;가부 판정
@@ -701,9 +701,9 @@ CALL COMABLE_CORRECTION("싫어한다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;서투르다고매도한다
-;─
+;────────────────────────────────────
 @COMABLE12
 ;-------------------------------------------------
 ;가부 판정
@@ -732,9 +732,9 @@ CALL COMABLE_CORRECTION("서투르다고매도한다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;겁없게웃는다
-;─
+;────────────────────────────────────
 @COMABLE13
 ;-------------------------------------------------
 ;가부 판정
@@ -757,9 +757,9 @@ CALL COMABLE_CORRECTION("겁없게웃는다", "반항_30/활기_40/끈기_20/호
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;쾌감을참는다
-;─
+;────────────────────────────────────
 @COMABLE14
 ;-------------------------------------------------
 ;가부 판정
@@ -770,14 +770,14 @@ SIF GLOBAL_COMABLE(14)
 ;가게해선택 후
 SIF TCVAR:MASTER:가게해거동제어용
 	RETURN 0
-;합의 없음의 승마위는 받아들이지 않는다
-SIF CFLAG:합의 == 0 && IS_NOWACTNAME("승마위") && TALENT:MASTER:처녀
+;합의 없음의 기승위는 받아들이지 않는다
+SIF CFLAG:합의 == 0 && IS_NOWACTNAME("기승위") && TALENT:MASTER:처녀
 	RETURN 0
 ;합의 없음의 성교 봉사는 받아들이지 않는다
 SIF CFLAG:합의 == 0 && GET_ACTM(TFLAG:ACT) == 10 && !IS_NOWACTNAME("역강간") && TALENT:MASTER:동정
 	RETURN 0
 ;쾌감이 없으면 안돼
-SIF SOURCE:MASTER:쾌C == 0 && SOURCE:MASTER:쾌V == 0 && SOURCE:MASTER:쾌A == 0 && SOURCE:MASTER:쾌B == 0
+SIF SOURCE:MASTER:쾌Ｃ == 0 && SOURCE:MASTER:쾌Ｖ == 0 && SOURCE:MASTER:쾌Ａ == 0 && SOURCE:MASTER:쾌Ｂ == 0
 	RETURN 0
 RETURN 1
 ;-------------------------------------------------
@@ -794,9 +794,9 @@ CALL COMABLE_CORRECTION("쾌감을참는다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;쾌감을받아들인다
-;─
+;────────────────────────────────────
 @COMABLE15
 ;-------------------------------------------------
 ;가부 판정
@@ -804,14 +804,14 @@ RETURN LOCAL
 ;일괄관리
 SIF GLOBAL_COMABLE(15)
 	RETURN RESULT
-;합의 없음의 승마위는 받아들이지 않는다
-SIF CFLAG:합의 == 0 && IS_NOWACTNAME("승마위") && TALENT:MASTER:처녀
+;합의 없음의 기승위는 받아들이지 않는다
+SIF CFLAG:합의 == 0 && IS_NOWACTNAME("기승위") && TALENT:MASTER:처녀
 	RETURN 0
 ;합의 없음의 성교 봉사는 받아들이지 않는다
 SIF CFLAG:합의 == 0 && GET_ACTM(TFLAG:ACT) == 10 && !IS_NOWACTNAME("역강간") && TALENT:MASTER:동정
 	RETURN 0
 ;쾌감이 없으면 안돼
-SIF SOURCE:MASTER:쾌C == 0 && SOURCE:MASTER:쾌V == 0 && SOURCE:MASTER:쾌A == 0 && SOURCE:MASTER:쾌B == 0
+SIF SOURCE:MASTER:쾌Ｃ == 0 && SOURCE:MASTER:쾌Ｖ == 0 && SOURCE:MASTER:쾌Ａ == 0 && SOURCE:MASTER:쾌Ｂ == 0
 	RETURN 0
 RETURN 1
 ;-------------------------------------------------
@@ -828,9 +828,9 @@ CALL COMABLE_CORRECTION("쾌감을받아들인다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;기분좋다！
-;─
+;────────────────────────────────────
 @COMABLE16
 ;-------------------------------------------------
 ;가부 판정
@@ -838,14 +838,14 @@ RETURN LOCAL
 ;일괄관리
 SIF GLOBAL_COMABLE(16)
 	RETURN RESULT
-;합의 없음의 승마위는 받아들이지 않는다
-SIF CFLAG:합의 == 0 && IS_NOWACTNAME("승마위") && TALENT:MASTER:처녀
+;합의 없음의 기승위는 받아들이지 않는다
+SIF CFLAG:합의 == 0 && IS_NOWACTNAME("기승위") && TALENT:MASTER:처녀
 	RETURN 0
 ;합의 없음의 성교 봉사는 받아들이지 않는다
 SIF CFLAG:합의 == 0 && GET_ACTM(TFLAG:ACT) == 10 && !IS_NOWACTNAME("역강간") && TALENT:MASTER:동정
 	RETURN 0
 ;쾌감이 없으면 안돼
-SIF SOURCE:MASTER:쾌C == 0 && SOURCE:MASTER:쾌V == 0 && SOURCE:MASTER:쾌A == 0 && SOURCE:MASTER:쾌B == 0
+SIF SOURCE:MASTER:쾌Ｃ == 0 && SOURCE:MASTER:쾌Ｖ == 0 && SOURCE:MASTER:쾌Ａ == 0 && SOURCE:MASTER:쾌Ｂ == 0
 	RETURN 0
 RETURN 1
 ;-------------------------------------------------
@@ -862,9 +862,9 @@ CALL COMABLE_CORRECTION("기분좋다！", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;허리를흔드는
-;─
+;────────────────────────────────────
 @COMABLE20
 ;-------------------------------------------------
 ;가부 판정
@@ -872,8 +872,8 @@ RETURN LOCAL
 ;일괄관리
 SIF GLOBAL_COMABLE(20)
 	RETURN RESULT
-;초조하게해중은 실행 불가
-SIF TCVAR:MASTER:초조하게해번 > 1
+;애태움중은 실행 불가
+SIF TCVAR:MASTER:애태움수 > 1
 	RETURN 0
 ;ACT, 상황 제한
 ;삽입하고 있다/되고 있다/하려고 하고 있다, 추가;파이즈리, 가랑이
@@ -882,8 +882,8 @@ SIF TFLAG:ACT분류 != 3 && TFLAG:ACT분류 != 10 && !TEQUIP:성교중 && !TEQUI
 ;파이즈리한다시, 조교자가 빈유
 SIF IS_NOWACTNAME("파이즈리한다") && TALENT:빈유
 	RETURN 0
-;합의 없음의 승마위는 받아들이지 않는다
-SIF CFLAG:합의 == 0 && IS_NOWACTNAME("승마위") && TALENT:MASTER:처녀
+;합의 없음의 기승위는 받아들이지 않는다
+SIF CFLAG:합의 == 0 && IS_NOWACTNAME("기승위") && TALENT:MASTER:처녀
 	RETURN 0
 ;합의 없음의 성교 봉사는 받아들이지 않는다
 SIF CFLAG:합의 == 0 && GET_ACTM(TFLAG:ACT) == 10 && !IS_NOWACTNAME("역강간") && TALENT:MASTER:동정
@@ -903,9 +903,9 @@ CALL COMABLE_CORRECTION("허리를흔드는", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;안에내！
-;─
+;────────────────────────────────────
 @COMABLE21
 ;-------------------------------------------------
 ;가부 판정
@@ -931,8 +931,8 @@ SIF IS_NOWACTNAME("역강간")
 ;어느 정도의 성지식이 없으면 안돼
 SIF EXP:MASTER:성지식 < 10
 	RETURN 0
-;합의 없음의 승마위는 받아들이지 않는다
-SIF CFLAG:합의 == 0 && IS_NOWACTNAME("승마위") && TALENT:MASTER:처녀
+;합의 없음의 기승위는 받아들이지 않는다
+SIF CFLAG:합의 == 0 && IS_NOWACTNAME("기승위") && TALENT:MASTER:처녀
 	RETURN 0
 ;합의 없음의 성교 봉사는 받아들이지 않는다
 SIF CFLAG:합의 == 0 && GET_ACTM(TFLAG:ACT) == 10 && !IS_NOWACTNAME("역강간") && TALENT:MASTER:동정
@@ -952,9 +952,9 @@ CALL COMABLE_CORRECTION("안에내！", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;안에내지마！
-;─
+;────────────────────────────────────
 @COMABLE22
 ;-------------------------------------------------
 ;가부 판정
@@ -978,8 +978,8 @@ SIF IS_NOWACTNAME("역강간")
 ;어느 정도의 성지식이 없으면 안돼
 SIF EXP:MASTER:성지식 < 10
 	RETURN 0
-;합의 없음의 승마위는 받아들이지 않는다
-SIF CFLAG:합의 == 0 && IS_NOWACTNAME("승마위") && TALENT:MASTER:처녀
+;합의 없음의 기승위는 받아들이지 않는다
+SIF CFLAG:합의 == 0 && IS_NOWACTNAME("기승위") && TALENT:MASTER:처녀
 	RETURN 0
 ;합의 없음의 성교 봉사는 받아들이지 않는다
 SIF CFLAG:합의 == 0 && GET_ACTM(TFLAG:ACT) == 10 && !IS_NOWACTNAME("역강간") && TALENT:MASTER:동정
@@ -999,9 +999,9 @@ CALL COMABLE_CORRECTION("안에내지마！", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;아픔을참는다
-;─
+;────────────────────────────────────
 @COMABLE30
 ;-------------------------------------------------
 ;가부 판정
@@ -1027,9 +1027,9 @@ CALL COMABLE_CORRECTION("아픔을참는다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;비명을올린다
-;─
+;────────────────────────────────────
 @COMABLE31
 ;-------------------------------------------------
 ;가부 판정
@@ -1050,9 +1050,9 @@ CALL COMABLE_CORRECTION("비명을올린다", "적극_-20/반항_40/활기_40/�
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;날뛴다
-;─
+;────────────────────────────────────
 @COMABLE32
 ;-------------------------------------------------
 ;가부 판정
@@ -1075,9 +1075,9 @@ CALL COMABLE_CORRECTION("날뛴다", "적극_30/반항_40/활기_60/끈기_20/�
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;무서워한다
-;─
+;────────────────────────────────────
 @COMABLE33
 ;-------------------------------------------------
 ;가부 판정
@@ -1091,8 +1091,8 @@ IF 0
 ELSEIF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을얘기한다/성에대한이야기를한다")
 ;엄격하게위협한다/벌이라고선언한다/고함친다/기분나쁘게웃는다/매도/페니스밴드장착
 ELSEIF IS_NOWACTNAME("엄격하게위협한다/벌이라고선언한다/고함친다/기분나쁘게웃는다/매도") || (IS_NOWACTNAME("페니스밴드장착") && !TFLAG:ACT파생)
-;밀어넘어뜨린다
-ELSEIF IS_NOWACTNAME("밀어넘어뜨린다")
+;쓰러트린다
+ELSEIF IS_NOWACTNAME("쓰러트린다")
 ;풋잡한다
 ELSEIF IS_NOWACTNAME("풋잡한다")
 ;애널바이브/애널비즈
@@ -1126,9 +1126,9 @@ CALL COMABLE_CORRECTION("무서워한다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;거부한다
-;─
+;────────────────────────────────────
 @COMABLE40
 ;-------------------------------------------------
 ;가부 판정
@@ -1145,8 +1145,8 @@ ELSEIF IS_NOWACTNAME("이라마치오/역강간")
 ELSEIF TFLAG:ACT분류 == 5
 ;의상의변경을요구한다/합의를요구한다
 ELSEIF IS_NOWACTNAME("의상의변경을요구한다/합의를요구한다")
-;합의가 있으면 승마위를 받아들인다
-ELSEIF IS_NOWACTNAME("승마위") && CFLAG:합의 == 0 && TALENT:MASTER:처녀
+;합의가 있으면 기승위를 받아들인다
+ELSEIF IS_NOWACTNAME("기승위") && CFLAG:합의 == 0 && TALENT:MASTER:처녀
 ;자위
 ELSEIF IS_NOWACTNAME("자위")
 ;방뇨
@@ -1166,17 +1166,17 @@ RETURN 1
 @COMABLEM40
 ;LOCAL 초기화
 VARSET LOCAL
-;합의 없음의 승마위는 소비 기력 격감
-LOCAL = (IS_NOWACTNAME("승마위") && CFLAG:합의 == 0 && TALENT:MASTER:처녀) ? 5 # 1
+;합의 없음의 기승위는 소비 기력 격감
+LOCAL = (IS_NOWACTNAME("기승위") && CFLAG:합의 == 0 && TALENT:MASTER:처녀) ? 5 # 1
 ;소비 기력량 판정
 LOCALS = 적극_{-10 / LOCAL}/반항_{30 / LOCAL}/활기_{-10 / LOCAL}/끈기_{20 / LOCAL}/호의_{-10 / LOCAL}/붙임성_{-10 / LOCAL}/타락_{-10/LOCAL}
 CALL COMABLE_CORRECTION("거부한다", LOCALS)
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;소극적한다
-;─
+;────────────────────────────────────
 @COMABLE41
 ;-------------------------------------------------
 ;가부 판정
@@ -1190,8 +1190,8 @@ IF 0
 ELSEIF TFLAG:ACT분류 == 5
 ;의상의변경을요구한다
 ELSEIF IS_NOWACTNAME("의상의변경을요구한다")
-;승마위
-ELSEIF IS_NOWACTNAME("승마위")
+;기승위
+ELSEIF IS_NOWACTNAME("기승위")
 ;자위
 ELSEIF IS_NOWACTNAME("자위")
 ;방뇨
@@ -1214,9 +1214,9 @@ CALL COMABLE_CORRECTION("소극적한다", "적극_-20/반항_-5/활기_-10/끈�
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;적극적한다
-;─
+;────────────────────────────────────
 @COMABLE42
 ;-------------------------------------------------
 ;가부 판정
@@ -1230,8 +1230,8 @@ IF 0
 ELSEIF TFLAG:ACT분류 == 5
 ;의상의변경을요구한다
 ELSEIF IS_NOWACTNAME("의상의변경을요구한다")
-;승마위
-ELSEIF IS_NOWACTNAME("승마위")
+;기승위
+ELSEIF IS_NOWACTNAME("기승위")
 ;성교 봉사계
 ELSEIF GET_ACTM(TFLAG:ACT) == 10 && !IS_NOWACTNAME("역강간")
 ;자위
@@ -1254,9 +1254,9 @@ CALL COMABLE_CORRECTION("적극적한다", "적극_20/반항_-60/활기_10/끈�
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;애정을담아준다
-;─
+;────────────────────────────────────
 @COMABLE43
 ;-------------------------------------------------
 ;가부 판정
@@ -1268,8 +1268,8 @@ SIF GLOBAL_COMABLE(43)
 IF 0
 ;ACT분류가 봉사
 ELSEIF TFLAG:ACT분류 == 5
-;승마위
-ELSEIF IS_NOWACTNAME("승마위")
+;기승위
+ELSEIF IS_NOWACTNAME("기승위")
 ;성교 봉사계
 ELSEIF GET_ACTM(TFLAG:ACT) == 10 && !IS_NOWACTNAME("역강간")
 ELSE
@@ -1293,9 +1293,9 @@ CALL COMABLE_CORRECTION("애정을담아준다", "적극_20/반항_-90/활기_10
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;태연하게한다
-;─
+;────────────────────────────────────
 @COMABLE44
 ;-------------------------------------------------
 ;가부 판정
@@ -1309,8 +1309,8 @@ IF 0
 ELSEIF TFLAG:ACT분류 == 5
 ;의상의변경을요구한다
 ELSEIF IS_NOWACTNAME("의상의변경을요구한다")
-;승마위
-ELSEIF IS_NOWACTNAME("승마위")
+;기승위
+ELSEIF IS_NOWACTNAME("기승위")
 ;성교 봉사계
 ELSEIF GET_ACTM(TFLAG:ACT) == 10 && !IS_NOWACTNAME("역강간")
 ;자위
@@ -1334,9 +1334,9 @@ LOCAL = RESULT
 RETURN LOCAL
 
 
-;─
+;────────────────────────────────────
 ;자위하기시작한다
-;─
+;────────────────────────────────────
 @COMABLE50
 ;-------------------------------------------------
 ;가부 판정
@@ -1358,12 +1358,12 @@ ELSEIF IS_NOWACTNAME("지금의기분을얘기한다/자신에게로의기분을
 ;ELSEIF IS_NOWACTNAME("키스")
 ;매도
 ELSEIF IS_NOWACTNAME("매도")
-;자위과시하고/페니스밴드장착
-ELSEIF IS_NOWACTNAME("자위과시하고/페니스밴드장착")
+;자위과시/페니스밴드장착
+ELSEIF IS_NOWACTNAME("자위과시/페니스밴드장착")
 ;수치플레이/야외플레이
 ELSEIF IS_NOWACTNAME("수치플레이/야외플레이")
-;손으로애무를강제/입으로애무를강제/다리빨고강제/가슴애무강제
-ELSEIF IS_NOWACTNAME("손으로애무를강제/입으로애무를강제/다리빨고강제/가슴애무강제")
+;손으로애무를강제/입으로애무를강제/밟핥기강제/가슴애무강제
+ELSEIF IS_NOWACTNAME("손으로애무를강제/입으로애무를강제/밟핥기강제/가슴애무강제")
 ;방치플레이
 ELSEIF IS_NOWACTNAME("방치플레이")
 ;쉬게한다
@@ -1386,9 +1386,9 @@ CALL COMABLE_CORRECTION("자위하기시작한다", "적극_30/반항_30/활기_
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;도구를제외한다
-;─
+;────────────────────────────────────
 @COMABLE51
 ;-------------------------------------------------
 ;가부 판정
@@ -1418,9 +1418,9 @@ CALL COMABLE_CORRECTION("도구를제외한다", "적극_10/반항_30/활기_20/
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;하는대로
-;─
+;────────────────────────────────────
 @COMABLE52
 ;-------------------------------------------------
 ;가부 판정
@@ -1435,9 +1435,9 @@ RETURN 1
 ;소비 기력 대입(0 고정)
 RETURN 0
 
-;─
+;────────────────────────────────────
 ;가게해！실행 판정
-;─
+;────────────────────────────────────
 @COMABLE70
 ;-------------------------------------------------
 ;가부 판정
@@ -1446,8 +1446,8 @@ RETURN 0
 SIF GLOBAL_COMABLE(70)
 	RETURN RESULT
 ;상위 판정(여기에 해당했을 경우 이후의 판정을 무시한다)
-;초조하게해중
-SIF TCVAR:MASTER:초조하게해번
+;애태움중
+SIF TCVAR:MASTER:애태움수
 	RETURN 0
 ;갈것같다라면 여러 가지 마구 달린다
 IF TCVAR:MASTER:갈것같다
@@ -1461,23 +1461,23 @@ ELSEIF TFLAG:ACT분류 != 1
 ;손으로애무/입으로애무/성기를서로켠다/파이즈리한다/풋잡한다
 ELSEIF IS_NOWACTNAME("손으로애무/입으로애무/성기를서로켠다/파이즈리한다/풋잡한다")
 	;대응 PALAM가 핍박하고 있지 않으면 금지
-	SIF PALAM:MASTER:쾌C < 5000
+	SIF PALAM:MASTER:쾌Ｃ < 5000
 		RETURN 0
 ;가슴애무
 ELSEIF IS_NOWACTNAME("가슴애무")
 	;대응 PALAM가 핍박하고 있지 않으면 금지
-	SIF PALAM:MASTER:쾌B < 5000
+	SIF PALAM:MASTER:쾌Ｂ < 5000
 		RETURN 0
-;애널애무/애널빨고
-ELSEIF IS_NOWACTNAME("애널애무/애널빨고")
+;애널애무/애널핥기
+ELSEIF IS_NOWACTNAME("애널애무/애널핥기")
 	;대응 PALAM가 핍박하고 있지 않으면 금지
-	SIF PALAM:MASTER:쾌A < 5000
+	SIF PALAM:MASTER:쾌Ａ < 5000
 		RETURN 0
 ;키스시 금지
 ELSEIF IS_NOWACTNAME("키스")
 	RETURN 0
-;밀어넘어뜨린다시 금지
-ELSEIF IS_NOWACTNAME("밀어넘어뜨린다")
+;쓰러트린다시 금지
+ELSEIF IS_NOWACTNAME("쓰러트린다")
 	RETURN 0
 ELSE
 	RETURN 0
@@ -1497,9 +1497,9 @@ CALL COMABLE_CORRECTION("가게해！", "적극_20/반항_-40/활기_10/끈기_-
 LOCAL = RESULT
 RETURN LOCAL
 
-;─
+;────────────────────────────────────
 ;보정 처리(일괄 보정)
-;─
+;────────────────────────────────────
 @COMABLE_CORRECTION(ARGS, ARGS:1)
 #LOCALSSIZE 10
 #DIM LCOUNT
@@ -1816,7 +1816,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("붙임성", 1)
 		CALL ADD_CRI_VAR("타락", -2)
 	ENDIF
-	IF TALENT:MASTER:쾌감에순수
+	IF TALENT:MASTER:쾌감에솔직
 		CALL ADD_CRI_VAR("적극", -1)
 		CALL ADD_CRI_VAR("반항", 1)
 		CALL ADD_CRI_VAR("활기", -1)
@@ -1840,7 +1840,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("붙임성", -2)
 		CALL ADD_CRI_VAR("타락", -2)
 	ENDIF
-	IF TALENT:MASTER:음단지 && COMABLE_MV()
+	IF TALENT:MASTER:음호 && COMABLE_MV()
 		CALL ADD_CRI_VAR("적극", -2)
 		CALL ADD_CRI_VAR("반항", 2)
 		CALL ADD_CRI_VAR("활기", -2)
@@ -1902,7 +1902,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("적극", -5)
 		CALL ADD_CRI_VAR("활기", -5)
 	ENDIF
-	IF TALENT:MASTER:C민감 && COMABLE_MC()
+	IF TALENT:MASTER:Ｃ민감 && COMABLE_MC()
 		CALL ADD_CRI_VAR("적극", -1)
 		CALL ADD_CRI_VAR("활기", -1)
 		CALL ADD_CRI_VAR("끈기", 2)
@@ -1910,14 +1910,14 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("붙임성", 1)
 		CALL ADD_CRI_VAR("타락", -2)
 	ENDIF
-	IF TALENT:MASTER:C둔감 && COMABLE_MC()
+	IF TALENT:MASTER:Ｃ둔감 && COMABLE_MC()
 		CALL ADD_CRI_VAR("적극", 1)
 		CALL ADD_CRI_VAR("끈기", -2)
 		CALL ADD_CRI_VAR("호의", 2)
 		CALL ADD_CRI_VAR("붙임성", -1)
 		CALL ADD_CRI_VAR("타락", 2)
 	ENDIF
-	IF TALENT:MASTER:V민감 && COMABLE_MV()
+	IF TALENT:MASTER:Ｖ민감 && COMABLE_MV()
 		CALL ADD_CRI_VAR("적극", -1)
 		CALL ADD_CRI_VAR("반항", -1)
 		CALL ADD_CRI_VAR("활기", -1)
@@ -1926,7 +1926,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("붙임성", 1)
 		CALL ADD_CRI_VAR("타락", -2)
 	ENDIF
-	IF TALENT:MASTER:V둔감 && COMABLE_MV()
+	IF TALENT:MASTER:Ｖ둔감 && COMABLE_MV()
 		CALL ADD_CRI_VAR("적극", 1)
 		CALL ADD_CRI_VAR("반항", -1)
 		CALL ADD_CRI_VAR("끈기", -2)
@@ -1934,7 +1934,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("붙임성", -1)
 		CALL ADD_CRI_VAR("타락", 2)
 	ENDIF
-	IF TALENT:MASTER:A민감 && COMABLE_MA()
+	IF TALENT:MASTER:Ａ민감 && COMABLE_MA()
 		CALL ADD_CRI_VAR("적극", -1)
 		CALL ADD_CRI_VAR("반항", -1)
 		CALL ADD_CRI_VAR("활기", -1)
@@ -1943,7 +1943,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("붙임성", 1)
 		CALL ADD_CRI_VAR("타락", -2)
 	ENDIF
-	IF TALENT:MASTER:A둔감 && COMABLE_MA()
+	IF TALENT:MASTER:Ａ둔감 && COMABLE_MA()
 		CALL ADD_CRI_VAR("적극", 1)
 		CALL ADD_CRI_VAR("반항", -1)
 		CALL ADD_CRI_VAR("끈기", -3)
@@ -2372,18 +2372,18 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		
 		;탈의시
 		IF TFLAG:ACT파생 == 1
-			CALL ADD_CRI_VAR("적극", 1 - ABL:MASTER:노출버릇)
-			CALL ADD_CRI_VAR("반항", -2 + ABL:MASTER:노출버릇)
-			CALL ADD_CRI_VAR("활기", 1 - ABL:MASTER:노출버릇)
-			CALL ADD_CRI_VAR("호의", 1 - ABL:MASTER:노출버릇)
-			CALL ADD_CRI_VAR("타락", 0 - ABL:MASTER:노출버릇)
+			CALL ADD_CRI_VAR("적극", 1 - ABL:MASTER:노출증)
+			CALL ADD_CRI_VAR("반항", -2 + ABL:MASTER:노출증)
+			CALL ADD_CRI_VAR("활기", 1 - ABL:MASTER:노출증)
+			CALL ADD_CRI_VAR("호의", 1 - ABL:MASTER:노출증)
+			CALL ADD_CRI_VAR("타락", 0 - ABL:MASTER:노출증)
 		;착의시
 		ELSE
-			CALL ADD_CRI_VAR("적극", -1 + ABL:MASTER:노출버릇)
-			CALL ADD_CRI_VAR("반항", 2 - ABL:MASTER:노출버릇)
-			CALL ADD_CRI_VAR("활기", -1 + ABL:MASTER:노출버릇)
-			CALL ADD_CRI_VAR("호의", -1 + ABL:MASTER:노출버릇)
-			CALL ADD_CRI_VAR("타락", 1 - ABL:MASTER:노출버릇)
+			CALL ADD_CRI_VAR("적극", -1 + ABL:MASTER:노출증)
+			CALL ADD_CRI_VAR("반항", 2 - ABL:MASTER:노출증)
+			CALL ADD_CRI_VAR("활기", -1 + ABL:MASTER:노출증)
+			CALL ADD_CRI_VAR("호의", -1 + ABL:MASTER:노출증)
+			CALL ADD_CRI_VAR("타락", 1 - ABL:MASTER:노출증)
 		ENDIF
 		
 	ELSEIF IS_NOWACTNAME("합의를요구한다")
@@ -2465,7 +2465,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("붙임성", 2)
 		CALL ADD_CRI_VAR("타락", -2)
 		
-	ELSEIF IS_NOWACTNAME("밀어넘어뜨린다") && TFLAG:ACT파생 != 1
+	ELSEIF IS_NOWACTNAME("쓰러트린다") && TFLAG:ACT파생 != 1
 		
 		CALL ADD_CRI_VAR("적극", 3)
 		CALL ADD_CRI_VAR("반항", 3)
@@ -2485,7 +2485,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("붙임성", -2 - CFLAG:합의 * 3)
 		CALL ADD_CRI_VAR("타락", -2 - CFLAG:합의 * 3)
 		
-	ELSEIF IS_NOWACTNAME("승마위")
+	ELSEIF IS_NOWACTNAME("기승위")
 		
 		CALL ADD_CRI_VAR("적극", -2 - CFLAG:합의 * 3)
 		CALL ADD_CRI_VAR("반항", 3 + CFLAG:합의 * 5)
@@ -2523,7 +2523,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("끈기", -1)
 		CALL ADD_CRI_VAR("호의", 1)
 		
-	ELSEIF IS_NOWACTNAME("자위과시하고")
+	ELSEIF IS_NOWACTNAME("자위과시")
 		
 		CALL ADD_CRI_VAR("적극", 2)
 		CALL ADD_CRI_VAR("반항", -1)
@@ -2582,7 +2582,7 @@ IF LTURNS != @"{FLAG:연수+1}/{FLAG:일수}/{TIME}/{TFLAG:조교시간}"
 		CALL ADD_CRI_VAR("호의", -1)
 		CALL ADD_CRI_VAR("타락", -1)
 		
-	ELSEIF IS_NOWACTNAME("다리빨고강제")
+	ELSEIF IS_NOWACTNAME("밟핥기강제")
 		
 		CALL ADD_CRI_VAR("적극", 1 - TALENT:MASTER:도착적 * 2)
 		CALL ADD_CRI_VAR("반항", -2 + TALENT:MASTER:도착적 * 2)
@@ -2795,7 +2795,7 @@ FOR LCOUNT, 0, RESULT
 		;초기치 보정
 		LTEMP *= 30
 		;연속 실행 보정(기력 소비가 증가하는 것은 부자연스러운 것으로, 가산 처리만 생략 한다)
-		;LTEMP = LTEMP * COMABLE_CONT(ARGS) / 100
+		;LTEMP = LTEMP * COMABLE_CONT(ARGS)/100
 		;소비 기력을 생성
 		IF SIGN(LOCAL:LCOUNT) == SIGN(LTEMP)
 			LTEMP = LTEMP * (10 + ABS(LOCAL:LCOUNT))
@@ -2810,7 +2810,7 @@ NEXT
 ;조교레벨에 의해 소비 기력을 곱셈과 나눗셈산
 ;(조교 대상 조교레벨이 웃돌면 소비 기력이 내린다)
 ;한 번 생략 한다
-;소비 기력 =소비 기력 * (CFLAG:조교레벨 + 5) / (CFLAG:MASTER:조교레벨 + 5)
+;소비 기력 =소비 기력 * (CFLAG:조교레벨 + 5)/(CFLAG:MASTER:조교레벨 + 5)
 
 ;소비 기력을 돌려준다
 ;SANDBOX 한정 처리
@@ -2820,14 +2820,14 @@ ELSE
 	RETURN MAX(소비기력, 0)
 ENDIF
 
-;─
+;────────────────────────────────────
 ;연속 처리
 ;동일 COM를 연속으로 실행하려고 하면 기력 소비량 상승
 ;(소비량은 곧바로는 돌아오지 않는다)
 ;
 ;ARGS: COM 명칭
 ;ARG : -1 =초기화, 0 =지정 취득, 1 =지정 갱신
-;─
+;────────────────────────────────────
 @COMABLE_CONT(ARGS, ARG = 0)
 #FUNCTION
 #LOCALSIZE 10
@@ -2883,11 +2883,11 @@ ENDIF
 LTEMP = FINDELEMENT(LOCALS, ARGS)
 RETURNF LTEMP == -1 ? 100 # LOCAL:LTEMP * 2
 
-;─
+;────────────────────────────────────
 ;한계 처리
 ;기력이 한계를 돌파하면, 돌파한 소비 기력이 소비 체력에 흐른다
 ;다 흐르지 않았던 경우, COM는 실행 불능이 된다
-;─
+;────────────────────────────────────
 @COMABLE_LIMIT(ARGS)
 
 ;기력 소비량 취득
@@ -2912,10 +2912,10 @@ SIF LOCAL <= COM_LIM_VIT() && LOCAL <= BASE:MASTER:체력
 RETURN 0
 
 
-;─
+;────────────────────────────────────
 ;한계 순간 기력 소비
 ;1회의 COM로 소비할 수 있는 기력의 최대치
-;─
+;────────────────────────────────────
 @COM_LIM_INS()
 #FUNCTION
 LOCAL = TALENT:MASTER:호기심 - TALENT:MASTER:무관심 + TALENT:MASTER:낙관적 - TALENT:MASTER:비관적 + TALENT:MASTER:튀고싶어함 + TALENT:MASTER:해방 - TALENT:MASTER:억압 + TALENT:MASTER:헌신적 + TALENT:MASTER:조급함 - TALENT:MASTER:신중
@@ -2928,19 +2928,19 @@ ELSE
 	RETURNF MIN(MAXBASE:MASTER:기력 * LOCAL / 500, MAXBASE:MASTER:기력/2)
 ENDIF
 
-;─
+;────────────────────────────────────
 ;기력 대체 체력 소비
 ;기력 대신에 사용할 수 있는 체력의 최대치
-;─
+;────────────────────────────────────
 @COM_LIM_VIT()
 #FUNCTION
 LOCAL = TALENT:MASTER:아픔에강함 - TALENT:MASTER:아픔에약함 + TALENT:MASTER:도M + TALENT:MASTER:회복빠름 - TALENT:MASTER:회복느림 + TALENT:MASTER:불사
 LOCAL = LOCAL < 0 ? 500 / (5 - LOCAL) # 100 + LOCAL * 20
 RETURNF MAXBASE:MASTER:체력 * LOCAL / 4000
 
-;─
+;────────────────────────────────────
 ;관련 식 안의 함수
-;─
+;────────────────────────────────────
 ;-------------------------------------------------
 ;조교 대상 C고려 조건
 ;-------------------------------------------------
@@ -2952,7 +2952,7 @@ RETURNF IS_NOWACTNAME("성기를서로켠다/파이즈리한다/정상위시킨�
 ;-------------------------------------------------
 @COMABLE_MV
 #FUNCTION
-RETURNF IS_NOWACTNAME("정상위/후배위/승마위/대면좌위/배면좌위") || TEQUIP:성교중 < 6
+RETURNF IS_NOWACTNAME("정상위/후배위/기승위/대면좌위/배면좌위") || TEQUIP:성교중 < 6
 ;-------------------------------------------------
 ;조교 대상 A고려 조건
 ;-------------------------------------------------

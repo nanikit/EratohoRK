@@ -3,24 +3,24 @@
 ;											탈의 실행 처리를 여기에 이동
 ;------------------------------------------------------------------------
 
-;─
+;────────────────────────────────────
 ;거절 처리(리액션에 의해 조교가 캔슬된다)
-;─
+;────────────────────────────────────
 
-;─
-;성교의 캔슬(쾌C, 쾌V, 쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
+;성교의 캔슬(쾌Ｃ, 쾌Ｖ, 쾌Ａ, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 @CANCEL_INSERT_TO_M
 ;애널섹스 선택시, 애널섹스 상태이면
 IF IS_NOWACTNAME("애널섹스") || TEQUIP:성교중 == 6
-	;쾌A/쾌cSOURCE 감쇠
-	SOURCE:MASTER:쾌A /= 3
-	SOURCE:쾌C /= 5
+	;쾌Ａ/쾌cSOURCE 감쇠
+	SOURCE:MASTER:쾌Ａ /= 3
+	SOURCE:쾌Ｃ /= 5
 ;애널섹스 이외 선택시, 애널섹스 이외의 성교 상태이면
 ELSEIF TEQUIP:성교중 < 6
-	;쾌V/쾌cSOURCE 감쇠
-	SOURCE:MASTER:쾌V /= 3
-	SOURCE:쾌C /= 5
+	;쾌Ｖ/쾌cSOURCE 감쇠
+	SOURCE:MASTER:쾌Ｖ /= 3
+	SOURCE:쾌Ｃ /= 5
 ENDIF
 ;접촉, 성행동, 상해, 일탈, 트라우마 SOURCE는 감쇠
 ;사랑 SOURCE는 감산, 중독충족 SOURCE는 말소
@@ -35,20 +35,20 @@ SOURCE:MASTER:트라우마 /= 3
 TEQUIP:성교중     = 0
 TEQUIP:성교봉사중 = 0
 TFLAG:뽑지않고      = 0
-;─
-;성교 봉사의 캔슬(쾌C, 쾌V, 쾌A, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마)
-;─
+;────────────────────────────────────
+;성교 봉사의 캔슬(쾌Ｃ, 쾌Ｖ, 쾌Ａ, 접촉, 사랑, 성행동, 상해, 일탈, 중독충족, 트라우마)
+;────────────────────────────────────
 @CANCEL_INSERT_TO_T
 ;애널섹스 상태이면
 IF TEQUIP:성교봉사중 == 6
-	;쾌C/쾌aSOURCE 감쇠
-	SOURCE:MASTER:쾌C /= 3
-	SOURCE:쾌A /= 5
+	;쾌Ｃ/쾌aSOURCE 감쇠
+	SOURCE:MASTER:쾌Ｃ /= 3
+	SOURCE:쾌Ａ /= 5
 ;애널섹스 이외의 성교 상태이면
 ELSE
-	;쾌C/쾌vSOURCE 감쇠
-	SOURCE:MASTER:쾌C /= 3
-	SOURCE:쾌V /= 5
+	;쾌Ｃ/쾌vSOURCE 감쇠
+	SOURCE:MASTER:쾌Ｃ /= 3
+	SOURCE:쾌Ｖ /= 5
 ENDIF
 ;접촉, 성행동, 상해, 일탈, 트라우마 SOURCE는 감쇠
 ;사랑 SOURCE는 감산, 중독충족 SOURCE는 말소
@@ -63,9 +63,9 @@ SOURCE:MASTER:트라우마 /= 3
 TEQUIP:성교중     = 0
 TEQUIP:성교봉사중 = 0
 TFLAG:뽑지않고      = 0
-;─
+;────────────────────────────────────
 ;가학, 노출 플레이의 캔슬(아픔, 구속, 노출, 일탈)
-;─
+;────────────────────────────────────
 ;구속 캔슬
 @CANCEL_TEQUIP_RESTRAINT
 ;발생 카운트
@@ -132,32 +132,32 @@ ENDIF
 #FUNCTION
 IF ARGS != ""
 	IF ARGS:1 == "발생"
-		IF CFLAG:@"%ARGS%캔슬보정" <= 33
-			CFLAG:@"%ARGS%캔슬보정" = 100
+		IF CFLAG:@"%ARGS%취소보정" <= 33
+			CFLAG:@"%ARGS%취소보정" = 100
 		ELSE
-			CFLAG:@"%ARGS%캔슬보정" *= 3
+			CFLAG:@"%ARGS%취소보정" *= 3
 		ENDIF
 	ELSE
-		RETURNF CFLAG:@"%ARGS%캔슬보정"
+		RETURNF CFLAG:@"%ARGS%취소보정"
 	ENDIF
 ELSE
 	SPLIT "구속/삼각목마/야외플레이/대거울/코스프레", "/", LOCALS
 	FOR LOCAL, 0, RESULT
-		CFLAG:@"%LOCALS:LOCAL%캔슬보정" -= 5 + CFLAG:@"%LOCALS:LOCAL%캔슬보정" / 100
+		CFLAG:@"%LOCALS:LOCAL%취소보정" -= 5 + CFLAG:@"%LOCALS:LOCAL%취소보정" / 100
 	NEXT
 ENDIF
 RETURNF 0
 
-;─
+;────────────────────────────────────
 ;사용 검토 처리(조교자가 도구나 소모품의 사용 미사용을 결정한다)
-;─
+;────────────────────────────────────
 
-;─
+;────────────────────────────────────
 ;미약과 로션의 사용(윤활, 소변욕)
 ;
 ;불려 가면 현재의 상황을 감안해,
 ;필요하다고 판단되면 미약/로션이 사용된다
-;─
+;────────────────────────────────────
 ;실은 미약의 사용도 거부되거나 저항되거나 것이 보통이라고 생각하지만, 처리가 귀찮은 것으로 사용하면 절대 성공이야 게했습니다
 @LOVEPOTION_USE
 
@@ -307,13 +307,13 @@ IF LOCAL > 0
 	TFLAG:미약등사용지문스킵 |= 1
 ENDIF
 
-;─
+;────────────────────────────────────
 ;효과 계산 처리(조교 효과의 계산을 실시한다)
-;─
+;────────────────────────────────────
 
-;─
+;────────────────────────────────────
 ;윤활 부족 시계산처리
-;─
+;────────────────────────────────────
 ;인수에는 『/』단락으로 캐릭터 라인을 대입
 ;제 0 블록:충분히 윤활치
 ;	윤활 부족을 빼앗기지 않게 되는 PALAM:MASTER:윤활을 지정
@@ -325,8 +325,8 @@ ENDIF
 ;	제 2 블록:지정치
 ;		보정법에 따라 취급은 다르다
 ;
-;지정예:"500/M쾌A, T, 50/M 상해, A, 500"
-;　　　　"2000/M쾌V, T, 80/M쾌A, T, 80/M 상해, A, 600"
+;지정예:"500/M쾌Ａ, T, 50/M 상해, A, 500"
+;　　　　"2000/M쾌Ｖ, T, 80/M쾌Ａ, T, 80/M 상해, A, 600"
 @SHORTAGE_LUBRICATION(ARGS)
 #LOCALSSIZE 100
 ;COUNT 변수
@@ -415,13 +415,13 @@ DO
 ;처리하는 것이 없어지면 탈출
 LOOP LOCALS:(LCOUNT + 1) != ""
 
-;─
+;────────────────────────────────────
 ;자위 관련 처리
-;─
+;────────────────────────────────────
 
-;─
+;────────────────────────────────────
 ;자위의 실행 함수
-;─
+;────────────────────────────────────
 @ONANIE_APPLY
 ;부위 보정치
 #DIM L_C
@@ -448,7 +448,7 @@ IF TEQUIP:바이브
 ENDIF
 
 ;애널바이브 사용
-IF TEQUIP:애널바이브 && ABL:MASTER:A감각 > 1
+IF TEQUIP:애널바이브 && ABL:MASTER:Ａ감각 > 1
 	;조교 대상 욕망, 조교레벨, 도구사용 소질, 기교, 도구 강화에 응해 A부위 보정 가격인상승
 	L_A = (GET_ABL(MASTER, "욕망") + 10) * (CFLAG:MASTER:조교레벨 + 1) * 6 + (TALENT:MASTER:도구사용 + 1) * GET_ABL(MASTER, "기교") * (ITEM:9 + 1) * 25 / 10
 	;B부위 보정치는 크게 감소
@@ -456,19 +456,19 @@ IF TEQUIP:애널바이브 && ABL:MASTER:A감각 > 1
 ENDIF
 
 ;적극적한다라면 부위 보정치에 보너스
-IF IS_COMGRONAME("적극적 따른다")
+IF IS_COMGRONAME("적극적으로 한다")
 	TIMES L_C, 1.20
 	TIMES L_V, 1.10
 	TIMES L_A, 1.10
 	TIMES L_B, 1.20
 ENDIF
 
-;부위 보정치에 응해 쾌X발생
-;(남자이면 쾌B는 발생하지 않는다)
-SOURCE:MASTER:쾌C += L_C * 2
-SOURCE:MASTER:쾌V += L_V
-SOURCE:MASTER:쾌A += L_A
-SOURCE:MASTER:쾌B += TALENT:MASTER:남자 ? 0 # L_B * 2
+;부위 보정치에 응해 쾌Ｘ발생
+;(남자이면 쾌Ｂ는 발생하지 않는다)
+SOURCE:MASTER:쾌Ｃ += L_C * 2
+SOURCE:MASTER:쾌Ｖ += L_V
+SOURCE:MASTER:쾌Ａ += L_A
+SOURCE:MASTER:쾌Ｂ += TALENT:MASTER:남자 ? 0 # L_B * 2
 
 ;조교 대상 기교, 조교레벨, 바이브, 애널바이브 장착에 응해 성행동 SOURCE 증가
 SOURCE:MASTER:성행동 += 50 + GET_ABL(MASTER, "기교") * 2 + CFLAG:MASTER:조교레벨 * 10 + TEQUIP:바이브 * 50 + TEQUIP:애널바이브 * 50
@@ -476,29 +476,29 @@ SOURCE:MASTER:성행동 += 50 + GET_ABL(MASTER, "기교") * 2 + CFLAG:MASTER:조
 L_E = 150 + GET_TRAINLV(TARGET) * 10 + TEQUIP:야외플레이 * 200 + TEQUIP:대거울 * 150 + L_C / 2 + L_V / 3 + L_A / 3 + L_B / 2
 ;노출 보정치에 응해 노출 SOURCE 증가
 SOURCE:MASTER:노출 += L_E
-;노출 보정치에 응해 증가해, 노출버릇, 조교 대상 조교레벨에 응해 감소하는 값이 정이면 일탈 SOURCE에 가산
-LOCAL = L_E / 2 - GET_ABL(MASTER, "노출버릇") * 2 - CFLAG:MASTER:조교레벨 * 10
+;노출 보정치에 응해 증가해, 노출증, 조교 대상 조교레벨에 응해 감소하는 값이 정이면 일탈 SOURCE에 가산
+LOCAL = L_E / 2 - GET_ABL(MASTER, "노출증") * 2 - CFLAG:MASTER:조교레벨 * 10
 SOURCE:MASTER:일탈 += LOCAL > 0 ? LOCAL # 0
 ;보정치 총계, 자위중독에 응해 중독충족 SOURCE 증가
 SOURCE:MASTER:중독충족 += (L_C + L_V + L_A + L_B + L_E) * (50 + GET_ABL(MASTER, "자위중독")) / 500
 
 ;조교 대상 자위중을 세트
 TEQUIP:자위중 |= 1
-;─
+;────────────────────────────────────
 ;자위절정 처리
-;─
+;────────────────────────────────────
 @ONANIE_EX
 ;자위의 실행 함수 호출
 CALL ONANIE_APPLY
 
-;─
+;────────────────────────────────────
 ;탈의 관련 처리
-;─
+;────────────────────────────────────
 
-;─
+;────────────────────────────────────
 ;자주탈의/강제탈의 최적화(탈의 대상이 존재하지 않는 경우, 탈의 지정을 변경한다)
 ;ARG	탈의 대상
-;─
+;────────────────────────────────────
 ;구명에서의 호출을 처리
 @KYOUSEI_DATUI
 CALL DATUI_OPTIMIZE(MASTER)
@@ -556,9 +556,9 @@ ELSEIF TFLAG:LOCAL == 9 && !TEQUIP:ARG:하반신속옷 && !TEQUIP:ARG:상반신�
 	TFLAG:LOCAL = 0
 ENDIF
 
-;─
+;────────────────────────────────────
 ;강제탈의 성공 여부 판정
-;─
+;────────────────────────────────────
 @KYOUSEI_DATUI_CHECK
 
 ;강제탈의를 하지 않는 경우, 판정을 실시하지 않는다
@@ -693,9 +693,9 @@ ENDIF
 ;내부 처리를 비트 연산으로 변경
 ;장래적으로 강제탈의, 자주탈의를 비트로 취급할 수 있도록(듯이)
 ;---------------------------------------
-;─
+;────────────────────────────────────
 ;강제탈의, 자주탈의시의 탈의 처리
-;─
+;────────────────────────────────────
 ;※전제로서 자주탈의/강제탈의 최적화, 강제탈의 성공 여부 판정을 하고 있을 필요가 있다
 @DATUI_PROCESS
 
@@ -809,11 +809,11 @@ RETURN RESULT
 ;-----------EDIT 001 END  --------------
 
 [SKIPSTART]
-;─
+;────────────────────────────────────
 ;보정치 대입 처리(원래의 값을 사용하면 증가가 직선적이고 사용하기 어려운 경우에 이용)
 ;※모두 GET_ABL, GET_TRAINLV, ACT_FROM, ACT_TO에 옮겨놓았을 것!
 ;  인 것으로 이하는 모두 구기록술이 됩니다@이것 보고
-;─
+;────────────────────────────────────
 ;@ABL_REVISION
 #DIM LCOUNT
 
@@ -849,11 +849,11 @@ A:30, C:30은 ABL는 아니고, 조교레벨에 의한 보정입니다
 Lv0 때 0 제산할 것 같은 것으로 하고 있지 않은 근처, 나에게도 잘 모르는 수수께끼가 있을 것 같다
 
 뒤는 상당히 여러가지 개소에서 드문드문 사용하고 있습니다만 일례를 내 두면
-;─
-;010, 애무/자위 하는(S/N/H)(쾌C, 쾌B, 접촉, 사랑, 성행동, 불결)
-;─
+;────────────────────────────────────
+;010, 애무/자위 하는(Ｓ/Ｎ/Ｈ)(쾌Ｃ, 쾌Ｂ, 접촉, 사랑, 성행동, 불결)
+;────────────────────────────────────
 ELSEIF IS_NOWACTNAME("손으로애무")
-	SOURCE:MASTER:쾌C = 75 + S:1 * (2 + TALENT:기묘한손가락) / 4
+	SOURCE:MASTER:쾌Ｃ = 75 + S:1 * (2 + TALENT:기묘한손가락) / 4
 	;탈의의 처리
 	;벽통과가 있으면 3/4로 무시한다
 	IF ! TALENT:벽통과 || ! RAND:4
@@ -903,7 +903,7 @@ LOCAL = MAX(2 * 애무 실행자의 기교 - 피애무자의 감각, 굴복각�
 ;400		10
 
 사용의 실례를 나타내면
-SOURCE:MASTER:쾌C = 75 + S:1 * (2 + TALENT:기묘한손가락) / 4(애무의 C감각 소스)
+SOURCE:MASTER:쾌Ｃ = 75 + S:1 * (2 + TALENT:기묘한손가락) / 4(애무의 C감각 소스)
 ※TALENT:57은기묘한손가락
 보정치가 30*400/10라면 1200으로,75+600그리고 675가 됩니다
 
@@ -914,10 +914,10 @@ C감각은, 오르면 C로 예민해지는 것은 아니고, 느끼기 어려워
 
 덧붙여 1문자야 리카등 탈각하기 위해서 식 안의 함수를 만들고 있어, 여유가 있으면 옮겨놓아 가고 싶다든가 그런 응 같아?
 
-;─
+;────────────────────────────────────
 ;ABL, CFLAG:**:조교레벨 보정
 ;향후는 GET_ABL, GET_TRAINLV 를 사용하는 것
-;─
+;────────────────────────────────────
 
 ;원래의 조건에서는 TARGET, ASSI > 0이었지만,
 ;조교자 및 조수가 『당신』의 때라도 처리되어야 한다고 생각했으므로 수정
@@ -952,10 +952,10 @@ IF ASSI > -1
 	C:30 = 50 - 2000 / (CFLAG:ASSI:조교레벨 + 40)
 ENDIF
 
-;─
+;────────────────────────────────────
 ;애무 효과 보정
 ;향후는 ACT_FROM, ACT_TO 를 사용하는 것
-;─
+;────────────────────────────────────
 
 ;큰폭으로 단축하는 것은 가능하지만,
 ;그 결과가 ACT_FROM, ACT_TO 와 다름없기 때문에 그 쪽을 참조
@@ -972,52 +972,52 @@ IF TARGET > 0
 	;조교자 기교 + 애무로부터 조교 대상 대응 감각을 당긴 것과 굴복각인을 비교해,
 	;큰 것에 10을 더해 제곱 해, LOCAL:1을 걸쳐 10으로 나눈다
 	;C애무
-	LOCAL = MAX(ABL:기교 + ABL:애무 - ABL:MASTER:C감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:애무 - ABL:MASTER:Ｃ감각, MARK:굴복각인)
 	S:1 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;V애무
-	LOCAL = MAX(ABL:기교 + ABL:애무 - ABL:MASTER:V감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:애무 - ABL:MASTER:Ｖ감각, MARK:굴복각인)
 	S:2 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;A애무
-	LOCAL = MAX(ABL:기교 + ABL:애무 - ABL:MASTER:A감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:애무 - ABL:MASTER:Ａ감각, MARK:굴복각인)
 	S:3 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;B애무
-	LOCAL = MAX(ABL:기교 + ABL:애무 - ABL:MASTER:B감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:애무 - ABL:MASTER:Ｂ감각, MARK:굴복각인)
 	S:4 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	
 	;성교계
 	;조교자 기교 + 성교로부터 조교 대상 대응 감각을 당긴 것과 굴복각인을 비교해,
 	;큰 것에 10을 더해 제곱 해, LOCAL:1을 걸쳐 10으로 나눈다
 	;V성교
-	LOCAL = MAX(ABL:기교 + ABL:성교- ABL:MASTER:V감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:성교- ABL:MASTER:Ｖ감각, MARK:굴복각인)
 	S:5 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;A성교
-	LOCAL = MAX(ABL:기교 + ABL:성교 - ABL:MASTER:A감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:성교 - ABL:MASTER:Ａ감각, MARK:굴복각인)
 	S:6 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	
 	;성교 봉사계
 	;조교자 기교 + 성교 + 조교자 대응 감각으로부터 조교 대상 대응 감각을 당긴 것과 굴복각인을 비교해,
 	;큰 것에 10을 더해 제곱 해, LOCAL:1을 걸쳐 10으로 나눈다
 	;V성교 봉사
-	LOCAL = MAX(ABL:기교 + ABL:성교 + ABL:V감각 - ABL:MASTER:C감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:성교 + ABL:Ｖ감각 - ABL:MASTER:Ｃ감각, MARK:굴복각인)
 	S:7 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;A성교 봉사
-	LOCAL = MAX(ABL:기교 + ABL:성교 + ABL:A감각 - ABL:MASTER:C감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:성교 + ABL:Ａ감각 - ABL:MASTER:Ｃ감각, MARK:굴복각인)
 	S:8 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	
 	;도구계
 	;조교자 기교 + 도구로부터 조교 대상 대응 감각을 당긴 것과 굴복각인을 비교해,
 	;큰 것에 10을 더해 제곱 해, LOCAL:1을 걸쳐 10으로 나눈다
 	;C도구
-	LOCAL = MAX(ABL:기교 + ABL:도구 - ABL:MASTER:C감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:도구 - ABL:MASTER:Ｃ감각, MARK:굴복각인)
 	S:11 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;V도구
-	LOCAL = MAX(ABL:기교 + ABL:도구 - ABL:MASTER:V감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:도구 - ABL:MASTER:Ｖ감각, MARK:굴복각인)
 	S:12 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;A도구
-	LOCAL = MAX(ABL:기교 + ABL:도구 - ABL:MASTER:A감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:도구 - ABL:MASTER:Ａ감각, MARK:굴복각인)
 	S:13 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;B도구
-	LOCAL = MAX(ABL:기교 + ABL:도구 - ABL:MASTER:B감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:기교 + ABL:도구 - ABL:MASTER:Ｂ감각, MARK:굴복각인)
 	S:14 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 ENDIF
 
@@ -1029,43 +1029,43 @@ IF ASSI > 0
 	LOCAL:1 = LIMIT(LOCAL:1, 10, 1000)
 	
 	;C애무
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:애무 - ABL:MASTER:C감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:애무 - ABL:MASTER:Ｃ감각, MARK:ASSI:굴복각인)
 	S:21 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;V애무
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:애무 - ABL:MASTER:V감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:애무 - ABL:MASTER:Ｖ감각, MARK:ASSI:굴복각인)
 	S:22 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;A애무
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:애무 - ABL:MASTER:A감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:애무 - ABL:MASTER:Ａ감각, MARK:ASSI:굴복각인)
 	S:23 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;B애무
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:애무 - ABL:MASTER:B감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:애무 - ABL:MASTER:Ｂ감각, MARK:ASSI:굴복각인)
 	S:24 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 
 	;V성교
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:성교 - ABL:MASTER:V감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:성교 - ABL:MASTER:Ｖ감각, MARK:ASSI:굴복각인)
 	S:25 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;A성교
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:성교 - ABL:MASTER:A감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:성교 - ABL:MASTER:Ａ감각, MARK:ASSI:굴복각인)
 	S:26 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	
 	;V성교 봉사
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:성교 + ABL:ASSI:V감각 - ABL:MASTER:C감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:성교 + ABL:ASSI:Ｖ감각 - ABL:MASTER:Ｃ감각, MARK:ASSI:굴복각인)
 	S:27 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;A성교 봉사
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:성교 + ABL:ASSI:A감각 - ABL:MASTER:C감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:성교 + ABL:ASSI:Ａ감각 - ABL:MASTER:Ｃ감각, MARK:ASSI:굴복각인)
 	S:27 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 
 	;C도구
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:도구 - ABL:MASTER:C감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:도구 - ABL:MASTER:Ｃ감각, MARK:굴복각인)
 	S:31 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;V도구
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:도구 - ABL:MASTER:V감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:도구 - ABL:MASTER:Ｖ감각, MARK:굴복각인)
 	S:32 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;A도구
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:도구 - ABL:MASTER:A감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:도구 - ABL:MASTER:Ａ감각, MARK:굴복각인)
 	S:33 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 	;B도구
-	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:도구 - ABL:MASTER:B감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:ASSI:기교 + ABL:ASSI:도구 - ABL:MASTER:Ｂ감각, MARK:굴복각인)
 	S:34 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 / 10
 ENDIF
 
@@ -1080,27 +1080,27 @@ IF TARGET > 0
 	LOCAL:1 = LIMIT(LOCAL:1, 10, 1000)
 	
 	;C애무
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:C감각, MARK:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:Ｃ감각, MARK:굴복각인)
 	S:41 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	;A애무
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:A감각, MARK:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:Ａ감각, MARK:굴복각인)
 	S:43 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	;B애무
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:B감각, MARK:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:Ｂ감각, MARK:굴복각인)
 	S:44 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	
 	;V성교
-	LOCAL = MAX(ABL:MASTER:기교 + ABL:MASTER:V감각 - ABL:C감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:MASTER:기교 + ABL:MASTER:Ｖ감각 - ABL:Ｃ감각, MARK:굴복각인)
 	S:45 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	;A성교
-	LOCAL = MAX(ABL:MASTER:기교 + ABL:MASTER:A감각 - ABL:C감각, MARK:굴복각인)
+	LOCAL = MAX(ABL:MASTER:기교 + ABL:MASTER:Ａ감각 - ABL:Ｃ감각, MARK:굴복각인)
 	S:46 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	
 	;V성교 봉사
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:V감각, MARK:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:Ｖ감각, MARK:굴복각인)
 	S:47 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	;A성교 봉사
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:A감각, MARK:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:Ａ감각, MARK:굴복각인)
 	S:48 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 ENDIF
 
@@ -1109,27 +1109,27 @@ IF ASSI > 0
 	LOCAL:1 = MAX(CFLAG:MASTER:조교레벨  * 10 / (CFLAG:ASSI:조교레벨 + 1), MIN(CFLAG:호의 / 200, 30), 10)
 	LOCAL:1 = LIMIT(LOCAL:1, 10, 1000)
 	;C애무
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:C감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:Ｃ감각, MARK:ASSI:굴복각인)
 	S:51 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	;A애무
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:A감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:Ａ감각, MARK:ASSI:굴복각인)
 	S:53 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	;B애무
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:B감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:Ｂ감각, MARK:ASSI:굴복각인)
 	S:54 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	
 	;V성교
-	LOCAL = MAX(ABL:MASTER:기교 + ABL:MASTER:V감각 - ABL:ASSI:C감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:MASTER:기교 + ABL:MASTER:Ｖ감각 - ABL:ASSI:Ｃ감각, MARK:ASSI:굴복각인)
 	S:55 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	;A성교
-	LOCAL = MAX(ABL:MASTER:기교 + ABL:MASTER:A감각 - ABL:ASSI:C감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(ABL:MASTER:기교 + ABL:MASTER:Ａ감각 - ABL:ASSI:Ｃ감각, MARK:ASSI:굴복각인)
 	S:56 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	
 	;V성교 봉사
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:V감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:Ｖ감각, MARK:ASSI:굴복각인)
 	S:57 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 	;A성교 봉사
-	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:A감각, MARK:ASSI:굴복각인)
+	LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:ASSI:Ａ감각, MARK:ASSI:굴복각인)
 	S:58 = (LOCAL + 10) * (LOCAL + 10) * LOCAL:1 * (FLAG:3185 + 100) / 1000
 ENDIF
 

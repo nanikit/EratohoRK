@@ -1,11 +1,11 @@
-﻿;─
-;조교 방침의 판정(휴게 1/소프트 2/노멀 3/하드 4/이상 5)
-;─
+﻿;────────────────────────────────────
+;조교 방침의 판정(휴식 1/소프트 2/노멀 3/하드 4/이상 5)
+;────────────────────────────────────
 @ACT_COURSE
 #LOCALSSIZE 10
 #DIMS 방침종
 
-방침종 = 휴게/소프트/노멀/하드/이상
+방침종 = 휴식/소프트/노멀/하드/이상
 
 ;변수를 초기화
 CALL SET_CRI_VAR, 방침종
@@ -76,13 +76,13 @@ CALLFORM %LOCALS%_PLAYNOW
 CALL CHA_CRI_VAR, "잠정 처리"
 ;SANDBOX 한정 처리
 SIF FLAG:모드 == 1
-	CALL ADD_CRI_VAR("휴게", -99)
+	CALL ADD_CRI_VAR("휴식", -99)
 
-;─
-;최종 판정, 갈라 놓을 때의 우선순서는 노멀 3＞소프트 2＞하드 4＞이상 5＞휴게 1
-;─
+;──────────────────────────────
+;최종 판정, 갈라 놓을 때의 우선순서는 노멀 3＞소프트 2＞하드 4＞이상 5＞휴식 1
+;──────────────────────────────
 SPLIT 방침종, "/", LOCALS
-CALL DEF_CRI_VAR("최대 우선 지정-노멀/소프트/하드/이상/휴게")
+CALL DEF_CRI_VAR("최대 우선 지정-노멀/소프트/하드/이상/휴식")
 LOCAL = GET_CRI_VAR("결정")
 IF LOCAL == -1
 	PRINTW 조교 방침 카운터가 이상합니다
@@ -94,7 +94,7 @@ CALL ANA_CRI_VAR()
 
 ;-------------------------------------------
 ;오늘의 방침
-;0=언제나 대로/1=A개발/2=벌/3=하드/4=러브러브/5=이상/6=야외/7=이상/8=휴게
+;0=언제나 대로/1=A개발/2=벌/3=하드/4=러브러브/5=이상/6=야외/7=이상/8=휴식
 ;TFLAG:오늘의방침로 관리되고 있다
 ;여기서 영향을 주는 것은 4 방침만인 것으로 주의
 ;-------------------------------------------
@@ -125,30 +125,30 @@ ENDSELECT
 
 LOCAL = ARG == -1 ? TARGET # ARG
 
-;휴게의 보정치
+;휴식의 보정치
 ;============
 SIF TALENT:LOCAL:겁쟁이               ;10,         겁쟁이
-	CALL ADD_CRI_VAR("휴게",  0, 3)
+	CALL ADD_CRI_VAR("휴식",  0, 3)
 SIF TALENT:LOCAL:반항적             ;11,       반항적
-	CALL ADD_CRI_VAR("휴게", -1)
+	CALL ADD_CRI_VAR("휴식", -1)
 SIF TALENT:LOCAL:기장               ;12,         기장
-	CALL ADD_CRI_VAR("휴게", -1)
+	CALL ADD_CRI_VAR("휴식", -1)
 SIF TALENT:LOCAL:얌전함           ;14,     얌전함
-	CALL ADD_CRI_VAR("휴게",  2)
+	CALL ADD_CRI_VAR("휴식",  2)
 SIF TALENT:LOCAL:거만함             ;16,       거만함
-	CALL ADD_CRI_VAR("휴게", -2)
+	CALL ADD_CRI_VAR("휴식", -2)
 SIF TALENT:LOCAL:감정결핍         ;24,   감정결핍
-	CALL ADD_CRI_VAR("휴게", -1)
+	CALL ADD_CRI_VAR("휴식", -1)
 SIF TALENT:LOCAL:튀고싶어함       ;29, 튀고싶어함
-	CALL ADD_CRI_VAR("휴게", -2)
+	CALL ADD_CRI_VAR("휴식", -2)
 SIF TALENT:LOCAL:신중               ;84,         신중
-	CALL ADD_CRI_VAR("휴게",  2)
+	CALL ADD_CRI_VAR("휴식",  2)
 SIF TALENT:LOCAL:조급함               ;85,         조급함
-	CALL ADD_CRI_VAR("휴게", -2)
+	CALL ADD_CRI_VAR("휴식", -2)
 SIF TALENT:LOCAL:상냥함         ;87,   상냥함
-	CALL ADD_CRI_VAR("휴게",  2)
+	CALL ADD_CRI_VAR("휴식",  2)
 SIF TALENT:LOCAL:유치               ;88,         유치
-	CALL ADD_CRI_VAR("휴게", -1)
+	CALL ADD_CRI_VAR("휴식", -1)
 
 
 ;소프트의 보정치
@@ -171,7 +171,7 @@ SIF TALENT:LOCAL:선을그음          ;28, 선을그음
 	CALL ADD_CRI_VAR("소프트",  2)
 SIF TALENT:LOCAL:청초                  ;37,         청초
 	CALL ADD_CRI_VAR("소프트",  2)
-SIF TALENT:LOCAL:새디즘                  ;83,         새디즘
+SIF TALENT:LOCAL:새드                  ;83,         새드
 	CALL ADD_CRI_VAR("소프트", -1, -5)
 SIF TALENT:LOCAL:신중                  ;84,         신중
 	CALL ADD_CRI_VAR("소프트",  1)
@@ -197,7 +197,7 @@ SIF TALENT:LOCAL:해방                   ;33,         해방
 	CALL ADD_CRI_VAR("노멀", 0,  5)
 SIF TALENT:LOCAL:청초                   ;37,         청초
 	CALL ADD_CRI_VAR("노멀", 1)
-SIF TALENT:LOCAL:새디즘                   ;83,         새디즘
+SIF TALENT:LOCAL:새드                   ;83,         새드
 	CALL ADD_CRI_VAR("노멀", 0, -2)
 SIF TALENT:LOCAL:조급함                   ;85,         조급함
 	CALL ADD_CRI_VAR("노멀", 0,  3)
@@ -229,7 +229,7 @@ SIF TALENT:LOCAL:억압                  ;32,         억압
 	CALL ADD_CRI_VAR("하드", -2)
 SIF TALENT:LOCAL:해방                  ;33,         해방
 	CALL ADD_CRI_VAR("하드",  0,  4)
-SIF TALENT:LOCAL:새디즘                  ;83,         새디즘
+SIF TALENT:LOCAL:새드                  ;83,         새드
 	CALL ADD_CRI_VAR("하드",  5)
 SIF TALENT:LOCAL:조급함                  ;85,         조급함
 	CALL ADD_CRI_VAR("하드",  0,  5)
@@ -265,7 +265,7 @@ SIF TALENT:LOCAL:억압                ;32,         억압
 	CALL ADD_CRI_VAR("이상", -3)
 SIF TALENT:LOCAL:해방                ;33,         해방
 	CALL ADD_CRI_VAR("이상",  0,  3)
-SIF TALENT:LOCAL:새디즘                ;83,         새디즘
+SIF TALENT:LOCAL:새드                ;83,         새드
 	CALL ADD_CRI_VAR("이상",  2)
 SIF TALENT:LOCAL:신중                ;84,         신중
 	CALL ADD_CRI_VAR("이상", -2)
@@ -285,7 +285,7 @@ SIF TALENT:LOCAL:광기                ;89,         광기
 
 LOCAL = ARG == -1 ? TARGET # ARG
 ;욕망
-CALL ADD_CRI_VAR("휴게", -ABL:LOCAL:욕망)
+CALL ADD_CRI_VAR("휴식", -ABL:LOCAL:욕망)
 
 ;봉사정신
 CALL ADD_CRI_VAR("소프트"  , LINE_CALC(ABL:LOCAL:봉사정신, "0→0, 5→2, LIMIT/0～2"))
@@ -354,7 +354,7 @@ SELECTCASE GET_CONDITION(LOCAL)
 	CASE "피폐", "쇠약"
 		;TCVAR:상태변화는 1때 피폐, 2때 쇠약, 즉, 피폐는+2, 쇠약은+4
 		;TFLAG:조교자소모도는 조교자의 소모 플래그
-		CALL ADD_CRI_VAR("휴게"    ,  TFLAG:조교자소모도 + 5 + TCVAR:상태변화 * 2)
+		CALL ADD_CRI_VAR("휴식"    ,  TFLAG:조교자소모도 + 5 + TCVAR:상태변화 * 2)
 		CALL ADD_CRI_VAR("소프트"  , -TFLAG:조교자소모도)
 		CALL ADD_CRI_VAR("노멀", -TFLAG:조교자소모도)
 		CALL ADD_CRI_VAR("하드"  , -TFLAG:조교자소모도)
@@ -366,7 +366,7 @@ SELECTCASE GET_CONDITION(LOCAL)
 		CALL ADD_CRI_VAR("하드"  , -2)
 		CALL ADD_CRI_VAR("이상"    , -2)
 	CASE "몽롱"
-		CALL ADD_CRI_VAR("휴게"    ,  6)
+		CALL ADD_CRI_VAR("휴식"    ,  6)
 		CALL ADD_CRI_VAR("소프트"  ,  0, 10)
 		CALL ADD_CRI_VAR("노멀",  0, 10)
 		CALL ADD_CRI_VAR("하드"  ,  0, 10)
@@ -375,13 +375,13 @@ SELECTCASE GET_CONDITION(LOCAL)
 		CALL ADD_CRI_VAR("소프트"  ,  4)
 		CALL ADD_CRI_VAR("노멀",  4)
 	CASE "분노"
-		CALL ADD_CRI_VAR("휴게"    , -3)
+		CALL ADD_CRI_VAR("휴식"    , -3)
 		CALL ADD_CRI_VAR("소프트"  , -4)
 		CALL ADD_CRI_VAR("노멀", -2)
 		CALL ADD_CRI_VAR("하드"  ,  4)
 		CALL ADD_CRI_VAR("이상"    ,  2)
 	CASE "지루함"
-		CALL ADD_CRI_VAR("휴게"    ,  4)
+		CALL ADD_CRI_VAR("휴식"    ,  4)
 		CALL ADD_CRI_VAR("소프트"  , -3)
 		CALL ADD_CRI_VAR("노멀", -3)
 		CALL ADD_CRI_VAR("하드"  , -3)
@@ -419,7 +419,7 @@ SIF IS_CONDITION(MASTER, "피폐")
 SIF TALENT:LOCAL:광기 || IS_CONDITION(TARGET, "울적")
 	LOCAL:1 -= RAND:6
 LOCAL:1 += MAX(LOCAL:1, 0)
-CALL ADD_CRI_VAR("휴게", LOCAL:1)
+CALL ADD_CRI_VAR("휴식", LOCAL:1)
 
 ;-------------------------------------------
 ;이하, BASE 및 PALAM에 의한 보정
@@ -435,8 +435,8 @@ CALL ADD_CRI_VAR("휴게", LOCAL:1)
 #LOCALSIZE 1
 
 LOCAL = ARG == -1 ? TARGET # ARG
-CALL ADD_CRI_VAR("휴게", LINE_CALC(BASE:LOCAL:체력, "0→3, 1500→-1, LIMIT/-1～3"))
-CALL MUL_CRI_VAR("휴게", LINE_CALC(BASE:LOCAL:체력, "0→120, 1500→80, LIMIT/80～120"))
+CALL ADD_CRI_VAR("휴식", LINE_CALC(BASE:LOCAL:체력, "0→3, 1500→-1, LIMIT/-1～3"))
+CALL MUL_CRI_VAR("휴식", LINE_CALC(BASE:LOCAL:체력, "0→120, 1500→80, LIMIT/80～120"))
 
 ;-------------------------------------------
 ;조교자의 기력 보정
@@ -450,8 +450,8 @@ CALL ADD_CRI_VAR("노멀", LINE_CALC(BASE:LOCAL:기력, "0→-2, 750→0, LIMIT/
 CALL ADD_CRI_VAR("하드"  , LINE_CALC(BASE:LOCAL:기력, "0→-3, 750→0, LIMIT/-3～0"))
 CALL ADD_CRI_VAR("이상"    , LINE_CALC(BASE:LOCAL:기력, "0→-3, 1000→0, LIMIT/-3～0"))
 IF BASE:LOCAL:기력 > 750
-	CALL ADD_CRI_VAR("휴게", -2)
-	CALL MUL_CRI_VAR("휴게", 80)
+	CALL ADD_CRI_VAR("휴식", -2)
+	CALL MUL_CRI_VAR("휴식", 80)
 ENDIF
 
 ;-------------------------------------------
@@ -525,10 +525,10 @@ ENDIF
 
 ;허가를 청했는지 개, 조교자 상태가 울적 이외
 IF IS_PREVCOMNAME("용서를빈다") && !IS_CONDITION(TARGET, "울적")
-	CALL ADD_CRI_VAR("휴게"    ,  5, (TALENT:새디즘 || TALENT:심술쟁이) ? -5 # 0)
+	CALL ADD_CRI_VAR("휴식"    ,  5, (TALENT:새드 || TALENT:심술쟁이) ? -5 # 0)
 	CALL ADD_CRI_VAR("소프트"  ,  5)
-	CALL ADD_CRI_VAR("노멀",  0, (TALENT:새디즘 || TALENT:심술쟁이) ? 2 # 0)
-	CALL ADD_CRI_VAR("하드"  , -5, (TALENT:새디즘 || TALENT:심술쟁이) ? 5 # 0)
+	CALL ADD_CRI_VAR("노멀",  0, (TALENT:새드 || TALENT:심술쟁이) ? 2 # 0)
+	CALL ADD_CRI_VAR("하드"  , -5, (TALENT:새드 || TALENT:심술쟁이) ? 5 # 0)
 	CALL ADD_CRI_VAR("이상"    , -5)
 ENDIF
 
@@ -538,10 +538,10 @@ SIF IS_PREVCOMNAME("기분좋게해줘") && IS_CONDITION(TARGET, "통상/피폐/
 
 ;무서워한다 한편, 조교자 상태가 울적 이외
 IF IS_PREVCOMNAME("무서워한다") && !IS_CONDITION(TARGET, "울적")
-	CALL ADD_CRI_VAR("휴게"    ,  5, (TALENT:새디즘 || TALENT:심술쟁이) ? -5 # 0)
+	CALL ADD_CRI_VAR("휴식"    ,  5, (TALENT:새드 || TALENT:심술쟁이) ? -5 # 0)
 	CALL ADD_CRI_VAR("소프트"  ,  5)
-	CALL ADD_CRI_VAR("노멀",  0, (TALENT:새디즘 || TALENT:심술쟁이) ? 2 # 0)
-	CALL ADD_CRI_VAR("하드"  , -5, (TALENT:새디즘 || TALENT:심술쟁이) ? 5 # 0)
+	CALL ADD_CRI_VAR("노멀",  0, (TALENT:새드 || TALENT:심술쟁이) ? 2 # 0)
+	CALL ADD_CRI_VAR("하드"  , -5, (TALENT:새드 || TALENT:심술쟁이) ? 5 # 0)
 	CALL ADD_CRI_VAR("이상"    , -5)
 ENDIF
 
@@ -553,7 +553,7 @@ ENDIF
 
 ;볼개그
 SIF TEQUIP:볼개그
-	CALL ADD_CRI_VAR("휴게", -5)
+	CALL ADD_CRI_VAR("휴식", -5)
 ;대거울
 SIF TEQUIP:대거울
 	CALL ADD_CRI_VAR("노멀", 1)
@@ -567,7 +567,7 @@ SIF TEQUIP:야외플레이
 @ACT_COURCE_OSHIOKI
 
 IF TFLAG:벌플래그
-	CALL ADD_CRI_VAR("휴게", -99)
+	CALL ADD_CRI_VAR("휴식", -99)
 	CALL ADD_CRI_VAR("하드", 4)
 ENDIF
 
@@ -580,7 +580,7 @@ ENDIF
 
 SPLIT ARGS, "/", LOCALS
 FOR LCOUNT, 0, RESULT
-	CALL ADD_CRI_VAR(LOCALS:LCOUNT, -TFLAG:(@"%LOCALS:LCOUNT%방침의히트"))
+	CALL ADD_CRI_VAR(LOCALS:LCOUNT, -TFLAG:(@"%LOCALS:LCOUNT%방침히트"))
 NEXT
 
 ;--------------------------------------------
@@ -589,9 +589,9 @@ NEXT
 @ACT_COURCE_PLAYNOW
 
 IF TEQUIP:성교중 || TEQUIP:성교봉사중 || IS_CONDITION(TARGET, "정욕")
-	CALL ADD_CRI_VAR("휴게", -99)
+	CALL ADD_CRI_VAR("휴식", -99)
 	CALL ADD_CRI_VAR("이상", -99)
 ENDIF
-IF TCVAR:MASTER:초조하게해번
-	CALL ADD_CRI_VAR("휴게", -99)
+IF TCVAR:MASTER:애태움수
+	CALL ADD_CRI_VAR("휴식", -99)
 ENDIF

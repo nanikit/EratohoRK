@@ -1,16 +1,16 @@
 ﻿;애무계 리액션 커맨드군
-;─
+;────────────────────────────────────
 ;070, 가게해！
-;─
+;────────────────────────────────────
 @COM70
 ;일탈 SOURCE 감소
 TIMES SOURCE:MASTER:일탈 , 0.70
 ;트라우마화 감속
 TIMES SOURCE:MASTER:트라우마 , 0.80
 ;굴종, 달성, 열락 SOURCE 증가
-SOURCE:MASTER:굴종 += 50 + (MARK:MASTER:쾌락각인 + 1) * (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B) * CFLAG:MASTER:조교레벨 / 200
-SOURCE:MASTER:달성 += 100 + (CFLAG:MASTER:조교레벨 + 5) * (SOURCE:MASTER:쾌C + SOURCE:MASTER:쾌V + SOURCE:MASTER:쾌A + SOURCE:MASTER:쾌B) / 100
-SOURCE:MASTER:열락 += 100 + SOURCE:MASTER:쾌C / 25 + SOURCE:MASTER:쾌V / 25 + SOURCE:MASTER:쾌A / 25 + SOURCE:MASTER:쾌B / 25
+SOURCE:MASTER:굴종 += 50 + (MARK:MASTER:쾌락각인 + 1) * (SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ) * CFLAG:MASTER:조교레벨 / 200
+SOURCE:MASTER:달성 += 100 + (CFLAG:MASTER:조교레벨 + 5) * (SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ) / 100
+SOURCE:MASTER:열락 += 100 + SOURCE:MASTER:쾌Ｃ / 25 + SOURCE:MASTER:쾌Ｖ / 25 + SOURCE:MASTER:쾌Ａ / 25 + SOURCE:MASTER:쾌Ｂ / 25
 ;보정치 초기화
 VARSET LOCAL
 ;소질 보정치 설정
@@ -18,7 +18,7 @@ LOCAL = (CFLAG:호의 / 500) + TALENT:호색 - TALENT:청초 + TALENT:헌신적 
 LOCAL = LIMIT(LOCAL, 1, 5)
 ;가학 보정치 설정
 ;3<=(LOCAL:1)<=8
-SIF TALENT:새디즘
+SIF TALENT:새드
 	LOCAL:1 += 1
 SIF TALENT:심술쟁이
 	LOCAL:1 += 1
@@ -30,22 +30,22 @@ ENDIF
 SIF TALENT:상냥함
 	LOCAL:1 -= 1
 LOCAL:1 += 5
-;소질에 의해 초조하게해 종료
+;소질에 의해 애태움 종료
 IF RAND:LOCAL > 0
-	TCVAR:MASTER:초조하게해번 = 1
-	;가학 보정에 의해 초조하게해 연장
+	TCVAR:MASTER:애태움수 = 1
+	;가학 보정에 의해 애태움 연장
 	IF RAND:(LOCAL:1) >= RAND:5
 		;기교에 의해 기간 결정
 		LOCAL:2 = ABL:기교 / 5 + 2
 		SIF LOCAL:2 > 4
 			LOCAL:2 = 4
-		TCVAR:MASTER:초조하게해번 += LOCAL:2
+		TCVAR:MASTER:애태움수 += LOCAL:2
 	ENDIF
 ENDIF
-IF TCVAR:MASTER:초조하게해번 == 1
+IF TCVAR:MASTER:애태움수 == 1
 	;파생:가게해 준다
 	TFLAG:REACT파생 = 1
-ELSEIF TCVAR:MASTER:초조하게해번 > 1
+ELSEIF TCVAR:MASTER:애태움수 > 1
 	;파생:가게해 주지 않는다
 	TFLAG:REACT파생 = 2
 ELSE

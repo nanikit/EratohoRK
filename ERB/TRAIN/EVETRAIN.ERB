@@ -1,6 +1,6 @@
-﻿;─
+﻿;────────────────────────────────────
 ;조교 개시의 처리
-;─
+;────────────────────────────────────
 @EVENTTRAIN
 #DIM LCOUNT
 #DIM 가능만족보수
@@ -23,7 +23,7 @@ TEQUIP:MASTER:상반신윗도리 = CFLAG:MASTER:의상 < 1 ? EQUIP:MASTER:상반
 TEQUIP:MASTER:전신윗도리   = CFLAG:MASTER:의상 < 1 ? EQUIP:MASTER:전신윗도리 # 0
 TEQUIP:MASTER:코스프레   = CFLAG:MASTER:의상 == 3 ? EQUIP:MASTER:코스프레 # 0
 
-TEQUIP:MASTER:노예의목걸이 = EQUIP:MASTER:노예의목걸이
+TEQUIP:MASTER:노예목걸이 = EQUIP:MASTER:노예목걸이
 
 TEQUIP:악세사리 = CFLAG:TARGET:의상 < 2 ? EQUIP:TARGET:악세사리 # 0
 TEQUIP:양말       = CFLAG:TARGET:의상 < 2 ? EQUIP:TARGET:양말 # 0
@@ -58,17 +58,17 @@ NEXT
 
 ;자세 관련
 CVARSET TCVAR, GETNUM(TCVAR,           "자세")
-CVARSET TCVAR, GETNUM(TCVAR,     "전회의자세")
+CVARSET TCVAR, GETNUM(TCVAR,     "전회자세")
 CVARSET TCVAR, GETNUM(TCVAR,       "위치전후")
-CVARSET TCVAR, GETNUM(TCVAR, "전회의위치전후")
+CVARSET TCVAR, GETNUM(TCVAR, "전회위치전후")
 CVARSET TCVAR, GETNUM(TCVAR,       "위치상하")
-CVARSET TCVAR, GETNUM(TCVAR, "전회의위치상하")
+CVARSET TCVAR, GETNUM(TCVAR, "전회위치상하")
 
 ;현재의 아라이먼트=평시아 라이먼트
 CFLAG:평시아 = LIMIT(CFLAG:평시아, -999, 999)
 CFLAG:아라이먼트 = CFLAG:평시아 / 10
-;노예의목걸이 장비중
-SIF TEQUIP:MASTER:노예의목걸이 == 1
+;노예목걸이 장비중
+SIF TEQUIP:MASTER:노예목걸이 == 1
 	CFLAG:아라이먼트 = -99
 
 ;개시시의 조교자의 사정 게이지가 0이 되어 있었으므로, 여기서 수정
@@ -87,9 +87,9 @@ CALL ACT_M_RESEARCH_L(0)
 
 CALLF _UNEXTRACTION(MASTER, 1, 0)	;뽑지않고 상태 지연 판정 플래그 초기화@revkoishi(14/07/15)
 
-;─
+;────────────────────────────────────
 ;이번 방침
-;─
+;────────────────────────────────────
 ;선택 가능한 대만족 보너스가 몇개 있을까
 가능만족보수 = 0
 FOR LCOUNT, 0, 12
@@ -101,9 +101,9 @@ NEXT
 ;포상이 있었을 때는 방침 변경을 날리도록(듯이)
 IF (!CFLAG:만족보 && CFLAG:소모 <= 5 && CFLAG:MASTER:소모 <= 5 && CFLAG:조교레벨 > 4) || !가능만족보수
 	;엉덩이를 괴롭혀 볼까처리?
-	;야 이것 의미 모르는…A감각 오를수록 나오기 어려워지는 거야?
+	;야 이것 의미 모르는…Ａ감각 오를수록 나오기 어려워지는 거야?
 	;잠정 잔재
-	SELECTCASE ABL:MASTER:A감각
+	SELECTCASE ABL:MASTER:Ａ감각
 		CASE 0
 			TFLAG:오늘의방침 = !RAND:3
 		CASE 1
@@ -127,7 +127,7 @@ IF (!CFLAG:만족보 && CFLAG:소모 <= 5 && CFLAG:MASTER:소모 <= 5 && CFLAG:�
 		;ELSEIF GETBIT(FLAG:60, 0)  && LOCAL == 3
 		;	TFLAG:오늘의방침 = 9
 		;벌은 반발 의존으로 하고 싶지만 사양이 정해지지 않기 때문에 뒷전
-		;ELSEIF RAND:((2 + MARK:반항각인) * (TALENT:새디즘 + 1)) > RAND:30
+		;ELSEIF RAND:((2 + MARK:반항각인) * (TALENT:새드 + 1)) > RAND:30
 		;	TFLAG:오늘의방침 = 2
 		ENDIF
 	ENDIF
@@ -200,7 +200,7 @@ IF 가능만족보수 && CFLAG:만족보 && CFLAG:호의 > 1000 && !TFLAG:오늘
 		SIF SATISBONUS_ABLE(7)
 			CALL HTMLPRINTL(@"%HTMLBUTTON(@"[ 7] - %CALLNAME%님을 임신하게 하고 싶다", "7", "성적봉사++")%")
 		SIF SATISBONUS_ABLE(8)
-			CALL HTMLPRINTL(@"%HTMLBUTTON("[ 8] - 쉬게 해", "8", "휴게에 의한 조교의 스킵")%")
+			CALL HTMLPRINTL(@"%HTMLBUTTON("[ 8] - 쉬게 해", "8", "휴식에 의한 조교의 스킵")%")
 		;호의+호감도 10000이상
 		SIF SATISBONUS_ABLE(9)
 			CALL HTMLPRINTL(@"%HTMLBUTTON(@"[ 9] - %CALLNAME%님에게 안기고 싶다", "9", "성교++")%")
@@ -241,7 +241,7 @@ IF 가능만족보수 && CFLAG:만족보 && CFLAG:호의 > 1000 && !TFLAG:오늘
 			TEQUIP:야외플레이 = 1
 		;자 만들기
 		CASE 7
-		;휴게
+		;휴식
 		CASE 8
 		;안아
 		CASE 9
@@ -297,12 +297,12 @@ SELECTCASE POLICY("오늘")
 	;이하, 포상으로 밖에 나오지 않는다
 	CASE "자 만들기"
 		PRINTFORMW %CALLNAME:TARGET%는 아이를 내려 주시는 것의 기대로부터%CALLNAME:MASTER%에 다가서 왔다…
-	CASE "휴게"
-		;휴게. INFO.ERB에 처리를 이동
+	CASE "휴식"
+		;휴식. INFO.ERB에 처리를 이동
 	CASE "안아"
 		{
 		PRINTFORMW %CALLNAME:TARGET%는 지금부터 안기는 것에의 기대에 신체를 뜨겁게 달아오르게 한다%CALLNAME:MASTER%를\@ 
-		!TALENT:새디즘 ? 상냥하고 # \@껴안았다…
+		!TALENT:새드 ? 상냥하고 # \@껴안았다…
 		}
 	CASE "봉사"
 		PRINTFORMW %CALLNAME:TARGET%는 기특한 의사표현에 만족인 미소를 띄우면서,%CALLNAME:MASTER%를 불러 대고 그 머리를 상냥하게 어루만졌다…
@@ -379,9 +379,9 @@ ENDSELECT
 RETURNF !CFLAG:(1200+ARG)
 
 
-;─
+;────────────────────────────────────
 ;더러움의 리셋트
-;─
+;────────────────────────────────────
 @STAIN_RESET
 RESET_STAIN MASTER
 RESET_STAIN TARGET
