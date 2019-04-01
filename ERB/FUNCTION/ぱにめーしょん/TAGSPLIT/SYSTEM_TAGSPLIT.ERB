@@ -101,7 +101,7 @@ RETURNF 0
 ;	지정의 태그가 없는 경우는 추가, 어느 경우는 동태그내에서 프롭퍼티치의 변경을 한다
 ;	프롭퍼티의 기법은 2종류 있어, 직접 써도 괜찮고, (HAGE의 예)
 ;	태그명만 기입해 ARGS:2를 사용해도 괜찮다(HIGE의 예).
-;	는 후자 쪽을 알 수 있기 쉬울지도
+;	어쩐지 후자 쪽을 알 수 있기 쉬울지도
 ;
 ;	·제 2 인수를 생략 해, 제 3 인수는 입력했을 경우 본문을 옮겨놓는다
 ;
@@ -113,10 +113,10 @@ RETURNF 0
 #LOCALSIZE 1
 #LOCALSSIZE 1
 LOCAL = TAGSPLIT_SETLOG(ARGS,ARGS:1)
-; 상에서 말하는 TAGSPLIT_ADD(LOCALS, "<HAGE_감구>")의 예
+; 위에서 말하는 TAGSPLIT_ADD(LOCALS, "<HAGE_감구>")의 예
 IF STRFIND(ARGS:1,"<") != -1 && STRFIND(ARGS:1,">") != -1 && ARGS:2 == ""
 	LOCALS = %REPLACE(ARGS:1,">","")%
-; 상에서 말하는 TAGSPLIT_ADD(LOCALS, "HIGE", "5")의 예
+; 위에서 말하는 TAGSPLIT_ADD(LOCALS, "HIGE", "5")의 예
 ELSEIF ARGS:1 != ""
 	LOCALS = %"<" + ARGS:1%
 	SIF ARGS:2 != ""
@@ -333,13 +333,13 @@ IF ARGS != "" || TAGSPLIT_STR == ""
 
 			; "태그군"을 태그 마다 SPLIT		예:태그군= "<HOGE_10><HAGE_20>"  →  TAGSPLIT_NOWBLOCS:(0～19) = "<HOGE_10", "<HAGE_20"
 			SPLIT TAGSPLIT_TAG, ">", TAGSPLIT_TAGBLOCS						
-			; 태그수를 본문의 1에 SPLIT 분할수를 플러스
+			; 태그수를 본문의 것 1에SPLIT분할수를 플러스
 			TAGSPLIT_TAGNUM += RESULT - 1
 			
 			; 태그전치는 본문을 마지막으로 배치						예:TAGSPLIT_NOWBLOCS:(0～19) = "<HOGE_10", "<HAGE_20", "본문"
 			IF TAGSPLIT_TAGEND() == 0
 				TAGSPLIT_TAGBLOCS:(TAGSPLIT_TAGNUM-1) = %TAGSPLIT_STR%
-			; 태그 후치는 본문을 0에, 태그를 1이후에 비켜 놓아 배치예:TAGSPLIT_NOWBLOCS:(0～19) = "본문", "<HOGE_10", "<HAGE_20"
+			; 태그 후치는 본문을 0에, 태그를 1이후에 비켜 놓아 배치	예:TAGSPLIT_NOWBLOCS:(0～19) = "본문", "<HOGE_10", "<HAGE_20"
 			ELSEIF TAGSPLIT_TAGEND() == 1
 				ARRAYSHIFT TAGSPLIT_TAGBLOCS, 1, TAGSPLIT_STR, 0
 			ENDIF
@@ -371,9 +371,9 @@ ELSEIF ARGS:1 != ""
 		RESULT = LOCAL:1
 		RETURNF -1
 	ENDIF
-	; 분할 배열의 본문을 제외한 부분으로부터 인수 1의 S태그 요소를 찾는다			;	예:(본문), "<HOGE_10", "<HAGE_20", (본문)로부터"<HOGE"를 찾는다
+	; 분할 배열의 본문을 제외한 부분으로부터 인수 1의S태그 요소를 찾는다			;	예:(본문), "<HOGE_10", "<HAGE_20", (본문)로부터"<HOGE"를 찾는다
 	LOCAL = FINDELEMENT( TAGSPLIT_TAGBLOCS, TAGSPLIT_NOWPROPS:0, TAGSPLIT_TAGEND(), ( TAGSPLIT_TAGEND() == 0 ? TAGSPLIT_TAGNUM -1 # TAGSPLIT_TAGNUM ) )
-	; 발견되었을 경우는 발견된 것을 태그와 프롭퍼티에 SPLIT		;	예:TAGSPLIT_TAGBLOCS:1 = "<HOGE_10"  →  TAGSPLIT_TAGPROPS:(0～1) = "HOGE", "10"
+	; 발견되었을 경우는 발견된 것을 태그와 프롭퍼티에SPLIT		;	예:TAGSPLIT_TAGBLOCS:1 = "<HOGE_10"  →  TAGSPLIT_TAGPROPS:(0～1) = "HOGE", "10"
 	IF LOCAL != -1
 		VARSET TAGSPLIT_TAGPROPS
 		SPLIT REPLACE(TAGSPLIT_TAGBLOCS:(LOCAL),"<",""), "_", TAGSPLIT_TAGPROPS	
@@ -423,7 +423,7 @@ FOR LCOUNT, 0, LOCAL + 1
 			LOCALS += TAGSPLIT_TAGBLOCS:LCOUNT + ">"
 		ENDIF
 	ENDIF
-	SIF LCOUNT == LOCAL									; 상에서 찾은 최대 요소수까지 오면 끝
+	SIF LCOUNT == LOCAL									; 위에서 찾은 최대 요소수까지 오면 끝
 		BREAK
 NEXT
 ; 인수 개미로 재분할해 로그에 거둔다(재이용은 실제 어떤 것인가)

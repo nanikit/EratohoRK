@@ -39,15 +39,15 @@ ARG:1 = ARG:1 != -2 ? ARG:1 # TARGET
 ;기본경칭의 처리
 SPLIT CSTR:(ARG:1):기본경칭, "/", 경칭대상, LOCAL
 FOR LCOUNT, 0, LOCAL
-	경칭내역:LCOUNT = %REPLACE(REPLACE(SUBSTRINGU(경칭대상:LCOUNT, STRFINDU(경칭대상:LCOUNT, "_")+1), "이름", NAME:ARG), "통칭", CALLNAME:ARG)%
-	경칭대상:LCOUNT = %SUBSTRINGU(경칭대상:LCOUNT,0, STRFINDU(경칭대상:LCOUNT, "_"))%
+	경칭내역:LCOUNT = %REPLACE(REPLACE(SUBSTRING(경칭대상:LCOUNT, STRFIND(경칭대상:LCOUNT, "_")+1), "이름", NAME:ARG), "통칭", CALLNAME:ARG)%
+	경칭대상:LCOUNT = %SUBSTRING(경칭대상:LCOUNT,0, STRFIND(경칭대상:LCOUNT, "_")-1)%
 NEXT
 
 ;통칭의 분류
 SPLIT CSTR:(ARG:1):호칭목록, "/", 통칭대상, LOCAL
 FOR LCOUNT, 0, LOCAL
-	통칭내역:LCOUNT = %REPLACE(REPLACE(SUBSTRINGU(통칭대상:LCOUNT, STRFINDU(통칭대상:LCOUNT, "_")+1), "이름", NAME:ARG), "통칭", CALLNAME:ARG)%
-	통칭대상:LCOUNT = %SUBSTRINGU(통칭대상:LCOUNT,0, STRFINDU(통칭대상:LCOUNT, "_"))%
+	통칭내역:LCOUNT = %REPLACE(REPLACE(SUBSTRING(통칭대상:LCOUNT, STRFIND(통칭대상:LCOUNT, "_")+1), "이름", NAME:ARG), "통칭", CALLNAME:ARG)%
+	통칭대상:LCOUNT = %SUBSTRING(통칭대상:LCOUNT,0, STRFIND(통칭대상:LCOUNT, "_")-1)%
 NEXT
 
 ;일시적으로 NAME를 넣는다
@@ -369,7 +369,7 @@ SELECTCASE ARG:1
 	CASE 119	;햇빛싫어함/일광 골칫거리
 		RETURNF "일광" + \@ TALENT:ARG:햇빛싫어함 == 2 ? 골칫거리 # 싫다 \@
 	CASE 132	;(독심술) 공기를 읽는 정도의 능력/마음을 읽는 정도의 능력
-		RETURNF \@ TALENT:ARG:독심술 == 2 ? 심 # 공기 \@ + "를 읽는 정도의 능력"
+		RETURNF \@ TALENT:ARG:독심술 == 2 ? 마음 # 공기 \@ + "를 읽는 정도의 능력"
 ENDSELECT
 RETURNF TALENTNAME:(ARG:1)
 
@@ -827,7 +827,7 @@ SELECTCASE PALAM:ARG:윤활
 ENDSELECT
 RETURNF LOCALS:0
 ;eraWIZ를 봐 만들고 싶어졌다
-;라고 할까, 한정 없음 구상전용으로 MASTER의 체격등으로 분기 만들어도 괜찮은 것인지도
+;이렇게 말하는지, 한정 없음 구상전용으로 MASTER의 체격등으로 분기 만들어도 괜찮은 것인지도
 ;작은체형 체형이라면 어린 취급이고
 
 ;-------------------------------------------------

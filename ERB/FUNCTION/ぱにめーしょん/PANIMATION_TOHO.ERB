@@ -243,7 +243,7 @@ RETURNF @"제%TOKANJI(LOCAL+115)%계　%GETMONTHNAME(LOCAL:1)%의%TOKANJI(LOCAL:
 #FUNCTIONS
 ;분으로 변환한다
 SELECTCASE ARG:1
-	;시에 건네주는 경우
+	;때에 건네주는 경우
 	CASE 2
 		ARG *= 60
 	;초에 건네주는 경우
@@ -259,13 +259,13 @@ SIF GET_CLASSICAL_HOUR(ARG, 1) == "축" && (ARG%120)/30 == 2
 	RETURNF "오밤중시"
 RETURNF @"%GET_CLASSICAL_HOUR(ARG, 1)%의\@ ARG:2 == 1 ? 각,  # \@%TOKANJI(((ARG%120)/30)+1)%개\@ ARG:2 == 2 ? 　-%GET_CLASSICAL_HOUR(ARG, 1, 1)%시- # \@"
 
-;시를 취득
+;때를 취득
 ;인수 2를 실로 하면, 대범한 시간의 모습을 취한다
 @GET_CLASSICAL_HOUR(ARG, ARG:1, ARG:2)
 #FUNCTIONS
 ;분으로 변환한다
 SELECTCASE ARG:1
-	;시에 건네주는 경우
+	;때에 건네주는 경우
 	CASE 2
 		ARG *= 60
 	;분에 건네주는 경우（처리 없음）
@@ -277,7 +277,7 @@ ENDSELECT
 
 SELECTCASE ARG/120
 	CASE 0
-		RETURNF \@ ARG:2 ? 야밤중（해이렇게） # 자 \@
+		RETURNF \@ ARG:2 ? 야밤중（해이렇게） # 아이 \@
 	CASE 1
 		RETURNF \@ ARG:2 ? 미명（보고째있고） # 축 \@
 	CASE 2
@@ -299,7 +299,7 @@ SELECTCASE ARG/120
 	CASE 10
 		RETURNF \@ ARG:2 ? 소（좋다） # 술 \@
 	CASE 11
-		RETURNF \@ ARG:2 ? 야밤중（에요） # 돼지 \@
+		RETURNF \@ ARG:2 ? 야밤중（원） # 돼지 \@
 ENDSELECT
 
 
@@ -343,7 +343,7 @@ LOCALS = \@ ARG/1000 ? %TOKANJIS(ARG/1000, 1)%천 # \@
 ARG %= 1000
 LOCALS += \@ ARG/100 ? %TOKANJIS(ARG/100, 1)%백 # \@
 ARG %= 100
-LOCALS += \@ ARG/10 ? %TOKANJIS(ARG/10, 1)%십 # \@
+LOCALS += \@ ARG/10 ? %TOKANJIS(ARG/10, 1)%10 # \@
 ARG %= 10
 RETURNF LOCALS + TOKANJIS(ARG)
 
@@ -353,29 +353,29 @@ RETURNF LOCALS + TOKANJIS(ARG)
 #FUNCTIONS
 SELECTCASE ARG
 	CASE 0
-		RETURNF \@ ARG:1 > 1 ? 0 #  \@
+		RETURNF \@ ARG:1 > 1 ? 영 #  \@
 	CASE 1
-		RETURNF \@ ARG:1 ?  # 일 \@
+		RETURNF \@ ARG:1 ?  # 1 \@
 	CASE 2
-		RETURNF "이"
+		RETURNF "2"
 	CASE 3
-		RETURNF "삼"
+		RETURNF "3"
 	CASE 4
-		RETURNF "사"
+		RETURNF "4"
 	CASE 5
-		RETURNF "오"
+		RETURNF "5"
 	CASE 6
-		RETURNF "육"
+		RETURNF "6"
 	CASE 7
-		RETURNF "칠"
+		RETURNF "7"
 	CASE 8
-		RETURNF "팔"
+		RETURNF "8"
 	CASE 9
-		RETURNF "구"
+		RETURNF "9"
 	CASE 10
-		RETURNF "십"
+		RETURNF "10"
 	CASEELSE
-		RETURNF "엑"
+		RETURNF ""
 ENDSELECT
 
 
@@ -395,15 +395,15 @@ RETURNF (!(ARG % 4) && (ARG % 100)) || !(ARG % 400) ? 366 # 365
 ;	인수 1:1으로 하면, 구석 일수를 돌려줍니다
 ;경과일수부터, 경과년수를 돌려줍니다.
 ;인수 1을 실로 하면, 현재의 해에 며칠 경과하고 있을까를 돌려줍니다.
-;2000년을 0년으로서 돌려주기 (위해)때문에, 서기 표기할 때는 2000을 더해 주세요.
+;2000해를 0년으로서 돌려주기 (위해)때문에, 서기 표기할 때는 2000을 더해 주세요.
 ;단순하게 경과년수를 세는 경우는 의식하지 않아도ＯＫ
 ;-------------------------------------------------
 @GETYEAR(ARG, ARG:1)
 #FUNCTION
 #LOCALSIZE 1
 VARSET LOCAL
-;2000년을 0년째로서 취급한다
-;2000년부터 순서에 돌려, 연수 LOCAL를 늘린다
+;2000해를 0년째로서 취급한다
+;2000해부터 순서에 돌려, 연수 LOCAL를 늘린다
 WHILE ARG > GETURUU(LOCAL)
 	LOCAL++
 	ARG -= GETURUU(LOCAL)
@@ -422,16 +422,16 @@ RETURNF ARG:1 ? ARG # LOCAL
 #LOCALSIZE 2
 ;만약을 위해의 처리
 ARG %= ARG:1
-;월 마다의 일수 계산
+;달 마다의 일수 계산
 FOR LOCAL, 1, 13
 	SELECTCASE LOCAL
-		;30일의 달
+		;30날의 달
 		CASE 4, 6, 9, 11
 			LOCAL:1 = 30
 		;2월
 		CASE 2
 			LOCAL:1 = 28 + (ARG:2 == 366)
-		;31일의 달
+		;31날의 달
 		CASEELSE
 			LOCAL:1 = 31
 	ENDSELECT
